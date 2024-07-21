@@ -1,5 +1,6 @@
 add_library(lethe-dem
   # Sources
+  dem_action_manager.cc
   adaptive_sparse_contacts.cc
   data_containers.cc
   dem.cc
@@ -48,6 +49,7 @@ add_library(lethe-dem
   visualization.cc
   write_checkpoint.cc
   # Headers
+  ../../include/dem/dem_action_manager.h
   ../../include/dem/adaptive_sparse_contacts.h
   ../../include/dem/boundary_cells_info_struct.h
   ../../include/dem/contact_type.h

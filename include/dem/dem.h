@@ -24,6 +24,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -108,6 +109,9 @@ private:
   resize_containers()
   {
     displacement.resize(particle_handler.get_max_local_particle_index());
+    std::fill(displacement.begin(), displacement.end(), 0.);
+
+
     force.resize(displacement.size());
     torque.resize(displacement.size());
   }
@@ -129,8 +133,8 @@ private:
   inline bool
   check_contact_search_step(bool solid_object_map_step)
   {
-    if (particles_insertion_step || load_balance_step ||
-        contact_detection_step || checkpoint_step || solid_object_map_step)
+    if (particles_insertion_step || action_manager->check_contact_search() ||
+        contact_detection_step || solid_object_map_step)
       {
         return true;
       }
@@ -257,8 +261,6 @@ private:
   double                               smallest_solid_object_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
-  bool                                 load_balance_step;
-  bool                                 checkpoint_step;
   Tensor<1, 3>                         g;
 
   DEM::DEMProperties<dim>                  properties_class;
@@ -342,6 +344,9 @@ private:
 
   // Contact detection iteration check function
   std::function<bool()> contact_detection_iteration_check_function;
+
+  DEMActionManager *action_manager;
+  bool test = true;
 };
 
 #endif

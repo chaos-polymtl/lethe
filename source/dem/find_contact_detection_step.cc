@@ -1,3 +1,4 @@
+#include <dem/dem_action_manager.h>
 #include <dem/find_contact_detection_step.h>
 
 using namespace dealii;
@@ -13,12 +14,15 @@ find_particle_contact_detection_step(
   std::vector<double>             &displacement,
   const bool                       parallel_update)
 {
-  if (sorting_in_subdomains_step)
-    for (auto &d : displacement)
-      d = 0.;
+  DEMActionManager *action_manager = DEMActionManager::get_action_manager();
 
-  double max_displacement       = 0.;
-  bool   contact_detection_step = false;
+// If the contact search is already triggered, no need to check again
+  if (action_manager->check_contact_search())
+      return true;
+
+  double max_displacement = 0.;
+  // Here need to work with action maanger
+  bool contact_detection_step = false;
 
   // Updating displacement
   for (auto &particle : particle_handler)

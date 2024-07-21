@@ -24,6 +24,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -69,6 +70,8 @@ public:
     load_balance_step      = model_parameters.load_balance_step;
     load_balance_frequency = model_parameters.load_balance_frequency;
     load_threshold         = model_parameters.load_balance_threshold;
+
+    action_manager = DEMActionManager::get_action_manager();
   }
 
   /**
@@ -454,6 +457,11 @@ private:
    * @brief Pointer to the adaptive sparse contacts object.
    */
   AdaptiveSparseContacts<dim> *adaptive_sparse_contacts;
+
+  /**
+   * @brief Pointer to the DEM action manager object.
+   */
+  DEMActionManager *action_manager;
 };
 
 

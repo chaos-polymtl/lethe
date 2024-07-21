@@ -48,8 +48,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(true)
-  , load_balance_step(true)
-  , checkpoint_step(true)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
@@ -84,6 +82,9 @@ DEMSolver<dim>::setup_parameters()
         }
     }
 
+  // Construct the action manager
+  action_manager = DEMActionManager::get_action_manager();
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -106,10 +107,13 @@ DEMSolver<dim>::setup_parameters()
   if (parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
+      action_manager->set_sparse_contacts_enabling(true);
       sparse_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold,
         parameters.model_parameters.advect_particles);
+
+      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
     }
 
   // Set the distribution type and initialize the neighborhood threshold
@@ -266,6 +270,7 @@ DEMSolver<dim>::setup_solid_objects()
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
       has_solid_objects = true;
+      action_manager->set_solid_objects_enabling(true);
       contact_manager.particle_floating_mesh_in_contact.resize(
         solid_surfaces.size() + solid_volumes.size());
     }
@@ -276,9 +281,9 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  load_balance_step = load_balancing.check_load_balance_iteration();
+  test = load_balancing.check_load_balance_iteration();
 
-  if (!load_balance_step)
+  if (!test)
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
@@ -361,15 +366,12 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
-  bool sorting_in_subdomains_step =
-    (particles_insertion_step || load_balance_step || contact_detection_step);
-
   return find_particle_contact_detection_step<dim>(
     particle_handler,
     simulation_control->get_time_step(),
     smallest_contact_search_criterion,
     mpi_communicator,
-    sorting_in_subdomains_step,
+    false,
     displacement,
     (simulation_control->get_step_number() % contact_detection_frequency) == 0);
 }
@@ -572,6 +574,25 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 }
 
 template <int dim>
+inline std::function<bool()>
+DEMSolver<dim>::set_contact_search_iteration_function()
+{
+  using namespace Parameters::Lagrangian;
+  ModelParameters::ContactDetectionMethod &contact_detection_method =
+    parameters.model_parameters.contact_detection_method;
+
+  switch (contact_detection_method)
+    {
+      case ModelParameters::ContactDetectionMethod::constant:
+        return [&] { return check_contact_search_iteration_constant(); };
+      case ModelParameters::ContactDetectionMethod::dynamic:
+        return [&] { return check_contact_search_iteration_dynamic(); };
+      default:
+        throw(std::runtime_error("Invalid contact detection method."));
+    }
+}
+
+template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
@@ -582,11 +603,11 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-          return std::make_shared<VelocityVerletIntegrator<dim>>();
+        return std::make_shared<VelocityVerletIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-          return std::make_shared<ExplicitEulerIntegrator<dim>>();
+        return std::make_shared<ExplicitEulerIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::gear3:
-          return std::make_shared<Gear3Integrator<dim>>();
+        return std::make_shared<Gear3Integrator<dim>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
@@ -748,7 +769,7 @@ DEMSolver<dim>::report_statistics()
 
 template <int dim>
 void
-  DEMSolver<dim>::setup_triangulation_dependent_parameters()
+DEMSolver<dim>::setup_triangulation_dependent_parameters()
 {
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model(parameters, triangulation);
@@ -837,7 +858,7 @@ DEMSolver<dim>::solve()
       resize_containers();
       update_moment_of_inertia(particle_handler, MOI);
 
-      checkpoint_step = true;
+      action_manager->checkpoint_step();
     }
 
   setup_triangulation_dependent_parameters();
@@ -860,6 +881,11 @@ DEMSolver<dim>::solve()
 
   // Setup background dof
   setup_background_dofs();
+  if (has_sparse_contacts)
+    {
+      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
+    }
+
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -880,34 +906,27 @@ DEMSolver<dim>::solve()
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();
 
-      if (particles_insertion_step)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-
       // Load balancing
       load_balance();
 
-      if (load_balance_step || checkpoint_step)
+      if (action_manager->check_update_sparse_contacts_cells())
         {
-          displacement.resize(particle_handler.get_max_local_particle_index());
-
-          if (has_sparse_contacts)
-            {
-              sparse_contacts_object.update_local_and_ghost_cell_set(
-                background_dh);
-            }
+          sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
         }
 
       // Check to see if it is contact search step
       contact_detection_step = contact_detection_iteration_check_function();
 
       bool solid_object_map_step = false;
+      // Should be done when load balancing is done and when criteria
       // Check to see if floating meshes need to be mapped in background mesh
       if (has_solid_objects)
         {
           solid_object_map_step = find_floating_mesh_mapping_step(
             smallest_solid_object_mapping_criterion, this->solid_surfaces);
 
-          if (solid_object_map_step)
+          if (solid_object_map_step ||
+              action_manager->check_solid_object_search())
             {
               // Update floating mesh information in the container manager
               for (unsigned int i_solid = 0; i_solid < solid_surfaces.size();
@@ -929,6 +948,8 @@ DEMSolver<dim>::solve()
       if (check_contact_search_step(solid_object_map_step))
         {
           // Particles displacement if passing through a periodic boundary
+          // Executed before the sort particles into subdomains and cells
+          // since particle might be outside of the domain.
           periodic_boundaries_object.execute_particles_displacement(
             particle_handler, periodic_boundaries_cells_information);
 
@@ -986,7 +1007,9 @@ DEMSolver<dim>::solve()
           // Updates the iterators to particles in local-local contact
           // containers
           contact_manager.update_local_particles_in_cells(
-            particle_handler, load_balance_step, has_periodic_boundaries);
+            particle_handler,
+            test,
+            has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
@@ -1005,6 +1028,9 @@ DEMSolver<dim>::solve()
 
           // Updating number of contact builds
           contact_build_number++;
+
+          // Flag that there was a contact search step
+          //action_manager->contact_search_step();
         }
       else
         {
@@ -1127,8 +1153,7 @@ DEMSolver<dim>::solve()
                            mpi_communicator);
         }
 
-      // Reset checkpoint step
-      checkpoint_step = false;
+      action_manager->reset_triggers();
     }
 
   finish_simulation();

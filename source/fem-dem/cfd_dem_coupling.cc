@@ -777,9 +777,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
                                    this->particle_handler,
                                    this->mpi_communicator,
                                    this->simulation_control,
-                                   contact_detection_step,
-                                   checkpoint_step,
-                                   load_balance_step,
                                    smallest_contact_search_criterion);
 
   // Sort particles in cells
@@ -803,13 +800,15 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.exchange_ghost_particles(true);
 
+      // To change
+      if (dem_action_manager->check_update_sparse_contacts_cells())
+        {
+          sparse_contacts_object.update_local_and_ghost_cell_set(
+            this->void_fraction_dof_handler);
+        }
+
       if (has_sparse_contacts)
         {
-          if (load_balance_step || checkpoint_step ||
-              (this->simulation_control->is_at_start() && (counter == 0)))
-            sparse_contacts_object.update_local_and_ghost_cell_set(
-              this->void_fraction_dof_handler);
-
           sparse_contacts_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
@@ -856,9 +855,10 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       // Updates the iterators to particles in local-local contact
       // containers
-      contact_manager.update_local_particles_in_cells(this->particle_handler,
-                                                      load_balance_step,
-                                                      has_periodic_boundaries);
+      contact_manager.update_local_particles_in_cells(
+        this->particle_handler,
+        dem_action_manager->check_clear_contact_structures(),
+        has_periodic_boundaries);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
@@ -881,15 +881,18 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // been performed, this functions are set to false. The checkpoint_step
       // remains false for the duration of the simulation while the load
       // balancing is reset everytime load balancing is called.
-      checkpoint_step           = false;
-      load_balance_step         = false;
+
       particle_displaced_in_pbc = false;
+      // Flag that there was a contact search step
+      //dem_action_manager->contact_search_step();
     }
   else
     {
       this->particle_handler.update_ghost_particles();
     }
-  // TODO add DEM post-processing
+
+  // Reset all triggers for this DEM time step
+  dem_action_manager->reset_triggers();
 }
 
 template <int dim>
@@ -1238,6 +1241,8 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_setup_contact_parameters()
 {
+  dem_action_manager = DEMActionManager::get_action_manager();
+
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
@@ -1283,6 +1288,9 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
         dem_parameters.model_parameters.granular_temperature_threshold,
         dem_parameters.model_parameters.solid_fraction_threshold,
         dem_parameters.model_parameters.advect_particles);
+
+      sparse_contacts_object.update_local_and_ghost_cell_set(
+        this->void_fraction_dof_handler);
     }
 
 
@@ -1362,7 +1370,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
   // Initialize contact detection step
   contact_detection_step = false;
-  load_balance_step      = false;
 
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
@@ -1411,9 +1418,7 @@ CFDDEMSolver<dim>::solve()
   // and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart == true)
-    checkpoint_step = true;
-  else
-    checkpoint_step = false;
+    dem_action_manager->checkpoint_step();
 
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
@@ -1427,7 +1432,7 @@ CFDDEMSolver<dim>::solve()
 
   // Calculate first instance of void fraction once particles are set-up
   this->vertices_cell_mapping();
-  if (!checkpoint_step)
+  if (!dem_action_manager->check_checkpoint_trigger_tmp()) // big tmp thing
     this->initialize_void_fraction();
 
   while (this->simulation_control->integrate())
@@ -1460,8 +1465,10 @@ CFDDEMSolver<dim>::solve()
           this->vertices_cell_mapping();
         }
 
+      // Change this check
       this->calculate_void_fraction(
-        this->simulation_control->get_current_time(), load_balance_step);
+        this->simulation_control->get_current_time(),
+        dem_action_manager->check_repartition());
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
@@ -1506,9 +1513,9 @@ CFDDEMSolver<dim>::solve()
         // The input argument to this function is set to zero as this integer is
         // not used for the check_load_balance_step function and is only
         // important for the check_contact_search_step function.
-        load_balance_step = load_balancing.check_load_balance_iteration();
+        load_balancing.check_load_balance_iteration();
 
-        if (load_balance_step)
+        if (dem_action_manager->check_repartition())
           {
             load_balance();
           }

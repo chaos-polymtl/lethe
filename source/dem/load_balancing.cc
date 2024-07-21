@@ -16,6 +16,7 @@ LagrangianLoadBalancing<dim>::check_load_balance_once()
 {
   if (simulation_control->get_step_number() == load_balance_step)
     {
+      action_manager->load_balance_step();
       return true;
     }
 
@@ -28,6 +29,7 @@ LagrangianLoadBalancing<dim>::check_load_balance_frequent()
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
     {
+      action_manager->load_balance_step();
       return true;
     }
 
@@ -53,6 +55,7 @@ LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
           load_threshold *
             (particle_handler->n_global_particles() / n_mpi_processes))
         {
+          action_manager->load_balance_step();
           return true;
         }
     }
@@ -126,6 +129,7 @@ LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
           // Clear and connect a new cell weight function
           connect_mobility_status_weight_signals();
 
+          action_manager->load_balance_step();
           return true;
         }
     }
