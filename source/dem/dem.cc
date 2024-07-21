@@ -40,16 +40,12 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
   , mapping(1)
-  , particles_insertion_step(0)
   , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
-  , contact_detection_step(true)
-  , load_balance_step(true)
-  , checkpoint_step(true)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
@@ -84,6 +80,8 @@ DEMSolver<dim>::setup_parameters()
         }
     }
 
+  action_manager = DEMActionManager::get_action_manager();
+
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -106,6 +104,7 @@ DEMSolver<dim>::setup_parameters()
   if (parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
+      action_manager->set_sparse_contacts_enabling(true);
       sparse_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold,
@@ -137,6 +136,7 @@ DEMSolver<dim>::setup_parameters()
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
           has_periodic_boundaries = true;
+          action_manager->set_periodic_boundaries_enabling(true);
           break;
         }
     }
@@ -276,9 +276,9 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  load_balance_step = load_balancing.check_load_balance_iteration();
+  load_balancing.check_load_balance_iteration();
 
-  if (!load_balance_step)
+  if (!action_manager->check_repartition())
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
@@ -315,6 +315,11 @@ DEMSolver<dim>::load_balance()
 
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
+    }
+
+  if (has_sparse_contacts)
+    {
+      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
     }
 
   // Update neighbors of cells after load balance
@@ -358,28 +363,25 @@ DEMSolver<dim>::load_balance()
 }
 
 template <int dim>
-inline bool
+inline void
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
-  bool sorting_in_subdomains_step =
-    (particles_insertion_step || load_balance_step || contact_detection_step);
-
-  return find_particle_contact_detection_step<dim>(
+  find_particle_contact_detection_step<dim>(
     particle_handler,
     simulation_control->get_time_step(),
     smallest_contact_search_criterion,
     mpi_communicator,
-    sorting_in_subdomains_step,
     displacement,
     (simulation_control->get_step_number() % contact_detection_frequency) == 0);
 }
 
 template <int dim>
-inline bool
+inline void
 DEMSolver<dim>::check_contact_search_iteration_constant()
 {
-  return (
-    (simulation_control->get_step_number() % contact_detection_frequency) == 0);
+  if ((simulation_control->get_step_number() % contact_detection_frequency) ==
+      0)
+    action_manager->contact_search_step();
 }
 
 template <int dim>
@@ -389,6 +391,8 @@ DEMSolver<dim>::insert_particles()
   if ((simulation_control->get_step_number() % insertion_frequency) == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
+
+      action_manager->particle_insertion_step();
       return true;
     }
   return false;
@@ -582,11 +586,11 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-          return std::make_shared<VelocityVerletIntegrator<dim>>();
+        return std::make_shared<VelocityVerletIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-          return std::make_shared<ExplicitEulerIntegrator<dim>>();
+        return std::make_shared<ExplicitEulerIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::gear3:
-          return std::make_shared<Gear3Integrator<dim>>();
+        return std::make_shared<Gear3Integrator<dim>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
@@ -748,7 +752,7 @@ DEMSolver<dim>::report_statistics()
 
 template <int dim>
 void
-  DEMSolver<dim>::setup_triangulation_dependent_parameters()
+DEMSolver<dim>::setup_triangulation_dependent_parameters()
 {
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model(parameters, triangulation);
@@ -807,6 +811,14 @@ void
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
     }
+
+  // Setup background dof
+  setup_background_dofs();
+
+  if (has_sparse_contacts)
+    {
+      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
+    }
 }
 
 template <int dim>
@@ -837,7 +849,7 @@ DEMSolver<dim>::solve()
       resize_containers();
       update_moment_of_inertia(particle_handler, MOI);
 
-      checkpoint_step = true;
+      action_manager->checkpoint_step();
     }
 
   setup_triangulation_dependent_parameters();
@@ -858,8 +870,6 @@ DEMSolver<dim>::solve()
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
 
-  // Setup background dof
-  setup_background_dofs();
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -878,27 +888,13 @@ DEMSolver<dim>::solve()
         }
 
       // Keep track if particles were inserted this step
-      particles_insertion_step = insert_particles();
-
-      if (particles_insertion_step)
-        displacement.resize(particle_handler.get_max_local_particle_index());
+      insert_particles();
 
       // Load balancing
       load_balance();
 
-      if (load_balance_step || checkpoint_step)
-        {
-          displacement.resize(particle_handler.get_max_local_particle_index());
-
-          if (has_sparse_contacts)
-            {
-              sparse_contacts_object.update_local_and_ghost_cell_set(
-                background_dh);
-            }
-        }
-
       // Check to see if it is contact search step
-      contact_detection_step = contact_detection_iteration_check_function();
+      contact_detection_iteration_check_function();
 
       bool solid_object_map_step = false;
       // Check to see if floating meshes need to be mapped in background mesh
@@ -986,7 +982,9 @@ DEMSolver<dim>::solve()
           // Updates the iterators to particles in local-local contact
           // containers
           contact_manager.update_local_particles_in_cells(
-            particle_handler, load_balance_step, has_periodic_boundaries);
+            particle_handler,
+            action_manager->check_clear_contact_structures(),
+            has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
@@ -1128,7 +1126,7 @@ DEMSolver<dim>::solve()
         }
 
       // Reset checkpoint step
-      checkpoint_step = false;
+      action_manager->reset_triggers();
     }
 
   finish_simulation();

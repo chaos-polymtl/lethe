@@ -24,6 +24,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -101,13 +102,30 @@ private:
    *
    * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
    */
-  inline std::function<bool()>
-  set_contact_search_iteration_function();
+  inline std::function<void()>
+  set_contact_search_iteration_function()
+  {
+    using namespace Parameters::Lagrangian;
+    ModelParameters::ContactDetectionMethod &contact_detection_method =
+      parameters.model_parameters.contact_detection_method;
+
+    switch (contact_detection_method)
+      {
+        case ModelParameters::ContactDetectionMethod::constant:
+          return [&] { check_contact_search_iteration_constant(); };
+        case ModelParameters::ContactDetectionMethod::dynamic:
+          return [&] { check_contact_search_iteration_dynamic(); };
+        default:
+          throw(std::runtime_error("Invalid contact detection method."));
+      }
+  }
 
   inline void
   resize_containers()
   {
     displacement.resize(particle_handler.get_max_local_particle_index());
+    std::fill(displacement.begin(), displacement.end(), 0.);
+
     force.resize(displacement.size());
     torque.resize(displacement.size());
   }
@@ -129,8 +147,7 @@ private:
   inline bool
   check_contact_search_step(bool solid_object_map_step)
   {
-    if (particles_insertion_step || load_balance_step ||
-        contact_detection_step || checkpoint_step || solid_object_map_step)
+    if (action_manager->check_contact_search() || solid_object_map_step)
       {
         return true;
       }
@@ -148,7 +165,7 @@ private:
    *
    * @return bool indicating if the contact search should be carried out in the current iteration.
    */
-  inline bool
+  inline void
   check_contact_search_iteration_constant();
 
   /**
@@ -158,7 +175,7 @@ private:
    *
    * @return bool indicating if the contact search should be carried out in the current iteration.
    */
-  inline bool
+  inline void
   check_contact_search_iteration_dynamic();
 
   /**
@@ -250,15 +267,11 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
 
   MappingQGeneric<dim>                 mapping;
-  bool                                 particles_insertion_step;
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
   double                               smallest_solid_object_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
-  bool                                 contact_detection_step;
-  bool                                 load_balance_step;
-  bool                                 checkpoint_step;
   Tensor<1, 3>                         g;
 
   DEM::DEMProperties<dim>                  properties_class;
@@ -341,7 +354,9 @@ private:
   std::function<bool()> load_balance_iteration_check_function;
 
   // Contact detection iteration check function
-  std::function<bool()> contact_detection_iteration_check_function;
+  std::function<void()> contact_detection_iteration_check_function;
+
+  DEMActionManager *action_manager;
 };
 
 #endif

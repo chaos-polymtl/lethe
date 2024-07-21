@@ -106,7 +106,7 @@ public:
    *
    * @return bool indicating if this is a load balance iteration.
    */
-  bool
+  inline void
   check_load_balance_iteration()
   {
     return iteration_check_function();
@@ -121,7 +121,7 @@ public:
    * @return Return a function that returns a bool indicating if the current
    * time step is a load balance iteration.
    */
-  inline std::function<bool()>
+  inline std::function<void()>
   set_iteration_check_function()
   {
     using namespace Parameters::Lagrangian;
@@ -129,15 +129,15 @@ public:
     switch (load_balance_method)
       {
         case ModelParameters::LoadBalanceMethod::once:
-          return [&] { return check_load_balance_once(); };
+          return [&] { check_load_balance_once(); };
         case ModelParameters::LoadBalanceMethod::frequent:
-          return [&] { return check_load_balance_frequent(); };
+          return [&] { check_load_balance_frequent(); };
         case ModelParameters::LoadBalanceMethod::dynamic:
-          return [&] { return check_load_balance_dynamic(); };
+          return [&] { check_load_balance_dynamic(); };
         case ModelParameters::LoadBalanceMethod::dynamic_with_sparse_contacts:
-          return [&] { return check_load_balance_with_sparse_contacts(); };
+          return [&] { check_load_balance_with_sparse_contacts(); };
         default: // Default is no load balance (none)
-          return [&]() { return false; };
+          return [&]() { return; };
       }
   }
 
@@ -148,7 +148,7 @@ public:
    * @return bool indicating if the current time step is a load balance
    * iteration according to the load balancing `step`.
    */
-  bool
+  void
   check_load_balance_once();
 
   /**
@@ -158,7 +158,7 @@ public:
    * @return bool indicating if the current time step is a load balance
    * iteration according to the load balancing `frequency`.
    */
-  bool
+  void
   check_load_balance_frequent();
 
   /**
@@ -169,7 +169,7 @@ public:
    * iteration according to the load balancing `dynamic check frequency`and
    * `threshold`.
    */
-  bool
+  void
   check_load_balance_dynamic();
 
   /**
@@ -182,7 +182,7 @@ public:
    * iteration according to the load balancing `dynamic check frequency`,
    * `threshold` and load factors.
    */
-  bool
+  void
   check_load_balance_with_sparse_contacts();
 
   /**
@@ -367,7 +367,7 @@ private:
    * @brief The load balancing iteration check function according to the load
    * balancing method.
    */
-  std::function<bool()> iteration_check_function;
+  std::function<void()> iteration_check_function;
 
   /**
    * @brief Default hard-coded load weight of a cell.

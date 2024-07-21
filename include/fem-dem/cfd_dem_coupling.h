@@ -24,6 +24,7 @@
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/dem.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
@@ -85,13 +86,37 @@ private:
    * @brief Sets up the various parameters related to the DEM contacts
    */
   void
-  dem_setup_contact_parameters();
+  dem_setup_parameters();
 
   /**
    * @brief Carries out the initialization of DEM parameters
    */
   void
   initialize_dem_parameters();
+
+  inline void
+  resize_containers()
+  {
+    displacement.resize(this->particle_handler.get_max_local_particle_index());
+    std::fill(displacement.begin(), displacement.end(), 0.);
+
+    force.resize(displacement.size());
+    torque.resize(displacement.size());
+  }
+
+  inline void
+  sort_particles_into_subdomains_and_cells()
+  {
+    this->particle_handler.sort_particles_into_subdomains_and_cells();
+
+    // Resizing displacement, force and torque containers
+    resize_containers();
+
+    // Updating moment of inertia container
+    update_moment_of_inertia(this->particle_handler, MOI);
+
+    this->particle_handler.exchange_ghost_particles(true);
+  }
 
   /**
    * @brief write DEM_output_results
@@ -186,7 +211,7 @@ private:
   void
   dynamic_flow_control() override;
 
-  inline bool
+  inline void
   check_contact_detection_method(
     unsigned int                          counter,
     CFDDEMSimulationParameters<dim>      &param,
@@ -194,9 +219,6 @@ private:
     Particles::ParticleHandler<dim, dim> &particle_handler,
     MPI_Comm                              mpi_communicator,
     std::shared_ptr<SimulationControl>    simulation_control,
-    bool                                  contact_detection_step,
-    bool                                  checkpoint_step,
-    bool                                  load_balance_step,
     double                                smallest_contact_search_criterion)
   {
     // Use namespace and alias to make the code more readable
@@ -208,8 +230,10 @@ private:
       {
         case ModelParameters::ContactDetectionMethod::constant:
           {
-            return ((counter % model_parameters.contact_detection_frequency) ==
-                    0);
+            if ((counter % model_parameters.contact_detection_frequency) == 0)
+              dem_action_manager->contact_search_step();
+
+            break;
           }
         case ModelParameters::ContactDetectionMethod::dynamic:
           {
@@ -218,27 +242,17 @@ private:
             // subdomains and cells. This is applicable if any of the following
             // three conditions apply: a load balancing step, a restart
             // simulation step, or a contact detection step.
-            bool sorting_in_subdomains_step =
-              (checkpoint_step || load_balance_step || contact_detection_step);
-
-            if (sorting_in_subdomains_step)
-              displacement.resize(
-                particle_handler.get_max_local_particle_index());
-
-            contact_detection_step = find_particle_contact_detection_step<dim>(
+            find_particle_contact_detection_step<dim>(
               particle_handler,
               simulation_control->get_time_step() /
                 param.cfd_dem.coupling_frequency,
               smallest_contact_search_criterion,
               mpi_communicator,
-              sorting_in_subdomains_step,
               displacement);
-
-            return contact_detection_step;
+            break;
           }
-        default: // Invalid contact detection method parameter is already
-                 // checked
-          return false;
+        default:
+          break;
       }
   }
 
@@ -251,7 +265,7 @@ private:
   inline bool
   check_contact_search_step(const unsigned int counter)
   {
-    if (contact_detection_step)
+    if (dem_action_manager->check_contact_search())
       {
         // Contact search step according to the contact detection method
         return true;
@@ -271,18 +285,6 @@ private:
         // status of cell match the particles that are in.
         return true;
       }
-    else if (load_balance_step)
-      {
-        // Needs to update contacts since particles/cells may have been
-        // distributed to a different subdomain
-        return true;
-      }
-    else if ((this->simulation_control->is_at_start() && (counter == 0)) ||
-             checkpoint_step)
-      {
-        // First contact search of the simulation
-        return true;
-      }
     else if (has_periodic_boundaries && particle_displaced_in_pbc)
       {
         // Particles have been displaced in periodic boundaries
@@ -295,9 +297,6 @@ private:
   }
 
   unsigned int                               coupling_frequency;
-  bool                                       contact_detection_step;
-  bool                                       checkpoint_step;
-  bool                                       load_balance_step;
   Tensor<1, 3>                               g;
   std::vector<Tensor<1, 3>>                  torque;
   std::vector<Tensor<1, 3>>                  force;
@@ -369,5 +368,7 @@ private:
   /// Post-processing variables to output total fluid volume and total particles
   /// volume
   TableHandler table_phase_volumes;
+
+  DEMActionManager *dem_action_manager;
 };
 #endif

@@ -12,59 +12,6 @@
 #include <fstream>
 #include <sstream>
 
-template <int dim>
-bool
-check_contact_detection_method(
-  unsigned int                          counter,
-  CFDDEMSimulationParameters<dim>      &param,
-  std::vector<double>                  &displacement,
-  Particles::ParticleHandler<dim, dim> &particle_handler,
-  MPI_Comm                              mpi_communicator,
-  std::shared_ptr<SimulationControl>    simulation_control,
-  bool                                  contact_detection_step,
-  bool                                  checkpoint_step,
-  bool                                  load_balance_step,
-  double                                smallest_contact_search_criterion)
-{
-  if (param.dem_parameters.model_parameters.contact_detection_method ==
-      Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
-    {
-      return ((counter % param.dem_parameters.model_parameters
-                           .contact_detection_frequency) == 0);
-    }
-  else if (param.dem_parameters.model_parameters.contact_detection_method ==
-           Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::
-             dynamic)
-    {
-      // The sorting into subdomain step checks whether or not the current time
-      // step is a step that requires sorting particles into subdomains and
-      // cells.
-      // This is applicable if any of the following three conditions apply:if
-      // its a load balancing step, a restart simulation step, or a contact
-      // detection tsep.
-      bool sorting_in_subdomains_step =
-        (checkpoint_step || load_balance_step || contact_detection_step);
-
-      if (sorting_in_subdomains_step)
-        displacement.resize(particle_handler.get_max_local_particle_index());
-
-      contact_detection_step = find_particle_contact_detection_step<dim>(
-        particle_handler,
-        simulation_control->get_time_step() / param.cfd_dem.coupling_frequency,
-        smallest_contact_search_criterion,
-        mpi_communicator,
-        sorting_in_subdomains_step,
-        displacement);
-
-      return contact_detection_step;
-    }
-  else
-    {
-      throw std::runtime_error(
-        "Specified contact detection method is not valid");
-    }
-}
-
 // Constructor for class CFD-DEM
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
@@ -466,6 +413,12 @@ CFDDEMSolver<dim>::load_balance()
         this->void_fraction_constraints);
     }
 
+  if (has_sparse_contacts)
+    {
+      sparse_contacts_object.update_local_and_ghost_cell_set(
+        this->void_fraction_dof_handler);
+    }
+
   // Velocity Vectors
   std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
 
@@ -544,6 +497,16 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
+  if (has_sparse_contacts)
+    {
+      sparse_contacts_object.update_local_and_ghost_cell_set(
+        this->void_fraction_dof_handler);
+    }
+
+  particle_wall_contact_force_object = set_particle_wall_contact_force_model(
+    this->cfd_dem_simulation_parameters.dem_parameters,
+    *parallel_triangulation);
+
   // No solid objects
 
   // No insertion
@@ -602,25 +565,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       .expand_particle_wall_contact_search,
     this->pcout);
 
-  // Setting chosen contact force, insertion and integration methods
-  integrator_object = set_integrator_type();
-  particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(
-      this->cfd_dem_simulation_parameters.dem_parameters);
-  particle_wall_contact_force_object = set_particle_wall_contact_force_model(
-    this->cfd_dem_simulation_parameters.dem_parameters,
-    *parallel_triangulation);
-
-  this->particle_handler.sort_particles_into_subdomains_and_cells();
-
-  displacement.resize(this->particle_handler.get_max_local_particle_index());
-  force.resize(displacement.size());
-  torque.resize(displacement.size());
-
-  this->particle_handler.exchange_ghost_particles(true);
-
-  // Updating moment of inertia container
-  update_moment_of_inertia(this->particle_handler, MOI);
+  sort_particles_into_subdomains_and_cells();
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
               << "DEM time-step is " << dem_time_step << " s" << std::endl;
@@ -789,6 +734,35 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             }
         }
     }
+
+  // If simulation has periodic boundaries, the particles are sorted into
+  // subdomains and cells at the last DEM coupled time step otherwise the
+  // particles will not match the cells that they are in when void fraction is
+  // calculated with the qcm method
+  if (counter == (coupling_frequency - 1))
+    {
+      if (has_periodic_boundaries &&
+          this->cfd_dem_simulation_parameters.void_fraction->mode ==
+            Parameters::VoidFractionMode::qcm)
+        {
+          bool particle_has_been_moved =
+            periodic_boundaries_object.execute_particles_displacement(
+              this->particle_handler, periodic_boundaries_cells_information);
+
+          // Exchange information between processors
+          particle_displaced_in_pbc =
+            Utilities::MPI::logical_or(particle_has_been_moved,
+                                       this->mpi_communicator);
+
+          if (particle_displaced_in_pbc)
+            {
+              this->particle_handler.sort_particles_into_subdomains_and_cells();
+              this->particle_handler.exchange_ghost_particles(true);
+            }
+        }
+    }
+
+  dem_action_manager->reset_triggers();
 }
 
 template <int dim>
@@ -796,17 +770,13 @@ void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // Check to see if it is contact detection step
-  contact_detection_step =
-    check_contact_detection_method(counter,
-                                   this->cfd_dem_simulation_parameters,
-                                   displacement,
-                                   this->particle_handler,
-                                   this->mpi_communicator,
-                                   this->simulation_control,
-                                   contact_detection_step,
-                                   checkpoint_step,
-                                   load_balance_step,
-                                   smallest_contact_search_criterion);
+  check_contact_detection_method(counter,
+                                 this->cfd_dem_simulation_parameters,
+                                 displacement,
+                                 this->particle_handler,
+                                 this->mpi_communicator,
+                                 this->simulation_control,
+                                 smallest_contact_search_criterion);
 
   // Sort particles in cells
   if (check_contact_search_step(counter))
@@ -831,11 +801,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       if (has_sparse_contacts)
         {
-          if (load_balance_step || checkpoint_step ||
-              (this->simulation_control->is_at_start() && (counter == 0)))
-            sparse_contacts_object.update_local_and_ghost_cell_set(
-              this->void_fraction_dof_handler);
-
           sparse_contacts_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
@@ -885,9 +850,10 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       // Updates the iterators to particles in local-local contact
       // containers
-      contact_manager.update_local_particles_in_cells(this->particle_handler,
-                                                      load_balance_step,
-                                                      has_periodic_boundaries);
+      contact_manager.update_local_particles_in_cells(
+        this->particle_handler,
+        dem_action_manager->check_clear_contact_structures(),
+        has_periodic_boundaries);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
@@ -910,8 +876,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // been performed, this functions are set to false. The checkpoint_step
       // remains false for the duration of the simulation while the load
       // balancing is reset everytime load balancing is called.
-      checkpoint_step           = false;
-      load_balance_step         = false;
       particle_displaced_in_pbc = false;
     }
   else
@@ -1277,10 +1241,12 @@ CFDDEMSolver<dim>::print_particles_summary()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_setup_contact_parameters()
+CFDDEMSolver<dim>::dem_setup_parameters()
 {
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
+
+  dem_action_manager = DEMActionManager::get_action_manager();
 
   // Initialize DEM Parameters
   dem_parameters.lagrangian_physical_properties =
@@ -1320,6 +1286,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   if (dem_parameters.model_parameters.sparse_particle_contacts)
     {
       has_sparse_contacts = true;
+      dem_action_manager->set_sparse_contacts_enabling(true);
       sparse_contacts_object.set_parameters(
         dem_parameters.model_parameters.granular_temperature_threshold,
         dem_parameters.model_parameters.solid_fraction_threshold,
@@ -1397,10 +1364,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
               << "% of Rayleigh time step" << std::endl;
 
-  // Initialize contact detection step
-  contact_detection_step = false;
-  load_balance_step      = false;
-
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
        i_bc < dem_parameters.boundary_conditions.bc_types.size();
@@ -1410,6 +1373,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
           has_periodic_boundaries = true;
+          dem_action_manager->set_periodic_boundaries_enabling(true);
           break;
         }
     }
@@ -1429,12 +1393,12 @@ CFDDEMSolver<dim>::solve()
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-  dem_setup_contact_parameters();
+  dem_setup_parameters();
 
   // Reading DEM start file information
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
-      this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-          .restart == false)
+      !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+         .restart)
     read_dem();
 
   this->setup_dofs();
@@ -1450,10 +1414,8 @@ CFDDEMSolver<dim>::solve()
   // been performed, this checkpoint_step is reset to false. It is only set once
   // and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart == true)
-    checkpoint_step = true;
-  else
-    checkpoint_step = false;
+        .restart)
+    dem_action_manager->checkpoint_step();
 
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
@@ -1467,7 +1429,7 @@ CFDDEMSolver<dim>::solve()
 
   // Calculate first instance of void fraction once particles are set-up
   this->vertices_cell_mapping();
-  if (!checkpoint_step)
+  if (!dem_action_manager->check_checkpoint_trigger_tmp())
     this->initialize_void_fraction();
 
   while (this->simulation_control->integrate())
@@ -1500,8 +1462,10 @@ CFDDEMSolver<dim>::solve()
           this->vertices_cell_mapping();
         }
 
+      // I thing we could remove the load balacaning and the sorting done here
       this->calculate_void_fraction(
-        this->simulation_control->get_current_time(), load_balance_step);
+        this->simulation_control->get_current_time(),
+        dem_action_manager->check_repartition());
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
@@ -1546,9 +1510,9 @@ CFDDEMSolver<dim>::solve()
         // The input argument to this function is set to zero as this integer is
         // not used for the check_load_balance_step function and is only
         // important for the check_contact_search_step function.
-        load_balance_step = load_balancing.check_load_balance_iteration();
+        load_balancing.check_load_balance_iteration();
 
-        if (load_balance_step)
+        if (dem_action_manager->check_repartition())
           {
             load_balance();
           }
