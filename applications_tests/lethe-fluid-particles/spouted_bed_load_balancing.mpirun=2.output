@@ -1,0 +1,71 @@
+Running on 2 MPI rank(s)...
+DEM time-step is 5.879363789% of Rayleigh time step
+Reading DEM checkpoint 
+Finished reading DEM checkpoint 
+31050 particles are in the simulation 
+   Number of active cells:       679
+   Number of degrees of freedom: 5952
+   Volume of triangulation:      0.0010185
+---------------------------------------------------------------
+Initializing DEM parameters 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
+Finished initializing DEM parameters 
+DEM time-step is 2e-05 s 
+--------------
+Void Fraction
+--------------
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 1.11062 
+*******************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+-->Repartitionning triangulation
+
+Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 15525 , 1731 and 29319
+Minimum and maximum number of cells owned by the processors are 679 and 679
+Setup DOFs
+   Number of active cells:       679
+   Number of degrees of freedom: 5952
+   Volume of triangulation:      0.0010185
+DEM contact search at dem step 0
+Finished 50 DEM iterations
+---------------------------------------------------------------
+Global continuity equation error: 0 s^-1
+Max local continuity error: 0 s^-1
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39637
+*******************************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
+----
+DEM
+----
+-->Repartitionning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 15525 , 15444 and 15606
+Minimum and maximum number of cells owned by the processors are 679 and 679
+Setup DOFs
+   Number of active cells:       679
+   Number of degrees of freedom: 5952
+   Volume of triangulation:      0.0010185
+DEM contact search at dem step 0
+Finished 50 DEM iterations
+---------------------------------------------------------------
+Global continuity equation error: 0 s^-1
+Max local continuity error: 0 s^-1

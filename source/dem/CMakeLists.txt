@@ -21,6 +21,7 @@ add_library(lethe-dem
   insertion_volume.cc
   integrator.cc
   lagrangian_post_processing.cc
+  load_balancing.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
@@ -69,6 +70,7 @@ add_library(lethe-dem
   ../../include/dem/insertion_volume.h
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
+  ../../include/dem/load_balancing.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h

@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_dem_h
+#define lethe_dem_h
+
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
@@ -29,6 +32,7 @@
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
+#include <dem/load_balancing.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>
@@ -49,9 +53,6 @@
 #include <iostream>
 #include <unordered_set>
 
-#ifndef lethe_dem_h
-#  define lethe_dem_h
-
 using namespace DEM;
 
 /**
@@ -65,7 +66,7 @@ public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
   /**
-   * Initialiazes all the required parameters and iterates over the DEM iterator
+   * Initializes all the required parameters and iterates over the DEM iterator
    * (DEM engine).
    */
   void
@@ -73,71 +74,11 @@ public:
 
 private:
   /**
-   * The cell_weight() function indicates to the triangulation how much
-   * computational work is expected to happen on this cell, and consequently
-   * how the domain needs to be partitioned so that every MPI rank receives a
-   * roughly equal amount of work (potentially not an equal number of cells).
-   * While the function is called from the outside, it is connected to the
-   * corresponding signal from inside this class, therefore it can be private.
-   * This function is the key component that allow us to dynamically balance the
-   * computational load. The function attributes a weight to
-   * every cell that represents the computational work on this cell. Here the
-   * majority of work is expected to happen on the particles, therefore the
-   * return value of this function (representing "work for this cell") is
-   * calculated based on the number of particles in the current cell.
-   * The function is connected to the cell_weight() signal inside the
-   * triangulation, and will be called once per cell, whenever the triangulation
-   * repartitions the domain between ranks (the connection is created inside the
-   * particles_generation() function of this class).
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
    */
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
-    const CellStatus status) const;
-#  endif
-
-  /**
-   * Similar to the cell_weight() function, this function is used when the cell
-   * weight is adapted to the mobility status. For instance, if the
-   * cell is inactive, its computational load will be significantly lower than
-   * if it is a mobile cell since there is no force calculation and no velocity
-   * integration for the particles that lie within it. The weight of the cells
-   * must thus be adapted to the status of the cell.
-   *
-   * cell load = cell weight + load balancing factor * n particles * particle
-   * weight
-   *
-   * @param cell The cell for which the load is calculated
-   *
-   * @param status The status of the cell used to inform functions in derived
-   * classes how the cell with the given cell iterator is going to change
-   *
-   * @param mobility_status The mobility status of the cell
-   */
-
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight_with_mobility_status(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
-  unsigned int
-  cell_weight_with_mobility_status(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
-    const CellStatus status) const;
-#  endif
+  void
+  load_balance();
 
   /**
    * @brief Sets the right iteration check function according to the chosen contact detection method.
@@ -166,56 +107,6 @@ private:
    */
   inline bool
   check_contact_search_iteration_dynamic();
-
-  /**
-   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
-   *
-   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
-   */
-  inline std::function<bool()>
-  set_load_balance_iteration_check_function();
-
-  /**
-   * @brief For `load balance method = once`, determines whether the present is the load balance step.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_once();
-
-  /**
-   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_frequent();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
-   * uses the load imbalance between the core as a load balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_dynamic();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
-   * The dynamic method uses the load imbalance between the core as a load
-   * balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_with_sparse_contacts();
-
-  /**
-   * @brief Manages the call to the load balance by first identifying if
-   * load balancing is required and then performing the load balance.
-   */
-  void
-  load_balance();
 
   /**
    * @brief Manages the call to the particle insertion. Returns true if
@@ -347,8 +238,9 @@ private:
   const unsigned int contact_detection_frequency;
   const unsigned int insertion_frequency;
 
-  // Initilization of classes and building objects
+  // Initialization of classes and building objects
   DEMContactManager<dim>             contact_manager;
+  LagrangianLoadBalancing<dim>       load_balancing;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
