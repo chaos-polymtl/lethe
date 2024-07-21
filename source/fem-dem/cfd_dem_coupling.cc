@@ -1504,27 +1504,26 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_time_step =
     this->simulation_control->get_time_step() / coupling_frequency;
 
-  double rayleigh_time_step = 0;
+  double rayleigh_time_step = 1. / DBL_MIN;
 
-  for (unsigned int i = 0;
-       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
-       ++i)
-    rayleigh_time_step = std::max(
-      M_PI_2 *
-        dem_parameters.lagrangian_physical_properties
-          .particle_average_diameter[i] *
-        sqrt(2 *
-             dem_parameters.lagrangian_physical_properties.density_particle[i] *
-             (2 + dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i]) *
-             (1 - dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i]) /
-             dem_parameters.lagrangian_physical_properties
-               .youngs_modulus_particle[i]) /
-        (0.1631 * dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i] +
-         0.8766),
-      rayleigh_time_step);
+  Parameters::Lagrangian::LagrangianPhysicalProperties &physical_properties =
+    dem_parameters.lagrangian_physical_properties;
+
+  for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
+    {
+      double shear_modulus =
+        physical_properties.youngs_modulus_particle[i] /
+        (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
+
+      double min_diameter =
+        size_distribution_object_container.at(i)->find_min_diameter();
+
+      rayleigh_time_step = std::min(
+        M_PI_2 * min_diameter *
+          sqrt(physical_properties.density_particle[i] / shear_modulus) /
+          (0.1631 * physical_properties.poisson_ratio_particle[i] + 0.8766),
+        rayleigh_time_step);
+    }
 
   const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
   this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100

@@ -1,5 +1,5 @@
 Running on 2 MPI rank(s)...
-DEM time-step is 3.28354% of Rayleigh time step
+DEM time-step is 3.65413% of Rayleigh time step
    Number of active cells:       40
    Number of degrees of freedom: 656
    Volume of triangulation:      0.00108
