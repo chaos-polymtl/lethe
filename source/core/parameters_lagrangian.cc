@@ -395,17 +395,21 @@ namespace Parameters
             Patterns::List(Patterns::Double(), 2, 3, ","), 2, 2, ":"),
           "Coordinates of two points for the insertion box (x1, y1, z1 : x2, y2, z2)");
         prm.declare_entry("insertion distance threshold",
-                          "1",
+                          "1.",
                           Patterns::Double(),
                           "Distance threshold");
-        prm.declare_entry("insertion maximum offset",
-                          "1",
-                          Patterns::Double(),
-                          "Maximum position offset went insertion particles");
-        prm.declare_entry("insertion prn seed",
-                          "1",
-                          Patterns::Integer(),
-                          "Prn seed used to generate the position offsets");
+
+        // Volume or plane:
+        prm.declare_entry(
+          "insertion maximum offset",
+          "1.",
+          Patterns::Double(),
+          "Maximum position offset when insertion of particles");
+        prm.declare_entry(
+          "insertion prn seed",
+          "1",
+          Patterns::Integer(),
+          "Pseudo-random number seed used to generate the position offsets");
         prm.declare_entry("initial velocity",
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
