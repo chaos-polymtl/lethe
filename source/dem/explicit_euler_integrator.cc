@@ -91,15 +91,27 @@ ExplicitEulerIntegrator<dim>::integrate(
 template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
-  Particles::ParticleHandler<dim> & /* particle_handler */,
-  const Tensor<1, 3> & /* g */,
-  const double /* dt */,
-  std::vector<Tensor<1, 3>> & /* torque */,
-  std::vector<Tensor<1, 3>> & /* force */,
-  const std::vector<double> & /* MOI */,
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
   AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
 {
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  bool use_default_function =
+    !action_manager->check_sparse_contacts_enabling() ||
+    action_manager->check_mobility_status_reset();
+
+  if (use_default_function)
+    {
+      integrate(particle_handler, g, dt, torque, force, MOI);
+      return;
+    }
+
   throw std::runtime_error(
     "Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.");
 }

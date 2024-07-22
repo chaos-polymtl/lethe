@@ -1,3 +1,4 @@
+#include <dem/dem_action_manager.h>
 #include <dem/read_checkpoint.h>
 
 using namespace dealii;
@@ -15,6 +16,9 @@ read_checkpoint(
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces)
 {
+  if (!DEMActionManager::get_action_manager()->check_restart_simulation())
+    return;
+
   TimerOutput::Scope timer(computing_timer, "Read checkpoint");
   std::string        prefix = parameters.restart.filename;
   simulation_control->read(prefix);

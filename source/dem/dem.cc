@@ -49,12 +49,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
-  , has_periodic_boundaries(false)
   , background_dh(triangulation)
-  , has_solid_objects(false)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
-  , has_sparse_contacts(false)
 {}
 
 template <int dim>
@@ -103,8 +100,7 @@ DEMSolver<dim>::setup_parameters()
   // Set the adaptive sparse contacts parameters
   if (parameters.model_parameters.sparse_particle_contacts)
     {
-      has_sparse_contacts = true;
-      action_manager->set_sparse_contacts_enabling(true);
+      action_manager->set_sparse_contacts_enabling();
       sparse_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold,
@@ -135,8 +131,12 @@ DEMSolver<dim>::setup_parameters()
       if (parameters.boundary_conditions.bc_types[i_bc] ==
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
-          has_periodic_boundaries = true;
-          action_manager->set_periodic_boundaries_enabling(true);
+          action_manager->set_periodic_boundaries_enabling();
+
+          periodic_boundaries_object.set_periodic_boundaries_information(
+            parameters.boundary_conditions.periodic_boundary_0,
+            parameters.boundary_conditions.periodic_direction);
+
           break;
         }
     }
@@ -155,6 +155,10 @@ DEMSolver<dim>::setup_parameters()
 
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
+
+  // If this is a start simulation
+  if (parameters.restart.restart)
+    action_manager->restart_simulation();
 }
 
 template <int dim>
@@ -170,7 +174,8 @@ DEMSolver<dim>::setup_background_dofs()
   // Those constraints are not used for any matrix assembly in DEM solver, this
   // approach comes from CFD-DEM coupling where void fraction constraints are
   // used to achieve the periodic node mapping.
-  if (has_sparse_contacts && has_periodic_boundaries)
+  if (action_manager->check_periodic_boundaries_enabling() &&
+      action_manager->check_sparse_contacts_enabling())
     {
       IndexSet locally_relevant_dofs;
       DoFTools::extract_locally_relevant_dofs(background_dh,
@@ -265,8 +270,7 @@ DEMSolver<dim>::setup_solid_objects()
   // Resize particle_floating_mesh_in_contact
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
-      has_solid_objects = true;
-      action_manager->set_solid_objects_enabling(true);
+      action_manager->set_solid_objects_enabling();
       contact_manager.particle_floating_mesh_in_contact.resize(
         solid_surfaces.size() + solid_volumes.size());
     }
@@ -293,25 +297,16 @@ DEMSolver<dim>::load_balance()
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
 
-  if (has_periodic_boundaries)
-    {
-      periodic_boundaries_object.map_periodic_cells(
-        triangulation, periodic_boundaries_cells_information);
+  // If PBC are enabled, update the periodic cells
+  periodic_boundaries_object.map_periodic_cells(
+    triangulation, periodic_boundaries_cells_information);
 
-      periodic_offset =
-        periodic_boundaries_object.get_periodic_offset_distance();
-    }
-
-  if (has_sparse_contacts)
-    {
-      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
-    }
+  // If ASC is enabled, update the local and ghost cell set
+  sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 
   // Update neighbors of cells after load balance
   contact_manager.update_cell_neighbors(triangulation,
-                                        periodic_boundaries_cells_information,
-                                        has_periodic_boundaries,
-                                        has_solid_objects);
+                                        periodic_boundaries_cells_information);
 
   boundary_cell_object.build(
     triangulation,
@@ -370,7 +365,7 @@ DEMSolver<dim>::check_contact_search_iteration_constant()
 }
 
 template <int dim>
-bool
+void
 DEMSolver<dim>::insert_particles()
 {
   if ((simulation_control->get_step_number() % insertion_frequency) == 1)
@@ -378,9 +373,7 @@ DEMSolver<dim>::insert_particles()
       insertion_object->insert(particle_handler, triangulation, parameters);
 
       action_manager->particle_insertion_step();
-      return true;
     }
-  return false;
 }
 
 template <int dim>
@@ -431,7 +424,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle-solid objectscontact force
-  if (has_solid_objects)
+  if (action_manager->check_solid_objects_enabling()) // until refactor
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
@@ -448,7 +441,7 @@ DEMSolver<dim>::particle_wall_contact_force()
       parameters.lagrangian_physical_properties,
       force);
 
-  if (dim == 3)
+  if constexpr (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
@@ -766,29 +759,19 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
       return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
   }();
 
-  if (has_periodic_boundaries)
-    {
-      periodic_boundaries_object.set_periodic_boundaries_information(
-        parameters.boundary_conditions.periodic_boundary_0,
-        parameters.boundary_conditions.periodic_boundary_1,
-        parameters.boundary_conditions.periodic_direction);
-
-      periodic_boundaries_object.map_periodic_cells(
-        triangulation, periodic_boundaries_cells_information);
-
-      // Temporary offset calculation : works only for one set of periodic
-      // boundary on an axis.
-      periodic_offset =
-        periodic_boundaries_object.get_periodic_offset_distance();
-    }
-
   // Setup background dof
   setup_background_dofs();
 
-  if (has_sparse_contacts)
-    {
-      sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
-    }
+  // If PBC enabled, set up the periodic boundaries
+  periodic_boundaries_object.map_periodic_cells(
+    triangulation, periodic_boundaries_cells_information);
+
+  // Temporary offset calculation : works only for one set of periodic
+  // boundary on an axis.
+  periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
+
+  // If ASC is enabled, set up the local and ghost cells
+  sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
 
 template <int dim>
@@ -799,37 +782,26 @@ DEMSolver<dim>::solve()
 
   // Reading mesh
   read_mesh(parameters.mesh,
-            parameters.restart.restart,
+            action_manager->check_restart_simulation(),
             pcout,
             triangulation,
             parameters.boundary_conditions);
 
-  if (parameters.restart.restart == true)
-    {
-      read_checkpoint(computing_timer,
-                      parameters,
-                      simulation_control,
-                      particles_pvdhandler,
-                      grid_pvdhandler,
-                      triangulation,
-                      particle_handler,
-                      insertion_object,
-                      solid_surfaces);
-
-      resize_containers();
-      update_moment_of_inertia(particle_handler, MOI);
-
-      action_manager->checkpoint_step();
-    }
+  read_checkpoint(computing_timer,
+                  parameters,
+                  simulation_control,
+                  particles_pvdhandler,
+                  grid_pvdhandler,
+                  triangulation,
+                  particle_handler,
+                  insertion_object,
+                  solid_surfaces);
 
   setup_triangulation_dependent_parameters();
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(
-    triangulation,
-    periodic_boundaries_cells_information,
-    has_periodic_boundaries,
-    has_solid_objects);
+    triangulation, periodic_boundaries_cells_information);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -839,7 +811,6 @@ DEMSolver<dim>::solve()
     parameters.mesh.check_for_diamond_cells,
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
-
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -901,77 +872,47 @@ DEMSolver<dim>::solve()
 
           sort_particles_into_subdomains_and_cells();
 
-          if (has_sparse_contacts && !simulation_control->is_at_start())
-            {
-              // Compute cell mobility for all cells after the sort
-              // particles into subdomains and cells and exchange ghost
-              // particles
-              sparse_contacts_object.identify_mobility_status(
-                background_dh,
-                particle_handler,
-                triangulation.n_active_cells(),
-                mpi_communicator);
-            }
+          // Compute cell mobility if adaptative sparse contacts is enabled
+          sparse_contacts_object.identify_mobility_status(
+            background_dh,
+            particle_handler,
+            triangulation.n_active_cells(),
+            mpi_communicator);
 
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
           // contact pair candidates
-          if (!(has_sparse_contacts && contact_build_number > 1))
-            {
-              contact_manager.execute_particle_particle_broad_search(
-                particle_handler, has_periodic_boundaries);
+          contact_manager.execute_particle_particle_broad_search(
+            particle_handler, sparse_contacts_object);
 
-              contact_manager.execute_particle_wall_broad_search(
-                particle_handler,
-                boundary_cell_object,
-                solid_surfaces_mesh_info,
-                parameters.floating_walls,
-                simulation_control->get_current_time(),
-                has_solid_objects);
-            }
-          else
-            {
-              contact_manager.execute_particle_particle_broad_search(
-                particle_handler,
-                sparse_contacts_object,
-                has_periodic_boundaries);
-
-              contact_manager.execute_particle_wall_broad_search(
-                particle_handler,
-                boundary_cell_object,
-                solid_surfaces_mesh_info,
-                parameters.floating_walls,
-                simulation_control->get_current_time(),
-                sparse_contacts_object,
-                has_solid_objects);
-            }
+          contact_manager.execute_particle_wall_broad_search(
+            particle_handler,
+            boundary_cell_object,
+            solid_surfaces_mesh_info,
+            parameters.floating_walls,
+            simulation_control->get_current_time(),
+            sparse_contacts_object);
 
           // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
-          contact_manager.update_contacts(has_periodic_boundaries);
+          contact_manager.update_contacts();
 
           // Updates the iterators to particles in local-local contact
           // containers
-          contact_manager.update_local_particles_in_cells(
-            particle_handler,
-            action_manager->check_clear_contact_structures(),
-            has_periodic_boundaries);
+          contact_manager.update_local_particles_in_cells(particle_handler);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared,
-            has_periodic_boundaries,
-            periodic_offset);
+            neighborhood_threshold_squared, periodic_offset);
 
           // Execute fine search by updating particle-wall contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_wall_fine_search(
             parameters.floating_walls,
             simulation_control->get_current_time(),
-            neighborhood_threshold_squared,
-            has_solid_objects);
+            neighborhood_threshold_squared);
 
           // Updating number of contact builds
           contact_build_number++;
@@ -1003,20 +944,7 @@ DEMSolver<dim>::solve()
             contact_manager.particle_wall_in_contact,
             updated_boundary_points_and_normal_vectors);
 
-      if (has_solid_objects)
-        {
-          // Move the solid triangulations, previous time must be used here
-          // instead of current time.
-          for (auto &solid_object : solid_surfaces)
-            solid_object->move_solid_triangulation(
-              simulation_control->get_time_step(),
-              simulation_control->get_previous_time());
-
-          for (auto &solid_object : solid_volumes)
-            solid_object->move_solid_triangulation(
-              simulation_control->get_time_step(),
-              simulation_control->get_previous_time());
-        }
+      move_solid_objects();
 
       // Particles-walls contact force:
       particle_wall_contact_force();
@@ -1036,44 +964,36 @@ DEMSolver<dim>::solve()
         }
       else // Step number > 0
         {
-          if (!(has_sparse_contacts && contact_build_number > 1))
-            {
-              integrator_object->integrate(particle_handler,
-                                           g,
-                                           simulation_control->get_time_step(),
-                                           torque,
-                                           force,
-                                           MOI);
-            }
-          else
-            {
-              integrator_object->integrate(particle_handler,
-                                           g,
-                                           simulation_control->get_time_step(),
-                                           torque,
-                                           force,
-                                           MOI,
-                                           triangulation,
-                                           sparse_contacts_object);
-            }
+          integrator_object->integrate(particle_handler,
+                                       g,
+                                       simulation_control->get_time_step(),
+                                       torque,
+                                       force,
+                                       MOI,
+                                       triangulation,
+                                       sparse_contacts_object);
         }
 
       // Visualization
       if (simulation_control->is_output_iteration())
-        {
-          write_output_results();
-        }
+        write_output_results();
 
-      if (parameters.forces_torques.calculate_force_torque &&
-          (this_mpi_process == 0) &&
-          (simulation_control->get_step_number() %
-             parameters.forces_torques.output_frequency ==
-           0) &&
-          (parameters.forces_torques.force_torque_verbosity ==
-           Parameters::Verbosity::verbose))
-        write_forces_torques_output_locally(
-          forces_boundary_information[simulation_control->get_step_number()],
-          torques_boundary_information[simulation_control->get_step_number()]);
+      if (parameters.forces_torques.calculate_force_torque)
+        {
+          if ((this_mpi_process == 0) &&
+              (simulation_control->get_step_number() %
+                 parameters.forces_torques.output_frequency ==
+               0) &&
+              (parameters.forces_torques.force_torque_verbosity ==
+               Parameters::Verbosity::verbose))
+            {
+              write_forces_torques_output_locally(
+                forces_boundary_information[simulation_control
+                                              ->get_step_number()],
+                torques_boundary_information[simulation_control
+                                               ->get_step_number()]);
+            }
+        }
 
       // Post-processing
       if (parameters.post_processing.Lagrangian_post_processing &&

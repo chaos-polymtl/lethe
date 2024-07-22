@@ -1,3 +1,4 @@
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 
 template <int dim>
@@ -5,17 +6,18 @@ void
 DEMContactManager<dim>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-             periodic_boundaries_cells_information,
-  const bool has_periodic_boundaries,
-  const bool has_solid_objects)
+    periodic_boundaries_cells_information)
 {
+  // Get action manager
+  auto action_manager = DEMActionManager::get_action_manager();
+
   // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
   // Find cell periodic neighbors
-  if (has_periodic_boundaries)
+  if (action_manager->check_periodic_boundaries_enabling())
     {
       cell_neighbors_object.find_cell_periodic_neighbors(
         triangulation,
@@ -26,7 +28,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
     }
 
   // Get total (with repetition) neighbors list for floating mesh.
-  if (has_solid_objects)
+  if (action_manager->check_solid_objects_enabling())
     {
       cell_neighbors_object.find_full_cell_neighbors(triangulation,
                                                      total_neighbor_list);
@@ -35,7 +37,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
 
 template <int dim>
 void
-DEMContactManager<dim>::update_contacts(const bool has_periodic_boundaries)
+DEMContactManager<dim>::update_contacts()
 {
   // Update particle-particle contacts in local_adjacent_particles of fine
   // search step with local_contact_pair_candidates
@@ -55,7 +57,8 @@ DEMContactManager<dim>::update_contacts(const bool has_periodic_boundaries)
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
                                           ghost_contact_pair_candidates);
 
-  if (has_periodic_boundaries)
+  if (DEMActionManager::get_action_manager()
+        ->check_periodic_boundaries_enabling())
     {
       // Update periodic particle-particle contacts in
       // local_periodic_adjacent_particles of fine search step with
@@ -130,9 +133,7 @@ DEMContactManager<dim>::update_contacts(const bool has_periodic_boundaries)
 template <int dim>
 void
 DEMContactManager<dim>::update_local_particles_in_cells(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  const bool                             clear_contact_structures,
-  const bool                             has_periodic_boundaries)
+  const Particles::ParticleHandler<dim> &particle_handler)
 {
   // Update the iterators to local particles in a map of particles
   update_particle_container<dim>(particle_container, &particle_handler);
@@ -142,18 +143,17 @@ DEMContactManager<dim>::update_local_particles_in_cells(
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::local_particle_particle>(local_adjacent_particles,
-                                          particle_container,
-                                          clear_contact_structures);
+                                          particle_container);
 
   // Update contact containers for ghost particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
-                                          particle_container,
-                                          clear_contact_structures);
+                                          particle_container);
 
-  if (has_periodic_boundaries)
+  if (DEMActionManager::get_action_manager()
+        ->check_periodic_boundaries_enabling())
     {
       // Update contact containers for local-local periodic particle-particle
       // pairs in contact
@@ -161,9 +161,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
-        local_periodic_adjacent_particles,
-        particle_container,
-        clear_contact_structures);
+        local_periodic_adjacent_particles, particle_container);
 
       // Update contact containers for local-ghost periodic particle-particle
       // pairs in contact
@@ -171,9 +169,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
-        ghost_periodic_adjacent_particles,
-        particle_container,
-        clear_contact_structures);
+        ghost_periodic_adjacent_particles, particle_container);
 
       // Update contact containers for ghost-local periodic particle-particle
       // pairs in contact
@@ -181,9 +177,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_local_periodic_particle_particle>(
-        ghost_local_periodic_adjacent_particles,
-        particle_container,
-        clear_contact_structures);
+        ghost_local_periodic_adjacent_particles, particle_container);
     }
 
   // Update contact containers for particle-wall pairs in contact
@@ -231,34 +225,43 @@ template <int dim>
 void
 DEMContactManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const bool                               has_periodic_boundaries)
+  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
 {
-  particle_particle_broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler, *this);
+  auto action_manager = DEMActionManager::get_action_manager();
 
-  if (has_periodic_boundaries)
+  // Check if sparse contacts are enabled to use proper broad search functions
+  // ASC will use the default broad search functions at the first iteration
+  bool use_default_functions =
+    !action_manager->check_sparse_contacts_enabling() ||
+    action_manager->check_mobility_status_reset();
+
+  // Check if sparse contacts are enabled to use proper broad search functions
+  // The first broad search is the default one for sparse contacts
+  if (use_default_functions)
     {
       particle_particle_broad_search_object
-        .find_particle_particle_periodic_contact_pairs(particle_handler, *this);
+        .find_particle_particle_contact_pairs(particle_handler, *this);
+
+      if (action_manager->check_periodic_boundaries_enabling())
+        {
+          particle_particle_broad_search_object
+            .find_particle_particle_periodic_contact_pairs(particle_handler,
+                                                           *this);
+        }
     }
-}
-
-template <int dim>
-void
-DEMContactManager<dim>::execute_particle_particle_broad_search(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object,
-  const bool                               has_periodic_boundaries)
-{
-  particle_particle_broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler, *this, sparse_contacts_object);
-
-  if (has_periodic_boundaries)
+  else
     {
       particle_particle_broad_search_object
-        .find_particle_particle_periodic_contact_pairs(particle_handler,
-                                                       *this,
-                                                       sparse_contacts_object);
+        .find_particle_particle_contact_pairs(particle_handler,
+                                              *this,
+                                              sparse_contacts_object);
+
+      if (action_manager->check_periodic_boundaries_enabling())
+        {
+          particle_particle_broad_search_object
+            .find_particle_particle_periodic_contact_pairs(
+              particle_handler, *this, sparse_contacts_object);
+        }
     }
 }
 
@@ -271,107 +274,112 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
                                                     solid_surfaces_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const bool                                        has_solid_objects)
+  const AdaptiveSparseContacts<dim>                &sparse_contacts_object)
 {
-  // Particle-wall contact candidates
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cell_object.get_boundary_cells_information(),
-    particle_handler,
-    particle_wall_candidates);
+  auto action_manager = DEMActionManager::get_action_manager();
 
-  // Particle-floating wall contact pairs
-  if (floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_broad_search_object
-        .find_particle_floating_wall_contact_pairs(
-          boundary_cell_object.get_boundary_cells_with_floating_walls(),
-          particle_handler,
-          floating_walls,
-          simulation_time,
-          particle_floating_wall_candidates);
-    }
+  // Check if sparse contacts are enabled to use proper broad search functions
+  // ASC will use the default broad search functions at the first iteration
+  bool use_default_functions =
+    !action_manager->check_sparse_contacts_enabling() ||
+    action_manager->check_mobility_status_reset();
 
-  // Particle-floating mesh broad search
-  if (has_solid_objects)
+  if (use_default_functions)
     {
-      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
-        solid_surfaces_mesh_info,
+      // Particle-wall contact candidates
+      particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+        boundary_cell_object.get_boundary_cells_information(),
         particle_handler,
-        particle_floating_mesh_candidates,
-        total_neighbor_list);
-    }
+        particle_wall_candidates);
 
-  particle_point_candidates =
-    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
-      particle_handler, boundary_cell_object.get_boundary_cells_with_points());
+      // Particle-floating wall contact pairs
+      if (floating_walls.floating_walls_number > 0)
+        {
+          particle_wall_broad_search_object
+            .find_particle_floating_wall_contact_pairs(
+              boundary_cell_object.get_boundary_cells_with_floating_walls(),
+              particle_handler,
+              floating_walls,
+              simulation_time,
+              particle_floating_wall_candidates);
+        }
 
-  if constexpr (dim == 3)
-    {
-      particle_line_candidates =
+      // Particle-floating mesh broad search
+      if (action_manager->check_solid_objects_enabling())
+        {
+          particle_wall_broad_search_object
+            .particle_solid_surfaces_contact_search(
+              solid_surfaces_mesh_info,
+              particle_handler,
+              particle_floating_mesh_candidates,
+              total_neighbor_list);
+        }
+
+      particle_point_candidates =
         particle_point_line_broad_search_object
-          .find_particle_line_contact_pairs(
+          .find_particle_point_contact_pairs(
             particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines());
+            boundary_cell_object.get_boundary_cells_with_points());
+
+      if constexpr (dim == 3)
+        {
+          particle_line_candidates =
+            particle_point_line_broad_search_object
+              .find_particle_line_contact_pairs(
+                particle_handler,
+                boundary_cell_object.get_boundary_cells_with_lines());
+        }
     }
-}
-
-template <int dim>
-void
-DEMContactManager<dim>::execute_particle_wall_broad_search(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  BoundaryCellsInformation<dim>         &boundary_cell_object,
-  const typename dem_data_structures<dim>::solid_surfaces_mesh_information
-                                                    solid_surfaces_mesh_info,
-  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-  const double                                      simulation_time,
-  const AdaptiveSparseContacts<dim>                &sparse_contacts_object,
-  const bool                                        has_solid_objects)
-{
-  // Particle-wall contact candidates
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cell_object.get_boundary_cells_information(),
-    particle_handler,
-    particle_wall_candidates,
-    sparse_contacts_object);
-
-  // Particle-floating wall contact pairs
-  if (floating_walls.floating_walls_number > 0)
+  else
     {
-      particle_wall_broad_search_object
-        .find_particle_floating_wall_contact_pairs(
-          boundary_cell_object.get_boundary_cells_with_floating_walls(),
-          particle_handler,
-          floating_walls,
-          simulation_time,
-          particle_floating_wall_candidates,
-          sparse_contacts_object);
-    }
-
-  // Particle-floating mesh broad search
-  if (has_solid_objects)
-    {
-      particle_wall_broad_search_object.particle_solid_surfaces_contact_search(
-        solid_surfaces_mesh_info,
+      // Particle-wall contact candidates
+      particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+        boundary_cell_object.get_boundary_cells_information(),
         particle_handler,
-        particle_floating_mesh_candidates,
-        total_neighbor_list,
+        particle_wall_candidates,
         sparse_contacts_object);
-    }
 
-  particle_point_candidates =
-    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
-      particle_handler,
-      boundary_cell_object.get_boundary_cells_with_points(),
-      sparse_contacts_object);
+      // Particle-floating wall contact pairs
+      if (floating_walls.floating_walls_number > 0)
+        {
+          particle_wall_broad_search_object
+            .find_particle_floating_wall_contact_pairs(
+              boundary_cell_object.get_boundary_cells_with_floating_walls(),
+              particle_handler,
+              floating_walls,
+              simulation_time,
+              particle_floating_wall_candidates,
+              sparse_contacts_object);
+        }
 
-  if constexpr (dim == 3)
-    {
-      particle_line_candidates =
+      // Particle-floating mesh broad search
+      if (action_manager->check_solid_objects_enabling())
+        {
+          particle_wall_broad_search_object
+            .particle_solid_surfaces_contact_search(
+              solid_surfaces_mesh_info,
+              particle_handler,
+              particle_floating_mesh_candidates,
+              total_neighbor_list,
+              sparse_contacts_object);
+        }
+
+      particle_point_candidates =
         particle_point_line_broad_search_object
-          .find_particle_line_contact_pairs(
+          .find_particle_point_contact_pairs(
             particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines(),
+            boundary_cell_object.get_boundary_cells_with_points(),
             sparse_contacts_object);
+
+      if constexpr (dim == 3)
+        {
+          particle_line_candidates =
+            particle_point_line_broad_search_object
+              .find_particle_line_contact_pairs(
+                particle_handler,
+                boundary_cell_object.get_boundary_cells_with_lines(),
+                sparse_contacts_object);
+        }
     }
 }
 
@@ -379,7 +387,6 @@ template <int dim>
 void
 DEMContactManager<dim>::execute_particle_particle_fine_search(
   const double         neighborhood_threshold,
-  const bool           has_periodic_boundaries,
   const Tensor<1, dim> periodic_offset)
 {
   // Fine search for local particle-particle
@@ -396,7 +403,8 @@ DEMContactManager<dim>::execute_particle_particle_fine_search(
     ghost_contact_pair_candidates,
     neighborhood_threshold);
 
-  if (has_periodic_boundaries)
+  if (DEMActionManager::get_action_manager()
+        ->check_periodic_boundaries_enabling())
     {
       // Fine search for local-local periodic particle-particle
       particle_particle_fine_search_object.particle_particle_fine_search(
@@ -429,8 +437,7 @@ void
 DEMContactManager<dim>::execute_particle_wall_fine_search(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const double                                      neighborhood_threshold,
-  const bool                                        has_solid_objects)
+  const double                                      neighborhood_threshold)
 {
   // Particle - wall fine search
   particle_wall_fine_search_object.particle_wall_fine_search(
@@ -447,7 +454,7 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
     }
 
   // Particle - floating mesh fine search
-  if (has_solid_objects)
+  if (DEMActionManager::get_action_manager()->check_solid_objects_enabling())
     {
       particle_wall_fine_search_object.particle_floating_mesh_fine_search(
         particle_floating_mesh_candidates, particle_floating_mesh_in_contact);

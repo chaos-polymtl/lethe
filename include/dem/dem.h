@@ -144,6 +144,26 @@ private:
     particle_handler.exchange_ghost_particles(true);
   }
 
+  inline void
+  move_solid_objects()
+  {
+    if (!action_manager->check_solid_objects_enabling())
+      return;
+
+    // Move the solid triangulations, previous time must be used here
+    // instead of current time.
+    for (auto &solid_object : solid_surfaces)
+      solid_object->move_solid_triangulation(
+        simulation_control->get_time_step(),
+        simulation_control->get_previous_time());
+
+    for (auto &solid_object : solid_volumes)
+      solid_object->move_solid_triangulation(
+        simulation_control->get_time_step(),
+        simulation_control->get_previous_time());
+  }
+
+
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
@@ -170,7 +190,7 @@ private:
    * particles were inserted
    *
    */
-  bool
+  void
   insert_particles();
 
   /**
@@ -310,12 +330,10 @@ private:
   // Information for periodic boundaries
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   Tensor<1, dim>                     periodic_offset;
-  bool                               has_periodic_boundaries;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-  bool            has_solid_objects;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;
@@ -330,9 +348,6 @@ private:
 
   // Adaptive sparce contacts (ASC) in cells object
   AdaptiveSparseContacts<dim> sparse_contacts_object;
-
-  // Flag to indicate if sparse contacts are enabled
-  bool has_sparse_contacts;
 
   // Contraints for the background grid needed for ASC with PBC
   AffineConstraints<double> background_constraints;

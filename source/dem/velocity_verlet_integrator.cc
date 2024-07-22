@@ -143,6 +143,20 @@ VelocityVerletIntegrator<dim>::integrate(
   const parallel::distributed::Triangulation<dim> &triangulation,
   AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
 {
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  bool use_default_function =
+    !action_manager->check_sparse_contacts_enabling() ||
+    action_manager->check_mobility_status_reset();
+
+  // Regular integration process if sparse contacts are not enabled or if this
+  // is the first iteration.
+  if (use_default_function)
+    {
+      integrate(particle_handler, g, dt, torque, force, MOI);
+      return;
+    }
+
   // If there are advected particles, we use another function since the average
   // velocity and acceleration of cells are computed for mobile cells
   if (sparse_contacts_object.has_advected_particles())

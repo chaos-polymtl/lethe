@@ -9,12 +9,11 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
 
-#include <deal.II/grid/grid_tools.h>
-
 using namespace dealii;
 
 template <int dim>
 PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
+  : periodic_boundaries_enabled(false)
 {}
 
 template <int dim>
@@ -64,6 +63,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information)
 {
+  if (!periodic_boundaries_enabled)
+    return;
+
   periodic_boundaries_cells_information.clear();
 
   // Iterating over the active cells in the triangulation
@@ -122,9 +124,10 @@ template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
+  const bool                                       &particles_in_pb0_cell,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
        &particles_in_cell,
-  bool &particles_in_pb0_cell)
+  bool &particle_has_been_moved)
 {
   for (auto particle = particles_in_cell.begin();
        particle != particles_in_cell.end();
@@ -137,6 +140,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       // the particle
       Point<dim>     point_on_face, point_on_periodic_face;
       Tensor<1, dim> normal_vector, distance_between_faces;
+
       if (particles_in_pb0_cell)
         {
           point_on_face          = boundaries_cells_content.point_on_face;
@@ -163,17 +167,25 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
           // Move particle outside the current cell to the periodic cell.
           particle_position += distance_between_faces;
           particle->set_location(particle_position);
+
+          // Update flag to indicate that particle has been moved
+          particle_has_been_moved = true;
         }
     }
 }
 
 template <int dim>
-void
+bool
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
   const Particles::ParticleHandler<dim> &particle_handler,
   const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information)
 {
+  if (!periodic_boundaries_enabled)
+    return false;
+
+  bool particle_has_been_moved = false;
+
   if (!periodic_boundaries_cells_information.empty())
     {
       for (auto boundaries_cells_information_iterator =
@@ -202,8 +214,9 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                 {
                   bool particles_in_pb0_cell = true;
                   check_and_move_particles(boundaries_cells_content,
+                                           particles_in_pb0_cell,
                                            particles_in_cell,
-                                           particles_in_pb0_cell);
+                                           particle_has_been_moved);
                 }
             }
 
@@ -220,12 +233,15 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                 {
                   bool particles_in_pb0_cell = false;
                   check_and_move_particles(boundaries_cells_content,
+                                           particles_in_pb0_cell,
                                            particles_in_periodic_cell,
-                                           particles_in_pb0_cell);
+                                           particle_has_been_moved);
                 }
             }
         }
     }
+
+  return particle_has_been_moved;
 }
 
 template class PeriodicBoundariesManipulator<2>;

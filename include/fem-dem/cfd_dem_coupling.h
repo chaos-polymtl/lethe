@@ -50,8 +50,6 @@ using namespace dealii;
 template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
-  using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
-
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
@@ -124,13 +122,6 @@ private:
    */
   void
   write_DEM_output_results();
-
-  /**
-   * @brief Carries out the fine particled-wall contact detection
-   *
-   */
-  void
-  particle_wall_fine_search();
 
   /**
    * @brief Calculates particles-wall contact forces
@@ -277,19 +268,6 @@ private:
         // the last calculated locations prior the void fraction calculation.
         return true;
       }
-    else if (has_sparse_contacts && (counter == 1))
-      {
-        // First mobility status identification of the CFD time step (from the
-        // velocity computed at the first DEM time step (counter = 0) of the CFD
-        // time step) The contact search is executed to make sure the mobility
-        // status of cell match the particles that are in.
-        return true;
-      }
-    else if (has_periodic_boundaries && particle_displaced_in_pbc)
-      {
-        // Particles have been displaced in periodic boundaries
-        return true;
-      }
     else
       {
         return false;
@@ -334,14 +312,9 @@ private:
   // Information for periodic boundaries
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   Tensor<1, dim>                     periodic_offset;
-  bool                               has_periodic_boundaries;
-  bool                               particle_displaced_in_pbc;
 
   // Object handling the sparse contacts
   AdaptiveSparseContacts<dim> sparse_contacts_object;
-
-  // Flag to indicate if sparse contacts are used
-  bool has_sparse_contacts;
 
   // Counter of contact searches in a CFD iteration
   unsigned int contact_search_counter;

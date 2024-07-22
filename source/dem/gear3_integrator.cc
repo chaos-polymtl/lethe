@@ -81,15 +81,27 @@ for (auto particle = particle_handler.begin();
 template <int dim>
 void
 Gear3Integrator<dim>::integrate(
-  Particles::ParticleHandler<dim> & /* particle_handler */,
-  const Tensor<1, 3> & /* g */,
-  const double /* dt */,
-  std::vector<Tensor<1, 3>> & /* torque */,
-  std::vector<Tensor<1, 3>> & /* force */,
-  const std::vector<double> & /* MOI */,
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
-  AdaptiveSparseContacts<dim> & /* disable_contacts_object */)
+  AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
 {
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  bool use_default_function =
+    !action_manager->check_sparse_contacts_enabling() ||
+    action_manager->check_mobility_status_reset();
+
+  if (use_default_function)
+    {
+      integrate(particle_handler, g, dt, torque, force, MOI);
+      return;
+    }
+
   throw std::runtime_error(
     "Adaptive sparse contacts not supported with explicit Gear 3 integrator, use Verlet integrator.");
 }

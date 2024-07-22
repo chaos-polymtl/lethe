@@ -20,34 +20,61 @@ public:
   inline void
   reset_triggers()
   {
+    // First mobility status identification of the CFD time step (from the
+    // velocity computed at the first DEM time step (counter = 0) of the CFD
+    // time step) The contact search is executed to make sure the mobility
+    // status of cell match the particles that are in.
     repartition_trigger                  = false;
-    contact_search_trigger               = false;
+    contact_search_trigger               = mobility_status_reset_trigger;
     clear_contact_structures_trigger     = false;
     solid_object_search_trigger          = false;
     sparse_contacts_cells_update_trigger = false;
-    checkpoint_trigger_tmp               = false;
+    restart_simulation_trigger           = false;
+    mobility_status_reset_trigger        = false;
   }
 
 
   inline void
-  set_sparse_contacts_enabling(const bool sparse_contacts_enabled)
+  set_sparse_contacts_enabling()
   {
-    this->sparse_contacts_enabled = sparse_contacts_enabled;
+    this->sparse_contacts_enabled = true;
+
+    // Allowing the full broad search without mobility status at first iteration
+    mobility_status_reset_trigger = true;
+  }
+
+
+  inline bool
+  check_sparse_contacts_enabling()
+  {
+    return sparse_contacts_enabled;
   }
 
   inline void
-  set_periodic_boundaries_enabling(const bool periodic_boundaries_enabled)
+  set_periodic_boundaries_enabling()
   {
-    this->periodic_boundaries_enabled = periodic_boundaries_enabled;
+    this->periodic_boundaries_enabled = true;
+  }
+
+  inline bool
+  check_periodic_boundaries_enabling()
+  {
+    return periodic_boundaries_enabled;
   }
 
   inline void
-  set_solid_objects_enabling(const bool solid_objects_enabled)
+  set_solid_objects_enabling()
   {
-    this->solid_objects_enabled = solid_objects_enabled;
+    this->solid_objects_enabled = true;
 
     // Allowing the first contact search of solid objects
     solid_object_search_trigger = true;
+  }
+
+  inline bool
+  check_solid_objects_enabling()
+  {
+    return solid_objects_enabled;
   }
 
 
@@ -76,10 +103,11 @@ public:
     contact_search_trigger = true;
   }
 
+
   inline void
-  checkpoint_step()
+  restart_simulation()
   {
-    checkpoint_trigger_tmp           = true;
+    restart_simulation_trigger       = true;
     contact_search_trigger           = true;
     clear_contact_structures_trigger = true;
     solid_object_search_trigger      = solid_objects_enabled ? true : false;
@@ -88,9 +116,9 @@ public:
   }
 
   inline bool
-  check_checkpoint_trigger_tmp()
+  check_restart_simulation()
   {
-    return checkpoint_trigger_tmp;
+    return restart_simulation_trigger;
   }
 
   inline bool
@@ -131,6 +159,25 @@ public:
     return clear_contact_structures_trigger;
   }
 
+  inline bool
+  check_mobility_status_reset()
+  {
+    return mobility_status_reset_trigger;
+  }
+
+  inline void
+  first_dem_step()
+  {
+    // Only triggered if the sparse contacts are enabled
+    mobility_status_reset_trigger = sparse_contacts_enabled ? true : false;
+  }
+
+  inline void
+  last_dem_iteration_with_pbc_step()
+  {
+    contact_search_trigger = true;
+  }
+
 
 
 private:
@@ -144,7 +191,8 @@ private:
     , solid_object_search_trigger(false)
     , sparse_contacts_cells_update_trigger(false)
     , clear_contact_structures_trigger(false)
-    , checkpoint_trigger_tmp(false) // see again for first time step
+    , restart_simulation_trigger(false)
+    , mobility_status_reset_trigger(false)
   {}
 
   static DEMActionManager *instance;
@@ -166,7 +214,8 @@ private:
   bool solid_object_search_trigger;
   bool sparse_contacts_cells_update_trigger;
   bool clear_contact_structures_trigger;
-  bool checkpoint_trigger_tmp;
+  bool restart_simulation_trigger;
+  bool mobility_status_reset_trigger;
 };
 
 
