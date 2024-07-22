@@ -16,9 +16,7 @@ find_particle_contact_detection_step(
   // If something else has already triggered contact search,
   // no need to do it again
   if (DEMActionManager::get_action_manager()->check_contact_search())
-    {
-      return;
-    }
+    return;
 
   double max_displacement       = 0.;
   bool   contact_detection_step = false;

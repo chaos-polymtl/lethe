@@ -787,17 +787,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       periodic_boundaries_object.execute_particles_displacement(
         this->particle_handler, periodic_boundaries_cells_information);
 
-      this->particle_handler.sort_particles_into_subdomains_and_cells();
-
-      displacement.resize(
-        this->particle_handler.get_max_local_particle_index());
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-
-      // Updating moment of inertia container
-      update_moment_of_inertia(this->particle_handler, MOI);
-
-      this->particle_handler.exchange_ghost_particles(true);
+      sort_particles_into_subdomains_and_cells();
 
       if (has_sparse_contacts)
         {
