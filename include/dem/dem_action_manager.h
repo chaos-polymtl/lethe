@@ -18,6 +18,18 @@ public:
   operator=(const DEMActionManager &copy) = delete;
 
   inline void
+  reset_triggers()
+  {
+    repartition_trigger                  = false;
+    contact_search_trigger               = false;
+    clear_contact_structures_trigger     = false;
+    solid_object_search_trigger          = false;
+    sparse_contacts_cells_update_trigger = false;
+    checkpoint_trigger_tmp               = false;
+  }
+
+
+  inline void
   set_sparse_contacts_enabling(const bool sparse_contacts_enabled)
   {
     this->sparse_contacts_enabled = sparse_contacts_enabled;
@@ -30,22 +42,13 @@ public:
   }
 
   inline void
-  set_solid_objects_enabling(const bool solid_object_enabled)
+  set_solid_objects_enabling(const bool solid_objects_enabled)
   {
-    this->solid_objects_enabled = solid_object_enabled;
-  }
+    this->solid_objects_enabled = solid_objects_enabled;
 
-  inline void
-  reset_triggers()
-  {
-    repartition_trigger                  = false;
-    contact_search_trigger               = false;
-    clear_contact_structures_trigger     = false;
-    solid_object_search_trigger          = false;
-    sparse_contacts_cells_update_trigger = false;
-    checkpoint_trigger_tmp               = false;
+    // Allowing the first contact search of solid objects
+    solid_object_search_trigger = true;
   }
-
 
 
   // Need something to say that the previous step was a contact detection
@@ -79,6 +82,7 @@ public:
     checkpoint_trigger_tmp           = true;
     contact_search_trigger           = true;
     clear_contact_structures_trigger = true;
+    solid_object_search_trigger      = solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
   }
@@ -100,6 +104,14 @@ public:
   {
     return solid_object_search_trigger;
   }
+
+  inline void
+  solid_objects_search_step()
+  {
+    solid_object_search_trigger = true;
+    contact_search_trigger      = true;
+  }
+
 
   inline bool
   check_contact_search()

@@ -266,6 +266,7 @@ DEMSolver<dim>::setup_solid_objects()
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
       has_solid_objects = true;
+      action_manager->set_solid_objects_enabling(true);
       contact_manager.particle_floating_mesh_in_contact.resize(
         solid_surfaces.size() + solid_volumes.size());
     }
@@ -291,22 +292,6 @@ DEMSolver<dim>::load_balance()
 
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
-
-  // Update the container with all the combinations of background and
-  // solid cells
-  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
-    {
-      solid_surfaces_mesh_info[i_solid] =
-        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
-    {
-      solid_volumes_mesh_info[i_solid] =
-        solid_volumes[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
 
   if (has_periodic_boundaries)
     {
@@ -445,7 +430,7 @@ DEMSolver<dim>::particle_wall_contact_force()
         force);
     }
 
-  // Particle - floating mesh contact force
+  // Particle-solid objectscontact force
   if (has_solid_objects)
     {
       particle_wall_contact_force_object
@@ -757,21 +742,6 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model(parameters, triangulation);
 
-  // Store information about floating mesh/background mesh intersection
-  for (unsigned int i_solid = 0; i_solid < solid_surfaces.size(); ++i_solid)
-    {
-      solid_surfaces_mesh_info[i_solid] =
-        solid_surfaces[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
-  for (unsigned int i_solid = 0; i_solid < solid_volumes.size(); ++i_solid)
-    {
-      solid_volumes_mesh_info[i_solid] =
-        solid_volumes[i_solid]->map_solid_in_background_triangulation(
-          triangulation);
-    }
-
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
   // diameter - 1) *  largest particle radius). This value is used in
@@ -896,33 +866,34 @@ DEMSolver<dim>::solve()
       // Check to see if it is contact search step
       contact_detection_iteration_check_function();
 
-      bool solid_object_map_step = false;
-      // Check to see if floating meshes need to be mapped in background mesh
-      if (has_solid_objects)
+      // Check to see if solid objects need to be mapped in background mesh
+      find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
+                                      this->solid_surfaces);
+
+      // Map solid objects, will neven be executed if there is no solid object
+      if (action_manager->check_solid_object_search())
         {
-          solid_object_map_step = find_floating_mesh_mapping_step(
-            smallest_solid_object_mapping_criterion, this->solid_surfaces);
-
-          if (solid_object_map_step)
+          // Store information about floating mesh/background mesh
+          // intersection
+          for (unsigned int i_solid = 0; i_solid < solid_surfaces.size();
+               ++i_solid)
             {
-              // Update floating mesh information in the container manager
-              for (unsigned int i_solid = 0; i_solid < solid_surfaces.size();
-                   ++i_solid)
-                {
-                  solid_surfaces_mesh_info[i_solid] =
-                    solid_surfaces[i_solid]
-                      ->map_solid_in_background_triangulation(triangulation);
-                }
+              solid_surfaces_mesh_info[i_solid] =
+                solid_surfaces[i_solid]->map_solid_in_background_triangulation(
+                  triangulation);
+            }
 
-              for (unsigned int i_solid = 0; i_solid < solid_volumes.size();
-                   ++i_solid)
-                {
-                }
+          for (unsigned int i_solid = 0; i_solid < solid_volumes.size();
+               ++i_solid)
+            {
+              solid_volumes_mesh_info[i_solid] =
+                solid_volumes[i_solid]->map_solid_in_background_triangulation(
+                  triangulation);
             }
         }
 
-      // Sort particles in cells
-      if (check_contact_search_step(solid_object_map_step))
+      // Execute contact search
+      if (action_manager->check_contact_search())
         {
           // Particles displacement if passing through a periodic boundary
           periodic_boundaries_object.execute_particles_displacement(
@@ -932,8 +903,9 @@ DEMSolver<dim>::solve()
 
           if (has_sparse_contacts && !simulation_control->is_at_start())
             {
-              // Compute cell mobility for all cells after the sort particles
-              // into subdomains and cells and exchange ghost particles
+              // Compute cell mobility for all cells after the sort
+              // particles into subdomains and cells and exchange ghost
+              // particles
               sparse_contacts_object.identify_mobility_status(
                 background_dh,
                 particle_handler,
@@ -993,8 +965,8 @@ DEMSolver<dim>::solve()
             has_periodic_boundaries,
             periodic_offset);
 
-          // Execute fine search by updating particle-wall contact containers
-          // according to the neighborhood threshold
+          // Execute fine search by updating particle-wall contact
+          // containers according to the neighborhood threshold
           contact_manager.execute_particle_wall_fine_search(
             parameters.floating_walls,
             simulation_control->get_current_time(),
@@ -1020,8 +992,8 @@ DEMSolver<dim>::solve()
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
-      // particle-wall contact candidate if it exists in the contact list. As
-      // a result, when we update the points on boundary faces and their
+      // particle-wall contact candidate if it exists in the contact list.
+      // As a result, when we update the points on boundary faces and their
       // normal vectors, update_contacts deletes it from the output of broad
       // search and they are not updated in the contact force calculations.
       if (parameters.grid_motion.motion_type !=
@@ -1031,17 +1003,20 @@ DEMSolver<dim>::solve()
             contact_manager.particle_wall_in_contact,
             updated_boundary_points_and_normal_vectors);
 
-      // Move the solid triangulations, previous time must be used here
-      // instead of current time.
-      for (auto &solid_object : solid_surfaces)
-        solid_object->move_solid_triangulation(
-          simulation_control->get_time_step(),
-          simulation_control->get_previous_time());
+      if (has_solid_objects)
+        {
+          // Move the solid triangulations, previous time must be used here
+          // instead of current time.
+          for (auto &solid_object : solid_surfaces)
+            solid_object->move_solid_triangulation(
+              simulation_control->get_time_step(),
+              simulation_control->get_previous_time());
 
-      for (auto &solid_object : solid_volumes)
-        solid_object->move_solid_triangulation(
-          simulation_control->get_time_step(),
-          simulation_control->get_previous_time());
+          for (auto &solid_object : solid_volumes)
+            solid_object->move_solid_triangulation(
+              simulation_control->get_time_step(),
+              simulation_control->get_previous_time());
+        }
 
       // Particles-walls contact force:
       particle_wall_contact_force();

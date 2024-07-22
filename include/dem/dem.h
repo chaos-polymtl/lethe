@@ -144,19 +144,6 @@ private:
     particle_handler.exchange_ghost_particles(true);
   }
 
-  inline bool
-  check_contact_search_step(bool solid_object_map_step)
-  {
-    if (action_manager->check_contact_search() || solid_object_map_step)
-      {
-        return true;
-      }
-    else
-      {
-        return false;
-      }
-  }
-
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.

@@ -13,9 +13,11 @@ find_particle_contact_detection_step(
   std::vector<double>             &displacement,
   const bool                       parallel_update)
 {
+  // Get the action manager
+  auto action_manager = DEMActionManager::get_action_manager();
   // If something else has already triggered contact search,
   // no need to do it again
-  if (DEMActionManager::get_action_manager()->check_contact_search())
+  if (action_manager->check_contact_search())
     return;
 
   double max_displacement       = 0.;
@@ -50,7 +52,7 @@ find_particle_contact_detection_step(
       contact_detection_step =
         Utilities::MPI::logical_or(contact_detection_step, mpi_communicator);
       if (contact_detection_step)
-        DEMActionManager::get_action_manager()->contact_search_step();
+        action_manager->contact_search_step();
     }
 }
 
@@ -74,11 +76,18 @@ find_particle_contact_detection_step(
 
 
 template <int dim>
-bool
+void
 find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
 {
+  // Get the action manager
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  // If there is no solid object, no need to do anything
+  if (!action_manager->check_solid_objects_enabling())
+    return;
+
   bool floating_mesh_requires_map = false;
 
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
@@ -90,15 +99,16 @@ find_floating_mesh_mapping_step(
         displacement > smallest_contact_search_criterion;
     }
 
-  return floating_mesh_requires_map;
+  if (floating_mesh_requires_map)
+    action_manager->solid_objects_search_step();
 }
 
-template bool
+template void
 find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<2, 3>>> solids);
 
-template bool
+template void
 find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> solids);
