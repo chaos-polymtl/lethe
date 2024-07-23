@@ -787,33 +787,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             }
         }
     }
-
-  // If simulation has periodic boundaries, the particles are sorted into
-  // subdomains and cells at the last DEM coupled time step otherwise the
-  // particles will not match the cells that they are in when void fraction is
-  // calculated with the qcm method
-  if (counter == (coupling_frequency - 1))
-    {
-      if (has_periodic_boundaries &&
-          this->cfd_dem_simulation_parameters.void_fraction->mode ==
-            Parameters::VoidFractionMode::qcm)
-        {
-          bool particle_has_been_moved =
-            periodic_boundaries_object.execute_particles_displacement(
-              this->particle_handler, periodic_boundaries_cells_information);
-
-          // Exchange information between processors
-          particle_displaced_in_pbc =
-            Utilities::MPI::logical_or(particle_has_been_moved,
-                                       this->mpi_communicator);
-
-          if (particle_displaced_in_pbc)
-            {
-              this->particle_handler.sort_particles_into_subdomains_and_cells();
-              this->particle_handler.exchange_ghost_particles(true);
-            }
-        }
-    }
 }
 
 template <int dim>
