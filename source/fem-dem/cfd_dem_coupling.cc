@@ -1179,7 +1179,6 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         dem_parameters.model_parameters.advect_particles);
     }
 
-
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
   LagrangianPhysicalProperties &lpp =
@@ -1227,23 +1226,20 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
   double rayleigh_time_step = 1. / DBL_MIN;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties &physical_properties =
-    dem_parameters.lagrangian_physical_properties;
 
-  for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
+  for (unsigned int i = 0; i < lpp.particle_type_number; ++i)
     {
-      double shear_modulus =
-        physical_properties.youngs_modulus_particle[i] /
-        (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
+      double shear_modulus = lpp.youngs_modulus_particle[i] /
+                             (2.0 * (1.0 + lpp.poisson_ratio_particle[i]));
 
       double min_diameter =
         size_distribution_object_container.at(i)->find_min_diameter();
 
-      rayleigh_time_step = std::min(
-        M_PI_2 * min_diameter *
-          sqrt(physical_properties.density_particle[i] / shear_modulus) /
-          (0.1631 * physical_properties.poisson_ratio_particle[i] + 0.8766),
-        rayleigh_time_step);
+      rayleigh_time_step =
+        std::min(M_PI_2 * min_diameter *
+                   sqrt(lpp.density_particle[i] / shear_modulus) /
+                   (0.1631 * lpp.poisson_ratio_particle[i] + 0.8766),
+                 rayleigh_time_step);
     }
 
   const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
@@ -1269,6 +1265,12 @@ CFDDEMSolver<dim>::dem_setup_parameters()
     }
 
   // Initialize the total contact list counter
+  integrator_object = set_integrator_type();
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force_model(
+      this->cfd_dem_simulation_parameters.dem_parameters);
+
+  // Initialize the contact search counter
   contact_search_total_number = 0;
 }
 
@@ -1413,32 +1415,6 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
-
-      // If simulation has periodic boundaries, the particles are sorted into
-      // subdomains and cells at the last DEM coupled time step otherwise the
-      // particles will not match the cells that they are in when void fraction
-      // is calculated with the qcm method
-      // TODO
-      if (dem_action_manager->check_periodic_boundaries_enabling() &&
-          this->cfd_dem_simulation_parameters.void_fraction->mode ==
-            Parameters::VoidFractionMode::qcm)
-        {
-          bool particle_has_been_moved =
-            periodic_boundaries_object.execute_particles_displacement(
-              this->particle_handler, periodic_boundaries_cells_information);
-
-          // Exchange information between processors
-          particle_has_been_moved =
-            Utilities::MPI::logical_or(particle_has_been_moved,
-                                       this->mpi_communicator);
-
-          if (particle_has_been_moved)
-            {
-              sort_particles_into_subdomains_and_cells();
-              dem_action_manager->last_dem_iteration_with_pbc_step();
-            }
-        }
-
 
       contact_search_total_number += contact_search_counter;
 
