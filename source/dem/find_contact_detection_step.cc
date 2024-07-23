@@ -52,7 +52,7 @@ find_particle_contact_detection_step(
       contact_detection_step =
         Utilities::MPI::logical_or(contact_detection_step, mpi_communicator);
       if (contact_detection_step)
-        action_manager->contact_search_step();
+        action_manager->contact_detection_step();
     }
 }
 

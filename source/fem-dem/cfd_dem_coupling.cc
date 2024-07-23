@@ -1401,9 +1401,7 @@ CFDDEMSolver<dim>::solve()
         load_balancing.check_load_balance_iteration();
 
         if (dem_action_manager->check_repartition())
-          {
-            load_balance();
-          }
+          load_balance();
 
         contact_search_counter = 0;
         for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;

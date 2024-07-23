@@ -302,16 +302,16 @@ private:
    * @brief Constructor of the DEMActionManager.
    */
   DEMActionManager()
-    : periodic_boundaries_enabled(false)
-    , solid_objects_enabled(false)
+    : solid_objects_enabled(false)
     , sparse_contacts_enabled(false)
+    , periodic_boundaries_enabled(false)
     , grid_motion_enabled(false)
-    , read_checkpoint_trigger(false)
     , repartition_trigger(false)
-    , clear_tangential_overlap_trigger(false)
     , contact_search_trigger(true)
     , solid_object_search_trigger(false)
     , sparse_contacts_cells_update_trigger(false)
+    , clear_tangential_overlap_trigger(false)
+    , read_checkpoint_trigger(false)
     , mobility_status_reset_trigger(false)
   {}
 

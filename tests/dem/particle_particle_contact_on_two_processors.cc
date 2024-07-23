@@ -210,9 +210,11 @@ test()
 
       container_manager.update_local_particles_in_cells(particle_handler);
 
-      // Calling broad search
+      // Dummy Adaptive sparse contacts object and particle-particle broad
+      // search
+      AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
       container_manager.execute_particle_particle_broad_search(
-        particle_handler);
+        particle_handler, dummy_adaptive_sparse_contacts);
 
       // Calling fine search
       container_manager.execute_particle_particle_fine_search(

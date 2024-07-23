@@ -160,6 +160,8 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
           assign_mobility_status(cell->active_cell_index(),
                                  mobility_status::mobile);
         }
+
+      return;
     }
 
   // Get a copy of the active & ghost cells set to iterate over and remove cell

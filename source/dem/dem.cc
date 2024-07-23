@@ -361,7 +361,7 @@ DEMSolver<dim>::check_contact_search_iteration_constant()
 {
   if ((simulation_control->get_step_number() % contact_detection_frequency) ==
       0)
-    action_manager->contact_search_step();
+    action_manager->contact_detection_step();
 }
 
 template <int dim>
@@ -423,7 +423,7 @@ DEMSolver<dim>::particle_wall_contact_force()
         force);
     }
 
-  // Particle-solid objectscontact force
+  // Particle-solid objects contact force
   if (action_manager->check_solid_objects_enabling()) // until refactor
     {
       particle_wall_contact_force_object

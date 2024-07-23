@@ -222,7 +222,7 @@ private:
         case ModelParameters::ContactDetectionMethod::constant:
           {
             if ((counter % model_parameters.contact_detection_frequency) == 0)
-              dem_action_manager->contact_search_step();
+              dem_action_manager->contact_detection_step();
 
             break;
           }
