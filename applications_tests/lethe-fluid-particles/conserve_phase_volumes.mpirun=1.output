@@ -30,7 +30,7 @@ DEM
 ----
 DEM contact search at dem step 0
 DEM contact search at dem step 9
-Finished 10 DEM iterations
+Finished 10 DEM iterations 
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
@@ -50,7 +50,7 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations
+Finished 10 DEM iterations 
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
@@ -70,7 +70,7 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations
+Finished 10 DEM iterations 
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
