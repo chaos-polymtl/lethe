@@ -34,7 +34,8 @@ namespace Parameters
     L2projection,
     viscous,
     nodal,
-    ramp
+    ramp,
+    vtu
   };
 
   struct Ramp_n
@@ -108,6 +109,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> cahn_hilliard =
       Functions::ParsedFunction<dim>(2);
 
+    // vtk file
+    std::string vtu;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -122,9 +126,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "nodal",
-                        Patterns::Selection("L2projection|viscous|nodal|ramp"),
+                        Patterns::Selection("L2projection|viscous|nodal|ramp|vtu"),
                         "Type of initial condition"
-                        "Choices are <L2projection|viscous|nodal|ramp>.");
+                        "Choices are <L2projection|viscous|nodal|ramp|vtu>.");
       prm.enter_subsection("uvwp");
       uvwp.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
@@ -163,6 +167,13 @@ namespace Parameters
       cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
 
+      prm.enter_subsection("vtu");
+      prm.declare_entry("vtu file name",
+                        "out.vtu",
+                        Patterns::Anything(),
+                        "vtu file name containing the desired initial condition");
+      prm.leave_subsection();
+
       ramp.declare_parameters(prm);
     }
     prm.leave_subsection();
@@ -183,6 +194,8 @@ namespace Parameters
         type = InitialConditionType::nodal;
       else if (op == "ramp")
         type = InitialConditionType::ramp;
+      else if (op == "vtu")
+        type = InitialConditionType::vtu;
 
       kinematic_viscosity = prm.get_double("kinematic viscosity");
       prm.enter_subsection("uvwp");
@@ -213,6 +226,10 @@ namespace Parameters
 
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("vtu");
+      vtu = prm.get("vtu file name");
       prm.leave_subsection();
     }
     prm.leave_subsection();

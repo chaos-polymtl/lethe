@@ -2165,6 +2165,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   DataOutBase::VtkFlags flags;
   if (this->velocity_fem_degree > 1)
     flags.write_higher_order_cells = true;
+  // if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  //   {flags.serialize_triangulation = true;
+  //   std::cout << "serialize_triangulation set to treu " << std::endl;
+  
   data_out.set_flags(flags);
 
   // Attach the solution data to data_out object

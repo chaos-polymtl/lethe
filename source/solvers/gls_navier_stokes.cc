@@ -1269,6 +1269,14 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
           this->pcout << "*********************************" << std::endl;
         }
     }
+  else if (initial_condition_type == Parameters::InitialConditionType::vtu)
+    {
+      this->set_nodal_values();
+      this->finish_time_step();
+      std::cout << "Initial condition set using VTU file" << std::endl;
+      const std::string vtu_file_name = this->simulation_parameters.initial_condition->vtu;
+      std::cout << "VTU file name: " << vtu_file_name << std::endl;
+    }
   else
     {
       throw std::runtime_error("GLSNS - Initial condition could not be set");
