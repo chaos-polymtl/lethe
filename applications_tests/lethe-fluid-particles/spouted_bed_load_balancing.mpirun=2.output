@@ -39,6 +39,7 @@ Setup DOFs
    Number of degrees of freedom: 5952
    Volume of triangulation:      0.0010185
 DEM contact search at dem step 0
+DEM contact search at dem step 49
 Finished 50 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
@@ -65,6 +66,7 @@ Setup DOFs
    Number of degrees of freedom: 5952
    Volume of triangulation:      0.0010185
 DEM contact search at dem step 0
+DEM contact search at dem step 49
 Finished 50 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
