@@ -218,11 +218,9 @@ private:
         // Contact search step according to the contact detection method
         return true;
       }
-    else if (counter == (coupling_frequency - 1) &&
-             (contact_search_counter == 0))
+    else if (counter == (coupling_frequency - 1))
       {
-        // Ensure that the contact search is executed at least once per CFD time
-        // step.
+        // Execute the contact search at the last DEM iteration of the CFD time
         return true;
       }
     else if (has_sparse_contacts && (counter == 1))
