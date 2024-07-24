@@ -100,7 +100,6 @@ DEMSolver<dim>::setup_parameters()
   // Set the adaptive sparse contacts parameters
   if (parameters.model_parameters.sparse_particle_contacts)
     {
-      action_manager->set_sparse_contacts_enabling();
       sparse_contacts_object.set_parameters(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold,
@@ -131,8 +130,6 @@ DEMSolver<dim>::setup_parameters()
       if (parameters.boundary_conditions.bc_types[i_bc] ==
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
-          action_manager->set_periodic_boundaries_enabling();
-
           periodic_boundaries_object.set_periodic_boundaries_information(
             parameters.boundary_conditions.periodic_boundary_0,
             parameters.boundary_conditions.periodic_direction);
@@ -276,7 +273,6 @@ DEMSolver<dim>::setup_solid_objects()
     }
 }
 
-
 template <int dim>
 void
 DEMSolver<dim>::load_balance()
@@ -316,10 +312,9 @@ DEMSolver<dim>::load_balance()
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
 
-  if (parameters.grid_motion.motion_type !=
-      Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-    boundary_cell_object.update_boundary_info_after_grid_motion(
-      updated_boundary_points_and_normal_vectors);
+  // Update the boundary information (if grid motion)
+  boundary_cell_object.update_boundary_info_after_grid_motion(
+    updated_boundary_points_and_normal_vectors);
 
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(triangulation.n_active_cells(),
@@ -819,19 +814,15 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_verbose_iteration())
         report_statistics();
 
-      // Grid motion
-      if (parameters.grid_motion.motion_type !=
-          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-        {
-          grid_motion_object->move_grid(triangulation);
-          boundary_cell_object.update_boundary_info_after_grid_motion(
-            updated_boundary_points_and_normal_vectors);
-        }
+      // Move grid and update the boundary information (if grid motion)
+      grid_motion_object->move_grid(triangulation);
+      boundary_cell_object.update_boundary_info_after_grid_motion(
+        updated_boundary_points_and_normal_vectors);
 
-      // Keep track if particles were inserted this step
+      // Insert particle if needed
       insert_particles();
 
-      // Load balancing
+      // Load balancing if needed
       load_balance();
 
       // Check to see if it is contact search step
@@ -931,18 +922,17 @@ DEMSolver<dim>::solve()
           force,
           periodic_offset);
 
+      // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
       // particle-wall contact candidate if it exists in the contact list.
       // As a result, when we update the points on boundary faces and their
       // normal vectors, update_contacts deletes it from the output of broad
       // search and they are not updated in the contact force calculations.
-      if (parameters.grid_motion.motion_type !=
-          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-        grid_motion_object
-          ->update_boundary_points_and_normal_vectors_in_contact_list(
-            contact_manager.particle_wall_in_contact,
-            updated_boundary_points_and_normal_vectors);
+      grid_motion_object
+        ->update_boundary_points_and_normal_vectors_in_contact_list(
+          contact_manager.particle_wall_in_contact,
+          updated_boundary_points_and_normal_vectors);
 
       move_solid_objects();
 
@@ -1002,6 +992,7 @@ DEMSolver<dim>::solve()
           post_process_results();
         }
 
+      // Write checkpoint if needed
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %
               parameters.restart.frequency ==
@@ -1020,7 +1011,7 @@ DEMSolver<dim>::solve()
                            mpi_communicator);
         }
 
-      // Reset checkpoint step
+      // Reset all trigger flags
       action_manager->reset_triggers();
     }
 

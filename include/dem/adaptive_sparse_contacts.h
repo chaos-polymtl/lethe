@@ -20,6 +20,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -174,6 +175,34 @@ public:
     empty           = 5  // used for nodes only
   };
 
+
+  /**
+   * @brief Set the threshold values for the mobile status criteria (granular
+   * temperature and solid fraction) and the flag for the advection of
+   * particles.
+   *
+   * @param[in] granular_temperature The threshold value for the granular
+   * temperature.
+   * @param[in] solid_fraction The threshold value for the solid fraction
+   * (volume of particles in the cell).
+   * @param[in] advect_particles The flag for the advection of particles.
+   */
+  void
+  set_parameters(const double granular_temperature,
+                 const double solid_fraction,
+                 const double advect_particles)
+  {
+    // If the function is reached, the adaptive sparse contacts is enabled.
+    sparse_contacts_enabled = true;
+
+    // Communicate to the action manager that there are periodic boundaries
+    DEMActionManager::get_action_manager()->set_sparse_contacts_enabling();
+
+    granular_temperature_threshold = granular_temperature;
+    solid_fraction_threshold       = solid_fraction;
+    advect_particles_enabled       = advect_particles;
+  }
+
   /**
    * @brief Create or update a set of the active and ghost cells so that
    * there is no loop over all the cells of the triangulation for the granular
@@ -306,30 +335,6 @@ public:
       {
         status[cell_to_status.first] = cell_to_status.second;
       }
-  }
-
-  /**
-   * @brief Set the threshold values for the mobile status criteria (granular
-   * temperature and solid fraction) and the flag for the advection of
-   * particles.
-   *
-   * @param[in] granular_temperature The threshold value for the granular
-   * temperature.
-   * @param[in] solid_fraction The threshold value for the solid fraction
-   * (volume of particles in the cell).
-   * @param[in] advect_particles The flag for the advection of particles.
-   */
-  void
-  set_parameters(const double granular_temperature,
-                 const double solid_fraction,
-                 const double advect_particles)
-  {
-    // If the function is reached, the adaptive sparse contacts is enabled.
-    sparse_contacts_enabled = true;
-
-    granular_temperature_threshold = granular_temperature;
-    solid_fraction_threshold       = solid_fraction;
-    advect_particles_enabled       = advect_particles;
   }
 
   /**

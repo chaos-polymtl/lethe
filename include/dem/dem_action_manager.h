@@ -117,6 +117,26 @@ public:
   }
 
   /**
+   * @brief Flag that the grid will motion in the simulation.
+   */
+  inline void
+  set_grid_motion_enabling()
+  {
+    this->grid_motion_enabled = true;
+  }
+
+  /**
+   * @brief Check if the solid objects are enabled to perform some actions.
+   *
+   * @return True if the solid objects are enabled.
+   */
+  inline bool
+  check_grid_motion_enabling()
+  {
+    return grid_motion_enabled;
+  }
+
+  /**
    * @brief Set triggers for action to be performed in the current time step
    * because the simulation starts from restart files (previously called
    * checkpoint step).
@@ -302,16 +322,16 @@ private:
    * @brief Constructor of the DEMActionManager.
    */
   DEMActionManager()
-    : solid_objects_enabled(false)
+    : periodic_boundaries_enabled(false)
+    , solid_objects_enabled(false)
     , sparse_contacts_enabled(false)
-    , periodic_boundaries_enabled(false)
     , grid_motion_enabled(false)
+    , read_checkpoint_trigger(false)
     , repartition_trigger(false)
+    , clear_tangential_overlap_trigger(false)
     , contact_search_trigger(true)
     , solid_object_search_trigger(false)
     , sparse_contacts_cells_update_trigger(false)
-    , clear_tangential_overlap_trigger(false)
-    , read_checkpoint_trigger(false)
     , mobility_status_reset_trigger(false)
   {}
 

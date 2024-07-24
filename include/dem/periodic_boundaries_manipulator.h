@@ -21,6 +21,7 @@
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 
@@ -67,6 +68,9 @@ public:
   {
     // If function is reached, there are periodic boundaries in the simulation
     periodic_boundaries_enabled = true;
+
+    // Communicate to the action manager that there are periodic boundaries
+    DEMActionManager::get_action_manager()->set_periodic_boundaries_enabling();
 
     periodic_boundary_0 = periodic_boundary_id_0;
     direction           = periodic_direction;
