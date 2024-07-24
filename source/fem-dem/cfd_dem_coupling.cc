@@ -787,33 +787,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             }
         }
     }
-
-  // If simulation has periodic boundaries, the particles are sorted into
-  // subdomains and cells at the last DEM coupled time step otherwise the
-  // particles will not match the cells that they are in when void fraction is
-  // calculated with the qcm method
-  if (counter == (coupling_frequency - 1))
-    {
-      if (has_periodic_boundaries &&
-          this->cfd_dem_simulation_parameters.void_fraction->mode ==
-            Parameters::VoidFractionMode::qcm)
-        {
-          bool particle_has_been_moved =
-            periodic_boundaries_object.execute_particles_displacement(
-              this->particle_handler, periodic_boundaries_cells_information);
-
-          // Exchange information between processors
-          particle_displaced_in_pbc =
-            Utilities::MPI::logical_or(particle_has_been_moved,
-                                       this->mpi_communicator);
-
-          if (particle_displaced_in_pbc)
-            {
-              this->particle_handler.sort_particles_into_subdomains_and_cells();
-              this->particle_handler.exchange_ghost_particles(true);
-            }
-        }
-    }
 }
 
 template <int dim>
@@ -1249,19 +1222,29 @@ CFDDEMSolver<dim>::print_particles_summary()
 {
   this->pcout << "Particle Summary" << std::endl;
   this->pcout << "id, x, y, z, v_x, v_y, v_z " << std::endl;
+  // Agressively force synchronization of the header line
+  usleep(500);
+  MPI_Barrier(this->mpi_communicator);
+  usleep(500);
+  MPI_Barrier(this->mpi_communicator);
+
   std::map<int, Particles::ParticleIterator<dim>> global_particles;
-  unsigned int                                    current_id, id_max = 0;
+  unsigned int current_id, current_id_max = 0;
 
   // Mapping of all particles & find the max id on current processor
   for (auto particle = this->particle_handler.begin();
        particle != this->particle_handler.end();
        ++particle)
     {
-      current_id = particle->get_id();
-      id_max     = std::max(current_id, id_max);
+      current_id     = particle->get_id();
+      current_id_max = std::max(current_id, current_id_max);
 
       global_particles.insert({current_id, particle});
     }
+
+  // Find global max particle index
+  unsigned int id_max =
+    Utilities::MPI::max(current_id_max, this->mpi_communicator);
 
   for (unsigned int i = 0; i <= id_max; i++)
     {
@@ -1274,14 +1257,16 @@ CFDDEMSolver<dim>::print_particles_summary()
               auto particle_properties = particle->get_properties();
               auto particle_location   = particle->get_location();
 
-              std::stringstream ss;
-              ss << std::setprecision(6) << id << " " << particle_location
-                 << " " << particle_properties[DEM::PropertiesIndex::v_x] << " "
-                 << particle_properties[DEM::PropertiesIndex::v_y] << " "
-                 << particle_properties[DEM::PropertiesIndex::v_z];
-              this->pcout << ss.str() << std::endl;
+              std::cout << std::setprecision(6) << id << " "
+                        << particle_location << " "
+                        << particle_properties[DEM::PropertiesIndex::v_x] << " "
+                        << particle_properties[DEM::PropertiesIndex::v_y] << " "
+                        << particle_properties[DEM::PropertiesIndex::v_z]
+                        << std::endl;
             }
         }
+      usleep(500);
+      MPI_Barrier(this->mpi_communicator);
     }
 }
 

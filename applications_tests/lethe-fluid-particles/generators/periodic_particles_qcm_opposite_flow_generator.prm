@@ -11,8 +11,7 @@ subsection simulation control
   set time step         = 1e-5
   set time end          = 1
   set log frequency     = 1000
-  set output frequency  = 1000000
-  set output path       = ./output_dem/
+  set output frequency  = 0
   set output boundaries = true
 end
 
@@ -24,7 +23,7 @@ subsection restart
   set checkpoint = true
   set frequency  = 10000
   set restart    = false
-  set filename   = dem
+  set filename   = ../periodic_particles_qcm_opposite_flow_files/dem
 end
 
 #---------------------------------------------------
@@ -78,7 +77,7 @@ end
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
-  set list x              = 0.1199, 0.2399
+  set list x              = 0.1201, 0.0001
   set list y              = 0.0051, 0.0051
   set list z              = 0.019, 0.019
 end
