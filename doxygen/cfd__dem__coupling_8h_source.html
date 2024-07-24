@@ -299,11 +299,11 @@ $(function() {
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <span class="comment">// Contact search step according to the contact detection method</span></div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (counter == (coupling_frequency - 1) &amp;&amp;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;             (contact_search_counter == 0))</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="comment">// Ensure that the contact search is executed at least once per CFD time</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="comment">// step.</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (counter == (coupling_frequency - 1))</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        <span class="comment">// Execute the contact search at the last DEM iteration of the CFD</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="comment">// iteration. It updates the reference location of particles with</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="comment">// the last calculated locations prior the void fraction calculation.</span></div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      }</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (has_sparse_contacts &amp;&amp; (counter == 1))</div>
