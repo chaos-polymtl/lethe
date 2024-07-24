@@ -3,11 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-24
+
+### Changed
+
+- MINOR Forces a contact search at the last DEM iteration of a CFD iteration for more robustness related to the update of the reference location of the particles prior the void fraction calculation [#1205](https://github.com/chaos-polymtl/lethe/pull/1205)
+- 
 ## [Master] - 2024-07-23
 
 ### Changed
 
-- MINOR PBC with QCM in CFD-DEM are working without forcing the particle displacement at the last DEM time step of the CFD iteration. It is removed. [#1204](https://github.com/chaos-polymtl/lethe/pull/1204)
+- MINOR PBC with QCM in CFD-DEM are working without forcing the particle displacement at the last DEM iteration of the CFD iteration. It is removed. [#1204](https://github.com/chaos-polymtl/lethe/pull/1204)
 
 ## [Master] - 2024-07-21
 

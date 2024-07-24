@@ -29,11 +29,12 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 0
-Finished 10 DEM iterations 
+DEM contact search at dem step 9
+Finished 10 DEM iterations
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
-Global continuity equation error: -8.247081136e-13 s^-1
+Global continuity equation error: -8.247081115e-13 s^-1
 Max local continuity error: 2.939360858e-07 s^-1
 
 *********************************************************************************
@@ -49,12 +50,12 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
-Global continuity equation error: -1.170125066e-11 s^-1
-Max local continuity error: 2.667651567e-07 s^-1
+Global continuity equation error: -1.170126711e-11 s^-1
+Max local continuity error: 2.667651689e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.00426005
@@ -69,9 +70,9 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 9
-Finished 10 DEM iterations 
+Finished 10 DEM iterations
 ---------------------------------------------------------------
 Total volume of fluid: 0.8558614008 m^3
 Total volume of particles: 0.1409160992 m^3
-Global continuity equation error: -4.68769759e-12 s^-1
-Max local continuity error: 2.432011016e-07 s^-1
+Global continuity equation error: -4.68769726e-12 s^-1
+Max local continuity error: 2.432011078e-07 s^-1
