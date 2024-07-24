@@ -94,10 +94,8 @@ public:
    * cells
    * @param periodic_boundaries_cells_information Map of information of the
    * pair of cells on periodic boundaries
-   * @return Flag if at least one particle has been moved to the other periodic
-   * cell
    */
-  bool
+  void
   execute_particles_displacement(
     const Particles::ParticleHandler<dim> &particle_handler,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
@@ -141,15 +139,13 @@ private:
    * @param particles_in_cell Iterator to the particles in cell
    * @param particles_in_pb0_cell If the particles are linked to a cell on the
    * periodic boundary 0 (true) or the periodic boundary 1 (false)
-   * @param particle_has_been_moved Flag the particle has been moved to the other periodic cell
    */
   void
   check_and_move_particles(
     const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
          &particles_in_cell,
-    bool &particles_in_pb0_cell,
-    bool &particle_has_been_moved);
+    bool &particles_in_pb0_cell);
 
   types::boundary_id periodic_boundary_0;
   types::boundary_id periodic_boundary_1;

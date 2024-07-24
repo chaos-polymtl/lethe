@@ -93,7 +93,6 @@ Visualization<dim>::print_xyz(
   usleep(500);
   MPI_Barrier(mpi_communicator);
 
-
   std::map<int, Particles::ParticleIterator<dim>> global_particles;
   unsigned int current_id, current_id_max = 0;
 

@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-23
+
+### Changed
+
+- MINOR PBC with QCM in CFD-DEM are working without forcing the particle displacement at the last DEM time step of the CFD iteration. It is removed. [#1204](https://github.com/chaos-polymtl/lethe/pull/1204)
+
 ## [Master] - 2024-07-21
 
 ### Changed
