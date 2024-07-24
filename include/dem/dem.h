@@ -28,6 +28,7 @@
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/force_chains_visualization.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
@@ -162,8 +163,6 @@ private:
         simulation_control->get_time_step(),
         simulation_control->get_previous_time());
   }
-
-
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.

@@ -248,8 +248,18 @@ public:
     mobility_status_reset_trigger = sparse_contacts_enabled ? true : false;
   }
 
+  /**
+   * @brief Set trigger for the contact search to be performed at the last DEM
+   * iteration of the CFD iteration.
+   *
+   * It triggers:
+   * - contact search: the contact search is performed in order to call the
+   *                   sorting of particles in cells and for the update of the
+   *                   particle reference locations prior of the void fraction
+   *                   calculation.
+   */
   inline void
-  last_dem_iteration_with_pbc_step()
+  last_dem_of_cfd_iteration_step()
   {
     contact_search_trigger = true;
   }

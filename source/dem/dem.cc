@@ -639,16 +639,20 @@ template <int dim>
 void
 DEMSolver<dim>::post_process_results()
 {
-  post_processing_object.write_post_processing_results(
-    triangulation,
-    grid_pvdhandler,
-    background_dh,
-    particle_handler,
-    parameters,
-    simulation_control->get_current_time(),
-    simulation_control->get_step_number(),
-    mpi_communicator,
-    sparse_contacts_object);
+  if (parameters.post_processing.Lagrangian_post_processing &&
+      simulation_control->is_output_iteration())
+    {
+      post_processing_object.write_post_processing_results(
+        triangulation,
+        grid_pvdhandler,
+        background_dh,
+        particle_handler,
+        parameters,
+        simulation_control->get_current_time(),
+        simulation_control->get_step_number(),
+        mpi_communicator,
+        sparse_contacts_object);
+    }
 }
 
 template <int dim>
@@ -757,15 +761,12 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   // Setup background dof
   setup_background_dofs();
 
-  // If PBC enabled, set up the periodic boundaries
+  // Set up the periodic boundaries (if PBC enabled)
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
-
-  // Temporary offset calculation : works only for one set of periodic
-  // boundary on an axis.
   periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
 
-  // If ASC is enabled, set up the local and ghost cells
+  // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
 
@@ -794,11 +795,11 @@ DEMSolver<dim>::solve()
 
   setup_triangulation_dependent_parameters();
 
-  // Find cell neighbors
+  // Build the mapping of the cell neighbors
   contact_manager.execute_cell_neighbors_search(
     triangulation, periodic_boundaries_cells_information);
 
-  // Finding boundary cells with faces
+  // Find boundary cells with faces
   boundary_cell_object.build(
     triangulation,
     parameters.floating_walls,
@@ -807,7 +808,7 @@ DEMSolver<dim>::solve()
     parameters.mesh.expand_particle_wall_contact_search,
     pcout);
 
-  // DEM engine iterator:
+  // DEM engine iterator
   while (simulation_control->integrate())
     {
       simulation_control->print_progression(pcout);
@@ -822,17 +823,18 @@ DEMSolver<dim>::solve()
       // Insert particle if needed
       insert_particles();
 
-      // Load balancing if needed
+      // Load balancing (if load balancing enabled and if needed)
       load_balance();
 
-      // Check to see if it is contact search step
+      // Check for contact search according to the contact detection method
       contact_detection_iteration_check_function();
 
-      // Check to see if solid objects need to be mapped in background mesh
+      // Check if solid object needs to be mapped with background mesh
+      // (if solid object)
       find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
                                       this->solid_surfaces);
 
-      // Map solid objects, will neven be executed if there is no solid object
+      // Map solid objects if the action was triggered (if solid object)
       if (action_manager->check_solid_object_search())
         {
           // Store information about floating mesh/background mesh
@@ -854,16 +856,17 @@ DEMSolver<dim>::solve()
             }
         }
 
-      // Execute contact search
+      // Execute contact search if the action was triggered
       if (action_manager->check_contact_search())
         {
           // Particles displacement if passing through a periodic boundary
+          // (if PBC enabled)
           periodic_boundaries_object.execute_particles_displacement(
             particle_handler, periodic_boundaries_cells_information);
 
           sort_particles_into_subdomains_and_cells();
 
-          // Compute cell mobility if adaptative sparse contacts is enabled
+          // Compute cell mobility (if ASC enabled)
           sparse_contacts_object.identify_mobility_status(
             background_dh,
             particle_handler,
@@ -934,14 +937,14 @@ DEMSolver<dim>::solve()
           contact_manager.particle_wall_in_contact,
           updated_boundary_points_and_normal_vectors);
 
+      // Move solid objects (if solid object)
       move_solid_objects();
 
-      // Particles-walls contact force:
+      // Particle-wall contact force
       particle_wall_contact_force();
 
-      // Integration correction step (after force calculation)
-      // In the first step, we have to obtain location of particles at
-      // half-step time
+      // Integration of force and velocity for new location of particles
+      // The half step is calculated at the first iteration
       if (simulation_control->get_step_number() == 0)
         {
           integrator_object->integrate_half_step_location(
@@ -952,7 +955,7 @@ DEMSolver<dim>::solve()
             force,
             MOI);
         }
-      else // Step number > 0
+      else
         {
           integrator_object->integrate(particle_handler,
                                        g,
@@ -968,6 +971,7 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_output_iteration())
         write_output_results();
 
+      // Calculation of forces and torques if needed
       if (parameters.forces_torques.calculate_force_torque)
         {
           if ((this_mpi_process == 0) &&
@@ -985,12 +989,8 @@ DEMSolver<dim>::solve()
             }
         }
 
-      // Post-processing
-      if (parameters.post_processing.Lagrangian_post_processing &&
-          simulation_control->is_output_iteration())
-        {
-          post_process_results();
-        }
+      // Post-processing if needed
+      post_process_results();
 
       // Write checkpoint if needed
       if (parameters.restart.checkpoint &&

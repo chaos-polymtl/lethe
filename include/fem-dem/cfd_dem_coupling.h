@@ -202,77 +202,8 @@ private:
   void
   dynamic_flow_control() override;
 
-  inline void
-  check_contact_detection_method(
-    unsigned int                          counter,
-    CFDDEMSimulationParameters<dim>      &param,
-    std::vector<double>                  &displacement,
-    Particles::ParticleHandler<dim, dim> &particle_handler,
-    MPI_Comm                              mpi_communicator,
-    std::shared_ptr<SimulationControl>    simulation_control,
-    double                                smallest_contact_search_criterion)
-  {
-    // Use namespace and alias to make the code more readable
-    using namespace Parameters::Lagrangian;
-    Parameters::Lagrangian::ModelParameters &model_parameters =
-      param.dem_parameters.model_parameters;
-
-    switch (model_parameters.contact_detection_method)
-      {
-        case ModelParameters::ContactDetectionMethod::constant:
-          {
-            if ((counter % model_parameters.contact_detection_frequency) == 0)
-              dem_action_manager->contact_detection_step();
-
-            break;
-          }
-        case ModelParameters::ContactDetectionMethod::dynamic:
-          {
-            // The sorting into subdomain step checks whether the current
-            // time step is a step that requires sorting particles into
-            // subdomains and cells. This is applicable if any of the following
-            // three conditions apply: a load balancing step, a restart
-            // simulation step, or a contact detection step.
-            find_particle_contact_detection_step<dim>(
-              particle_handler,
-              simulation_control->get_time_step() /
-                param.cfd_dem.coupling_frequency,
-              smallest_contact_search_criterion,
-              mpi_communicator,
-              displacement);
-            break;
-          }
-        default:
-          break;
-      }
-  }
-
-  /**
-   * @brief Checks all the conditions that require a contact search step. The
-   * check of conditions is done in order of suspected frequency occurrence.
-   *
-   * @param counter The counter of DEM iterations in a CFD iteration.
-   */
-  inline bool
-  check_contact_search_step(const unsigned int counter)
-  {
-    if (dem_action_manager->check_contact_search())
-      {
-        // Contact search step according to the contact detection method
-        return true;
-      }
-    else if (counter == (coupling_frequency - 1))
-      {
-        // Execute the contact search at the last DEM iteration of the CFD
-        // iteration. It updates the reference location of particles with
-        // the last calculated locations prior the void fraction calculation.
-        return true;
-      }
-    else
-      {
-        return false;
-      }
-  }
+  void
+  check_contact_detection_method(unsigned int counter);
 
   unsigned int                               coupling_frequency;
   Tensor<1, 3>                               g;
