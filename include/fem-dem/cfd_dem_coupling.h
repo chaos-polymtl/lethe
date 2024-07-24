@@ -220,7 +220,9 @@ private:
       }
     else if (counter == (coupling_frequency - 1))
       {
-        // Execute the contact search at the last DEM iteration of the CFD time
+        // Execute the contact search at the last DEM iteration of the CFD
+        // iteration. It updates the reference location of particles with
+        // the last calculated locations prior the void fraction calculation.
         return true;
       }
     else if (has_sparse_contacts && (counter == 1))
