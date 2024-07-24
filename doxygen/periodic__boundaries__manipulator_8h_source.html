@@ -175,80 +175,76 @@ $(function() {
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   * cells</span></div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @param periodic_boundaries_cells_information Map of information of the</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * pair of cells on periodic boundaries</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @return Flag if at least one particle has been moved to the other periodic</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * cell</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  execute_particles_displacement(</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41">DEM::dem_data_structures&lt;dim&gt;::periodic_boundaries_cells_info</a></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      &amp;periodic_boundaries_cells_information);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * @brief Return the periodic offset distance, it is calculated from the first pair of</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * cells on periodic boundaries, all pair of cells are assumed to have the</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   * same offset</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">inline</span> Tensor&lt;1, dim&gt;</div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">  112</a></span>&#160;  <a class="code" href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">get_periodic_offset_distance</a>()</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> constant_periodic_offset;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  }</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * @brief Gets boundaries information related to the face at periodic</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * boundaries 0 and 1 and stores in periodic_boundaries_cells_info_struct</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * object</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param cell Current cell on boundary</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @param face_id Face located on boundary</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @param boundaries_information Reference to the object with periodic</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   * boundaries information</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  get_periodic_boundaries_info(</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator  cell,</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          face_id,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <a class="code" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct&lt;dim&gt;</a> &amp;boundaries_information);</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * @brief Checks if particle is outside of the cell, if so, modifies the</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   * location of the particle with the distance (offset) between the periodic</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">   * faces</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @param boundaries_cells_content Reference to the object with periodic</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   * boundaries information</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * @param particles_in_cell Iterator to the particles in cell</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   * @param particles_in_pb0_cell If the particles are linked to a cell on the</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   * periodic boundary 0 (true) or the periodic boundary 1 (false)</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * @param particle_has_been_moved Flag the particle has been moved to the other periodic cell</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  check_and_move_particles(</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keyword">const</span> <a class="code" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct&lt;dim&gt;</a> &amp;boundaries_cells_content,</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;         &amp;particles_in_cell,</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordtype">bool</span> &amp;particles_in_pb0_cell,</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">bool</span> &amp;particle_has_been_moved);</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">  154</a></span>&#160;  types::boundary_id <a class="code" href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">periodic_boundary_0</a>;</div>
-<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">  155</a></span>&#160;  types::boundary_id <a class="code" href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">periodic_boundary_1</a>;</div>
-<div class="line"><a name="l00156"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">  156</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>       <a class="code" href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">direction</a>;</div>
-<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">  157</a></span>&#160;  Tensor&lt;1, dim&gt;     <a class="code" href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">constant_periodic_offset</a>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;};</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* periodic_boundaries_manipulator_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  execute_particles_displacement(</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41">DEM::dem_data_structures&lt;dim&gt;::periodic_boundaries_cells_info</a></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      &amp;periodic_boundaries_cells_information);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @brief Return the periodic offset distance, it is calculated from the first pair of</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * cells on periodic boundaries, all pair of cells are assumed to have the</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * same offset</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">inline</span> Tensor&lt;1, dim&gt;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">  110</a></span>&#160;  <a class="code" href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">get_periodic_offset_distance</a>()</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">return</span> constant_periodic_offset;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @brief Gets boundaries information related to the face at periodic</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * boundaries 0 and 1 and stores in periodic_boundaries_cells_info_struct</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * object</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @param cell Current cell on boundary</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @param face_id Face located on boundary</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param boundaries_information Reference to the object with periodic</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * boundaries information</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  get_periodic_boundaries_info(</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator  cell,</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                          face_id,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <a class="code" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct&lt;dim&gt;</a> &amp;boundaries_information);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * @brief Checks if particle is outside of the cell, if so, modifies the</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   * location of the particle with the distance (offset) between the periodic</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * faces</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">   * @param boundaries_cells_content Reference to the object with periodic</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * boundaries information</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @param particles_in_cell Iterator to the particles in cell</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   * @param particles_in_pb0_cell If the particles are linked to a cell on the</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * periodic boundary 0 (true) or the periodic boundary 1 (false)</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  check_and_move_particles(</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keyword">const</span> <a class="code" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct&lt;dim&gt;</a> &amp;boundaries_cells_content,</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keyword">typename</span> Particles::ParticleHandler&lt;dim&gt;::particle_iterator_range</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;         &amp;particles_in_cell,</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">bool</span> &amp;particles_in_pb0_cell);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">  150</a></span>&#160;  types::boundary_id <a class="code" href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">periodic_boundary_0</a>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">  151</a></span>&#160;  types::boundary_id <a class="code" href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">periodic_boundary_1</a>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">  152</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>       <a class="code" href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">direction</a>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">  153</a></span>&#160;  Tensor&lt;1, dim&gt;     <a class="code" href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">constant_periodic_offset</a>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;};</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* periodic_boundaries_manipulator_h */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aboundary__cells__info__struct_8h_html"><div class="ttname"><a href="boundary__cells__info__struct_8h.html">boundary_cells_info_struct.h</a></div></div>
 <div class="ttc" id="aclassPeriodicBoundariesManipulator_html"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a></div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00051">periodic_boundaries_manipulator.h:52</a></div></div>
-<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a2667afdbff088ad9d1930dc90f82ab25"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">PeriodicBoundariesManipulator::get_periodic_offset_distance</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; get_periodic_offset_distance()</div><div class="ttdoc">Return the periodic offset distance, it is calculated from the first pair of cells on periodic bounda...</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00112">periodic_boundaries_manipulator.h:112</a></div></div>
-<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a3571cd66c55259e13a4a8307d6601745"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">PeriodicBoundariesManipulator::direction</a></div><div class="ttdeci">unsigned int direction</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00156">periodic_boundaries_manipulator.h:156</a></div></div>
+<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a2667afdbff088ad9d1930dc90f82ab25"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">PeriodicBoundariesManipulator::get_periodic_offset_distance</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; get_periodic_offset_distance()</div><div class="ttdoc">Return the periodic offset distance, it is calculated from the first pair of cells on periodic bounda...</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00110">periodic_boundaries_manipulator.h:110</a></div></div>
+<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a3571cd66c55259e13a4a8307d6601745"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a3571cd66c55259e13a4a8307d6601745">PeriodicBoundariesManipulator::direction</a></div><div class="ttdeci">unsigned int direction</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00152">periodic_boundaries_manipulator.h:152</a></div></div>
 <div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a4bb01e3789834388ab0745d2575248ab"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a4bb01e3789834388ab0745d2575248ab">PeriodicBoundariesManipulator::set_periodic_boundaries_information</a></div><div class="ttdeci">void set_periodic_boundaries_information(const types::boundary_id periodic_boundary_id_0, const types::boundary_id periodic_boundary_id_1, const unsigned int periodic_direction)</div><div class="ttdoc">Sets the periodic boundaries parameters.</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00064">periodic_boundaries_manipulator.h:64</a></div></div>
-<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a503fdd011c9fee1d318620f1be8f2454"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">PeriodicBoundariesManipulator::constant_periodic_offset</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; constant_periodic_offset</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00157">periodic_boundaries_manipulator.h:157</a></div></div>
-<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a55af22bd32d9d4143515a80f0df58e80"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">PeriodicBoundariesManipulator::periodic_boundary_1</a></div><div class="ttdeci">types::boundary_id periodic_boundary_1</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00155">periodic_boundaries_manipulator.h:155</a></div></div>
-<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a91124d85ec7380bc0472960e85f516d5"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">PeriodicBoundariesManipulator::periodic_boundary_0</a></div><div class="ttdeci">types::boundary_id periodic_boundary_0</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00154">periodic_boundaries_manipulator.h:154</a></div></div>
+<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a503fdd011c9fee1d318620f1be8f2454"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a503fdd011c9fee1d318620f1be8f2454">PeriodicBoundariesManipulator::constant_periodic_offset</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; constant_periodic_offset</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00153">periodic_boundaries_manipulator.h:153</a></div></div>
+<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a55af22bd32d9d4143515a80f0df58e80"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a55af22bd32d9d4143515a80f0df58e80">PeriodicBoundariesManipulator::periodic_boundary_1</a></div><div class="ttdeci">types::boundary_id periodic_boundary_1</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00151">periodic_boundaries_manipulator.h:151</a></div></div>
+<div class="ttc" id="aclassPeriodicBoundariesManipulator_html_a91124d85ec7380bc0472960e85f516d5"><div class="ttname"><a href="classPeriodicBoundariesManipulator.html#a91124d85ec7380bc0472960e85f516d5">PeriodicBoundariesManipulator::periodic_boundary_0</a></div><div class="ttdeci">types::boundary_id periodic_boundary_0</div><div class="ttdef"><b>Definition:</b> <a href="periodic__boundaries__manipulator_8h_source.html#l00150">periodic_boundaries_manipulator.h:150</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
 <div class="ttc" id="adem__contact__manager_8h_html"><div class="ttname"><a href="dem__contact__manager_8h.html">dem_contact_manager.h</a></div></div>
 <div class="ttc" id="adem__solver__parameters_8h_html"><div class="ttname"><a href="dem__solver__parameters_8h.html">dem_solver_parameters.h</a></div></div>

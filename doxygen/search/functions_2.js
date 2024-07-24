@@ -192,7 +192,7 @@ var searchData=
   ['cell_5finside_4382',['cell_inside',['../classGLSSharpNavierStokesSolver.html#aae70b3cc897a880a9ca858d179ded18e',1,'GLSSharpNavierStokesSolver']]],
   ['cell_5fpierced_5fby_5fedge_4383',['cell_pierced_by_edge',['../namespaceLetheGridTools.html#afa26b38db1428080af0330f1ac28a8b6',1,'LetheGridTools::cell_pierced_by_edge(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Point&lt; dim &gt; point_1, Point&lt; dim &gt; point_2)'],['../namespaceLetheGridTools.html#ace492ced93f51fd48f3d3fa18b476778',1,'LetheGridTools::cell_pierced_by_edge(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const TriaIterator&lt; CellAccessor&lt; 1, dim &gt;&gt; &amp;cell_edge)']]],
   ['cfddemsolver_4384',['CFDDEMSolver',['../classCFDDEMSolver.html#adebfddbf93e41946ccf7309c7b01515d',1,'CFDDEMSolver']]],
-  ['check_5fand_5fmove_5fparticles_4385',['check_and_move_particles',['../classPeriodicBoundariesManipulator.html#a26f9275f0ac9fdcbd413a99e38f4d3a5',1,'PeriodicBoundariesManipulator']]],
+  ['check_5fand_5fmove_5fparticles_4385',['check_and_move_particles',['../classPeriodicBoundariesManipulator.html#ad8152831215adadad25e37d97735b4ec',1,'PeriodicBoundariesManipulator']]],
   ['check_5fcell_5fis_5fconnected_5fto_5ffluid_4386',['check_cell_is_connected_to_fluid',['../classNavierStokesBase.html#a2f7059bc37e23e4ed073847455f678e8',1,'NavierStokesBase']]],
   ['check_5fcell_5fmobility_4387',['check_cell_mobility',['../classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd',1,'AdaptiveSparseContacts']]],
   ['check_5fcontact_5fdetection_5fmethod_4388',['check_contact_detection_method',['../cfd__dem__coupling_8cc.html#a610def463b36eecb1a4f62b0c5ab63cf',1,'cfd_dem_coupling.cc']]],

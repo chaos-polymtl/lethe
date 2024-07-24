@@ -279,7 +279,7 @@ var searchData=
   ['cfddemsolver_507',['CFDDEMSolver',['../classCFDDEMSolver.html',1,'CFDDEMSolver&lt; dim &gt;'],['../classCFDDEMSolver.html#adebfddbf93e41946ccf7309c7b01515d',1,'CFDDEMSolver::CFDDEMSolver()']]],
   ['cfl_508',['CFL',['../classSimulationControl.html#a3b3cc016a68348146112de04c7820020',1,'SimulationControl']]],
   ['change_5fto_5ftriangulation_509',['change_to_triangulation',['../classInsertion.html#a7458657c2cbf3c5351812e1109646f51',1,'Insertion']]],
-  ['check_5fand_5fmove_5fparticles_510',['check_and_move_particles',['../classPeriodicBoundariesManipulator.html#a26f9275f0ac9fdcbd413a99e38f4d3a5',1,'PeriodicBoundariesManipulator']]],
+  ['check_5fand_5fmove_5fparticles_510',['check_and_move_particles',['../classPeriodicBoundariesManipulator.html#ad8152831215adadad25e37d97735b4ec',1,'PeriodicBoundariesManipulator']]],
   ['check_5fcell_5fis_5fconnected_5fto_5ffluid_511',['check_cell_is_connected_to_fluid',['../classNavierStokesBase.html#a2f7059bc37e23e4ed073847455f678e8',1,'NavierStokesBase']]],
   ['check_5fcell_5fmobility_512',['check_cell_mobility',['../classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd',1,'AdaptiveSparseContacts']]],
   ['check_5fcontact_5fdetection_5fmethod_513',['check_contact_detection_method',['../cfd__dem__coupling_8cc.html#a610def463b36eecb1a4f62b0c5ab63cf',1,'cfd_dem_coupling.cc']]],

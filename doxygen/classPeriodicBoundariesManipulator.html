@@ -91,8 +91,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4bb01e3789834388ab0745d2575248ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f9ac1843d0beb0dea34a5beadd4120a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a7f9ac1843d0beb0dea34a5beadd4120a">map_periodic_cells</a> (const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information)</td></tr>
 <tr class="separator:a7f9ac1843d0beb0dea34a5beadd4120a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0a3b491c630334dd56e173e79a2811c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#ae0a3b491c630334dd56e173e79a2811c">execute_particles_displacement</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information)</td></tr>
-<tr class="separator:ae0a3b491c630334dd56e173e79a2811c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a968c65b88e7efbd8e6c26c73ac93c3b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a968c65b88e7efbd8e6c26c73ac93c3b8">execute_particles_displacement</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information)</td></tr>
+<tr class="separator:a968c65b88e7efbd8e6c26c73ac93c3b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2667afdbff088ad9d1930dc90f82ab25"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a2667afdbff088ad9d1930dc90f82ab25">get_periodic_offset_distance</a> ()</td></tr>
 <tr class="separator:a2667afdbff088ad9d1930dc90f82ab25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -100,8 +100,8 @@ Public Member Functions</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a6dfded44117aa19d2aa08224c4cf15e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a6dfded44117aa19d2aa08224c4cf15e8">get_periodic_boundaries_info</a> (typename Triangulation&lt; dim &gt;::cell_iterator cell, const unsigned int face_id, <a class="el" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct</a>&lt; dim &gt; &amp;boundaries_information)</td></tr>
 <tr class="separator:a6dfded44117aa19d2aa08224c4cf15e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26f9275f0ac9fdcbd413a99e38f4d3a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#a26f9275f0ac9fdcbd413a99e38f4d3a5">check_and_move_particles</a> (const <a class="el" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct</a>&lt; dim &gt; &amp;boundaries_cells_content, typename Particles::ParticleHandler&lt; dim &gt;::particle_iterator_range &amp;particles_in_cell, bool &amp;particles_in_pb0_cell, bool &amp;particle_has_been_moved)</td></tr>
-<tr class="separator:a26f9275f0ac9fdcbd413a99e38f4d3a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8152831215adadad25e37d97735b4ec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicBoundariesManipulator.html#ad8152831215adadad25e37d97735b4ec">check_and_move_particles</a> (const <a class="el" href="structperiodic__boundaries__cells__info__struct.html">periodic_boundaries_cells_info_struct</a>&lt; dim &gt; &amp;boundaries_cells_content, typename Particles::ParticleHandler&lt; dim &gt;::particle_iterator_range &amp;particles_in_cell, bool &amp;particles_in_pb0_cell)</td></tr>
+<tr class="separator:ad8152831215adadad25e37d97735b4ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -142,8 +142,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a26f9275f0ac9fdcbd413a99e38f4d3a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26f9275f0ac9fdcbd413a99e38f4d3a5">&#9670;&nbsp;</a></span>check_and_move_particles()</h2>
+<a id="ad8152831215adadad25e37d97735b4ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8152831215adadad25e37d97735b4ec">&#9670;&nbsp;</a></span>check_and_move_particles()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,13 +169,7 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>particles_in_pb0_cell</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>particle_has_been_moved</em>&#160;</td>
+          <td class="paramname"><em>particles_in_pb0_cell</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -196,7 +190,6 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramname">boundaries_cells_content</td><td>Reference to the object with periodic boundaries information </td></tr>
     <tr><td class="paramname">particles_in_cell</td><td>Iterator to the particles in cell </td></tr>
     <tr><td class="paramname">particles_in_pb0_cell</td><td>If the particles are linked to a cell on the periodic boundary 0 (true) or the periodic boundary 1 (false) </td></tr>
-    <tr><td class="paramname">particle_has_been_moved</td><td>Flag the particle has been moved to the other periodic cell </td></tr>
   </table>
   </dd>
 </dl>
@@ -207,8 +200,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ae0a3b491c630334dd56e173e79a2811c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0a3b491c630334dd56e173e79a2811c">&#9670;&nbsp;</a></span>execute_particles_displacement()</h2>
+<a id="a968c65b88e7efbd8e6c26c73ac93c3b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a968c65b88e7efbd8e6c26c73ac93c3b8">&#9670;&nbsp;</a></span>execute_particles_displacement()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +209,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::execute_particles_displacement </td>
+          <td class="memname">void <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a>&lt; dim &gt;::execute_particles_displacement </td>
           <td>(</td>
           <td class="paramtype">const Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -243,9 +236,8 @@ template&lt;int dim&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Flag if at least one particle has been moved to the other periodic cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00176">176</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8cc_source.html#l00172">172</a> of file <a class="el" href="periodic__boundaries__manipulator_8cc_source.html">periodic_boundaries_manipulator.cc</a>.</p>
 
 </div>
 </div>
@@ -334,7 +326,7 @@ template&lt;int dim&gt; </div>
 
 <p>Return the periodic offset distance, it is calculated from the first pair of cells on periodic boundaries, all pair of cells are assumed to have the same offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00112">112</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00110">110</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -460,7 +452,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00157">157</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00153">153</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -486,7 +478,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00156">156</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00152">152</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -512,7 +504,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00154">154</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00150">150</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -538,7 +530,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00155">155</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00151">151</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
