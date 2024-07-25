@@ -1,6 +1,5 @@
 #include <dem/dem_action_manager.h>
 
-
 DEMActionManager *DEMActionManager::instance = nullptr;
 
 DEMActionManager *

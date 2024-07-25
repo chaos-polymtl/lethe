@@ -38,7 +38,7 @@ public:
     // velocity computed at the first DEM time step (counter = 0) of the CFD
     // time step) The contact search is executed to make sure the mobility
     // status of cell match the particles that are in.
-    repartition_trigger                  = false;
+    load_balance_trigger                 = false;
     contact_search_trigger               = mobility_status_reset_trigger;
     clear_tangential_overlap_trigger     = false;
     solid_object_search_trigger          = false;
@@ -167,6 +167,8 @@ public:
    *                   so all the contact search needs to be performed
    * - clearing the contact structures: same as above, the contact structures
    *                                    need to be cleared prior of it
+   * - resizing the containers: the containers need to be resized to the new
+   *                            number of local particles
    * - solid object search (if enabled): the solid objects need to be mapped to
    *                                     the rebalanced cells
    * - update the sparse contacts cells (if enabled): the sparse contacts cells
@@ -176,9 +178,10 @@ public:
   inline void
   load_balance_step()
   {
-    repartition_trigger              = true;
+    load_balance_trigger             = true;
     contact_search_trigger           = true;
     clear_tangential_overlap_trigger = true;
+    resize_containers_trigger        = true;
     solid_object_search_trigger      = solid_objects_enabled ? true : false;
     sparse_contacts_cells_update_trigger =
       sparse_contacts_enabled ? true : false;
@@ -279,7 +282,7 @@ public:
   inline bool
   check_repartition() const
   {
-    return repartition_trigger;
+    return load_balance_trigger;
   }
 
   /**
@@ -319,6 +322,15 @@ public:
   }
 
   /**
+   * @brief Check if the containers need to be resized.
+   */
+  inline bool
+  check_resize_containers()
+  {
+    return resize_containers_trigger;
+  }
+
+  /**
    * @brief Check if the mobility status need to be reset to mobile.
    */
   inline bool
@@ -337,8 +349,9 @@ private:
     , sparse_contacts_enabled(false)
     , grid_motion_enabled(false)
     , read_checkpoint_trigger(false)
-    , repartition_trigger(false)
+    , load_balance_trigger(false)
     , clear_tangential_overlap_trigger(false)
+    , resize_containers_trigger(true)
     , contact_search_trigger(true)
     , solid_object_search_trigger(false)
     , sparse_contacts_cells_update_trigger(false)
@@ -379,12 +392,18 @@ private:
   /**
    * @brief Flag of the trigger for load balancing execution.
    */
-  bool repartition_trigger;
+  bool load_balance_trigger;
 
   /**
    * @brief Flag of the trigger for clearing the tangential overlap history.
    */
   bool clear_tangential_overlap_trigger;
+
+  /**
+   * @brief Flag of the trigger for resize the vector dependant of the local
+   * particles.
+   */
+  bool resize_containers_trigger;
 
   /**
    * @brief Flag of the trigger for the contact search.

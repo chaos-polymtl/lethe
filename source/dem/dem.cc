@@ -6,7 +6,6 @@
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
-#include <dem/force_chains_visualization.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
@@ -40,15 +39,15 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
   , mapping(1)
-  , contact_build_number(0)
+  , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
-  , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
+  , contact_build_number(0)
   , background_dh(triangulation)
   , size_distribution_object_container(
       parameters.lagrangian_physical_properties.particle_type_number)
@@ -325,7 +324,7 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
 
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
-  // diameter - 1) *  largest particle radius). This value is used in
+  // diameter - 1) * largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
@@ -353,7 +352,6 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   // Set up the periodic boundaries (if PBC enabled)
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
-  periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
 
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
@@ -796,24 +794,30 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 {
   particle_handler.sort_particles_into_subdomains_and_cells();
 
-  // Resize and reinitialize displacement container
-  displacement.resize(particle_handler.get_max_local_particle_index());
-  std::fill(displacement.begin(), displacement.end(), 0.);
-
-  // Resize and reinitialize displacement container
-  force.resize(displacement.size());
-  torque.resize(displacement.size());
-  MOI.resize(displacement.size());
-
-  // Updating moment of inertia container
-  for (auto &particle : particle_handler)
+  // Resize the displacement, force and torque containers only if the particles
+  // have changed subdomains
+  if (action_manager->check_resize_containers())
     {
-      auto particle_properties = particle.get_properties();
-      MOI[particle.get_local_index()] =
-        0.1 * particle_properties[DEM::PropertiesIndex::mass] *
-        particle_properties[DEM::PropertiesIndex::dp] *
-        particle_properties[DEM::PropertiesIndex::dp];
+      // Resize and reinitialize displacement container
+      displacement.resize(particle_handler.get_max_local_particle_index());
+      // Resize and reinitialize displacement container
+      force.resize(displacement.size());
+      torque.resize(displacement.size());
+      MOI.resize(displacement.size());
+
+      // Updating moment of inertia container
+      for (auto &particle : particle_handler)
+        {
+          auto particle_properties = particle.get_properties();
+          MOI[particle.get_local_index()] =
+            0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+            particle_properties[DEM::PropertiesIndex::dp] *
+            particle_properties[DEM::PropertiesIndex::dp];
+        }
     }
+
+  // Always reset the displacement values since we are doing a search detection
+  std::fill(displacement.begin(), displacement.end(), 0.);
 
   // Exchange ghost particles
   particle_handler.exchange_ghost_particles(true);
@@ -949,7 +953,8 @@ DEMSolver<dim>::solve()
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared, periodic_offset);
+            neighborhood_threshold_squared,
+            periodic_boundaries_object.get_periodic_offset_distance());
 
           // Execute fine search by updating particle-wall contact
           // containers according to the neighborhood threshold
@@ -973,7 +978,7 @@ DEMSolver<dim>::solve()
           simulation_control->get_time_step(),
           torque,
           force,
-          periodic_offset);
+          periodic_boundaries_object.get_periodic_offset_distance());
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
