@@ -1406,6 +1406,9 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
           break;
         }
     }
+
+  // Initialize the total contact list counter
+  contact_search_total_number = 0;
 }
 
 template <int dim>

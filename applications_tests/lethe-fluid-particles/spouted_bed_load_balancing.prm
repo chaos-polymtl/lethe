@@ -76,7 +76,7 @@ subsection cfd-dem
   set implicit stabilization        = false
   set grad-div length scale         = 0.005
   set vans model                    = modelA
-  set particle statistics           = false
+  set particle statistics           = true
 end
 
 #---------------------------------------------------
