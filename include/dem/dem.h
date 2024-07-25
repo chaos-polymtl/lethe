@@ -78,8 +78,6 @@ private:
   void
   setup_parameters();
 
-  void
-  setup_triangulation_dependent_parameters();
   /**
    * @brief Initializes the distribution type for the particles, and sets the
    * maximum particle diameter and the neighborhood threshold squared in the
@@ -92,77 +90,47 @@ private:
   setup_solid_objects();
 
   /**
-   * @brief Manages the call to the load balance by first identifying if
-   * load balancing is required and then performing the load balance.
-   */
-  void
-  load_balance();
-
-  /**
    * @brief Sets the right iteration check function according to the chosen contact detection method.
    *
    * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
    */
   inline std::function<void()>
-  set_contact_search_iteration_function()
-  {
-    using namespace Parameters::Lagrangian;
-    ModelParameters::ContactDetectionMethod &contact_detection_method =
-      parameters.model_parameters.contact_detection_method;
+  set_contact_search_iteration_function();
 
-    switch (contact_detection_method)
-      {
-        case ModelParameters::ContactDetectionMethod::constant:
-          return [&] { check_contact_search_iteration_constant(); };
-        case ModelParameters::ContactDetectionMethod::dynamic:
-          return [&] { check_contact_search_iteration_dynamic(); };
-        default:
-          throw(std::runtime_error("Invalid contact detection method."));
-      }
-  }
+  /**
+   * Sets the chosen insertion method in the parameter handler file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the insertion object
+   */
+  std::shared_ptr<Insertion<dim>>
+  set_insertion_type(const DEMSolverParameters<dim> &dem_parameters);
 
-  inline void
-  resize_containers()
-  {
-    displacement.resize(particle_handler.get_max_local_particle_index());
-    std::fill(displacement.begin(), displacement.end(), 0.);
+  /**
+   * Sets the chosen integration method in the parameter handler file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the integration object
+   */
+  std::shared_ptr<Integrator<dim>>
+  set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
 
-    force.resize(displacement.size());
-    torque.resize(displacement.size());
-  }
+  void
+  setup_triangulation_dependent_parameters();
 
-  inline void
-  sort_particles_into_subdomains_and_cells()
-  {
-    particle_handler.sort_particles_into_subdomains_and_cells();
+  /**
+   * Sets the background degree of freedom used for parallel grid output
+   *
+   */
+  void
+  setup_background_dofs();
 
-    // Resizing displacement, force and torque containers
-    resize_containers();
-
-    // Updating moment of inertia container
-    update_moment_of_inertia(particle_handler, MOI);
-
-    particle_handler.exchange_ghost_particles(true);
-  }
-
-  inline void
-  move_solid_objects()
-  {
-    if (!action_manager->check_solid_objects_enabling())
-      return;
-
-    // Move the solid triangulations, previous time must be used here
-    // instead of current time.
-    for (auto &solid_object : solid_surfaces)
-      solid_object->move_solid_triangulation(
-        simulation_control->get_time_step(),
-        simulation_control->get_previous_time());
-
-    for (auto &solid_object : solid_volumes)
-      solid_object->move_solid_triangulation(
-        simulation_control->get_time_step(),
-        simulation_control->get_previous_time());
-  }
+  /**
+   * @brief Manages the call to the load balance by first identifying if
+   * load balancing is required and then performing the load balance.
+   */
+  void
+  load_balance();
 
   /**
    * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
@@ -193,22 +161,14 @@ private:
   insert_particles();
 
   /**
-   * @brief Updates moment of inertia container after sorting particles
-   * into subdomains
-   *
-   */
-  void
-  update_moment_of_inertia(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
-
-
-  /**
    * @brief Calculates particles-wall contact forces
    *
    */
   void
   particle_wall_contact_force();
+
+  inline void
+  move_solid_objects();
 
   /**
    * @brief finish_simulation
@@ -217,31 +177,6 @@ private:
    */
   void
   finish_simulation();
-
-  /**
-   * Sets the chosen insertion method in the parameter handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the insertion object
-   */
-  std::shared_ptr<Insertion<dim>>
-  set_insertion_type(const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the chosen integration method in the parameter handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the integration object
-   */
-  std::shared_ptr<Integrator<dim>>
-  set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the background degree of freedom used for parallel grid output
-   *
-   */
-  void
-  setup_background_dofs();
 
   /**
    * @brief write_output_results
@@ -264,6 +199,10 @@ private:
    */
   void
   report_statistics();
+
+
+  inline void
+  sort_particles_into_subdomains_and_cells();
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;

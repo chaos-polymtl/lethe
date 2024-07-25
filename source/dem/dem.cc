@@ -77,6 +77,7 @@ DEMSolver<dim>::setup_parameters()
         }
     }
 
+  // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
 
   // Change the behavior of the timer for situations when you don't want outputs
@@ -87,14 +88,13 @@ DEMSolver<dim>::setup_parameters()
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
-  // Setup load balancing parameters
+  // Setup load balancing parameters and attach the correct functions to the
+  // signals inside the triangulation
   load_balancing.set_parameters(parameters.model_parameters);
   load_balancing.copy_references(simulation_control,
                                  triangulation,
                                  particle_handler,
                                  sparse_contacts_object);
-
-  // Attach the correct functions to the signals inside the triangulation
   load_balancing.connect_weight_signals();
 
   // Set the adaptive sparse contacts parameters
@@ -138,12 +138,12 @@ DEMSolver<dim>::setup_parameters()
         }
     }
 
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
+
   // Set insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
   insertion_object = set_insertion_type(parameters);
-
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type(parameters);
@@ -156,42 +156,6 @@ DEMSolver<dim>::setup_parameters()
   // If this is a start simulation
   if (parameters.restart.restart)
     action_manager->restart_simulation();
-}
-
-template <int dim>
-void
-DEMSolver<dim>::setup_background_dofs()
-{
-  FE_Q<dim> background_fe(1);
-  background_dh.distribute_dofs(background_fe);
-
-  // Periodic nodes must be mapped otherwise the disabling of contacts will not
-  // propagate the mobility status to the periodic nodes during iterations.
-  // Identification of periodic nodes is done with the background constraints.
-  // Those constraints are not used for any matrix assembly in DEM solver, this
-  // approach comes from CFD-DEM coupling where void fraction constraints are
-  // used to achieve the periodic node mapping.
-  if (action_manager->check_periodic_boundaries_enabling() &&
-      action_manager->check_sparse_contacts_enabling())
-    {
-      IndexSet locally_relevant_dofs;
-      DoFTools::extract_locally_relevant_dofs(background_dh,
-                                              locally_relevant_dofs);
-
-      background_constraints.clear();
-      background_constraints.reinit(locally_relevant_dofs);
-
-      DoFTools::make_periodicity_constraints(
-        background_dh,
-        parameters.boundary_conditions.periodic_boundary_0,
-        parameters.boundary_conditions.periodic_boundary_1,
-        parameters.boundary_conditions.periodic_direction,
-        background_constraints);
-
-      background_constraints.close();
-
-      sparse_contacts_object.map_periodic_nodes(background_constraints);
-    }
 }
 
 template <int dim>
@@ -264,12 +228,169 @@ DEMSolver<dim>::setup_solid_objects()
   solid_surfaces_mesh_info.resize(solid_surfaces.size());
   solid_volumes_mesh_info.resize(solid_volumes.size());
 
-  // Resize particle_floating_mesh_in_contact
+  // Simulation has solid objects and resize the container
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
       action_manager->set_solid_objects_enabling();
       contact_manager.particle_floating_mesh_in_contact.resize(
         solid_surfaces.size() + solid_volumes.size());
+    }
+}
+
+template <int dim>
+inline std::function<void()>
+DEMSolver<dim>::set_contact_search_iteration_function()
+{
+  using namespace Parameters::Lagrangian;
+  ModelParameters::ContactDetectionMethod &contact_detection_method =
+    parameters.model_parameters.contact_detection_method;
+
+  switch (contact_detection_method)
+    {
+      case ModelParameters::ContactDetectionMethod::constant:
+        return [&] { check_contact_search_iteration_constant(); };
+      case ModelParameters::ContactDetectionMethod::dynamic:
+        return [&] { check_contact_search_iteration_dynamic(); };
+      default:
+        throw(std::runtime_error("Invalid contact detection method."));
+    }
+}
+
+template <int dim>
+std::shared_ptr<Insertion<dim>>
+DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
+{
+  using namespace Parameters::Lagrangian;
+  InsertionInfo::InsertionMethod insertion_method =
+    parameters.insertion_info.insertion_method;
+
+  switch (insertion_method)
+    {
+      case InsertionInfo::InsertionMethod::file:
+        {
+          return std::make_shared<InsertionFile<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::list:
+        {
+          return std::make_shared<InsertionList<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::plane:
+        {
+          return std::make_shared<InsertionPlane<dim>>(
+            size_distribution_object_container, triangulation, parameters);
+        }
+      case InsertionInfo::InsertionMethod::volume:
+        {
+          return std::make_shared<InsertionVolume<dim>>(
+            size_distribution_object_container,
+            triangulation,
+            parameters,
+            maximum_particle_diameter);
+        }
+      default:
+        throw(std::runtime_error("Invalid insertion method."));
+    }
+}
+
+template <int dim>
+std::shared_ptr<Integrator<dim>>
+DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
+{
+  using namespace Parameters::Lagrangian;
+  ModelParameters::IntegrationMethod integration_method =
+    parameters.model_parameters.integration_method;
+
+  switch (integration_method)
+    {
+      case ModelParameters::IntegrationMethod::velocity_verlet:
+        return std::make_shared<VelocityVerletIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::explicit_euler:
+        return std::make_shared<ExplicitEulerIntegrator<dim>>();
+      case ModelParameters::IntegrationMethod::gear3:
+        return std::make_shared<Gear3Integrator<dim>>();
+      default:
+        throw(std::runtime_error("Invalid integration method."));
+    }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_triangulation_dependent_parameters()
+{
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force_model(parameters, triangulation);
+
+  // Find the smallest contact search frequency criterion between (smallest
+  // cell size - largest particle radius) and (security factor * (blob
+  // diameter - 1) *  largest particle radius). This value is used in
+  // find_contact_detection_frequency function
+  smallest_contact_search_criterion =
+    std::min((GridTools::minimal_cell_diameter(triangulation) -
+              maximum_particle_diameter * 0.5),
+             (parameters.model_parameters.dynamic_contact_search_factor *
+              (parameters.model_parameters.neighborhood_threshold - 1) *
+              maximum_particle_diameter * 0.5));
+
+  // Find the smallest cell size and use this as the floating mesh mapping
+  // criterion. The edge case comes when the cell are completely square/cubic.
+  // In that case, every sides of a cell are 2^-0.5 or 3^-0.5 times the
+  // cell_diameter. We want to refresh the mapping each time the solid-objet
+  // pass through a cell or there will be late contact detection. Thus, we use
+  // this value.
+  smallest_solid_object_mapping_criterion = [&] {
+    if constexpr (dim == 2) // 2^-0.5 * D_c,min
+      return 0.70710678118 * GridTools::minimal_cell_diameter(triangulation);
+    if constexpr (dim == 3) // 3^-0.5 * D_c,min
+      return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
+  }();
+
+  // Setup background dof
+  setup_background_dofs();
+
+  // Set up the periodic boundaries (if PBC enabled)
+  periodic_boundaries_object.map_periodic_cells(
+    triangulation, periodic_boundaries_cells_information);
+  periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
+
+  // Set up the local and ghost cells (if ASC enabled)
+  sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
+}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_background_dofs()
+{
+  FE_Q<dim> background_fe(1);
+  background_dh.distribute_dofs(background_fe);
+
+  // Periodic nodes must be mapped otherwise the disabling of contacts will not
+  // propagate the mobility status to the periodic nodes during iterations.
+  // Identification of periodic nodes is done with the background constraints.
+  // Those constraints are not used for any matrix assembly in DEM solver, this
+  // approach comes from CFD-DEM coupling where void fraction constraints are
+  // used to achieve the periodic node mapping.
+  if (action_manager->check_periodic_boundaries_enabling() &&
+      action_manager->check_sparse_contacts_enabling())
+    {
+      IndexSet locally_relevant_dofs;
+      DoFTools::extract_locally_relevant_dofs(background_dh,
+                                              locally_relevant_dofs);
+
+      background_constraints.clear();
+      background_constraints.reinit(locally_relevant_dofs);
+
+      DoFTools::make_periodicity_constraints(
+        background_dh,
+        parameters.boundary_conditions.periodic_boundary_0,
+        parameters.boundary_conditions.periodic_boundary_1,
+        parameters.boundary_conditions.periodic_direction,
+        background_constraints);
+
+      background_constraints.close();
+
+      sparse_contacts_object.map_periodic_nodes(background_constraints);
     }
 }
 
@@ -373,24 +494,6 @@ DEMSolver<dim>::insert_particles()
 
 template <int dim>
 void
-DEMSolver<dim>::update_moment_of_inertia(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
-{
-  MOI.resize(torque.size());
-
-  for (auto &particle : particle_handler)
-    {
-      auto particle_properties = particle.get_properties();
-      MOI[particle.get_local_index()] =
-        0.1 * particle_properties[DEM::PropertiesIndex::mass] *
-        particle_properties[DEM::PropertiesIndex::dp] *
-        particle_properties[DEM::PropertiesIndex::dp];
-    }
-}
-
-template <int dim>
-void
 DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
@@ -448,13 +551,31 @@ DEMSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
+DEMSolver<dim>::move_solid_objects()
+{
+  if (!action_manager->check_solid_objects_enabling())
+    return;
+
+  // Move the solid triangulations, previous time must be used here
+  // instead of current time.
+  for (auto &solid_object : solid_surfaces)
+    solid_object->move_solid_triangulation(
+      simulation_control->get_time_step(),
+      simulation_control->get_previous_time());
+
+  for (auto &solid_object : solid_volumes)
+    solid_object->move_solid_triangulation(
+      simulation_control->get_time_step(),
+      simulation_control->get_previous_time());
+}
+
+template <int dim>
+void
 DEMSolver<dim>::finish_simulation()
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
-    {
-      this->computing_timer.print_summary();
-    }
+    this->computing_timer.print_summary();
 
   // Testing
   if (parameters.test.enabled)
@@ -507,65 +628,6 @@ DEMSolver<dim>::finish_simulation()
         simulation_control->get_time_step(),
         forces_boundary_information,
         torques_boundary_information);
-    }
-}
-
-template <int dim>
-std::shared_ptr<Insertion<dim>>
-DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
-{
-  using namespace Parameters::Lagrangian;
-  InsertionInfo::InsertionMethod insertion_method =
-    parameters.insertion_info.insertion_method;
-
-  switch (insertion_method)
-    {
-      case InsertionInfo::InsertionMethod::file:
-        {
-          return std::make_shared<InsertionFile<dim>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo::InsertionMethod::list:
-        {
-          return std::make_shared<InsertionList<dim>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo::InsertionMethod::plane:
-        {
-          return std::make_shared<InsertionPlane<dim>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo::InsertionMethod::volume:
-        {
-          return std::make_shared<InsertionVolume<dim>>(
-            size_distribution_object_container,
-            triangulation,
-            parameters,
-            maximum_particle_diameter);
-        }
-      default:
-        throw(std::runtime_error("Invalid insertion method."));
-    }
-}
-
-template <int dim>
-std::shared_ptr<Integrator<dim>>
-DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
-{
-  using namespace Parameters::Lagrangian;
-  ModelParameters::IntegrationMethod integration_method =
-    parameters.model_parameters.integration_method;
-
-  switch (integration_method)
-    {
-      case ModelParameters::IntegrationMethod::velocity_verlet:
-        return std::make_shared<VelocityVerletIntegrator<dim>>();
-      case ModelParameters::IntegrationMethod::explicit_euler:
-        return std::make_shared<ExplicitEulerIntegrator<dim>>();
-      case ModelParameters::IntegrationMethod::gear3:
-        return std::make_shared<Gear3Integrator<dim>>();
-      default:
-        throw(std::runtime_error("Invalid integration method."));
     }
 }
 
@@ -728,47 +790,34 @@ DEMSolver<dim>::report_statistics()
 }
 
 template <int dim>
-void
-DEMSolver<dim>::setup_triangulation_dependent_parameters()
+inline void
+DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 {
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters, triangulation);
+  particle_handler.sort_particles_into_subdomains_and_cells();
 
-  // Find the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blob
-  // diameter - 1) *  largest particle radius). This value is used in
-  // find_contact_detection_frequency function
-  smallest_contact_search_criterion =
-    std::min((GridTools::minimal_cell_diameter(triangulation) -
-              maximum_particle_diameter * 0.5),
-             (parameters.model_parameters.dynamic_contact_search_factor *
-              (parameters.model_parameters.neighborhood_threshold - 1) *
-              maximum_particle_diameter * 0.5));
+  // Resize and reinitialize displacement container
+  displacement.resize(particle_handler.get_max_local_particle_index());
+  std::fill(displacement.begin(), displacement.end(), 0.);
 
-  // Find the smallest cell size and use this as the floating mesh mapping
-  // criterion. The edge case comes when the cell are completely square/cubic.
-  // In that case, every sides of a cell are 2^-0.5 or 3^-0.5 times the
-  // cell_diameter. We want to refresh the mapping each time the solid-objet
-  // pass through a cell or there will be late contact detection. Thus, we use
-  // this value.
-  smallest_solid_object_mapping_criterion = [&] {
-    if constexpr (dim == 2) // 2^-0.5 * D_c,min
-      return 0.70710678118 * GridTools::minimal_cell_diameter(triangulation);
-    if constexpr (dim == 3) // 3^-0.5 * D_c,min
-      return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
-  }();
+  // Resize and reinitialize displacement container
+  force.resize(displacement.size());
+  torque.resize(displacement.size());
+  MOI.resize(displacement.size());
 
-  // Setup background dof
-  setup_background_dofs();
+  // Updating moment of inertia container
+  for (auto &particle : particle_handler)
+    {
+      auto particle_properties = particle.get_properties();
+      MOI[particle.get_local_index()] =
+        0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+        particle_properties[DEM::PropertiesIndex::dp] *
+        particle_properties[DEM::PropertiesIndex::dp];
+    }
 
-  // Set up the periodic boundaries (if PBC enabled)
-  periodic_boundaries_object.map_periodic_cells(
-    triangulation, periodic_boundaries_cells_information);
-  periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
-
-  // Set up the local and ghost cells (if ASC enabled)
-  sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
+  // Exchange ghost particles
+  particle_handler.exchange_ghost_particles(true);
 }
+
 
 template <int dim>
 void
