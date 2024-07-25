@@ -208,6 +208,7 @@ template <int dim>
 void
 DEMSolver<dim>::setup_solid_objects()
 {
+  // Set up solid objects and carry them in vectors
   for (unsigned int i_solid = 0;
        i_solid < parameters.solid_objects->number_solid_surfaces;
        ++i_solid)
@@ -224,7 +225,7 @@ DEMSolver<dim>::setup_solid_objects()
         this->parameters.solid_objects->solid_volumes[i_solid], i_solid));
     }
 
-  // Generate solid objects
+  // Resize the mesh info containers
   solid_surfaces_mesh_info.resize(solid_surfaces.size());
   solid_volumes_mesh_info.resize(solid_volumes.size());
 
