@@ -83,7 +83,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::read_dem()
 {
-  this->pcout << "Reading DEM checkpoint " << std::endl;
+  this->pcout << "Reading DEM checkpoint" << std::endl;
 
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
@@ -134,9 +134,9 @@ CFDDEMSolver<dim>::read_dem()
   // Deserialize particles have the triangulation has been read
   this->particle_handler.deserialize();
 
-  this->pcout << "Finished reading DEM checkpoint " << std::endl
+  this->pcout << "Finished reading DEM checkpoint" << std::endl
               << this->particle_handler.n_global_particles()
-              << " particles are in the simulation " << std::endl;
+              << " particles are in the simulation" << std::endl;
 
   write_DEM_output_results();
 }
@@ -445,7 +445,7 @@ CFDDEMSolver<dim>::load_balance()
   const auto average_minimum_maximum_particles = Utilities::MPI::min_max_avg(
     this->particle_handler.n_locally_owned_particles(), this->mpi_communicator);
 
-  this->pcout << "Load balance finished " << std::endl;
+  this->pcout << "Load balance finished" << std::endl;
   this->pcout
     << "Average, minimum and maximum number of particles on the processors are "
     << average_minimum_maximum_particles.avg << " , "
@@ -538,7 +538,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::initialize_dem_parameters()
 {
-  this->pcout << "Initializing DEM parameters " << std::endl;
+  this->pcout << "Initializing DEM parameters" << std::endl;
 
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
@@ -620,8 +620,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   // Updating moment of inertia container
   update_moment_of_inertia(this->particle_handler, MOI);
 
-  this->pcout << "Finished initializing DEM parameters " << std::endl
-              << "DEM time-step is " << dem_time_step << " s " << std::endl;
+  this->pcout << "Finished initializing DEM parameters" << std::endl
+              << "DEM time-step is " << dem_time_step << " s" << std::endl;
 }
 
 template <int dim>
@@ -1221,7 +1221,7 @@ void
 CFDDEMSolver<dim>::print_particles_summary()
 {
   this->pcout << "Particle Summary" << std::endl;
-  this->pcout << "id, x, y, z, v_x, v_y, v_z " << std::endl;
+  this->pcout << "id, x, y, z, v_x, v_y, v_z" << std::endl;
   // Agressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(this->mpi_communicator);
@@ -1558,7 +1558,7 @@ CFDDEMSolver<dim>::solve()
       }
       contact_search_total_number += contact_search_counter;
 
-      this->pcout << "Finished " << coupling_frequency << " DEM iterations "
+      this->pcout << "Finished " << coupling_frequency << " DEM iterations"
                   << std::endl;
 
       this->postprocess(false);
