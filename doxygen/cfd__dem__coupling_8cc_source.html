@@ -164,7 +164,7 @@ $(function() {
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keywordtype">void</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="classCFDDEMSolver.html#a49eace16077d20cb12722c0fa49aed14">   84</a></span>&#160;<a class="code" href="classCFDDEMSolver.html#a49eace16077d20cb12722c0fa49aed14">CFDDEMSolver&lt;dim&gt;::read_dem</a>()</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;{</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Reading DEM checkpoint &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Reading DEM checkpoint&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  std::string prefix =</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;dem_file_name;</div>
@@ -215,9 +215,9 @@ $(function() {
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">// Deserialize particles have the triangulation has been read</span></div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  this-&gt;particle_handler.deserialize();</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished reading DEM checkpoint &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished reading DEM checkpoint&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;              &lt;&lt; this-&gt;particle_handler.n_global_particles()</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;              &lt;&lt; <span class="stringliteral">&quot; particles are in the simulation &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;              &lt;&lt; <span class="stringliteral">&quot; particles are in the simulation&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  write_DEM_output_results();</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;}</div>
@@ -526,7 +526,7 @@ $(function() {
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> average_minimum_maximum_particles = Utilities::MPI::min_max_avg(</div>
 <div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    this-&gt;particle_handler.n_locally_owned_particles(), this-&gt;mpi_communicator);</div>
 <div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160; </div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Load balance finished &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Load balance finished&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;  this-&gt;pcout</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    &lt;&lt; <span class="stringliteral">&quot;Average, minimum and maximum number of particles on the processors are &quot;</span></div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    &lt;&lt; average_minimum_maximum_particles.avg &lt;&lt; <span class="stringliteral">&quot; , &quot;</span></div>
@@ -619,7 +619,7 @@ $(function() {
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="keywordtype">void</span></div>
 <div class="line"><a name="l00539"></a><span class="lineno"><a class="line" href="classCFDDEMSolver.html#adcdc56eef545bb81d6359211782fd85b">  539</a></span>&#160;<a class="code" href="classCFDDEMSolver.html#adcdc56eef545bb81d6359211782fd85b">CFDDEMSolver&lt;dim&gt;::initialize_dem_parameters</a>()</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;{</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Initializing DEM parameters &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Initializing DEM parameters&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160; </div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> parallel_triangulation =</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
@@ -701,8 +701,8 @@ $(function() {
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;  <span class="comment">// Updating moment of inertia container</span></div>
 <div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;  update_moment_of_inertia(this-&gt;particle_handler, MOI);</div>
 <div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160; </div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished initializing DEM parameters &quot;</span> &lt;&lt; std::endl</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;DEM time-step is &quot;</span> &lt;&lt; dem_time_step &lt;&lt; <span class="stringliteral">&quot; s &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished initializing DEM parameters&quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;DEM time-step is &quot;</span> &lt;&lt; dem_time_step &lt;&lt; <span class="stringliteral">&quot; s&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;}</div>
 <div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160; </div>
 <div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
@@ -1302,7 +1302,7 @@ $(function() {
 <div class="line"><a name="l01221"></a><span class="lineno"><a class="line" href="classCFDDEMSolver.html#ae7e51607d5955b60cc40ed8ad05b69ae"> 1221</a></span>&#160;<a class="code" href="classCFDDEMSolver.html#ae7e51607d5955b60cc40ed8ad05b69ae">CFDDEMSolver&lt;dim&gt;::print_particles_summary</a>()</div>
 <div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;{</div>
 <div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Particle Summary&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;id, x, y, z, v_x, v_y, v_z &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;id, x, y, z, v_x, v_y, v_z&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;  <span class="comment">// Agressively force synchronization of the header line</span></div>
 <div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;  usleep(500);</div>
 <div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;  MPI_Barrier(this-&gt;mpi_communicator);</div>
@@ -1487,179 +1487,182 @@ $(function() {
 <div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;          <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160;        }</div>
 <div class="line"><a name="l01408"></a><span class="lineno"> 1408</span>&#160;    }</div>
-<div class="line"><a name="l01409"></a><span class="lineno"> 1409</span>&#160;}</div>
-<div class="line"><a name="l01410"></a><span class="lineno"> 1410</span>&#160; </div>
-<div class="line"><a name="l01411"></a><span class="lineno"> 1411</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01412"></a><span class="lineno"> 1412</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01413"></a><span class="lineno"><a class="line" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87"> 1413</a></span>&#160;<a class="code" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt;dim&gt;::solve</a>()</div>
-<div class="line"><a name="l01414"></a><span class="lineno"> 1414</span>&#160;{</div>
-<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;  <a class="code" href="grids_8h.html#a1f27ceafbf8c10616efa13f334641b85">read_mesh_and_manifolds</a>(</div>
-<div class="line"><a name="l01416"></a><span class="lineno"> 1416</span>&#160;    *this-&gt;triangulation,</div>
-<div class="line"><a name="l01417"></a><span class="lineno"> 1417</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.mesh,</div>
-<div class="line"><a name="l01418"></a><span class="lineno"> 1418</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,</div>
-<div class="line"><a name="l01419"></a><span class="lineno"> 1419</span>&#160;    <span class="keyword">true</span>,</div>
-<div class="line"><a name="l01420"></a><span class="lineno"> 1420</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);</div>
-<div class="line"><a name="l01421"></a><span class="lineno"> 1421</span>&#160; </div>
-<div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;  dem_setup_contact_parameters();</div>
-<div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160; </div>
-<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;  <span class="comment">// Reading DEM start file information</span></div>
-<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160;      this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
-<div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160;          .restart == <span class="keyword">false</span>)</div>
-<div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160;    read_dem();</div>
-<div class="line"><a name="l01429"></a><span class="lineno"> 1429</span>&#160; </div>
-<div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;  this-&gt;setup_dofs();</div>
-<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160; </div>
-<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;  this-&gt;set_initial_condition(</div>
-<div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.initial_condition-&gt;type,</div>
-<div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
-<div class="line"><a name="l01435"></a><span class="lineno"> 1435</span>&#160;      .restart);</div>
-<div class="line"><a name="l01436"></a><span class="lineno"> 1436</span>&#160; </div>
-<div class="line"><a name="l01437"></a><span class="lineno"> 1437</span>&#160;  <span class="comment">// In the case the simulation is being restarted from a checkpoint file, the</span></div>
-<div class="line"><a name="l01438"></a><span class="lineno"> 1438</span>&#160;  <span class="comment">// checkpoint_step parameter is set to true. This allows to perform all</span></div>
-<div class="line"><a name="l01439"></a><span class="lineno"> 1439</span>&#160;  <span class="comment">// operations related to restarting a simulation. Once all operations have</span></div>
-<div class="line"><a name="l01440"></a><span class="lineno"> 1440</span>&#160;  <span class="comment">// been performed, this checkpoint_step is reset to false. It is only set once</span></div>
-<div class="line"><a name="l01441"></a><span class="lineno"> 1441</span>&#160;  <span class="comment">// and reset once since restarting only occurs once.</span></div>
-<div class="line"><a name="l01442"></a><span class="lineno"> 1442</span>&#160;  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
-<div class="line"><a name="l01443"></a><span class="lineno"> 1443</span>&#160;        .restart == <span class="keyword">true</span>)</div>
-<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;    checkpoint_step = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;  <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160;    checkpoint_step = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160; </div>
-<div class="line"><a name="l01448"></a><span class="lineno"> 1448</span>&#160;  <span class="comment">// Initialize the DEM parameters and generate the required ghost particles</span></div>
-<div class="line"><a name="l01449"></a><span class="lineno"> 1449</span>&#160;  initialize_dem_parameters();</div>
+<div class="line"><a name="l01409"></a><span class="lineno"> 1409</span>&#160; </div>
+<div class="line"><a name="l01410"></a><span class="lineno"> 1410</span>&#160;  <span class="comment">// Initialize the total contact list counter</span></div>
+<div class="line"><a name="l01411"></a><span class="lineno"> 1411</span>&#160;  contact_search_total_number = 0;</div>
+<div class="line"><a name="l01412"></a><span class="lineno"> 1412</span>&#160;}</div>
+<div class="line"><a name="l01413"></a><span class="lineno"> 1413</span>&#160; </div>
+<div class="line"><a name="l01414"></a><span class="lineno"> 1414</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01416"></a><span class="lineno"><a class="line" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87"> 1416</a></span>&#160;<a class="code" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt;dim&gt;::solve</a>()</div>
+<div class="line"><a name="l01417"></a><span class="lineno"> 1417</span>&#160;{</div>
+<div class="line"><a name="l01418"></a><span class="lineno"> 1418</span>&#160;  <a class="code" href="grids_8h.html#a1f27ceafbf8c10616efa13f334641b85">read_mesh_and_manifolds</a>(</div>
+<div class="line"><a name="l01419"></a><span class="lineno"> 1419</span>&#160;    *this-&gt;triangulation,</div>
+<div class="line"><a name="l01420"></a><span class="lineno"> 1420</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.mesh,</div>
+<div class="line"><a name="l01421"></a><span class="lineno"> 1421</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,</div>
+<div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;    <span class="keyword">true</span>,</div>
+<div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);</div>
+<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160; </div>
+<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;  dem_setup_contact_parameters();</div>
+<div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160; </div>
+<div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160;  <span class="comment">// Reading DEM start file information</span></div>
+<div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160;  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a name="l01429"></a><span class="lineno"> 1429</span>&#160;      this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
+<div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;          .restart == <span class="keyword">false</span>)</div>
+<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160;    read_dem();</div>
+<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160; </div>
+<div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;  this-&gt;setup_dofs();</div>
+<div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160; </div>
+<div class="line"><a name="l01435"></a><span class="lineno"> 1435</span>&#160;  this-&gt;set_initial_condition(</div>
+<div class="line"><a name="l01436"></a><span class="lineno"> 1436</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.initial_condition-&gt;type,</div>
+<div class="line"><a name="l01437"></a><span class="lineno"> 1437</span>&#160;    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
+<div class="line"><a name="l01438"></a><span class="lineno"> 1438</span>&#160;      .restart);</div>
+<div class="line"><a name="l01439"></a><span class="lineno"> 1439</span>&#160; </div>
+<div class="line"><a name="l01440"></a><span class="lineno"> 1440</span>&#160;  <span class="comment">// In the case the simulation is being restarted from a checkpoint file, the</span></div>
+<div class="line"><a name="l01441"></a><span class="lineno"> 1441</span>&#160;  <span class="comment">// checkpoint_step parameter is set to true. This allows to perform all</span></div>
+<div class="line"><a name="l01442"></a><span class="lineno"> 1442</span>&#160;  <span class="comment">// operations related to restarting a simulation. Once all operations have</span></div>
+<div class="line"><a name="l01443"></a><span class="lineno"> 1443</span>&#160;  <span class="comment">// been performed, this checkpoint_step is reset to false. It is only set once</span></div>
+<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;  <span class="comment">// and reset once since restarting only occurs once.</span></div>
+<div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
+<div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160;        .restart == <span class="keyword">true</span>)</div>
+<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;    checkpoint_step = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01448"></a><span class="lineno"> 1448</span>&#160;  <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01449"></a><span class="lineno"> 1449</span>&#160;    checkpoint_step = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l01450"></a><span class="lineno"> 1450</span>&#160; </div>
-<div class="line"><a name="l01451"></a><span class="lineno"> 1451</span>&#160;  this-&gt;particle_handler.exchange_ghost_particles(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l01452"></a><span class="lineno"> 1452</span>&#160; </div>
+<div class="line"><a name="l01451"></a><span class="lineno"> 1451</span>&#160;  <span class="comment">// Initialize the DEM parameters and generate the required ghost particles</span></div>
+<div class="line"><a name="l01452"></a><span class="lineno"> 1452</span>&#160;  initialize_dem_parameters();</div>
 <div class="line"><a name="l01453"></a><span class="lineno"> 1453</span>&#160; </div>
-<div class="line"><a name="l01454"></a><span class="lineno"> 1454</span>&#160;  <span class="comment">// Remap periodic nodes after setup of dofs</span></div>
-<div class="line"><a name="l01455"></a><span class="lineno"> 1455</span>&#160;  <span class="keywordflow">if</span> (has_periodic_boundaries &amp;&amp; has_sparse_contacts)</div>
-<div class="line"><a name="l01456"></a><span class="lineno"> 1456</span>&#160;    {</div>
-<div class="line"><a name="l01457"></a><span class="lineno"> 1457</span>&#160;      sparse_contacts_object.map_periodic_nodes(</div>
-<div class="line"><a name="l01458"></a><span class="lineno"> 1458</span>&#160;        this-&gt;void_fraction_constraints);</div>
-<div class="line"><a name="l01459"></a><span class="lineno"> 1459</span>&#160;    }</div>
-<div class="line"><a name="l01460"></a><span class="lineno"> 1460</span>&#160; </div>
-<div class="line"><a name="l01461"></a><span class="lineno"> 1461</span>&#160;  <span class="comment">// Calculate first instance of void fraction once particles are set-up</span></div>
-<div class="line"><a name="l01462"></a><span class="lineno"> 1462</span>&#160;  this-&gt;<a class="code" href="namespaceLetheGridTools.html#a996a99a477d3abb7d81678c39a9d9cf9">vertices_cell_mapping</a>();</div>
-<div class="line"><a name="l01463"></a><span class="lineno"> 1463</span>&#160;  <span class="keywordflow">if</span> (!checkpoint_step)</div>
-<div class="line"><a name="l01464"></a><span class="lineno"> 1464</span>&#160;    this-&gt;initialize_void_fraction();</div>
-<div class="line"><a name="l01465"></a><span class="lineno"> 1465</span>&#160; </div>
-<div class="line"><a name="l01466"></a><span class="lineno"> 1466</span>&#160;  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
-<div class="line"><a name="l01467"></a><span class="lineno"> 1467</span>&#160;    {</div>
-<div class="line"><a name="l01468"></a><span class="lineno"> 1468</span>&#160;      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
-<div class="line"><a name="l01469"></a><span class="lineno"> 1469</span>&#160;      <span class="keywordtype">bool</span> refinement_step;</div>
-<div class="line"><a name="l01470"></a><span class="lineno"> 1470</span>&#160;      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mesh_adaptation.refinement_at_frequency)</div>
-<div class="line"><a name="l01471"></a><span class="lineno"> 1471</span>&#160;        refinement_step =</div>
-<div class="line"><a name="l01472"></a><span class="lineno"> 1472</span>&#160;          this-&gt;simulation_control-&gt;get_step_number() %</div>
-<div class="line"><a name="l01473"></a><span class="lineno"> 1473</span>&#160;            this-&gt;simulation_parameters.mesh_adaptation.frequency !=</div>
-<div class="line"><a name="l01474"></a><span class="lineno"> 1474</span>&#160;          0;</div>
-<div class="line"><a name="l01475"></a><span class="lineno"> 1475</span>&#160;      <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160;        refinement_step = this-&gt;simulation_control-&gt;get_step_number() == 0;</div>
-<div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;      <span class="keywordflow">if</span> (refinement_step ||</div>
-<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;          this-&gt;simulation_parameters.mesh_adaptation.type ==</div>
-<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;            <a class="code" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::Type::none</a> ||</div>
-<div class="line"><a name="l01480"></a><span class="lineno"> 1480</span>&#160;          this-&gt;simulation_control-&gt;is_at_start())</div>
-<div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160;        {</div>
-<div class="line"><a name="l01482"></a><span class="lineno"> 1482</span>&#160;          <span class="comment">// We allow the physics to update their boundary conditions</span></div>
-<div class="line"><a name="l01483"></a><span class="lineno"> 1483</span>&#160;          <span class="comment">// according to their own parameters</span></div>
-<div class="line"><a name="l01484"></a><span class="lineno"> 1484</span>&#160;          this-&gt;update_boundary_conditions();</div>
-<div class="line"><a name="l01485"></a><span class="lineno"> 1485</span>&#160;          this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
-<div class="line"><a name="l01486"></a><span class="lineno"> 1486</span>&#160;        }</div>
-<div class="line"><a name="l01487"></a><span class="lineno"> 1487</span>&#160; </div>
-<div class="line"><a name="l01488"></a><span class="lineno"> 1488</span>&#160;      this-&gt;dynamic_flow_control();</div>
-<div class="line"><a name="l01489"></a><span class="lineno"> 1489</span>&#160; </div>
-<div class="line"><a name="l01490"></a><span class="lineno"> 1490</span>&#160;      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
-<div class="line"><a name="l01491"></a><span class="lineno"> 1491</span>&#160;        {</div>
-<div class="line"><a name="l01492"></a><span class="lineno"> 1492</span>&#160;          <a class="code" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt;dim, GlobalVectorType, IndexSet&gt;::refine_mesh</a>();</div>
-<div class="line"><a name="l01493"></a><span class="lineno"> 1493</span>&#160;          this-&gt;<a class="code" href="namespaceLetheGridTools.html#a996a99a477d3abb7d81678c39a9d9cf9">vertices_cell_mapping</a>();</div>
-<div class="line"><a name="l01494"></a><span class="lineno"> 1494</span>&#160;        }</div>
-<div class="line"><a name="l01495"></a><span class="lineno"> 1495</span>&#160; </div>
-<div class="line"><a name="l01496"></a><span class="lineno"> 1496</span>&#160;      this-&gt;calculate_void_fraction(</div>
-<div class="line"><a name="l01497"></a><span class="lineno"> 1497</span>&#160;        this-&gt;simulation_control-&gt;get_current_time(), load_balance_step);</div>
-<div class="line"><a name="l01498"></a><span class="lineno"> 1498</span>&#160;      this-&gt;iterate();</div>
-<div class="line"><a name="l01499"></a><span class="lineno"> 1499</span>&#160; </div>
-<div class="line"><a name="l01500"></a><span class="lineno"> 1500</span>&#160;      <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_parameters.test.enabled)</div>
-<div class="line"><a name="l01501"></a><span class="lineno"> 1501</span>&#160;        {</div>
-<div class="line"><a name="l01502"></a><span class="lineno"> 1502</span>&#160;          <span class="keywordflow">switch</span> (</div>
-<div class="line"><a name="l01503"></a><span class="lineno"> 1503</span>&#160;            this-&gt;cfd_dem_simulation_parameters.cfd_parameters.test.test_type)</div>
-<div class="line"><a name="l01504"></a><span class="lineno"> 1504</span>&#160;            {</div>
-<div class="line"><a name="l01505"></a><span class="lineno"> 1505</span>&#160;              <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::TestType::particles</a>:</div>
-<div class="line"><a name="l01506"></a><span class="lineno"> 1506</span>&#160;                {</div>
-<div class="line"><a name="l01507"></a><span class="lineno"> 1507</span>&#160;                  print_particles_summary();</div>
-<div class="line"><a name="l01508"></a><span class="lineno"> 1508</span>&#160;                  <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160;                }</div>
-<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160;              <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::TestType::mobility_status</a>:</div>
-<div class="line"><a name="l01511"></a><span class="lineno"> 1511</span>&#160;                {</div>
-<div class="line"><a name="l01512"></a><span class="lineno"> 1512</span>&#160;                  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;is_at_end())</div>
-<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160; </div>
-<div class="line"><a name="l01514"></a><span class="lineno"> 1514</span>&#160;                    {</div>
-<div class="line"><a name="l01515"></a><span class="lineno"> 1515</span>&#160;                      <span class="comment">// Get mobility status vector sorted by cell id</span></div>
-<div class="line"><a name="l01516"></a><span class="lineno"> 1516</span>&#160;                      Vector&lt;float&gt; mobility_status(</div>
-<div class="line"><a name="l01517"></a><span class="lineno"> 1517</span>&#160;                        this-&gt;triangulation-&gt;n_active_cells());</div>
-<div class="line"><a name="l01518"></a><span class="lineno"> 1518</span>&#160;                      sparse_contacts_object.get_mobility_status_vector(</div>
-<div class="line"><a name="l01519"></a><span class="lineno"> 1519</span>&#160;                        mobility_status);</div>
-<div class="line"><a name="l01520"></a><span class="lineno"> 1520</span>&#160; </div>
-<div class="line"><a name="l01521"></a><span class="lineno"> 1521</span>&#160;                      <span class="comment">// Output mobility status vector</span></div>
-<div class="line"><a name="l01522"></a><span class="lineno"> 1522</span>&#160;                      visualization_object.print_intermediate_format(</div>
-<div class="line"><a name="l01523"></a><span class="lineno"> 1523</span>&#160;                        mobility_status,</div>
-<div class="line"><a name="l01524"></a><span class="lineno"> 1524</span>&#160;                        this-&gt;void_fraction_dof_handler,</div>
-<div class="line"><a name="l01525"></a><span class="lineno"> 1525</span>&#160;                        this-&gt;mpi_communicator);</div>
-<div class="line"><a name="l01526"></a><span class="lineno"> 1526</span>&#160;                    }</div>
-<div class="line"><a name="l01527"></a><span class="lineno"> 1527</span>&#160;                  <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01528"></a><span class="lineno"> 1528</span>&#160;                }</div>
-<div class="line"><a name="l01529"></a><span class="lineno"> 1529</span>&#160;              <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l01530"></a><span class="lineno"> 1530</span>&#160;                print_particles_summary();</div>
-<div class="line"><a name="l01531"></a><span class="lineno"> 1531</span>&#160;            }</div>
-<div class="line"><a name="l01532"></a><span class="lineno"> 1532</span>&#160;        }</div>
-<div class="line"><a name="l01533"></a><span class="lineno"> 1533</span>&#160; </div>
-<div class="line"><a name="l01534"></a><span class="lineno"> 1534</span>&#160;      {</div>
-<div class="line"><a name="l01535"></a><span class="lineno"> 1535</span>&#160;        <a class="code" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;DEM&quot;</span>);</div>
-<div class="line"><a name="l01536"></a><span class="lineno"> 1536</span>&#160;        TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;DEM_Iterator&quot;</span>);</div>
-<div class="line"><a name="l01537"></a><span class="lineno"> 1537</span>&#160; </div>
-<div class="line"><a name="l01538"></a><span class="lineno"> 1538</span>&#160;        <span class="comment">// Load balancing</span></div>
-<div class="line"><a name="l01539"></a><span class="lineno"> 1539</span>&#160;        <span class="comment">// The input argument to this function is set to zero as this integer is</span></div>
-<div class="line"><a name="l01540"></a><span class="lineno"> 1540</span>&#160;        <span class="comment">// not used for the check_load_balance_step function and is only</span></div>
-<div class="line"><a name="l01541"></a><span class="lineno"> 1541</span>&#160;        <span class="comment">// important for the check_contact_search_step function.</span></div>
-<div class="line"><a name="l01542"></a><span class="lineno"> 1542</span>&#160;        load_balance_step = load_balancing.check_load_balance_iteration();</div>
-<div class="line"><a name="l01543"></a><span class="lineno"> 1543</span>&#160; </div>
-<div class="line"><a name="l01544"></a><span class="lineno"> 1544</span>&#160;        <span class="keywordflow">if</span> (load_balance_step)</div>
-<div class="line"><a name="l01545"></a><span class="lineno"> 1545</span>&#160;          {</div>
-<div class="line"><a name="l01546"></a><span class="lineno"> 1546</span>&#160;            load_balance();</div>
-<div class="line"><a name="l01547"></a><span class="lineno"> 1547</span>&#160;          }</div>
-<div class="line"><a name="l01548"></a><span class="lineno"> 1548</span>&#160; </div>
-<div class="line"><a name="l01549"></a><span class="lineno"> 1549</span>&#160;        contact_search_counter = 0;</div>
-<div class="line"><a name="l01550"></a><span class="lineno"> 1550</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> dem_counter = 0; dem_counter &lt; coupling_frequency;</div>
-<div class="line"><a name="l01551"></a><span class="lineno"> 1551</span>&#160;             ++dem_counter)</div>
-<div class="line"><a name="l01552"></a><span class="lineno"> 1552</span>&#160;          {</div>
-<div class="line"><a name="l01553"></a><span class="lineno"> 1553</span>&#160;            <span class="comment">// dem_iterator carries out the particle-particle and</span></div>
-<div class="line"><a name="l01554"></a><span class="lineno"> 1554</span>&#160;            <span class="comment">// particle_wall force calculations, integration and</span></div>
-<div class="line"><a name="l01555"></a><span class="lineno"> 1555</span>&#160;            <span class="comment">// update_ghost</span></div>
-<div class="line"><a name="l01556"></a><span class="lineno"> 1556</span>&#160;            dem_iterator(dem_counter);</div>
-<div class="line"><a name="l01557"></a><span class="lineno"> 1557</span>&#160;          }</div>
-<div class="line"><a name="l01558"></a><span class="lineno"> 1558</span>&#160;      }</div>
-<div class="line"><a name="l01559"></a><span class="lineno"> 1559</span>&#160;      contact_search_total_number += contact_search_counter;</div>
-<div class="line"><a name="l01560"></a><span class="lineno"> 1560</span>&#160; </div>
-<div class="line"><a name="l01561"></a><span class="lineno"> 1561</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished &quot;</span> &lt;&lt; coupling_frequency &lt;&lt; <span class="stringliteral">&quot; DEM iterations &quot;</span></div>
-<div class="line"><a name="l01562"></a><span class="lineno"> 1562</span>&#160;                  &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01454"></a><span class="lineno"> 1454</span>&#160;  this-&gt;particle_handler.exchange_ghost_particles(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l01455"></a><span class="lineno"> 1455</span>&#160; </div>
+<div class="line"><a name="l01456"></a><span class="lineno"> 1456</span>&#160; </div>
+<div class="line"><a name="l01457"></a><span class="lineno"> 1457</span>&#160;  <span class="comment">// Remap periodic nodes after setup of dofs</span></div>
+<div class="line"><a name="l01458"></a><span class="lineno"> 1458</span>&#160;  <span class="keywordflow">if</span> (has_periodic_boundaries &amp;&amp; has_sparse_contacts)</div>
+<div class="line"><a name="l01459"></a><span class="lineno"> 1459</span>&#160;    {</div>
+<div class="line"><a name="l01460"></a><span class="lineno"> 1460</span>&#160;      sparse_contacts_object.map_periodic_nodes(</div>
+<div class="line"><a name="l01461"></a><span class="lineno"> 1461</span>&#160;        this-&gt;void_fraction_constraints);</div>
+<div class="line"><a name="l01462"></a><span class="lineno"> 1462</span>&#160;    }</div>
+<div class="line"><a name="l01463"></a><span class="lineno"> 1463</span>&#160; </div>
+<div class="line"><a name="l01464"></a><span class="lineno"> 1464</span>&#160;  <span class="comment">// Calculate first instance of void fraction once particles are set-up</span></div>
+<div class="line"><a name="l01465"></a><span class="lineno"> 1465</span>&#160;  this-&gt;<a class="code" href="namespaceLetheGridTools.html#a996a99a477d3abb7d81678c39a9d9cf9">vertices_cell_mapping</a>();</div>
+<div class="line"><a name="l01466"></a><span class="lineno"> 1466</span>&#160;  <span class="keywordflow">if</span> (!checkpoint_step)</div>
+<div class="line"><a name="l01467"></a><span class="lineno"> 1467</span>&#160;    this-&gt;initialize_void_fraction();</div>
+<div class="line"><a name="l01468"></a><span class="lineno"> 1468</span>&#160; </div>
+<div class="line"><a name="l01469"></a><span class="lineno"> 1469</span>&#160;  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
+<div class="line"><a name="l01470"></a><span class="lineno"> 1470</span>&#160;    {</div>
+<div class="line"><a name="l01471"></a><span class="lineno"> 1471</span>&#160;      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
+<div class="line"><a name="l01472"></a><span class="lineno"> 1472</span>&#160;      <span class="keywordtype">bool</span> refinement_step;</div>
+<div class="line"><a name="l01473"></a><span class="lineno"> 1473</span>&#160;      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mesh_adaptation.refinement_at_frequency)</div>
+<div class="line"><a name="l01474"></a><span class="lineno"> 1474</span>&#160;        refinement_step =</div>
+<div class="line"><a name="l01475"></a><span class="lineno"> 1475</span>&#160;          this-&gt;simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160;            this-&gt;simulation_parameters.mesh_adaptation.frequency !=</div>
+<div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;          0;</div>
+<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;      <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;        refinement_step = this-&gt;simulation_control-&gt;get_step_number() == 0;</div>
+<div class="line"><a name="l01480"></a><span class="lineno"> 1480</span>&#160;      <span class="keywordflow">if</span> (refinement_step ||</div>
+<div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160;          this-&gt;simulation_parameters.mesh_adaptation.type ==</div>
+<div class="line"><a name="l01482"></a><span class="lineno"> 1482</span>&#160;            <a class="code" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::Type::none</a> ||</div>
+<div class="line"><a name="l01483"></a><span class="lineno"> 1483</span>&#160;          this-&gt;simulation_control-&gt;is_at_start())</div>
+<div class="line"><a name="l01484"></a><span class="lineno"> 1484</span>&#160;        {</div>
+<div class="line"><a name="l01485"></a><span class="lineno"> 1485</span>&#160;          <span class="comment">// We allow the physics to update their boundary conditions</span></div>
+<div class="line"><a name="l01486"></a><span class="lineno"> 1486</span>&#160;          <span class="comment">// according to their own parameters</span></div>
+<div class="line"><a name="l01487"></a><span class="lineno"> 1487</span>&#160;          this-&gt;update_boundary_conditions();</div>
+<div class="line"><a name="l01488"></a><span class="lineno"> 1488</span>&#160;          this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
+<div class="line"><a name="l01489"></a><span class="lineno"> 1489</span>&#160;        }</div>
+<div class="line"><a name="l01490"></a><span class="lineno"> 1490</span>&#160; </div>
+<div class="line"><a name="l01491"></a><span class="lineno"> 1491</span>&#160;      this-&gt;dynamic_flow_control();</div>
+<div class="line"><a name="l01492"></a><span class="lineno"> 1492</span>&#160; </div>
+<div class="line"><a name="l01493"></a><span class="lineno"> 1493</span>&#160;      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
+<div class="line"><a name="l01494"></a><span class="lineno"> 1494</span>&#160;        {</div>
+<div class="line"><a name="l01495"></a><span class="lineno"> 1495</span>&#160;          <a class="code" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt;dim, GlobalVectorType, IndexSet&gt;::refine_mesh</a>();</div>
+<div class="line"><a name="l01496"></a><span class="lineno"> 1496</span>&#160;          this-&gt;<a class="code" href="namespaceLetheGridTools.html#a996a99a477d3abb7d81678c39a9d9cf9">vertices_cell_mapping</a>();</div>
+<div class="line"><a name="l01497"></a><span class="lineno"> 1497</span>&#160;        }</div>
+<div class="line"><a name="l01498"></a><span class="lineno"> 1498</span>&#160; </div>
+<div class="line"><a name="l01499"></a><span class="lineno"> 1499</span>&#160;      this-&gt;calculate_void_fraction(</div>
+<div class="line"><a name="l01500"></a><span class="lineno"> 1500</span>&#160;        this-&gt;simulation_control-&gt;get_current_time(), load_balance_step);</div>
+<div class="line"><a name="l01501"></a><span class="lineno"> 1501</span>&#160;      this-&gt;iterate();</div>
+<div class="line"><a name="l01502"></a><span class="lineno"> 1502</span>&#160; </div>
+<div class="line"><a name="l01503"></a><span class="lineno"> 1503</span>&#160;      <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_parameters.test.enabled)</div>
+<div class="line"><a name="l01504"></a><span class="lineno"> 1504</span>&#160;        {</div>
+<div class="line"><a name="l01505"></a><span class="lineno"> 1505</span>&#160;          <span class="keywordflow">switch</span> (</div>
+<div class="line"><a name="l01506"></a><span class="lineno"> 1506</span>&#160;            this-&gt;cfd_dem_simulation_parameters.cfd_parameters.test.test_type)</div>
+<div class="line"><a name="l01507"></a><span class="lineno"> 1507</span>&#160;            {</div>
+<div class="line"><a name="l01508"></a><span class="lineno"> 1508</span>&#160;              <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::TestType::particles</a>:</div>
+<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160;                {</div>
+<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160;                  print_particles_summary();</div>
+<div class="line"><a name="l01511"></a><span class="lineno"> 1511</span>&#160;                  <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01512"></a><span class="lineno"> 1512</span>&#160;                }</div>
+<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160;              <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1Testing.html#afd161c1bdce13e24eaf289c43e7086a7abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::TestType::mobility_status</a>:</div>
+<div class="line"><a name="l01514"></a><span class="lineno"> 1514</span>&#160;                {</div>
+<div class="line"><a name="l01515"></a><span class="lineno"> 1515</span>&#160;                  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;is_at_end())</div>
+<div class="line"><a name="l01516"></a><span class="lineno"> 1516</span>&#160; </div>
+<div class="line"><a name="l01517"></a><span class="lineno"> 1517</span>&#160;                    {</div>
+<div class="line"><a name="l01518"></a><span class="lineno"> 1518</span>&#160;                      <span class="comment">// Get mobility status vector sorted by cell id</span></div>
+<div class="line"><a name="l01519"></a><span class="lineno"> 1519</span>&#160;                      Vector&lt;float&gt; mobility_status(</div>
+<div class="line"><a name="l01520"></a><span class="lineno"> 1520</span>&#160;                        this-&gt;triangulation-&gt;n_active_cells());</div>
+<div class="line"><a name="l01521"></a><span class="lineno"> 1521</span>&#160;                      sparse_contacts_object.get_mobility_status_vector(</div>
+<div class="line"><a name="l01522"></a><span class="lineno"> 1522</span>&#160;                        mobility_status);</div>
+<div class="line"><a name="l01523"></a><span class="lineno"> 1523</span>&#160; </div>
+<div class="line"><a name="l01524"></a><span class="lineno"> 1524</span>&#160;                      <span class="comment">// Output mobility status vector</span></div>
+<div class="line"><a name="l01525"></a><span class="lineno"> 1525</span>&#160;                      visualization_object.print_intermediate_format(</div>
+<div class="line"><a name="l01526"></a><span class="lineno"> 1526</span>&#160;                        mobility_status,</div>
+<div class="line"><a name="l01527"></a><span class="lineno"> 1527</span>&#160;                        this-&gt;void_fraction_dof_handler,</div>
+<div class="line"><a name="l01528"></a><span class="lineno"> 1528</span>&#160;                        this-&gt;mpi_communicator);</div>
+<div class="line"><a name="l01529"></a><span class="lineno"> 1529</span>&#160;                    }</div>
+<div class="line"><a name="l01530"></a><span class="lineno"> 1530</span>&#160;                  <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01531"></a><span class="lineno"> 1531</span>&#160;                }</div>
+<div class="line"><a name="l01532"></a><span class="lineno"> 1532</span>&#160;              <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l01533"></a><span class="lineno"> 1533</span>&#160;                print_particles_summary();</div>
+<div class="line"><a name="l01534"></a><span class="lineno"> 1534</span>&#160;            }</div>
+<div class="line"><a name="l01535"></a><span class="lineno"> 1535</span>&#160;        }</div>
+<div class="line"><a name="l01536"></a><span class="lineno"> 1536</span>&#160; </div>
+<div class="line"><a name="l01537"></a><span class="lineno"> 1537</span>&#160;      {</div>
+<div class="line"><a name="l01538"></a><span class="lineno"> 1538</span>&#160;        <a class="code" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;DEM&quot;</span>);</div>
+<div class="line"><a name="l01539"></a><span class="lineno"> 1539</span>&#160;        TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;DEM_Iterator&quot;</span>);</div>
+<div class="line"><a name="l01540"></a><span class="lineno"> 1540</span>&#160; </div>
+<div class="line"><a name="l01541"></a><span class="lineno"> 1541</span>&#160;        <span class="comment">// Load balancing</span></div>
+<div class="line"><a name="l01542"></a><span class="lineno"> 1542</span>&#160;        <span class="comment">// The input argument to this function is set to zero as this integer is</span></div>
+<div class="line"><a name="l01543"></a><span class="lineno"> 1543</span>&#160;        <span class="comment">// not used for the check_load_balance_step function and is only</span></div>
+<div class="line"><a name="l01544"></a><span class="lineno"> 1544</span>&#160;        <span class="comment">// important for the check_contact_search_step function.</span></div>
+<div class="line"><a name="l01545"></a><span class="lineno"> 1545</span>&#160;        load_balance_step = load_balancing.check_load_balance_iteration();</div>
+<div class="line"><a name="l01546"></a><span class="lineno"> 1546</span>&#160; </div>
+<div class="line"><a name="l01547"></a><span class="lineno"> 1547</span>&#160;        <span class="keywordflow">if</span> (load_balance_step)</div>
+<div class="line"><a name="l01548"></a><span class="lineno"> 1548</span>&#160;          {</div>
+<div class="line"><a name="l01549"></a><span class="lineno"> 1549</span>&#160;            load_balance();</div>
+<div class="line"><a name="l01550"></a><span class="lineno"> 1550</span>&#160;          }</div>
+<div class="line"><a name="l01551"></a><span class="lineno"> 1551</span>&#160; </div>
+<div class="line"><a name="l01552"></a><span class="lineno"> 1552</span>&#160;        contact_search_counter = 0;</div>
+<div class="line"><a name="l01553"></a><span class="lineno"> 1553</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> dem_counter = 0; dem_counter &lt; coupling_frequency;</div>
+<div class="line"><a name="l01554"></a><span class="lineno"> 1554</span>&#160;             ++dem_counter)</div>
+<div class="line"><a name="l01555"></a><span class="lineno"> 1555</span>&#160;          {</div>
+<div class="line"><a name="l01556"></a><span class="lineno"> 1556</span>&#160;            <span class="comment">// dem_iterator carries out the particle-particle and</span></div>
+<div class="line"><a name="l01557"></a><span class="lineno"> 1557</span>&#160;            <span class="comment">// particle_wall force calculations, integration and</span></div>
+<div class="line"><a name="l01558"></a><span class="lineno"> 1558</span>&#160;            <span class="comment">// update_ghost</span></div>
+<div class="line"><a name="l01559"></a><span class="lineno"> 1559</span>&#160;            dem_iterator(dem_counter);</div>
+<div class="line"><a name="l01560"></a><span class="lineno"> 1560</span>&#160;          }</div>
+<div class="line"><a name="l01561"></a><span class="lineno"> 1561</span>&#160;      }</div>
+<div class="line"><a name="l01562"></a><span class="lineno"> 1562</span>&#160;      contact_search_total_number += contact_search_counter;</div>
 <div class="line"><a name="l01563"></a><span class="lineno"> 1563</span>&#160; </div>
-<div class="line"><a name="l01564"></a><span class="lineno"> 1564</span>&#160;      this-&gt;postprocess(<span class="keyword">false</span>);</div>
-<div class="line"><a name="l01565"></a><span class="lineno"> 1565</span>&#160;      this-&gt;postprocess_cfd_dem();</div>
-<div class="line"><a name="l01566"></a><span class="lineno"> 1566</span>&#160;      this-&gt;finish_time_step_fd();</div>
-<div class="line"><a name="l01567"></a><span class="lineno"> 1567</span>&#160; </div>
-<div class="line"><a name="l01568"></a><span class="lineno"> 1568</span>&#160;      this-&gt;<a class="code" href="classGLSVANSSolver.html#a938ebc83377361602c801822e567616d">GLSVANSSolver&lt;dim&gt;::monitor_mass_conservation</a>();</div>
-<div class="line"><a name="l01569"></a><span class="lineno"> 1569</span>&#160; </div>
-<div class="line"><a name="l01570"></a><span class="lineno"> 1570</span>&#160;      <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_dem.particle_statistics)</div>
-<div class="line"><a name="l01571"></a><span class="lineno"> 1571</span>&#160;        dem_post_process_results();</div>
-<div class="line"><a name="l01572"></a><span class="lineno"> 1572</span>&#160;    }</div>
-<div class="line"><a name="l01573"></a><span class="lineno"> 1573</span>&#160; </div>
-<div class="line"><a name="l01574"></a><span class="lineno"> 1574</span>&#160;  this-&gt;finish_simulation();</div>
-<div class="line"><a name="l01575"></a><span class="lineno"> 1575</span>&#160;}</div>
+<div class="line"><a name="l01564"></a><span class="lineno"> 1564</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Finished &quot;</span> &lt;&lt; coupling_frequency &lt;&lt; <span class="stringliteral">&quot; DEM iterations&quot;</span></div>
+<div class="line"><a name="l01565"></a><span class="lineno"> 1565</span>&#160;                  &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01566"></a><span class="lineno"> 1566</span>&#160; </div>
+<div class="line"><a name="l01567"></a><span class="lineno"> 1567</span>&#160;      this-&gt;postprocess(<span class="keyword">false</span>);</div>
+<div class="line"><a name="l01568"></a><span class="lineno"> 1568</span>&#160;      this-&gt;postprocess_cfd_dem();</div>
+<div class="line"><a name="l01569"></a><span class="lineno"> 1569</span>&#160;      this-&gt;finish_time_step_fd();</div>
+<div class="line"><a name="l01570"></a><span class="lineno"> 1570</span>&#160; </div>
+<div class="line"><a name="l01571"></a><span class="lineno"> 1571</span>&#160;      this-&gt;<a class="code" href="classGLSVANSSolver.html#a938ebc83377361602c801822e567616d">GLSVANSSolver&lt;dim&gt;::monitor_mass_conservation</a>();</div>
+<div class="line"><a name="l01572"></a><span class="lineno"> 1572</span>&#160; </div>
+<div class="line"><a name="l01573"></a><span class="lineno"> 1573</span>&#160;      <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.cfd_dem.particle_statistics)</div>
+<div class="line"><a name="l01574"></a><span class="lineno"> 1574</span>&#160;        dem_post_process_results();</div>
+<div class="line"><a name="l01575"></a><span class="lineno"> 1575</span>&#160;    }</div>
 <div class="line"><a name="l01576"></a><span class="lineno"> 1576</span>&#160; </div>
-<div class="line"><a name="l01577"></a><span class="lineno"> 1577</span>&#160;<span class="comment">// Pre-compile the 2D and 3D CFD-DEM solver to ensure that the</span></div>
-<div class="line"><a name="l01578"></a><span class="lineno"> 1578</span>&#160;<span class="comment">// library is valid before we actually compile the solver This greatly</span></div>
-<div class="line"><a name="l01579"></a><span class="lineno"> 1579</span>&#160;<span class="comment">// helps with debugging</span></div>
-<div class="line"><a name="l01580"></a><span class="lineno"> 1580</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCFDDEMSolver.html">CFDDEMSolver&lt;2&gt;</a>;</div>
-<div class="line"><a name="l01581"></a><span class="lineno"> 1581</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCFDDEMSolver.html">CFDDEMSolver&lt;3&gt;</a>;</div>
+<div class="line"><a name="l01577"></a><span class="lineno"> 1577</span>&#160;  this-&gt;finish_simulation();</div>
+<div class="line"><a name="l01578"></a><span class="lineno"> 1578</span>&#160;}</div>
+<div class="line"><a name="l01579"></a><span class="lineno"> 1579</span>&#160; </div>
+<div class="line"><a name="l01580"></a><span class="lineno"> 1580</span>&#160;<span class="comment">// Pre-compile the 2D and 3D CFD-DEM solver to ensure that the</span></div>
+<div class="line"><a name="l01581"></a><span class="lineno"> 1581</span>&#160;<span class="comment">// library is valid before we actually compile the solver This greatly</span></div>
+<div class="line"><a name="l01582"></a><span class="lineno"> 1582</span>&#160;<span class="comment">// helps with debugging</span></div>
+<div class="line"><a name="l01583"></a><span class="lineno"> 1583</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCFDDEMSolver.html">CFDDEMSolver&lt;2&gt;</a>;</div>
+<div class="line"><a name="l01584"></a><span class="lineno"> 1584</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCFDDEMSolver.html">CFDDEMSolver&lt;3&gt;</a>;</div>
 <div class="ttc" id="acfd__dem__coupling_8cc_html_a610def463b36eecb1a4f62b0c5ab63cf"><div class="ttname"><a href="cfd__dem__coupling_8cc.html#a610def463b36eecb1a4f62b0c5ab63cf">check_contact_detection_method</a></div><div class="ttdeci">bool check_contact_detection_method(unsigned int counter, CFDDEMSimulationParameters&lt; dim &gt; &amp;param, std::vector&lt; double &gt; &amp;displacement, Particles::ParticleHandler&lt; dim, dim &gt; &amp;particle_handler, MPI_Comm mpi_communicator, std::shared_ptr&lt; SimulationControl &gt; simulation_control, bool contact_detection_step, bool checkpoint_step, bool load_balance_step, double smallest_contact_search_criterion)</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00017">cfd_dem_coupling.cc:17</a></div></div>
 <div class="ttc" id="acfd__dem__coupling_8h_html"><div class="ttname"><a href="cfd__dem__coupling_8h.html">cfd_dem_coupling.h</a></div></div>
 <div class="ttc" id="aclassCFDDEMSimulationParameters_html"><div class="ttname"><a href="classCFDDEMSimulationParameters.html">CFDDEMSimulationParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__simulation__parameters_8h_source.html#l00035">cfd_dem_simulation_parameters.h:36</a></div></div>
@@ -1680,7 +1683,7 @@ $(function() {
 <div class="ttc" id="aclassCFDDEMSolver_html_a8b9e15f6a05f529a210367c8557da092"><div class="ttname"><a href="classCFDDEMSolver.html#a8b9e15f6a05f529a210367c8557da092">CFDDEMSolver::~CFDDEMSolver</a></div><div class="ttdeci">~CFDDEMSolver()</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00079">cfd_dem_coupling.cc:79</a></div></div>
 <div class="ttc" id="aclassCFDDEMSolver_html_a8e1bf1e148eb7c08ddc4da5d1b1f2304"><div class="ttname"><a href="classCFDDEMSolver.html#a8e1bf1e148eb7c08ddc4da5d1b1f2304">CFDDEMSolver::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">read_checkpoint</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00229">cfd_dem_coupling.cc:229</a></div></div>
 <div class="ttc" id="aclassCFDDEMSolver_html_a9075164421bd04fcf087860c0bf2154a"><div class="ttname"><a href="classCFDDEMSolver.html#a9075164421bd04fcf087860c0bf2154a">CFDDEMSolver::dem_setup_contact_parameters</a></div><div class="ttdeci">void dem_setup_contact_parameters()</div><div class="ttdoc">Sets up the various parameters related to the DEM contacts.</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l01275">cfd_dem_coupling.cc:1275</a></div></div>
-<div class="ttc" id="aclassCFDDEMSolver_html_aaebd11ac00952aaaa99ebd66c43f7d87"><div class="ttname"><a href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver::solve</a></div><div class="ttdeci">virtual void solve() override</div><div class="ttdoc">solve Solves the Navier-Stokes problem</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l01413">cfd_dem_coupling.cc:1413</a></div></div>
+<div class="ttc" id="aclassCFDDEMSolver_html_aaebd11ac00952aaaa99ebd66c43f7d87"><div class="ttname"><a href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver::solve</a></div><div class="ttdeci">virtual void solve() override</div><div class="ttdoc">solve Solves the Navier-Stokes problem</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l01416">cfd_dem_coupling.cc:1416</a></div></div>
 <div class="ttc" id="aclassCFDDEMSolver_html_abac82776ad4217182984d3f97386be37"><div class="ttname"><a href="classCFDDEMSolver.html#abac82776ad4217182984d3f97386be37">CFDDEMSolver::update_moment_of_inertia</a></div><div class="ttdeci">void update_moment_of_inertia(dealii::Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::vector&lt; double &gt; &amp;MOI)</div><div class="ttdoc">Updates moment of inertia container after sorting particles into subdomains.</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00629">cfd_dem_coupling.cc:629</a></div></div>
 <div class="ttc" id="aclassCFDDEMSolver_html_adcdc56eef545bb81d6359211782fd85b"><div class="ttname"><a href="classCFDDEMSolver.html#adcdc56eef545bb81d6359211782fd85b">CFDDEMSolver::initialize_dem_parameters</a></div><div class="ttdeci">void initialize_dem_parameters()</div><div class="ttdoc">Carries out the initialization of DEM parameters.</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00539">cfd_dem_coupling.cc:539</a></div></div>
 <div class="ttc" id="aclassCFDDEMSolver_html_adebfddbf93e41946ccf7309c7b01515d"><div class="ttname"><a href="classCFDDEMSolver.html#adebfddbf93e41946ccf7309c7b01515d">CFDDEMSolver::CFDDEMSolver</a></div><div class="ttdeci">CFDDEMSolver(CFDDEMSimulationParameters&lt; dim &gt; &amp;nsparam)</div><div class="ttdef"><b>Definition:</b> <a href="cfd__dem__coupling_8cc_source.html#l00070">cfd_dem_coupling.cc:70</a></div></div>
