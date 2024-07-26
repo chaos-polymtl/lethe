@@ -1,17 +1,17 @@
 Running on 2 MPI rank(s)...
 DEM time-step is 5.13612% of Rayleigh time step
-Reading DEM checkpoint 
-Finished reading DEM checkpoint 
-2 particles are in the simulation 
+Reading DEM checkpoint
+Finished reading DEM checkpoint
+2 particles are in the simulation
    Number of active cells:       48
    Number of degrees of freedom: 468
    Volume of triangulation:      0.000384
 ---------------------------------------------------------------
-Initializing DEM parameters 
+Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-Finished initializing DEM parameters 
-DEM time-step is 1e-05 s 
+Finished initializing DEM parameters
+DEM time-step is 1e-05 s
 --------------
 Void Fraction
 --------------

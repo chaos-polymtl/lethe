@@ -1,17 +1,17 @@
 Running on 2 MPI rank(s)...
 DEM time-step is 5.879363789% of Rayleigh time step
-Reading DEM checkpoint 
-Finished reading DEM checkpoint 
-31050 particles are in the simulation 
+Reading DEM checkpoint
+Finished reading DEM checkpoint
+31050 particles are in the simulation
    Number of active cells:       679
    Number of degrees of freedom: 5952
    Volume of triangulation:      0.0010185
 ---------------------------------------------------------------
-Initializing DEM parameters 
+Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-Finished initializing DEM parameters 
-DEM time-step is 2e-05 s 
+Finished initializing DEM parameters
+DEM time-step is 2e-05 s
 --------------
 Void Fraction
 --------------
@@ -44,9 +44,18 @@ Finished 50 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
 Max local continuity error: 0 s^-1
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 2.0000e+00 | 2.0000e+00 | 2.0000e+00 | 
+| Velocity magnitude           | 1.1352e-06 | 9.9832e-02 | 1.6504e-02 | 5.1246e+02 | 
+| Angular velocity magnitude   | 2.4264e-02 | 4.3111e+01 | 6.0452e+00 | 1.8770e+05 | 
+| Translational kinetic energy | 1.3316e-17 | 1.0298e-07 | 3.7774e-09 | 1.1729e-04 | 
+| Rotational kinetic energy    | 7.6043e-15 | 2.4005e-08 | 7.3895e-10 | 2.2944e-05 | 
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39637
+Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 1.39637 
 *******************************************************************************
 --------------
 Void Fraction
@@ -71,3 +80,12 @@ Finished 50 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
 Max local continuity error: 0 s^-1
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 2.0000e+00 | 2.0000e+00 | 4.0000e+00 | 
+| Velocity magnitude           | 5.7051e-05 | 1.0407e-01 | 1.6740e-02 | 5.1976e+02 | 
+| Angular velocity magnitude   | 1.2132e-02 | 4.7965e+01 | 5.7326e+00 | 1.7800e+05 | 
+| Translational kinetic energy | 3.3632e-14 | 1.1191e-07 | 3.7752e-09 | 1.1722e-04 | 
+| Rotational kinetic energy    | 1.9010e-15 | 2.9715e-08 | 6.5871e-10 | 2.0453e-05 | 

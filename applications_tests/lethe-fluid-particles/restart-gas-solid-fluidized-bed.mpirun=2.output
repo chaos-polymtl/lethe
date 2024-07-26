@@ -9,11 +9,11 @@ DEM time-step is 3.65413% of Rayleigh time step
    Number of active cells:       2560
    Number of degrees of freedom: 16100
    Volume of triangulation:      0.00108
-Initializing DEM parameters 
+Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-Finished initializing DEM parameters 
-DEM time-step is 5e-06 s 
+Finished initializing DEM parameters
+DEM time-step is 5e-06 s
 
 ********************************************************************************
 Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0354915
