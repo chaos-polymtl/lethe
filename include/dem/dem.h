@@ -97,6 +97,13 @@ private:
   setup_solid_objects();
 
   /**
+   * @brief Set up the pointers to the functions and classes according to the
+   * parameters.
+   */
+  void
+  setup_functions_and_pointers();
+
+  /**
    * @brief Set the iteration check function according to the chosen
    * contact detection method.
    *

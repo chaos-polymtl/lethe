@@ -132,22 +132,9 @@ DEMSolver<dim>::setup_parameters()
           periodic_boundaries_object.set_periodic_boundaries_information(
             parameters.boundary_conditions.periodic_boundary_0,
             parameters.boundary_conditions.periodic_direction);
-
           break;
         }
     }
-
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
-
-  // Set insertion object type before the restart because the restart only
-  // rebuilds the member of the insertion object
-  insertion_object = set_insertion_type(parameters);
-
-  // Setting chosen contact force, insertion and integration methods
-  integrator_object = set_integrator_type(parameters);
-  particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(parameters);
 
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
@@ -238,7 +225,26 @@ DEMSolver<dim>::setup_solid_objects()
 }
 
 template <int dim>
-inline std::function<void()>
+void
+DEMSolver<dim>::setup_functions_and_pointers()
+{
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
+
+  // Set insertion object type before the restart because the restart only
+  // rebuilds the member of the insertion object
+  insertion_object = set_insertion_type(parameters);
+
+  // Setting chosen contact force, insertion and integration methods
+  integrator_object = set_integrator_type(parameters);
+  particle_particle_contact_force_object =
+    set_particle_particle_contact_force_model(parameters);
+  particle_wall_contact_force_object =
+    set_particle_wall_contact_force_model(parameters, triangulation);
+}
+
+template <int dim>
+std::function<void()>
 DEMSolver<dim>::set_contact_search_iteration_function()
 {
   using namespace Parameters::Lagrangian;
@@ -319,9 +325,6 @@ template <int dim>
 void
 DEMSolver<dim>::setup_triangulation_dependent_parameters()
 {
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters, triangulation);
-
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
   // diameter - 1) * largest particle radius). This value is used in
@@ -828,6 +831,7 @@ template <int dim>
 void
 DEMSolver<dim>::solve()
 {
+  // Set up the parameters
   setup_parameters();
 
   // Reading mesh
@@ -837,6 +841,10 @@ DEMSolver<dim>::solve()
             triangulation,
             parameters.boundary_conditions);
 
+  // Set up functions and pointers according to parameters
+  setup_functions_and_pointers();
+
+  // Read checkpoint if needed
   read_checkpoint(computing_timer,
                   parameters,
                   simulation_control,
@@ -847,6 +855,7 @@ DEMSolver<dim>::solve()
                   insertion_object,
                   solid_surfaces);
 
+  // Set up the various parameters that need the triangulation
   setup_triangulation_dependent_parameters();
 
   // Build the mapping of the cell neighbors
