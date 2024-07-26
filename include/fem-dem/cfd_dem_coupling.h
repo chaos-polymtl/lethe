@@ -47,6 +47,11 @@
 
 using namespace dealii;
 
+/**
+ * @brief Solver using the GLS Volume-averaged Navier-Stokes solver for fluid
+ * and the soft-sphere model of the discrete element method (DEM) to simulate
+ * solid-fluid physics.
+ */
 template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>
 {
@@ -55,155 +60,154 @@ public:
 
   ~CFDDEMSolver();
 
+  /**
+   * @brief Engine of the CFD-DEM solver. Calls all the necessary functions to
+   * set parameters, solve the simulation, and finish the simulation.
+   */
   virtual void
   solve() override;
 
-  /**
-   * @brief Manages the call to the load balancing. Returns true if
-   * load balancing is performed
-   *
-   */
-  void
-  load_balance();
-
-protected:
 private:
   /**
-   * @brief Carries out the DEM calculations in the DEM_CFD solver. Particle-particle and particle-wall contact force calculations, integration and update_ghost
-   */
-  void
-  dem_iterator(unsigned int counter);
-
-  /**
-   * @brief Carries out the particle-particle and particle-wall contact searches, sort_particles_into_subdomains_and_cells and exchange_ghost
-   */
-  void
-  dem_contact_build(unsigned int counter);
-
-  /**
-   * @brief Sets up the various parameters related to the DEM contacts
+   * @brief Set up the various parameters related to the DEM.
    */
   void
   dem_setup_parameters();
 
   /**
-   * @brief Carries out the initialization of DEM parameters
+   * @brief Initialize the distribution type for the particles, and sets the
+   * maximum particle diameter and the neighborhood threshold squared in the
+   * process.
    */
   void
-  initialize_dem_parameters();
-
-  inline void
-  resize_containers()
-  {
-    displacement.resize(this->particle_handler.get_max_local_particle_index());
-    std::fill(displacement.begin(), displacement.end(), 0.);
-
-    force.resize(displacement.size());
-    torque.resize(displacement.size());
-  }
-
-  inline void
-  sort_particles_into_subdomains_and_cells()
-  {
-    this->particle_handler.sort_particles_into_subdomains_and_cells();
-
-    // Resizing displacement, force and torque containers
-    resize_containers();
-
-    // Updating moment of inertia container
-    update_moment_of_inertia(this->particle_handler, MOI);
-
-    this->particle_handler.exchange_ghost_particles(true);
-  }
+  setup_distribution_type();
 
   /**
-   * @brief write DEM_output_results
-   * Post-processing as parallel VTU files
-   */
-  void
-  write_DEM_output_results();
-
-  /**
-   * @brief Calculates particles-wall contact forces
+   * @brief Set the integration method.
    *
-   */
-  void
-  particle_wall_contact_force();
-
-  /**
-   * @brief Updates moment of inertia container after sorting particles
-   * into subdomains
-   *
-   */
-  void
-  update_moment_of_inertia(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
-
-  /**
-   * Sets the chosen integration method in the parameter handler file
-   *
-   * @return A pointer to the integration object
+   * @return The pointer to the integration object
    */
   std::shared_ptr<Integrator<dim>>
   set_integrator_type();
 
   /**
-   * Adds fluid-particle interaction force to the "force" container
+   * @brief Initialize some DEM parameters.
+   */
+  void
+  initialize_dem_parameters();
+
+  /**
+   * @brief Read the DEM restart files from a DEM simulation.
+   */
+  void
+  read_dem();
+
+  /**
+   * @brief Write the CFD-DEM restart files.
+   */
+  void
+  write_checkpoint() override;
+
+  /**
+   * @brief Read the CFD-DEM restart files.
+   */
+  void
+  read_checkpoint() override;
+
+  /**
+   * @brief Execute the contact detection method.
    *
+   * @param[in] counter The DEM iteration.
+   */
+  void
+  check_contact_detection_method(unsigned int counter);
+
+  /**
+   * @brief Check if a load balancing is required according to the load
+   * balancing method and perform it if necessary.
+   */
+  void
+  load_balance();
+
+  /**
+   * @brief Add fluid-particle interaction force to the "force" container.
    */
   void
   add_fluid_particle_interaction_force();
 
   /**
-   * Adds fluid-particle interaction torque to the "torque" container
-   *
+   * @brief Add fluid-particle interaction torque to the "torque" container.
    */
   void
   add_fluid_particle_interaction_torque();
 
+  /**
+   * @brief Calculate particles-wall contact forces.
+   */
   void
-  read_dem();
+  particle_wall_contact_force();
 
+  /**
+   * @brief Post-processing as parallel VTU files.
+   */
   void
-  write_checkpoint() override;
+  write_dem_output_results();
 
+  /**
+   * @brief Calculate statistics on the particles and report them to the
+   * terminal. This function is notably used to monitor the time min, max and
+   * total performed contact searches, and the instant min, max, avg and total
+   * values of the linear velocity, angular velocity, linear kinetic energy and
+   * angular kinetic.
+   */
   void
-  read_checkpoint() override;
+  report_particle_statistics();
 
+  /**
+   * @brief Print the final summary of the particles.
+   */
   void
   print_particles_summary();
 
   /**
-   * @brief dem_post_process_results
-   */
-  void
-  dem_post_process_results();
-
-  /**
-   * @brief postprocess
-   * Post-process fluid dynamics after an iteration
+   * @brief Post-process fluid dynamics after an iteration.
    */
   void
   postprocess_fd(bool first_iteration) override;
 
   /**
-   * @brief postprocess for cfd-dem
-   * Post-process cfd-dem after an iteration
+   * @brief Post-process cfd-dem after an iteration.
    */
   void
   postprocess_cfd_dem();
 
   /**
-   * @brief dynamic_flow_control
-   * Dynamic flow control calculation that take into account the void fraction
-   * for the average velocity calculation
+   * @brief Dynamic flow control calculation that take into account the void
+   * fraction for the average velocity calculation.
    */
   void
   dynamic_flow_control() override;
 
+  /**
+   * @brief Execute the sorting of particle into subdomains and cells, and
+   * reinitialize the containers dependent on the local particle ids.
+   */
   void
-  check_contact_detection_method(unsigned int counter);
+  sort_particles_into_subdomains_and_cells();
+
+  /**
+   * @brief Execute a complete DEM iteration, including the particle-particle
+   * and particle-wall contact force calculations, integration.
+   */
+  void
+  dem_iterator(unsigned int counter);
+
+  /**
+   * @brief Check if a contact search has to be performed and execute it if so.
+   */
+  void
+  dem_contact_build(unsigned int counter);
+
 
   unsigned int                               coupling_frequency;
   Tensor<1, 3>                               g;
@@ -255,7 +259,6 @@ private:
 
   // Storage of statistics about time and contact lists
   statistics contact_list;
-  statistics simulation_time;
 
   DEM::DEMProperties<dim> properties_class;
 

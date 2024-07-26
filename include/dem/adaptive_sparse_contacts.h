@@ -195,7 +195,7 @@ public:
     // If the function is reached, the adaptive sparse contacts is enabled.
     sparse_contacts_enabled = true;
 
-    // Communicate to the action manager that there are periodic boundaries
+    // Communicate to the action manager that the sparse contacts is enabled
     DEMActionManager::get_action_manager()->set_sparse_contacts_enabling();
 
     granular_temperature_threshold = granular_temperature;

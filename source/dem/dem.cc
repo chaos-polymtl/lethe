@@ -233,10 +233,10 @@ DEMSolver<dim>::setup_functions_and_pointers()
 
   // Set insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
-  insertion_object = set_insertion_type(parameters);
+  insertion_object = set_insertion_type();
 
   // Setting chosen contact force, insertion and integration methods
-  integrator_object = set_integrator_type(parameters);
+  integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
     set_particle_particle_contact_force_model(parameters);
   particle_wall_contact_force_object =
@@ -264,7 +264,7 @@ DEMSolver<dim>::set_contact_search_iteration_function()
 
 template <int dim>
 std::shared_ptr<Insertion<dim>>
-DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
+DEMSolver<dim>::set_insertion_type()
 {
   using namespace Parameters::Lagrangian;
   InsertionInfo::InsertionMethod insertion_method =
@@ -302,7 +302,7 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
-DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
+DEMSolver<dim>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
   ModelParameters::IntegrationMethod integration_method =

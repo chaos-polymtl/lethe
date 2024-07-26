@@ -86,7 +86,7 @@ private:
    * maximum particle diameter and the neighborhood threshold squared in the
    * process.
    */
-  inline void
+  void
   setup_distribution_type();
 
   /**
@@ -115,22 +115,18 @@ private:
   /**
    * @brief Set the insertion method.
    *
-   * @param dem_parameters DEM parameters
-   *
    * @return The pointer to the insertion object
    */
   std::shared_ptr<Insertion<dim>>
-  set_insertion_type(const DEMSolverParameters<dim> &dem_parameters);
+  set_insertion_type();
 
   /**
    * @brief Set the integration method.
    *
-   * @param dem_parameters DEM parameters
-   *
    * @return The pointer to the integration object
    */
   std::shared_ptr<Integrator<dim>>
-  set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
+  set_integrator_type();
 
   /**
    * @brief Set up the triangulation dependent parameters after the reading of
@@ -223,7 +219,7 @@ private:
    * @brief Execute the sorting of particle into subdomains and cells, and
    * reinitialize the containers dependent on the local particle ids.
    */
-  inline void
+  void
   sort_particles_into_subdomains_and_cells();
 
   /**
