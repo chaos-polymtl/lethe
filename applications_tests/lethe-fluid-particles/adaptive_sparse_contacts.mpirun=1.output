@@ -31,7 +31,7 @@ DEM
 DEM contact search at dem step 0
 DEM contact search at dem step 1
 DEM contact search at dem step 49
-Finished 50 DEM iterations 
+Finished 50 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.803e-09 s^-1
 Max local continuity error: 7.07295e-08 s^-1
