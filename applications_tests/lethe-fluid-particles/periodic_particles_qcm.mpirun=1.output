@@ -1,17 +1,17 @@
 Running on 1 MPI rank(s)...
 DEM time-step is 5.13612% of Rayleigh time step
-Reading DEM checkpoint 
-Finished reading DEM checkpoint 
-2 particles are in the simulation 
+Reading DEM checkpoint
+Finished reading DEM checkpoint
+2 particles are in the simulation
    Number of active cells:       48
    Number of degrees of freedom: 468
    Volume of triangulation:      0.000384
 ---------------------------------------------------------------
-Initializing DEM parameters 
+Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-Finished initializing DEM parameters 
-DEM time-step is 1e-05 s 
+Finished initializing DEM parameters
+DEM time-step is 1e-05 s
 --------------
 Void Fraction
 --------------
@@ -32,7 +32,7 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z 
+id, x, y, z, v_x, v_y, v_z
 0 0.1199 0.00499572 0.019 0 2.24509e-14 0
 1 0.2399 0.00499572 0.019 0 2.24509e-14 0
 ----
