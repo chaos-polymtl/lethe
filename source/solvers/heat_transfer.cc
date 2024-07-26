@@ -465,8 +465,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.multiphysics
-            .use_time_average_velocity_field &&
+      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -487,8 +486,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
     }
   else
     {
-      if (this->simulation_parameters.multiphysics
-            .use_time_average_velocity_field &&
+      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -626,8 +624,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.multiphysics
-            .use_time_average_velocity_field &&
+      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -649,8 +646,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
     }
   else
     {
-      if (this->simulation_parameters.multiphysics
-            .use_time_average_velocity_field &&
+      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -1119,9 +1115,13 @@ HeatTransfer<dim>::read_checkpoint()
   GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
   input_vectors[0] = &distributed_system;
 
+  std::cout << "previous solution size: "<< previous_solutions.size() << std::endl;
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions.size());
+
+  std::cout << "find crash 2" << std::endl;
+
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
@@ -1129,7 +1129,7 @@ HeatTransfer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  solution_transfer->deserialize(input_vectors);
+  solution_transfer->deserialize(input_vectors); // this is the line
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)

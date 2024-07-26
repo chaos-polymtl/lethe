@@ -318,6 +318,29 @@ public:
     CFL = p_CFL;
   }
 
+  /**
+   * @brief Set the value of the simulation time. 
+   *
+   * @param p_current_time Desired time at the current time step.
+   */
+
+  void
+  set_current_time(const double p_current_time)
+  {
+    current_time = p_current_time;
+  }
+
+  /**
+   * @brief Set the iteration number. 
+   *
+   * @param p_iteration_number The new iteration number.
+   */
+
+  void
+  set_iteration_number(const unsigned int p_iteration_number)
+  {
+    iteration_number = p_iteration_number;
+  }
 
   /**
    * @brief Manually force the value of the time step for the present iteration

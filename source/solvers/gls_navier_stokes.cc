@@ -36,6 +36,7 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/grid_in.h>
 
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/solver_bicgstab.h>
@@ -1269,13 +1270,42 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
           this->pcout << "*********************************" << std::endl;
         }
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::vtu)
+  else if (initial_condition_type == Parameters::InitialConditionType::average_velocity_profile)
     {
-      this->set_nodal_values();
-      this->finish_time_step();
-      std::cout << "Initial condition set using VTU file" << std::endl;
-      const std::string vtu_file_name = this->simulation_parameters.initial_condition->vtu;
-      std::cout << "VTU file name: " << vtu_file_name << std::endl;
+      this->pcout << "*********************************************************" << std::endl;
+      this->pcout << " Initial condition using average velocity from checkpoint " << std::endl;
+      this->pcout << "*********************************************************" << std::endl;
+      
+      // When the average velocity profile is used as an initial condition, the output folder path is not defined by the simulation control field in the parameter file as in a normal restart. The output folder is therefore set to the output folder defined in the initial condition field.
+      this->read_checkpoint();
+
+      // This is an initial condition, not a restart. Therefore, the current time is set to 0, the iteration number as well and the pvd is cleared from previous results
+      this->simulation_control->set_current_time(0.0);
+      this->simulation_control->set_iteration_number(0);
+      this->pvdhandler.times_and_names.clear();
+
+      std::cout << "current time: " << this->simulation_control->get_current_time() << std::endl;
+
+      // This is not a restart, therefore the simulation timer is set to 0
+
+
+      //this->set_nodal_values();
+      //this->finish_time_step();
+      //std::cout << "Initial condition set using VTU file" << std::endl;
+      //const std::string vtu_file_name = this->simulation_parameters.initial_condition->vtu;
+      //std::cout << "VTU file name: " << vtu_file_name << std::endl;
+
+      // Instantiation of the triangulation and the mesh reader object
+      //parallel::shared::Triangulation<dim> basetria(MPI_COMM_WORLD);
+      //GridIn<dim> grid_in;
+
+      //grid_in.attach_triangulation(basetria);
+      //std::ifstream input_file("restart-grid.vtu");
+
+      //grid_in.read_vtu(input_file);
+
+      //std::cout << "allo" << std::endl;
+
     }
   else
     {

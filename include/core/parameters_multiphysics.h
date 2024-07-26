@@ -231,8 +231,6 @@ namespace Parameters
     bool VOF;
     bool cahn_hilliard;
 
-    bool use_time_average_velocity_field;
-
     // subparameters for heat_transfer
     bool viscous_dissipation;
     bool buoyancy_force;

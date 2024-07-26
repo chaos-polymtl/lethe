@@ -730,8 +730,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
 
       if (multiphysics->fluid_dynamics_is_block())
         {
-          if (this->simulation_parameters.multiphysics
-                .use_time_average_velocity_field &&
+          if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
               simulation_control->get_current_time() >
                 this->simulation_parameters.post_processing.initial_time)
             {
@@ -750,8 +749,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         }
       else
         {
-          if (this->simulation_parameters.multiphysics
-                .use_time_average_velocity_field &&
+          if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
               simulation_control->get_current_time() >
                 this->simulation_parameters.post_processing.initial_time)
             {
