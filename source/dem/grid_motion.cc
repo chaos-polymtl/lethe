@@ -25,7 +25,7 @@ GridMotion<dim, spacedim>::GridMotion(
       case Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational:
         {
           // Communicate to the action manager that there is a grid motion
-          action_manager->set_grid_motion_enabling();
+          action_manager->set_grid_motion_enabled();
 
           grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
           rotation_angle =
@@ -38,7 +38,7 @@ GridMotion<dim, spacedim>::GridMotion(
         {
           // Flag and communicate to the action manager that there is a
           // grid motion
-          action_manager->set_grid_motion_enabling();
+          action_manager->set_grid_motion_enabled();
 
           grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
           shift_vector =
@@ -103,7 +103,7 @@ GridMotion<dim, spacedim>::
       &updated_boundary_points_and_normal_vectors)
 {
   // If there is no grid motion, exit the function
-  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabling())
+  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
     return;
 
   for (auto &[particle_id, pairs_in_contact_content] :

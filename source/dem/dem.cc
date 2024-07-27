@@ -218,7 +218,7 @@ DEMSolver<dim>::setup_solid_objects()
   // Simulation has solid objects and resize the container
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
-      action_manager->set_solid_objects_enabling();
+      action_manager->set_solid_objects_enabled();
       contact_manager.particle_floating_mesh_in_contact.resize(
         solid_surfaces.size() + solid_volumes.size());
     }
@@ -373,8 +373,8 @@ DEMSolver<dim>::setup_background_dofs()
   // Those constraints are not used for any matrix assembly in DEM solver, this
   // approach comes from CFD-DEM coupling where void fraction constraints are
   // used to achieve the periodic node mapping.
-  if (action_manager->check_periodic_boundaries_enabling() &&
-      action_manager->check_sparse_contacts_enabling())
+  if (action_manager->check_periodic_boundaries_enabled() &&
+      action_manager->check_sparse_contacts_enabled())
     {
       IndexSet locally_relevant_dofs;
       DoFTools::extract_locally_relevant_dofs(background_dh,
@@ -402,7 +402,7 @@ DEMSolver<dim>::load_balance()
 {
   load_balancing.check_load_balance_iteration();
 
-  if (!action_manager->check_repartition())
+  if (!action_manager->check_load_balance())
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
@@ -524,7 +524,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle-solid objects contact force
-  if (action_manager->check_solid_objects_enabling()) // until refactor
+  if (action_manager->check_solid_objects_enabled()) // until refactor
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
@@ -555,7 +555,7 @@ template <int dim>
 void
 DEMSolver<dim>::move_solid_objects()
 {
-  if (!action_manager->check_solid_objects_enabling())
+  if (!action_manager->check_solid_objects_enabled())
     return;
 
   // Move the solid triangulations, previous time must be used here

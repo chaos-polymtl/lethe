@@ -70,7 +70,7 @@ public:
     periodic_boundaries_enabled = true;
 
     // Communicate to the action manager that there are periodic boundaries
-    DEMActionManager::get_action_manager()->set_periodic_boundaries_enabling();
+    DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
     periodic_boundary_0 = periodic_boundary_id_0;
     direction           = periodic_direction;

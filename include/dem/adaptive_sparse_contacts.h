@@ -196,7 +196,7 @@ public:
     sparse_contacts_enabled = true;
 
     // Communicate to the action manager that the sparse contacts is enabled
-    DEMActionManager::get_action_manager()->set_sparse_contacts_enabling();
+    DEMActionManager::get_action_manager()->set_sparse_contacts_enabled();
 
     granular_temperature_threshold = granular_temperature;
     solid_fraction_threshold       = solid_fraction;

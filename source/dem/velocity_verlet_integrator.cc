@@ -146,7 +146,7 @@ VelocityVerletIntegrator<dim>::integrate(
   auto action_manager = DEMActionManager::get_action_manager();
 
   bool use_default_function =
-    !action_manager->check_sparse_contacts_enabling() ||
+    !action_manager->check_sparse_contacts_enabled() ||
     action_manager->check_mobility_status_reset();
 
   // Regular integration process if sparse contacts are not enabled or if this

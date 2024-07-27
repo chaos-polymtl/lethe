@@ -85,7 +85,7 @@ find_floating_mesh_mapping_step(
   auto action_manager = DEMActionManager::get_action_manager();
 
   // If there is no solid object, no need to do anything
-  if (!action_manager->check_solid_objects_enabling())
+  if (!action_manager->check_solid_objects_enabled())
     return;
 
   bool floating_mesh_requires_map = false;

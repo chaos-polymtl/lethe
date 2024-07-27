@@ -231,7 +231,7 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
     &updated_boundary_points_and_normal_vectors)
 {
   // If there is no grid motion, exit the function
-  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabling())
+  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
     return;
 
   // Initialize a simple quadrature for on the system. This will be used to

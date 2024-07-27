@@ -17,7 +17,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
                                             cells_ghost_neighbor_list);
 
   // Find cell periodic neighbors
-  if (action_manager->check_periodic_boundaries_enabling())
+  if (action_manager->check_periodic_boundaries_enabled())
     {
       cell_neighbors_object.find_cell_periodic_neighbors(
         triangulation,
@@ -28,7 +28,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
     }
 
   // Get total (with repetition) neighbors list for floating mesh.
-  if (action_manager->check_solid_objects_enabling())
+  if (action_manager->check_solid_objects_enabled())
     {
       cell_neighbors_object.find_full_cell_neighbors(triangulation,
                                                      total_neighbor_list);
@@ -58,7 +58,7 @@ DEMContactManager<dim>::update_contacts()
                                           ghost_contact_pair_candidates);
 
   if (DEMActionManager::get_action_manager()
-        ->check_periodic_boundaries_enabling())
+        ->check_periodic_boundaries_enabled())
     {
       // Update periodic particle-particle contacts in
       // local_periodic_adjacent_particles of fine search step with
@@ -153,7 +153,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
                                           particle_container);
 
   if (DEMActionManager::get_action_manager()
-        ->check_periodic_boundaries_enabling())
+        ->check_periodic_boundaries_enabled())
     {
       // Update contact containers for local-local periodic particle-particle
       // pairs in contact
@@ -232,7 +232,7 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
   // Check if sparse contacts are enabled to use proper broad search functions
   // ASC will use the default broad search functions at the first iteration
   bool use_default_functions =
-    !action_manager->check_sparse_contacts_enabling() ||
+    !action_manager->check_sparse_contacts_enabled() ||
     action_manager->check_mobility_status_reset();
 
   // Check if sparse contacts are enabled to use proper broad search functions
@@ -242,7 +242,7 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
       particle_particle_broad_search_object
         .find_particle_particle_contact_pairs(particle_handler, *this);
 
-      if (action_manager->check_periodic_boundaries_enabling())
+      if (action_manager->check_periodic_boundaries_enabled())
         {
           particle_particle_broad_search_object
             .find_particle_particle_periodic_contact_pairs(particle_handler,
@@ -256,7 +256,7 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
                                               *this,
                                               sparse_contacts_object);
 
-      if (action_manager->check_periodic_boundaries_enabling())
+      if (action_manager->check_periodic_boundaries_enabled())
         {
           particle_particle_broad_search_object
             .find_particle_particle_periodic_contact_pairs(
@@ -281,7 +281,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   // Check if sparse contacts are enabled to use proper broad search functions
   // ASC will use the default broad search functions at the first iteration
   bool use_default_functions =
-    !action_manager->check_sparse_contacts_enabling() ||
+    !action_manager->check_sparse_contacts_enabled() ||
     action_manager->check_mobility_status_reset();
 
   if (use_default_functions)
@@ -305,7 +305,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
         }
 
       // Particle-floating mesh broad search
-      if (action_manager->check_solid_objects_enabling())
+      if (action_manager->check_solid_objects_enabled())
         {
           particle_wall_broad_search_object
             .particle_solid_surfaces_contact_search(
@@ -353,7 +353,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
         }
 
       // Particle-floating mesh broad search
-      if (action_manager->check_solid_objects_enabling())
+      if (action_manager->check_solid_objects_enabled())
         {
           particle_wall_broad_search_object
             .particle_solid_surfaces_contact_search(
@@ -404,7 +404,7 @@ DEMContactManager<dim>::execute_particle_particle_fine_search(
     neighborhood_threshold);
 
   if (DEMActionManager::get_action_manager()
-        ->check_periodic_boundaries_enabling())
+        ->check_periodic_boundaries_enabled())
     {
       // Fine search for local-local periodic particle-particle
       particle_particle_fine_search_object.particle_particle_fine_search(
@@ -454,7 +454,7 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
     }
 
   // Particle - floating mesh fine search
-  if (DEMActionManager::get_action_manager()->check_solid_objects_enabling())
+  if (DEMActionManager::get_action_manager()->check_solid_objects_enabled())
     {
       particle_wall_fine_search_object.particle_floating_mesh_fine_search(
         particle_floating_mesh_candidates, particle_floating_mesh_in_contact);

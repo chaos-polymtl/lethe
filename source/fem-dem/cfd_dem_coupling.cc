@@ -70,7 +70,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
   if (dem_parameters.model_parameters.sparse_particle_contacts)
     {
-      dem_action_manager->set_sparse_contacts_enabling();
+      dem_action_manager->set_sparse_contacts_enabled();
       sparse_contacts_object.set_parameters(
         dem_parameters.model_parameters.granular_temperature_threshold,
         dem_parameters.model_parameters.solid_fraction_threshold,
@@ -119,7 +119,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
       if (dem_parameters.boundary_conditions.bc_types[i_bc] ==
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
-          dem_action_manager->set_periodic_boundaries_enabling();
+          dem_action_manager->set_periodic_boundaries_enabled();
 
           periodic_boundaries_object.set_periodic_boundaries_information(
             dem_parameters.boundary_conditions.periodic_boundary_0,
@@ -259,8 +259,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   sort_particles_into_subdomains_and_cells();
 
   // Remap periodic nodes after setup of dofs (If ASC and PBC)
-  if (dem_action_manager->check_periodic_boundaries_enabling() &&
-      dem_action_manager->check_sparse_contacts_enabling())
+  if (dem_action_manager->check_periodic_boundaries_enabled() &&
+      dem_action_manager->check_sparse_contacts_enabled())
     {
       sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
@@ -473,8 +473,8 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (dem_action_manager->check_periodic_boundaries_enabling() &&
-      dem_action_manager->check_sparse_contacts_enabling())
+  if (dem_action_manager->check_periodic_boundaries_enabled() &&
+      dem_action_manager->check_sparse_contacts_enabled())
     {
       sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
@@ -605,7 +605,7 @@ CFDDEMSolver<dim>::load_balance()
   load_balancing.check_load_balance_iteration();
 
   // If not a load balance iteration, exit the function
-  if (!dem_action_manager->check_repartition())
+  if (!dem_action_manager->check_load_balance())
     return;
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
@@ -685,8 +685,8 @@ CFDDEMSolver<dim>::load_balance()
   this->setup_dofs();
 
   // Remap periodic nodes after setup of dofs
-  if (dem_action_manager->check_periodic_boundaries_enabling() &&
-      dem_action_manager->check_sparse_contacts_enabling())
+  if (dem_action_manager->check_periodic_boundaries_enabled() &&
+      dem_action_manager->check_sparse_contacts_enabled())
     {
       sparse_contacts_object.map_periodic_nodes(
         this->void_fraction_constraints);
@@ -1263,9 +1263,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // For the contact search at the last CFD iteration
   if (counter == (coupling_frequency - 1))
-    {
-      dem_action_manager->last_dem_of_cfd_iteration_step();
-    }
+      dem_action_manager->last_dem_of_cfddem_iteration_step();
 
   // Check contact detection step by detection method
   check_contact_detection_method(counter);
@@ -1405,10 +1403,9 @@ CFDDEMSolver<dim>::solve()
           this->vertices_cell_mapping();
         }
 
-      // I thing we could remove the load balacaning and the sorting done here
       this->calculate_void_fraction(
         this->simulation_control->get_current_time(),
-        dem_action_manager->check_repartition());
+        dem_action_manager->check_load_balance());
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
@@ -1450,7 +1447,7 @@ CFDDEMSolver<dim>::solve()
         TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
 
         // First DEM iteration of the CFD iteration
-        dem_action_manager->first_dem_step();
+        dem_action_manager->first_dem_of_cfddem_iteration_step();
 
         // Load balancing if needed
         load_balance();
