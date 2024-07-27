@@ -1263,7 +1263,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
   // For the contact search at the last CFD iteration
   if (counter == (coupling_frequency - 1))
-      dem_action_manager->last_dem_of_cfddem_iteration_step();
+    dem_action_manager->last_dem_of_cfddem_iteration_step();
 
   // Check contact detection step by detection method
   check_contact_detection_method(counter);

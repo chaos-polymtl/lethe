@@ -6,24 +6,24 @@
  * @brief Manage the actions to be performed in the DEM solver and on the DEM
  * part of the coupling CFD-DEM solver.
  *
- *  Any event that needs some following actions are handled by the action
- *  manager. The event communicates to the action manager that it happened and
- *  the action manager will change the trigger flags to the actions to do.
- *  When this action is about to be performed, it checks with the action manager
- *  if it should be trigger.
- *  Many events can triggered the same actions, but when the action is about to
- *  be performed, it only checks if it has to be performed, not what event have
- *  happened.
+ * Any event that needs some following actions are handled by the action
+ * manager. The event communicates to the action manager that it happened and
+ * the action manager will change the trigger flags to the actions to do.
+ * When this action is about to be performed, it checks with the action manager
+ * if it should be trigger.
+ * Many events can triggered the same actions, but when the action is about to
+ * be performed, it only checks if it has to be performed, not what event have
+ * happened.
  *
- *  If you implement a new feature that needs resetting or contact search after
- *  (or other actions), you should add a new "step" function to the action
- *  manager that will set the trigger to the action to be performed.
- *  If you implement new actions, you should add a new trigger flag and a new
- *  check function to the action manager. Obviously, you should also have to
- *  initialize the trigger in the constructor, and reset it in the reset
- *  function called after a DEM iteration.
- *  If the action depends on a enabling of a feature, you should add a new
- *  function to set the enabled flag.
+ * If you implement a new feature that needs resetting or contact search after
+ * (or other actions), you should add a new "step" function to the action
+ * manager that will set the trigger to the action to be performed.
+ * If you implement new actions, you should add a new trigger flag and a new
+ * check function to the action manager. Obviously, you should also have to
+ * initialize the trigger in the constructor, and reset it in the reset
+ * function called after a DEM iteration.
+ * If the action depends on a enabling of a feature, you should add a new
+ * function to set the enabled flag.
  */
 class DEMActionManager
 {
