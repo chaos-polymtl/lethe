@@ -2501,6 +2501,11 @@ namespace Parameters
                           Patterns::Integer(),
                           "mg minimum number of cells for coarse level");
 
+        prm.declare_entry("mg int level",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg int level");
+
         prm.declare_entry(
           "mg enable hessians in jacobian",
           "true",
@@ -2685,6 +2690,7 @@ namespace Parameters
 
         mg_min_level       = prm.get_integer("mg min level");
         mg_level_min_cells = prm.get_integer("mg level min cells");
+        mg_int_level       = prm.get_integer("mg int level");
         mg_enable_hessians_jacobian =
           prm.get_bool("mg enable hessians in jacobian");
         Assert(enable_hessians_jacobian || !mg_enable_hessians_jacobian,
