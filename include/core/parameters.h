@@ -1190,6 +1190,14 @@ namespace Parameters
     /// MG smoother relaxation parameter
     double mg_smoother_relaxation;
 
+    /// Type of multigrid
+    enum class MultigridSmootherPreconditionerType
+    {
+      InverseDiagonal,
+      AdditiveSchwarzMethod
+    };
+    MultigridSmootherPreconditionerType mg_smoother_preconditioner_type;
+
     /// MG eigenvalue estimation for smoother relaxation parameter
     bool mg_smoother_eig_estimation;
 

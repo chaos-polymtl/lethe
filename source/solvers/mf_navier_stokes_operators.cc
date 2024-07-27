@@ -462,6 +462,16 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
 }
 
 
+
+template <int dim, typename number>
+const DynamicSparsityPattern &
+NavierStokesOperatorBase<dim, number>::get_sparsity_pattern() const
+{
+  return dsp;
+}
+
+
+
 template <int dim, typename number>
 const TrilinosWrappers::SparseMatrix &
 NavierStokesOperatorBase<dim, number>::get_system_matrix() const
@@ -491,7 +501,9 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
             DoFTools::extract_locally_relevant_dofs(dof_handler);
         }
 
-      DynamicSparsityPattern dsp(locally_relevant_dofs);
+      this->dsp.reinit(locally_relevant_dofs.size(),
+                       locally_relevant_dofs.size(),
+                       locally_relevant_dofs);
 
       if (mg_level != numbers::invalid_unsigned_int)
         {

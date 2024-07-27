@@ -2517,6 +2517,12 @@ namespace Parameters
                           Patterns::Double(),
                           "mg smoother relaxation for lsmg or gcmg");
 
+        prm.declare_entry("mg smoother preconditioner type",
+                          "inverse diagonal",
+                          Patterns::Selection(
+                            "inverse diagonal|additive schwarz method"),
+                          "Preconditioner of smoother");
+
         prm.declare_entry("mg smoother eig estimation",
                           "false",
                           Patterns::Bool(),
@@ -2673,8 +2679,20 @@ namespace Parameters
         Assert(enable_hessians_jacobian || !mg_enable_hessians_jacobian,
                ExcNotImplemented());
 
-        mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
-        mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
+        mg_smoother_iterations = prm.get_integer("mg smoother iterations");
+        mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
+
+        const std::string mg_smoother_preconditioner_type =
+          prm.get("mg smoother preconditioner type");
+        if (mg_smoother_preconditioner_type == "inverse diagonal")
+          this->mg_smoother_preconditioner_type =
+            MultigridSmootherPreconditionerType::InverseDiagonal;
+        else if (mg_smoother_preconditioner_type == "additive schwarz method")
+          this->mg_smoother_preconditioner_type =
+            MultigridSmootherPreconditionerType::AdditiveSchwarzMethod;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
         eig_estimation_smoothing_range =
           prm.get_double("eig estimation smoothing range");
