@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author:  Lucka Barbeau , Polytechnique Montreal, 2021-
-*/
+ */
 
 // Deal.II includes
 #include <deal.II/distributed/tria.h>

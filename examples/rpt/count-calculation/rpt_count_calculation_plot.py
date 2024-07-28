@@ -1,6 +1,5 @@
 """
 Name   : rpt_count-calculation_plot.py
-Author : Amishga Alphonius
 Date   : 16-06-2022
 Desc   : Generates plots for the data resulting from the count calculation example
 """

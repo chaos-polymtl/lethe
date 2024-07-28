@@ -12,10 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Carole-Anne Daunais, Valérie Bibeau, Polytechnique
- Montreal, 2020-
  */
 
 #include <core/bdf.h>
