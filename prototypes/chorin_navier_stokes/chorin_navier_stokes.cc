@@ -60,9 +60,9 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
-//#include "boundaryconditions.h"
-//#include "exactsolutions.h"
-//#include "forcingfunctions.h"
+// #include "boundaryconditions.h"
+// #include "exactsolutions.h"
+// #include "forcingfunctions.h"
 
 #include <cmath>
 #include <fstream>
@@ -115,7 +115,7 @@ public:
 template <int dim>
 void
 MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
-                                          Vector<double> &  values) const
+                                          Vector<double>   &values) const
 {
   assert(dim == 2);
   const double a = M_PI;
@@ -168,7 +168,7 @@ public:
 template <int dim>
 void
 ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
-                                    Vector<double> &  values) const
+                                    Vector<double>   &values) const
 {
   const double a = M_PI;
   double       x = p[0];

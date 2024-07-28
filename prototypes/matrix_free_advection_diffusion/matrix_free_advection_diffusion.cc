@@ -372,7 +372,7 @@ AdvectionField<dim>::value(const Point<dim, number> &p,
 
 template <int dim>
 double
-AdvectionField<dim>::value(const Point<dim> & p,
+AdvectionField<dim>::value(const Point<dim>  &p,
                            const unsigned int component) const
 {
   return value<double>(p, component);
@@ -400,13 +400,13 @@ public:
 
   virtual void
   value_list(const std::vector<Point<dim>> &points,
-             std::vector<double> &          values,
+             std::vector<double>           &values,
              const unsigned int             component = 0) const override;
 };
 
 template <int dim>
 double
-BoundaryValues<dim>::value(const Point<dim> & p,
+BoundaryValues<dim>::value(const Point<dim>  &p,
                            const unsigned int component) const
 {
   Assert(component == 0, ExcIndexRange(component, 0, 1));
@@ -426,7 +426,7 @@ BoundaryValues<dim>::value(const Point<dim> & p,
 template <int dim>
 void
 BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
-                                std::vector<double> &          values,
+                                std::vector<double>           &values,
                                 const unsigned int             component) const
 {
   AssertDimension(values.size(), points.size());
@@ -438,7 +438,7 @@ BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
 // Matrix-free helper function
 template <int dim, typename Number>
 VectorizedArray<Number>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   VectorizedArray<Number> result;
@@ -455,7 +455,7 @@ evaluate_function(const Function<dim> &                      function,
 // Matrix-free helper function
 template <int dim, typename Number, int components>
 Tensor<1, dim, VectorizedArray<Number>>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   Tensor<1, dim, VectorizedArray<Number>> result;
@@ -503,12 +503,12 @@ public:
 private:
   virtual void
   apply_add(
-    LinearAlgebra::distributed::Vector<number> &      dst,
+    LinearAlgebra::distributed::Vector<number>       &dst,
     const LinearAlgebra::distributed::Vector<number> &src) const override;
 
   void
-  local_apply(const MatrixFree<dim, number> &                   data,
-              LinearAlgebra::distributed::Vector<number> &      dst,
+  local_apply(const MatrixFree<dim, number>                    &data,
+              LinearAlgebra::distributed::Vector<number>       &dst,
               const LinearAlgebra::distributed::Vector<number> &src,
               const std::pair<unsigned int, unsigned int> &cell_range) const;
 
@@ -573,10 +573,10 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::evaluate_newton_step(
 template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
-  const MatrixFree<dim, number> &                   data,
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  const MatrixFree<dim, number>                    &data,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
   FECellIntegrator phi(data);
 
@@ -673,7 +673,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src) const
 {
   this->data->cell_loop(&AdvectionDiffusionOperator::local_apply,
@@ -856,15 +856,15 @@ private:
 
   void
   evaluate_residual(
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src) const;
 
   void
   local_evaluate_residual(
-    const MatrixFree<dim, double> &                   data,
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    const MatrixFree<dim, double>                    &data,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int> &     cell_range) const;
+    const std::pair<unsigned int, unsigned int>      &cell_range) const;
 
   void
   assemble_rhs();
@@ -941,7 +941,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
 
   switch (parameters.geometry)
     {
-        case Settings::hyperball: {
+      case Settings::hyperball:
+        {
           SphericalManifold<dim>                boundary_manifold;
           TransfiniteInterpolationManifold<dim> inner_manifold;
 
@@ -957,11 +958,13 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
 
           break;
         }
-        case Settings::hypercube: {
+      case Settings::hypercube:
+        {
           GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
-        case Settings::hypercube_with_hole: {
+      case Settings::hypercube_with_hole:
+        {
           GridGenerator::hyper_cube_with_cylindrical_hole(triangulation,
                                                           0.3,
                                                           1.0);
@@ -970,7 +973,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
           triangulation.set_manifold(1, manifold_description);
           break;
         }
-        case Settings::hyperrectangle: {
+      case Settings::hyperrectangle:
+        {
           std::vector<unsigned int> repetitions(dim);
           for (unsigned int i = 0; i < dim - 1; i++)
             {
@@ -1279,7 +1283,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
 template <int dim, int fe_degree>
 void
 MatrixFreeAdvectionDiffusion<dim, fe_degree>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   auto matrix_free = system_matrix.get_matrix_free();
@@ -1294,10 +1298,10 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::evaluate_residual(
 template <int dim, int fe_degree>
 void
 MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
-  const MatrixFree<dim, double> &                   data,
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  const MatrixFree<dim, double>                    &data,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
   SourceTerm<dim>                                        source_term_function;
@@ -1450,7 +1454,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   switch (parameters.preconditioner)
     {
-        case Settings::amg: {
+      case Settings::amg:
+        {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
 
@@ -1467,7 +1472,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
-        case Settings::gmg: {
+      case Settings::gmg:
+        {
           system_matrix.evaluate_newton_step(solution);
 
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
@@ -1557,7 +1563,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
-        case Settings::ilu: {
+      case Settings::ilu:
+        {
           TrilinosWrappers::PreconditionILU                 preconditioner;
           TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
           preconditioner.initialize(
@@ -1898,24 +1905,28 @@ main(int argc, char *argv[])
     {
       switch (parameters.dimension)
         {
-            case 2: {
+          case 2:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixFreeAdvectionDiffusion<2, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixFreeAdvectionDiffusion<2, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixFreeAdvectionDiffusion<2, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
@@ -1926,24 +1937,28 @@ main(int argc, char *argv[])
               break;
             }
 
-            case 3: {
+          case 3:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixFreeAdvectionDiffusion<3, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixFreeAdvectionDiffusion<3, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixFreeAdvectionDiffusion<3, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
