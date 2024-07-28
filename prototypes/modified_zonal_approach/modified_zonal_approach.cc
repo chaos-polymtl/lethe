@@ -256,7 +256,7 @@ main()
             if (t == n_times - 1)
               write_distances(case_1.second, distances, "random.dat");
           }
-      }    
+      }
 
       {
         unsigned int n_times = 1e5;

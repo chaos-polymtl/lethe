@@ -251,7 +251,7 @@ public:
 template <int dim>
 struct ScratchData
 {
-  ScratchData(const Mapping<dim> &      mapping,
+  ScratchData(const Mapping<dim>       &mapping,
               const FiniteElement<dim> &fe,
               const unsigned int        quadrature_degree,
               const UpdateFlags         update_flags)
@@ -323,9 +323,9 @@ private:
 
   template <class Iterator>
   void
-  cell_worker(const Iterator &  cell,
+  cell_worker(const Iterator   &cell,
               ScratchData<dim> &scratch_data,
-              CopyData &        copy_data);
+              CopyData         &copy_data);
 
   void
   assemble_gmg_meshworker();
@@ -410,7 +410,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
 
   switch (parameters.geometry)
     {
-        case Settings::hyperball: {
+      case Settings::hyperball:
+        {
           SphericalManifold<dim>                boundary_manifold;
           TransfiniteInterpolationManifold<dim> inner_manifold;
 
@@ -426,11 +427,13 @@ MatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
 
           break;
         }
-        case Settings::hypercube: {
+      case Settings::hypercube:
+        {
           GridGenerator::hyper_cube(triangulation);
           break;
         }
-        case Settings::hyperrectangle: {
+      case Settings::hyperrectangle:
+        {
           std::vector<unsigned int> repetitions(dim);
           for (unsigned int i = 0; i < dim - 1; i++)
             {
@@ -790,9 +793,9 @@ template <int dim, int fe_degree>
 template <class Iterator>
 void
 MatrixBasedPoissonProblem<dim, fe_degree>::cell_worker(
-  const Iterator &  cell,
+  const Iterator   &cell,
   ScratchData<dim> &scratch_data,
-  CopyData &        copy_data)
+  CopyData         &copy_data)
 {
   FEValues<dim> &fe_values = scratch_data.fe_values;
   fe_values.reinit(cell);
@@ -849,8 +852,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_gmg_meshworker()
     }
   auto cell_worker =
     [&](const typename DoFHandler<dim>::level_cell_iterator &cell,
-        ScratchData<dim> &                                   scratch_data,
-        CopyData &                                           copy_data) {
+        ScratchData<dim>                                    &scratch_data,
+        CopyData                                            &copy_data) {
       this->cell_worker(cell, scratch_data, copy_data);
     };
 
@@ -1002,7 +1005,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
 
   switch (parameters.preconditioner)
     {
-        case Settings::amg: {
+      case Settings::amg:
+        {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
 
@@ -1017,7 +1021,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
                    preconditioner);
           break;
         }
-        case Settings::gmg: {
+      case Settings::gmg:
+        {
           MGTransferPrebuilt<VectorType> mg_transfer(mg_constrained_dofs);
           mg_transfer.build(dof_handler);
 
@@ -1369,24 +1374,28 @@ main(int argc, char *argv[])
     {
       switch (parameters.dimension)
         {
-            case 2: {
+          case 2:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixBasedPoissonProblem<2, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixBasedPoissonProblem<2, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixBasedPoissonProblem<2, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
@@ -1397,24 +1406,28 @@ main(int argc, char *argv[])
               break;
             }
 
-            case 3: {
+          case 3:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixBasedPoissonProblem<3, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixBasedPoissonProblem<3, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixBasedPoissonProblem<3, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
