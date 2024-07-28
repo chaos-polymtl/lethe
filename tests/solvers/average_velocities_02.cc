@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ */
 
 /**
  * @brief This code tests averaging values in time with Trilinos vectors with

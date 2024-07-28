@@ -1,8 +1,6 @@
 """
 Postprocessing code for the 2D taylor-couette example
 This code extracts the data from the vtu file and plots it against the analytical solution
-
-Author : Bruno Blais
 """
 
 # Modules
