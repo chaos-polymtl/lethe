@@ -2,10 +2,10 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/lac/precondition.h>
@@ -153,8 +153,8 @@ compute_quadrature(
   std::vector<Point<spacedim>> all_points;
   std::vector<double>          all_JxWs;
 
-  for (const auto & subsection_0 : subsections_0)
-    for (const auto & subsection_1 : subsections_1)
+  for (const auto &subsection_0 : subsections_0)
+    for (const auto &subsection_1 : subsections_1)
       {
         const auto [points, JxWs] =
           compute_quadrature<structdim, spacedim>(subsection_0.first,
@@ -191,9 +191,7 @@ public:
     , dof_handler(dof_handler)
     , constraints(constraints)
     , quadrature(quadrature)
-    , panalty_factor(
-        compute_pentaly_factor(dof_handler.get_fe().degree,
-                               1.0))
+    , panalty_factor(compute_pentaly_factor(dof_handler.get_fe().degree, 1.0))
     , valid_system(false)
   {
     typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
@@ -207,43 +205,42 @@ public:
 
     const double radius = 0.5; // TODO
 
-    const auto compute_penalty_parameter = [&](const auto & cell)
-      {
-    const dealii::FiniteElement<dim> &fe =
-      matrix_free.get_dof_handler().get_fe();
-    const unsigned int degree = fe.degree;
+    const auto compute_penalty_parameter = [&](const auto &cell) {
+      const dealii::FiniteElement<dim> &fe =
+        matrix_free.get_dof_handler().get_fe();
+      const unsigned int degree = fe.degree;
 
-    dealii::QGauss<dim>   quadrature(degree + 1);
-    dealii::FEValues<dim> fe_values(mapping,
-                                    fe,
-                                    quadrature,
-                                    dealii::update_JxW_values);
+      dealii::QGauss<dim>   quadrature(degree + 1);
+      dealii::FEValues<dim> fe_values(mapping,
+                                      fe,
+                                      quadrature,
+                                      dealii::update_JxW_values);
 
-    dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
-    dealii::FEFaceValues<dim> fe_face_values(mapping,
-                                             fe,
-                                             face_quadrature,
-                                             dealii::update_JxW_values);
+      dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
+      dealii::FEFaceValues<dim> fe_face_values(mapping,
+                                               fe,
+                                               face_quadrature,
+                                               dealii::update_JxW_values);
 
-          fe_values.reinit(cell);
+      fe_values.reinit(cell);
 
-          Number volume = 0;
-          for (unsigned int q = 0; q < quadrature.size(); ++q)
-            volume += fe_values.JxW(q);
+      Number volume = 0;
+      for (unsigned int q = 0; q < quadrature.size(); ++q)
+        volume += fe_values.JxW(q);
 
-          Number surface_area = 0;
-          for (const auto f : cell->face_indices())
-            {
-              fe_face_values.reinit(cell, f);
-              const Number factor =
-                (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
-                                                                            0.5;
-              for (unsigned int q = 0; q < face_quadrature.size(); ++q)
-                surface_area += fe_face_values.JxW(q) * factor;
-            }
+      Number surface_area = 0;
+      for (const auto f : cell->face_indices())
+        {
+          fe_face_values.reinit(cell, f);
+          const Number factor =
+            (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
+                                                                        0.5;
+          for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+            surface_area += fe_face_values.JxW(q) * factor;
+        }
 
-          return surface_area / volume;
-      };
+      return surface_area / volume;
+    };
 
     for (const auto &cell_0 : tria.active_cell_iterators())
       for (const auto &face_0 : cell_0->face_iterators())
@@ -273,14 +270,18 @@ public:
                   for (const auto &p : points)
                     normal.emplace_back(p / p.norm());
 
-                  const Number penalty_parameter = std::min(
-                    compute_penalty_parameter(cell_0),
-                    compute_penalty_parameter(cell_1)
-                  );
-                  
+                  const Number penalty_parameter =
+                    std::min(compute_penalty_parameter(cell_0),
+                             compute_penalty_parameter(cell_1));
 
-                  all_intersections.emplace_back(
-                    JxWs, cell_0, points_0, cell_1, points_1, normal, penalty_parameter);
+
+                  all_intersections.emplace_back(JxWs,
+                                                 cell_0,
+                                                 points_0,
+                                                 cell_1,
+                                                 points_1,
+                                                 normal,
+                                                 penalty_parameter);
                 }
   }
 
@@ -330,8 +331,13 @@ public:
     Vector<double> buffer_0;
     Vector<double> buffer_1;
 
-    for (const auto &[JxWs, cell_0, points_0, cell_1, points_1, normals, penalty_parameter] :
-         all_intersections)
+    for (const auto &[JxWs,
+                      cell_0,
+                      points_0,
+                      cell_1,
+                      points_1,
+                      normals,
+                      penalty_parameter] : all_intersections)
       {
         const auto cell_dof_0 = cell_0->as_dof_handler_iterator(dof_handler);
         const auto cell_dof_1 = cell_1->as_dof_handler_iterator(dof_handler);
@@ -353,7 +359,7 @@ public:
         for (const auto q : phi_m.quadrature_point_indices())
           {
             const auto normal = normals[q];
-            const auto JxW    = JxWs [q];
+            const auto JxW    = JxWs[q];
 
             const auto value_m = phi_m.get_value(q);
             const auto value_p = phi_p.get_value(q);
@@ -361,8 +367,9 @@ public:
             const auto gradient_m = phi_m.get_gradient(q);
             const auto gradient_p = phi_p.get_gradient(q);
 
-            const auto jump_value   = (value_m - value_p) * 0.5 * JxW;
-            const auto avg_gradient = normal * (gradient_m + gradient_p) * 0.5 * JxW;
+            const auto jump_value = (value_m - value_p) * 0.5 * JxW;
+            const auto avg_gradient =
+              normal * (gradient_m + gradient_p) * 0.5 * JxW;
 
             const double sigma = penalty_parameter * panalty_factor;
 
@@ -452,7 +459,8 @@ private:
                          std::vector<Point<dim>>,
                          typename Triangulation<dim>::active_cell_iterator,
                          std::vector<Point<dim>>,
-                         std::vector<Tensor<1, dim, Number>>, Number>>
+                         std::vector<Tensor<1, dim, Number>>,
+                         Number>>
     all_intersections;
 
   void
@@ -491,7 +499,7 @@ private:
   }
 
   mutable TrilinosWrappers::SparseMatrix system_matrix;
-  const Number panalty_factor;
+  const Number                           panalty_factor;
   mutable bool                           valid_system;
 };
 

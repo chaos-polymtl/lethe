@@ -18,7 +18,7 @@ public:
 template <int dim>
 void
 ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
-                                    Vector<double> &  values) const
+                                    Vector<double>   &values) const
 {
   const double a = M_PI;
   double       x = p[0];
@@ -48,7 +48,7 @@ private:
 template <int dim>
 void
 ExactSolutionTaylorCouette<dim>::vector_value(const Point<dim> &p,
-                                              Vector<double> &  values) const
+                                              Vector<double>   &values) const
 {
   const double a      = M_PI;
   double       x      = p[0];

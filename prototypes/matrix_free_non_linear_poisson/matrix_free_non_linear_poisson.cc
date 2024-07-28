@@ -267,12 +267,12 @@ public:
 private:
   virtual void
   apply_add(
-    LinearAlgebra::distributed::Vector<number> &      dst,
+    LinearAlgebra::distributed::Vector<number>       &dst,
     const LinearAlgebra::distributed::Vector<number> &src) const override;
 
   void
-  local_apply(const MatrixFree<dim, number> &                   data,
-              LinearAlgebra::distributed::Vector<number> &      dst,
+  local_apply(const MatrixFree<dim, number>                    &data,
+              LinearAlgebra::distributed::Vector<number>       &dst,
               const LinearAlgebra::distributed::Vector<number> &src,
               const std::pair<unsigned int, unsigned int> &cell_range) const;
 
@@ -322,10 +322,10 @@ JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
 template <int dim, int fe_degree, typename number>
 void
 JacobianOperator<dim, fe_degree, number>::local_apply(
-  const MatrixFree<dim, number> &                   data,
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  const MatrixFree<dim, number>                    &data,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
   FECellIntegrator phi(data);
 
@@ -356,7 +356,7 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 template <int dim, int fe_degree, typename number>
 void
 JacobianOperator<dim, fe_degree, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src) const
 {
   this->data->cell_loop(&JacobianOperator::local_apply, this, dst, src);
@@ -430,15 +430,15 @@ private:
 
   void
   evaluate_residual(
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src) const;
 
   void
   local_evaluate_residual(
-    const MatrixFree<dim, double> &                   data,
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    const MatrixFree<dim, double>                    &data,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int> &     cell_range) const;
+    const std::pair<unsigned int, unsigned int>      &cell_range) const;
 
   void
   assemble_rhs();
@@ -514,7 +514,8 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
 
   switch (parameters.geometry)
     {
-        case Settings::hyperball: {
+      case Settings::hyperball:
+        {
           SphericalManifold<dim>                boundary_manifold;
           TransfiniteInterpolationManifold<dim> inner_manifold;
 
@@ -530,11 +531,13 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
 
           break;
         }
-        case Settings::hypercube: {
+      case Settings::hypercube:
+        {
           GridGenerator::hyper_cube(triangulation);
           break;
         }
-        case Settings::hyperrectangle: {
+      case Settings::hyperrectangle:
+        {
           std::vector<unsigned int> repetitions(dim);
           for (unsigned int i = 0; i < dim - 1; i++)
             {
@@ -656,7 +659,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
 template <int dim, int fe_degree>
 void
 MatrixFreePoissonProblem<dim, fe_degree>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   auto matrix_free = system_matrix.get_matrix_free();
@@ -668,10 +671,10 @@ MatrixFreePoissonProblem<dim, fe_degree>::evaluate_residual(
 template <int dim, int fe_degree>
 void
 MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
-  const MatrixFree<dim, double> &                   data,
-  LinearAlgebra::distributed::Vector<double> &      dst,
+  const MatrixFree<dim, double>                    &data,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
   SourceTerm<dim>                                        source_term_function;
@@ -1104,24 +1107,28 @@ main(int argc, char *argv[])
     {
       switch (parameters.dimension)
         {
-            case 2: {
+          case 2:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixFreePoissonProblem<2, 1> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixFreePoissonProblem<2, 2> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixFreePoissonProblem<2, 3> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();
@@ -1132,24 +1139,28 @@ main(int argc, char *argv[])
               break;
             }
 
-            case 3: {
+          case 3:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixFreePoissonProblem<3, 1> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixFreePoissonProblem<3, 2> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixFreePoissonProblem<3, 3> non_linear_poisson_problem(
                         parameters);
                       non_linear_poisson_problem.run();

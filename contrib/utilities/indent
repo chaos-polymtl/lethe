@@ -61,29 +61,29 @@ checks
 # Process all source and header files:
 #
 
-process_changed "tests include source examples cmake/scripts contrib/python-bindings" ".*\.(cc|h)" format_file
+process_changed "tests include source examples prototypes" ".*\.(cc|h)" format_file
 process_changed "source" ".*\.inst.in" format_inst
 
 #
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process_changed "tests include source examples cmake/scripts contrib/python-bindings" \
+process_changed "tests include source examples prototypes" \
   ".*\.(cc|h|inst.in|output.*|cmake)" fix_permissions
 
-process_changed "tests include source examples cmake/scripts contrib/python-bindings" \
+process_changed "tests include source examples prototypes" \
   ".*\.(cc|h|inst.in|cmake)" dos_to_unix
 
 #
 # Removing trailing whitespace
 #
 
-process_changed "tests include source examples cmake/scripts contrib/python-bindings doc" \
+process_changed "tests include source examples prototypes doc" \
   ".*\.(cc|h|html|dox|txt)" remove_trailing_whitespace
 
 #
 # Ensure only a single newline at end of files
 #
 
-process_changed "tests include source examples cmake/scripts contrib/python-bindings doc" \
+process_changed "tests include source examples prototypes doc" \
   ".*\.(cc|h|html|dox|txt)" ensure_single_trailing_newline

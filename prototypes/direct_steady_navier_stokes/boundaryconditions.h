@@ -16,16 +16,16 @@ public:
 
 template <int dim>
 double
-RotatingWall<dim>::value(const Point<dim> & p,
+RotatingWall<dim>::value(const Point<dim>  &p,
                          const unsigned int component) const
 {
   Assert(component < this->n_components,
          ExcIndexRange(component, 0, this->n_components));
 
-  if (component == 0) 
-      return -p[1];
-  else if (component == 1) 
-      return p[0];
+  if (component == 0)
+    return -p[1];
+  else if (component == 1)
+    return p[0];
   return 0.;
 }
 
@@ -55,7 +55,7 @@ private:
 
 template <int dim>
 double
-PoiseuilleInlet<dim>::value(const Point<dim> & p,
+PoiseuilleInlet<dim>::value(const Point<dim>  &p,
                             const unsigned int component) const
 {
   Assert(component < this->n_components,
@@ -128,7 +128,7 @@ private:
 
 template <int dim>
 double
-ConstantXSlip<dim>::value(const Point<dim> & p,
+ConstantXSlip<dim>::value(const Point<dim>  &p,
                           const unsigned int component) const
 {
   Assert(component < this->n_components,
