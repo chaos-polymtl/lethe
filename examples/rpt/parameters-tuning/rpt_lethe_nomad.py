@@ -1,6 +1,5 @@
 """
 Name   : rpt_lethe_nomad.py
-Author : Audrey Collard-Daigneault
 Date   : 17-06-2021
 Desc   : This code is a meta Python code to run the rpt_3d lethe application with the NOMAD software for
          blackbox optimization

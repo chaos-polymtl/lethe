@@ -1,6 +1,5 @@
 """
 Name   : rpt_parameter_tuning_plot.py
-Author : Amishga Alphonius
 Date   : 23-06-2022
 Desc   : Generates plots with the data resulting from the parameter tuning example
 """

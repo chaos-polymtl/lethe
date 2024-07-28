@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Simon Gauvin, Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 /*

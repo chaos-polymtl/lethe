@@ -2,8 +2,6 @@
 Postprocessing code for 2D-backward-facing-step example
 Computes the reattachment length (x_r) for Re = 100
 for several meshes with a bisection algorithm
-
-Author : Charles Le Pailleur
 """
 
 import numpy as np

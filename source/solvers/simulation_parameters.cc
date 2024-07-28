@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
 #include <solvers/simulation_parameters.h>

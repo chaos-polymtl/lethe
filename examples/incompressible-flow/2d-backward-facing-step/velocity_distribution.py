@@ -2,8 +2,6 @@
 Postprocessing code for 2D-backward-facing-step example
 Computes velocity distributions at inlet and outlet and
 compares it with analytical solution (Poiseuille)
-
-Author : Charles Le Pailleur
 """
 
 import numpy as np

@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2020-
-*/
+ */
 
 /**
  * @brief This test checks the read and write capacities of the
