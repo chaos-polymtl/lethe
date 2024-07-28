@@ -329,6 +329,9 @@ public:
     FEPointEvaluation<1, dim, dim, double> phi_p(
       mapping, dof_handler.get_fe(), update_values | update_gradients);
 
+    Vector<double> buffer_0;
+    Vector<double> buffer_1;
+
     for (const auto &[JxWs,
                       cell_0,
                       points_0,
