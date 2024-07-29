@@ -237,7 +237,6 @@ protected:
         set_initial_condition_fd(initial_condition_type, restart);
         if (!restart)
           {
-            std::cout <<"flag"<<std::endl;
             multiphysics->set_initial_conditions();
             this->postprocess_fd(true);
             multiphysics->postprocess(true);

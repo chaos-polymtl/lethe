@@ -1115,12 +1115,8 @@ HeatTransfer<dim>::read_checkpoint()
   GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
   input_vectors[0] = &distributed_system;
 
-  std::cout << "previous solution size: "<< previous_solutions.size() << std::endl;
-
   std::vector<GlobalVectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions.size());
-
-  std::cout << "find crash 2" << std::endl;
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
@@ -1129,7 +1125,7 @@ HeatTransfer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  solution_transfer->deserialize(input_vectors); // this is the line
+  solution_transfer->deserialize(input_vectors);
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)

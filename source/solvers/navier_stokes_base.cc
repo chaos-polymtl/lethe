@@ -40,7 +40,6 @@
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria_iterator.h>
 
@@ -501,11 +500,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
           error_table.write_text(std::cout);
         }
     }
-    // Calculating the average velocities was implemented in order to run fluid flows and auxiliary physics simulations independantly. Therefore a checkpoint is always written at the end of the simulation even if checkpointing is not specified in the parameter file.
-    // if (simulation_parameters.post_processing.calculate_average_velocities)
-    // {
-    //  this -> write_checkpoint();
-    // }
 }
  
 template <int dim, typename VectorType, typename DofsType>
@@ -1826,10 +1820,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       this->flow_control.read(prefix);
     }
 
-  // The average velocity profile initial condition uses the checkpoint mechanism to fetch a previous simulation solution. If an auxiliary physics was set to false in a previous simulation and is now set as true in a new simulation, the code would try to get an inexistant solution. Therefore, the multiphysics initial condition should not be set from the checkpoint.  
+  // The average velocity profile initial condition uses the checkpoint mechanism to fetch a previous simulation solution. If an auxiliary physics was set to false in this previous simulation and is now set as true in a new simulation, the code would try to get an inexistant solution. Therefore, the multiphysics initial condition should not be set from the checkpoint. 
   if (this->simulation_parameters.initial_condition->type != Parameters::InitialConditionType::average_velocity_profile || (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile && this->simulation_parameters.restart_parameters.restart)){
-
-    std::cout << "I did enter" << std::endl;
     multiphysics->read_checkpoint();
   }
 
@@ -2188,7 +2180,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   DataOutBase::VtkFlags flags;
   if (this->velocity_fem_degree > 1)
     flags.write_higher_order_cells = true;
-  
   data_out.set_flags(flags);
 
   // Attach the solution data to data_out object
@@ -2437,7 +2428,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       DataOutBase::VtkFlags flags;
       if (this->velocity_fem_degree > 1)
         flags.write_higher_order_cells = true;
-
       data_out_faces.set_flags(flags);
 
       BoundaryPostprocessor<dim> boundary_id;
@@ -2604,42 +2594,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
           this->simulation_parameters.analytical_solution->get_filename() +
           "_FD" + suffix);
   }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void 
-NavierStokesBase<dim, VectorType, DofsType>::write_grid()
-{
-  // Had a bug with multiple processors the rank 0 stuff makes sure only one cores executes this
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  if (rank == 0){ 
-    
-  GridOut grid_out;
-  std::ofstream out("restart-grid.vtu");
-  GridOutFlags::Vtu flags;
-
-  flags.serialize_triangulation = true;
-  grid_out.set_flags(flags);
-
-  grid_out.write_vtu(*this->triangulation, out);
-
-  
-  // Triangulation<dim> basetria(Triangulation<dim>::limit_level_difference_at_vertices);
-  // // std::shared_ptr<parallel::DistributedTriangulationBase<dim>> basetria;
-
-  // GridIn<dim> grid_in;
-  // grid_in.attach_triangulation(basetria);
-  // std::ifstream input_file("test-grid.vtu");
-
-  // grid_in.read_vtu(input_file);
-
-  // std::cout << "allo" << std::endl;
-
-  }
-  // GridIn<dim> grid_in;
-  // std::ifstream in("test-grid.vtu");
-  // grid_in.read_vtu(in);
 }
 
 template <int dim, typename VectorType, typename DofsType>
