@@ -1727,10 +1727,15 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile && !(this->simulation_parameters.restart_parameters.restart) ){
     checkpoint_folder = this->simulation_parameters.initial_condition->checkpoint_folder;
     checkpoint_file_name = this->simulation_parameters.initial_condition->checkpoint_file_name;
+    std::cout<< "wrong folder" << endl;
   }
   else {
+    std::cout << "reading correct output folder" << std::endl;
     checkpoint_folder = this->simulation_parameters.simulation_control.output_folder;
     checkpoint_file_name = this->simulation_parameters.restart_parameters.filename;
+
+    std::cout << "checkpoint_folder: " << checkpoint_folder << std::endl;
+    std::cout << "checkpoint_file_name: " << checkpoint_file_name << std::endl;
   }
 
   std::string prefix = checkpoint_folder + checkpoint_file_name;
@@ -1739,6 +1744,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   this->pvdhandler.read(prefix);
 
   const std::string filename = prefix + ".triangulation";
+  std::cout << "filename: " << filename << std::endl;
   std::ifstream     in(filename.c_str());
   if (!in)
     AssertThrow(false,
@@ -1822,6 +1828,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   // The average velocity profile initial condition uses the checkpoint mechanism to fetch a previous simulation solution. If an auxiliary physics was set to false in this previous simulation and is now set as true in a new simulation, the code would try to get an inexistant solution. Therefore, the multiphysics initial condition should not be set from the checkpoint. 
   if (this->simulation_parameters.initial_condition->type != Parameters::InitialConditionType::average_velocity_profile || (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile && this->simulation_parameters.restart_parameters.restart)){
+    std::cout << "Entering normally" << std::endl;
+
     multiphysics->read_checkpoint();
   }
 
