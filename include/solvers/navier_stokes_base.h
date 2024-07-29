@@ -235,7 +235,7 @@ protected:
           this->refine_mesh();
 
         set_initial_condition_fd(initial_condition_type, restart);
-        if (!restart)// || initial_condition_type == Parameters::InitialConditionType::vtu)
+        if (!restart)
           {
             std::cout <<"flag"<<std::endl;
             multiphysics->set_initial_conditions();
@@ -781,13 +781,6 @@ protected:
    */
   void
   write_output_torques();
-
-  /**
-   * @brief write_grid
-   * THIS FUNCTION IS ONLY USED TO OUTPUT THE FINAL MESH IN VTU FORMAT THAT IS USED FOR THE RESTART OF A SIMULATION USING THE AVERAGE VELOCITY AS AN INITIAL CONDITION
-   */
-  void
-  write_grid();
 
   /**
    * @brief rescale_pressure_dofs_in_newton_update
