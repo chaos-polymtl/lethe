@@ -230,14 +230,8 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
   auto action_manager = DEMActionManager::get_action_manager();
 
   // Check if sparse contacts are enabled to use proper broad search functions
-  // ASC will use the default broad search functions at the first iteration
-  bool use_default_functions =
-    !action_manager->check_sparse_contacts_enabled() ||
-    action_manager->check_mobility_status_reset();
-
-  // Check if sparse contacts are enabled to use proper broad search functions
   // The first broad search is the default one for sparse contacts
-  if (use_default_functions)
+  if (action_manager->use_default_broad_search_functions())
     {
       particle_particle_broad_search_object
         .find_particle_particle_contact_pairs(particle_handler, *this);
@@ -278,13 +272,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
 {
   auto action_manager = DEMActionManager::get_action_manager();
 
-  // Check if sparse contacts are enabled to use proper broad search functions
-  // ASC will use the default broad search functions at the first iteration
-  bool use_default_functions =
-    !action_manager->check_sparse_contacts_enabled() ||
-    action_manager->check_mobility_status_reset();
-
-  if (use_default_functions)
+  if (action_manager->use_default_broad_search_functions())
     {
       // Particle-wall contact candidates
       particle_wall_broad_search_object.find_particle_wall_contact_pairs(

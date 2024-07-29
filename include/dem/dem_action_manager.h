@@ -82,7 +82,8 @@ public:
   }
 
   /**
-   * @brief Check if the periodic boundaries are enabled to perform some actions.
+   * @brief Check if the periodic boundaries are enabled to perform some actions
+   * that are not handled by triggers of the action manager.
    *
    * @return True if the periodic boundaries are enabled.
    */
@@ -106,7 +107,8 @@ public:
   }
 
   /**
-   * @brief Check if the solid objects are enabled to perform some actions.
+   * @brief Check if the solid objects are enabled to perform some actions
+   * that are not handled by triggers of the action manager.
    *
    * @return True if the solid objects are enabled.
    */
@@ -130,7 +132,8 @@ public:
   }
 
   /**
-   * @brief Check if the sparse contacts is enabled to perform some actions.
+   * @brief Check if the sparse contacts is enabled to perform some actions
+   * that are not handled by triggers of the action manager.
    *
    * @return True if the sparse contacts is enabled.
    */
@@ -150,7 +153,8 @@ public:
   }
 
   /**
-   * @brief Check if the solid objects are enabled to perform some actions.
+   * @brief Check if the solid objects are enabled to perform some actions
+   * that are not handled by triggers of the action manager.
    *
    * @return True if the solid objects are enabled.
    */
@@ -364,6 +368,18 @@ public:
   check_mobility_status_reset()
   {
     return mobility_status_reset_trigger;
+  }
+
+  /**
+   * @brief Check if the default broad search functions should be used. It
+   * depends if adaptive sparse contacts is enabled, if so, it is a step where
+   * the mobility status are reset.
+   */
+  inline bool
+  use_default_broad_search_functions()
+  {
+    return !sparse_contacts_cells_update_trigger ||
+           mobility_status_reset_trigger;
   }
 
 private:
