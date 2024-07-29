@@ -48,9 +48,9 @@
 using namespace dealii;
 
 /**
- * @brief Solver using the GLS Volume-averaged Navier-Stokes solver for fluid
- * and the soft-sphere model of the discrete element method (DEM) to simulate
- * solid-fluid physics.
+ * @brief Solver using the GLS Volume-averaged Navier-Stokes (VANS) solver for
+ * fluid and the soft-sphere model of the discrete element method (DEM) to
+ * simulate solid-fluid flow with two-way coupling.
  */
 template <int dim>
 class CFDDEMSolver : public GLSVANSSolver<dim>

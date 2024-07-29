@@ -6,12 +6,12 @@
  * @brief Manage the actions to be performed in the DEM solver and on the DEM
  * part of the coupling CFD-DEM solver.
  *
- * Any event that needs some following actions are handled by the action
+ * Any event that needs some following actions is handled by the action
  * manager. The event communicates to the action manager that it happened and
- * the action manager will change the trigger flags to the actions to do.
+ * the action manager will change the trigger flags to the actions to be taken.
  * When this action is about to be performed, it checks with the action manager
- * if it should be trigger.
- * Many events can triggered the same actions, but when the action is about to
+ * if it should be triggered.
+ * Many events can trigger the same actions, but when the action is about to
  * be performed, it only checks if it has to be performed, not what event have
  * happened.
  *
@@ -30,7 +30,7 @@ class DEMActionManager
 public:
   /**
    * @brief Copy constructor as a delete function to make sure it can not be
-   * copied. Will never be used.
+   * copied. It w ill never be used.
    *
    * @param copy The object to be copied
    */
@@ -38,7 +38,7 @@ public:
 
   /**
    * @brief Copy constructor as a delete function to make sure it can not be
-   * assigned. Will never be used.
+   * assigned. It will never be used.
    *
    * @param copy The object to be copied
    */
@@ -62,7 +62,7 @@ public:
     // First mobility status identification of the CFD time step (from the
     // velocity computed at the first DEM time step (counter = 0) of the CFD
     // time step) The contact search is executed to make sure the mobility
-    // status of cell match the particles that are in.
+    // status of the cell matches the particles that are in.
     load_balance_trigger                 = false;
     contact_search_trigger               = mobility_status_reset_trigger;
     clear_tangential_overlap_trigger     = false;

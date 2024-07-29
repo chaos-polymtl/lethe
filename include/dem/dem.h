@@ -59,7 +59,7 @@ using namespace DEM;
 
 /**
  * @brief Solver using the soft-sphere model of the discrete element method
- * (DEM) to simulate the motion of particles.
+ * (DEM) to simulate granular systems.
  */
 template <int dim>
 class DEMSolver
@@ -281,7 +281,7 @@ private:
   DEM::DEMProperties<dim> properties_class;
 
   /**
-   * @brief The acceleration acting of the particles.
+   * @brief The acceleration acting on the particles.
    */
   Tensor<1, 3> g;
 

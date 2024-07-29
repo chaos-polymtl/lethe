@@ -183,8 +183,8 @@ public:
    *
    * @param[in] granular_temperature The threshold value for the granular
    * temperature.
-   * @param[in] solid_fraction The threshold value for the solid fraction
-   * (volume of particles in the cell).
+   * @param[in] solid_fraction The threshold value for the volumic solid
+   * fraction.
    * @param[in] advect_particles The flag for the advection of particles.
    */
   void
@@ -376,7 +376,7 @@ private:
    * and ghost cells that empty cells were removed from.
    * @param[out] cell_granular_temperature The empty vector of granular
    * temperature.
-   * @param[out] cell_solid_fraction The empty vector of solid fraction
+   * @param[out] cell_solid_fraction The empty vector of solid fraction.
    */
   void
   calculate_granular_temperature_and_solid_fraction(

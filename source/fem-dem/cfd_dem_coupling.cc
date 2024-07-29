@@ -12,7 +12,7 @@
 #include <fstream>
 #include <sstream>
 
-// Constructor for class CFD-DEM
+// Constructor for the class CFD-DEM class
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
@@ -83,7 +83,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
     this->simulation_control->get_time_step() / coupling_frequency;
 
   // Calculate the Rayleigh critical time step ratio
-  double rayleigh_time_step = 1. / DBL_MIN;
+  double rayleigh_time_step = DBL_MAX;
 
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
