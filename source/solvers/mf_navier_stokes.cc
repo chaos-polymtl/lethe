@@ -45,22 +45,37 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+/**
+ * @brief A base class of preconditioners used by the smoother.
+ */
 template <typename VectorType>
 class PreconditionBase
 {
 public:
+  /**
+   * @brief Apply preconditioner.
+   */
   virtual void
   vmult(VectorType &dst, const VectorType &src) const = 0;
 };
 
+/**
+ * @brief A wrapper class around DiagonalMatrix class from deal.II.
+ */
 template <typename VectorType>
 class MyDiagonalMatrix : public PreconditionBase<VectorType>
 {
 public:
+  /**
+   * @brief Constructor.
+   */
   MyDiagonalMatrix(const VectorType &diagonal)
     : diagonal_matrix(diagonal)
   {}
 
+  /**
+   * @brief Apply preconditioner.
+   */
   void
   vmult(VectorType &dst, const VectorType &src) const override
   {
@@ -68,13 +83,18 @@ public:
   }
 
 private:
+  // DiagonalMatrix class from deal.II.
   DiagonalMatrix<VectorType> diagonal_matrix;
 };
 
+/**
+ * @brief An Additive Schwarz preconditioner.
+ */
 template <typename VectorType>
 class PreconditionASM : public PreconditionBase<VectorType>
 {
 private:
+  /// Weighting type.
   enum class WeightingType
   {
     none,
@@ -84,12 +104,19 @@ private:
   };
 
 public:
+  /// Value type.
   using Number = typename VectorType::value_type;
 
+  /**
+   * @brief Constructor.
+   */
   PreconditionASM()
     : weighting_type(WeightingType::left)
   {}
 
+  /**
+   * @brief Constructor that also performs initialization.
+   */
   template <int dim,
             typename GlobalSparseMatrixType,
             typename GlobalSparsityPattern,
@@ -106,6 +133,9 @@ public:
                      constraints);
   }
 
+  /**
+   * @brief Initialize inverses of blocks.
+   */
   template <int dim,
             typename GlobalSparseMatrixType,
             typename GlobalSparsityPattern,
@@ -167,6 +197,9 @@ public:
       }
   }
 
+  /**
+   * @brief Apply preconditioner.
+   */
   void
   vmult(VectorType &dst_, const VectorType &src_) const override
   {
@@ -238,13 +271,22 @@ public:
   }
 
 private:
+  /// DoF indices of patches.
   std::vector<std::vector<types::global_dof_index>> patches;
-  std::vector<LAPACKFullMatrix<Number>>             blocks;
 
-  mutable VectorType  weights;
+  /// Inverse of patch matrices.
+  std::vector<LAPACKFullMatrix<Number>> blocks;
+
+  /// Weights.
+  mutable VectorType weights;
+
+  /// Weighting type.
   const WeightingType weighting_type;
 
+  /// Internal destination vector with correct ghosting.
   mutable VectorType dst;
+
+  /// Internal source vector with correct ghosting.
   mutable VectorType src;
 };
 
