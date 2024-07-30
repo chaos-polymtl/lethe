@@ -93,7 +93,7 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="comment">// Getting the input parameters as local variable</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">auto</span>   parameters          = dem_parameters;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">auto</span>   physical_properties = dem_parameters.<a class="code" href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">lagrangian_physical_properties</a>;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordtype">double</span> rayleigh_time_step  = 1. / DBL_MIN;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordtype">double</span> rayleigh_time_step  = DBL_MAX;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; physical_properties.particle_type_number; ++i)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      <span class="keywordtype">double</span> shear_modulus =</div>

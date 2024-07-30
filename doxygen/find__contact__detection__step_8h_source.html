@@ -131,38 +131,37 @@ $(function() {
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<a class="code" href="find__contact__detection__step_8h.html#ae7b4104d780efddc8459389243ff5e16">find_particle_contact_detection_step</a>(</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<a class="code" href="find__contact__detection__step_8h.html#a2cda3b14d091cbf7f6f208b56692fbbe">find_particle_contact_detection_step</a>(</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     smallest_contact_search_criterion,</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  MPI_Comm                        &amp;mpi_communicator,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       sorting_in_subdomains_step,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  std::vector&lt;double&gt;             &amp;displacement,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       parallel_update = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"> * @brief Carries out finding steps for dynamic contact search in particle-floating</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"> * mesh contacts</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"> * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"> * @param solids All solid objects used in the simulation</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"> * @return Returns true if the maximum cumulative</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment"> * displacement of particles exceeds the threshold and false otherwise</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<a class="code" href="find__contact__detection__step_8h.html#a0275c4da5683b99058b27a74bdb3d4fe">find_floating_mesh_mapping_step</a>(</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; solids);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::vector&lt;double&gt;             &amp;displacement,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       parallel_update = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment"> * @brief Carries out finding steps for dynamic contact search in particle-floating</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"> * mesh contacts</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"> * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"> * @param solids All solid objects used in the simulation</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"> * @return Returns true if the maximum cumulative</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"> * displacement of particles exceeds the threshold and false otherwise</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<a class="code" href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a>(</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> smallest_contact_search_criterion,</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; solids);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition:</b> <a href="serial__solid_8h_source.html#l00061">serial_solid.h:62</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
-<div class="ttc" id="afind__contact__detection__step_8h_html_a0275c4da5683b99058b27a74bdb3d4fe"><div class="ttname"><a href="find__contact__detection__step_8h.html#a0275c4da5683b99058b27a74bdb3d4fe">find_floating_mesh_mapping_step</a></div><div class="ttdeci">bool find_floating_mesh_mapping_step(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; solids)</div><div class="ttdoc">Carries out finding steps for dynamic contact search in particle-floating mesh contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00082">find_contact_detection_step.cc:82</a></div></div>
-<div class="ttc" id="afind__contact__detection__step_8h_html_ae7b4104d780efddc8459389243ff5e16"><div class="ttname"><a href="find__contact__detection__step_8h.html#ae7b4104d780efddc8459389243ff5e16">find_particle_contact_detection_step</a></div><div class="ttdeci">bool find_particle_contact_detection_step(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, const bool sorting_in_subdomains_step, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</div><div class="ttdoc">Carries out finding steps for dynamic contact search for particle-particle contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00007">find_contact_detection_step.cc:7</a></div></div>
+<div class="ttc" id="afind__contact__detection__step_8h_html_a2cda3b14d091cbf7f6f208b56692fbbe"><div class="ttname"><a href="find__contact__detection__step_8h.html#a2cda3b14d091cbf7f6f208b56692fbbe">find_particle_contact_detection_step</a></div><div class="ttdeci">void find_particle_contact_detection_step(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</div><div class="ttdoc">Carries out finding steps for dynamic contact search for particle-particle contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00008">find_contact_detection_step.cc:8</a></div></div>
+<div class="ttc" id="afind__contact__detection__step_8h_html_ae590253416d507acd017a2491c75bd8d"><div class="ttname"><a href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a></div><div class="ttdeci">void find_floating_mesh_mapping_step(const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; solids)</div><div class="ttdoc">Carries out finding steps for dynamic contact search in particle-floating mesh contacts.</div><div class="ttdef"><b>Definition:</b> <a href="find__contact__detection__step_8cc_source.html#l00080">find_contact_detection_step.cc:80</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="mf__navier__stokes_8cc_source.html#l00065">mf_navier_stokes.cc:66</a></div></div>
 <div class="ttc" id="aserial__solid_8h_html"><div class="ttname"><a href="serial__solid_8h.html">serial_solid.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

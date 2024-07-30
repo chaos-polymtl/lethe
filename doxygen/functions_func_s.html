@@ -122,7 +122,7 @@ $(function() {
 : <a class="el" href="classRPTCellReconstruction.html#ae58ecc40dd71090123eb622c810c19a6">RPTCellReconstruction&lt; dim &gt;</a>
 </li>
 <li>set_contact_search_iteration_function()
-: <a class="el" href="classDEMSolver.html#a7b19502daa68dda43e4433a0410d4d95">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#ac1c46dcbd6f5eb33214f196055dd3c7a">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>set_current_time_step()
 : <a class="el" href="classSimulationControl.html#aa0eca88ca928d9f463b2051c394ad0c2">SimulationControl</a>
@@ -139,6 +139,9 @@ $(function() {
 </li>
 <li>set_filtered_solution()
 : <a class="el" href="classMultiphysicsInterface.html#a9416751da885340423298ad0fcca72c6">MultiphysicsInterface&lt; dim &gt;</a>
+</li>
+<li>set_grid_motion_enabled()
+: <a class="el" href="classDEMActionManager.html#aab60e3e85d49fc69e0b76968daf0e63e">DEMActionManager</a>
 </li>
 <li>set_immersed_solid_signed_distance_function()
 : <a class="el" href="classMultiphysicsInterface.html#a8485e3cc587fef0aae4d789f32a761b4">MultiphysicsInterface&lt; dim &gt;</a>
@@ -161,14 +164,14 @@ $(function() {
 , <a class="el" href="classVolumeOfFluid.html#af6671ae1cb1643f4dadb1194bd577450">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>set_insertion_type()
-: <a class="el" href="classDEMSolver.html#a25412c4515484ed11e960bf90c7cc87d">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#ab34526bbb2ef2aeffc0fbf004c6a09e0">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>set_integrator_type()
 : <a class="el" href="classCFDDEMSolver.html#a6b3ff772c8839a0e3cda8f9e3570244a">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a5733f8e12554eb8651085adb8370ed11">DEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#aab99d30e873335754972bd547aaeaa5d">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>set_iteration_check_function()
-: <a class="el" href="classLagrangianLoadBalancing.html#a4260a2e9ff67a6d288675626551b30a4">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>set_kinematic_viscosity()
 : <a class="el" href="classCarreau.html#a78c8590574d172714e92ca75ff8e3801">Carreau</a>
@@ -201,22 +204,17 @@ $(function() {
 <li>set_part_of_a_composite()
 : <a class="el" href="classShape.html#acc115201008418068265ed7fd5f092ae">Shape&lt; dim &gt;</a>
 </li>
-<li>set_particle_particle_contact_force()
-: <a class="el" href="classCFDDEMSolver.html#ab4f50550d8617490244ee80c9b2f227c">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#ac40d057d64f99fe5a877d5cc28572327">DEMSolver&lt; dim &gt;</a>
-</li>
-<li>set_particle_wall_contact_force()
-: <a class="el" href="classCFDDEMSolver.html#a630872ba8555ea0cfa09c95bcea5d3a7">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#ad452023734ba49d802b6405ef7a922be">DEMSolver&lt; dim &gt;</a>
+<li>set_periodic_boundaries_enabled()
+: <a class="el" href="classDEMActionManager.html#aabc812aa959238fb3463303573ae2a9a">DEMActionManager</a>
 </li>
 <li>set_periodic_boundaries_information()
-: <a class="el" href="classPeriodicBoundariesManipulator.html#a4bb01e3789834388ab0745d2575248ab">PeriodicBoundariesManipulator&lt; dim &gt;</a>
+: <a class="el" href="classPeriodicBoundariesManipulator.html#a2e5957327cd067b68e0f104ad49073aa">PeriodicBoundariesManipulator&lt; dim &gt;</a>
 </li>
 <li>set_phase_coefficient()
 : <a class="el" href="classHeatTransfer.html#af942f57eb949d35aadc77d28a84adebe">HeatTransfer&lt; dim &gt;</a>
 </li>
 <li>set_position()
-: <a class="el" href="classIBParticle.html#a894d4dd9b201656390d362a0613f900d">IBParticle&lt; dim &gt;</a>
+: <a class="el" href="classIBParticle.html#aa98eab44ccaac1bb391d2c8ea9ab1475">IBParticle&lt; dim &gt;</a>
 , <a class="el" href="classOpenCascadeShape.html#a552e8985bec2f9ad893235502c350b62">OpenCascadeShape&lt; dim &gt;</a>
 , <a class="el" href="classShape.html#a81b71bed82c812367cc9bb77b74c0318">Shape&lt; dim &gt;</a>
 , <a class="el" href="classSphere.html#a7a62ccd8adb5caf255b60f066e4a4059">Sphere&lt; dim &gt;</a>
@@ -236,11 +234,17 @@ $(function() {
 <li>set_solid()
 : <a class="el" href="classMultiphysicsInterface.html#a55ff9a6ec97cd2d80d3ae6c1a195aa77">MultiphysicsInterface&lt; dim &gt;</a>
 </li>
+<li>set_solid_objects_enabled()
+: <a class="el" href="classDEMActionManager.html#a8bb02151cdca968312dc2f520a05492a">DEMActionManager</a>
+</li>
 <li>set_solution()
 : <a class="el" href="classMultiphysicsInterface.html#a24c4630b62ccf275391781c0138d2ff5">MultiphysicsInterface&lt; dim &gt;</a>
 </li>
 <li>set_solution_vector()
 : <a class="el" href="classGDNavierStokesSolver.html#a820274d170f00036a43f316d3a00bdee">GDNavierStokesSolver&lt; dim &gt;</a>
+</li>
+<li>set_sparse_contacts_enabled()
+: <a class="el" href="classDEMActionManager.html#aa137d3e58cff897aedf7b4d64f321f23">DEMActionManager</a>
 </li>
 <li>set_suggested_time_step()
 : <a class="el" href="classSimulationControl.html#aa6a38ec53bec29f7d4a57142988c981d">SimulationControl</a>
@@ -275,6 +279,10 @@ $(function() {
 <li>setup_displacement()
 : <a class="el" href="classSolidBase.html#ac8bd2ffa327601876162a5d44d0b4d5b">SolidBase&lt; dim, spacedim &gt;</a>
 </li>
+<li>setup_distribution_type()
+: <a class="el" href="classCFDDEMSolver.html#a63137bf05ff3f846437641ac99147aba">CFDDEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a8cd252994d88459ae17ac8e29fedb702">DEMSolver&lt; dim &gt;</a>
+</li>
 <li>setup_dof_handler()
 : <a class="el" href="classSerialSolid.html#a2e1e63989dd2a3a462f58972ff096f55">SerialSolid&lt; dim, spacedim &gt;</a>
 </li>
@@ -294,6 +302,9 @@ $(function() {
 , <a class="el" href="classMFNavierStokesSolver.html#a8ee03cdf7aa3477bbbf0fc53a22c39a3">MFNavierStokesSolver&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#a34c629a49de72b06c8ff30192dd843af">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 </li>
+<li>setup_functions_and_pointers()
+: <a class="el" href="classDEMSolver.html#aded92a6a08115c715411a6a90a6bc4c5">DEMSolver&lt; dim &gt;</a>
+</li>
 <li>setup_GMG()
 : <a class="el" href="classMFNavierStokesSolver.html#acb99476f14a59c1b475c0377ec04c73b">MFNavierStokesSolver&lt; dim &gt;</a>
 </li>
@@ -302,6 +313,9 @@ $(function() {
 , <a class="el" href="classGLSNavierStokesSolver.html#ad5f4d7b4e5330e9837d08ccb57b4523e">GLSNavierStokesSolver&lt; dim &gt;</a>
 , <a class="el" href="classMFNavierStokesPreconditionGMG.html#a2d8a2e84e7c9e890168af384c7e53784">MFNavierStokesPreconditionGMG&lt; dim &gt;</a>
 , <a class="el" href="classMFNavierStokesSolver.html#a66a607f5ebe35f21a9a4f26763fdbb81">MFNavierStokesSolver&lt; dim &gt;</a>
+</li>
+<li>setup_parameters()
+: <a class="el" href="classDEMSolver.html#a0ac63ef26bffad4bbf18c6ced323488a">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>setup_particles()
 : <a class="el" href="classSolidBase.html#aea5ba1e94c9d54c1f7d0c7dd81dd1dd0">SolidBase&lt; dim, spacedim &gt;</a>
@@ -316,6 +330,9 @@ $(function() {
 , <a class="el" href="classMFNavierStokesSolver.html#ac496af2ecb449cca0e888ac82aac1ec2">MFNavierStokesSolver&lt; dim &gt;</a>
 , <a class="el" href="classPhysicsSolver.html#a566177a0569619dcf0c3a5f2fb1cdf4d">PhysicsSolver&lt; VectorType &gt;</a>
 </li>
+<li>setup_solid_objects()
+: <a class="el" href="classDEMSolver.html#a46460ab641c53332c1030976e657507d">DEMSolver&lt; dim &gt;</a>
+</li>
 <li>setup_system()
 : <a class="el" href="classRPTL2Projection.html#a66232600a29707d4b81a13b84c70af73">RPTL2Projection&lt; dim &gt;</a>
 </li>
@@ -324,6 +341,9 @@ $(function() {
 , <a class="el" href="classRPTL2Projection.html#a99a8e68a2e3cf00eabb289c92476d7da">RPTL2Projection&lt; dim &gt;</a>
 , <a class="el" href="classSerialSolid.html#aeea81ad3be95913c3112f40291761a53">SerialSolid&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classSolidBase.html#a7f7dc77812dcd58d7e749b48b29516c4">SolidBase&lt; dim, spacedim &gt;</a>
+</li>
+<li>setup_triangulation_dependent_parameters()
+: <a class="el" href="classDEMSolver.html#acda15ec14dca93c8a0681c97f5fb183d">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>Shape()
 : <a class="el" href="classShape.html#afe1e03ec9d78e28f160d88380ffd0a35">Shape&lt; dim &gt;</a>
@@ -363,6 +383,9 @@ $(function() {
 </li>
 <li>smooth_phase_fraction()
 : <a class="el" href="classVolumeOfFluid.html#a31a63b403298bb51892a368eb48c5b8b">VolumeOfFluid&lt; dim &gt;</a>
+</li>
+<li>solid_objects_search_step()
+: <a class="el" href="classDEMActionManager.html#ab0fc704f087aeb3f9ef957872d93ebb7">DEMActionManager</a>
 </li>
 <li>SolidBase()
 : <a class="el" href="classSolidBase.html#a9f4dc8deca9f9a243067db8dd4f0492a">SolidBase&lt; dim, spacedim &gt;</a>
@@ -437,6 +460,10 @@ $(function() {
 </li>
 <li>solve_t()
 : <a class="el" href="classParticleDetectorInteractions.html#ab54b281427a30e0468ac6f088aee87d0">ParticleDetectorInteractions&lt; dim &gt;</a>
+</li>
+<li>sort_particles_into_subdomains_and_cells()
+: <a class="el" href="classCFDDEMSolver.html#a1ceafcd5709812c9d1699d1c7b11d2b3">CFDDEMSolver&lt; dim &gt;</a>
+, <a class="el" href="classDEMSolver.html#a164711f92929c395ed44717adffebe88">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>SourceTerm()
 : <a class="el" href="classSourceTerms_1_1SourceTerm.html#a10abb4a2696758535587e6906e748c5c">SourceTerms::SourceTerm&lt; dim &gt;</a>

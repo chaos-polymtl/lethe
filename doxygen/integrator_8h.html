@@ -83,6 +83,7 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="adaptive__sparse__contacts_8h_source.html">dem/adaptive_sparse_contacts.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="data__containers_8h_source.html">dem/data_containers.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="dem__action__manager_8h_source.html">dem/dem_action_manager.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="dem__solver__parameters_8h_source.html">dem/dem_solver_parameters.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/particles/particle_handler.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -90,54 +91,55 @@ Include dependency graph for integrator.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="integrator_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8h">
-<area shape="rect" title=" " alt="" coords="1259,5,1482,47"/>
-<area shape="rect" href="adaptive__sparse__contacts_8h.html" title=" " alt="" coords="1200,408,1363,449"/>
-<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="559,505,729,531"/>
-<area shape="rect" title=" " alt="" coords="1319,497,1494,539"/>
-<area shape="rect" href="dem__solver__parameters_8h.html" title=" " alt="" coords="2926,95,3151,121"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="1620,505,1788,531"/>
-<area shape="rect" title=" " alt="" coords="1482,594,1545,621"/>
-<area shape="rect" title=" " alt="" coords="1367,683,1521,710"/>
-<area shape="rect" title=" " alt="" coords="5,676,141,717"/>
-<area shape="rect" title=" " alt="" coords="3539,683,3725,710"/>
-<area shape="rect" title=" " alt="" coords="754,497,881,539"/>
-<area shape="rect" title=" " alt="" coords="905,497,1063,539"/>
-<area shape="rect" title=" " alt="" coords="1087,497,1244,539"/>
-<area shape="rect" title=" " alt="" coords="1620,594,1679,621"/>
-<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="630,587,783,628"/>
-<area shape="rect" href="particle__particle__contact__info_8h.html" title=" " alt="" coords="808,587,968,628"/>
-<area shape="rect" title=" " alt="" coords="898,676,1073,717"/>
-<area shape="rect" href="particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="993,587,1189,628"/>
-<area shape="rect" href="particle__wall__contact__info_8h.html" title=" " alt="" coords="1213,587,1406,628"/>
-<area shape="rect" title=" " alt="" coords="1754,587,1907,628"/>
-<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="162,594,353,621"/>
-<area shape="rect" title=" " alt="" coords="377,594,457,621"/>
-<area shape="rect" title=" " alt="" coords="482,594,606,621"/>
-<area shape="rect" title=" " alt="" coords="1196,683,1343,710"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="3041,333,3183,360"/>
-<area shape="rect" href="parameters__lagrangian_8h.html" title=" " alt="" coords="2930,251,3147,278"/>
-<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="2799,169,2985,196"/>
-<area shape="rect" href="solid__objects__parameters_8h.html" title=" " alt="" coords="3292,244,3431,285"/>
-<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="3425,415,3586,442"/>
-<area shape="rect" title=" " alt="" coords="3479,497,3649,539"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="2630,415,2765,442"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="3684,594,3799,621"/>
-<area shape="rect" title=" " alt="" coords="3749,676,3923,717"/>
-<area shape="rect" title=" " alt="" coords="3049,497,3194,539"/>
-<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="3099,415,3248,442"/>
-<area shape="rect" href="shape_8h.html" title=" " alt="" coords="2690,505,2795,531"/>
-<area shape="rect" title=" " alt="" coords="1932,594,2167,621"/>
-<area shape="rect" title=" " alt="" coords="2819,497,2973,539"/>
-<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="2191,587,2393,628"/>
-<area shape="rect" title=" " alt="" coords="3407,587,3609,628"/>
-<area shape="rect" title=" " alt="" coords="2469,594,2635,621"/>
-<area shape="rect" title=" " alt="" coords="2660,594,2825,621"/>
-<area shape="rect" title=" " alt="" coords="2850,587,3003,628"/>
-<area shape="rect" title=" " alt="" coords="3028,594,3199,621"/>
-<area shape="rect" title=" " alt="" coords="3223,594,3281,621"/>
-<area shape="rect" title=" " alt="" coords="3305,594,3383,621"/>
-<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="2561,251,2647,278"/>
-<area shape="rect" title=" " alt="" coords="2201,333,2343,360"/>
+<area shape="rect" title=" " alt="" coords="2867,5,3090,47"/>
+<area shape="rect" href="adaptive__sparse__contacts_8h.html" title=" " alt="" coords="2325,408,2488,449"/>
+<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="2893,505,3064,531"/>
+<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="3139,505,3346,531"/>
+<area shape="rect" title=" " alt="" coords="3370,497,3545,539"/>
+<area shape="rect" href="dem__solver__parameters_8h.html" title=" " alt="" coords="1085,95,1310,121"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="1560,505,1728,531"/>
+<area shape="rect" title=" " alt="" coords="2229,594,2291,621"/>
+<area shape="rect" title=" " alt="" coords="2586,683,2739,710"/>
+<area shape="rect" title=" " alt="" coords="3681,676,3817,717"/>
+<area shape="rect" title=" " alt="" coords="1465,683,1652,710"/>
+<area shape="rect" title=" " alt="" coords="1854,497,1981,539"/>
+<area shape="rect" title=" " alt="" coords="2005,497,2163,539"/>
+<area shape="rect" title=" " alt="" coords="2187,497,2344,539"/>
+<area shape="rect" title=" " alt="" coords="1691,594,1749,621"/>
+<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="2805,587,2958,628"/>
+<area shape="rect" href="particle__particle__contact__info_8h.html" title=" " alt="" coords="3501,587,3661,628"/>
+<area shape="rect" title=" " alt="" coords="3123,676,3298,717"/>
+<area shape="rect" href="particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="2367,587,2563,628"/>
+<area shape="rect" href="particle__wall__contact__info_8h.html" title=" " alt="" coords="2587,587,2781,628"/>
+<area shape="rect" title=" " alt="" coords="2051,587,2205,628"/>
+<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="2982,594,3173,621"/>
+<area shape="rect" title=" " alt="" coords="3248,594,3328,621"/>
+<area shape="rect" title=" " alt="" coords="3353,594,3477,621"/>
+<area shape="rect" title=" " alt="" coords="2392,683,2539,710"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="1011,333,1152,360"/>
+<area shape="rect" href="parameters__lagrangian_8h.html" title=" " alt="" coords="1089,251,1306,278"/>
+<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="1251,169,1437,196"/>
+<area shape="rect" href="solid__objects__parameters_8h.html" title=" " alt="" coords="860,244,999,285"/>
+<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="663,415,825,442"/>
+<area shape="rect" title=" " alt="" coords="515,497,685,539"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1201,415,1335,442"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="1501,594,1616,621"/>
+<area shape="rect" title=" " alt="" coords="585,676,759,717"/>
+<area shape="rect" title=" " alt="" coords="827,497,973,539"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="951,415,1100,442"/>
+<area shape="rect" href="shape_8h.html" title=" " alt="" coords="1227,505,1333,531"/>
+<area shape="rect" title=" " alt="" coords="27,594,261,621"/>
+<area shape="rect" title=" " alt="" coords="997,497,1152,539"/>
+<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="1824,587,2027,628"/>
+<area shape="rect" title=" " alt="" coords="437,587,640,628"/>
+<area shape="rect" title=" " alt="" coords="665,594,831,621"/>
+<area shape="rect" title=" " alt="" coords="856,594,1021,621"/>
+<area shape="rect" title=" " alt="" coords="1046,587,1199,628"/>
+<area shape="rect" title=" " alt="" coords="1224,594,1395,621"/>
+<area shape="rect" title=" " alt="" coords="1419,594,1477,621"/>
+<area shape="rect" title=" " alt="" coords="336,594,413,621"/>
+<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="1553,251,1639,278"/>
+<area shape="rect" title=" " alt="" coords="1803,333,1944,360"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -145,20 +147,20 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="integrator_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2integrator_8hdep">
-<area shape="rect" title=" " alt="" coords="603,5,826,47"/>
-<area shape="rect" href="dem_8h.html" title=" " alt="" coords="404,102,592,143"/>
-<area shape="rect" href="explicit__euler__integrator_8h.html" title=" " alt="" coords="617,95,812,151"/>
-<area shape="rect" href="gear3__integrator_8h.html" title=" " alt="" coords="112,95,296,151"/>
-<area shape="rect" href="velocity__verlet__integrator_8h.html" title=" " alt="" coords="836,95,1035,151"/>
-<area shape="rect" href="integrator_8cc.html" title=" " alt="" coords="1058,102,1282,143"/>
-<area shape="rect" href="gls__vans_8h.html" title=" " alt="" coords="235,199,418,255"/>
-<area shape="rect" href="dem_8cc.html" title=" " alt="" coords="442,206,632,247"/>
-<area shape="rect" href="cfd__dem__coupling_8h.html" title=" " alt="" coords="530,303,712,359"/>
-<area shape="rect" href="gls__vans_8cc.html" title=" " alt="" coords="235,303,418,359"/>
-<area shape="rect" href="cfd__dem__coupling_8cc.html" title=" " alt="" coords="706,407,888,463"/>
-<area shape="rect" href="explicit__euler__integrator_8cc.html" title=" " alt="" coords="656,199,847,255"/>
-<area shape="rect" href="gear3__integrator_8cc.html" title=" " alt="" coords="28,199,211,255"/>
-<area shape="rect" href="velocity__verlet__integrator_8cc.html" title=" " alt="" coords="973,199,1168,255"/>
+<area shape="rect" title=" " alt="" coords="756,5,979,47"/>
+<area shape="rect" href="dem_8h.html" title=" " alt="" coords="320,102,508,143"/>
+<area shape="rect" href="explicit__euler__integrator_8h.html" title=" " alt="" coords="557,95,751,151"/>
+<area shape="rect" href="gear3__integrator_8h.html" title=" " alt="" coords="775,95,959,151"/>
+<area shape="rect" href="velocity__verlet__integrator_8h.html" title=" " alt="" coords="984,95,1183,151"/>
+<area shape="rect" href="integrator_8cc.html" title=" " alt="" coords="1206,102,1430,143"/>
+<area shape="rect" href="cfd__dem__coupling_8h.html" title=" " alt="" coords="5,303,188,359"/>
+<area shape="rect" href="gls__vans_8h.html" title=" " alt="" coords="212,199,395,255"/>
+<area shape="rect" href="dem_8cc.html" title=" " alt="" coords="685,206,876,247"/>
+<area shape="rect" href="cfd__dem__coupling_8cc.html" title=" " alt="" coords="685,407,868,463"/>
+<area shape="rect" href="gls__vans_8cc.html" title=" " alt="" coords="212,303,395,359"/>
+<area shape="rect" href="explicit__euler__integrator_8cc.html" title=" " alt="" coords="471,199,661,255"/>
+<area shape="rect" href="gear3__integrator_8cc.html" title=" " alt="" coords="900,199,1083,255"/>
+<area shape="rect" href="velocity__verlet__integrator_8cc.html" title=" " alt="" coords="1209,199,1403,255"/>
 </map>
 </div>
 </div>

@@ -182,10 +182,6 @@ $(function() {
 , <a class="el" href="classTracer.html#ae9abe79a880750e8b93394f1ee01c7bb">Tracer&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#aaa1e41cbe0028e8cfda3fb26ce933635">VolumeOfFluid&lt; dim &gt;</a>
 </li>
-<li>simulation_time
-: <a class="el" href="classCFDDEMSolver.html#af35ca5dbc9b52db7551fa87ccb68e9cf">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#afd164338a69336fb39d414c0b33bf60b">DEMSolver&lt; dim &gt;</a>
-</li>
 <li>size
 : <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a08c2186d9e77e8587160371300999e79">BoundaryConditions::BoundaryConditions&lt; dim &gt;</a>
 , <a class="el" href="classParameters_1_1Manifolds.html#a79e1c179677688cbf4d0c3e1b35aaece">Parameters::Manifolds</a>
@@ -198,8 +194,8 @@ $(function() {
 : <a class="el" href="classCFDDEMSolver.html#ae65d7a65752793150ba2f3a33e7e3cf8">CFDDEMSolver&lt; dim &gt;</a>
 , <a class="el" href="classDEMSolver.html#a90c26aa390eff864bbd3c7540e1e3d28">DEMSolver&lt; dim &gt;</a>
 </li>
-<li>smallest_floating_mesh_mapping_criterion
-: <a class="el" href="classDEMSolver.html#a9915253267c5e56e1d4bfbcc8b48fdd8">DEMSolver&lt; dim &gt;</a>
+<li>smallest_solid_object_mapping_criterion
+: <a class="el" href="classDEMSolver.html#a436f834fca335ef304cde052c0624069">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>smoothed_output_fields
 : <a class="el" href="structParameters_1_1PostProcessing.html#adb4949254bb60243667ce97e53444b62">Parameters::PostProcessing</a>
@@ -222,8 +218,14 @@ $(function() {
 : <a class="el" href="classParameters_1_1NitscheObject.html#ab740d4006331c0ef33dc903c1ef0d2ff">Parameters::NitscheObject&lt; dim &gt;</a>
 , <a class="el" href="classParameters_1_1RigidSolidObject.html#afd06c84e436ec31926cf11bb45fd411a">Parameters::RigidSolidObject&lt; dim &gt;</a>
 </li>
+<li>solid_object_search_trigger
+: <a class="el" href="classDEMActionManager.html#a08df50567bc508cdf935271f9f4ace18">DEMActionManager</a>
+</li>
 <li>solid_objects
 : <a class="el" href="classDEMSolverParameters.html#a15ad8075ed9d447cf977ca57e58e9e92">DEMSolverParameters&lt; dim &gt;</a>
+</li>
+<li>solid_objects_enabled
+: <a class="el" href="classDEMActionManager.html#acc3b65ce7dfc26b44aa9e71ba026e5ca">DEMActionManager</a>
 </li>
 <li>solid_particle_handler
 : <a class="el" href="classSolidBase.html#a9771e664f034fd8957775fc771cf644c">SolidBase&lt; dim, spacedim &gt;</a>
@@ -312,6 +314,13 @@ $(function() {
 : <a class="el" href="classPeriodicHillsGrid.html#ae91c98809946fdbc43197f419632fdb5">PeriodicHillsGrid&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classPeriodicHillsPullBack.html#a39c1232c5bc7c5a3d440c668fb924556">PeriodicHillsPullBack&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classPeriodicHillsPushForward.html#afbbc794ca004c79a7cd12e5b5d20584a">PeriodicHillsPushForward&lt; dim, spacedim &gt;</a>
+</li>
+<li>sparse_contacts_cells_update_trigger
+: <a class="el" href="classDEMActionManager.html#a9329102eacacc583bcf02110a1b2a245">DEMActionManager</a>
+</li>
+<li>sparse_contacts_enabled
+: <a class="el" href="classAdaptiveSparseContacts.html#aa596f3c544ab5c93d92fb6f8004df8e0">AdaptiveSparseContacts&lt; dim &gt;</a>
+, <a class="el" href="classDEMActionManager.html#a3ce473ee698ea3358170ae1e3452425a">DEMActionManager</a>
 </li>
 <li>sparse_contacts_object
 : <a class="el" href="classCFDDEMSolver.html#a292bc0e312e33e35bed98bcd92e0465a">CFDDEMSolver&lt; dim &gt;</a>

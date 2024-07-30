@@ -462,7 +462,7 @@ $(function() {
 : <a class="el" href="structParameters_1_1Forces.html#a97fd18e34c1a7073d6dbbbdf256a2bb9">Parameters::Forces</a>
 </li>
 <li>calculate_torque_on_solid()
-: <a class="el" href="classGLSNitscheNavierStokesSolver.html#abc24556892fd0c637e2e12b075ba6ad2">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>
+: <a class="el" href="classGLSNitscheNavierStokesSolver.html#a3038adea6b956ee9cc1a174e1b657752">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classParameters_1_1NitscheObject.html#a3c98f027f0e39b8987ece20855150e98">Parameters::NitscheObject&lt; dim &gt;</a>
 </li>
 <li>calculate_total_cell_weight()
@@ -642,7 +642,7 @@ $(function() {
 : <a class="el" href="classInsertion.html#a7458657c2cbf3c5351812e1109646f51">Insertion&lt; dim &gt;</a>
 </li>
 <li>check_and_move_particles()
-: <a class="el" href="classPeriodicBoundariesManipulator.html#ad8152831215adadad25e37d97735b4ec">PeriodicBoundariesManipulator&lt; dim &gt;</a>
+: <a class="el" href="classPeriodicBoundariesManipulator.html#abdb5962ff49ead6c6a7540934a604183">PeriodicBoundariesManipulator&lt; dim &gt;</a>
 </li>
 <li>check_cell_is_connected_to_fluid()
 : <a class="el" href="classNavierStokesBase.html#a2f7059bc37e23e4ed073847455f678e8">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
@@ -650,14 +650,20 @@ $(function() {
 <li>check_cell_mobility()
 : <a class="el" href="classAdaptiveSparseContacts.html#a92287b3928ce728df9ceab3785e46abd">AdaptiveSparseContacts&lt; dim &gt;</a>
 </li>
+<li>check_clear_tangential_overlap()
+: <a class="el" href="classDEMActionManager.html#a793cc519de62e5986b807b49fc0831ae">DEMActionManager</a>
+</li>
+<li>check_contact_detection_method()
+: <a class="el" href="classCFDDEMSolver.html#a0f5073d46ace47716591ff826eabc2a4">CFDDEMSolver&lt; dim &gt;</a>
+</li>
+<li>check_contact_search()
+: <a class="el" href="classDEMActionManager.html#a17c917b2a7383bc9c426a58da7860d13">DEMActionManager</a>
+</li>
 <li>check_contact_search_iteration_constant()
-: <a class="el" href="classDEMSolver.html#a6c0b79c8ca006a3f37dbf7a4bb6bbe74">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#ae4a749b752f8a7de0c75b537dcd443a9">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>check_contact_search_iteration_dynamic()
-: <a class="el" href="classDEMSolver.html#a8391ea8d2c62afa83d590f01a19b3ede">DEMSolver&lt; dim &gt;</a>
-</li>
-<li>check_contact_search_step
-: <a class="el" href="classCFDDEMSolver.html#a4526e90c02418e9f58f5de876a8a7f0a">CFDDEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#a77b9a512fc9cdd5a31a190d5947b278a">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>check_existance_of_bc()
 : <a class="el" href="classNavierStokesBase.html#a117c51c5894f115d42bdbd6e4ae78320">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
@@ -665,20 +671,50 @@ $(function() {
 <li>check_for_diamond_cells
 : <a class="el" href="structParameters_1_1Mesh.html#ac814f076b58498e7063a570ee1955f06">Parameters::Mesh</a>
 </li>
+<li>check_grid_motion_enabled()
+: <a class="el" href="classDEMActionManager.html#a435ef0d21899a9a289d85815f60abb6e">DEMActionManager</a>
+</li>
+<li>check_load_balance()
+: <a class="el" href="classDEMActionManager.html#a06553f3ab594a9ec06bfd930ee285bae">DEMActionManager</a>
+</li>
 <li>check_load_balance_dynamic()
-: <a class="el" href="classLagrangianLoadBalancing.html#ab1e5b0055c593ac9ab811c0d982156bb">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a1ee1108820cd5df05cf97332adf1f4b8">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_frequent()
-: <a class="el" href="classLagrangianLoadBalancing.html#add5cb4917b647aea55170eb88f47f583">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a7ee0320e868c56e592a75aa2b5107c82">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_iteration()
-: <a class="el" href="classLagrangianLoadBalancing.html#aa6cd5393e0f4a074b0fcc3875cbb7123">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_once()
-: <a class="el" href="classLagrangianLoadBalancing.html#a16805cf8007b0a430bb53ae870fe7f66">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#a03489ce79eec97fd6ae85c91e7bef0e6">LagrangianLoadBalancing&lt; dim &gt;</a>
 </li>
 <li>check_load_balance_with_sparse_contacts()
-: <a class="el" href="classLagrangianLoadBalancing.html#a0f2e6317098c24833a0197866b8861b0">LagrangianLoadBalancing&lt; dim &gt;</a>
+: <a class="el" href="classLagrangianLoadBalancing.html#ad5fa80b93d071d0b02c25ca4d0aaecd1">LagrangianLoadBalancing&lt; dim &gt;</a>
+</li>
+<li>check_mobility_status_reset()
+: <a class="el" href="classDEMActionManager.html#afb75631941fcab34b0cf5d08a7559fb0">DEMActionManager</a>
+</li>
+<li>check_periodic_boundaries_enabled()
+: <a class="el" href="classDEMActionManager.html#a4373898f3f5514dd1b43b7ff083c114b">DEMActionManager</a>
+</li>
+<li>check_resize_containers()
+: <a class="el" href="classDEMActionManager.html#a0c4fddca5e5e97c58c8dbf6825763998">DEMActionManager</a>
+</li>
+<li>check_restart_simulation()
+: <a class="el" href="classDEMActionManager.html#a8a6dfcb59d5bad5f0a073fc70bc9cf40">DEMActionManager</a>
+</li>
+<li>check_solid_object_search()
+: <a class="el" href="classDEMActionManager.html#affc49864ba516d7d700486acb790445d">DEMActionManager</a>
+</li>
+<li>check_solid_objects_enabled()
+: <a class="el" href="classDEMActionManager.html#a2514c83a9efcdbaad11b6c1e40df5d32">DEMActionManager</a>
+</li>
+<li>check_sparse_contacts_enabled()
+: <a class="el" href="classDEMActionManager.html#a10da7d627ef2ba1e8c6f31a53bd6796c">DEMActionManager</a>
+</li>
+<li>check_update_sparse_contacts_cells()
+: <a class="el" href="classDEMActionManager.html#ae3df485d63963ead88d62c3ea4091178">DEMActionManager</a>
 </li>
 <li>check_whether_all_particles_are_sphere()
 : <a class="el" href="classGLSSharpNavierStokesSolver.html#a92713b7b7dd089e7d61e0b6587a44b1c">GLSSharpNavierStokesSolver&lt; dim &gt;</a>
@@ -687,10 +723,6 @@ $(function() {
 : <a class="el" href="structParameters_1_1Restart.html#aa7fb84c1978dc97e0752f2735f1e0297">Parameters::Restart</a>
 , <a class="el" href="classRPTFEMReconstruction.html#af07e200f2c4ff4d334d39983b3e71393">RPTFEMReconstruction&lt; dim &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#a924a1ea8ca5a6c21d5db530fa92cb97a">RPTL2Projection&lt; dim &gt;</a>
-</li>
-<li>checkpoint_step
-: <a class="el" href="classCFDDEMSolver.html#abf8d12e8e5efa7f518911876a04cfd7c">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a836cab38b188a76209d878266917133c">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>chemical_potential
 : <a class="el" href="classCahnHilliardScratchData.html#ab380994e237140a284a253af988c1acc">CahnHilliardScratchData&lt; dim &gt;</a>
@@ -724,6 +756,9 @@ $(function() {
 </li>
 <li>clear_shape_cache()
 : <a class="el" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle&lt; dim &gt;</a>
+</li>
+<li>clear_tangential_overlap_trigger
+: <a class="el" href="classDEMActionManager.html#a9c6e80821fe726e68dfa06c813a79b33">DEMActionManager</a>
 </li>
 <li>closest_point_cache
 : <a class="el" href="classShape.html#aad72eb3feaa5852170232e3c19855330">Shape&lt; dim &gt;</a>
@@ -907,14 +942,13 @@ $(function() {
 , <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a55fa73335561f93dcf78c308d81ebca8">Parameters::Lagrangian::ModelParameters</a>
 </li>
 <li>contact_detection_iteration_check_function
-: <a class="el" href="classDEMSolver.html#afda4b84b8c4a1fe8d8c77d7f4a233e21">DEMSolver&lt; dim &gt;</a>
+: <a class="el" href="classDEMSolver.html#a5c846b894bed0fd52ec162e2835b95f0">DEMSolver&lt; dim &gt;</a>
 </li>
 <li>contact_detection_method
 : <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#ab4795968f22800a2923dfaff6471b2fe">Parameters::Lagrangian::ModelParameters</a>
 </li>
-<li>contact_detection_step
-: <a class="el" href="classCFDDEMSolver.html#a496f7a3eff1ee4bf25464bf2538bc4e8">CFDDEMSolver&lt; dim &gt;</a>
-, <a class="el" href="classDEMSolver.html#a3d6c1e9e5c85859ea93d20cd42be78b4">DEMSolver&lt; dim &gt;</a>
+<li>contact_detection_step()
+: <a class="el" href="classDEMActionManager.html#a80bd4be67ffbbc1cceb39b6ecd385798">DEMActionManager</a>
 </li>
 <li>contact_impulsion
 : <a class="el" href="classIBParticle.html#a34030d032f75074fe892125b0d247e8d">IBParticle&lt; dim &gt;</a>
@@ -939,11 +973,11 @@ $(function() {
 <li>contact_search_radius_factor
 : <a class="el" href="classParameters_1_1IBParticles.html#af69157336a02a94a7684b9d70ccf795f">Parameters::IBParticles&lt; dim &gt;</a>
 </li>
-<li>contact_search_step()
-: <a class="el" href="classCFDDEMSolver.html#ae1c4ccc1fa441b35d7f60bfbb681edea">CFDDEMSolver&lt; dim &gt;</a>
-</li>
 <li>contact_search_total_number
 : <a class="el" href="classCFDDEMSolver.html#a579c20db3e2f7d61068ddbc321088eb9">CFDDEMSolver&lt; dim &gt;</a>
+</li>
+<li>contact_search_trigger
+: <a class="el" href="classDEMActionManager.html#adbe1e073825c758d23ef7b376d39b323">DEMActionManager</a>
 </li>
 <li>ContactDetectionMethod
 : <a class="el" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a6e187d80f1fbd4ca22af7cd03e0df47a">Parameters::Lagrangian::ModelParameters</a>
@@ -1032,7 +1066,6 @@ $(function() {
 , <a class="el" href="classInsertionList.html#a53f63221e1c5b1580c4af354e240287b">InsertionList&lt; dim &gt;</a>
 , <a class="el" href="classInsertionPlane.html#a2cc419ac6fdf7d39cd098a53a6f4dbd2">InsertionPlane&lt; dim &gt;</a>
 , <a class="el" href="classInsertionVolume.html#a7e875ce68570ed72099eccc15b113ea3">InsertionVolume&lt; dim &gt;</a>
-, <a class="el" href="classUniformInsertion.html#a1f3a9e294e9c649187ebbbb1556cfaab">UniformInsertion&lt; dim &gt;</a>
 </li>
 <li>current_preconditioner_fill_level
 : <a class="el" href="classGLSNavierStokesSolver.html#a473f8103460c1c638d715ce560e84aaa">GLSNavierStokesSolver&lt; dim &gt;</a>

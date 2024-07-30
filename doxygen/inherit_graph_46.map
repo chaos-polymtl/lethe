@@ -1,10 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="5,107,180,134"/>
-<area shape="rect" id="node2" href="$classMobilityCahnHilliardModel.html" title="Implementation of the computation of the mobility for Cahn&#45;Hilliard equations." alt="" coords="228,78,423,105"/>
-<area shape="rect" id="node5" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="245,137,405,163"/>
-<area shape="rect" id="node3" href="$classMobilityCahnHilliardModelConstant.html" title="Constant mobility model." alt="" coords="471,5,665,47"/>
-<area shape="rect" id="node4" href="$classMobilityCahnHilliardModelQuartic.html" title="Quartic mobility model." alt="" coords="471,71,665,112"/>
-<area shape="rect" id="node6" href="$classSurfaceTensionConstant.html" title="Constant surface tension." alt="" coords="479,137,657,163"/>
-<area shape="rect" id="node7" href="$classSurfaceTensionLinear.html" title="Linear surface tension. The surface tension is given by: sigma_0 + dsimga/dT * (T&#45;T_0)." alt="" coords="488,187,648,214"/>
-<area shape="rect" id="node8" href="$classSurfaceTensionPhaseChange.html" title="Linear surface tension with phase change. The surface tension is given by: alpha_l*(sigma_0 + dsigma/..." alt="" coords="713,187,921,214"/>
+<area shape="rect" id="node1" href="$classIntegrator.html" title=" " alt="" coords="5,71,147,98"/>
+<area shape="rect" id="node2" href="$classExplicitEulerIntegrator.html" title=" " alt="" coords="201,5,368,47"/>
+<area shape="rect" id="node3" href="$classGear3Integrator.html" title=" " alt="" coords="195,71,375,98"/>
+<area shape="rect" id="node4" href="$classVelocityVerletIntegrator.html" title=" " alt="" coords="197,123,373,164"/>
 </map>

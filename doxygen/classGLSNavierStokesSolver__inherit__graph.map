@@ -5,5 +5,5 @@
 <area shape="rect" id="node6" href="$classGLSVANSSolver.html" title=" " alt="" coords="778,137,957,163"/>
 <area shape="rect" id="node2" href="$classNavierStokesBase.html" title=" " alt="" coords="267,71,485,112"/>
 <area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,78,219,105"/>
-<area shape="rect" id="node7" href="$classCFDDEMSolver.html" title=" " alt="" coords="1027,137,1201,163"/>
+<area shape="rect" id="node7" href="$classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1027,137,1201,163"/>
 </map>

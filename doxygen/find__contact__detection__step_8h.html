@@ -137,11 +137,14 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="find__contact__detection__step_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2find__contact__detection__step_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2find__contact__detection__step_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2find__contact__detection__step_8hdep">
-<area shape="rect" title=" " alt="" coords="211,5,403,61"/>
-<area shape="rect" href="cfd__dem__coupling_8h.html" title=" " alt="" coords="5,109,188,165"/>
-<area shape="rect" href="dem_8cc.html" title=" " alt="" coords="212,117,403,158"/>
-<area shape="rect" href="find__contact__detection__step_8cc.html" title=" " alt="" coords="427,109,625,165"/>
-<area shape="rect" href="cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,213,188,269"/>
+<area shape="rect" title=" " alt="" coords="221,5,413,61"/>
+<area shape="rect" href="dem_8h.html" title=" " alt="" coords="157,117,345,158"/>
+<area shape="rect" href="cfd__dem__coupling_8h.html" title=" " alt="" coords="5,317,188,373"/>
+<area shape="rect" href="dem_8cc.html" title=" " alt="" coords="367,221,557,262"/>
+<area shape="rect" href="find__contact__detection__step_8cc.html" title=" " alt="" coords="420,109,619,165"/>
+<area shape="rect" href="gls__vans_8h.html" title=" " alt="" coords="160,213,343,269"/>
+<area shape="rect" href="cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,421,188,477"/>
+<area shape="rect" href="gls__vans_8cc.html" title=" " alt="" coords="212,317,395,373"/>
 </map>
 </div>
 </div>
@@ -149,16 +152,16 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae7b4104d780efddc8459389243ff5e16"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:ae7b4104d780efddc8459389243ff5e16"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#ae7b4104d780efddc8459389243ff5e16">find_particle_contact_detection_step</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, const bool sorting_in_subdomains_step, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</td></tr>
-<tr class="separator:ae7b4104d780efddc8459389243ff5e16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0275c4da5683b99058b27a74bdb3d4fe"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a0275c4da5683b99058b27a74bdb3d4fe"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#a0275c4da5683b99058b27a74bdb3d4fe">find_floating_mesh_mapping_step</a> (const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; solids)</td></tr>
-<tr class="separator:a0275c4da5683b99058b27a74bdb3d4fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#a2cda3b14d091cbf7f6f208b56692fbbe">find_particle_contact_detection_step</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const double dt, const double smallest_contact_search_criterion, MPI_Comm &amp;mpi_communicator, std::vector&lt; double &gt; &amp;displacement, const bool parallel_update=true)</td></tr>
+<tr class="separator:a2cda3b14d091cbf7f6f208b56692fbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae590253416d507acd017a2491c75bd8d"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:ae590253416d507acd017a2491c75bd8d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__contact__detection__step_8h.html#ae590253416d507acd017a2491c75bd8d">find_floating_mesh_mapping_step</a> (const double smallest_contact_search_criterion, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; solids)</td></tr>
+<tr class="separator:ae590253416d507acd017a2491c75bd8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a0275c4da5683b99058b27a74bdb3d4fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0275c4da5683b99058b27a74bdb3d4fe">&#9670;&nbsp;</a></span>find_floating_mesh_mapping_step()</h2>
+<a id="ae590253416d507acd017a2491c75bd8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae590253416d507acd017a2491c75bd8d">&#9670;&nbsp;</a></span>find_floating_mesh_mapping_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -166,7 +169,7 @@ Functions</h2></td></tr>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool find_floating_mesh_mapping_step </td>
+          <td class="memname">void find_floating_mesh_mapping_step </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>smallest_contact_search_criterion</em>, </td>
@@ -195,12 +198,14 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the maximum cumulative displacement of particles exceeds the threshold and false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00082">82</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00080">80</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>.</p>
 
 </div>
 </div>
-<a id="ae7b4104d780efddc8459389243ff5e16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7b4104d780efddc8459389243ff5e16">&#9670;&nbsp;</a></span>find_particle_contact_detection_step()</h2>
+<a id="a2cda3b14d091cbf7f6f208b56692fbbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cda3b14d091cbf7f6f208b56692fbbe">&#9670;&nbsp;</a></span>find_particle_contact_detection_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -208,7 +213,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool find_particle_contact_detection_step </td>
+          <td class="memname">void find_particle_contact_detection_step </td>
           <td>(</td>
           <td class="paramtype">Particles::ParticleHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_handler</em>, </td>
@@ -230,12 +235,6 @@ template&lt;int dim&gt; </div>
           <td></td>
           <td class="paramtype">MPI_Comm &amp;&#160;</td>
           <td class="paramname"><em>mpi_communicator</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>sorting_in_subdomains_step</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -272,9 +271,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the maximum cumulative displacement of particles exceeds the threshold and false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00007">7</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__contact__detection__step_8cc_source.html#l00008">8</a> of file <a class="el" href="find__contact__detection__step_8cc_source.html">find_contact_detection_step.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00039">DEM::v_x</a>, <a class="el" href="dem__properties_8h_source.html#l00040">DEM::v_y</a>, and <a class="el" href="dem__properties_8h_source.html#l00041">DEM::v_z</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, <a class="el" href="dem__properties_8h_source.html#l00039">DEM::v_x</a>, <a class="el" href="dem__properties_8h_source.html#l00040">DEM::v_y</a>, and <a class="el" href="dem__properties_8h_source.html#l00041">DEM::v_z</a>.</p>
 
 </div>
 </div>

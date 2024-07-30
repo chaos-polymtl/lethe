@@ -1,3 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classSimulationParameters.html" title=" " alt="" coords="5,5,172,47"/>
+<area shape="rect" id="node1" href="$classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="5,46,144,73"/>
+<area shape="rect" id="node2" href="$classSimulationControlSteady.html" title=" " alt="" coords="199,21,383,47"/>
+<area shape="rect" id="node3" href="$classSimulationControlTransient.html" title=" " alt="" coords="192,71,391,98"/>
+<area shape="rect" id="node4" href="$classSimulationControlAdjointSteady.html" title=" " alt="" coords="460,5,645,47"/>
+<area shape="rect" id="node5" href="$classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="439,71,667,98"/>
+<area shape="rect" id="node6" href="$classSimulationControlTransientDynamicOutput.html" title=" " alt="" coords="453,123,652,164"/>
 </map>
