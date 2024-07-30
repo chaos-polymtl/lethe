@@ -30,7 +30,7 @@ class DEMActionManager
 public:
   /**
    * @brief Copy constructor as a delete function to make sure it can not be
-   * copied. It w ill never be used.
+   * copied. It will never be used.
    *
    * @param copy The object to be copied
    */
@@ -378,8 +378,7 @@ public:
   inline bool
   use_default_broad_search_functions()
   {
-    return !sparse_contacts_cells_update_trigger ||
-           mobility_status_reset_trigger;
+    return !sparse_contacts_enabled || mobility_status_reset_trigger;
   }
 
 private:
