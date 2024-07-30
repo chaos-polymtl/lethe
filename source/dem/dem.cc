@@ -353,6 +353,13 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
 
+  // Set the periodic offset to contact managers and particles contact forces
+  // for periodic contact detection (if PBC enabled)
+  contact_manager.set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
+  particle_particle_contact_force_object->set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
+
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
@@ -957,8 +964,7 @@ DEMSolver<dim>::solve()
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared,
-            periodic_boundaries_object.get_periodic_offset_distance());
+            neighborhood_threshold_squared);
 
           // Execute fine search by updating particle-wall contact
           // containers according to the neighborhood threshold
@@ -978,11 +984,7 @@ DEMSolver<dim>::solve()
       // Particle-particle contact force
       particle_particle_contact_force_object
         ->calculate_particle_particle_contact_force(
-          contact_manager,
-          simulation_control->get_time_step(),
-          torque,
-          force,
-          periodic_boundaries_object.get_periodic_offset_distance());
+          contact_manager, simulation_control->get_time_step(), torque, force);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and

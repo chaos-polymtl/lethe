@@ -202,13 +202,9 @@ public:
    * @param[in] neighborhood_threshold Threshold value of contact detection.
    * @param[in] has_periodic_boundaries Allow manipulations of periodic
    * containers if required.
-   * @param[in] periodic_offset Offset used for tuning particle locations in
-   * periodic boundaries.
    */
   void
-  execute_particle_particle_fine_search(
-    const double         neighborhood_threshold,
-    const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
+  execute_particle_particle_fine_search(const double neighborhood_threshold);
 
   /**
    * @brief Execute the particle-wall fine searches.
@@ -227,6 +223,18 @@ public:
     const double                                      simulation_time,
     const double                                      neighborhood_threshold);
 
+  /**
+   * @brief Set the constant periodic offset for the periodic boundaries. If
+   * they are no periodic boundaries, the default offset is zeros;
+   *
+   * @param[in] periodic_offset Offset used for tuning particle locations in
+   * periodic boundaries.
+   */
+  inline void
+  set_periodic_offset(const Tensor<1, dim> &offset)
+  {
+    this->periodic_offset = offset;
+  }
 
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map

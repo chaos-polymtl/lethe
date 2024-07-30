@@ -235,7 +235,13 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   // Remap periodic cells (if PBC enabled)
   periodic_boundaries_object.map_periodic_cells(
     *parallel_triangulation, periodic_boundaries_cells_information);
-  periodic_offset = periodic_boundaries_object.get_periodic_offset_distance();
+
+  // Set the periodic offset to contact managers and particles contact forces
+  // for periodic contact detection (if PBC enabled)
+  contact_manager.set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
+  particle_particle_contact_force_object->set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(
@@ -1200,8 +1206,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particle-particle contact force
   particle_particle_contact_force_object
-    ->calculate_particle_particle_contact_force(
-      contact_manager, dem_time_step, torque, force, periodic_offset);
+    ->calculate_particle_particle_contact_force(contact_manager,
+                                                dem_time_step,
+                                                torque,
+                                                force);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -1310,7 +1318,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
       contact_manager.execute_particle_particle_fine_search(
-        neighborhood_threshold_squared, periodic_offset);
+        neighborhood_threshold_squared);
 
       // Execute fine search by updating particle-wall contact containers
       // regards the neighborhood threshold

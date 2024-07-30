@@ -14,6 +14,7 @@ using namespace dealii;
 template <int dim>
 PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
   : periodic_boundaries_enabled(false)
+  , constant_periodic_offset(Tensor<1, dim>())
 {}
 
 template <int dim>

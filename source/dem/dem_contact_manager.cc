@@ -363,8 +363,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
 template <int dim>
 void
 DEMContactManager<dim>::execute_particle_particle_fine_search(
-  const double         neighborhood_threshold,
-  const Tensor<1, dim> periodic_offset)
+  const double neighborhood_threshold)
 {
   // Fine search for local particle-particle
   particle_particle_fine_search<dim>(particle_container,
