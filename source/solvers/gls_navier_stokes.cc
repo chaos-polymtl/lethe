@@ -138,9 +138,12 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                        dsp,
                        this->mpi_communicator);
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile || this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile)
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile)
     {
       this->average_velocities->initialize_vectors(
         this->locally_owned_dofs,
@@ -182,8 +185,10 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
-            Parameters::InitialConditionType::average_velocity_profile)
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile)
     {
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
@@ -1295,6 +1300,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       // from previous results
       this->simulation_control->set_current_time(0.0);
       this->simulation_control->set_iteration_number(0);
+      this->simulation_control->set_current_time_step(
+        this->simulation_parameters.simulation_control.dt);
+
       this->pvdhandler.times_and_names.clear();
     }
   else
