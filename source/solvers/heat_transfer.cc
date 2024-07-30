@@ -465,7 +465,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
+      if (this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -486,7 +487,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
     }
   else
     {
-      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
+      if (this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -624,7 +626,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
+      if (this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {
@@ -646,7 +649,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
     }
   else
     {
-      if (this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile &&
+      if (this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile &&
           simulation_control->get_current_time() >
             this->simulation_parameters.post_processing.initial_time)
         {

@@ -319,7 +319,7 @@ public:
   }
 
   /**
-   * @brief Set the value of the simulation time. 
+   * @brief Set the value of the simulation time.
    *
    * @param p_current_time Desired time at the current time step.
    */
@@ -331,7 +331,7 @@ public:
   }
 
   /**
-   * @brief Set the iteration number. 
+   * @brief Set the iteration number.
    *
    * @param p_iteration_number The new iteration number.
    */

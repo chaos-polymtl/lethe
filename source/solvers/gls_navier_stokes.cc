@@ -35,8 +35,8 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/solver_bicgstab.h>
@@ -1270,16 +1270,26 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
           this->pcout << "*********************************" << std::endl;
         }
     }
-  else if (initial_condition_type == Parameters::InitialConditionType::average_velocity_profile)
+  else if (initial_condition_type ==
+           Parameters::InitialConditionType::average_velocity_profile)
     {
-      this->pcout << "*********************************************************" << std::endl;
-      this->pcout << " Initial condition using average velocity from checkpoint " << std::endl;
-      this->pcout << "*********************************************************" << std::endl;
+      this->pcout << "*********************************************************"
+                  << std::endl;
+      this->pcout
+        << " Initial condition using average velocity from checkpoint "
+        << std::endl;
+      this->pcout << "*********************************************************"
+                  << std::endl;
 
-      // The average velocity profile needs to come from the results of a simulation. The checkpoint/restart mechanism is used to obtain all the simulations information necessary to restart the simulation. The same mesh needs to be used, but new physics can be added to the simulation. 
+      // The average velocity profile needs to come from the results of a
+      // simulation. The checkpoint/restart mechanism is used to obtain all the
+      // simulations information necessary to restart the simulation. The same
+      // mesh needs to be used, but new physics can be added to the simulation.
       this->read_checkpoint();
 
-      // This is an initial condition, not a restart. Therefore, the current time is set to 0, the iteration number as well and the pvd is cleared from previous results
+      // This is an initial condition, not a restart. Therefore, the current
+      // time is set to 0, the iteration number as well and the pvd is cleared
+      // from previous results
       this->simulation_control->set_current_time(0.0);
       this->simulation_control->set_iteration_number(0);
       this->pvdhandler.times_and_names.clear();

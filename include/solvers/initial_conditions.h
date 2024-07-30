@@ -125,11 +125,13 @@ namespace Parameters
   {
     prm.enter_subsection("initial conditions");
     {
-      prm.declare_entry("type",
-                        "nodal",
-                        Patterns::Selection("L2projection|viscous|nodal|ramp|average_velocity_profile"),
-                        "Type of initial condition"
-                        "Choices are <L2projection|viscous|nodal|ramp|average_velocity_profile>.");
+      prm.declare_entry(
+        "type",
+        "nodal",
+        Patterns::Selection(
+          "L2projection|viscous|nodal|ramp|average_velocity_profile"),
+        "Type of initial condition"
+        "Choices are <L2projection|viscous|nodal|ramp|average_velocity_profile>.");
       prm.enter_subsection("uvwp");
       uvwp.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
@@ -169,10 +171,11 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.enter_subsection("average velocity profile");
-      prm.declare_entry("checkpoint folder",
-                        "./",
-                        Patterns::FileName(),
-                        "the path leading to the checkpointed average velocity profile");
+      prm.declare_entry(
+        "checkpoint folder",
+        "./",
+        Patterns::FileName(),
+        "the path leading to the checkpointed average velocity profile");
       prm.declare_entry("checkpoint file name",
                         "restart",
                         Patterns::FileName(),
@@ -234,7 +237,7 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.enter_subsection("average velocity profile");
-      checkpoint_folder = prm.get("checkpoint folder");
+      checkpoint_folder    = prm.get("checkpoint folder");
       checkpoint_file_name = prm.get("checkpoint file name");
 
       prm.leave_subsection();
