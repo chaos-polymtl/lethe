@@ -95,7 +95,6 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 17
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -117,7 +116,6 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 55
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -139,7 +137,6 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 65
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -161,7 +158,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 61
+DEM contact search at dem step 92
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -183,7 +180,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 49
+DEM contact search at dem step 84
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -205,7 +202,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 31
+DEM contact search at dem step 79
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -227,8 +224,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 9
-DEM contact search at dem step 84
+DEM contact search at dem step 74
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -250,7 +246,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 57
+DEM contact search at dem step 71
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -272,8 +268,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 28
-DEM contact search at dem step 98
+DEM contact search at dem step 69
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -295,7 +290,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 66
+DEM contact search at dem step 67
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -317,7 +312,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 33
+DEM contact search at dem step 66
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -339,8 +334,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 66
+DEM contact search at dem step 65
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -362,8 +356,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 31
-DEM contact search at dem step 96
+DEM contact search at dem step 64
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -385,7 +378,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 61
+DEM contact search at dem step 63
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -407,8 +400,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 25
-DEM contact search at dem step 89
+DEM contact search at dem step 63
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -430,7 +422,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 53
+DEM contact search at dem step 63
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -452,8 +444,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 16
-DEM contact search at dem step 79
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -475,7 +466,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 42
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -497,8 +488,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 5
-DEM contact search at dem step 68
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -520,8 +510,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 31
-DEM contact search at dem step 94
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -543,7 +532,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 57
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -565,8 +554,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 20
-DEM contact search at dem step 83
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -588,7 +576,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 46
+DEM contact search at dem step 62
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -610,8 +598,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 9
-DEM contact search at dem step 71
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -633,8 +620,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 33
-DEM contact search at dem step 95
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -656,7 +642,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 57
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -678,8 +664,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 19
-DEM contact search at dem step 81
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -701,7 +686,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 43
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -723,8 +708,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 5
-DEM contact search at dem step 67
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -746,8 +730,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 29
-DEM contact search at dem step 91
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -769,7 +752,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 53
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -791,8 +774,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 15
-DEM contact search at dem step 77
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -814,7 +796,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 39
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -836,8 +818,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 1
-DEM contact search at dem step 63
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -859,8 +840,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 25
-DEM contact search at dem step 87
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -882,7 +862,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 49
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -904,8 +884,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 11
-DEM contact search at dem step 73
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -927,8 +906,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 35
-DEM contact search at dem step 97
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -950,7 +928,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 59
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -972,8 +950,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 21
-DEM contact search at dem step 83
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -995,7 +972,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 45
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1017,8 +994,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 7
-DEM contact search at dem step 69
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1040,8 +1016,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 31
-DEM contact search at dem step 93
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1063,7 +1038,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 55
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1085,8 +1060,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 17
-DEM contact search at dem step 79
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1108,7 +1082,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 41
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1130,8 +1104,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 3
-DEM contact search at dem step 65
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1153,8 +1126,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 27
-DEM contact search at dem step 89
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1176,7 +1148,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 51
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1198,8 +1170,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 13
-DEM contact search at dem step 75
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1221,7 +1192,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 37
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1265,8 +1236,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 23
-DEM contact search at dem step 85
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1288,7 +1258,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 47
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1310,8 +1280,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 9
-DEM contact search at dem step 71
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1333,8 +1302,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 33
-DEM contact search at dem step 95
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1356,7 +1324,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 57
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1378,8 +1346,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 19
-DEM contact search at dem step 81
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1401,7 +1368,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 43
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1423,8 +1390,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 5
-DEM contact search at dem step 67
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1446,8 +1412,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 29
-DEM contact search at dem step 91
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1469,7 +1434,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 53
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1491,8 +1456,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 15
-DEM contact search at dem step 77
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1514,7 +1478,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 39
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1536,8 +1500,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 1
-DEM contact search at dem step 63
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1559,8 +1522,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 25
-DEM contact search at dem step 87
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1582,7 +1544,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 49
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1604,8 +1566,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 11
-DEM contact search at dem step 73
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1627,8 +1588,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 35
-DEM contact search at dem step 97
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1650,7 +1610,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 59
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1672,8 +1632,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 21
-DEM contact search at dem step 83
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1695,7 +1654,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 45
+DEM contact search at dem step 61
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1717,7 +1676,7 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 7
+DEM contact search at dem step 91
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
@@ -1739,7 +1698,6 @@ id, x, y, z, v_x, v_y, v_z
 ----
 DEM
 ----
-DEM contact search at dem step 36
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
