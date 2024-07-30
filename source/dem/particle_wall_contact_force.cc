@@ -157,7 +157,7 @@ ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
   Tensor<1, 3>       add_force,
   const Point<3>     point_contact)
 {
-  if (calculate_force_torque_on_boundary == true)
+  if (calculate_force_torque_on_boundary)
     {
       mpi_correction_over_calculation_of_forces_and_torques();
 

@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef grid_motion_h
+#define grid_motion_h
+
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info.h>
@@ -23,16 +26,13 @@
 
 using namespace dealii;
 
-#ifndef grid_motion_h
-#  define grid_motion_h
-
 /**
- * Carries out motion of the triangulation, including rotational, translational
+ * @brief Carries out motion of the triangulation, including rotational, translational
  * and rotational-translational motions.
  *
  * @note Grid motion with a ParsedFunction should be added to the code as a future
  * improvement
- * @param triangulation Triagulation
+ * @param triangulation Triangulation
  * @param dem_parameters Input DEM parameters in the parameter handler file
  *
  */
@@ -46,7 +46,7 @@ class GridMotion
 
 public:
   /**
-   * The constructor sets up the grid motion function defined in the parameter
+   * @brief The constructor sets up the grid motion function defined in the parameter
    * handler, and calculates the rotation angle for rotational and
    * translational-rotational motions.
    *
@@ -58,7 +58,7 @@ public:
     const double                                        dem_time_step);
 
   /**
-   * Calls the desired grid motion.
+   * @brief Calls the desired grid motion.
    *
    * @param triangulation Triangulation
    */
@@ -69,7 +69,7 @@ public:
   }
 
   /**
-   * Carries out updating the boundary points and normal vectors in the
+   * @brief Carries out updating the boundary points and normal vectors in the
    * particle-wall contact list.
    *
    * @param particle_wall_pairs_in_contact The particle-wall contact list container.
@@ -91,7 +91,7 @@ public:
 
 private:
   /**
-   * Carries out rotational motion of the triangulation
+   * @brief Carries out rotational motion of the triangulation
    *
    * @param triangulation Triangulation
    */
@@ -105,6 +105,18 @@ private:
    */
   void
   move_grid_translational(Triangulation<dim, spacedim> &triangulation);
+
+  /**
+   * @brief Dummy function for no motion for grid motion pointer to point to.
+   *
+   * @param triangulation Triangulation
+   */
+  void
+  no_motion(Triangulation<dim, spacedim> & /* triangulation */)
+  {
+    return;
+  }
+
 
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a

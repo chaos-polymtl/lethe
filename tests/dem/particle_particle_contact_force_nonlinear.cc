@@ -15,7 +15,7 @@
  */
 
 /**
- * @ brief In this test, the performance of non-linear (Hertzian)
+ * @brief In this test, the performance of non-linear (Hertzian)
  * particle-particle contact force  is checked.
  */
 
@@ -156,7 +156,10 @@ test()
         particle_iterator;
     }
 
-  container_manager.execute_particle_particle_broad_search(particle_handler);
+  // Dummy Adaptive sparse contacts object and particle-particle broad search
+  AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+  container_manager.execute_particle_particle_broad_search(
+    particle_handler, dummy_adaptive_sparse_contacts);
 
   // Calling fine search
   container_manager.execute_particle_particle_fine_search(

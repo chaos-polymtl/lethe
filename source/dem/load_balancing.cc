@@ -1,4 +1,5 @@
 #include <dem/adaptive_sparse_contacts.h>
+#include <dem/dem_action_manager.h>
 #include <dem/load_balancing.h>
 
 using namespace dealii;
@@ -11,31 +12,23 @@ LagrangianLoadBalancing<dim>::LagrangianLoadBalancing()
 {}
 
 template <int dim>
-inline bool
+inline void
 LagrangianLoadBalancing<dim>::check_load_balance_once()
 {
   if (simulation_control->get_step_number() == load_balance_step)
-    {
-      return true;
-    }
-
-  return false;
+    DEMActionManager::get_action_manager()->load_balance_step();
 }
 
 template <int dim>
-inline bool
+inline void
 LagrangianLoadBalancing<dim>::check_load_balance_frequent()
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
-    {
-      return true;
-    }
-
-  return false;
+    DEMActionManager::get_action_manager()->load_balance_step();
 }
 
 template <int dim>
-inline bool
+inline void
 LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
@@ -46,22 +39,19 @@ LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
       unsigned int minimum_particle_number_on_proc =
         Utilities::MPI::min(particle_handler->n_locally_owned_particles(),
                             mpi_communicator);
+      unsigned int average_particle_number_on_proc =
+        particle_handler->n_locally_owned_particles() / n_mpi_processes;
 
       // Execute load balancing if difference of load between processors is
       // larger than threshold of the load per processor
       if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
-          load_threshold *
-            (particle_handler->n_global_particles() / n_mpi_processes))
-        {
-          return true;
-        }
+          load_threshold * average_particle_number_on_proc)
+        DEMActionManager::get_action_manager()->load_balance_step();
     }
-
-  return false;
 }
 
 template <int dim>
-inline bool
+inline void
 LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
@@ -126,14 +116,12 @@ LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
           // Clear and connect a new cell weight function
           connect_mobility_status_weight_signals();
 
-          return true;
+          DEMActionManager::get_action_manager()->load_balance_step();
         }
     }
 
-  // Clear and connect a new cell weight function
+  // Clear and connect a new cell weight function with new mobility status
   connect_mobility_status_weight_signals();
-
-  return false;
 }
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)

@@ -15,16 +15,18 @@
  *
  */
 
+
+#ifndef integrator_h
+#define integrator_h
+
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
-
-#ifndef integration_h
-#  define integration_h
 
 /**
  * Base interface for classes that carry out the integration of the velocity and

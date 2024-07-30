@@ -1,33 +1,32 @@
 Processor: AMD Ryzen 9 3950X 16-Core Processor
 
 _____________________________________________________________________________________________________________________________________________________________________________________
-|Branch					           |	SHA					                   |	date		|	time_1p (s)	|   time_4p (s) |	time_8p (s)	|	time_12p (s) | time_16p (s)
-|master                            | 402d5805085080ef0034141a60c466217c48916f  |   24/06/2022   |    77.5       |     42.8      |     28.8      |    24.2        |      22
-|emplace_back_fine_search          | 1ddb2e31dcf5ff44a14273a8f282020eadc24307  |   11/12/2022   |    55.8       |     35.1      |     25.2      |    21.0        |      20
-|master                            | c51887b58f365ab571a9abd20215d123d032f34c  |   03/03/2024   |    53.6       |     29.8      |     22.6      |    21.0        |      21.2
+|Branch                                            |    SHA                                                        |    date            |       time_1p (s)     |   time_4p (s) |    time_8p (s)     |   time_12p (s) | time_16p (s)
+|master                                            | 402d5805085080ef0034141a60c466217c48916f                      |   24/06/2022       |    77.5               |     42.8      |     28.8           |    24.2        |      22
+|emplace_back_fine_search                          | 1ddb2e31dcf5ff44a14273a8f282020eadc24307                      |   11/12/2022       |    55.8               |     35.1      |     25.2           |    21.0        |      20
+|master                                            | c51887b58f365ab571a9abd20215d123d032f34c                      |   03/03/2024       |    53.6               |     29.8      |     22.6           |    21.0        |      21.2
 
 
 
 Processor: 12th Gen Intel(R) Core(TM) i9-12900K
 
 ___________________________________________________________________________________________________________________________________________________________________________________________
-|Branch					                         |	SHA					                   |	date		|	time_1p (s)	|   time_4p (s) |	time_8p (s)	|	time_12p (s) | time_16p (s)
-|master                                          | 2212c29fcea13a3aeb2daae9dbc190ca83ed9340  |   18/10/2022   |    50.4       |     26.8      |     16.63     |    20.3        |      19.5
-|dem_optimize_find_cell_neighbors                | abdb2998346093680fa7df8c507b9ed47ab93c8e  |   08/12/2022   |    48.3       |     25.0      |     17.2      |    19.3        |      17.4
-|dem_refactor_containers_for_contact_properties  | 4daeeaa4179fe3302f3109bf76361a3e6dc16ada  |   08/12/2022   |    48.8       |     25.4      |     15.3      |    16.7        |      15.5
-|master                                          | d3b06b889e54356dd1addcf2cb7db867566f96ff  |   16/12/2022   |    52.6       |     23.1      |     14.6      |    18.1        |      16.4 
-|dem_bcs_optimize                                | 927ca632a9f8d6e73b29e4e2bf5be0695b2bd4f4  |   21/12/2022   |    49.3       |     21.3      |     13.7      |    17.3        |      15.1 
-|master                                          | 0652b8c75da540931f3ec035ae4fd417bf8064ae  |   30/03/2023   |    45.3       |     19.3      |     11.5      |    15.1        |      14.1 
-|master                                          | 58e9f4f1ddf7287954687d196a98cf0b597e79b1  |   24/10/2023   |    41.8       |     21.4      |     16.0      #comment : MPI Issues on Manjaro
-|dem_contact_storage                             | 58e9f4f1ddf7287954687d196a98cf0b597e79b1  |   24/10/2023   |    41.1       |     21        |     14.3      #comment : MPI Issues on Manjaro
+|Branch                                                          |      SHA                                        |    date            |       time_1p (s)     |   time_4p (s) |       time_8p (s)     |       time_12p (s) | time_16p (s)
+|master                                                          | 2212c29fcea13a3aeb2daae9dbc190ca83ed9340        |   18/10/2022   |    50.4       |     26.8      |     16.63     |    20.3        |      19.5
+|dem_optimize_find_cell_neighbors                                | abdb2998346093680fa7df8c507b9ed47ab93c8e        |   08/12/2022   |    48.3       |     25.0      |     17.2      |    19.3        |      17.4
+|dem_refactor_containers_for_contact_properties                  | 4daeeaa4179fe3302f3109bf76361a3e6dc16ada        |   08/12/2022   |    48.8       |     25.4      |     15.3      |    16.7        |      15.5
+|master                                                          | d3b06b889e54356dd1addcf2cb7db867566f96ff        |   16/12/2022   |    52.6       |     23.1      |     14.6      |    18.1        |      16.4 
+|dem_bcs_optimize                                                | 927ca632a9f8d6e73b29e4e2bf5be0695b2bd4f4        |   21/12/2022   |    49.3       |     21.3      |     13.7      |    17.3        |      15.1 
+|master                                                          | 0652b8c75da540931f3ec035ae4fd417bf8064ae        |   30/03/2023   |    45.3       |     19.3      |     11.5      |    15.1        |      14.1 
+|master                                                          | 58e9f4f1ddf7287954687d196a98cf0b597e79b1        |   24/10/2023   |    41.8       |     21.4      |     16.0      #comment : MPI Issues on Manjaro
+|dem_contact_storage                                             | 58e9f4f1ddf7287954687d196a98cf0b597e79b1        |   24/10/2023   |    41.1       |     21        |     14.3      #comment : MPI Issues on Manjaro
 
 
 Processor: AMD Ryzen 9 7950X 16-Core Processor
 
 ___________________________________________________________________________________________________________________________________________________________________________________________
-|Branch					                         |	SHA					                     |	date		  |	 time_1p (s)  |   time_4p (s) |	time_8p (s)	  |	time_12p (s)   | time_16p (s)
-|master                                          | 2212c29fcea13a3aeb2daae9dbc190ca83ed9340  |   18/10/2022   |    31.3       |     17.6      |     12.5      |    11.5        |      11.2
-|fix_DEM_memory_growth                           | d01db9579180768ccf51d5af5cbdb73749961127  |   27/02/2024   |    32.3       |     17.5      |     12.5      |    11.0        |      11.2
-
-
-
+|Branch                                                          |      SHA                                  |  date         |  time_1p (s)  |   time_4p (s) | time_8p (s)   |   time_12p (s) | time_16p (s)
+|master                                                          | 2212c29fcea13a3aeb2daae9dbc190ca83ed9340  |  18/10/2022   |    31.3       |     17.6      |     12.5      |    11.5        |      11.2
+|fix_DEM_memory_growth                                           | d01db9579180768ccf51d5af5cbdb73749961127  |  27/02/2024   |    32.3       |     17.5      |     12.5      |    11.0        |      11.2
+|master                                                          | a091baf2a75c0128e09edbdc07a174278b85f9bc  |  30/07/2024   |    31.2       |     14.9      |     9.74      |    9.4         |      8.8
+|master                                                          | 22ef4d7a08ac50f033e479adca462598f335440c  |  30/07/2024   |    31.2       |     14.9      |     9.8       |    9.4         |      8.6
