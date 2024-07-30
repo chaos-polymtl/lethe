@@ -188,7 +188,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // If there is a forcing function, get it from the parser
   forcing_function = simulation_parameters.source_term.navier_stokes_source;
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     average_velocities =
       std::make_shared<AverageVelocities<dim, VectorType, DofsType>>(
         dof_handler);
@@ -1092,7 +1093,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
   multiphysics->prepare_for_mesh_adaptation();
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
@@ -1120,7 +1122,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     }
 
   multiphysics->post_mesh_adaptation();
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     average_velocities->post_mesh_adaptation();
 
   // Only needed if other physics apart from fluid dynamics are enabled.
@@ -1198,7 +1201,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     }
 
   multiphysics->post_mesh_adaptation();
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     average_velocities->post_mesh_adaptation();
 
   // Only needed if other physics apart from fluid dynamics are enabled.
@@ -1337,7 +1341,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   // The average velocities and reynolds stresses are calculated when the
   // time reaches the initial time. (time >= initial time) with 1e-6 as
   // tolerance.
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Calculate average velocities");
@@ -1802,7 +1807,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
 
-  if (simulation_parameters.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     {
       std::vector<VectorType *> sum_vectors =
         this->average_velocities->read(prefix);
@@ -1817,7 +1823,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  if (simulation_parameters.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     {
       this->average_velocities->calculate_average_velocities(
         this->local_evaluation_point,
@@ -2212,7 +2219,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     {
       // Add the interpretation of the average solution. The dim first
       // components are the average velocity vectors and the following one is
@@ -2531,7 +2539,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       sol_set_transfer.push_back(&previous_solutions[i]);
     }
 
-  if (simulation_parameters.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type ==
+            Parameters::InitialConditionType::average_velocity_profile)
     {
       std::vector<const VectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
