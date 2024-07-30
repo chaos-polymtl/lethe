@@ -20,7 +20,8 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
+  set type = average_velocity_profile
+
   subsection VOF
     set Function expression = if (x<0.5, 1, 0)
 
@@ -60,8 +61,6 @@ subsection multiphysics
   set fluid dynamics = false
   set heat transfer  = true
   set VOF            = true
-
-  set use time average velocity field = true
 end
 
 #---------------------------------------------------
@@ -84,7 +83,7 @@ subsection restart
   set checkpoint = false
   set frequency  = 1
   set filename   = restart
-  set restart    = true
+  set restart    = false
 end
 
 #---------------------------------------------------
