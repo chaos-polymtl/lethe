@@ -1,14 +1,10 @@
 #include <core/parameters_lagrangian.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_linear_force.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
 
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_fe.h>
 
 template <int dim>
 void

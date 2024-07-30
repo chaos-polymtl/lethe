@@ -25,6 +25,11 @@
 
 #include <deal.II/distributed/tria.h>
 
+using namespace std;
+
+#ifndef set_particle_wall_contact_force_model_h
+#  define set_particle_wall_contact_force_model_h
+
 /**
  * @brief Set the selected particle-wall contact force model in the parameter
  * handler file.

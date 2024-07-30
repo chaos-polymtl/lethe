@@ -246,7 +246,6 @@ private:
 
   // Information for periodic boundaries
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
-  Tensor<1, dim>                     periodic_offset;
 
   // Object handling the sparse contacts
   AdaptiveSparseContacts<dim> sparse_contacts_object;
