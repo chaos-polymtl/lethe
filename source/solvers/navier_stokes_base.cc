@@ -530,9 +530,10 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
       simulation_control->get_step_number() != 0 &&
-      simulation_control->get_step_number() %
-          this->simulation_parameters.restart_parameters.frequency ==
-        0)
+      (simulation_control->get_step_number() %
+           this->simulation_parameters.restart_parameters.frequency ==
+         0 ||
+       simulation_control->is_at_end()))
     {
       this->write_checkpoint();
     }
