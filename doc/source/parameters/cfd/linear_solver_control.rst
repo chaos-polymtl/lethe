@@ -259,7 +259,7 @@ Different parameters for the main components of the two geometric multigrid algo
 .. tip::
   Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting ``mg enable hessians in jacobian`` to ``false``. This is useful for certain problems and must be used carefully.
 
-In addition, Lehte also supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying two additional parameters:
+In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying two additional parameters:
 
 .. code-block:: text
 
