@@ -36,6 +36,9 @@
 
 using namespace dealii;
 
+template <typename VectorType>
+class PreconditionBase;
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
@@ -47,7 +50,7 @@ class MFNavierStokesPreconditionGMG
   using LSTransferType = MGTransferMatrixFree<dim, double>;
   using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
   using OperatorType   = NavierStokesOperatorBase<dim, double>;
-  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherPreconditionerType = PreconditionBase<VectorType>;
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
   using PreconditionerTypeLS = PreconditionMG<dim, VectorType, LSTransferType>;
