@@ -83,7 +83,7 @@ public:
   }
 
 private:
-  // DiagonalMatrix class from deal.II.
+  /// DiagonalMatrix class from deal.II.
   DiagonalMatrix<VectorType> diagonal_matrix;
 };
 

@@ -1190,7 +1190,7 @@ namespace Parameters
     /// MG smoother relaxation parameter
     double mg_smoother_relaxation;
 
-    /// Type of multigrid
+    /// Type of preconditioner for the MG smoother
     enum class MultigridSmootherPreconditionerType
     {
       InverseDiagonal,
