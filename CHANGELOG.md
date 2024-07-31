@@ -3,12 +3,18 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-31
+
+### Fixed
+
+- MINOR The Coulomb's criterion was wrong in the particle-particle contact force for Hertz-Mindlin with limit force, Hertz and Linear in DEM. The normal force norm was explicitly positive when doing normal_force.norm(), making the Coulomb's criterion always positive even if the particles are in repulsion, so in slidling. This has been fixed using the same method as for Hertz-Mindlin with limit overlap is calculated. [#1216](https://github.com/chaos-polymtl/lethe/pull/1216)
+
 ## [Master] - 2024-07-24
 
 ### Changed
 
 - MINOR Forces a contact search at the last DEM iteration of a CFD iteration for more robustness related to the update of the reference location of the particles prior the void fraction calculation [#1205](https://github.com/chaos-polymtl/lethe/pull/1205)
-- 
+
 ## [Master] - 2024-07-23
 
 ### Changed
