@@ -634,8 +634,13 @@ set amg smoother overlap                      = 1
 <p>For more information about the <code class="docutils literal notranslate"><span class="pre">amg</span></code> preconditioner parameters, the reader is referred to the deal.II documentation for the <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html">AMG preconditioner</a> and its <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html">Additional Data</a>.</p>
 </div>
 </section>
-<section id="lsmg-and-gcmg-preconditioners">
-<h2>LSMG and GCMG preconditioners<a class="headerlink" href="#lsmg-and-gcmg-preconditioners" title="Link to this heading">#</a></h2>
+<section id="multigrid-preconditioners">
+<h2>Multigrid preconditioners<a class="headerlink" href="#multigrid-preconditioners" title="Link to this heading">#</a></h2>
+<p>Lethe supports two types of geometric multigrid preconditioners that only differ when dealing with locally-refined meshes:</p>
+<ul class="simple">
+<li><p>Global coarsening <code class="docutils literal notranslate"><span class="pre">gcmg</span></code>: coarsens all cells simultaneously, i.e., each level contains all the cells at their most refined state.</p></li>
+<li><p>Local smoothing <code class="docutils literal notranslate"><span class="pre">lsmg</span></code>: uses the refinement hierarchy to create the multigrid levels and to perform smoothing refinement level by refinement level, i.e., cells of less refined parts of the mesh are skipped.</p></li>
+</ul>
 <p>Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: <code class="docutils literal notranslate"><span class="pre">gmres</span></code>, <code class="docutils literal notranslate"><span class="pre">amg</span></code>, <code class="docutils literal notranslate"><span class="pre">ilu</span></code> and <code class="docutils literal notranslate"><span class="pre">direct</span></code>. The <code class="docutils literal notranslate"><span class="pre">gmres</span></code> coarse-grid solver supports two preconditioners <code class="docutils literal notranslate"><span class="pre">amg</span></code> and <code class="docutils literal notranslate"><span class="pre">ilu</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span># General MG parameters
 set mg verbosity                   = quiet
@@ -697,6 +702,22 @@ set ilu preconditioner relative tolerance = 1
 <p class="admonition-title">Tip</p>
 <p>Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">enable</span> <span class="pre">hessians</span> <span class="pre">in</span> <span class="pre">jacobian</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code>. This is useful for certain problems and must be used carefully.</p>
 </div>
+<p>In addition, Lethe supports <cite>p-multigrid</cite> through the <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It can be used by specifying two additional parameters:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set mg coarsening type             = p
+set mg p coarsening type           = decrease by one
+</pre></div>
+</div>
+<p>This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree <cite>p</cite> of the shape functions. Three strategies to create the <cite>p-multigrid</cite> levels can be used by specifying the <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">p</span> <span class="pre">coarsening</span> <span class="pre">type</span></code> parameter:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bisect</span></code>: half polynomial degree.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decrease</span> <span class="pre">by</span> <span class="pre">one</span></code>: decrease the polynomial degree by one for every level.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">to</span> <span class="pre">one</span></code>: decrease the polynomial degree to one directly.</p></li>
+</ul>
+<p>In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">coarsening</span> <span class="pre">type</span></code> parameter:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hp</span></code>: first levels with different mesh and then levels with different degree <cite>p</cite>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ph</span></code>: first levels with different degree <cite>p</cite> and then levels with different mesh.</p></li>
+</ul>
 </section>
 </section>
 
@@ -758,7 +779,7 @@ set ilu preconditioner relative tolerance = 1
 <li><a class="reference internal" href="#">Linear Solver</a><ul>
 <li><a class="reference internal" href="#ilu-preconditioner">ILU preconditioner</a></li>
 <li><a class="reference internal" href="#amg-preconditioner">AMG preconditioner</a></li>
-<li><a class="reference internal" href="#lsmg-and-gcmg-preconditioners">LSMG and GCMG preconditioners</a></li>
+<li><a class="reference internal" href="#multigrid-preconditioners">Multigrid preconditioners</a></li>
 </ul>
 </li>
 </ul>
