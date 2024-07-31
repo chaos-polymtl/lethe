@@ -386,10 +386,10 @@ protected:
       normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
 
     // Calculation of normal force
-    const double normal_force_norm =
+    const double normal_force_value =
       normal_spring_constant * normal_overlap +
       normal_damping_constant * normal_relative_velocity_value;
-    normal_force = normal_force_norm * normal_unit_vector;
+    normal_force = normal_force_value * normal_unit_vector;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -403,7 +403,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      std::fabs(normal_force_norm);
+      normal_force_value;
 
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
@@ -541,10 +541,10 @@ protected:
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force
-    const double normal_force_norm =
+    const double normal_force_value =
       normal_spring_constant * normal_overlap +
       normal_damping_constant * normal_relative_velocity_value;
-    normal_force = normal_force_norm * normal_unit_vector;
+    normal_force = normal_force_value * normal_unit_vector;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
@@ -557,7 +557,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      std::fabs(normal_force_norm);
+      normal_force_value;
 
     // Check for gross sliding
     const double tangential_force_norm = tangential_force.norm();
@@ -695,10 +695,10 @@ protected:
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force
-    const double normal_force_norm =
+    const double normal_force_value =
       normal_spring_constant * normal_overlap +
       normal_damping_constant * normal_relative_velocity_value;
-    normal_force = normal_force_norm * normal_unit_vector;
+    normal_force = normal_force_value * normal_unit_vector;
 
     // Calculation of tangential force using spring and dashpot tangential
     // forces. Since we need dashpot tangential force in the gross sliding
@@ -710,7 +710,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      std::fabs(normal_force_norm);
+      normal_force_value;
 
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
@@ -835,10 +835,10 @@ protected:
 
 
     // Calculation of normal force using spring and dashpot normal forces
-    const double normal_force_norm =
+    const double normal_force_value =
       normal_spring_constant * normal_overlap +
       normal_damping_constant * normal_relative_velocity_value;
-    normal_force = normal_force_norm * normal_unit_vector;
+    normal_force = normal_force_value * normal_unit_vector;
     // Calculation of tangential force using spring and dashpot tangential
     // forces. Since we need dashpot tangential force in the gross sliding
     // again, we define it as a separate variable
@@ -848,7 +848,7 @@ protected:
     double coulomb_threshold =
       this->effective_coefficient_of_friction[vec_particle_type_index(
         particle_one_type, particle_two_type)] *
-      std::fabs(normal_force_norm);
+      normal_force_value;
 
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
