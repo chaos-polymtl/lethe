@@ -31,6 +31,7 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparse_matrix_tools.h>
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
@@ -43,6 +44,251 @@
 #include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+/**
+ * @brief A base class of preconditioners used by the smoother.
+ */
+template <typename VectorType>
+class PreconditionBase
+{
+public:
+  /**
+   * @brief Apply preconditioner.
+   */
+  virtual void
+  vmult(VectorType &dst, const VectorType &src) const = 0;
+};
+
+/**
+ * @brief A wrapper class around DiagonalMatrix class from deal.II.
+ */
+template <typename VectorType>
+class MyDiagonalMatrix : public PreconditionBase<VectorType>
+{
+public:
+  /**
+   * @brief Constructor.
+   */
+  MyDiagonalMatrix(const VectorType &diagonal)
+    : diagonal_matrix(diagonal)
+  {}
+
+  /**
+   * @brief Apply preconditioner.
+   */
+  void
+  vmult(VectorType &dst, const VectorType &src) const override
+  {
+    diagonal_matrix.vmult(dst, src);
+  }
+
+private:
+  /// DiagonalMatrix class from deal.II.
+  DiagonalMatrix<VectorType> diagonal_matrix;
+};
+
+/**
+ * @brief An Additive Schwarz preconditioner.
+ */
+template <typename VectorType>
+class PreconditionASM : public PreconditionBase<VectorType>
+{
+private:
+  /// Weighting type.
+  enum class WeightingType
+  {
+    none,
+    left,
+    right,
+    symm
+  };
+
+public:
+  /// Value type.
+  using Number = typename VectorType::value_type;
+
+  /**
+   * @brief Constructor.
+   */
+  PreconditionASM()
+    : weighting_type(WeightingType::left)
+  {}
+
+  /**
+   * @brief Constructor that also performs initialization.
+   */
+  template <int dim,
+            typename GlobalSparseMatrixType,
+            typename GlobalSparsityPattern,
+            typename Number>
+  PreconditionASM(const DoFHandler<dim>           &dof_handler,
+                  const GlobalSparseMatrixType    &global_sparse_matrix,
+                  const GlobalSparsityPattern     &global_sparsity_pattern,
+                  const AffineConstraints<Number> &constraints)
+    : weighting_type(WeightingType::left)
+  {
+    this->initialize(dof_handler,
+                     global_sparse_matrix,
+                     global_sparsity_pattern,
+                     constraints);
+  }
+
+  /**
+   * @brief Initialize inverses of blocks.
+   */
+  template <int dim,
+            typename GlobalSparseMatrixType,
+            typename GlobalSparsityPattern,
+            typename Number>
+  void
+  initialize(const DoFHandler<dim>           &dof_handler,
+             const GlobalSparseMatrixType    &global_sparse_matrix,
+             const GlobalSparsityPattern     &global_sparsity_pattern,
+             const AffineConstraints<Number> &constraints)
+  {
+    const auto add_indices = [&](const auto &local_dof_indices) {
+      std::vector<types::global_dof_index> local_dof_indices_temp;
+
+      for (const auto i : local_dof_indices)
+        if (!constraints.is_constrained(i))
+          local_dof_indices_temp.emplace_back(i);
+
+      if (!local_dof_indices_temp.empty())
+        patches.push_back(local_dof_indices_temp);
+    };
+
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        if (cell->is_locally_owned() == false)
+          continue;
+
+        std::vector<types::global_dof_index> local_dof_indices(
+          cell->get_fe().n_dofs_per_cell());
+        cell->get_dof_indices(local_dof_indices);
+
+        add_indices(local_dof_indices);
+      }
+
+    IndexSet ghost_dofs(dof_handler.locally_owned_dofs().size());
+    for (const auto &indices : this->patches)
+      ghost_dofs.add_indices(indices.begin(), indices.end());
+
+    const auto partition = std::make_shared<Utilities::MPI::Partitioner>(
+      dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
+
+    src.reinit(partition);
+    dst.reinit(partition);
+
+    std::vector<FullMatrix<Number>> blocks;
+
+    SparseMatrixTools::restrict_to_full_matrices(global_sparse_matrix,
+                                                 global_sparsity_pattern,
+                                                 patches,
+                                                 blocks);
+
+    this->blocks.resize(blocks.size());
+
+    for (unsigned int b = 0; b < blocks.size(); ++b)
+      {
+        this->blocks[b] =
+          LAPACKFullMatrix<double>(blocks[b].m(), blocks[b].n());
+        this->blocks[b] = blocks[b];
+        this->blocks[b].compute_lu_factorization();
+      }
+  }
+
+  /**
+   * @brief Apply preconditioner.
+   */
+  void
+  vmult(VectorType &dst_, const VectorType &src_) const override
+  {
+    dst = 0.0;
+    src.copy_locally_owned_data_from(src_);
+    src.update_ghost_values();
+
+    Vector<double> vector_src, vector_dst, vector_weights;
+
+    if ((weights.size() == 0) && (weighting_type != WeightingType::none))
+      {
+        weights.reinit(src);
+
+        for (unsigned int c = 0; c < patches.size(); ++c)
+          {
+            const unsigned int dofs_per_cell = patches[c].size();
+            vector_weights.reinit(dofs_per_cell);
+
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              vector_weights[i] = 1.0;
+
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              weights[patches[c][i]] += vector_weights[i];
+          }
+
+        weights.compress(VectorOperation::add);
+        for (auto &i : weights)
+          i = (weighting_type == WeightingType::symm) ? std::sqrt(1.0 / i) :
+                                                        (1.0 / i);
+        weights.update_ghost_values();
+      }
+
+    for (unsigned int c = 0; c < patches.size(); ++c)
+      {
+        const unsigned int dofs_per_cell = patches[c].size();
+
+        vector_src.reinit(dofs_per_cell);
+        vector_dst.reinit(dofs_per_cell);
+        if (weighting_type != WeightingType::none)
+          vector_weights.reinit(dofs_per_cell);
+
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+          vector_src[i] = src[patches[c][i]];
+
+        if (weighting_type != WeightingType::none)
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            vector_weights[i] = weights[patches[c][i]];
+
+        if (weighting_type == WeightingType::symm ||
+            weighting_type == WeightingType::right)
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            vector_src[i] *= vector_weights[i];
+
+        blocks[c].solve(vector_src);
+        vector_dst = vector_src;
+
+        if (weighting_type == WeightingType::symm ||
+            weighting_type == WeightingType::left)
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            vector_dst[i] *= vector_weights[i];
+
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+          dst[patches[c][i]] += vector_dst[i];
+      }
+
+    src.zero_out_ghost_values();
+    dst.compress(VectorOperation::add);
+    dst_.copy_locally_owned_data_from(dst);
+  }
+
+private:
+  /// DoF indices of patches.
+  std::vector<std::vector<types::global_dof_index>> patches;
+
+  /// Inverse of patch matrices.
+  std::vector<LAPACKFullMatrix<Number>> blocks;
+
+  /// Weights.
+  mutable VectorType weights;
+
+  /// Weighting type.
+  const WeightingType weighting_type;
+
+  /// Internal destination vector with correct ghosting.
+  mutable VectorType dst;
+
+  /// Internal source vector with correct ghosting.
+  mutable VectorType src;
+};
 
 /**
  * @brief Helper function that allows to convert deal.II vectors to Trilinos vectors.
@@ -1024,10 +1270,35 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
-      VectorType diagonal_vector;
-      this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
-      smoother_data[level].preconditioner =
-        std::make_shared<SmootherPreconditionerType>(diagonal_vector);
+      if (this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_smoother_preconditioner_type ==
+          Parameters::LinearSolver::MultigridSmootherPreconditionerType::
+            InverseDiagonal)
+        {
+          VectorType diagonal_vector;
+          this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
+          smoother_data[level].preconditioner =
+            std::make_shared<MyDiagonalMatrix<VectorType>>(diagonal_vector);
+        }
+      else if (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .mg_smoother_preconditioner_type ==
+               Parameters::LinearSolver::MultigridSmootherPreconditionerType::
+                 AdditiveSchwarzMethod)
+        {
+          smoother_data[level].preconditioner =
+            std::make_shared<PreconditionASM<VectorType>>(
+              this->mg_operators[level]
+                ->get_system_matrix_free()
+                .get_dof_handler(),
+              this->mg_operators[level]->get_system_matrix(),
+              this->mg_operators[level]->get_sparsity_pattern(),
+              this->mg_operators[level]
+                ->get_system_matrix_free()
+                .get_affine_constraints());
+        }
+
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_smoother_iterations;
