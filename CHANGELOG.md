@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The Coulomb's criterion was wrong in the particle-particle contact force for Hertz-Mindlin with limit force, Hertz and Linear in DEM. The normal force norm was explicitly positive when doing normal_force.norm(), making the Coulomb's criterion always positive even if the particles are in repulsion, so in slidling. This has been fixed using the same method as for Hertz-Mindlin with limit overlap is calculated. [#1216](https://github.com/chaos-polymtl/lethe/pull/1216)
 
+### Added
+
+- MINOR P-multigrid was added to the gcmg preconditioner of the lethe-fluid-matrix-free application. It supports three different coarsening strategies to define the degree p of the different levels. It also allows to use hybrid hp- and ph-multigrid strategies. [#1209](https://github.com/chaos-polymtl/lethe/pull/1209)
+
 ## [Master] - 2024-07-24
 
 ### Changed

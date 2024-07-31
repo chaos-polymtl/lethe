@@ -35,6 +35,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+
 
 using namespace dealii;
 
@@ -1183,6 +1185,20 @@ namespace Parameters
 
     /// MG enable hessians in jacobian
     bool mg_enable_hessians_jacobian;
+
+    /// Type of multigrid
+    enum class MultigridCoarseningSequenceType
+    {
+      h,
+      p,
+      hp,
+      ph
+    };
+    MultigridCoarseningSequenceType mg_coarsening_type;
+
+    /// Type of p coarsening sequence
+    MGTransferGlobalCoarseningTools::PolynomialCoarseningSequenceType
+      mg_p_coarsening_type;
 
     /// MG smoother number of iterations
     int mg_smoother_iterations;
