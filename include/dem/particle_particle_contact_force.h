@@ -1031,9 +1031,9 @@ protected:
         particle_one_type, particle_two_type)] *
       this->effective_radius;
     const double modified_coulomb_threshold =
-      std::fabs((normal_force_coefficient + two_pull_off_force) *
-                this->effective_coefficient_of_friction[vec_particle_type_index(
-                  particle_one_type, particle_two_type)]);
+      (normal_force_coefficient + two_pull_off_force) *
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)];
 
     if (tangential_force.norm() > modified_coulomb_threshold)
       {
