@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classTracerScratchData.html" title="Class that stores the information required by the assembly procedure for a Tracer advection&#45;diffusion..." alt="" coords="5,5,156,47"/>
+<area shape="rect" id="node1" href="$classTracerAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="5,39,168,80"/>
+<area shape="rect" id="node2" href="$classTracerAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Tracer equations...." alt="" coords="217,5,375,47"/>
+<area shape="rect" id="node3" href="$classTracerAssemblerCore.html" title="Class that assembles the core of the Tracer equation. This class assembles the weak form of: &#160;with an..." alt="" coords="216,71,376,112"/>
 </map>

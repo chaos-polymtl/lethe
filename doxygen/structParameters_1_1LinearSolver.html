@@ -107,6 +107,10 @@ Public Types</h2></td></tr>
 , <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedada984e42a5899bbdac496ef0cbadcee2">ph</a>
  }</td></tr>
 <tr class="separator:a4e1400efdb5848b055b7b17bbe6ddced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac30e985421f44a248aff19aa1e5b4269"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269">MultigridSmootherPreconditionerType</a> { <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269ae7fff1cb2a236f84a1b484c38c878b6c">InverseDiagonal</a>
+, <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269a1b95d77c3911463763940c13b3c75245">AdditiveSchwarzMethod</a>
+ }</td></tr>
+<tr class="separator:ac30e985421f44a248aff19aa1e5b4269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f4a018960b285bffe538a588e3bd8aa"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aa">CoarseGridSolverType</a> { <a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aaad43c33b8e3d5435d9cbe65c156887a02">gmres</a>
 , <a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aaa0b65af7f2357d3fa0ee8d8972d7e0646">amg</a>
 , <a class="el" href="structParameters_1_1LinearSolver.html#a0f4a018960b285bffe538a588e3bd8aaa95dfbb838164998e04803c1e488b86ab">ilu</a>
@@ -182,6 +186,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aed6e4bc7952e6b92e35ccdd678ac8c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a365e7de6e12b57797205625df7795edc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#a365e7de6e12b57797205625df7795edc">mg_smoother_relaxation</a></td></tr>
 <tr class="separator:a365e7de6e12b57797205625df7795edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f521c5871ff6c175134f0e1016f43c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269">MultigridSmootherPreconditionerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#a7f521c5871ff6c175134f0e1016f43c3">mg_smoother_preconditioner_type</a></td></tr>
+<tr class="separator:a7f521c5871ff6c175134f0e1016f43c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5370c55fe538ad9fcfc8524e9409f1b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#a5370c55fe538ad9fcfc8524e9409f1b7">mg_smoother_eig_estimation</a></td></tr>
 <tr class="separator:a5370c55fe538ad9fcfc8524e9409f1b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1ed3b0c9a4cc04968728391591c8243"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1LinearSolver.html#aa1ed3b0c9a4cc04968728391591c8243">eig_estimation_smoothing_range</a></td></tr>
@@ -242,7 +248,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a0f4a018960b285bffe538a588e3bd8aaa7caa701b2bd5a182b80c72b9bdf88e2d"></a>direct&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01222">1222</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01230">1230</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -275,6 +281,36 @@ Public Attributes</h2></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01190">1190</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ac30e985421f44a248aff19aa1e5b4269"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac30e985421f44a248aff19aa1e5b4269">&#9670;&nbsp;</a></span>MultigridSmootherPreconditionerType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269">Parameters::LinearSolver::MultigridSmootherPreconditionerType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Type of preconditioner for the MG smoother. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac30e985421f44a248aff19aa1e5b4269ae7fff1cb2a236f84a1b484c38c878b6c"></a>InverseDiagonal&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac30e985421f44a248aff19aa1e5b4269a1b95d77c3911463763940c13b3c75245"></a>AdditiveSchwarzMethod&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01210">1210</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -404,9 +440,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02607">2607</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02613">2613</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a0b65af7f2357d3fa0ee8d8972d7e0646">amg</a>, <a class="el" href="parameters_8h_source.html#l01163">amg_aggregation_threshold</a>, <a class="el" href="parameters_8h_source.html#l01166">amg_n_cycles</a>, <a class="el" href="parameters_8h_source.html#l01157">amg_precond_ilu_atol</a>, <a class="el" href="parameters_8h_source.html#l01154">amg_precond_ilu_fill</a>, <a class="el" href="parameters_8h_source.html#l01160">amg_precond_ilu_rtol</a>, <a class="el" href="parameters_8h_source.html#l01175">amg_smoother_overlap</a>, <a class="el" href="parameters_8h_source.html#l01172">amg_smoother_sweeps</a>, <a class="el" href="parameters_8h_source.html#l01169">amg_w_cycles</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ae123b37d2b5fd373237e049a1e68ca13">bicgstab</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114a7caa701b2bd5a182b80c72b9bdf88e2d">direct</a>, <a class="el" href="parameters_8h_source.html#l01216">eig_estimation_cg_n_iterations</a>, <a class="el" href="parameters_8h_source.html#l01213">eig_estimation_smoothing_range</a>, <a class="el" href="parameters_8h_source.html#l01219">eig_estimation_verbose</a>, <a class="el" href="parameters_8h_source.html#l01126">enable_hessians_jacobian</a>, <a class="el" href="parameters_8h_source.html#l01129">enable_hessians_residual</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="parameters_8h_source.html#l01178">force_linear_solver_continuation</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">gcmg</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ad43c33b8e3d5435d9cbe65c156887a02">gmres</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda2510c39011c5be704182423e3a695e91">h</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedad2ccda10db94c2b5d51beed10484c025">hp</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a95dfbb838164998e04803c1e488b86ab">ilu</a>, <a class="el" href="parameters_8h_source.html#l01145">ilu_precond_atol</a>, <a class="el" href="parameters_8h_source.html#l01142">ilu_precond_fill</a>, <a class="el" href="parameters_8h_source.html#l01148">ilu_precond_rtol</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">lsmg</a>, <a class="el" href="parameters_8h_source.html#l01120">max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01123">max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01250">mg_amg_use_default_parameters</a>, <a class="el" href="parameters_8h_source.html#l01229">mg_coarse_grid_solver</a>, <a class="el" href="parameters_8h_source.html#l01197">mg_coarsening_type</a>, <a class="el" href="parameters_8h_source.html#l01187">mg_enable_hessians_jacobian</a>, <a class="el" href="parameters_8h_source.html#l01235">mg_gmres_max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01244">mg_gmres_max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01247">mg_gmres_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01241">mg_gmres_reduce</a>, <a class="el" href="parameters_8h_source.html#l01238">mg_gmres_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01184">mg_level_min_cells</a>, <a class="el" href="parameters_8h_source.html#l01181">mg_min_level</a>, <a class="el" href="parameters_8h_source.html#l01201">mg_p_coarsening_type</a>, <a class="el" href="parameters_8h_source.html#l01210">mg_smoother_eig_estimation</a>, <a class="el" href="parameters_8h_source.html#l01204">mg_smoother_iterations</a>, <a class="el" href="parameters_8h_source.html#l01207">mg_smoother_relaxation</a>, <a class="el" href="parameters_8h_source.html#l01232">mg_use_fe_q_iso_q1</a>, <a class="el" href="parameters_8h_source.html#l01253">mg_verbosity</a>, <a class="el" href="parameters_8h_source.html#l01117">minimum_residual</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda83878c91171338902e0fe0fb97a8c47a">p</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedada984e42a5899bbdac496ef0cbadcee2">ph</a>, <a class="el" href="parameters_8h_source.html#l01139">preconditioner</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01114">relative_residual</a>, <a class="el" href="parameters_8h_source.html#l01108">solver</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, and <a class="el" href="parameters_8h_source.html#l01111">verbosity</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269a1b95d77c3911463763940c13b3c75245">AdditiveSchwarzMethod</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a0b65af7f2357d3fa0ee8d8972d7e0646">amg</a>, <a class="el" href="parameters_8h_source.html#l01163">amg_aggregation_threshold</a>, <a class="el" href="parameters_8h_source.html#l01166">amg_n_cycles</a>, <a class="el" href="parameters_8h_source.html#l01157">amg_precond_ilu_atol</a>, <a class="el" href="parameters_8h_source.html#l01154">amg_precond_ilu_fill</a>, <a class="el" href="parameters_8h_source.html#l01160">amg_precond_ilu_rtol</a>, <a class="el" href="parameters_8h_source.html#l01175">amg_smoother_overlap</a>, <a class="el" href="parameters_8h_source.html#l01172">amg_smoother_sweeps</a>, <a class="el" href="parameters_8h_source.html#l01169">amg_w_cycles</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ae123b37d2b5fd373237e049a1e68ca13">bicgstab</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114a7caa701b2bd5a182b80c72b9bdf88e2d">direct</a>, <a class="el" href="parameters_8h_source.html#l01224">eig_estimation_cg_n_iterations</a>, <a class="el" href="parameters_8h_source.html#l01221">eig_estimation_smoothing_range</a>, <a class="el" href="parameters_8h_source.html#l01227">eig_estimation_verbose</a>, <a class="el" href="parameters_8h_source.html#l01126">enable_hessians_jacobian</a>, <a class="el" href="parameters_8h_source.html#l01129">enable_hessians_residual</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="parameters_8h_source.html#l01178">force_linear_solver_continuation</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482ae0941be0c6a876b60f0d7f9e6d33d341">gcmg</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ad43c33b8e3d5435d9cbe65c156887a02">gmres</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda2510c39011c5be704182423e3a695e91">h</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedad2ccda10db94c2b5d51beed10484c025">hp</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a95dfbb838164998e04803c1e488b86ab">ilu</a>, <a class="el" href="parameters_8h_source.html#l01145">ilu_precond_atol</a>, <a class="el" href="parameters_8h_source.html#l01142">ilu_precond_fill</a>, <a class="el" href="parameters_8h_source.html#l01148">ilu_precond_rtol</a>, <a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269ae7fff1cb2a236f84a1b484c38c878b6c">InverseDiagonal</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a5d266332fc0c9664dfb1414b629535f6">lsmg</a>, <a class="el" href="parameters_8h_source.html#l01120">max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01123">max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01258">mg_amg_use_default_parameters</a>, <a class="el" href="parameters_8h_source.html#l01237">mg_coarse_grid_solver</a>, <a class="el" href="parameters_8h_source.html#l01197">mg_coarsening_type</a>, <a class="el" href="parameters_8h_source.html#l01187">mg_enable_hessians_jacobian</a>, <a class="el" href="parameters_8h_source.html#l01243">mg_gmres_max_iterations</a>, <a class="el" href="parameters_8h_source.html#l01252">mg_gmres_max_krylov_vectors</a>, <a class="el" href="parameters_8h_source.html#l01255">mg_gmres_preconditioner</a>, <a class="el" href="parameters_8h_source.html#l01249">mg_gmres_reduce</a>, <a class="el" href="parameters_8h_source.html#l01246">mg_gmres_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01184">mg_level_min_cells</a>, <a class="el" href="parameters_8h_source.html#l01181">mg_min_level</a>, <a class="el" href="parameters_8h_source.html#l01201">mg_p_coarsening_type</a>, <a class="el" href="parameters_8h_source.html#l01218">mg_smoother_eig_estimation</a>, <a class="el" href="parameters_8h_source.html#l01204">mg_smoother_iterations</a>, <a class="el" href="parameters_8h_source.html#l01215">mg_smoother_preconditioner_type</a>, <a class="el" href="parameters_8h_source.html#l01207">mg_smoother_relaxation</a>, <a class="el" href="parameters_8h_source.html#l01240">mg_use_fe_q_iso_q1</a>, <a class="el" href="parameters_8h_source.html#l01261">mg_verbosity</a>, <a class="el" href="parameters_8h_source.html#l01117">minimum_residual</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddceda83878c91171338902e0fe0fb97a8c47a">p</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a4e1400efdb5848b055b7b17bbe6ddcedada984e42a5899bbdac496ef0cbadcee2">ph</a>, <a class="el" href="parameters_8h_source.html#l01139">preconditioner</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01114">relative_residual</a>, <a class="el" href="parameters_8h_source.html#l01108">solver</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, and <a class="el" href="parameters_8h_source.html#l01111">verbosity</a>.</p>
 
 </div>
 </div>
@@ -570,7 +606,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG number of cg iterations to find eigenvalue. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01216">1216</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01224">1224</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -588,7 +624,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG smoothing range to set range between eigenvalues. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01213">1213</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01221">1221</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -606,7 +642,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG print max, min, eigenvalues. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01219">1219</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01227">1227</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -768,7 +804,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG use default parameters for AMG. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01250">1250</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01258">1258</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -784,7 +820,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01229">1229</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01237">1237</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -836,7 +872,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG coarse-grid solver maximum number of iterations. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01235">1235</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01243">1243</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -854,7 +890,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG coarse-grid solver maximum number of krylov vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01244">1244</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01252">1252</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -872,7 +908,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG coarse-grid solver preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01247">1247</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01255">1255</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -890,7 +926,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG coarse-grid solver reduce. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01241">1241</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01249">1249</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -908,7 +944,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG coarse-grid solver tolerance. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01238">1238</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01246">1246</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -980,7 +1016,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG eigenvalue estimation for smoother relaxation parameter. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01210">1210</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01218">1218</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -999,6 +1035,22 @@ Public Attributes</h2></td></tr>
 <p>MG smoother number of iterations. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01204">1204</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a7f521c5871ff6c175134f0e1016f43c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f521c5871ff6c175134f0e1016f43c3">&#9670;&nbsp;</a></span>mg_smoother_preconditioner_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structParameters_1_1LinearSolver.html#ac30e985421f44a248aff19aa1e5b4269">MultigridSmootherPreconditionerType</a> Parameters::LinearSolver::mg_smoother_preconditioner_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01215">1215</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1086,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG use FE_Q_iso_Q1 elements for coarse grid. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01232">1232</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01240">1240</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1052,7 +1104,7 @@ Public Attributes</h2></td></tr>
 
 <p>MG information about levels. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01253">1253</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01261">1261</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

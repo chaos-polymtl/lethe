@@ -149,6 +149,7 @@ var menudata={children:[
 {text:"f",url:"functions_type.html#index_f"},
 {text:"g",url:"functions_type.html#index_g"},
 {text:"l",url:"functions_type.html#index_l"},
+{text:"n",url:"functions_type.html#index_n"},
 {text:"o",url:"functions_type.html#index_o"},
 {text:"p",url:"functions_type.html#index_p"},
 {text:"s",url:"functions_type.html#index_s"},
@@ -168,7 +169,8 @@ var menudata={children:[
 {text:"p",url:"functions_enum.html#index_p"},
 {text:"r",url:"functions_enum.html#index_r"},
 {text:"s",url:"functions_enum.html#index_s"},
-{text:"t",url:"functions_enum.html#index_t"}]},
+{text:"t",url:"functions_enum.html#index_t"},
+{text:"w",url:"functions_enum.html#index_w"}]},
 {text:"Enumerator",url:"functions_eval.html"}]}]},
 {text:"Related Pages",url:"pages.html"},
 {text:"Files",url:"files.html",children:[
