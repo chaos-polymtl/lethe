@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-07-31
+
+### Added
+
+- MINOR P-multigrid was added to the gcmg preconditioner of the lethe-fluid-matrix-free application. It supports three different coarsening strategies to define the degree p of the different levels. It also allows to use hybrid hp- and ph-multigrid strategies. [#1209](https://github.com/chaos-polymtl/lethe/pull/1209)
+
+
 ## [Master] - 2024-07-24
 
 ### Changed

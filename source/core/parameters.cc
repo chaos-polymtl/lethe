@@ -2550,6 +2550,17 @@ namespace Parameters
           Patterns::Bool(),
           "use elements with linear interpolation for coarse grid");
 
+        prm.declare_entry("mg coarsening type",
+                          "h",
+                          Patterns::Selection("h|p|hp|ph"),
+                          "mg coarsening type for gcmg");
+
+        prm.declare_entry("mg p coarsening type",
+                          "decrease by one",
+                          Patterns::Selection(
+                            "decrease by one|bisect|go to one"),
+                          "mg p coarsening type for gcmg");
+
         prm.declare_entry("mg gmres max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -2705,6 +2716,42 @@ namespace Parameters
             "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
 
         mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
+
+        const std::string mg_coarsening_type = prm.get("mg coarsening type");
+        if (mg_coarsening_type == "h")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::h;
+        else if (mg_coarsening_type == "p")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::p;
+        else if (mg_coarsening_type == "hp")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::hp;
+        else if (mg_coarsening_type == "ph")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::ph;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
+        const std::string mg_p_coarsening_type =
+          prm.get("mg p coarsening type");
+        if (mg_p_coarsening_type == "decrease by one")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::decrease_by_one;
+        else if (mg_p_coarsening_type == "bisect")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::bisect;
+        else if (mg_p_coarsening_type == "go to one")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::go_to_one;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
+        AssertThrow((!mg_use_fe_q_iso_q1) ||
+                      (this->mg_coarsening_type ==
+                       MultigridCoarseningSequenceType::h),
+                    ExcNotImplemented());
+
+        AssertThrow((preconditioner != PreconditionerType::lsmg) ||
+                      (this->mg_coarsening_type ==
+                       MultigridCoarseningSequenceType::h),
+                    ExcNotImplemented());
 
         mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
         mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");

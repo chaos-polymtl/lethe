@@ -535,6 +535,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
     {
+      AssertThrow(*cell_quadrature ==
+                    QGauss<dim>(this->dof_handler.get_fe().degree + 1),
+                  ExcNotImplemented());
+
       // Create triangulations
       this->mg_setup_timer.enter_subsection("Create level triangulations");
       this->coarse_grid_triangulations =
@@ -599,10 +603,68 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
       this->coarse_grid_triangulations = temp;
 
+      // p-multigrid
+      const auto mg_coarsening_type =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_coarsening_type;
+
+      const auto polynomial_coarsening_sequence =
+        MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
+          this->dof_handler.get_fe().degree,
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_p_coarsening_type);
+
+      std::vector<std::pair<unsigned int, unsigned int>> levels;
+
+      if (mg_coarsening_type ==
+          Parameters::LinearSolver::MultigridCoarseningSequenceType::hp)
+        {
+          // p
+          for (const auto i : polynomial_coarsening_sequence)
+            levels.emplace_back(0, i);
+
+          // h
+          for (unsigned int i = 1; i < this->coarse_grid_triangulations.size();
+               ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::ph)
+        {
+          // h
+          for (unsigned int i = 0;
+               i < this->coarse_grid_triangulations.size() - 1;
+               ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.front());
+
+          // p
+          for (const auto i : polynomial_coarsening_sequence)
+            levels.emplace_back(this->coarse_grid_triangulations.size() - 1, i);
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::p)
+        {
+          // p
+          for (const auto i : polynomial_coarsening_sequence)
+            levels.emplace_back(this->coarse_grid_triangulations.size() - 1, i);
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::h)
+        {
+          // h
+          for (unsigned int i = 0; i < this->coarse_grid_triangulations.size();
+               ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+
       // Define maximum and minimum level according to triangulations
-      const unsigned int n_h_levels = this->coarse_grid_triangulations.size();
-      this->minlevel                = 0;
-      this->maxlevel                = n_h_levels - 1;
+      this->minlevel = 0;
+      this->maxlevel = levels.size() - 1;
 
       // Local object for constraints of the different levels
       MGLevelObject<AffineConstraints<typename VectorType::value_type>>
@@ -620,7 +682,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
       for (unsigned int l = this->minlevel; l <= this->maxlevel; ++l)
         {
-          this->dof_handlers[l].reinit(*this->coarse_grid_triangulations[l]);
+          this->dof_handlers[l].reinit(
+            *this->coarse_grid_triangulations[levels[l].first]);
 
           // To use elements with linear interpolation for coarse-grid we need
           // to create the min level dof handler with the appropriate element
@@ -630,6 +693,11 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                 .mg_use_fe_q_iso_q1 &&
               l == this->minlevel)
             {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
               const auto points =
                 QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
                   .get_points();
@@ -638,7 +706,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
             }
           else
-            this->dof_handlers[l].distribute_dofs(this->dof_handler.get_fe());
+            this->dof_handlers[l].distribute_dofs(
+              FESystem<dim>(FE_Q<dim>(levels[l].second), dim + 1));
         }
 
       this->mg_setup_timer.leave_subsection(
@@ -654,7 +723,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                ++level)
             this->pcout << "    Level " << level << ": "
                         << this->dof_handlers[level].n_dofs() << " DoFs, "
-                        << this->coarse_grid_triangulations[level]
+                        << this->coarse_grid_triangulations[levels[level].first]
                              ->n_global_active_cells()
                         << " cells" << std::endl;
           this->pcout << std::endl;
@@ -802,12 +871,17 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          auto quadrature_mg = *cell_quadrature;
+          Quadrature<dim> quadrature_mg = QGauss<dim>(levels[level].second + 1);
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&
               level == this->minlevel)
             {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
               const auto points =
                 QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
                   .get_points();
