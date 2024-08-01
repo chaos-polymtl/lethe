@@ -221,7 +221,7 @@ private:
   /// Multigrid method (intermediate level)
   std::shared_ptr<Multigrid<VectorType>> mg_intermediate;
 
-  /// Global coarsening multigrid preconiditoner object (intermediate level)
+  /// Global coarsening multigrid preconditioner object (intermediate level)
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner_intermediate;
 
@@ -232,7 +232,7 @@ private:
   std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
     ls_multigrid_preconditioner;
 
-  /// Global coarsening multigrid preconiditoner object
+  /// Global coarsening multigrid preconditioner object
   std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
     gc_multigrid_preconditioner;
 
