@@ -646,6 +646,7 @@ set amg smoother overlap                      = 1
 set mg verbosity                   = quiet
 set mg min level                   = -1
 set mg level min cells             = -1
+set mg int level                   = -1
 set mg enable hessians in jacobian = true
 
 # Relaxation smoother parameters
@@ -701,6 +702,10 @@ set ilu preconditioner relative tolerance = 1
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">enable</span> <span class="pre">hessians</span> <span class="pre">in</span> <span class="pre">jacobian</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code>. This is useful for certain problems and must be used carefully.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">int</span> <span class="pre">level</span></code> option only works for <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It allows to choose an intermediate level as coarse grid solver and to perform several multigrid v-cycles there.</p>
 </div>
 <p>In addition, Lethe supports <cite>p-multigrid</cite> through the <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It can be used by specifying two additional parameters:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set mg coarsening type             = p
