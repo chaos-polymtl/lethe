@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-01
+
+### Added
+
+- MINOR The possibility to specify an intermediate level as coarse grid solver for the gcmg preconditioner was added as a parameter. It allows to perform several v-cycles at the level chosen. [#1211](https://github.com/chaos-polymtl/lethe/pull/1211)
+
 ## [Master] - 2024-07-31
 
 ### Fixed
