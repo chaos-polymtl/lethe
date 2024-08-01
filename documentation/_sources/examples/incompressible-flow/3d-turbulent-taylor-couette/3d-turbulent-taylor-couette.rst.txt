@@ -163,7 +163,7 @@ In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\n
   subsection physical properties
     set number of fluids = 1
     subsection fluid 0
-      set kinematic viscosity = 0.000625
+      set kinematic viscosity = 6.25e-5
     end
   end
 
