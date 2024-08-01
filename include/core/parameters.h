@@ -1183,6 +1183,9 @@ namespace Parameters
     /// MG minimum number of cells per level
     int mg_level_min_cells;
 
+    /// MG intermediate level
+    int mg_int_level;
+
     /// MG enable hessians in jacobian
     bool mg_enable_hessians_jacobian;
 

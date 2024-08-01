@@ -800,6 +800,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_min_level;
 
+      int mg_int_level =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_int_level;
+
       AssertThrow(
         (mg_min_level + 1) <=
           static_cast<int>(this->coarse_grid_triangulations.size()),
@@ -911,6 +915,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       // Define maximum and minimum level according to triangulations
       this->minlevel = 0;
       this->maxlevel = levels.size() - 1;
+
+      this->intlevel = (mg_int_level == -1) ? this->minlevel : mg_int_level;
 
       // Local object for constraints of the different levels
       MGLevelObject<AffineConstraints<typename VectorType::value_type>>
@@ -1522,7 +1528,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                                          *this->mg_transfer_ls,
                                                          *this->mg_smoother,
                                                          *this->mg_smoother,
-                                                         this->minlevel);
+                                                         this->minlevel,
+                                                         this->maxlevel);
 
       if (this->dof_handler.get_triangulation().has_hanging_nodes())
         this->mg->set_edge_in_matrix(*this->mg_interface_matrix_in);
@@ -1537,12 +1544,53 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
     {
+      if (this->minlevel != this->intlevel)
+        {
+          // Create main MG object
+          this->mg_intermediate =
+            std::make_shared<Multigrid<VectorType>>(*this->mg_matrix,
+                                                    *this->mg_coarse,
+                                                    *this->mg_transfer_gc,
+                                                    *this->mg_smoother,
+                                                    *this->mg_smoother,
+                                                    this->minlevel,
+                                                    this->intlevel);
+
+          // Create MG preconditioner
+          this->gc_multigrid_preconditioner_intermediate =
+            std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
+              this->dof_handler, *this->mg_intermediate, *this->mg_transfer_gc);
+
+          // TODO: introduce parameters
+          this->coarse_grid_solver_control_intermediate =
+            std::make_shared<ReductionControl>(1000, 1e-20, 1e-2, false, false);
+
+          this->coarse_grid_solver_intermediate =
+            std::make_shared<SolverGMRES<VectorType>>(
+              *this->coarse_grid_solver_control_intermediate);
+
+          this->mg_coarse_intermediate =
+            std::make_shared<MGCoarseGridIterativeSolver<
+              VectorType,
+              SolverGMRES<VectorType>,
+              OperatorType,
+              PreconditionMG<dim, VectorType, GCTransferType>>>(
+              *this->coarse_grid_solver_intermediate,
+              *this->mg_operators[this->intlevel],
+              *this->gc_multigrid_preconditioner_intermediate);
+        }
+
       // Create main MG object
-      this->mg = std::make_shared<Multigrid<VectorType>>(*this->mg_matrix,
-                                                         *this->mg_coarse,
-                                                         *this->mg_transfer_gc,
-                                                         *this->mg_smoother,
-                                                         *this->mg_smoother);
+      this->mg = std::make_shared<Multigrid<VectorType>>(
+        *this->mg_matrix,
+        (this->minlevel != this->intlevel) ? (*this->mg_coarse_intermediate) :
+                                             (*this->mg_coarse),
+        *this->mg_transfer_gc,
+        *this->mg_smoother,
+        *this->mg_smoother,
+        this->intlevel,
+        this->maxlevel,
+        Multigrid<VectorType>::Cycle::v_cycle);
 
       // Create MG preconditioner
       this->gc_multigrid_preconditioner =
@@ -1576,6 +1624,22 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   this->mg->connect_post_smoother_step(
     create_mg_timer_function("5_post_smoother_step"));
 
+  if (mg_intermediate)
+    {
+      this->mg_intermediate->connect_pre_smoother_step(
+        create_mg_timer_function("0_pre_smoother_step"));
+      this->mg_intermediate->connect_residual_step(
+        create_mg_timer_function("1_residual_step"));
+      this->mg_intermediate->connect_restriction(
+        create_mg_timer_function("2_restriction"));
+      this->mg_intermediate->connect_coarse_solve(create_mg_timer_function(""));
+      this->mg_intermediate->connect_prolongation(
+        create_mg_timer_function("3_prolongation"));
+      this->mg_intermediate->connect_edge_prolongation(
+        create_mg_timer_function("4_edge_prolongation"));
+      this->mg_intermediate->connect_post_smoother_step(
+        create_mg_timer_function("5_post_smoother_step"));
+    }
 
   const auto create_mg_precon_timer_function = [&](const std::string &label) {
     return [label, this](const bool flag) {
