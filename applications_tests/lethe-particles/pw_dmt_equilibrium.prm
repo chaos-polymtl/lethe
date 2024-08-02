@@ -55,6 +55,7 @@ subsection lagrangian physical properties
   set restitution coefficient wall = 0.9
   set friction coefficient wall    = 0.3
   set surface energy wall          = 2e-4
+  set hamaker constant wall        = 4e-19
 end
 #---------------------------------------------------
 # Insertion Info
