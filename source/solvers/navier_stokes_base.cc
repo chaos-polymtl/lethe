@@ -261,7 +261,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   const VectorType &evaluation_point)
 {
-  TimerOutput::Scope t(this->computing_timer, "calculate_forces");
+  TimerOutput::Scope t(this->computing_timer, "Calculate forces");
 
   this->forces_on_boundaries =
     calculate_forces(this->dof_handler,
@@ -382,7 +382,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
   const VectorType &evaluation_point)
 {
-  TimerOutput::Scope t(this->computing_timer, "calculate_torques");
+  TimerOutput::Scope t(this->computing_timer, "Calculate torques");
 
   this->torques_on_boundaries =
     calculate_torques(this->dof_handler,
@@ -2581,7 +2581,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
   if (abs(pressure_scaling_factor - 1) < 1e-8)
     return;
 
-  TimerOutput::Scope t(this->computing_timer, "rescale_pressure");
+  TimerOutput::Scope t(this->computing_timer, "Rescale pressure");
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
