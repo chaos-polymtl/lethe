@@ -50,7 +50,7 @@ class ParticleParticleContactForceBase
 {
 public:
  /**
-  * @brief Carries out the calculation of the contact force using the contact pair
+  * Carries out the calculation of the contact force using the contact pair
   * information obtained in the fine search and physical properties of
   * particles
   *
@@ -102,7 +102,7 @@ public:
  {}
 
  /**
-  * @brief Carries out the calculation of the contact force using the contact pair
+  * Carries out the calculation of the contact force using the contact pair
   * information
   * obtained in the fine search and physical properties of particles
   *
@@ -223,7 +223,97 @@ protected:
  }
 
  /**
-  * @brief Carries out the calculation of the particle-particle linear contact
+  * @brief Carries out applying the calculated force and torque on the local-local
+  * particle pair in contact, for both non-linear and linear contact force
+  * calculations
+  *
+  * @param normal_force Contact normal force
+  * @param tangential_force Contact tangential force
+  * @param tangential_torque Contact tangential torque
+  * @param rolling_resistance_torque Contact rolling resistance torque
+  * @param particle_one_torque
+  * @param particle_two_torque
+  * @param particle_one_force Force acting on particle one
+  * @param particle_two_force Force acting on particle two
+  */
+ inline void
+ apply_force_and_torque_on_local_particles(
+   const Tensor<1, 3> &normal_force,
+   const Tensor<1, 3> &tangential_force,
+   const Tensor<1, 3> &particle_one_tangential_torque,
+   const Tensor<1, 3> &particle_two_tangential_torque,
+   const Tensor<1, 3> &rolling_resistance_torque,
+   Tensor<1, 3>       &particle_one_torque,
+   Tensor<1, 3>       &particle_two_torque,
+   Tensor<1, 3>       &particle_one_force,
+   Tensor<1, 3>       &particle_two_force)
+ {
+   // Calculation of total force
+   Tensor<1, 3> total_force = normal_force + tangential_force;
+
+   // Updating the force and torque of particles in the particle handler
+   particle_one_force -= total_force;
+   particle_two_force += total_force;
+   particle_one_torque +=
+     -particle_one_tangential_torque + rolling_resistance_torque;
+   particle_two_torque +=
+     -particle_two_tangential_torque - rolling_resistance_torque;
+ }
+
+ /**
+  * Carries out applying the calculated force and torque on the local-ghost
+  * particle pair in contact, for both non-linear and linear contact force
+  * calculations. The contact force is only applied on the local particles
+  *
+  * @param normal_force normal_force Contact normal force
+  * @param tangential_force Contact tangential force
+  * @param tangential_torque Contact tangential torque
+  * @param rolling_resistance_torque Contact rolling resistance torque
+  * @param particle_one_torque Torque acting on particle one (local)
+  * @param particle_one_force Force acting on particle one
+  */
+ inline void
+ apply_force_and_torque_on_single_local_particle(
+   const Tensor<1, 3> &normal_force,
+   const Tensor<1, 3> &tangential_force,
+   const Tensor<1, 3> &particle_one_tangential_torque,
+   const Tensor<1, 3> &rolling_resistance_torque,
+   Tensor<1, 3>       &particle_one_torque,
+   Tensor<1, 3>       &particle_one_force)
+ {
+   // Updating the force and torque acting on particles in the particle handler
+   particle_one_force -= normal_force + tangential_force;
+   particle_one_torque +=
+     -particle_one_tangential_torque + rolling_resistance_torque;
+ }
+
+ /**
+  * Carries out the calculation of effective mass and radius of particles i and
+  * j in contact.
+  *
+  * @param particle_one_properties Properties of particle one in
+  * contact
+  * @param particle_two_properties Properties of particle two in
+  * contact
+  */
+ inline void
+ find_effective_radius_and_mass(
+   const ArrayView<const double> &particle_one_properties,
+   const ArrayView<const double> &particle_two_properties)
+ {
+   effective_mass = (particle_one_properties[DEM::PropertiesIndex::mass] *
+                     particle_two_properties[DEM::PropertiesIndex::mass]) /
+                    (particle_one_properties[DEM::PropertiesIndex::mass] +
+                     particle_two_properties[DEM::PropertiesIndex::mass]);
+   effective_radius =
+     (particle_one_properties[DEM::PropertiesIndex::dp] *
+      particle_two_properties[DEM::PropertiesIndex::dp]) /
+     (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+           particle_two_properties[DEM::PropertiesIndex::dp]));
+ }
+
+ /**
+  * Carries out the calculation of the particle-particle linear contact
   * force and torques based on the updated values in contact_info
   *
   * @param contact_info A container that contains the required information for
@@ -294,10 +384,12 @@ protected:
 
    double tangential_damping_constant =
      normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
-   // Calculation of the normal force
-   normal_force = (normal_spring_constant * normal_overlap +
-                   normal_damping_constant * normal_relative_velocity_value) *
-                  normal_unit_vector;
+
+   // Calculation of normal force
+   const double normal_force_value =
+     normal_spring_constant * normal_overlap +
+     normal_damping_constant * normal_relative_velocity_value;
+   normal_force = normal_force_value * normal_unit_vector;
 
    // Calculation of tangential force. Since we need damping tangential force
    // in the gross sliding again, we define it as a separate variable
@@ -308,11 +400,10 @@ protected:
      (tangential_spring_constant * contact_info.tangential_overlap) +
      damping_tangential_force;
 
-   double coulomb_threshold =
+   const double coulomb_threshold =
      this->effective_coefficient_of_friction[vec_particle_type_index(
        particle_one_type, particle_two_type)] *
-     normal_force.norm();
-
+     normal_force_value;
 
    // Check for gross sliding
    if (tangential_force.norm() > coulomb_threshold)
@@ -456,10 +547,10 @@ protected:
      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
    // Calculation of normal force
-   const double normal_force_norm =
+   const double normal_force_value =
      normal_spring_constant * normal_overlap +
      normal_damping_constant * normal_relative_velocity_value;
-   normal_force = normal_force_norm * normal_unit_vector;
+   normal_force = normal_force_value * normal_unit_vector;
 
    // Calculation of tangential force. Since we need damping tangential force
    // in the gross sliding again, we define it as a separate variable
@@ -469,10 +560,10 @@ protected:
      (tangential_spring_constant * contact_info.tangential_overlap) +
      damping_tangential_force;
 
-   double coulomb_threshold =
+   const double coulomb_threshold =
      this->effective_coefficient_of_friction[vec_particle_type_index(
        particle_one_type, particle_two_type)] *
-     normal_force_norm;
+     normal_force_value;
 
    // Check for gross sliding
    const double tangential_force_norm = tangential_force.norm();
@@ -609,11 +700,11 @@ protected:
    double tangential_damping_constant =
      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
-   // Calculation of normal force using spring and dashpot normal forces
-   normal_force =
-     ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
-     ((normal_damping_constant * normal_relative_velocity_value) *
-      normal_unit_vector);
+   // Calculation of normal force
+   const double normal_force_value =
+     normal_spring_constant * normal_overlap +
+     normal_damping_constant * normal_relative_velocity_value;
+   normal_force = normal_force_value * normal_unit_vector;
 
    // Calculation of tangential force using spring and dashpot tangential
    // forces. Since we need dashpot tangential force in the gross sliding
@@ -622,10 +713,10 @@ protected:
      tangential_spring_constant * contact_info.tangential_overlap +
      tangential_damping_constant * tangential_relative_velocity;
 
-   double coulomb_threshold =
+   const double coulomb_threshold =
      this->effective_coefficient_of_friction[vec_particle_type_index(
        particle_one_type, particle_two_type)] *
-     normal_force.norm();
+     normal_force_value;
 
    // Check for gross sliding
    if (tangential_force.norm() > coulomb_threshold)
@@ -750,21 +841,20 @@ protected:
 
 
    // Calculation of normal force using spring and dashpot normal forces
-   normal_force =
-     ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
-     ((normal_damping_constant * normal_relative_velocity_value) *
-      normal_unit_vector);
-
+   const double normal_force_value =
+     normal_spring_constant * normal_overlap +
+     normal_damping_constant * normal_relative_velocity_value;
+   normal_force = normal_force_value * normal_unit_vector;
    // Calculation of tangential force using spring and dashpot tangential
    // forces. Since we need dashpot tangential force in the gross sliding
    // again, we define it as a separate variable
    tangential_force =
      tangential_spring_constant * contact_info.tangential_overlap;
 
-   double coulomb_threshold =
+   const double coulomb_threshold =
      this->effective_coefficient_of_friction[vec_particle_type_index(
        particle_one_type, particle_two_type)] *
-     normal_force.norm();
+     normal_force_value;
 
    // Check for gross sliding
    if (tangential_force.norm() > coulomb_threshold)
@@ -1133,96 +1223,6 @@ protected:
  }
 
 private:
- /**
-  * @brief Apply the calculated force and torque on the local-local
-  * particle pair in contact, for both non-linear and linear contact force
-  * calculations
-  *
-  * @param normal_force Contact normal force
-  * @param tangential_force Contact tangential force
-  * @param tangential_torque Contact tangential torque
-  * @param rolling_resistance_torque Contact rolling resistance torque
-  * @param particle_one_torque
-  * @param particle_two_torque
-  * @param particle_one_force Force acting on particle one
-  * @param particle_two_force Force acting on particle two
-  */
- inline void
- apply_force_and_torque_on_local_particles(
-   const Tensor<1, 3> &normal_force,
-   const Tensor<1, 3> &tangential_force,
-   const Tensor<1, 3> &particle_one_tangential_torque,
-   const Tensor<1, 3> &particle_two_tangential_torque,
-   const Tensor<1, 3> &rolling_resistance_torque,
-   Tensor<1, 3>       &particle_one_torque,
-   Tensor<1, 3>       &particle_two_torque,
-   Tensor<1, 3>       &particle_one_force,
-   Tensor<1, 3>       &particle_two_force)
- {
-   // Calculation of total force
-   Tensor<1, 3> total_force = normal_force + tangential_force;
-
-   // Updating the force and torque of particles in the particle handler
-   particle_one_force -= total_force;
-   particle_two_force += total_force;
-   particle_one_torque +=
-     -particle_one_tangential_torque + rolling_resistance_torque;
-   particle_two_torque +=
-     -particle_two_tangential_torque - rolling_resistance_torque;
- }
-
- /**
-  * @brief Carries out applying the calculated force and torque on the local-ghost
-  * particle pair in contact, for both non-linear and linear contact force
-  * calculations. The contact force is only applied on the local particles
-  *
-  * @param normal_force normal_force Contact normal force
-  * @param tangential_force Contact tangential force
-  * @param tangential_torque Contact tangential torque
-  * @param rolling_resistance_torque Contact rolling resistance torque
-  * @param particle_one_torque Torque acting on particle one (local)
-  * @param particle_one_force Force acting on particle one
-  */
- inline void
- apply_force_and_torque_on_single_local_particle(
-   const Tensor<1, 3> &normal_force,
-   const Tensor<1, 3> &tangential_force,
-   const Tensor<1, 3> &particle_one_tangential_torque,
-   const Tensor<1, 3> &rolling_resistance_torque,
-   Tensor<1, 3>       &particle_one_torque,
-   Tensor<1, 3>       &particle_one_force)
- {
-   // Updating the force and torque acting on particles in the particle handler
-   particle_one_force -= normal_force + tangential_force;
-   particle_one_torque +=
-     -particle_one_tangential_torque + rolling_resistance_torque;
- }
-
- /**
-  * @brief Set the effective mass and radius of particles i and
-  * j in contact.
-  *
-  * @param particle_one_properties Properties of particle one in
-  * contact
-  * @param particle_two_properties Properties of particle two in
-  * contact
-  */
- inline void
- find_effective_radius_and_mass(
-   const ArrayView<const double> &particle_one_properties,
-   const ArrayView<const double> &particle_two_properties)
- {
-   effective_mass = (particle_one_properties[DEM::PropertiesIndex::mass] *
-                     particle_two_properties[DEM::PropertiesIndex::mass]) /
-                    (particle_one_properties[DEM::PropertiesIndex::mass] +
-                     particle_two_properties[DEM::PropertiesIndex::mass]);
-   effective_radius =
-     (particle_one_properties[DEM::PropertiesIndex::dp] *
-      particle_two_properties[DEM::PropertiesIndex::dp]) /
-     (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-           particle_two_properties[DEM::PropertiesIndex::dp]));
- }
-
  /**
   * @brief Returns the index for accessing the properties vectors for a given
   * combinations of particle types.
