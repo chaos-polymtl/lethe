@@ -1281,29 +1281,34 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type ==
            Parameters::InitialConditionType::average_velocity_profile)
     {
-      this->pcout << "*********************************************************"
-                  << std::endl;
-      this->pcout
-        << " Initial condition using average velocity from checkpoint "
-        << std::endl;
-      this->pcout << "*********************************************************"
-                  << std::endl;
+      announce_string(this->pcout, "Initial condition using average velocity profile");
+      // this->pcout << "*********************************************************"
+      //             << std::endl;
+      // this->pcout
+      //   << " Initial condition using average velocity from checkpoint "
+      //   << std::endl;
+      // this->pcout << "*********************************************************"
+      //             << std::endl;
+
+
+      std::string checkpoint_file_name =
+        this->simulation_parameters.initial_condition->checkpoint_folder + this->simulation_parameters.initial_condition->checkpoint_file_name;
 
       // The average velocity profile needs to come from the results of a
       // simulation. The checkpoint/restart mechanism is used to obtain all the
       // simulations information necessary to restart the simulation. The same
       // mesh needs to be used, but new physics can be added to the simulation.
-      this->read_checkpoint();
+      this->set_solution_from_checkpoint(checkpoint_file_name);
 
       // This is an initial condition, not a restart. Therefore, the current
       // time is set to 0, the iteration number as well and the pvd is cleared
       // from previous results
-      this->simulation_control->set_current_time(0.0);
-      this->simulation_control->set_iteration_number(0);
-      this->simulation_control->set_current_time_step(
-        this->simulation_parameters.simulation_control.dt);
+      // this->simulation_control->set_current_time(0.0);
+      // this->simulation_control->set_iteration_number(0);
+      // this->simulation_control->set_current_time_step(
+      //   this->simulation_parameters.simulation_control.dt);
 
-      this->pvdhandler.times_and_names.clear();
+      // this->pvdhandler.times_and_names.clear();
     }
   else
     {

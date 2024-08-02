@@ -382,10 +382,16 @@ protected:
   refine_mesh_uniform();
 
   /**
-   * @brief read_checkpoint
+   * @brief Restart a previous simulation from a checkpoint file. 
    */
   virtual void
   read_checkpoint();
+
+  /**
+   * @brief Read the solution from a checkpoint file and set it as the current solution.
+   */
+  virtual void
+  set_solution_from_checkpoint(std::string checkpoint_file_prefix);
 
   /**
    * @brief set_nodal_values

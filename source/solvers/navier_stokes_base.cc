@@ -1736,136 +1736,47 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-
-  // When the average velocity profile is used as an initial condition, the
-  // output folder path is not defined in the simulation control field but in
-  // the initial condition field.
-  std::string checkpoint_folder;
-  std::string checkpoint_file_name;
-  if (this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile &&
-      !(this->simulation_parameters.restart_parameters.restart))
-    {
-      checkpoint_folder =
-        this->simulation_parameters.initial_condition->checkpoint_folder;
-      checkpoint_file_name =
-        this->simulation_parameters.initial_condition->checkpoint_file_name;
-    }
-  else
-    {
-      checkpoint_folder =
-        this->simulation_parameters.simulation_control.output_folder;
-      checkpoint_file_name =
-        this->simulation_parameters.restart_parameters.filename;
-    }
-
-  std::string prefix = checkpoint_folder + checkpoint_file_name;
+  std::string prefix = this->simulation_parameters.simulation_control.output_folder + this->simulation_parameters.restart_parameters.filename;
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
-  const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+  // When the average velocity profile is used as an initial condition, the
+  // output folder path is not defined in the simulation control field but in
+  // the initial condition field.
+  // std::string checkpoint_folder;
+  // std::string checkpoint_file_name;
+  // if (this->simulation_parameters.initial_condition->type ==
+  //       Parameters::InitialConditionType::average_velocity_profile &&
+  //     !(this->simulation_parameters.restart_parameters.restart))
+  //   {
+  //     checkpoint_folder =
+  //       this->simulation_parameters.initial_condition->checkpoint_folder;
+  //     checkpoint_file_name =
+  //       this->simulation_parameters.initial_condition->checkpoint_file_name;
+  //   }
+  // else
+  //   {
+  //     checkpoint_folder =
+  //       this->simulation_parameters.simulation_control.output_folder;
+  //     checkpoint_file_name =
+  //       this->simulation_parameters.restart_parameters.filename;
+  //   }
+  
+  this->pcout << "Reading checkpoint file: " << prefix << std::endl;
 
-  try
-    {
-      if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-            this->triangulation.get()))
-        tria->load(filename.c_str());
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "triangulation stored there."));
-    }
-  setup_dofs();
-  enable_dynamic_zero_constraints_fd();
+  this-> set_solution_from_checkpoint(prefix); 
+  
+  // std::string prefix = checkpoint_folder + checkpoint_file_name;
 
-  // BB note: There is an issue right now that will prevent this code from
-  // running in debug mode with Trilinos vectors Deal.II vectors require that
-  // the vectors used in the checkpointing mechanism have their relevant dofs
-  // whereas Trilinos vectors do not allow for this. Right now this code works
-  // well in release mode for both vector types, but will not work in debug mode
-  // for Trilinos vectors because of an assertion. A workaround will be
-  // implemented in a near future
-
-  std::vector<VectorType *> x_system(1 + previous_solutions.size());
-
-  VectorType distributed_system(locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
-  x_system[0] = &(distributed_system);
-
-  std::vector<VectorType> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      distributed_previous_solutions.emplace_back(
-        VectorType(locally_owned_dofs,
-                   this->locally_relevant_dofs,
-                   this->mpi_communicator));
-      x_system[i + 1] = &distributed_previous_solutions[i];
-    }
-  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
-    this->dof_handler);
-
-  if (simulation_parameters.post_processing.calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
-    {
-      std::vector<VectorType *> sum_vectors =
-        this->average_velocities->read(prefix);
-
-      x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
-    }
-
-  system_trans_vectors.deserialize(x_system);
-  this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
-    {
-      previous_solutions[i] = distributed_previous_solutions[i];
-    }
-
-  if (simulation_parameters.post_processing.calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile)
-    {
-      this->average_velocities->calculate_average_velocities(
-        this->local_evaluation_point,
-        simulation_parameters.post_processing,
-        simulation_control->get_current_time(),
-        simulation_control->get_time_step());
-    }
 
   if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
     }
 
-  // The average velocity profile initial condition uses the checkpoint
-  // mechanism to fetch a previous simulation solution. If an auxiliary physics
-  // was set to false in this previous simulation and is now set as true in a
-  // new simulation, the code would try to get an inexistant solution.
-  // Therefore, the multiphysics initial condition should not be set from the
-  // checkpoint.
-  if (this->simulation_parameters.initial_condition->type !=
-        Parameters::InitialConditionType::average_velocity_profile ||
-      (this->simulation_parameters.initial_condition->type ==
-         Parameters::InitialConditionType::average_velocity_profile &&
-       this->simulation_parameters.restart_parameters.restart))
-    {
-      // std::cout << "Entering normally" << std::endl;
+  multiphysics->read_checkpoint();
 
-      multiphysics->read_checkpoint();
-    }
 
   // Deserialize all post-processing tables that are currently used
   {
@@ -1933,6 +1844,93 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
           this->simulation_parameters.analytical_solution->get_filename() +
           "_FD" + suffix);
   }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(std::string checkpoint_file_prefix)
+{
+  const std::string filename = checkpoint_file_prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  try
+    {
+      if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+            this->triangulation.get())){
+              std::cout << filename << std::endl;
+              tria->load(filename.c_str());
+            }
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "triangulation stored there."));
+    }
+
+
+  setup_dofs();
+  enable_dynamic_zero_constraints_fd();
+
+  // BB note: There is an issue right now that will prevent this code from
+  // running in debug mode with Trilinos vectors Deal.II vectors require that
+  // the vectors used in the checkpointing mechanism have their relevant dofs
+  // whereas Trilinos vectors do not allow for this. Right now this code works
+  // well in release mode for both vector types, but will not work in debug mode
+  // for Trilinos vectors because of an assertion. A workaround will be
+  // implemented in a near future
+
+  std::vector<VectorType *> x_system(1 + previous_solutions.size());
+
+  VectorType distributed_system(locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+  x_system[0] = &(distributed_system);
+
+  std::vector<VectorType> distributed_previous_solutions;
+  distributed_previous_solutions.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        VectorType(locally_owned_dofs,
+                   this->locally_relevant_dofs,
+                   this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
+  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
+    this->dof_handler);
+
+  if (simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile)
+    {
+      std::vector<VectorType *> sum_vectors =
+        this->average_velocities->read(checkpoint_file_prefix);
+
+      x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
+    }
+
+  system_trans_vectors.deserialize(x_system);
+  this->present_solution = distributed_system;
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions[i] = distributed_previous_solutions[i];
+    }
+
+  if (simulation_parameters.post_processing.calculate_average_velocities || this->simulation_parameters.initial_condition->type == Parameters::InitialConditionType::average_velocity_profile)
+    {
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
+    }
+
 }
 
 template <int dim, typename VectorType, typename DofsType>
