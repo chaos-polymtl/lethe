@@ -31,7 +31,8 @@ public:
 
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
-   * NormalDistribution, UniformDistribution and CustomDistribution classes.
+   * NormalDistribution, UniformDistribution and CustomDiscreteDistribution
+   * classes.
    * @param particle_number Number of particle inserted at a given insertion time step.
    */
   virtual void
@@ -52,6 +53,128 @@ public:
    */
   virtual double
   find_max_diameter() = 0;
+};
+class CustomContinuousDistribution : public Distribution
+{
+public:
+  /**
+   * @brief The constructor stores the parameters necessary to define the custom
+   * continuous distribution.
+   *
+   * @param d_list Vector of diameter values.
+   * @param d_probabilities Vector of probability values based on volume fraction
+   * with respect to each diameter value.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   */
+  CustomContinuousDistribution(const std::vector<double> &d_list,
+                               const std::vector<double> &d_probabilities,
+                               const unsigned int        &prn_seed);
+
+  /**
+   * @brief Carries out the size sampling of each particle inserted at an insertion
+   * time step for the custom continuous distribution.
+   *
+   * @param particle_number Number of particles inserted at a given insertion time
+   * step.
+   */
+  void
+  particle_size_sampling(const unsigned int &particle_number) override;
+
+  /**
+   * @brief Find the minimum diameter of the custom continuous  distribution.
+   *
+   * @return The minimum diameter of the distribution.
+   */
+  double
+  find_min_diameter() override;
+
+  /**
+   * @brief Find the maximum diameter of the custom continuous distribution.
+   *
+   * @return The minimum diameter of the distribution.
+   */
+  double
+  find_max_diameter() override;
+
+private:
+  /**
+   * Vector containing all the diameters values.
+   */
+  const std::vector<double> diameter_custom_values;
+
+  /**
+   * Vector containing cumulative probabilities associated with de
+   * diameter_custom_values vector. The probabilities are based on the volume
+   * fraction, not the number of particles.
+   */
+  std::vector<double> diameter_custom_cumu_prob;
+
+  /**
+   * Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
+};
+
+
+class CustomDiscreteDistribution : public Distribution
+{
+public:
+  /**
+   * @brief The constructor stores the parameters necessary to define the custom
+   * discrete distribution.
+   *
+   * @param d_list Vector of diameter values.
+   * @param d_probabilities Vector of probability values based on volume fraction
+   * with respect to each diameter value.
+   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   */
+  CustomDiscreteDistribution(const std::vector<double> &d_list,
+                             const std::vector<double> &d_probabilities,
+                             const unsigned int        &prn_seed);
+
+  /**
+   * @brief Carries out the size sampling of each particle inserted at an insertion
+   * time step for the custom discrete distribution.
+   *
+   * @param particle_number Number of particles inserted at a given insertion time
+   * step.
+   */
+  void
+  particle_size_sampling(const unsigned int &particle_number) override;
+
+  /**
+   * @brief Find the minimum diameter of the custom discrete distribution.
+   *
+   * @return The minimum diameter of the distribution.
+   */
+  double
+  find_min_diameter() override;
+
+  /**
+   * @brief Find the maximum diameter of the custom discrete distribution.
+   *
+   * @return The minimum diameter of the distribution.
+   */
+  double
+  find_max_diameter() override;
+
+private:
+  /**
+   * Vector containing all the diameters values.
+   */
+  const std::vector<double> diameter_custom_values;
+
+  /**
+   * Vector containing cumulative probabilities associated with de
+   * diameter_custom_values vector. The probabilities are based on the volume
+   * fraction, not the number of particles.
+   */
+  std::vector<double> diameter_custom_cumu_prob;
+
+  /**
+   * Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
 };
 
 class NormalDistribution : public Distribution
@@ -155,65 +278,6 @@ private:
   const double diameter_value;
 };
 
-class CustomDistribution : public Distribution
-{
-public:
-  /**
-   * @brief The constructor stores the parameters necessary to define the histogram
-   * distribution.
-   *
-   * @param d_list Vector of diameter values.
-   * @param d_probabilities Vector of probability values based on volume fraction
-   * with respect to each diameter value.
-   * @param prn_seed Pseudo-random number seed for the diameter generation.
-   */
-  CustomDistribution(const std::vector<double> &d_list,
-                     const std::vector<double> &d_probabilities,
-                     const unsigned int        &prn_seed);
 
-  /**
-   * @brief Carries out the size sampling of each particle inserted at an insertion
-   * time step for the histogram distribution.
-   *
-   * @param particle_number Number of particles inserted at a given insertion time
-   * step.
-   */
-  void
-  particle_size_sampling(const unsigned int &particle_number) override;
-
-  /**
-   * @brief Find the minimum diameter of the custom distribution.
-   *
-   * @return The minimum diameter of the distribution.
-   */
-  double
-  find_min_diameter() override;
-
-  /**
-   * @brief Find the maximum diameter of the custom distribution.
-   *
-   * @return The minimum diameter of the distribution.
-   */
-  double
-  find_max_diameter() override;
-
-private:
-  /**
-   * Vector containing all the diameters values.
-   */
-  const std::vector<double> diameter_custom_values;
-
-  /**
-   * Vector containing cumulative probabilities associated with de
-   * diameter_custom_values vector. The probabilities are based on the volume
-   * fraction, not the number of particles.
-   */
-  std::vector<double> diameter_custom_cumu_prob;
-
-  /**
-   * Random number generator for the diameter selection.
-   */
-  std::mt19937 gen;
-};
 
 #endif /* distributions_h */

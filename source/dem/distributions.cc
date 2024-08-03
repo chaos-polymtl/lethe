@@ -2,6 +2,123 @@
 
 #include <dem/distributions.h>
 
+void
+CustomContinuousDistribution::particle_size_sampling(
+  const unsigned int &particle_number)
+{
+  this->particle_sizes.clear();
+  this->particle_sizes.reserve(particle_number);
+
+  std::uniform_real_distribution<> dis(0.0, diameter_custom_cumu_prob.back());
+
+  for (unsigned int i = 0; i < particle_number; ++i)
+    {
+      // Search to find the appropriate diameter index
+
+      // Random number
+      const double random_number = dis(gen);
+      auto         it = std::upper_bound(diameter_custom_cumu_prob.begin(),
+                                 diameter_custom_cumu_prob.end(),
+                                 random_number);
+
+      // if dis(gen) returns exactly the maximum value of the cumulative
+      // distribution vector
+      if (it == diameter_custom_cumu_prob.end())
+        {
+          it = it - 1; // Move back to the last valid element
+        }
+
+      double       diameter_value;
+      unsigned int index =
+        static_cast<unsigned int>(it - diameter_custom_cumu_prob.begin());
+      // The distribution is continuous between the first and last diameter
+      // values. If the dis(gen) random number is before the first or after the
+      // last cumulative probability, the diameter value will respectively be
+      // the first or last diameter value.
+      if (it == diameter_custom_cumu_prob.begin() ||
+          (it == diameter_custom_cumu_prob.end() - 1))
+        {
+          diameter_value = diameter_custom_values[index];
+        }
+      else
+        {
+          // Interpolation
+          const double lower_bound_prob = diameter_custom_cumu_prob[index - 1];
+          const double lower_bound_dia  = diameter_custom_values[index - 1];
+
+          const double upper_bound_prob = diameter_custom_cumu_prob[index];
+          const double upper_bound_dia  = diameter_custom_values[index];
+
+          const double delta_prob = upper_bound_prob - lower_bound_prob;
+          const double delta_dia  = upper_bound_dia - lower_bound_dia;
+
+          diameter_value =
+            lower_bound_dia +
+            (delta_dia) * (random_number - lower_bound_prob) / delta_prob;
+        }
+
+      this->particle_sizes.push_back(diameter_value);
+    }
+}
+
+double
+CustomContinuousDistribution::find_min_diameter()
+{
+  return *std::min_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
+}
+
+double
+CustomContinuousDistribution::find_max_diameter()
+{
+  return *std::max_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
+}
+
+void
+CustomDiscreteDistribution::particle_size_sampling(
+  const unsigned int &particle_number)
+{
+  this->particle_sizes.clear();
+  this->particle_sizes.reserve(particle_number);
+
+  std::uniform_real_distribution<> dis(0.0, diameter_custom_cumu_prob.back());
+
+  for (unsigned int i = 0; i < particle_number; ++i)
+    {
+      // Search to find the appropriate diameter index
+      auto it = std::upper_bound(diameter_custom_cumu_prob.begin(),
+                                 diameter_custom_cumu_prob.end(),
+                                 dis(gen));
+
+      // if dis(gen) returns exactly the maximum value of the cumulative
+      // distribution vector
+      if (it == diameter_custom_cumu_prob.end())
+        {
+          it = it - 1; // Move back to the last valid element
+        }
+
+      unsigned int index =
+        static_cast<unsigned int>(it - diameter_custom_cumu_prob.begin());
+
+      this->particle_sizes.push_back(diameter_custom_values[index]);
+    }
+}
+
+double
+CustomDiscreteDistribution::find_min_diameter()
+{
+  return *std::min_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
+}
+
+double
+CustomDiscreteDistribution::find_max_diameter()
+{
+  return *std::max_element(diameter_custom_values.begin(),
+                           diameter_custom_values.end());
+}
+
 NormalDistribution::NormalDistribution(const double       &d_average,
                                        const double       &d_standard_deviation,
                                        const unsigned int &prn_seed)
@@ -68,7 +185,7 @@ UniformDistribution::find_max_diameter()
   return this->diameter_value;
 }
 
-CustomDistribution::CustomDistribution(
+CustomDiscreteDistribution::CustomDiscreteDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities,
   const unsigned int        &prn_seed)
@@ -99,47 +216,4 @@ CustomDistribution::CustomDistribution(
     }
 
   diameter_custom_cumu_prob = cumulative_probability_vector;
-}
-
-void
-CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
-{
-  this->particle_sizes.clear();
-  this->particle_sizes.reserve(particle_number);
-
-  std::uniform_real_distribution<> dis(0.0, diameter_custom_cumu_prob.back());
-
-  for (unsigned int i = 0; i < particle_number; ++i)
-    {
-      // Search to find the appropriate diameter index
-      auto it = std::upper_bound(diameter_custom_cumu_prob.begin(),
-                                 diameter_custom_cumu_prob.end(),
-                                 dis(gen));
-
-      // if dis(gen) returns exactly the maximum value of the cumulative
-      // distribution vector
-      if (it == diameter_custom_cumu_prob.end())
-        {
-          it = it - 1; // Move back to the last valid element
-        }
-
-      unsigned int index =
-        static_cast<unsigned int>(it - diameter_custom_cumu_prob.begin());
-
-      this->particle_sizes.push_back(diameter_custom_values[index]);
-    }
-}
-
-double
-CustomDistribution::find_min_diameter()
-{
-  return *std::min_element(diameter_custom_values.begin(),
-                           diameter_custom_values.end());
-}
-
-double
-CustomDistribution::find_max_diameter()
-{
-  return *std::max_element(diameter_custom_values.begin(),
-                           diameter_custom_values.end());
 }

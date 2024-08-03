@@ -1,0 +1,148 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 - 2019 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ */
+
+/**
+ * @brief Inserting particles following a custom distribution.
+ */
+
+// Deal.II includes
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/particles/particle.h>
+
+// Lethe
+#include "dem/dem_solver_parameters.h"
+#include "dem/insertion_volume.h"
+
+// Tests (with common definitions)
+#include "../tests.h"
+
+using namespace dealii;
+
+template <int dim>
+void
+test()
+{
+  // Creating the mesh and refinement
+  parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
+  int                                       hyper_cube_length = 1;
+  GridGenerator::hyper_cube(tr,
+                            -1 * hyper_cube_length,
+                            hyper_cube_length,
+                            true);
+  int refinement_number = 2;
+  tr.refine_global(refinement_number);
+
+  MappingQ<dim>            mapping(1);
+  DEMSolverParameters<dim> dem_parameters;
+
+  // Defining simulation general parameters
+  dem_parameters.insertion_info.insertion_box_point_1 = {-0.5, -0.5, -0.05};
+  dem_parameters.insertion_info.insertion_box_point_2 = {0.5, 0.5, 0.05};
+  dem_parameters.insertion_info.direction_sequence    = {0, 1, 2};
+  dem_parameters.insertion_info.inserted_this_step    = 1000;
+  dem_parameters.insertion_info.distance_threshold    = 2;
+  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
+  dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
+    Parameters::Lagrangian::SizeDistributionType::custom);
+  dem_parameters.lagrangian_physical_properties.seed_for_distributions
+    .push_back(10);
+  dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0] = {
+    0.0025, 0.005, 0.01};
+  dem_parameters.lagrangian_physical_properties
+    .particle_custom_probability[0] = {0.3, 0.3, 0.4};
+  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
+  dem_parameters.lagrangian_physical_properties.number[0]           = 1000;
+  dem_parameters.insertion_info.insertion_maximum_offset            = 0.75;
+  dem_parameters.insertion_info.seed_for_insertion                  = 19;
+
+  // Defining particle handler
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
+
+  // Calling uniform insertion
+  std::vector<std::shared_ptr<Distribution>> distribution_object_container;
+  distribution_object_container.push_back(
+    std::make_shared<CustomContinuousDistribution>(
+      dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0],
+      dem_parameters.lagrangian_physical_properties
+        .particle_custom_probability[0],
+      dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
+
+  // Calling volume insertion
+  InsertionVolume<dim> insertion_object(
+    distribution_object_container,
+    tr,
+    dem_parameters,
+    distribution_object_container[0]->find_max_diameter());
+
+  insertion_object.insert(particle_handler, tr, dem_parameters);
+
+  // Output
+  int particle_number = 0;
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle, ++particle_number)
+    {
+      auto particle_properties = particle->get_properties();
+
+      double dp = particle_properties[DEM::PropertiesIndex::dp];
+
+      deallog << "Particle " << particle_number << " diameter is: " << dp
+              << std::endl;
+    }
+  deallog<<"Test"<<std::endl;
+}
+
+int
+main(int argc, char **argv)
+{
+  try
+    {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+
+      initlog();
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
+}

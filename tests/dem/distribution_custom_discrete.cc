@@ -15,7 +15,7 @@
  */
 
 /**
- * @brief Inserting particles following a custom distribution.
+ * @brief Inserting particles following a custom continuous distribution.
  */
 
 // Deal.II includes
@@ -77,11 +77,12 @@ test()
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(std::make_shared<CustomDistribution>(
-    dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0],
-    dem_parameters.lagrangian_physical_properties
-      .particle_custom_probability[0],
-    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
+  distribution_object_container.push_back(
+    std::make_shared<CustomDiscreteDistribution>(
+      dem_parameters.lagrangian_physical_properties.particle_custom_diameter[0],
+      dem_parameters.lagrangian_physical_properties
+        .particle_custom_probability[0],
+      dem_parameters.lagrangian_physical_properties.seed_for_distributions[0]));
 
   // Calling volume insertion
   InsertionVolume<dim> insertion_object(
