@@ -168,7 +168,7 @@ CFDDEMSolver<dim>::setup_distribution_type()
             break;
           case SizeDistributionType::custom:
             size_distribution_object_container[particle_type] =
-              std::make_shared<CustomDistribution>(
+              std::make_shared<CustomDiscreteDistribution>(
                 lpp.particle_custom_diameter.at(particle_type),
                 lpp.particle_custom_probability.at(particle_type),
                 lpp.seed_for_distributions[particle_type] + this_mpi_process);
