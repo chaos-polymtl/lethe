@@ -297,8 +297,7 @@ namespace Parameters
       enum class IntegrationMethod
       {
         velocity_verlet,
-        explicit_euler,
-        gear3
+        explicit_euler
       } integration_method;
 
       // Disable particle contacts to optimize performance

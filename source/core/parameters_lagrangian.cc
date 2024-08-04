@@ -699,12 +699,11 @@ namespace Parameters
           "Choosing rolling resistance torque model"
           "Choices are <no_resistance|constant_resistance|viscous_resistance>.");
 
-        prm.declare_entry(
-          "integration method",
-          "velocity_verlet",
-          Patterns::Selection("velocity_verlet|explicit_euler|gear3"),
-          "Choosing integration method"
-          "Choices are <velocity_verlet|explicit_euler|gear3>.");
+        prm.declare_entry("integration method",
+                          "velocity_verlet",
+                          Patterns::Selection("velocity_verlet|explicit_euler"),
+                          "Choosing integration method"
+                          "Choices are <velocity_verlet|explicit_euler>.");
 
         prm.enter_subsection("adaptive sparse contacts");
         {
@@ -912,8 +911,6 @@ namespace Parameters
           integration_method = IntegrationMethod::velocity_verlet;
         else if (integration == "explicit_euler")
           integration_method = IntegrationMethod::explicit_euler;
-        else if (integration == "gear3")
-          integration_method = IntegrationMethod::gear3;
         else
           {
             throw(std::runtime_error("Invalid integration method "));
