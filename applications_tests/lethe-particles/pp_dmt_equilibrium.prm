@@ -11,9 +11,9 @@ end
 # Simulation Control
 #---------------------------------------------------
 subsection simulation control
-  set time step         = 1e-5
-  set time end          = 1.75
-  set log frequency     = 175000
+  set time step         = 5e-6
+  set time end          = 0.00175
+  set log frequency     = 175
   set output frequency  = -1
   set output path       = ./out/
   set output boundaries = true
@@ -42,20 +42,21 @@ subsection lagrangian physical properties
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
-    set diameter                          = 0.2
+    set diameter                          = 0.0001
     set number of particles               = 2
     set density particles                 = 2600
-    set young modulus particles           = 1e5
+    set young modulus particles           = 0.5e5
     set poisson ratio particles           = 0.3
-    set restitution coefficient particles = 0.5
+    set restitution coefficient particles = 0.3
     set friction coefficient particles    = 0.0
-    set surface energy particles          = 50.
+    set surface energy particles          = 1.e-4
+    set hamaker constant particles        = 4.e-19
   end
   set young modulus wall           = 1000000000000
   set poisson ratio wall           = 0.30
   set restitution coefficient wall = 0.8
   set friction coefficient wall    = 0.
-  set surface energy wall          = 50.
+  set surface energy wall          = 1.e-4
 end
 #---------------------------------------------------
 # Insertion Info
@@ -63,16 +64,16 @@ end
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
-  set list x              = 1.0 , 1.2
-  set list y              = 1.0 , 1.0
-  set list z              = 1.0 , 1.0
+  set list x              = 0.001 , 0.0011
+  set list y              = 0.001 , 0.001
+  set list z              = 0.001 , 0.001
   set list velocity x     = 0.001 , 0.0
   set list velocity y     = 0.0 , 0.0
   set list velocity z     = 0.0 , 0.0
   set list omega x        = 0.0 , 0.0
   set list omega y        = 0.0 , 0.0
   set list omega z        = 0.0 , 0.0
-  set list diameters      = 0.2 , 0.2
+  set list diameters      = 0.0001 , 0.0001
 end
 #---------------------------------------------------
 # Mesh
@@ -80,7 +81,7 @@ end
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_cube
-  set grid arguments                      = 0 : 2 : false
+  set grid arguments                      = 0 : 0.002 : false
   set initial refinement                  = 4
   set expand particle-wall contact search = false
 end

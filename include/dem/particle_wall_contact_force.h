@@ -52,6 +52,7 @@ public:
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
     effective_surface_energy.resize(n_particle_types);
+    effective_hamaker_constant.resize(n_particle_types);
     model_parameter_beta.resize(n_particle_types);
 
     this->boundary_translational_velocity_map =
@@ -240,7 +241,6 @@ protected:
   mpi_correction_over_calculation_of_forces_and_torques();
 
   double effective_radius;
-  double effective_mass;
   std::unordered_map<unsigned int, Tensor<1, 3>>
                                            boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
@@ -255,6 +255,7 @@ protected:
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
   std::vector<double> effective_surface_energy;
+  std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;

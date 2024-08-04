@@ -93,6 +93,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   double       normal_relative_velocity_value;
   Tensor<1, 3> tangential_relative_velocity;
 
+  const double force_calculation_threshold_distance =
+    this->set_force_calculation_threshold_distance();
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
 
@@ -264,19 +266,20 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      this->calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      this
+                        ->template calculate_hertz_mindlin_limit_overlap_contact<
+                          contact_model>(contact_info,
+                                         tangential_relative_velocity,
+                                         normal_relative_velocity_value,
+                                         normal_unit_vector,
+                                         normal_overlap,
+                                         particle_one_properties,
+                                         particle_two_properties,
+                                         normal_force,
+                                         tangential_force,
+                                         particle_one_tangential_torque,
+                                         particle_two_tangential_torque,
+                                         rolling_resistance_torque);
                     }
 
                   vertices.push_back(particle_one_location);
@@ -338,7 +341,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                        particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
-              if (normal_overlap > 0.0)
+              if (normal_overlap > force_calculation_threshold_distance)
                 {
                   // This means that the adjacent particles are in contact
                   // Since the normal overlap is already calculated, we update
@@ -455,20 +458,22 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                                   ParticleParticleContactForceModel::
                                     hertz_mindlin_limit_overlap)
                     {
-                      this->calculate_hertz_mindlin_limit_overlap_contact(
-                        contact_info,
-                        tangential_relative_velocity,
-                        normal_relative_velocity_value,
-                        normal_unit_vector,
-                        normal_overlap,
-                        particle_one_properties,
-                        particle_two_properties,
-                        normal_force,
-                        tangential_force,
-                        particle_one_tangential_torque,
-                        particle_two_tangential_torque,
-                        rolling_resistance_torque);
+                      this
+                        ->template calculate_hertz_mindlin_limit_overlap_contact<
+                          contact_model>(contact_info,
+                                         tangential_relative_velocity,
+                                         normal_relative_velocity_value,
+                                         normal_unit_vector,
+                                         normal_overlap,
+                                         particle_one_properties,
+                                         particle_two_properties,
+                                         normal_force,
+                                         tangential_force,
+                                         particle_one_tangential_torque,
+                                         particle_two_tangential_torque,
+                                         rolling_resistance_torque);
                     }
+
 
                   /* Allowing only one core to write the force chains for ghost
                     particles to avoid doubles. The core having the particle
