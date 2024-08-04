@@ -217,7 +217,7 @@ This model modifies the Hertz formulation by defining a larger contact path radi
 The model is defined by:
 
 .. math::
-    a^{3} = \frac{3 R_{\mathrm{e}}}{4 Y_{e}} \left[|\mathbf{F_{n}^{JKR}}| + 3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}  + \sqrt{6 |\mathbf{F_{n}^{JKR}}| \pi\gamma_{\mathrm{e}}R_{\mathrm{e}} + (3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}})^2 }\right]
+    a^{3} = \frac{3 R_{\mathrm{e}}}{4 Y_{\mathrm{e}}} \left[|\mathbf{F_{n}^{JKR}}| + 3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}  + \sqrt{6 |\mathbf{F_{n}^{JKR}}| \pi\gamma_{\mathrm{e}}R_{\mathrm{e}} + (3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}})^2 }\right]
 
 Where :math:`\mathbf{F_{n}^\mathrm{JKR}}` corresponds to the normal spring force and attractive force combined and :math:`\mathbf{\gamma_{\mathrm{e}}}` is the effective surface energy.
 Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.
@@ -247,8 +247,8 @@ Since we are always solving for the same real root, a straightforward procedure,
 
 .. math::
     c_\mathrm{0} &= R_{\mathrm{e}}^{2}\delta_{\mathrm{n}}^{2} \\
-    c_\mathrm{1} &= \frac{-2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}}{Y_{e}}\\
-    c_\mathrm{2} &= -2R_{\mathrm{e}}\delta_{n}\\
+    c_\mathrm{1} &= \frac{-2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}}{Y_{\mathrm{e}}}\\
+    c_\mathrm{2} &= -2R_{\mathrm{e}}\delta_{\mathrm{n}}\\
     P &= -\frac{c_{\mathrm{2}}^{2}}{12} - c_{\mathrm{0}} \\
     Q &= - \frac{c_{\mathrm{2}}^{3}}{108} + \frac{c_{\mathrm{0}}c_{\mathrm{2}}}{3} - \frac{c_{\mathrm{1}}^{2}}{8} \\
     U &= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
@@ -261,10 +261,10 @@ Since we are always solving for the same real root, a straightforward procedure,
     \lambda &= \frac{c_{\mathrm{1}} }{2 \omega}\\
     a &= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{\mathrm{2}} + s + \lambda ) } \right)
 
-Finally, the :math:`\mathbf{F_{n}^{JKR}}` can be computed as follows:
+Finally, the :math:`\mathbf{F_{\mathrm{n}}^{JKR}}` can be computed as follows:
 
 .. math::
-    \mathbf{F_{n}^{JKR}} = \left( \frac{4 Y_\mathrm{e} a^{3}}{3 R_{\mathrm{e}}} - \sqrt{8 \pi \gamma_{\mathrm{e}} Y_{e} a^{3}} \right) \mathbf{n}_{ij}
+    \mathbf{F_{n}^{JKR}} = \left( \frac{4 Y_\mathrm{e} a^{3}}{3 R_{\mathrm{e}}} - \sqrt{8 \pi \gamma_{\mathrm{e}} Y_{\mathrm{e}} a^{3}} \right) \mathbf{n}_{ij}
 
 The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.
 
@@ -291,8 +291,8 @@ The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van 
 
 .. math::
     \mathbf{F_{ad}^{DMT}} =    \begin{cases}
-        F_{\mathrm{po}} = -2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}, & \delta_n \leq \delta_{\mathrm{o}} \\
-        \frac{-AR_{\mathrm{e}}}{6 \delta_{n}^2}, & \delta_{o} < \delta_n < \delta^* \\
+        F_{\mathrm{po}} = -2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}, & \delta_\mathrm{n} \leq \delta_{\mathrm{o}} \\
+        \frac{-AR_{\mathrm{e}}}{6 \delta_{n}^2}, & \delta_{\mathrm{o}} < \delta_\mathrm{n} < \delta^* \\
         0, &  \delta^* \leq \delta_{\mathrm{n}}
     \end{cases}
 
@@ -320,15 +320,15 @@ Two types of integration methods are implemented in Lethe-DEM:
 Explicit Euler method is calculated as:
 
 .. math::
-    \mathbf{v}_{i}^\mathrm{n+1} &= \mathbf{v}_{i}^\mathrm{n} + \mathbf{a}_{i}^\mathrm{n}dt \\
-    \mathbf{x}_{i}^\mathrm{n+1} &= \mathbf{x}_{i}^\mathrm{n} + \mathbf{v}_{i}^\mathrm{n}dt
+    \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
+    \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt
 
 And velocity Verlet method is calculated with half-step velocity as:
 
 .. math::
-    \mathbf{v}_{i}^\mathrm{n+\frac{1}{2}} &= \mathbf{v}_{i}^\mathrm{n} + \mathbf{a}_{i}^\mathrm{n}\frac{dt}{2} \\
-    \mathbf{x}_{i}^\mathrm{n+1} &= \mathbf{x}_{i}^\mathrm{n} + \mathbf{v}_{i}^\mathrm{n+\frac{1}{2}}dt \\
-    \mathbf{v}_{i}^\mathrm{n+1} &= \mathbf{v}_{i}^\mathrm{n+\frac{1}{2}} + \mathbf{a}_{i}^\mathrm{n+1}\frac{dt}{2}
+    \mathbf{v}_{i}^{n+\frac{1}{2}} &= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
+    \mathbf{x}_{i}^{n+1} &= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt \\
+    \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n+\frac{1}{2}} + \mathbf{a}_{i}^{n+1}\frac{dt}{2}
 
 
 -------------
