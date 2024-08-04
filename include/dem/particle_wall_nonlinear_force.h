@@ -206,6 +206,7 @@ private:
     return rolling_resistance_torque;
   }
 
+protected:
   /**
    * Carries out the calculation of the particle-particle non-linear contact
    * force and torques based on the updated values in contact_info

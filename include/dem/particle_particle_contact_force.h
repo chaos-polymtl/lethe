@@ -486,6 +486,8 @@ protected:
    * @param particle_two_tangential_torque Contact tangential torque on particle two
    * @param rolling_resistance_torque Contact rolling resistance torque
    */
+  template <
+    Parameters::Lagrangian::ParticleParticleContactForceModel contact_model>
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -501,10 +503,14 @@ protected:
     Tensor<1, 3>                        &particle_two_tangential_torque,
     Tensor<1, 3>                        &rolling_resistance_torque)
   {
-    // Calculation of effective radius and mass
-    this->find_effective_radius_and_mass(particle_one_properties,
-                                         particle_two_properties);
-
+    if constexpr (contact_model ==
+                  Parameters::Lagrangian::ParticleParticleContactForceModel::
+                    hertz_mindlin_limit_overlap)
+      {
+        // Calculation of effective radius and mass
+        this->find_effective_radius_and_mass(particle_one_properties,
+                                             particle_two_properties);
+      }
     const unsigned int particle_one_type =
       particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
@@ -1121,6 +1127,8 @@ protected:
                         Tensor<1, 3> &particle_two_tangential_torque,
                         Tensor<1, 3> &rolling_resistance_torque)
   {
+    constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
+
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,
                                          particle_two_properties);
@@ -1129,130 +1137,211 @@ protected:
       particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
       particle_two_properties[PropertiesIndex::type];
+    const unsigned int property_index =
+      vec_particle_type_index(particle_one_type, particle_two_type);
 
-    const double radius_times_overlap_sqrt =
-      sqrt(this->effective_radius * normal_overlap);
-    const double model_parameter_sn =
-      2.0 *
-      this->effective_youngs_modulus[vec_particle_type_index(
-        particle_one_type, particle_two_type)] *
-      radius_times_overlap_sqrt;
-    double model_parameter_st =
-      8.0 *
-      this->effective_shear_modulus[vec_particle_type_index(
-        particle_one_type, particle_two_type)] *
-      radius_times_overlap_sqrt;
+    const double F_po = M_2PI * this->effective_radius *
+                        this->effective_surface_energy.at(property_index);
 
-    // Calculation of normal and tangential spring and dashpot constants
-    // using particle properties
-    double normal_spring_constant = 0.66665 * model_parameter_sn;
-    double normal_damping_constant =
-      -1.8257 *
-      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
-                                                         particle_two_type)] *
-      sqrt(model_parameter_sn * this->effective_mass);
-    double tangential_spring_constant =
-      8.0 *
-        this->effective_shear_modulus[vec_particle_type_index(
-          particle_one_type, particle_two_type)] *
-        radius_times_overlap_sqrt +
-      DBL_MIN;
-    double tangential_damping_constant =
-      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+    const double delta_0 =
+      -std::sqrt(this->effective_hamaker_constant.at(property_index) *
+                 this->effective_radius / (6. * F_po));
 
-    // Calculation of normal force. The cohesive term is computed here.
-    const double cohesive_term =
-      2. * M_PI * effective_radius *
-      this->effective_surface_energy[vec_particle_type_index(
-        particle_one_type, particle_two_type)];
-    double normal_force_norm =
-      normal_spring_constant * normal_overlap +
-      normal_damping_constant * normal_relative_velocity_value;
+    // Cohesive force. This will need to be added to the
+    // first vector inside the tuple.
+    double cohesive_term;
 
-    // Calculation of tangential force. Since we need damping tangential force
-    // in the gross sliding again, we define it as a separate variable
-    Tensor<1, 3> damping_tangential_force =
-      tangential_damping_constant * tangential_relative_velocity;
-    tangential_force =
-      (tangential_spring_constant * contact_info.tangential_overlap) +
-      damping_tangential_force;
-
-    double coulomb_threshold =
-      this->effective_coefficient_of_friction[vec_particle_type_index(
-        particle_one_type, particle_two_type)] *
-      normal_force_norm;
-
-    // Check for gross sliding
-    const double tangential_force_norm = tangential_force.norm();
-    if (tangential_force_norm > coulomb_threshold)
+    // Contact between particle + constant cohesive force.
+    if (normal_overlap > 0.)
       {
-        // Gross sliding occurs and the tangential overlap and tangential
-        // force are limited to Coulomb's criterion
-        contact_info.tangential_overlap =
-          (coulomb_threshold *
-             (tangential_force / (tangential_force_norm + DBL_MIN)) -
-           damping_tangential_force) /
-          (tangential_spring_constant + DBL_MIN);
+        cohesive_term = -F_po;
 
-        tangential_force =
-          (tangential_spring_constant * contact_info.tangential_overlap) +
-          damping_tangential_force;
+        this->template calculate_hertz_mindlin_limit_overlap_contact<
+          Parameters::Lagrangian::ParticleParticleContactForceModel::DMT>(
+          contact_info,
+          tangential_relative_velocity,
+          normal_relative_velocity_value,
+          normal_unit_vector,
+          normal_overlap,
+          particle_one_properties,
+          particle_two_properties,
+          normal_force,
+          tangential_force,
+          particle_one_tangential_torque,
+          particle_two_tangential_torque,
+          rolling_resistance_torque);
       }
-    normal_force_norm -= cohesive_term;
-    normal_force = normal_force_norm * normal_unit_vector;
+    // No contact, but still in the constant zone for the cohesive force.
+    else if (normal_overlap > delta_0)
+      {
+        cohesive_term = -F_po;
+        contact_info.tangential_overlap.clear();
+      }
+    // No contact. Particle are far from each other. The cohesive force is not
+    // constant. It needs to be computed.
+    else
+      {
+        cohesive_term = -this->effective_hamaker_constant.at(property_index) *
+                        effective_radius /
+                        (6. * Utilities::fixed_power<2>(normal_overlap));
+        contact_info.tangential_overlap.clear();
+      }
+    normal_force += cohesive_term * normal_unit_vector;
+  }
 
-    // Calculation of torque caused by tangential force (tangential_torque)
-    particle_one_tangential_torque =
-      cross_product_3d(normal_unit_vector,
-                       tangential_force *
-                         particle_one_properties[PropertiesIndex::dp] * 0.5);
-    particle_two_tangential_torque =
-      particle_one_tangential_torque *
-      particle_two_properties[PropertiesIndex::dp] /
-      particle_one_properties[PropertiesIndex::dp];
+  /**
+   * @brief Calculate the minimum overlap at which particle-particle forces are
+   * computed.
+   *
+   * @return minimum overlap for the force calculation.
+   */
+  double
+  set_force_calculation_threshold_distance()
+  {
+    if constexpr (force_model == Parameters::Lagrangian::
+                                   ParticleParticleContactForceModel::DMT)
+      {
+        // We are looking for the maximum hamaker constant and minimum surface
+        // energy to compute the biggest distance at which force will be
+        // computed. In other words, we are maximising the delta_0.
+        // This way, force_calculation_threshold_distance can be set
+        // to const variable, which should make the code faster.
+        const double max_effective_hamaker_constant =
+          *(std::max_element(this->effective_hamaker_constant.begin(),
+                             this->effective_hamaker_constant.end()));
+        const double min_effective_surface_energy =
+          *(std::min_element(this->effective_surface_energy.begin(),
+                             this->effective_surface_energy.end()));
 
-
-    // Rolling resistance torque
-    if constexpr (rolling_friction_model ==
-                  Parameters::Lagrangian::RollingResistanceMethod::
-                    no_resistance)
-      rolling_resistance_torque = no_rolling_resistance_torque(
-        this->effective_radius,
-        particle_one_properties,
-        particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
-          particle_one_type, particle_two_type)],
-        normal_force.norm(),
-        normal_unit_vector);
-    if constexpr (rolling_friction_model ==
-                  Parameters::Lagrangian::RollingResistanceMethod::
-                    constant_resistance)
-      rolling_resistance_torque = constant_rolling_resistance_torque(
-        this->effective_radius,
-        particle_one_properties,
-        particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
-          particle_one_type, particle_two_type)],
-        normal_force.norm(),
-        normal_unit_vector);
-    if constexpr (rolling_friction_model ==
-                  Parameters::Lagrangian::viscous_resistance)
-      rolling_resistance_torque = viscous_rolling_resistance_torque(
-        this->effective_radius,
-        particle_one_properties,
-        particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
-          particle_one_type, particle_two_type)],
-        normal_force.norm(),
-        normal_unit_vector);
+        // Return the critical delta_0. We but a minus sign in front since a
+        // positive overlap means that particles are in contact.
+        return -std::sqrt(
+          max_effective_hamaker_constant /
+          (12. * M_PI * min_effective_surface_energy * dmt_cut_off_threshold));
+      }
+    return 0.;
   }
 
 private:
+  /**
+   * @brief Returns the index for accessing the properties vectors for a given
+   * combinations of particle types.
+   *
+   * @param i First particle type index.
+   * @param i Second particle type index.
+   * @return index associated with the combinations of particle types.
+   */
   inline unsigned int
   vec_particle_type_index(const unsigned int i, const unsigned int j)
   {
     return i * n_particle_types + j;
   }
+
+
+  /**
+   * @brief Set every containers needed to carry the particle-particle force calculation.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file.
+   */
+  void
+  set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
+  {
+    auto properties  = dem_parameters.lagrangian_physical_properties;
+    n_particle_types = properties.particle_type_number;
+    effective_youngs_modulus.resize(n_particle_types * n_particle_types);
+    effective_shear_modulus.resize(n_particle_types * n_particle_types);
+    effective_coefficient_of_restitution.resize(n_particle_types *
+                                                n_particle_types);
+    effective_coefficient_of_friction.resize(n_particle_types *
+                                             n_particle_types);
+    effective_coefficient_of_rolling_friction.resize(n_particle_types *
+                                                     n_particle_types);
+    model_parameter_beta.resize(n_particle_types * n_particle_types);
+    effective_surface_energy.resize(n_particle_types * n_particle_types);
+    effective_hamaker_constant.resize(n_particle_types * n_particle_types);
+
+    for (unsigned int i = 0; i < n_particle_types; ++i)
+      {
+        const double youngs_modulus_i =
+          properties.youngs_modulus_particle.at(i);
+        const double poisson_ratio_i = properties.poisson_ratio_particle.at(i);
+        const double restitution_coefficient_i =
+          properties.restitution_coefficient_particle.at(i);
+        const double friction_coefficient_i =
+          properties.friction_coefficient_particle.at(i);
+        const double rolling_friction_coefficient_i =
+          properties.rolling_friction_coefficient_particle.at(i);
+        const double surface_energy_i =
+          properties.surface_energy_particle.at(i);
+        const double hamaker_constant_i =
+          properties.hamaker_constant_particle.at(i);
+
+        for (unsigned int j = 0; j < n_particle_types; ++j)
+          {
+            const unsigned int k = i * n_particle_types + j;
+
+            const double youngs_modulus_j =
+              properties.youngs_modulus_particle.at(j);
+            const double poisson_ratio_j =
+              properties.poisson_ratio_particle.at(j);
+            const double restitution_coefficient_j =
+              properties.restitution_coefficient_particle.at(j);
+            const double friction_coefficient_j =
+              properties.friction_coefficient_particle.at(j);
+            const double rolling_friction_coefficient_j =
+              properties.rolling_friction_coefficient_particle.at(j);
+            const double surface_energy_j =
+              properties.surface_energy_particle.at(j);
+            const double hamaker_constant_j =
+              properties.hamaker_constant_particle.at(j);
+
+            this->effective_youngs_modulus[k] =
+              (youngs_modulus_i * youngs_modulus_j) /
+              ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+               (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
+               DBL_MIN);
+
+            this->effective_shear_modulus[k] =
+              (youngs_modulus_i * youngs_modulus_j) /
+              (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                       (1.0 + poisson_ratio_i)) +
+                      (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                       (1.0 + poisson_ratio_j))) +
+               DBL_MIN);
+
+            this->effective_coefficient_of_restitution[k] =
+              harmonic_mean(restitution_coefficient_i,
+                            restitution_coefficient_j);
+
+            this->effective_coefficient_of_friction[k] =
+              harmonic_mean(friction_coefficient_i, friction_coefficient_j);
+
+            this->effective_coefficient_of_rolling_friction[k] =
+              harmonic_mean(rolling_friction_coefficient_i,
+                            rolling_friction_coefficient_j);
+
+            this->effective_surface_energy[k] =
+              surface_energy_i + surface_energy_j -
+              std::pow(std::sqrt(surface_energy_i) -
+                         std::sqrt(surface_energy_j),
+                       2);
+
+            this->effective_hamaker_constant[k] =
+              0.5 * (hamaker_constant_i + hamaker_constant_j);
+
+            double restitution_coefficient_particle_log =
+              std::log(this->effective_coefficient_of_restitution[k]);
+
+            this->model_parameter_beta[k] =
+              restitution_coefficient_particle_log /
+              sqrt(restitution_coefficient_particle_log *
+                     restitution_coefficient_particle_log +
+                   9.8696);
+          }
+      }
+  }
+
+
 
   // Members of the class
   // Contact model parameter. It is calculated in the constructor for different
@@ -1265,7 +1354,9 @@ private:
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
   std::vector<double> effective_surface_energy;
+  std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
+  const double        dmt_cut_off_threshold;
 
   double effective_radius;
   double effective_mass;
