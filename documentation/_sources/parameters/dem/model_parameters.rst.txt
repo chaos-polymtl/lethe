@@ -27,15 +27,17 @@ In this subsection, contact detection, force models, time integration, load bala
       set frequency               = 100000 # if method = frequent
       set dynamic check frequency = 10000  # if method = dynamic
       set threshold               = 0.5    # if method = dynamic
-    end
 
     # Particle-particle contact force model
-    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz|hertz_JKR|DMT
     set particle particle contact force method = hertz_mindlin_limit_overlap
 
     # Particle-wall contact force model
-    # Choices are linear|nonlinear|JKR
+    # Choices are linear|nonlinear|JKR|DMT
     set particle wall contact force method = nonlinear
+
+    # DMT cut-off threshold
+    set DMT cut-off threshold = 0.1
 
     # Integration method
     # Choices are euler|velocity_verlet
@@ -93,9 +95,14 @@ All contact force models are described in the :doc:`../../theory/multiphase/cfd_
 
 * ``integration`` controls the integration method  used. Lethe supports ``euler`` (1st order) and ``velocity-verlet`` (2nd order) time-integrators. The velocity-verlet should be used at all times. 
 
-* ``particle particle contact force method`` controls the particle-particle contact force model. Five models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, ``hertz_JKR`` and ``linear``.
+* ``particle particle contact force method`` controls the particle-particle contact force model. The following models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, ``hertz_JKR``, ``DMT`` and ``linear``.
   
-* ``particle wall contact force method`` controls the particle-wall contact force model used. Three models are available: ``linear``, ``non-linear`` and ``JKR``.
+* ``particle wall contact force method`` controls the particle-wall contact force model used. The following models are available: ``linear``, ``non-linear``, ``JKR`` and ``DMT``.
+
+* ``dmt cut-off threshold`` controls the distance at witch the non contact forces are being negleted for the DMT cohesive force model.
+
+.. note::
+    The ``neighborhood threshold`` has to be large enough to correctly consider all non contact forces.
 
 * ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``no_resistance``, ``constant_resistance``, ``viscous_resistance``
 
@@ -160,4 +167,5 @@ See how the mechanism works with mobility status in the figure below:
 * ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
 
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
-Note: The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
+.. note::
+The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.

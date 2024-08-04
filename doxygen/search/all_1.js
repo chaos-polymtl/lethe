@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['a_1',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a()'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a()']]],
-  ['a_2',['A',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear']]],
+  ['a_1',['A',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear']]],
+  ['a_2',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a()'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a()']]],
   ['a_5finverse_3',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
   ['abort_5fat_5fconvergence_5ffailure_4',['abort_at_convergence_failure',['../structParameters_1_1NonLinearSolver.html#a491f1c3c8f1c66e2ee84e42fd23be06e',1,'Parameters::NonLinearSolver']]],
   ['absolute_5',['absolute',['../structParameters_1_1RPTFEMReconstructionParameters.html#a8a845872a339fc0a2cb6b670ce764a38adc4d53aa0d117d8b189b36d161af4e96',1,'Parameters::RPTFEMReconstructionParameters']]],

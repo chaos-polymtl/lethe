@@ -88,8 +88,9 @@ Inheritance diagram for ParticleWallDMTForce&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classParticleWallDMTForce__inherit__graph.png" border="0" usemap="#aParticleWallDMTForce_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aParticleWallDMTForce_3_01dim_01_4_inherit__map" id="aParticleWallDMTForce_3_01dim_01_4_inherit__map">
-<area shape="rect" title="Calculation of the DMT particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="15,95,178,136"/>
-<area shape="rect" href="classParticleWallContactForce.html" title=" " alt="" coords="5,5,188,47"/>
+<area shape="rect" title="Calculation of the DMT particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="23,184,186,225"/>
+<area shape="rect" href="classParticleWallNonLinearForce.html" title=" " alt="" coords="5,95,204,136"/>
+<area shape="rect" href="classParticleWallContactForce.html" title=" " alt="" coords="13,5,196,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -101,6 +102,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a60fc6fbd89a46bd5b4ddf89d799e3226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a964a6cba012394563d39acb91a2d26"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#a6a964a6cba012394563d39acb91a2d26">calculate_particle_floating_wall_contact_force</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact, const double dt, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;force, const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; &amp;solids) override</td></tr>
 <tr class="separator:a6a964a6cba012394563d39acb91a2d26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classParticleWallNonLinearForce"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classParticleWallNonLinearForce')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classParticleWallNonLinearForce.html">ParticleWallNonLinearForce&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a597001d56c42eebe94bd58a0292c8454 inherit pub_methods_classParticleWallNonLinearForce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallNonLinearForce.html#a597001d56c42eebe94bd58a0292c8454">ParticleWallNonLinearForce</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const std::vector&lt; types::boundary_id &gt; <a class="el" href="classParticleWallContactForce.html#a34b229e7a32e7855e2ed6e3cc87f3b4c">boundary_index</a>={})</td></tr>
+<tr class="separator:a597001d56c42eebe94bd58a0292c8454 inherit pub_methods_classParticleWallNonLinearForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classParticleWallContactForce"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classParticleWallContactForce')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce&lt; dim &gt;</a></td></tr>
 <tr class="memitem:abd3afbd44d58ecb39f15d3cd41a7bc3f inherit pub_methods_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#abd3afbd44d58ecb39f15d3cd41a7bc3f">ParticleWallContactForce</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
 <tr class="separator:abd3afbd44d58ecb39f15d3cd41a7bc3f inherit pub_methods_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -126,16 +130,23 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a3cb4dd72c9b28add7e80eee3d6b3d4f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1731663b67f296a7be27ebc89ae7df1a"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#a1731663b67f296a7be27ebc89ae7df1a">viscous_resistance</a> (const ArrayView&lt; const double &gt; &amp;particle_properties, const double effective_rolling_friction_coefficient, const double normal_force_norm, const Tensor&lt; 1, 3 &gt; &amp;normal_contact_vector)</td></tr>
 <tr class="separator:a1731663b67f296a7be27ebc89ae7df1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61816c712f21e30701e9165d274966c9"><td class="memItemLeft" align="right" valign="top">std::tuple&lt; Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#a61816c712f21e30701e9165d274966c9">calculate_dmt_contact_force_and_torque</a> (<a class="el" href="classparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt; dim &gt; &amp;contact_info, const ArrayView&lt; const double &gt; &amp;particle_properties)</td></tr>
-<tr class="separator:a61816c712f21e30701e9165d274966c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11491d023d28734653c957c8e50d5cf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#a11491d023d28734653c957c8e50d5cf7">initialize_particle_wall_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
+<tr class="separator:a11491d023d28734653c957c8e50d5cf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae40a27b8697acd00d17049a36a9cc6d5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#ae40a27b8697acd00d17049a36a9cc6d5">set_dmt_cut_off_distance</a> ()</td></tr>
+<tr class="separator:ae40a27b8697acd00d17049a36a9cc6d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aeb17fa909edbd38adc6b77120df7dc31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleWallDMTForce.html#a2b15a234d3cd7b4bf8eea3cf3fedfbb4">FuncPtrType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#aeb17fa909edbd38adc6b77120df7dc31">calculate_rolling_resistance_torque</a></td></tr>
 <tr class="separator:aeb17fa909edbd38adc6b77120df7dc31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a068ee217108dae88e6d754726394b926"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallDMTForce.html#a068ee217108dae88e6d754726394b926">dmt_cut_off_threshold</a></td></tr>
+<tr class="separator:a068ee217108dae88e6d754726394b926"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_methods_classParticleWallNonLinearForce"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classParticleWallNonLinearForce')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classParticleWallNonLinearForce.html">ParticleWallNonLinearForce&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a36cbab9a08d7c62cb3ffe22cfe7983a4 inherit pro_methods_classParticleWallNonLinearForce"><td class="memItemLeft" align="right" valign="top">std::tuple&lt; Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallNonLinearForce.html#a36cbab9a08d7c62cb3ffe22cfe7983a4">calculate_nonlinear_contact_force_and_torque</a> (<a class="el" href="classparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt; dim &gt; &amp;contact_info, const ArrayView&lt; const double &gt; &amp;particle_properties)</td></tr>
+<tr class="separator:a36cbab9a08d7c62cb3ffe22cfe7983a4 inherit pro_methods_classParticleWallNonLinearForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classParticleWallContactForce"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classParticleWallContactForce')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce&lt; dim &gt;</a></td></tr>
 <tr class="memitem:aa22638072fa909af8b14424a80dc313d inherit pro_methods_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#aa22638072fa909af8b14424a80dc313d">update_contact_information</a> (<a class="el" href="classparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt; dim &gt; &amp;contact_pair_information, const Point&lt; 3 &gt; &amp;particle_position, const ArrayView&lt; const double &gt; &amp;particle_properties, const double dt)</td></tr>
 <tr class="separator:aa22638072fa909af8b14424a80dc313d inherit pro_methods_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,8 +163,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classParticleWallContactForce"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classParticleWallContactForce')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classParticleWallContactForce.html">ParticleWallContactForce&lt; dim &gt;</a></td></tr>
 <tr class="memitem:a3ab9001bb147269b1dc10ab8b6972a57 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a3ab9001bb147269b1dc10ab8b6972a57">effective_radius</a></td></tr>
 <tr class="separator:a3ab9001bb147269b1dc10ab8b6972a57 inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c570ea02dddbbb30ded348d0622ec94 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a2c570ea02dddbbb30ded348d0622ec94">effective_mass</a></td></tr>
-<tr class="separator:a2c570ea02dddbbb30ded348d0622ec94 inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8dd3a22b4e0ffe6865dd2cf37bcd554 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; unsigned int, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#ae8dd3a22b4e0ffe6865dd2cf37bcd554">boundary_translational_velocity_map</a></td></tr>
 <tr class="separator:ae8dd3a22b4e0ffe6865dd2cf37bcd554 inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa25e05180136b32778c0e23a9e36d2c7 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; unsigned int, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#aa25e05180136b32778c0e23a9e36d2c7">boundary_rotational_speed_map</a></td></tr>
@@ -176,6 +185,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:ac22878bad2f720af79e7eb6a88a41dfb inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92f4a257358bc5df8b0a9a33fe6dd7e3 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a92f4a257358bc5df8b0a9a33fe6dd7e3">effective_surface_energy</a></td></tr>
 <tr class="separator:a92f4a257358bc5df8b0a9a33fe6dd7e3 inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5073adf5231ac0cf06260b12c46c0155 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a5073adf5231ac0cf06260b12c46c0155">effective_hamaker_constant</a></td></tr>
+<tr class="separator:a5073adf5231ac0cf06260b12c46c0155 inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a766134d11299756f2cd0932e9d47d7eb inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a766134d11299756f2cd0932e9d47d7eb">model_parameter_beta</a></td></tr>
 <tr class="separator:a766134d11299756f2cd0932e9d47d7eb inherit pro_attribs_classParticleWallContactForce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86b0fd2f27fc8fc0d8432720f0cc0776 inherit pro_attribs_classParticleWallContactForce"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForce.html#a86b0fd2f27fc8fc0d8432720f0cc0776">force_on_walls</a></td></tr>
@@ -256,62 +267,11 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00009">9</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__wall__contact__force_8h_source.html#l00265">ParticleWallContactForce&lt; dim &gt;::boundary_index</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00263">ParticleWallContactForce&lt; dim &gt;::calculate_force_torque_on_boundary</a>, <a class="el" href="particle__wall__dmt__force_8h_source.html#l00047">ParticleWallDMTForce&lt; dim &gt;::calculate_rolling_resistance_torque</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00264">ParticleWallContactForce&lt; dim &gt;::center_mass_container</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00045">Parameters::Lagrangian::constant_resistance</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00255">ParticleWallContactForce&lt; dim &gt;::effective_coefficient_of_friction</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00254">ParticleWallContactForce&lt; dim &gt;::effective_coefficient_of_restitution</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00256">ParticleWallContactForce&lt; dim &gt;::effective_coefficient_of_rolling_friction</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00253">ParticleWallContactForce&lt; dim &gt;::effective_shear_modulus</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00257">ParticleWallContactForce&lt; dim &gt;::effective_surface_energy</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00252">ParticleWallContactForce&lt; dim &gt;::effective_youngs_modulus</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00260">ParticleWallContactForce&lt; dim &gt;::force_on_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00045">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00105">Parameters::Lagrangian::LagrangianPhysicalProperties::friction_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00121">Parameters::Lagrangian::LagrangianPhysicalProperties::friction_coefficient_wall</a>, <a class="el" href="particle__wall__contact__force_8cc_source.html#l00174">ParticleWallContactForce&lt; dim &gt;::initialize()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00258">ParticleWallContactForce&lt; dim &gt;::model_parameter_beta</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00041">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00044">Parameters::Lagrangian::no_resistance</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00096">Parameters::Lagrangian::LagrangianPhysicalProperties::poisson_ratio_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00115">Parameters::Lagrangian::LagrangianPhysicalProperties::poisson_ratio_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00102">Parameters::Lagrangian::LagrangianPhysicalProperties::restitution_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00118">Parameters::Lagrangian::LagrangianPhysicalProperties::restitution_coefficient_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00109">Parameters::Lagrangian::LagrangianPhysicalProperties::rolling_friction_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00124">Parameters::Lagrangian::LagrangianPhysicalProperties::rolling_friction_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00284">Parameters::Lagrangian::ModelParameters::rolling_resistance_method</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00099">Parameters::Lagrangian::LagrangianPhysicalProperties::surface_energy_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00127">Parameters::Lagrangian::LagrangianPhysicalProperties::surface_energy_wall</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00261">ParticleWallContactForce&lt; dim &gt;::torque_on_walls</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00046">Parameters::Lagrangian::viscous_resistance</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00093">Parameters::Lagrangian::LagrangianPhysicalProperties::youngs_modulus_particle</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00112">Parameters::Lagrangian::LagrangianPhysicalProperties::youngs_modulus_wall</a>.</p>
+<p class="reference">References <a class="el" href="particle__wall__contact__force_8h_source.html#l00266">ParticleWallContactForce&lt; dim &gt;::boundary_index</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00264">ParticleWallContactForce&lt; dim &gt;::calculate_force_torque_on_boundary</a>, <a class="el" href="particle__wall__dmt__force_8h_source.html#l00047">ParticleWallDMTForce&lt; dim &gt;::calculate_rolling_resistance_torque</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00265">ParticleWallContactForce&lt; dim &gt;::center_mass_container</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00045">Parameters::Lagrangian::constant_resistance</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00261">ParticleWallContactForce&lt; dim &gt;::force_on_walls</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00045">DEMSolverParameters&lt; dim &gt;::forces_torques</a>, <a class="el" href="particle__wall__contact__force_8cc_source.html#l00174">ParticleWallContactForce&lt; dim &gt;::initialize()</a>, <a class="el" href="particle__wall__dmt__force_8h_source.html#l00216">ParticleWallDMTForce&lt; dim &gt;::initialize_particle_wall_properties()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00041">DEMSolverParameters&lt; dim &gt;::model_parameters</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00044">Parameters::Lagrangian::no_resistance</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00294">Parameters::Lagrangian::ModelParameters::rolling_resistance_method</a>, <a class="el" href="particle__wall__contact__force_8h_source.html#l00262">ParticleWallContactForce&lt; dim &gt;::torque_on_walls</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00046">Parameters::Lagrangian::viscous_resistance</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a61816c712f21e30701e9165d274966c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61816c712f21e30701e9165d274966c9">&#9670;&nbsp;</a></span>calculate_dmt_contact_force_and_torque()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::tuple&lt; Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt;, Tensor&lt; 1, 3 &gt; &gt; <a class="el" href="classParticleWallDMTForce.html">ParticleWallDMTForce</a>&lt; dim &gt;::calculate_dmt_contact_force_and_torque </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classparticle__wall__contact__info.html">particle_wall_contact_info</a>&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>contact_info</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const ArrayView&lt; const double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>particle_properties</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Carries out the calculation of the particle-wall DMT contact force and torques based on the updated values in contact_info</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">contact_info</td><td>A container that contains the required information for calculation of the contact force for a particle pair in contact </td></tr>
-    <tr><td class="paramname">particle_properties</td><td>Properties of particle in contact </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A tuple which contains: 1, normal force, 2, tangential force, 3, tangential torque and 4, rolling resistance torque of a contact pair </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00391">391</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="dem__properties_8h_source.html#l00051">DEM::mass</a>, <a class="el" href="particle__wall__contact__info_8h_source.html#l00086">particle_wall_contact_info&lt; dim &gt;::normal_overlap</a>, <a class="el" href="particle__wall__contact__info_8h_source.html#l00087">particle_wall_contact_info&lt; dim &gt;::normal_relative_velocity</a>, <a class="el" href="particle__wall__contact__info_8h_source.html#l00083">particle_wall_contact_info&lt; dim &gt;::normal_vector</a>, <a class="el" href="particle__wall__contact__info_8h_source.html#l00088">particle_wall_contact_info&lt; dim &gt;::tangential_overlap</a>, <a class="el" href="particle__wall__contact__info_8h_source.html#l00089">particle_wall_contact_info&lt; dim &gt;::tangential_relative_velocity</a>, and <a class="el" href="dem__properties_8h_source.html#l00037">DEM::type</a>.</p>
-
-</div>
-</div>
 <a id="a6a964a6cba012394563d39acb91a2d26"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6a964a6cba012394563d39acb91a2d26">&#9670;&nbsp;</a></span>calculate_particle_floating_wall_contact_force()</h2>
 
@@ -378,11 +338,11 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classParticleWallContactForce.html#aa3c5dae21c55a9e8773e856f687be025">ParticleWallContactForce&lt; dim &gt;</a>.</p>
+<p>Reimplemented from <a class="el" href="classParticleWallNonLinearForce.html#ab574b433c1f6ef79b8ad0664e59225d2">ParticleWallNonLinearForce&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00227">227</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00240">240</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01220">LetheGridTools::find_particle_triangle_projection()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l01220">LetheGridTools::find_particle_triangle_projection()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, and <a class="el" href="dem__properties_8h_source.html#l00037">DEM::type</a>.</p>
 
 </div>
 </div>
@@ -445,11 +405,11 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classParticleWallContactForce.html#a3300f437e1981e8c9fabf2342518d5c3">ParticleWallContactForce&lt; dim &gt;</a>.</p>
+<p>Reimplemented from <a class="el" href="classParticleWallNonLinearForce.html#a6a42f39ed52f12c99c5db514afd66882">ParticleWallNonLinearForce&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00121">121</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8cc_source.html#l00044">44</a> of file <a class="el" href="particle__wall__dmt__force_8cc_source.html">particle_wall_dmt_force.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__wall__contact__force_8cc_source.html#l00174">ParticleWallContactForce&lt; dim &gt;::initialize()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__wall__contact__force_8cc_source.html#l00174">ParticleWallContactForce&lt; dim &gt;::initialize()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, and <a class="el" href="dem__properties_8h_source.html#l00037">DEM::type</a>.</p>
 
 </div>
 </div>
@@ -518,6 +478,46 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a11491d023d28734653c957c8e50d5cf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11491d023d28734653c957c8e50d5cf7">&#9670;&nbsp;</a></span>initialize_particle_wall_properties()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classParticleWallDMTForce.html">ParticleWallDMTForce</a>&lt; dim &gt;::initialize_particle_wall_properties </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dem_parameters</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize every particle-wall properties required for the force calculation. <a class="el" href="classThis.html">This</a> function is required for the DMT force model, since the dmt_cut_off_distance attribute needs the be set to const. To do so, the effective surface energy and of the effective hamaker contant need to be initialized before hand. For code clarity, we also initialized every other parameter, otherwise the initialization would take place at two different places in the code. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8h_source.html#l00216">216</a> of file <a class="el" href="particle__wall__dmt__force_8h_source.html">particle_wall_dmt_force.h</a>.</p>
+
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00108">Parameters::Lagrangian::LagrangianPhysicalProperties::friction_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00124">Parameters::Lagrangian::LagrangianPhysicalProperties::friction_coefficient_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00102">Parameters::Lagrangian::LagrangianPhysicalProperties::hamaker_constant_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00133">Parameters::Lagrangian::LagrangianPhysicalProperties::hamaker_constant_wall</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00096">Parameters::Lagrangian::LagrangianPhysicalProperties::poisson_ratio_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00118">Parameters::Lagrangian::LagrangianPhysicalProperties::poisson_ratio_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00105">Parameters::Lagrangian::LagrangianPhysicalProperties::restitution_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00121">Parameters::Lagrangian::LagrangianPhysicalProperties::restitution_coefficient_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00112">Parameters::Lagrangian::LagrangianPhysicalProperties::rolling_friction_coefficient_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00127">Parameters::Lagrangian::LagrangianPhysicalProperties::rolling_friction_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00099">Parameters::Lagrangian::LagrangianPhysicalProperties::surface_energy_particle</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00130">Parameters::Lagrangian::LagrangianPhysicalProperties::surface_energy_wall</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00093">Parameters::Lagrangian::LagrangianPhysicalProperties::youngs_modulus_particle</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00115">Parameters::Lagrangian::LagrangianPhysicalProperties::youngs_modulus_wall</a>.</p>
+
+</div>
+</div>
 <a id="a0718cf71231230147db6e78fe6c98c1b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0718cf71231230147db6e78fe6c98c1b">&#9670;&nbsp;</a></span>no_resistance()</h2>
 
@@ -578,6 +578,44 @@ template&lt;int dim&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>rolling resistance torque </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8h_source.html#l00105">105</a> of file <a class="el" href="particle__wall__dmt__force_8h_source.html">particle_wall_dmt_force.h</a>.</p>
+
+</div>
+</div>
+<a id="ae40a27b8697acd00d17049a36a9cc6d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae40a27b8697acd00d17049a36a9cc6d5">&#9670;&nbsp;</a></span>set_dmt_cut_off_distance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classParticleWallDMTForce.html">ParticleWallDMTForce</a>&lt; dim &gt;::set_dmt_cut_off_distance </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classThis.html">This</a> function uses the effective surface energy and effective hamaker constant to compute the cut off distance for the force calculation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Cut off distance for the force calculation. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8h_source.html#l00317">317</a> of file <a class="el" href="particle__wall__dmt__force_8h_source.html">particle_wall_dmt_force.h</a>.</p>
 
 </div>
 </div>
@@ -670,6 +708,32 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8h_source.html#l00047">47</a> of file <a class="el" href="particle__wall__dmt__force_8h_source.html">particle_wall_dmt_force.h</a>.</p>
+
+</div>
+</div>
+<a id="a068ee217108dae88e6d754726394b926"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a068ee217108dae88e6d754726394b926">&#9670;&nbsp;</a></span>dmt_cut_off_threshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double <a class="el" href="classParticleWallDMTForce.html">ParticleWallDMTForce</a>&lt; dim &gt;::dmt_cut_off_threshold</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="particle__wall__dmt__force_8h_source.html#l00335">335</a> of file <a class="el" href="particle__wall__dmt__force_8h_source.html">particle_wall_dmt_force.h</a>.</p>
 
 </div>
 </div>

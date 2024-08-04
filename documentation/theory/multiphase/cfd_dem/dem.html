@@ -432,46 +432,46 @@
 <p>In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Blais <em>et al.</em>  <a class="footnote-reference brackets" href="#blais2019" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the one by Golshan <em>et al.</em> <a class="footnote-reference brackets" href="#golshan2023" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}m_i\frac{d\mathbf{v_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^n + \mathbf{F}_{ij}^t) + m_i\mathbf{g} + \mathbf{F}_i^\text{ext} \\
-I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij}^t + \mathbf{M}_{ij}^r) +  \mathbf{M}_i^\text{ext}\end{split}\]</div>
+\[\begin{split}m_i\frac{d\mathbf{v_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^\mathrm{n} + \mathbf{F}_{ij}^\mathrm{t}) + m_i\mathbf{g} + \mathbf{F}_i^\mathrm{ext} \\
+I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij}^\mathrm{t} + \mathbf{M}_{ij}^\mathrm{r}) +  \mathbf{M}_i^\mathrm{ext}\end{split}\]</div>
 </div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(m_i\)</span> mass of the particule i;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v_i}\)</span> velocity of the particule i;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathcal C_i\)</span> particles in contact list;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^n\)</span> normal contact force due to the contact between particles i and j;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^t\)</span> tangential contact force due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{n}\)</span> normal contact force due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{t}\)</span> tangential contact force due to the contact between particles i and j;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{g}\)</span> gravitationnal acceleration;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_i^\text{ext}\)</span> external forces;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_i^\mathrm{ext}\)</span> external forces;</p></li>
 <li><p><span class="math notranslate nohighlight">\(I_i\)</span> moment of inertia of particle i;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{\omega_i}\)</span> angular velocity of particle i;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^t\)</span> tangential friction torque due to the contact between particles i and j;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^r\)</span> rolling friction torque due to the contact between particles i and j;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_i^\text{ext}\)</span> external torques;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{t}\)</span> tangential friction torque due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{r}\)</span> rolling friction torque due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_i^\mathrm{ext}\)</span> external torques;</p></li>
 </ul>
 <section id="contact-force-and-torque-models">
 <h2>Contact Force and Torque Models<a class="headerlink" href="#contact-force-and-torque-models" title="Link to this heading">#</a></h2>
 <p>The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{F}_{ij}^n &amp;= -(k_n\delta_n)\mathbf{n}_{ij}-(\eta_n\mathbf{v}_{rn}) \\
-\mathbf{F}_{ij}^t &amp;= -(k_t\mathbf{\delta}_t)-(\eta_t\mathbf{v}_{rt})\end{split}\]</div>
+\[\begin{split}\mathbf{F}_{ij}^\mathrm{n} &amp;= -(k_\mathrm{n}\delta_{\mathrm{n}})\mathbf{n}_{ij}-(\eta_\mathrm{n}\mathbf{v}_{rn}) \\
+\mathbf{F}_{ij}^\mathrm{t} &amp;= -(k_\mathrm{t}\mathbf{\delta}_\mathrm{t})-(\eta_\mathrm{t}\mathbf{v}_{rt})\end{split}\]</div>
 </div>
 <p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\delta_n\)</span> normal overlap;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{\delta_t}\)</span> tangential overlap vector;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span> normal overlap;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> tangential overlap vector;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> contact normal vector;</p></li>
-<li><p><span class="math notranslate nohighlight">\(k_n, k_t\)</span> spring constants;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\eta_n, \eta_t\)</span> damping model constants;</p></li>
+<li><p><span class="math notranslate nohighlight">\(k_\mathrm{n}, k_\mathrm{t}\)</span> spring constants;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n}, \eta_\mathrm{t}\)</span> damping model constants;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{rn}\)</span> relative velocity in the normal direction;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{tn}\)</span> relative velocity in the tangential direction;</p></li>
 </ul>
-<figure class="align-center" id="id13">
+<figure class="align-center" id="id14">
 <a class="reference internal image-reference" href="../../../_images/collision_particles.png"><img alt="particle-particle_collision" src="../../../_images/collision_particles.png" style="width: 400px;" /></a>
 <figcaption>
-<p><span class="caption-text">Representation of a typical particle-particle contact. <a class="footnote-reference brackets" href="#golshan2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></span><a class="headerlink" href="#id13" title="Link to this image">#</a></p>
+<p><span class="caption-text">Representation of a typical particle-particle contact. <a class="footnote-reference brackets" href="#golshan2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></span><a class="headerlink" href="#id14" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>The contact normal vector <span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> is computed as:</p>
@@ -479,12 +479,12 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 <div class="math notranslate nohighlight">
 \[\mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}\]</div>
 </div>
-<p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_n\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (<span class="math notranslate nohighlight">\(\delta_t\)</span>) depends on the contact history and is updated during a contact.
+<p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential overlap (<span class="math notranslate nohighlight">\(\delta_\mathrm{t}\)</span>) depends on the contact history and is updated during a contact.
 The normal and tangential overlaps are calculated as follow:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\delta_n =&amp; \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
-\mathbf{\delta}_{ij}^{t,\text{new}} &amp;= \mathbf{\delta}_{ij}^{t,\text{old}}+\mathbf{v}_{rt}dt\end{split}\]</div>
+\[\begin{split}\delta_{\mathrm{n}} =&amp; \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
+\mathbf{\delta}_{ij}^{\mathrm{t,new}} &amp;= \mathbf{\delta}_{ij}^{\mathrm{t,old}}+\mathbf{v}_{ij,\mathrm{t}}dt\end{split}\]</div>
 </div>
 <section id="relative-velocities">
 <h3>Relative Velocities<a class="headerlink" href="#relative-velocities" title="Link to this heading">#</a></h3>
@@ -492,16 +492,16 @@ The normal and tangential overlaps are calculated as follow:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{v}_{ij} &amp;= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij} \\
-\mathbf{v}_{rn} &amp;= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
-\mathbf{v}_{rt} &amp;= \mathbf{v}_{ij}-\mathbf{v}_{rn}\end{split}\]</div>
+\mathbf{v}_{ij,\mathrm{n}} &amp;= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
+\mathbf{v}_{ij,\mathrm{t}} &amp;= \mathbf{v}_{ij}-\mathbf{v}_{ij,\mathrm{n}}\end{split}\]</div>
 </div>
 </section>
 <section id="spring-and-damping-constants">
 <h3>Spring and damping constants<a class="headerlink" href="#spring-and-damping-constants" title="Link to this heading">#</a></h3>
 <p>The spring and damping constants for the linear and nonlinear viscoelastic models are calculated as follows:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id14">
-<table class="docutils align-default" id="id14">
-<caption><span class="caption-text">Spring and damping Models used in Lethe.</span><a class="headerlink" href="#id14" title="Link to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id15">
+<table class="docutils align-default" id="id15">
+<caption><span class="caption-text">Spring and damping Models used in Lethe.</span><a class="headerlink" href="#id15" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 40.0%" />
 <col style="width: 30.0%" />
@@ -515,43 +515,43 @@ The normal and tangential overlaps are calculated as follow:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Normal spring constant</p></td>
-<td><p><span class="math notranslate nohighlight">\(k_n = \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2}\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(k_n = \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{n} = \frac{16}{15}\sqrt{R_{\mathrm{e}}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{\mathrm{e}}}Y_{e}}\right)^{0.2}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{n} = \frac{4}{3}Y_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p>Normal damping model constant</p></td>
-<td><p><span class="math notranslate nohighlight">\(\eta_n = -2\beta\sqrt{m_{e} k_n}\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(\eta_n = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_nm_{e}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n} = -2\beta\sqrt{m_{e} k_\mathrm{n}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n} = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_\mathrm{n}m_{e}}\)</span></p></td>
 </tr>
 <tr class="row-even"><td><p>Tangential spring constant</p></td>
-<td><p><span class="math notranslate nohighlight">\(k_t = 0.4 k_n\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(k_t = 8G_{e}\sqrt{R_{e}\delta_n}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{t} = 0.4 k_\mathrm{n}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{t} = 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p>Tangential damping model constant</p></td>
-<td><p><span class="math notranslate nohighlight">\(\eta_t = -2\beta\sqrt{m_{e} k_t}\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(\eta_t = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_tm_{e}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{t} = -2\beta\sqrt{m_{e} k_\mathrm{t}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{t} = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_\mathrm{t}m_{e}}\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(R_e\)</span> effective radius;</p></li>
-<li><p><span class="math notranslate nohighlight">\(Y_e\)</span> effective Young’s modulus;</p></li>
-<li><p><span class="math notranslate nohighlight">\(m_e\)</span> effective mass;</p></li>
+<li><p><span class="math notranslate nohighlight">\(R_{\mathrm{e}}\)</span> effective radius;</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y_\mathrm{e}\)</span> effective Young’s modulus;</p></li>
+<li><p><span class="math notranslate nohighlight">\(m_\mathrm{e}\)</span> effective mass;</p></li>
 <li><p><span class="math notranslate nohighlight">\(V\)</span> characteristic impact velocity, this parameters is set to 1.0;</p></li>
 <li><p><span class="math notranslate nohighlight">\(e\)</span> coefficient of restitution;</p></li>
-<li><p><span class="math notranslate nohighlight">\(G_e\)</span> effective shear modulus;</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_\mathrm{e}\)</span> effective shear modulus;</p></li>
 </ul>
 <p>These parameters are computed as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\frac{1}{m_{e}} &amp;= \frac{1}{m_i}+\frac{1}{m_j} \\
-\frac{1}{R_{e}} &amp;= \frac{1}{R_i}+\frac{1}{R_j} \\
-\frac{1}{G_{e}} &amp;= \frac{2(2-\nu_i)(1+\nu_i)}{Y_i}+\frac{2(2-\nu_j)(1+\nu_j)}{Y_j} \\
-\frac{1}{Y_{e}} &amp;= \frac{\left(1-\nu_i^2\right)}{Y_i}+\frac{\left(1-\nu_j^2\right)}{Y_j} \\
+\[\begin{split}\frac{1}{m_\mathrm{e}} &amp;= \frac{1}{m_i}+\frac{1}{m_j} \\
+\frac{1}{R_{\mathrm{e}}} &amp;= \frac{1}{R_i}+\frac{1}{R_j} \\
+\frac{1}{G_\mathrm{e}} &amp;= \frac{2(2-\nu_i)(1+\nu_i)}{Y_i}+\frac{2(2-\nu_j)(1+\nu_j)}{Y_j} \\
+\frac{1}{Y_\mathrm{e}} &amp;= \frac{\left(1-\nu_i^2\right)}{Y_i}+\frac{\left(1-\nu_j^2\right)}{Y_j} \\
 \beta &amp;= \frac{\ln{e}}{\sqrt{\ln^2{e}+\pi^2}} \\
-S_n &amp;= 2Y_{e}\sqrt{R_{e}\delta_n} \\
-S_t &amp;= 8G_{e}\sqrt{R_{e}\delta_n}\end{split}\]</div>
+S_\mathrm{n} &amp;= 2Y_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}} \\
+S_\mathrm{t} &amp;= 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\end{split}\]</div>
 </div>
 <p>Where:</p>
 <ul class="simple">
@@ -563,16 +563,16 @@ S_t &amp;= 8G_{e}\sqrt{R_{e}\delta_n}\end{split}\]</div>
 <p>Coulomb’s criterion is breached when the following condition is broken during a collision:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[|\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F}_{ij}^{n}|\]</div>
+\[|\mathbf{F}_{ij}^{\mathrm{t}}| \geq \mu |\mathbf{F}_{ij}^\mathrm{n}|\]</div>
 </div>
 <p>A breach means the collision is having gross sliding and tangential force needs to be limited to the Coulomb’s limit.
-To do so, the tangential overlap <span class="math notranslate nohighlight">\(\mathbf{\delta_t}\)</span> is first limited and then the tangential force is recalculated.</p>
+To do so, the tangential overlap <span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> is first limited and then the tangential force is recalculated.</p>
 <p>When using nonlinear viscoelastic contact model, the tangential overlap is computed from tangential spring force :</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{\delta_t} &amp;= \frac{\mathbf{\tilde{F}_{ij}}}{-k_{t}} \\
-\mathbf{\tilde{F}_{ij}} &amp;= \mathbf{\hat{F}_{ij}} + \eta_{t}\mathbf{v}_{rt} \\
-\mathbf{\hat{F}_{ij}^{t}} &amp;= \mu |\mathbf{F}_{ij}^{n}| \frac{\mathbf{F}_{ij}^{t}}{|\mathbf{F}_{ij}^{t}|}\end{split}\]</div>
+\[\begin{split}\mathbf{\delta_\mathrm{t}} &amp;= \frac{\mathbf{\tilde{F}_{ij}}}{-k_\mathrm{t}} \\
+\mathbf{\tilde{F}_{ij}} &amp;= \mathbf{\hat{F}_{ij}} + \eta_\mathrm{t}\mathbf{v}_{ij,\mathrm{t}} \\
+\mathbf{\hat{F}_{ij}^\mathrm{t}} &amp;= \mu |\mathbf{F}_{ij}^\mathrm{n}| \frac{\mathbf{F}_{ij}^\mathrm{t}}{|\mathbf{F}_{ij}^\mathrm{t}|}\end{split}\]</div>
 </div>
 <p>Regarding the particle-wall contacts, the applied models are the same as for particle-particle contacts.</p>
 <div class="admonition note">
@@ -585,7 +585,7 @@ To do so, the tangential overlap <span class="math notranslate nohighlight">\(\m
 <p>Tangential torque is the torque generated by the tangential force. It can be calculated through:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{M}_{ij}^{t} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{ij}^{t}\]</div>
+\[\mathbf{M}_{ij}^\mathrm{t} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{ij}^\mathrm{t}\]</div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -595,9 +595,9 @@ To do so, the tangential overlap <span class="math notranslate nohighlight">\(\m
 <section id="rolling-friction-models">
 <h3>Rolling friction models<a class="headerlink" href="#rolling-friction-models" title="Link to this heading">#</a></h3>
 <p>Rolling friction may be computed through a constant torque model or a viscous torque model. It is also possible to ignore the rolling resistance. The corresponding model can be described by the following equations:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id15">
-<table class="docutils align-center" id="id15" style="width: 80%">
-<caption><span class="caption-text">Rolling Friction Models used in Lethe.</span><a class="headerlink" href="#id15" title="Link to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id16">
+<table class="docutils align-center" id="id16" style="width: 80%">
+<caption><span class="caption-text">Rolling Friction Models used in Lethe.</span><a class="headerlink" href="#id16" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 33.3%" />
 <col style="width: 33.3%" />
@@ -610,16 +610,16 @@ To do so, the tangential overlap <span class="math notranslate nohighlight">\(\m
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^{r} = -\mu_{r}R_{e}|\mathbf{F}_{ij}^{n}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^{r} = -\mu_{r}R_{e}|\mathbf{F}_{ij}^{n}||\mathbf{V}_{\omega}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^{r} = 0\)</span></p></td>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{r} = -\mu_\mathrm{r}R_{\mathrm{e}}|\mathbf{F}_{ij}^\mathrm{n}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{r} = -\mu_\mathrm{r}R_{\mathrm{e}}|\mathbf{F}_{ij}^\mathrm{n}||\mathbf{V}_{\omega}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{r} = 0\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mu_{r}\)</span> rolling friction coefficient;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu_\mathrm{r}\)</span> rolling friction coefficient;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\hat{\omega}_{ij}\)</span> relative angular velocity;</p></li>
 <li><p><span class="math notranslate nohighlight">\(V_{\omega}\)</span> contact point relative velocity caused by the angular velocities;</p></li>
 </ul>
@@ -637,9 +637,9 @@ To do so, the tangential overlap <span class="math notranslate nohighlight">\(\m
 <p>This parameter can be described as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{\tau} = \left( \frac{R_{e} \gamma_{e}^2}{Y_{e}^2 z_{o}^3}\right)^{1/3}\]</div>
+\[\mathbf{\tau} = \left( \frac{R_{\mathrm{e}} \gamma_{\mathrm{e}}^2}{Y_\mathrm{e}^2 z_{\mathrm{o}}^3}\right)^{1/3}\]</div>
 </div>
-<p>Where <span class="math notranslate nohighlight">\(\mathbf{z_{o}}\)</span> is the equilibrium separation of the surfaces and <span class="math notranslate nohighlight">\(\mathbf{\gamma}_{e}\)</span> the effective surface energy. The DMT model is applicable for low <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &lt; 1\)</span>) while the JKR model is more appropriate for high <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &gt; 1\)</span>) . In essence, the DMT model is preferred for small, hard particles (high <span class="math notranslate nohighlight">\(Y\)</span>) and the JKR model for large, soft particles.</p>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{z_{\mathrm{o}}}\)</span> is the equilibrium separation of the surfaces and <span class="math notranslate nohighlight">\(\mathbf{\gamma}_\mathrm{e}\)</span> the effective surface energy. The DMT model is applicable for low <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &lt; 1\)</span>) while the JKR model is more appropriate for high <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &gt; 1\)</span>) . In essence, the DMT model is preferred for small, hard particles (high <span class="math notranslate nohighlight">\(Y\)</span>) and the JKR model for large, soft particles.</p>
 <section id="johnson-kendall-roberts-force-model">
 <h3>Johnson-Kendall-Roberts force model<a class="headerlink" href="#johnson-kendall-roberts-force-model" title="Link to this heading">#</a></h3>
 <p>The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. <a class="footnote-reference brackets" href="#coetzee2023" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>
@@ -647,14 +647,14 @@ This model modifies the Hertz formulation by defining a larger contact path radi
 The model is defined by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[a^{3} = \frac{3 R_{e}}{4 Y_{e}} \left[|\mathbf{F_{n}^{JKR}}| + 3\pi\gamma_{e}R_{e}  + \sqrt{6 |\mathbf{F_{n}^{JKR}}| \pi\gamma_{e}R_{e} + (3\pi\gamma_{e}R_{e})^2 }\right]\]</div>
+\[a^{3} = \frac{3 R_{\mathrm{e}}}{4 Y_{\mathrm{e}}} \left[|\mathbf{F_{n}^{JKR}}| + 3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}  + \sqrt{6 |\mathbf{F_{n}^{JKR}}| \pi\gamma_{\mathrm{e}}R_{\mathrm{e}} + (3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}})^2 }\right]\]</div>
 </div>
-<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{n}^{JKR}}\)</span> corresponds to the normal spring force and attractive force combined and <span class="math notranslate nohighlight">\(\mathbf{\gamma_{e}}\)</span> is the effective surface energy.
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{n}^\mathrm{JKR}}\)</span> corresponds to the normal spring force and attractive force combined and <span class="math notranslate nohighlight">\(\mathbf{\gamma_{\mathrm{e}}}\)</span> is the effective surface energy.
 Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.</p>
 <p>The effective surface energy can be computed as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\gamma_{e} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}\]</div>
+\[\gamma_{\mathrm{e}} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}\]</div>
 </div>
 <p>Where <span class="math notranslate nohighlight">\(\gamma_{i}\)</span> and <span class="math notranslate nohighlight">\(\gamma_{j}\)</span> are the surface energy of each material (particle or wall) and where <span class="math notranslate nohighlight">\(\gamma_{i,j}\)</span> is the interface energy which is equal to zero when both surfaces are the same material.
 The interface energy term is approximated using [#israelachvili–289]_:</p>
@@ -665,35 +665,35 @@ The interface energy term is approximated using [#israelachvili–289]_:</p>
 <p>To compute the <span class="math notranslate nohighlight">\(\mathbf{F_{n}^{JKR}}\)</span>, the contact patch radius needs to be determined. The contact patch radius can be related to the normal overlap as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\delta_{n} = \frac{ a^{2} }{ R_{e} } -  \sqrt{ \frac{2 \pi \gamma_{e} a }{ Y_{e} }}\]</div>
+\[\delta_{\mathrm{n}} = \frac{ a^{2} }{ R_{\mathrm{e}} } -  \sqrt{ \frac{2 \pi \gamma_{\mathrm{e}} a }{ Y_\mathrm{e} }}\]</div>
 </div>
 <p>This equation can be rewritten as a fourth-order polynomial function with two complex and two real roots.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[0 = a^{4} - 2R_{e}\delta_{n}a^{2} - 2\pi\gamma_{e}R_{e}^{2}a + R_{e}^{2}\delta_{n}^{2}\]</div>
+\[0 = a^{4} - 2R_{\mathrm{e}}\delta_{\mathrm{n}}a^{2} - 2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}a + R_{\mathrm{e}}^{2}\delta_{\mathrm{n}}^{2}\]</div>
 </div>
 <p>Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used <a class="footnote-reference brackets" href="#parteli2014" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}c_{0} &amp;= R_{e}^{2}\delta_{n}^{2} \\
-c_{1} &amp;= \frac{-2\pi\gamma_{e}R_{e}^{2}}{Y_{e}}\\
-c_{2} &amp;= -2R_{e}\delta_{n}\\
-P &amp;= -\frac{c_{2}^{2}}{12} - c_{0} \\
-Q &amp;= - \frac{c_{2}^{3}}{108} + \frac{c_{0}c_{2}}{3} - \frac{c_{1}^{2}}{8} \\
+\[\begin{split}c_\mathrm{0} &amp;= R_{\mathrm{e}}^{2}\delta_{\mathrm{n}}^{2} \\
+c_\mathrm{1} &amp;= \frac{-2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}}{Y_{\mathrm{e}}}\\
+c_\mathrm{2} &amp;= -2R_{\mathrm{e}}\delta_{\mathrm{n}}\\
+P &amp;= -\frac{c_{\mathrm{2}}^{2}}{12} - c_{\mathrm{0}} \\
+Q &amp;= - \frac{c_{\mathrm{2}}^{3}}{108} + \frac{c_{\mathrm{0}}c_{\mathrm{2}}}{3} - \frac{c_{\mathrm{1}}^{2}}{8} \\
 U &amp;= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
 s &amp;=
 \begin{cases}
--5c_2/6 + U - \frac{P}{3U} &amp;{if}\: P \neq 0 \\
--5c_2/6 + Q^{\frac{1}{3}}  &amp;{if}\: P = 0
+-5c_{\mathrm{2}}/6 + U - \frac{P}{3U} &amp;{if}\: P \neq 0 \\
+-5c_{\mathrm{2}}/6 + Q^{\frac{1}{3}}  &amp;{if}\: P = 0
 \end{cases}\\
-\omega &amp;= \sqrt{c_{2} + 2 s} \\
-\lambda &amp;= \frac{c_{1} }{2 \omega}\\
-a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } \right)\end{split}\]</div>
+\omega &amp;= \sqrt{c_{\mathrm{2}} + 2 s} \\
+\lambda &amp;= \frac{c_{\mathrm{1}} }{2 \omega}\\
+a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{\mathrm{2}} + s + \lambda ) } \right)\end{split}\]</div>
 </div>
-<p>Finally, the <span class="math notranslate nohighlight">\(\mathbf{F_{n}^{JKR}}\)</span> can be computed as follows:</p>
+<p>Finally, the <span class="math notranslate nohighlight">\(\mathbf{F_{\mathrm{n}}^{JKR}}\)</span> can be computed as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{F_{n}^{JKR}} = \left( \frac{4 Y_{e} a^{3}}{3 R_{e}} - \sqrt{8 \pi \gamma_{e} Y_{e} a^{3}} \right) \mathbf{n}_{ij}\]</div>
+\[\mathbf{F_{n}^{JKR}} = \left( \frac{4 Y_\mathrm{e} a^{3}}{3 R_{\mathrm{e}}} - \sqrt{8 \pi \gamma_{\mathrm{e}} Y_{\mathrm{e}} a^{3}} \right) \mathbf{n}_{ij}\]</div>
 </div>
 <p>The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.</p>
 <p>A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features <a class="footnote-reference brackets" href="#coetzee2023" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p>
@@ -701,22 +701,35 @@ a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } 
 <p>The modified Coulomb’s criterion is breached when the following condition is broken during a collision:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[|\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F_{n}^{JKR} + 2F_{po}}|.\]</div>
+\[|\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F_{n}^{JKR} + 2F_{\mathrm{po}}}|.\]</div>
 </div>
-<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{po}}\)</span> is the pull-off force, which can be computed as follows:</p>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{\mathrm{po}}}\)</span> is the pull-off force, which can be computed as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{F_{po}} = \left(1.5\pi\gamma_{e}R_{e}\right) \mathbf{n}_{ij}\]</div>
+\[\mathbf{F_{\mathrm{po}}} = \left(1.5\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}\right) \mathbf{n}_{ij}\]</div>
 </div>
 </section>
 <section id="derjaguin-muller-toporov-force-model">
 <h3>Derjaguin-Muller-Toporov force model<a class="headerlink" href="#derjaguin-muller-toporov-force-model" title="Link to this heading">#</a></h3>
-<p>The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young’s modulus. In Lethe, the DMT model is implemented using the Maugis approximation which simply adds an adhesion term <span class="math notranslate nohighlight">\(\mathbf{F_{ad}^{DMT}}\)</span> to the normal force calculation <a class="footnote-reference brackets" href="#violano2018" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>.</p>
+<p>The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young’s modulus. In Lethe, the DMT model is implemented following the work of Meier <em>et al.</em> <a class="footnote-reference brackets" href="#meier2019" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>. This implementation includes non-contact forces between particles. The model is described by the following equations:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\mathbf{F_{ad}^{DMT}} = -2\pi\gamma_{e}R_{e} \mathbf{n}_{ij}\]</div>
+\[\begin{split}\mathbf{F_{ad}^{DMT}} =    \begin{cases}
+    F_{\mathrm{po}} = -2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}, &amp; \delta_\mathrm{n} \leq \delta_{\mathrm{o}} \\
+    \frac{-AR_{\mathrm{e}}}{6 \delta_{n}^2}, &amp; \delta_{\mathrm{o}} &lt; \delta_\mathrm{n} &lt; \delta^* \\
+    0, &amp;  \delta^* \leq \delta_{\mathrm{n}}
+\end{cases}\end{split}\]</div>
 </div>
-<p>The Coulomb’s limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term in not taken into account when computing the norm of the normal force. For further information, see <a class="reference internal" href="#coulomb-s-limit">Coulomb’s limit</a> .</p>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the Hamaker constant which is used to quantify the strength of van der Waals forces. <span class="math notranslate nohighlight">\(\delta_{\mathrm{o}}\)</span> represents the distance at which the van der Waals force curve equals the pull-off force <span class="math notranslate nohighlight">\(F_{\mathrm{po}}\)</span> and <span class="math notranslate nohighlight">\(\delta^*\)</span> represents a cut-off radius at which the van der Waals has a relative decline of <span class="math notranslate nohighlight">\(C_{\mathrm{FPO}}\)</span> <a class="footnote-reference brackets" href="#meier2019" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>. They are computed using:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    \delta_{\mathrm{o}} &amp;= - \sqrt{\frac{ -A R_{\mathrm{e}}}{6 F_{\mathrm{po}}}}\\
+    \delta^* &amp;= \frac{\delta_{\mathrm{o}}}{ \sqrt{C_{\mathrm{FPO}}}}
+\end{align}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(C_{\mathrm{FPO}}\)</span> is a user parameter used to determined the cut-off distance at which the non-contact forces are being performed.</p>
+<p>The Coulomb’s limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term is not taken into account when computing the norm of the normal force. For further information, see <a class="reference internal" href="#coulomb-s-limit">Coulomb’s limit</a> .</p>
 </section>
 </section>
 <section id="integration-methods">
@@ -774,12 +787,17 @@ a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{2} + s + \lambda ) } 
 <p>E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” <em>Sci Rep</em>, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: <a class="reference external" href="https://doi.org/10.1038/srep06227">10.1038/srep06227</a>.</p>
 </aside>
 <aside class="footnote brackets" id="violano2018" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">8</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
 <p>G. Violano, G. P. Demelio, and L. Afferrante, “On the DMT Adhesion Theory: From the First Studies to the Modern Applications in Rough Contacts.” <em>Procedia Structural Integrity</em>, vol. 12, pp. 58–70, Jan. 2018, doi: <a class="reference external" href="https://doi.org/10.1016/j.prostr.2018.11.106.">0.1016/j.prostr.2018.11.106</a>.</p>
 </aside>
 <aside class="footnote brackets" id="thornton1991" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">9</a><span class="fn-bracket">]</span></span>
 <p>C. Thornton, “ Interparticle sliding in the presence of adhesion,” <em>Journal of Physics D: Applied Physics</em>, vol. 24, no. 11, pp. 1942–1946, 1991, doi: <a class="reference external" href="https://doi.org/10.1088/0022-3727/24/11/007">10.1088/0022-3727/24/11/007</a>.</p>
+</aside>
+<aside class="footnote brackets" id="meier2019" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id10">1</a>,<a role="doc-backlink" href="#id11">2</a>)</span>
+<p>C. Meier, R. Weissbach, J. Weinberg, W. A. Wall, and A. John Hart, “Modeling and characterization of cohesion in fine metal powders with a focus on additive manufacturing process simulations,” <em>Powder Technology</em>, vol. 343, pp. 855–866, Feb. 2019, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2018.11.072">10.1016/j.powtec.2018.11.072</a>.</p>
 </aside>
 </aside>
 </section>
