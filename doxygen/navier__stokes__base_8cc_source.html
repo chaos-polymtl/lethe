@@ -342,7 +342,7 @@ $(function() {
 <div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#aeac63e5c8291a3e2314914f1605969ff">  261</a></span>&#160;<a class="code" href="classNavierStokesBase.html#aeac63e5c8291a3e2314914f1605969ff">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::postprocessing_forces</a>(</div>
 <div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a66e07e67baaf085649cea34a8aec24a3">  262</a></span>&#160;  <span class="keyword">const</span> VectorType &amp;evaluation_point)</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;{</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;calculate_forces&quot;</span>);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Calculate forces&quot;</span>);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  this-&gt;forces_on_boundaries =</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <a class="code" href="postprocessing__cfd_8h.html#abfdc02addc37b6d8043c1c2d5a17fd36">calculate_forces</a>(this-&gt;dof_handler,</div>
@@ -463,7 +463,7 @@ $(function() {
 <div class="line"><a name="l00382"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a5fbfce857a0331b37588f002999e6856">  382</a></span>&#160;<a class="code" href="classNavierStokesBase.html#a5fbfce857a0331b37588f002999e6856">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::postprocessing_torques</a>(</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;  <span class="keyword">const</span> VectorType &amp;evaluation_point)</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;{</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;calculate_torques&quot;</span>);</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Calculate torques&quot;</span>);</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  this-&gt;torques_on_boundaries =</div>
 <div class="line"><a name="l00388"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">  388</a></span>&#160;    <a class="code" href="postprocessing__cfd_8h.html#a474051d783a95c2eb98bd6ca4b8ba17b">calculate_torques</a>(this-&gt;dof_handler,</div>
@@ -2662,7 +2662,7 @@ $(function() {
 <div class="line"><a name="l02581"></a><span class="lineno"> 2581</span>&#160;  <span class="keywordflow">if</span> (abs(pressure_scaling_factor - 1) &lt; 1e-8)</div>
 <div class="line"><a name="l02582"></a><span class="lineno"> 2582</span>&#160;    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l02583"></a><span class="lineno"> 2583</span>&#160; </div>
-<div class="line"><a name="l02584"></a><span class="lineno"> 2584</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;rescale_pressure&quot;</span>);</div>
+<div class="line"><a name="l02584"></a><span class="lineno"> 2584</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Rescale pressure&quot;</span>);</div>
 <div class="line"><a name="l02585"></a><span class="lineno"> 2585</span>&#160; </div>
 <div class="line"><a name="l02586"></a><span class="lineno"> 2586</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                   dofs_per_cell = this-&gt;fe-&gt;dofs_per_cell;</div>
 <div class="line"><a name="l02587"></a><span class="lineno"> 2587</span>&#160;  std::vector&lt;types::global_dof_index&gt; local_dof_indices(dofs_per_cell);</div>

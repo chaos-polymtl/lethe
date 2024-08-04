@@ -326,7 +326,7 @@ $(function() {
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;{</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  <a class="code" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Void Fraction&quot;</span>);</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;calculate_void_fraction&quot;</span>);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Calculate void fraction&quot;</span>);</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;mode ==</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      <a class="code" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14">Parameters::VoidFractionMode::function</a>)</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    {</div>
@@ -513,7 +513,7 @@ $(function() {
 <div class="line"><a name="l00432"></a><span class="lineno"><a class="line" href="classGLSVANSSolver.html#a2ac275e569bb1fe63a8ffa744f247030">  432</a></span>&#160;<a class="code" href="classGLSVANSSolver.html#a2ac275e569bb1fe63a8ffa744f247030">GLSVANSSolver&lt;dim&gt;::vertices_cell_mapping</a>()</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;{</div>
 <div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;  <span class="comment">// Find all the cells around each vertex</span></div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;vertices_to_cell_map&quot;</span>);</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Map vertices to cell&quot;</span>);</div>
 <div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160; </div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;  <a class="code" href="namespaceLetheGridTools.html#a996a99a477d3abb7d81678c39a9d9cf9">LetheGridTools::vertices_cell_mapping</a>(this-&gt;void_fraction_dof_handler,</div>
 <div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                                        vertices_to_cell);</div>
@@ -1657,7 +1657,7 @@ $(function() {
 <div class="line"><a name="l01576"></a><span class="lineno"><a class="line" href="classGLSVANSSolver.html#a2f2f0f5f6d13c4534ff75c971d3fe493"> 1576</a></span>&#160;<a class="code" href="classGLSVANSSolver.html#a2f2f0f5f6d13c4534ff75c971d3fe493">GLSVANSSolver&lt;dim&gt;::assemble_system_matrix</a>()</div>
 <div class="line"><a name="l01577"></a><span class="lineno"> 1577</span>&#160;{</div>
 <div class="line"><a name="l01578"></a><span class="lineno"> 1578</span>&#160;  {</div>
-<div class="line"><a name="l01579"></a><span class="lineno"> 1579</span>&#160;    TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Assemble_Matrix&quot;</span>);</div>
+<div class="line"><a name="l01579"></a><span class="lineno"> 1579</span>&#160;    TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Assemble matrix&quot;</span>);</div>
 <div class="line"><a name="l01580"></a><span class="lineno"> 1580</span>&#160;    this-&gt;system_matrix = 0;</div>
 <div class="line"><a name="l01581"></a><span class="lineno"> 1581</span>&#160; </div>
 <div class="line"><a name="l01582"></a><span class="lineno"> 1582</span>&#160;    setup_assemblers();</div>
@@ -1761,7 +1761,7 @@ $(function() {
 <div class="line"><a name="l01680"></a><span class="lineno"> 1680</span>&#160;<span class="keywordtype">void</span></div>
 <div class="line"><a name="l01681"></a><span class="lineno"><a class="line" href="classGLSVANSSolver.html#aea4c6b244e80c3240524b10a0a5e20bd"> 1681</a></span>&#160;<a class="code" href="classGLSVANSSolver.html#aea4c6b244e80c3240524b10a0a5e20bd">GLSVANSSolver&lt;dim&gt;::assemble_system_rhs</a>()</div>
 <div class="line"><a name="l01682"></a><span class="lineno"> 1682</span>&#160;{</div>
-<div class="line"><a name="l01683"></a><span class="lineno"> 1683</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Assemble_RHS&quot;</span>);</div>
+<div class="line"><a name="l01683"></a><span class="lineno"> 1683</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Assemble RHS&quot;</span>);</div>
 <div class="line"><a name="l01684"></a><span class="lineno"> 1684</span>&#160; </div>
 <div class="line"><a name="l01685"></a><span class="lineno"> 1685</span>&#160;  this-&gt;system_rhs = 0;</div>
 <div class="line"><a name="l01686"></a><span class="lineno"> 1686</span>&#160; </div>
