@@ -245,7 +245,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time,
 {
   announce_string(this->pcout, "Void Fraction");
 
-  TimerOutput::Scope t(this->computing_timer, "calculate_void_fraction");
+  TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
   if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
     {
@@ -432,7 +432,7 @@ void
 GLSVANSSolver<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertex
-  TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+  TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
   LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
                                         vertices_to_cell);
@@ -1576,7 +1576,7 @@ void
 GLSVANSSolver<dim>::assemble_system_matrix()
 {
   {
-    TimerOutput::Scope t(this->computing_timer, "Assemble_Matrix");
+    TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
     this->system_matrix = 0;
 
     setup_assemblers();
@@ -1680,7 +1680,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_system_rhs()
 {
-  TimerOutput::Scope t(this->computing_timer, "Assemble_RHS");
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
   this->system_rhs = 0;
 
