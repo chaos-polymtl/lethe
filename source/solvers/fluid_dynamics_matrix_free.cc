@@ -20,7 +20,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/mf_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <deal.II/base/multithread_info.h>
 
@@ -1857,7 +1857,7 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
 }
 
 template <int dim>
-MFNavierStokesSolver<dim>::MFNavierStokesSolver(
+FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
@@ -1880,14 +1880,14 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
 }
 
 template <int dim>
-MFNavierStokesSolver<dim>::~MFNavierStokesSolver()
+FluidDynamicsMatrixFree<dim>::~FluidDynamicsMatrixFree()
 {
   this->dof_handler.clear();
 }
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve()
+FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
@@ -1982,7 +1982,7 @@ MFNavierStokesSolver<dim>::solve()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_dofs_fd()
+FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup DoFs");
 
@@ -2119,7 +2119,7 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::update_boundary_conditions()
+FluidDynamicsMatrixFree<dim>::update_boundary_conditions()
 {
   if (this->simulation_parameters.boundary_conditions.time_dependent)
     {
@@ -2148,7 +2148,7 @@ MFNavierStokesSolver<dim>::update_boundary_conditions()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::set_initial_condition_fd(
+FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -2393,7 +2393,7 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::assemble_system_matrix()
+FluidDynamicsMatrixFree<dim>::assemble_system_matrix()
 {
   // Required for compilation but not used for matrix free solvers.
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
@@ -2401,7 +2401,7 @@ MFNavierStokesSolver<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::assemble_system_rhs()
+FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -2418,7 +2418,7 @@ MFNavierStokesSolver<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
+FluidDynamicsMatrixFree<dim>::update_multiphysics_time_average_solution()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Update multiphysics average solution");
@@ -2439,7 +2439,7 @@ MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
+FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
 {
   this->time_derivative_previous_solutions = 0;
 
@@ -2458,7 +2458,7 @@ MFNavierStokesSolver<dim>::calculate_time_derivative_previous_solutions()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_GMG()
+FluidDynamicsMatrixFree<dim>::setup_GMG()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup GMG");
 
@@ -2481,7 +2481,7 @@ MFNavierStokesSolver<dim>::setup_GMG()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_ILU()
+FluidDynamicsMatrixFree<dim>::setup_ILU()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
@@ -2506,7 +2506,7 @@ MFNavierStokesSolver<dim>::setup_ILU()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::print_mg_setup_times()
+FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity == Parameters::Verbosity::extra_verbose)
@@ -2543,7 +2543,7 @@ MFNavierStokesSolver<dim>::print_mg_setup_times()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
+FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Update solutions for multiphysics");
@@ -2592,7 +2592,7 @@ MFNavierStokesSolver<dim>::update_solutions_for_multiphysics()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::define_non_zero_constraints()
+FluidDynamicsMatrixFree<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -2682,7 +2682,7 @@ MFNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::define_zero_constraints()
+FluidDynamicsMatrixFree<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -2761,7 +2761,7 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_preconditioner()
+FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 {
   this->present_solution.update_ghost_values();
 
@@ -2798,8 +2798,9 @@ MFNavierStokesSolver<dim>::setup_preconditioner()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                               const bool /* renewed_matrix */)
+FluidDynamicsMatrixFree<dim>::solve_linear_system(
+  const bool initial_step,
+  const bool /* renewed_matrix */)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2818,16 +2819,16 @@ MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::assemble_L2_projection()
+FluidDynamicsMatrixFree<dim>::assemble_L2_projection()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
-                                              const double absolute_residual,
-                                              const double relative_residual)
+FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
+                                                 const double absolute_residual,
+                                                 const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
@@ -2921,5 +2922,5 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     "Distribute constraints after linear solve");
 }
 
-template class MFNavierStokesSolver<2>;
-template class MFNavierStokesSolver<3>;
+template class FluidDynamicsMatrixFree<2>;
+template class FluidDynamicsMatrixFree<3>;

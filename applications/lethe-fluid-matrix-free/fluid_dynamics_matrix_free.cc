@@ -13,7 +13,7 @@
  *
  ---------------------------------------------------------------------*/
 
-#include "solvers/mf_navier_stokes.h"
+#include "solvers/fluid_dynamics_matrix_free.h"
 
 int
 main(int argc, char *argv[])
@@ -41,7 +41,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFNavierStokesSolver<2> problem(NSparam);
+          FluidDynamicsMatrixFree<2> problem(NSparam);
           problem.solve();
         }
 
@@ -54,7 +54,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFNavierStokesSolver<3> problem(NSparam);
+          FluidDynamicsMatrixFree<3> problem(NSparam);
           problem.solve();
         }
       else

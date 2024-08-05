@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-08-05
 
+### Changed
+
+- MINOR Renamed all the files related to the `lethe-fluid-matrix-free` application: `mf_navier_stokes` to `fluid_dynamics_matrix_free` and `mf_navier_stokes_operators` to `fluid_dynamics_matrix_free_operators`. The main class `MFNavierStokesSolver` was also renamed to `FluidDynamicsMatrixFree`. [#1222](https://github.com/chaos-polymtl/lethe/pull/1222)
+
+## [Master] - 2024-08-05
+
 ### Removed
 
 - MINOR Removed the gear3 DEM integrator. It was never used, it did not possess any unit test and it was not even clear if it still worked. [#1221](https://github.com/chaos-polymtl/lethe/pull/1211)
