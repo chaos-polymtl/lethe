@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR A post-processing feature for the tracer flow rate through boundaries is added. This allows to produce data useful for residence time distribution analyses. [#1197](https://github.com/chaos-polymtl/lethe/pull/1197)
 
+### Fixed
+
+- MINOR Conditions for whether a boundary condition should be updated were made less restrictive. Now, each physics is responsible for updating or not their boundary conditions. [#1197](https://github.com/chaos-polymtl/lethe/pull/1197)
+
 ## [Master] - 2024-08-05
 
 ### Removed
