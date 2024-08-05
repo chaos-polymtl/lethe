@@ -376,12 +376,19 @@ private:
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
    *
+   * @return values of the tracer flow rate at each boundary
+   *
    * @tparam GlobalVectorType The type of the global vector used for the tracer physic
    */
-
   template <typename GlobalVectorType>
-  void
+  std::vector<double>
   postprocess_tracer_flow_rate(const GlobalVectorType &current_solution_fd);
+
+  /**
+   * @brief Writes the tracer flow rates to an output file
+   */
+  void
+  write_tracer_flow_rates(const std::vector<double> tracer_flow_rate_vector);
 
   /**
    * @brief Writes the tracer statistics to an output file

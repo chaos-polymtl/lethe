@@ -429,13 +429,6 @@ Tracer<dim>::postprocess(bool first_iteration)
           0)
         this->write_tracer_statistics();
     }
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::iteration)
-    {
-      announce_string(this->pcout, "Tracer");
-      this->computing_timer.print_summary();
-      this->computing_timer.reset();
-    }
 
   // Calculate tracer flow rate at every boundary
   if (this->simulation_parameters.post_processing.calculate_tracer_flow_rate)
@@ -448,16 +441,27 @@ Tracer<dim>::postprocess(bool first_iteration)
           announce_string(this->pcout, "Tracer flow rates");
         }
 
+      std::vector<double> tracer_flow_rates(
+        this->simulation_parameters.boundary_conditions.size);
       if (multiphysics->fluid_dynamics_is_block())
         {
-          postprocess_tracer_flow_rate(
+          tracer_flow_rates = postprocess_tracer_flow_rate(
             *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
         }
       else
         {
-          postprocess_tracer_flow_rate(
+          tracer_flow_rates = postprocess_tracer_flow_rate(
             *multiphysics->get_solution(PhysicsID::fluid_dynamics));
         }
+      this->write_tracer_flow_rates(tracer_flow_rates);
+    }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::iteration)
+    {
+      announce_string(this->pcout, "Tracer");
+      this->computing_timer.print_summary();
+      this->computing_timer.reset();
     }
 }
 
@@ -556,7 +560,7 @@ Tracer<dim>::calculate_tracer_statistics()
 
 template <int dim>
 template <typename VectorType>
-void
+std::vector<double>
 Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face  = this->face_quadrature->size();
@@ -684,6 +688,14 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
     tracer_flow_rate_vector[i_bc] =
       Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
 
+  return tracer_flow_rate_vector;
+}
+
+template <int dim>
+void
+Tracer<dim>::write_tracer_flow_rates(
+  const std::vector<double> tracer_flow_rate_vector)
+{
   // Fill table
   this->tracer_flow_rate_table.add_value(
     "time", this->simulation_control->get_current_time());
@@ -712,6 +724,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                     << tracer_flow_rate_vector[i_bc] << std::endl;
     }
 
+  auto mpi_communicator = triangulation->get_communicator();
   if ((simulation_control->get_step_number() %
          this->simulation_parameters.post_processing.output_frequency ==
        0) &&
