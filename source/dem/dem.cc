@@ -6,7 +6,6 @@
 #include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
-#include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
@@ -314,8 +313,6 @@ DEMSolver<dim>::set_integrator_type()
         return std::make_shared<VelocityVerletIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
         return std::make_shared<ExplicitEulerIntegrator<dim>>();
-      case ModelParameters::IntegrationMethod::gear3:
-        return std::make_shared<Gear3Integrator<dim>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
