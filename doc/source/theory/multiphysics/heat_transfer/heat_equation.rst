@@ -44,7 +44,7 @@ where :math:`\mathbf{n}` is the normal vector to the boundary, :math:`q` is the 
 The weak form of the heat equation is obtained by multiplying the strong form by a test function :math:`v` and integrating over the domain :math:`\Omega`. After applying the integration by part and the Gauss-Ostrogradsky theorem, the weak form of the heat equation is given by the following equation:
 
 .. math::
-    \int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi + Q \right] \;d\Omega
+    \int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi - Q \right] \;d\Omega
 
 Note that this formulation treats the thermal conductivity :math:`k` as a constant.
 
