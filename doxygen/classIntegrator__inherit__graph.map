@@ -1,6 +1,5 @@
 <map id="Integrator&lt; dim &gt;" name="Integrator&lt; dim &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,147,98"/>
-<area shape="rect" id="node2" href="$classExplicitEulerIntegrator.html" title=" " alt="" coords="201,5,368,47"/>
-<area shape="rect" id="node3" href="$classGear3Integrator.html" title=" " alt="" coords="195,71,375,98"/>
-<area shape="rect" id="node4" href="$classVelocityVerletIntegrator.html" title=" " alt="" coords="197,123,373,164"/>
+<area shape="rect" id="node1" title=" " alt="" coords="115,5,257,32"/>
+<area shape="rect" id="node2" href="$classExplicitEulerIntegrator.html" title=" " alt="" coords="5,80,172,121"/>
+<area shape="rect" id="node3" href="$classVelocityVerletIntegrator.html" title=" " alt="" coords="197,80,373,121"/>
 </map>
