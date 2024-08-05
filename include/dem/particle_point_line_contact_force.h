@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_point_line_force_h
+#define lethe_particle_point_line_force_h
 
 #include <core/dem_properties.h>
 
@@ -26,21 +28,13 @@
 
 using namespace dealii;
 
-#ifndef particle_point_line_force_h
-#  define particle_point_line_force_h
-
 /**
- * Calculation of the non-linear particle-point and particle-line contact force
+ * @brief Calculate the non-linear particle-point and particle-line contact force
  * using the information obtained from the fine search and physical properties
  * of particles and walls. Since the inputs and the calculation method of
  * particle-point and particle-line contact forces are similar, we only used one
- * function for both tasks
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * function for both tasks.
  */
-
 template <int dim>
 class ParticlePointLineForce
 {
@@ -48,7 +42,7 @@ public:
   ParticlePointLineForce();
 
   /**
-   * Carries out the calculation of the particle-point contact force using
+   * @brief Calculate of the particle-point contact force using
    * non-linear (Hertzian) model
    *
    * @param particle_point_pairs_in_contact Required information for
@@ -66,7 +60,7 @@ public:
     std::vector<Tensor<1, 3>> &force);
 
   /**
-   * Carries out the calculation of the particle-line contact force using
+   * @brief Calculate of the particle-line contact force using
    * non-linear (Hertzian) model
    *
    * @param particle_line_pairs_in_contact Required information for
@@ -84,7 +78,8 @@ public:
     std::vector<Tensor<1, 3>> &force);
 
 private:
-  /** This private function is used to find the projection of point_p on
+  /**
+   * @brief This private function is used to find the projection of point_p on
    * a line with beginning and ending vertices of point_a and point_b,
    * respectively
    * @param point_p A point which is going to be projected on the line
@@ -92,7 +87,6 @@ private:
    * @param point_b Ending point of the line
    * @return The projection of point_p on the line (from point_a to point_b)
    */
-
   Point<3>
   find_projection_point(const Point<3> &point_p,
                         const Point<3> &point_a,

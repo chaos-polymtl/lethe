@@ -1,6 +1,6 @@
 #include <core/dem_properties.h>
 
-#include <dem/post_processing.h>
+#include <dem/dem_post_processing.h>
 
 namespace DEM
 {

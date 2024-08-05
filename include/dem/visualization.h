@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_visualization_h
+#define lethe_visualization_h
 
 #include <core/dem_properties.h>
 
@@ -29,17 +31,10 @@
 
 using namespace dealii;
 
-#ifndef visualization_h
-#  define visualization_h
-
 /**
- * Building patches of particle properties for visualization
- *
- * @note This function is taken from Aspect and dealii and implemented here
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * @brief Building patches of particle properties for visualization.
+ * This function is taken from Aspect and dealii and implemented here.
  */
-
 template <int dim>
 class Visualization : public dealii::DataOutInterface<0, dim>
 {
@@ -47,26 +42,25 @@ public:
   Visualization();
 
   /**
-   * Carries out building the patches of properties of particles for
-   * visualization
+   * @brief Build the patches of properties of particles for visualization.
    *
    * @param particle_handler The particle handler of active particles for
-   * visulization
-   * @param properties Properties of particles for visulization. This is a
+   * visualization.
+   * @param properties Properties of particles for visualization. This is a
    * vector of pairs and each pair contains the property name as the first
    * element and the size of the property as the second element. For vectors
    * only the size of the first element of the vector is defined equal to the
-   * dimension
+   * dimension.
    */
   void
   build_patches(Particles::ParticleHandler<dim>         &particle_handler,
                 std::vector<std::pair<std::string, int>> properties);
 
   /**
-   * Prints the data of particles in the xyz format
+   * @brief Print the data of particles in the xyz format.
    *
-   * @param particle_handler The particle handler of active particles
-   * @param pcout Printing in parallel
+   * @param particle_handler The particle handler of active particles.
+   * @param pcout Printing in parallel.
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -74,11 +68,11 @@ public:
             const ConditionalOStream                &pcout);
 
   /**
-   * Prints the data of particles in the deal.II intermediate format
-   * @param data_to_print The vector of data to be printed
-   * @param background_dh The DoFHandler of the background grid
-   * @param mpi_communicator The MPI communicator
-   * @param pcout Printing in parallel
+   * @brief Print the data of particles in the deal.II intermediate format.
+   *
+   * @param data_to_print The vector of data to be printed.
+   * @param background_dh The DoFHandler of the background grid.
+   * @param mpi_communicator The MPI communicator.
    */
   void
   print_intermediate_format(const Vector<float>   &data_to_print,
@@ -89,13 +83,13 @@ public:
 
 private:
   /**
-   * Implementation of the corresponding function of the base class.
+   * @brief Implementation of the corresponding function of the base class.
    */
   virtual const std::vector<DataOutBase::Patch<0, dim>> &
   get_patches() const override;
 
   /**
-   * Implementation of the corresponding function of the base class.
+   * @brief Implementation of the corresponding function of the base class.
    */
   virtual std::vector<std::string>
   get_dataset_names() const override;
@@ -108,33 +102,28 @@ private:
   get_nonscalar_data_ranges() const override;
 
   /**
-   * Output information that is filled by build_patches() and
+   * @brief Output information that is filled by build_patches() and
    * written by the write function of the base class.
    */
   std::vector<DataOutBase::Patch<0, dim>> patches;
 
   /**
-   * A list of field names for all data components stored in patches.
+   * @brief A list of field names for all data components stored in patches.
    */
   std::vector<std::string> dataset_names;
 
   /**
-   * Store which of the data fields are vectors.
+   * @brief Store which of the data fields are vectors.
    */
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
   std::vector<
     std::tuple<unsigned int,
                unsigned int,
                std::string,
                DataComponentInterpretation::DataComponentInterpretation>>
     vector_datasets;
-#  else
-  std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-    vector_datasets;
-#  endif
 
   /**
-   * Particle properties that are written in output files
+   * @brief Particle properties that are written in output files.
    */
   std::vector<std::pair<std::string, int>> properties_to_write;
 };

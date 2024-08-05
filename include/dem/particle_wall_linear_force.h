@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_wall_linear_force_h
+#define lethe_particle_wall_linear_force_h
 
 #include <core/dem_properties.h>
 
@@ -29,16 +31,12 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_linear_force_h
-#  define particle_wall_linear_force_h
-
 /**
- * Calculation of the linear particle-wall contact force using the
+ * @brief Calculate particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
  *
  */
-
 template <int dim>
 class ParticleWallLinearForce : public ParticleWallContactForce<dim>
 {
@@ -55,7 +53,7 @@ public:
     const std::vector<types::boundary_id> boundary_index = {});
 
   /**
-   * Carries out the calculation of the particle-wall contact force using
+   * @brief Calculate the particle-wall contact force using
    * linear (Hookean) model
    *
    * @param particle_wall_pairs_in_contact Required information for calculation of
@@ -74,7 +72,7 @@ public:
     std::vector<Tensor<1, 3>> &force) override;
 
   /**
-   * Carries out the calculation of particle-floating mesh contact force using
+   * @brief Calculate particle-floating mesh contact force using
    * linear (Hooekan) model
    *
    * @param particle_floating_mesh_in_contact A container that stores the information of
@@ -208,7 +206,7 @@ private:
   }
 
   /**
-   * Carries out the calculation of the particle-particle linear contact
+   * @brief Calculate the particle-particle linear contact
    * force and torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for

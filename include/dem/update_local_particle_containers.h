@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_update_local_particle_containers_h
+#define lethe_update_local_particle_containers_h
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
@@ -23,21 +25,18 @@
 
 using namespace dealii;
 
-#ifndef locate_local_particles_h
-#  define locate_local_particles_h
-
 /**
- * Updates the iterators to local particles in a map of particles
+ * @brief Update the iterators to local particles in a map of particles
  * (particle_container)
  *
  * @tparam dim Dimensionality of the geometry which contains the particles
+ *
  * @param particle_container A map of particles which is used to update
  * the iterators to particles in particle-particle and particle-wall fine search
  * outputs after calling sort particles into cells function
  * @param particle_handler Particle handler to access all the particles in the
  * system
  */
-
 template <int dim>
 void
 update_particle_container(
@@ -46,17 +45,17 @@ update_particle_container(
   const Particles::ParticleHandler<dim> *particle_handler);
 
 /**
- * Updates the iterators to particles in pairs_in_contact
+ * @brief Update the iterators to particles in pairs_in_contact
  * (output of particle-object fine search)
  *
  * @tparam dim Dimensionality of the geometry which contains the particles
- * @tparam pairs_structure DEM data structure which contains particle-object pairs relevant information
- * @tparam contact_type Contact type of the contact pairs
- * @param pairs_in_contact Output of particle-object fine search
- * @param particle_container Output of update_particle_container function
- * @param clear_contact_structures If true, the contact structures will be cleared
+ * @tparam pairs_structure Adjacent particle-object pairs container type.
+ * @tparam contact_type Label of contact type to apply proper manipulation of
+ * contact removal in containers.
+ *
+ * @param pairs_in_contact Output of particle-object fine search.
+ * @param particle_container Output of update_particle_container function.
  */
-
 template <int dim, typename pairs_structure, ContactType contact_type>
 void
 update_contact_container_iterators(
@@ -65,4 +64,4 @@ update_contact_container_iterators(
     &particle_container);
 
 
-#endif /* locate_local_particles_h */
+#endif

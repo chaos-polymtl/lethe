@@ -14,6 +14,9 @@
  * ---------------------------------------------------------------------
  */
 
+#ifndef lethe_read_checkpoint_h
+#define lethe_read_checkpoint_h
+
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
 
@@ -26,20 +29,9 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
-#include <fstream>
-#include <iostream>
-
-using namespace std;
-
-#ifndef read_checkpoint_h
-#  define read_checkpoint_h
-
 /**
- * Read_checkpoint Read a DEM simulation checkpoint, allowing the simulation
- * to restart from where it stopped
+ * @brief Read a DEM simulation checkpoint, allowing the simulation to restart
+ * from where it stopped.
  *
  * @param computing_timer Dem timer
  * @param parameters Input DEM parameters in the parameter handler file
@@ -64,4 +56,4 @@ read_checkpoint(
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces);
 
-#endif /* read_checkpoint_h */
+#endif

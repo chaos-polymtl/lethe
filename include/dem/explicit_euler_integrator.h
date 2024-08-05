@@ -12,33 +12,28 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-#include <dem/dem_solver_parameters.h>
+#ifndef lethe_explicit_euler_integrator_h
+#define lethe_explicit_euler_integrator_h
+
 #include <dem/integrator.h>
 
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
-#ifndef explicit_euler_integrator_h
-#  define explicit_euler_integrator_h
-
 /**
- * Implementation of a classical explicit euler scheme for the integration
- * of the particle motion. Note that reinitilization of force and torque is also
- * integrated into integration class
+ * @brief Implementation of a classical explicit euler scheme for the integration
+ * of the particle motion. Note that reinitialization of force and torque is
+ * also integrated into integration class
  *
  * @note Euler is a first-order integration scheme. Calculation proceudre:
  *
  * x(n+1) = x(n) + v(n) * dt
  * v(n+1) = v(n) + a(n) * dt
  * a(n+1) = F(n+1) / m
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
-
 template <int dim>
 class ExplicitEulerIntegrator : public Integrator<dim>
 {
@@ -47,7 +42,7 @@ public:
   {}
 
   /**
-   * Carries out integrating of new particles' location after insertion.
+   * @brief Integrate new particles' location after insertion.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -67,8 +62,8 @@ public:
     const std::vector<double>       &MOI) override;
 
   /**
-   * Carries out integration of the motion of all
-   * particles by using the acceleration with the explicit Euler method.
+   * @brief Integrate motion of all particles by using the acceleration with
+   * the explicit Euler method.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -95,9 +90,6 @@ public:
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
             AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
-
-private:
-  Tensor<1, 3> acceleration;
 };
 
 #endif

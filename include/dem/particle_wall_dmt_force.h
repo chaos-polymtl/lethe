@@ -1,4 +1,5 @@
 /* ---------------------------------------------------------------------
+ *
  * Copyright (C) 2019 - 2024 by the Lethe authors
  *
  * This file is part of the Lethe library
@@ -11,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_wall_dmt_force_h
+#define lethe_particle_wall_dmt_force_h
 
 #include <core/dem_properties.h>
 
@@ -27,9 +30,6 @@
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_wall_dmt_force_h
-#  define particle_wall_dmt_force_h
 
 /**
  * @brief Calculation of the DMT particle-wall contact force using the

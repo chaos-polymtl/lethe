@@ -1,5 +1,10 @@
 #include <dem/write_checkpoint.h>
 
+#include <boost/archive/text_oarchive.hpp>
+
+#include <fstream>
+#include <iostream>
+
 using namespace dealii;
 
 template <int dim>

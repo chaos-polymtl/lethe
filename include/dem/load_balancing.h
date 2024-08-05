@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
-
 
 #ifndef lethe_load_balancing_h
 #define lethe_load_balancing_h
@@ -455,6 +453,5 @@ private:
    */
   AdaptiveSparseContacts<dim> *adaptive_sparse_contacts;
 };
-
 
 #endif

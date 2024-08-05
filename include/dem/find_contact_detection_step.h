@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_find_contact_detection_step_h
+#define lethe_find_contact_detection_step_h
 
 #include <core/dem_properties.h>
 #include <core/serial_solid.h>
@@ -24,12 +26,8 @@
 
 using namespace dealii;
 
-#ifndef find_contact_detection_step_h
-#  define find_contact_detection_step_h
-
 /**
- * @brief Carries out finding steps for dynamic contact search for particle-particle
- * contacts
+ * @brief Find steps for dynamic contact search for particle-particle contacts.
  *
  * @param particle_handler
  * @param dt DEM time step

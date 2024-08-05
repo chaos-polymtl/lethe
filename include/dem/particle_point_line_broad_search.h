@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_point_line_broad_search_h
+#define lethe_particle_point_line_broad_search_h
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
@@ -25,19 +27,11 @@
 
 using namespace dealii;
 
-#ifndef particle_point_line_broad_search_h
-#  define particle_point_line_broad_search_h
-
 /**
- * This class is used for broad particle-line and particle-point contact
+ * @brief This class is used for broad particle-line and particle-point contact
  * search.This broad search is used to obtain all the particles located at
- * boundary cells with lines and points
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * boundary cells with lines and points.
  */
-
 template <int dim>
 class ParticlePointLineBroadSearch
 {
@@ -45,19 +39,19 @@ public:
   ParticlePointLineBroadSearch();
 
   /**
-   * Finds a map of pairs (pair of particle and the boundary vertex location)
-   * which shows the candidate particle-point collision pairs. These collision
-   * pairs will be investigated in the fine search to check if they are in
-   * contact or not
+   * @brief Find a map of pairs (pair of particle and the boundary vertex
+   * location) which shows the candidate particle-point collision pairs. These
+   * collision pairs will be investigated in the fine search to check if they
+   * are in contact or not.
    *
    * @param particle_handler Particle handler of particles located in boundary
    * cells
    * @param boundary_cells_with_points A container of cells which are located at
    * boundaries with only one vertex
+   *
    * @return A map of pairs. Each element of map (pair) contains a contact pair
    * (particle located near boundaries with vertices and the vertex location)
    */
-
   typename DEM::dem_data_structures<dim>::particle_point_candidates
   find_particle_point_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -76,10 +70,10 @@ public:
     const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
   /**
-   * Finds a map of tuples (tuple of particle and the locations of beginning and
-   * ending vertices of the boundary lines) which shows the candidate
-   * particle-line collision pairs. These collision pairs will be investigated
-   * in the fine search to check if they are in contact or not
+   * @brief Find a map of tuples (tuple of particle and the locations of
+   * beginning and ending vertices of the boundary lines) which shows the
+   * candidate particle-line collision pairs. These collision pairs will be
+   * investigated in the fine search to check if they are in contact or not.
    *
    * @param particle_handler Particle handler of particles located in boundary
    * cells
@@ -109,4 +103,4 @@ public:
     const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 };
 
-#endif /* particle_point_line_broad_search_h */
+#endif

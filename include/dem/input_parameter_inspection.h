@@ -12,19 +12,16 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_input_parameter_inspection_h
+#define lethe_input_parameter_inspection_h
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/distributions.h>
 
-using namespace std;
-
-#ifndef input_parameter_inspection_h
-#  define input_parameter_inspection_h
-
 /**
- * Manages checking input parameters in the parameter handler to be in the
+ * @brief Check input parameters in the parameter handler to be in the
  * correct range. Warnings or error would appear if the parameters are not in
  * their acceptable range.
  *
@@ -32,14 +29,13 @@ using namespace std;
  * @param pcout Printing in parallel
  * @param size_distribution_object_container Contain all the types of distribution
  * being used for each type of particle.
- *
  */
 
 template <int dim>
 void
 input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
                            const ConditionalOStream       &pcout,
-                           const std::vector<shared_ptr<Distribution>>
+                           const std::vector<std::shared_ptr<Distribution>>
                              &size_distribution_object_container);
 
-#endif /* input_parameter_inspection_h */
+#endif

@@ -12,27 +12,25 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-#include <dem/dem_solver_parameters.h>
+#ifndef lethe_insertion_volume_h
+#define lethe_insertion_volume_h
+
 #include <dem/insertion.h>
 
-#include <deal.II/distributed/tria.h>
+using namespace dealii;
 
-#include <deal.II/particles/particle_handler.h>
-
-#ifndef insertion_volume_h
-#  define insertion_volume_h
 
 template <int dim>
 class InsertionVolume : public Insertion<dim>
 {
 public:
   /**
-   * The constructor investigates if the insertion box is large enough to handle
-   * to insert the desired number of particles with the specified insertion
-   * parameters. If the insertion box is not adequately large, the number of
+   * @brief The constructor investigates if the insertion box is large enough
+   * to handleto insert the desired number of particles with the specified
+   * insertion parameters.
+   * If the insertion box is not adequately large, the number of
    * inserted particles at each insertion step is updated. It also finds the
    * insertion points in each direction (number_of_particles_x_direction,
    * number_of_particles_y_direction and number_of_particles_z_direction).
@@ -53,7 +51,7 @@ public:
     const double                                     maximum_particle_diameter);
 
   /**
-   * Carries out the volume insertion of particles.
+   * @brief Carries out the volume insertion of particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -94,8 +92,8 @@ public:
 
 private:
   /**
-   * Creates a vector of random numbers with size of particles which are going
-   * to be inserted at each insertion step
+   * @brief Creates a vector of random numbers with size of particles which are
+   * going to be inserted at each insertion step
    *
    * @param random_container A vector of random numbers
    * @param maximum_range The range in which the random numbers will be
@@ -108,7 +106,7 @@ private:
                                  const int            seed_for_insertion);
 
   /**
-   * Converts id of particles to volume insertion location
+   * @brief Converts id of particles to volume insertion location
    *
    * @param insertion_location Insertion location of the particle
    * @param id Particle_id
@@ -131,4 +129,4 @@ private:
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 };
-#endif /* insertion_volume_h */
+#endif

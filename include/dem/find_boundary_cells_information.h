@@ -12,12 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-
-#ifndef find_boundary_cells_information_h
-#define find_boundary_cells_information_h
+#ifndef lethe_find_boundary_cells_information_h
+#define lethe_find_boundary_cells_information_h
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
@@ -54,7 +52,8 @@ public:
    * @brief The build function builds all the boundary cell information
    * structure that finds which cell has a boundary face, boundary line or a
    * boundary point. Additionally, it identifies which cells are located in the
-   * vicinity (controlled by the max cell diameter of floating  walls
+   * vicinity (controlled by the max cell diameter of floating walls.
+   *
    * @param triangulation Triangulation to access the information of the cells
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
@@ -65,7 +64,6 @@ public:
    * particle-wall contact search by adding the contact search between
    * particles in the boundary cells with the boundary neighbors of these
    * boundary cells
-   *
    * @param pcout
    */
   void
