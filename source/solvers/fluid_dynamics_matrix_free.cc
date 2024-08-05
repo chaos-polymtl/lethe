@@ -2798,8 +2798,9 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve_linear_system(const bool initial_step,
-                                               const bool /* renewed_matrix */)
+FluidDynamicsMatrixFree<dim>::solve_linear_system(
+  const bool initial_step,
+  const bool /* renewed_matrix */)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2826,8 +2827,8 @@ FluidDynamicsMatrixFree<dim>::assemble_L2_projection()
 template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
-                                              const double absolute_residual,
-                                              const double relative_residual)
+                                                 const double absolute_residual,
+                                                 const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
