@@ -2,7 +2,6 @@
 #include <core/solutions_output.h>
 
 #include <dem/explicit_euler_integrator.h>
-#include <dem/gear3_integrator.h>
 #include <dem/post_processing.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
@@ -200,8 +199,6 @@ CFDDEMSolver<dim>::set_integrator_type()
         return std::make_shared<VelocityVerletIntegrator<dim>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
         return std::make_shared<ExplicitEulerIntegrator<dim>>();
-      case ModelParameters::IntegrationMethod::gear3:
-        return std::make_shared<Gear3Integrator<dim>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
