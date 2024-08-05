@@ -1836,7 +1836,7 @@ namespace Parameters
       prm.declare_entry("tracer flow rate name",
                         "tracer_flow_rate",
                         Patterns::FileName(),
-                        "File output tracer flux");
+                        "Output file name for tracer flow rate");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
