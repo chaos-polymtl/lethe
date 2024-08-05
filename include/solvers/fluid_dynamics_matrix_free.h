@@ -13,12 +13,12 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lethe_mf_navier_stokes_h
-#define lethe_mf_navier_stokes_h
+#ifndef lehte_fluid_dynamics_matrix_free_h
+#define lehte_fluid_dynamics_matrix_free_h
 
 #include <core/exceptions.h>
 
-#include <solvers/mf_navier_stokes_operators.h>
+#include <solvers/fluid_dynamics_matrix_free_operators.h>
 #include <solvers/navier_stokes_base.h>
 
 #include <deal.II/lac/precondition.h>
@@ -274,7 +274,7 @@ public:
  * the flow is solved.
  */
 template <int dim>
-class MFNavierStokesSolver
+class FluidDynamicsMatrixFree
   : public NavierStokesBase<dim,
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
@@ -288,13 +288,13 @@ public:
    *
    * @param[in] nsparam Relevant parameters for the solver.
    */
-  MFNavierStokesSolver(SimulationParameters<dim> &nsparam);
+  FluidDynamicsMatrixFree(SimulationParameters<dim> &nsparam);
 
   /**
    * @brief Destructor.
    *
    */
-  ~MFNavierStokesSolver();
+  ~FluidDynamicsMatrixFree();
 
   /**
    * @brief Solve the problem defined by simulation parameters by iterating
