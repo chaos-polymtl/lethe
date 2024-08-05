@@ -9,7 +9,7 @@
 
 template <int dim>
 void
-VansAssemblerCoreModelB<dim>::assemble_matrix(
+VANSAssemblerCoreModelB<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -212,7 +212,7 @@ VansAssemblerCoreModelB<dim>::assemble_matrix(
 
 template <int dim>
 void
-VansAssemblerCoreModelB<dim>::assemble_rhs(
+VANSAssemblerCoreModelB<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -364,12 +364,12 @@ VansAssemblerCoreModelB<dim>::assemble_rhs(
 }
 
 
-template class VansAssemblerCoreModelB<2>;
-template class VansAssemblerCoreModelB<3>;
+template class VANSAssemblerCoreModelB<2>;
+template class VANSAssemblerCoreModelB<3>;
 
 template <int dim>
 void
-VansAssemblerCoreModelA<dim>::assemble_matrix(
+VANSAssemblerCoreModelA<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -576,7 +576,7 @@ VansAssemblerCoreModelA<dim>::assemble_matrix(
 
 template <int dim>
 void
-VansAssemblerCoreModelA<dim>::assemble_rhs(
+VANSAssemblerCoreModelA<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -734,12 +734,12 @@ VansAssemblerCoreModelA<dim>::assemble_rhs(
     }
 }
 
-template class VansAssemblerCoreModelA<2>;
-template class VansAssemblerCoreModelA<3>;
+template class VANSAssemblerCoreModelA<2>;
+template class VANSAssemblerCoreModelA<3>;
 
 template <int dim>
 void
-VansAssemblerBDF<dim>::assemble_matrix(
+VANSAssemblerBDF<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -799,7 +799,7 @@ VansAssemblerBDF<dim>::assemble_matrix(
 
 template <int dim>
 void
-VansAssemblerBDF<dim>::assemble_rhs(
+VANSAssemblerBDF<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -890,12 +890,12 @@ VansAssemblerBDF<dim>::assemble_rhs(
     }
 }
 
-template class VansAssemblerBDF<2>;
-template class VansAssemblerBDF<3>;
+template class VANSAssemblerBDF<2>;
+template class VANSAssemblerBDF<3>;
 
 template <int dim>
 void
-VansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -917,12 +917,12 @@ VansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
@@ -966,12 +966,12 @@ VansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerDiFelice<2>;
-template class VansAssemblerDiFelice<3>;
+template class VANSAssemblerDiFelice<2>;
+template class VANSAssemblerDiFelice<3>;
 
 template <int dim>
 void
-VansAssemblerRong<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   double      cell_void_fraction = 0;
@@ -986,11 +986,11 @@ VansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   // Physical Properties
   Assert(!scratch_data.properties_manager.is_non_newtonian(),
          RequiresConstantViscosity(
-           "VansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+           "VANSAssemblerRong<dim>::calculate_particle_fluid_interactions"));
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "VansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
+           "VANSAssemblerRong<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
@@ -1035,12 +1035,12 @@ VansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerRong<2>;
-template class VansAssemblerRong<3>;
+template class VANSAssemblerRong<2>;
+template class VANSAssemblerRong<3>;
 
 template <int dim>
 void
-VansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   double      C_d = 0;
@@ -1055,12 +1055,12 @@ VansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
@@ -1097,12 +1097,12 @@ VansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerDallavalle<2>;
-template class VansAssemblerDallavalle<3>;
+template class VANSAssemblerDallavalle<2>;
+template class VANSAssemblerDallavalle<3>;
 
 template <int dim>
 void
-VansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   double      cell_void_fraction = 0;
@@ -1117,14 +1117,14 @@ VansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
@@ -1186,12 +1186,12 @@ VansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerKochHill<2>;
-template class VansAssemblerKochHill<3>;
+template class VANSAssemblerKochHill<2>;
+template class VANSAssemblerKochHill<3>;
 
 template <int dim>
 void
-VansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   double      cell_void_fraction = 0;
@@ -1209,14 +1209,14 @@ VansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto pic               = scratch_data.pic;
@@ -1264,12 +1264,12 @@ VansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerBeetstra<2>;
-template class VansAssemblerBeetstra<3>;
+template class VANSAssemblerBeetstra<2>;
+template class VANSAssemblerBeetstra<3>;
 
 template <int dim>
 void
-VansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1290,14 +1290,14 @@ VansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
 
@@ -1363,12 +1363,12 @@ VansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   beta_drag = beta_drag / scratch_data.cell_volume;
 }
 
-template class VansAssemblerGidaspow<2>;
-template class VansAssemblerGidaspow<3>;
+template class VANSAssemblerGidaspow<2>;
+template class VANSAssemblerGidaspow<3>;
 
 template <int dim>
 void
-VansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1400,14 +1400,14 @@ VansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto   pic             = scratch_data.pic;
@@ -1509,12 +1509,12 @@ VansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
     }
 }
 
-template class VansAssemblerSaffmanMei<2>;
-template class VansAssemblerSaffmanMei<3>;
+template class VANSAssemblerSaffmanMei<2>;
+template class VANSAssemblerSaffmanMei<3>;
 
 template <int dim>
 void
-VansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1538,7 +1538,7 @@ VansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   // Physical Properties
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "VansAssemblerMagnus<dim>::calculate_particle_fluid_interactions"));
+           "VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   const auto   pic             = scratch_data.pic;
@@ -1656,12 +1656,12 @@ VansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
     }
 }
 
-template class VansAssemblerMagnus<2>;
-template class VansAssemblerMagnus<3>;
+template class VANSAssemblerMagnus<2>;
+template class VANSAssemblerMagnus<3>;
 
 template <int dim>
 void
-VansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1671,12 +1671,12 @@ VansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
   const double density = scratch_data.properties_manager.get_density_scale();
   const double kinematic_viscosity =
@@ -1706,24 +1706,24 @@ VansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
   particle_number += 1;
 }
 
-template class VansAssemblerViscousTorque<2>;
-template class VansAssemblerViscousTorque<3>;
+template class VANSAssemblerViscousTorque<2>;
+template class VANSAssemblerViscousTorque<3>;
 
 template <int dim>
 void
-VansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // Physical Properties
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
   const double density = scratch_data.properties_manager.get_density_scale();
   const double kinematic_viscosity =
@@ -1759,12 +1759,12 @@ VansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
   i_particle += 1;
 }
 
-template class VansAssemblerVorticalTorque<2>;
-template class VansAssemblerVorticalTorque<3>;
+template class VANSAssemblerVorticalTorque<2>;
+template class VANSAssemblerVorticalTorque<3>;
 
 template <int dim>
 void
-VansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   const auto   pic = scratch_data.pic;
@@ -1774,7 +1774,7 @@ VansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions"));
 
   const double density = scratch_data.properties_manager.get_density_scale();
 
@@ -1796,12 +1796,12 @@ VansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
     }
 }
 
-template class VansAssemblerBuoyancy<2>;
-template class VansAssemblerBuoyancy<3>;
+template class VANSAssemblerBuoyancy<2>;
+template class VANSAssemblerBuoyancy<3>;
 
 template <int dim>
 void
-VansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   const auto pic                    = scratch_data.pic;
@@ -1816,7 +1816,7 @@ VansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions"));
 
 
   const double density = scratch_data.properties_manager.get_density_scale();
@@ -1851,12 +1851,12 @@ VansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
     }
 }
 
-template class VansAssemblerPressureForce<2>;
-template class VansAssemblerPressureForce<3>;
+template class VANSAssemblerPressureForce<2>;
+template class VANSAssemblerPressureForce<3>;
 
 template <int dim>
 void
-VansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
+VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   const auto pic                    = scratch_data.pic;
@@ -1873,14 +1873,14 @@ VansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "VansAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
   const double kinematic_viscosity =
     scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "VansAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
+      "VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   // Loop over particles in cell
@@ -1914,13 +1914,13 @@ VansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
     }
 }
 
-template class VansAssemblerShearForce<2>;
-template class VansAssemblerShearForce<3>;
+template class VANSAssemblerShearForce<2>;
+template class VANSAssemblerShearForce<3>;
 
 
 template <int dim>
 void
-VansAssemblerFPI<dim>::assemble_matrix(
+VANSAssemblerFPI<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1985,7 +1985,7 @@ VansAssemblerFPI<dim>::assemble_matrix(
 
 template <int dim>
 void
-VansAssemblerFPI<dim>::assemble_rhs(
+VANSAssemblerFPI<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2048,5 +2048,5 @@ VansAssemblerFPI<dim>::assemble_rhs(
     }
 }
 
-template class VansAssemblerFPI<2>;
-template class VansAssemblerFPI<3>;
+template class VANSAssemblerFPI<2>;
+template class VANSAssemblerFPI<3>;

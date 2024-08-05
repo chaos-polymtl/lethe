@@ -1449,7 +1449,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerDiFelice<dim>>(
+            std::make_shared<VANSAssemblerDiFelice<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1458,7 +1458,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerRong<dim>>(
+            std::make_shared<VANSAssemblerRong<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1467,7 +1467,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerDallavalle<dim>>(
+            std::make_shared<VANSAssemblerDallavalle<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1476,7 +1476,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Koch and Hill Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerKochHill<dim>>(
+            std::make_shared<VANSAssemblerKochHill<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -1484,7 +1484,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Beetstra drag model assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerBeetstra<dim>>(
+            std::make_shared<VANSAssemblerBeetstra<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -1492,7 +1492,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         {
           // Gidaspow Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<VansAssemblerGidaspow<dim>>(
+            std::make_shared<VANSAssemblerGidaspow<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
@@ -1500,14 +1500,14 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerSaffmanMei<dim>>(
+      std::make_shared<VANSAssemblerSaffmanMei<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.magnus_lift_force == true)
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerMagnus<dim>>(
+      std::make_shared<VANSAssemblerMagnus<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -1515,7 +1515,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
       true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerViscousTorque<dim>>(
+      std::make_shared<VANSAssemblerViscousTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -1523,38 +1523,38 @@ FluidDynamicsVANS<dim>::setup_assemblers()
       true)
     // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerVorticalTorque<dim>>(
+      std::make_shared<VANSAssemblerVorticalTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerBuoyancy<dim>>(
+      std::make_shared<VANSAssemblerBuoyancy<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
     // Pressure Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerPressureForce<dim>>(
+      std::make_shared<VANSAssemblerPressureForce<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<VansAssemblerShearForce<dim>>(
+      std::make_shared<VANSAssemblerShearForce<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(std::make_shared<VansAssemblerBDF<dim>>(
+      this->assemblers.push_back(std::make_shared<VANSAssemblerBDF<dim>>(
         this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<VansAssemblerFPI<dim>>(
+  this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
     this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called
@@ -1562,12 +1562,12 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   // jacobian stored. Core assembler
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelA)
-    this->assemblers.push_back(std::make_shared<VansAssemblerCoreModelA<dim>>(
+    this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelA<dim>>(
       this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelB)
-    this->assemblers.push_back(std::make_shared<VansAssemblerCoreModelB<dim>>(
+    this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelB<dim>>(
       this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
