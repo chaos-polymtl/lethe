@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include "fem-dem/gls_vans.h"
+#include "fem-dem/fluid_dynamics_vans.h"
 
 int
 main(int argc, char *argv[])
@@ -42,7 +42,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSVANSSolver<2> problem(NSparam);
+          FluidDynamicsVANS<2> problem(NSparam);
           problem.solve();
         }
 
@@ -55,7 +55,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSVANSSolver<3> problem(NSparam);
+          FluidDynamicsVANS<3> problem(NSparam);
           problem.solve();
         }
 
