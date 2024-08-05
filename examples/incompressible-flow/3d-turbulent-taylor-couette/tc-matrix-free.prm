@@ -8,12 +8,14 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf3
+  set method            = bdf2
   set output name       = taylor-couette
   set output path       = ./output/
   set time end          = 60
-  set time step         = 0.0125
-  set output frequency  = 2
+  set adapt             = true
+  set max cfl           = 1
+  set time step         = 0.01
+  set output frequency  = 10
   set subdivision       = 2
 end
 
@@ -116,6 +118,13 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
@@ -139,9 +148,9 @@ subsection linear solver
     set verbosity         = verbose
 
     # MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = -1
-    set mg level min cells = 16
+    set mg verbosity                   = quiet
+    set mg min level                   = -1
+    set mg level min cells             = 16
 
     # Smoother
     set mg smoother iterations     = 10
