@@ -13,8 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lethe_mf_navier_stokes_operators_h
-#define lethe_mf_navier_stokes_operators_h
+#ifndef lethe_fluid_dynamics_matrix_free_operators_h
+#define lethe_fluid_dynamics_matrix_free_operators_h
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>

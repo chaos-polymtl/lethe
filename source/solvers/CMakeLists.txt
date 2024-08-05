@@ -16,8 +16,8 @@ add_library(lethe-solvers
   initial_conditions.cc
   isothermal_compressible_navier_stokes_assembler.cc
   isothermal_compressible_navier_stokes_vof_assembler.cc
-  mf_navier_stokes.cc
-  mf_navier_stokes_operators.cc
+  fluid_dynamics_matrix_free.cc
+  fluid_dynamics_matrix_free_operators.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
   navier_stokes_base.cc
@@ -56,8 +56,8 @@ add_library(lethe-solvers
   ../../include/solvers/initial_conditions.h
   ../../include/solvers/isothermal_compressible_navier_stokes_assembler.h
   ../../include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h
-  ../../include/solvers/mf_navier_stokes.h
-  ../../include/solvers/mf_navier_stokes_operators.h
+  ../../include/solvers/fluid_dynamics_matrix_free.h
+  ../../include/solvers/fluid_dynamics_matrix_free_operators.h
   ../../include/solvers/multiphysics_interface.h
   ../../include/solvers/navier_stokes_assemblers.h
   ../../include/solvers/navier_stokes_base.h

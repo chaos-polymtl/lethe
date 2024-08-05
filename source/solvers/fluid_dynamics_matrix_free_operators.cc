@@ -13,7 +13,7 @@
  *
  * ---------------------------------------------------------------------*/
 
-#include "solvers/mf_navier_stokes_operators.h"
+#include "solvers/fluid_dynamics_matrix_free_operators.h"
 
 #include <deal.II/grid/grid_generator.h>
 /**
