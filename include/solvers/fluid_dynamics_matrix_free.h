@@ -13,7 +13,7 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lehte_fluid_dynamics_matrix_free_h
+#ifndef lethe_fluid_dynamics_matrix_free_h
 #define lehte_fluid_dynamics_matrix_free_h
 
 #include <core/exceptions.h>
