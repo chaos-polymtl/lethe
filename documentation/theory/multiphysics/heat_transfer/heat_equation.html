@@ -459,7 +459,7 @@
 <p>The weak form of the heat equation is obtained by multiplying the strong form by a test function <span class="math notranslate nohighlight">\(v\)</span> and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. After applying the integration by part and the Gauss-Ostrogradsky theorem, the weak form of the heat equation is given by the following equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi + Q \right] \;d\Omega\]</div>
+\[\int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi - Q \right] \;d\Omega\]</div>
 </div>
 <p>Note that this formulation treats the thermal conductivity <span class="math notranslate nohighlight">\(k\)</span> as a constant.</p>
 </section>
