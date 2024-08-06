@@ -518,10 +518,10 @@ private:
   /**
    * @brief Assemble the system for interface sharpening
    *  * This function assembles the weak form of:
-   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)  if 0 <=
-   * \phi <= c $$
-   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha  if c <
-   * \phi <= 1 $$
+   * \f$ \Phi = c ^ {(1 - \alpha)} * (\phi ^ \alpha)\f$  if \f$ 0 <=
+   * \phi <= c  \ \f$
+   * \f$ \Phi = 1 - (1 - c) ^ {(1 - \alpha)} * (1 - \phi) ^ \alpha \f$ if \f$c <
+   * \phi <= 1 \f$
    * Reference for sharpening method
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
    *
@@ -666,9 +666,9 @@ private:
    * @brief Assembles the matrix and rhs for calculation of the curvature.
    *
    * Solves:
-   * $$ v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|) $$
-   * where $$v$$, $$psi$$, $$eta$$, and $$k$$ are test function, fpg, filter
-   * value, and curvature.
+   * \f$v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|)\f$
+   * where \f$v\f$, \f$\psi\f$, \f$\eta\f$, and \f$k\f$ are test function, fpg,
+   * filter value, and curvature.
    *
    * @param present_projected_phase_fraction_gradient_solution
    */
