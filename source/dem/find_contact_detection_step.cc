@@ -104,11 +104,11 @@ find_floating_mesh_mapping_step(
 }
 
 template void
-find_floating_mesh_mapping_step(
-  const double smallest_contact_search_criterion,
-  std::vector<std::shared_ptr<SerialSolid<2, 3>>> solids);
-
-template void
-find_floating_mesh_mapping_step(
+find_floating_mesh_mapping_step<2>(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> solids);
+
+template void
+find_floating_mesh_mapping_step<3>(
+  const double smallest_contact_search_criterion,
+  std::vector<std::shared_ptr<SerialSolid<2, 3>>> solids);

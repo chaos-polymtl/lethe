@@ -703,16 +703,15 @@ DEMSolver<dim>::post_process_results()
   if (parameters.post_processing.Lagrangian_post_processing &&
       simulation_control->is_output_iteration())
     {
-      post_processing_object.write_post_processing_results(
-        triangulation,
-        grid_pvdhandler,
-        background_dh,
-        particle_handler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator,
-        sparse_contacts_object);
+      write_post_processing_results<dim>(triangulation,
+                                         grid_pvdhandler,
+                                         background_dh,
+                                         particle_handler,
+                                         parameters,
+                                         simulation_control->get_current_time(),
+                                         simulation_control->get_step_number(),
+                                         mpi_communicator,
+                                         sparse_contacts_object);
     }
 }
 
@@ -822,7 +821,6 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
   // Exchange ghost particles
   particle_handler.exchange_ghost_particles(true);
 }
-
 
 template <int dim>
 void
