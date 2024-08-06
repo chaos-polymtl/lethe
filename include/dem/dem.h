@@ -377,11 +377,6 @@ private:
   std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
 
   /**
-   * @brief The post-processing object.
-   */
-  LagrangianPostProcessing<dim> post_processing_object;
-
-  /**
    * @brief The integrator object.
    */
   std::shared_ptr<Integrator<dim>> integrator_object;
