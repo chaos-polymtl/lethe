@@ -12,23 +12,22 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_boundary_cells_info_struct_h
+#define lethe_boundary_cells_info_struct_h
+
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/distributed/tria.h>
 
-#ifndef boundary_cells_info_struct_h
-#  define boundary_cells_info_struct_h
-
-/**
- * This struct handles the information related to the boundary cells which will
- * be used for particle-wall contact detection
- */
-
 using namespace dealii;
 
+/**
+ * @brief Handle the information related to the boundary cells
+ * which will be used for particle-wall contact detection.
+ */
 template <int dim>
 struct boundary_cells_info_struct
 {
@@ -48,6 +47,10 @@ struct boundary_cells_info_struct
   Point<dim> point_on_face;
 };
 
+/**
+ * @brief Handle the information related to the periodic boundary cells
+ * which will be used for particle-wall contact detection.
+ */
 template <int dim>
 struct periodic_boundaries_cells_info_struct
 {
@@ -73,5 +76,4 @@ struct periodic_boundaries_cells_info_struct
   Point<dim> point_on_periodic_face;
 };
 
-
-#endif /* boundary_cells_info_struct_h */
+#endif

@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_velocity_verlet_integrator_h
+#define lethe_velocity_verlet_integrator_h
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/integrator.h>
@@ -22,15 +24,14 @@
 
 using namespace dealii;
 
-#ifndef velocity_verlet_integrator_h
-#  define velocity_verlet_integrator_h
-
 /**
- * Implementation of a classical velocity verlet scheme for the integration
- * of the particle motion. Note that reinitilization of force and torque is also
- * integrated into integration class
+ * @brief Implementation of a classical velocity verlet scheme for the
+ * integration of the particle motion. Note that reinitilization of force and
+ * torque is also integrated into integration class.
  *
- * @note Velocity Verlet is a second-order integration scheme. Calculation precedure:
+ * Velocity Verlet is a second-order integration scheme.
+ *
+ * Calculation precedure:
  *
  * Calculation of half-step velocity
  * v(n+1/2) = v(n)     + 1/2 * a(n)   * dt
@@ -41,10 +42,7 @@ using namespace dealii;
  * Updating acceleration and velocity of particle
  * a(n+1)   = F(n+1) / m
  * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
- *
- * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
-
 template <int dim>
 class VelocityVerletIntegrator : public Integrator<dim>
 {
@@ -53,7 +51,7 @@ public:
   {}
 
   /**
-   * Carries out integrating of new particles' location after insertion.
+   * @brief Integrate new particles' location after insertion.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -73,7 +71,7 @@ public:
     const std::vector<double>       &MOI) override;
 
   /**
-   * Carries out the correction integration of the motion of all
+   * @brief Calculate the integration of the motion of all
    * particles by using the Velocity Verlet method.
    *
    * @param particle_handler The particle handler whose particle motion we wish

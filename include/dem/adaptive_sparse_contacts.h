@@ -187,7 +187,7 @@ public:
    * fraction.
    * @param[in] advect_particles The flag for the advection of particles.
    */
-  void
+  inline void
   set_parameters(const double granular_temperature,
                  const double solid_fraction,
                  const double advect_particles)

@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_write_checkpoint_h
+#define lethe_write_checkpoint_h
 
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
@@ -26,17 +28,6 @@
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
-#include <fstream>
-#include <iostream>
-
-using namespace std;
-
-#ifndef write_checkpoint_h
-#  define write_checkpoint_h
 
 /**
  * @brief Write_checkpoint Write a DEM simulation checkpointing to allow for DEM
@@ -54,7 +45,6 @@ using namespace std;
  * @param pcout Printing in parallel
  * @param mpi_communicator
  */
-
 template <int dim>
 void
 write_checkpoint(
@@ -70,4 +60,4 @@ write_checkpoint(
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator);
 
-#endif /* write_checkpoint_h */
+#endif

@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_data_containers_h
+#define lethe_data_containers_h
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/particle_particle_contact_info.h>
@@ -28,20 +30,17 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 #include <ankerl/unordered_dense.h>
 #pragma GCC diagnostic pop
 
-#include <iostream>
-#include <unordered_map>
-#include <vector>
-
-#ifndef lethe_data_containers_h
-#  define lethe_data_containers_h
-
 /**
- * This namespace defines all the data containers and required operations on
+ * @brief This namespace defines all the data containers and required operations on
  * these containers for the DEM solver. At the moment, only overloaded operators
  * are here, but eventually all the data containers of the DEM solver will be
  * moved here
@@ -49,14 +48,13 @@
 namespace DEM
 {
   /**
-   * Defined global face id as a type to ensure that we know what the
+   * @brief Defined global face id as a type to ensure that we know what the
    * structures use as index. This is more verbose than unsigned int
    */
   typedef unsigned int global_face_id;
 
-
   /**
-   * Operator overloading to enable using triangulation cells as map keys.
+   * @brief Operator overloading to enable using triangulation cells as map keys.
    */
   using namespace dealii;
 
@@ -74,7 +72,7 @@ namespace DEM
   };
 
   /**
-   * Operator overloading to enable using particle iterators as map keys.
+   * @brief Operator overloading to enable using particle iterators as map keys.
    */
 
   template <int dim>
@@ -89,7 +87,7 @@ namespace DEM
   };
 
   /**
-   * Operator overloading to enable using triangulation cells as map keys.
+   * @brief Operator overloading to enable using triangulation cells as map keys.
    */
   using namespace dealii;
 
@@ -107,12 +105,14 @@ namespace DEM
     }
   };
 
-  // DEM data structure containers
-  // To improve readability of containers, there's a simple description above
-  // all declarations which follow these representation :
-  // <> : map or unordered map
-  // () : tuple or pair
-  // [] : vector
+  /**
+   * @brief DEM data structure containers
+   * To improve readability of containers, there's a simple description above
+   * all declarations which follow these representation :
+   * <> : map or unordered map
+   * () : tuple or pair
+   * [] : vector
+   */
   template <int dim>
   struct dem_data_structures
   {

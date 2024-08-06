@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_particle_contact_force_h
+#define lethe_particle_particle_contact_force_h
 
 #include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
@@ -31,14 +33,10 @@
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_particle_contact_force_h
-#  define particle_particle_contact_force_h
-
 using namespace DEM;
 
 /**
- * Base class for the particle-particle contact force models
+ * @brief Base class for the particle-particle contact force models
  * This class does not implement any of the models, but ensures that
  * an interface without template specialization is available. All of the
  * actual implementation of the models are carried out in the
@@ -50,8 +48,8 @@ class ParticleParticleContactForceBase
 {
 public:
   /**
-   * Carries out the calculation of the contact force using the contact pair
-   * information obtained in the fine search and physical properties of
+   * @brief Carries out the calculation of the contact force using the contact
+   * pair information obtained in the fine search and physical properties of
    * particles
    *
    * @param local_adjacent_particles Required information for calculation of the

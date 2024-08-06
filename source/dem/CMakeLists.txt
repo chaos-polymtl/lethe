@@ -5,6 +5,7 @@ add_library(lethe-dem
   dem.cc
   dem_action_manager.cc
   dem_contact_manager.cc
+  dem_post_processing.cc
   dem_solver_parameters.cc
   distributions.cc
   explicit_euler_integrator.cc
@@ -37,7 +38,6 @@ add_library(lethe-dem
   particle_wall_linear_force.cc
   particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
-  post_processing.cc
   read_checkpoint.cc
   read_mesh.cc
   set_particle_particle_contact_force_model.cc
@@ -55,6 +55,7 @@ add_library(lethe-dem
   ../../include/dem/dem.h
   ../../include/dem/dem_action_manager.h
   ../../include/dem/dem_contact_manager.h
+  ../../include/dem/dem_post_processing.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/distributions.h
   ../../include/dem/explicit_euler_integrator.h
@@ -90,7 +91,6 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h
   ../../include/dem/periodic_boundaries_manipulator.h
-  ../../include/dem/post_processing.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
   ../../include/dem/rolling_resistance_torque_models.h

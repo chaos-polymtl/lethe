@@ -12,20 +12,12 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-#include <core/dem_properties.h>
-
-#include <dem/dem_solver_parameters.h>
-#include <dem/insertion.h>
-
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/particles/particle_handler.h>
-
 #ifndef lethe_insertion_file_h
-#  define lethe_insertion_file_h
+#define lethe_insertion_file_h
+
+#include <dem/insertion.h>
 
 template <int dim>
 class InsertionFile : public Insertion<dim>

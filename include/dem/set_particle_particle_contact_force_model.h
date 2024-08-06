@@ -12,21 +12,18 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_set_particle_particle_contact_force_model_h
+#define lethe_set_particle_particle_contact_force_model_h
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/force_chains_visualization.h>
 #include <dem/particle_particle_contact_force.h>
 
-using namespace std;
-
-#ifndef set_particle_particle_contact_force_model_h
-#  define set_particle_particle_contact_force_model_h
-
 /**
- * Sets the selected particle-particle contact force model in the parameter
- * handler file.
+ * @brief Set the selected particle-particle contact force model in the
+ * parameter handler file.
  *
  * @param dem_parameters DEM parameters
  * @return A pointer to the particle-particle contact force object
@@ -37,7 +34,7 @@ set_particle_particle_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
 /**
- * Sets the selected force chains contact force model in the parameter
+ * @brief Set the selected force chains contact force model in the parameter
  * handler file.
  *
  * @param dem_parameters DEM parameters
@@ -48,4 +45,4 @@ std::shared_ptr<ParticlesForceChainsBase<dim>>
 set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
-#endif /* set_particle_particle_contact_force_model_h */
+#endif

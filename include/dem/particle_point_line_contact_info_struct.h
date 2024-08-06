@@ -12,20 +12,19 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_point_line_contact_info_struct_h
+#define lethe_particle_point_line_contact_info_struct_h
 
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef particle_point_line_contact_info_struct_h
-#  define particle_point_line_contact_info_struct_h
-
 /**
- * This struct handles the information related to the calculation of the
- * particle-point and particle-line contact forces
+ * @brief Handle information related to the calculation of the particle-point
+ * and particle-line contact forces.
  */
 
 using namespace dealii;
@@ -38,4 +37,4 @@ struct particle_point_line_contact_info_struct
   Point<3>                         point_two;
 };
 
-#endif /* particle_point_line_contact_info_struct_h */
+#endif

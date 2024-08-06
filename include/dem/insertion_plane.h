@@ -12,32 +12,21 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-#include <dem/dem_solver_parameters.h>
+#ifndef lethe_insertion_plane_h
+#define lethe_insertion_plane_h
+
 #include <dem/insertion.h>
 
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/particles/particle_handler.h>
-
-
-#ifndef insertion_plane_h
-#  define insertion_plane_h
-
 /**
- * Insertion of particles using cells cut by a plane
- *
- * @note
- *
+ * @brief Insertion of particles using cells cut by a plane.
  * Particle insertion using cells cut by a plane. Locally owned cells that are
  * cut by the plane are flagged. From those flagged cells, we insert a particle
  * at their centroids if they are individually empty (contain no particle). This
  * way, no significant overlap is occurring on the insertion of new particle
  * which can occur with other insertion method.
  */
-
 template <int dim>
 class InsertionPlane : public Insertion<dim>
 {
@@ -129,5 +118,4 @@ private:
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
 };
 
-
-#endif /* insertion_plane_h */
+#endif

@@ -1,8 +1,8 @@
 #include <core/grids.h>
 #include <core/solutions_output.h>
 
+#include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/post_processing.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>

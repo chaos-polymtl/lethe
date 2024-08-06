@@ -12,17 +12,16 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_distributions_h
+#define lethe_distributions_h
 
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
-
-#ifndef distributions_h
-#  define distributions_h
 
 class Distribution
 {
@@ -97,17 +96,17 @@ public:
 
 private:
   /**
-   * Average diameter of the normal distribution.
+   * @brief Average diameter of the normal distribution.
    */
   const double diameter_average;
 
   /**
-   * Standard deviation of distribution of the normal distribution.
+   * @brief Standard deviation of distribution of the normal distribution.
    */
   const double standard_deviation;
 
   /**
-   * Random number generator for the diameter selection.
+   * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
 };
@@ -150,7 +149,7 @@ public:
 
 private:
   /**
-   *  The diameter value of the distribution.
+   * @brief The diameter value of the distribution.
    */
   const double diameter_value;
 };
@@ -204,16 +203,16 @@ private:
   const std::vector<double> diameter_custom_values;
 
   /**
-   * Vector containing cumulative probabilities associated with de
+   * @brief Vector containing cumulative probabilities associated with de
    * diameter_custom_values vector. The probabilities are based on the volume
    * fraction, not the number of particles.
    */
-  std::vector<double> diameter_custom_cumu_prob;
+  std::vector<double> diameter_custom_cumul_prob;
 
   /**
-   * Random number generator for the diameter selection.
+   * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
 };
 
-#endif /* distributions_h */
+#endif
