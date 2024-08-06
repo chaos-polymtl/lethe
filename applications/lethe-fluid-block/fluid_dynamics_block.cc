@@ -30,8 +30,8 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "fluid_dynamics_block_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid-block",
+                                   "lethe-fluid-nitsche"));
 
           FluidDynamicsBlock<2> problem(NSparam);
           problem.solve();
@@ -48,8 +48,8 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "fluid_dynamics_block_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid-block",
+                                   "lethe-fluid-nitsche"));
 
           FluidDynamicsBlock<3> problem(NSparam);
           problem.solve();
