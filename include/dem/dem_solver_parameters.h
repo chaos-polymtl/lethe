@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_dem_solver_parmmeters_h
-#define lethe_dem_solver_parmmeters_h
+#ifndef lethe_dem_solver_parameters_h
+#define lethe_dem_solver_parameters_h
 
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
