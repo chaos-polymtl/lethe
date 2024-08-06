@@ -382,7 +382,7 @@ protected:
   refine_mesh_uniform();
 
   /**
-   * @brief Restart a previous simulation from a checkpoint file. 
+   * @brief Restart a previous simulation from a checkpoint file.
    */
   virtual void
   read_checkpoint();

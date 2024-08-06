@@ -35,7 +35,6 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/full_matrix.h>
@@ -140,8 +139,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
-      this->simulation_parameters.initial_condition->type ==
-        Parameters::InitialConditionType::average_velocity_profile ||
       this->simulation_parameters.initial_condition->type ==
         Parameters::InitialConditionType::average_velocity_profile)
     {
@@ -1281,18 +1278,13 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type ==
            Parameters::InitialConditionType::average_velocity_profile)
     {
-      announce_string(this->pcout, "Initial condition using average velocity profile");
-      // this->pcout << "*********************************************************"
-      //             << std::endl;
-      // this->pcout
-      //   << " Initial condition using average velocity from checkpoint "
-      //   << std::endl;
-      // this->pcout << "*********************************************************"
-      //             << std::endl;
-
+      announce_string(this->pcout,
+                      "Initial condition using average velocity profile");
 
       std::string checkpoint_file_name =
-        this->simulation_parameters.initial_condition->checkpoint_folder + this->simulation_parameters.initial_condition->checkpoint_file_name;
+        this->simulation_parameters.initial_condition->average_velocity_folder +
+        this->simulation_parameters.initial_condition
+          ->average_velocity_file_name;
 
       // The average velocity profile needs to come from the results of a
       // simulation. The checkpoint/restart mechanism is used to obtain all the
@@ -1300,15 +1292,16 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       // mesh needs to be used, but new physics can be added to the simulation.
       this->set_solution_from_checkpoint(checkpoint_file_name);
 
-      // This is an initial condition, not a restart. Therefore, the current
-      // time is set to 0, the iteration number as well and the pvd is cleared
-      // from previous results
-      // this->simulation_control->set_current_time(0.0);
-      // this->simulation_control->set_iteration_number(0);
-      // this->simulation_control->set_current_time_step(
-      //   this->simulation_parameters.simulation_control.dt);
+      auto simulation_control_info =
+        this->simulation_control->get_checkpointed_simulation_control_info(
+          checkpoint_file_name);
 
-      // this->pvdhandler.times_and_names.clear();
+      // Calculate the the average velocities
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        this->simulation_parameters.post_processing,
+        simulation_control_info[0],  // Checkpointed end time
+        simulation_control_info[1]); // Checkpointed time step
     }
   else
     {

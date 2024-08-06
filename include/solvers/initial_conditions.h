@@ -110,8 +110,8 @@ namespace Parameters
       Functions::ParsedFunction<dim>(2);
 
     // Path to the checkpointed average velocity profile
-    std::string checkpoint_folder;
-    std::string checkpoint_file_name;
+    std::string average_velocity_folder;
+    std::string average_velocity_file_name;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -237,8 +237,8 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.enter_subsection("average velocity profile");
-      checkpoint_folder    = prm.get("checkpoint folder");
-      checkpoint_file_name = prm.get("checkpoint file name");
+      average_velocity_folder    = prm.get("checkpoint folder");
+      average_velocity_file_name = prm.get("checkpoint file name");
 
       prm.leave_subsection();
     }

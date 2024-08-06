@@ -318,29 +318,6 @@ public:
     CFL = p_CFL;
   }
 
-  /**
-   * @brief Set the value of the simulation time.
-   *
-   * @param p_current_time Desired time at the current time step.
-   */
-
-  void
-  set_current_time(const double p_current_time)
-  {
-    current_time = p_current_time;
-  }
-
-  /**
-   * @brief Set the iteration number.
-   *
-   * @param p_iteration_number The new iteration number.
-   */
-
-  void
-  set_iteration_number(const unsigned int p_iteration_number)
-  {
-    iteration_number = p_iteration_number;
-  }
 
   /**
    * @brief Manually force the value of the time step for the present iteration
@@ -498,8 +475,20 @@ public:
 
   void
   save(std::string filename);
+
+  /**
+   * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   */
   void
   read(std::string filename);
+
+  /**
+   * @brief Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information.
+   *
+   * @return A vector containing the last checkpointed file and time step.
+   */
+  std::vector<double>
+  get_checkpointed_simulation_control_info(std::string filename);
 };
 
 

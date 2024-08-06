@@ -92,9 +92,11 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
-      const double nu_dcdd = is_steady(method) ? 0 : 0.5 * h * h * u_mag *
-                             dcdd_temperature_gradient.norm() /
-                             scratch_data.global_delta_T_ref;
+      const double nu_dcdd = is_steady(method) ?
+                               0 :
+                               0.5 * h * h * u_mag *
+                                 dcdd_temperature_gradient.norm() /
+                                 scratch_data.global_delta_T_ref;
 
       // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -231,9 +233,11 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
-      const double nu_dcdd = is_steady(method) ? 0 : 0.5 * h * h * u_mag *
-                             dcdd_temperature_gradient.norm() /
-                             scratch_data.global_delta_T_ref;
+      const double nu_dcdd = is_steady(method) ?
+                               0 :
+                               0.5 * h * h * u_mag *
+                                 dcdd_temperature_gradient.norm() /
+                                 scratch_data.global_delta_T_ref;
 
       // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
