@@ -429,6 +429,33 @@ Tracer<dim>::postprocess(bool first_iteration)
           0)
         this->write_tracer_statistics();
     }
+
+  // Calculate tracer flow rate at every boundary
+  if (this->simulation_parameters.post_processing.calculate_tracer_flow_rate)
+    {
+      TimerOutput::Scope t(this->computing_timer, "Calculate tracer flow rate");
+
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          announce_string(this->pcout, "Tracer flow rates");
+        }
+
+      std::vector<double> tracer_flow_rates(
+        this->simulation_parameters.boundary_conditions.size);
+      if (multiphysics->fluid_dynamics_is_block())
+        {
+          tracer_flow_rates = postprocess_tracer_flow_rate(
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          tracer_flow_rates = postprocess_tracer_flow_rate(
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        }
+      this->write_tracer_flow_rates(tracer_flow_rates);
+    }
+
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
@@ -528,6 +555,188 @@ Tracer<dim>::calculate_tracer_statistics()
   statistics_table.add_value("std-dev", tracer_std_deviation);
   statistics_table.set_scientific("std-dev", true);
   statistics_table.set_precision("std-dev", 12);
+}
+
+
+template <int dim>
+template <typename VectorType>
+std::vector<double>
+Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
+{
+  const unsigned int n_q_points_face  = this->face_quadrature->size();
+  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+
+  // Initialize tracer information
+  std::vector<double>         tracer_values(n_q_points_face);
+  std::vector<Tensor<1, dim>> tracer_gradient(n_q_points_face);
+  FEFaceValues<dim>           fe_face_values_tracer(*this->mapping,
+                                          this->dof_handler.get_fe(),
+                                          *this->face_quadrature,
+                                          update_values | update_gradients |
+                                            update_JxW_values |
+                                            update_normal_vectors);
+
+  // Initialize fluid dynamics information
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  const FEValuesExtractors::Vector velocities(0);
+  std::vector<Tensor<1, dim>>      velocity_values(n_q_points_face);
+  FEFaceValues<dim>                fe_face_values_fd(*this->mapping,
+                                      dof_handler_fd->get_fe(),
+                                      *this->face_quadrature,
+                                      update_values);
+
+  // Initialize fluid properties
+  auto &properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+  std::map<field, std::vector<double>> fields;
+
+  const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
+
+  std::vector<double>     tracer_diffusivity(n_q_points_face);
+  std::vector<Point<dim>> face_quadrature_points;
+
+  std::vector<double> tracer_flow_rate_vector(
+    this->simulation_parameters.boundary_conditions.size, 0);
+
+  // Get vector of all boundary conditions
+  const auto boundary_conditions_ids =
+    this->simulation_parameters.boundary_conditions.id;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() && cell->at_boundary())
+        {
+          for (const auto face : cell->face_indices())
+            {
+              if (cell->face(face)->at_boundary())
+                {
+                  const auto boundary_id =
+                    std::find(begin(boundary_conditions_ids),
+                              end(boundary_conditions_ids),
+                              cell->face(face)->boundary_id());
+
+
+                  unsigned int vector_index =
+                    boundary_id - boundary_conditions_ids.begin();
+
+                  // Gather tracer information
+                  fe_face_values_tracer.reinit(cell, face);
+                  fe_face_values_tracer.get_function_values(
+                    this->present_solution, tracer_values);
+                  fe_face_values_tracer.get_function_gradients(
+                    this->present_solution, tracer_gradient);
+
+                  // We update the fields required by the diffusivity
+                  // model
+                  fields.clear();
+                  if (diffusivity_model->depends_on(field::levelset))
+                    {
+                      std::vector<double> levelset_values(n_q_points_face);
+                      fields.insert(
+                        std::pair<field, std::vector<double>>(field::levelset,
+                                                              n_q_points_face));
+                      face_quadrature_points =
+                        fe_face_values_tracer.get_quadrature_points();
+                      immersed_solid_signed_distance_function =
+                        this->multiphysics
+                          ->get_immersed_solid_signed_distance_function();
+                      this->immersed_solid_signed_distance_function->value_list(
+                        face_quadrature_points, levelset_values);
+                      set_field_vector(field::levelset,
+                                       levelset_values,
+                                       fields);
+                    }
+
+                  diffusivity_model->vector_value(fields, tracer_diffusivity);
+
+                  // Get fluid dynamics active cell iterator
+                  typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                    &(*(this->triangulation)),
+                    cell->level(),
+                    cell->index(),
+                    dof_handler_fd);
+
+                  // Gather fluid dynamics information
+                  fe_face_values_fd.reinit(cell_fd, face);
+                  fe_face_values_fd[velocities].get_function_values(
+                    current_solution_fd, velocity_values);
+
+                  // Loop on the quadrature points
+                  for (unsigned int q = 0; q < n_q_points_face; q++)
+                    {
+                      Tensor<1, dim> normal_vector_tracer =
+                        -fe_face_values_tracer.normal_vector(q);
+
+                      tracer_flow_rate_vector[vector_index] +=
+                        (-tracer_diffusivity[q] * tracer_gradient[q] *
+                           normal_vector_tracer +
+                         tracer_values[q] * velocity_values[q] *
+                           normal_vector_tracer) *
+                        fe_face_values_tracer.JxW(q);
+                    } // end loop on quadrature points
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
+
+
+  // Sum across all cores
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    tracer_flow_rate_vector[i_bc] =
+      Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
+
+  return tracer_flow_rate_vector;
+}
+
+template <int dim>
+void
+Tracer<dim>::write_tracer_flow_rates(
+  const std::vector<double> tracer_flow_rate_vector)
+{
+  // Fill table
+  this->tracer_flow_rate_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  this->tracer_flow_rate_table.set_precision("time", 12);
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      this->tracer_flow_rate_table.add_value("flow-rate-" +
+                                               Utilities::int_to_string(i_bc,
+                                                                        2),
+                                             tracer_flow_rate_vector[i_bc]);
+      this->tracer_flow_rate_table.set_scientific(
+        "flow-rate-" + Utilities::int_to_string(i_bc, 2), true);
+    }
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Tracer flow rate at the boundaries: " << std::endl;
+      for (unsigned int i_bc = 0;
+           i_bc < this->simulation_parameters.boundary_conditions.size;
+           ++i_bc)
+        this->pcout << "\t boundary " << i_bc << ": "
+                    << tracer_flow_rate_vector[i_bc] << std::endl;
+    }
+
+  auto mpi_communicator = triangulation->get_communicator();
+  if ((simulation_control->get_step_number() %
+         this->simulation_parameters.post_processing.output_frequency ==
+       0) &&
+      Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing.tracer_flow_rate_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+      this->tracer_flow_rate_table.write_text(output);
+    }
 }
 
 template <int dim>
