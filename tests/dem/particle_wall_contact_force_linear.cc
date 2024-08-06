@@ -148,27 +148,24 @@ test()
     ConditionalOStream(std::cout,
                        Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
-  // Calling broad search
-  ParticleWallBroadSearch<dim> broad_search_object;
+
   // P-W broad search
-  ParticleWallBroadSearch<dim> particle_wall_broad_search_object;
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     particle_wall_contact_list;
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+  find_particle_wall_contact_pairs<dim>(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
     particle_wall_contact_list);
-  broad_search_object.find_particle_wall_contact_pairs(
+  find_particle_wall_contact_pairs<dim>(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
     particle_wall_contact_list);
 
   // Calling fine search
-  ParticleWallFineSearch<dim> fine_search_object;
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_contact_information;
-  fine_search_object.particle_wall_fine_search(
-    particle_wall_contact_list, particle_wall_contact_information);
+  particle_wall_fine_search<dim>(particle_wall_contact_list,
+                                 particle_wall_contact_information);
 
   // Calling linear force
   ParticleWallLinearForce<dim> force_object(dem_parameters);
