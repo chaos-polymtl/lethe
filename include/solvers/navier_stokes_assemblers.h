@@ -369,10 +369,10 @@ public:
 
 
 template <int dim>
-class GDNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+class BlockNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GDNavierStokesAssemblerCore(
+  BlockNavierStokesAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     const double                       gamma)
     : simulation_control(simulation_control)
@@ -404,11 +404,11 @@ public:
 };
 
 template <int dim>
-class GDNavierStokesAssemblerNonNewtonianCore
+class BlockNavierStokesAssemblerNonNewtonianCore
   : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GDNavierStokesAssemblerNonNewtonianCore(
+  BlockNavierStokesAssemblerNonNewtonianCore(
     std::shared_ptr<SimulationControl> simulation_control,
     const double                       gamma)
     : simulation_control(simulation_control)

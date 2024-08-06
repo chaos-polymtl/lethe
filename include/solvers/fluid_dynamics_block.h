@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_gd_navier_stokes_h
-#define lethe_gd_navier_stokes_h
+#ifndef lethe_fluid_dynamics_block_h
+#define lethe_fluid_dynamics_block_h
 
 #include <core/exceptions.h>
 #include <core/vector.h>
@@ -72,12 +72,12 @@ private:
  */
 
 template <int dim>
-class GDNavierStokesSolver
+class FluidDynamicsBlock
   : public NavierStokesBase<dim, GlobalBlockVectorType, std::vector<IndexSet>>
 {
 public:
-  GDNavierStokesSolver(SimulationParameters<dim> &nsparam);
-  ~GDNavierStokesSolver();
+  FluidDynamicsBlock(SimulationParameters<dim> &nsparam);
+  ~FluidDynamicsBlock();
 
   void
   solve();

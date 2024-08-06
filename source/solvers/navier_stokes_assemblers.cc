@@ -1227,7 +1227,7 @@ template class GLSNavierStokesAssemblerBDF<3>;
 
 template <int dim>
 void
-GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
+BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1315,7 +1315,7 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
+BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1383,13 +1383,13 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
     }
 }
 
-template class GDNavierStokesAssemblerNonNewtonianCore<2>;
-template class GDNavierStokesAssemblerNonNewtonianCore<3>;
+template class BlockNavierStokesAssemblerNonNewtonianCore<2>;
+template class BlockNavierStokesAssemblerNonNewtonianCore<3>;
 
 
 template <int dim>
 void
-GDNavierStokesAssemblerCore<dim>::assemble_matrix(
+BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1476,7 +1476,7 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-GDNavierStokesAssemblerCore<dim>::assemble_rhs(
+BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1543,8 +1543,8 @@ GDNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 
 
-template class GDNavierStokesAssemblerCore<2>;
-template class GDNavierStokesAssemblerCore<3>;
+template class BlockNavierStokesAssemblerCore<2>;
+template class BlockNavierStokesAssemblerCore<3>;
 
 template <int dim>
 void
