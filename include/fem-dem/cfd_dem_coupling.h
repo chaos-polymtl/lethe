@@ -31,7 +31,7 @@
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/gls_vans.h>
+#include <fem-dem/fluid_dynamics_vans.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <deal.II/base/work_stream.h>
@@ -53,7 +53,7 @@ using namespace dealii;
  * simulate solid-fluid flow with two-way coupling.
  */
 template <int dim>
-class CFDDEMSolver : public GLSVANSSolver<dim>
+class CFDDEMSolver : public FluidDynamicsVANS<dim>
 {
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);

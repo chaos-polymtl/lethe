@@ -1,6 +1,6 @@
 #include <core/lethe_grid_tools.h>
 
-#include <fem-dem/gls_vans.h>
+#include <fem-dem/fluid_dynamics_vans.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -8,9 +8,10 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-// Constructor for class GLS_VANS
+// Constructor for class FluidDynamicsVANS
 template <int dim>
-GLSVANSSolver<dim>::GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam)
+FluidDynamicsVANS<dim>::FluidDynamicsVANS(
+  CFDDEMSimulationParameters<dim> &nsparam)
   : GLSNavierStokesSolver<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
   , void_fraction_dof_handler(*this->triangulation)
@@ -46,7 +47,7 @@ GLSVANSSolver<dim>::GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam)
 }
 
 template <int dim>
-GLSVANSSolver<dim>::~GLSVANSSolver()
+FluidDynamicsVANS<dim>::~FluidDynamicsVANS()
 {
   this->dof_handler.clear();
   void_fraction_dof_handler.clear();
@@ -54,7 +55,7 @@ GLSVANSSolver<dim>::~GLSVANSSolver()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::setup_dofs()
+FluidDynamicsVANS<dim>::setup_dofs()
 {
   GLSNavierStokesSolver<dim>::setup_dofs();
 
@@ -154,7 +155,7 @@ GLSVANSSolver<dim>::setup_dofs()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::percolate_void_fraction()
+FluidDynamicsVANS<dim>::percolate_void_fraction()
 {
   for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
     {
@@ -165,7 +166,7 @@ GLSVANSSolver<dim>::percolate_void_fraction()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::finish_time_step_fd()
+FluidDynamicsVANS<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
@@ -176,7 +177,7 @@ GLSVANSSolver<dim>::finish_time_step_fd()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::read_dem()
+FluidDynamicsVANS<dim>::read_dem()
 {
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
@@ -231,7 +232,7 @@ GLSVANSSolver<dim>::read_dem()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::initialize_void_fraction()
+FluidDynamicsVANS<dim>::initialize_void_fraction()
 {
   calculate_void_fraction(this->simulation_control->get_current_time(), false);
   for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
@@ -240,8 +241,8 @@ GLSVANSSolver<dim>::initialize_void_fraction()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::calculate_void_fraction(const double time,
-                                            bool         load_balance_step)
+FluidDynamicsVANS<dim>::calculate_void_fraction(const double time,
+                                                bool         load_balance_step)
 {
   announce_string(this->pcout, "Void Fraction");
 
@@ -283,7 +284,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time,
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_mass_matrix_diagonal(
+FluidDynamicsVANS<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
   Assert(fe_void_fraction.degree == 1, ExcNotImplemented());
@@ -315,7 +316,7 @@ GLSVANSSolver<dim>::assemble_mass_matrix_diagonal(
 
 template <int dim>
 void
-GLSVANSSolver<dim>::update_solution_and_constraints()
+FluidDynamicsVANS<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
@@ -429,7 +430,7 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::vertices_cell_mapping()
+FluidDynamicsVANS<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
@@ -444,7 +445,7 @@ GLSVANSSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::particle_centered_method()
+FluidDynamicsVANS<dim>::particle_centered_method()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(1);
@@ -537,7 +538,8 @@ GLSVANSSolver<dim>::particle_centered_method()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
+FluidDynamicsVANS<dim>::quadrature_centered_sphere_method(
+  bool load_balance_step)
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(1);
@@ -1079,7 +1081,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
 
 template <int dim>
 void
-GLSVANSSolver<dim>::satellite_point_method()
+FluidDynamicsVANS<dim>::satellite_point_method()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(1);
@@ -1318,7 +1320,7 @@ GLSVANSSolver<dim>::satellite_point_method()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::solve_L2_system_void_fraction()
+FluidDynamicsVANS<dim>::solve_L2_system_void_fraction()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -1393,7 +1395,7 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 // iteration with the solver and sets the initial conditions
 template <int dim>
 void
-GLSVANSSolver<dim>::iterate()
+FluidDynamicsVANS<dim>::iterate()
 {
   announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
   this->forcing_function->set_time(
@@ -1404,7 +1406,7 @@ GLSVANSSolver<dim>::iterate()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::setup_assemblers()
+FluidDynamicsVANS<dim>::setup_assemblers()
 {
   this->assemblers.clear();
   particle_fluid_assemblers.clear();
@@ -1447,7 +1449,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // DiFelice Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDiFelice<dim>>(
+            std::make_shared<VANSAssemblerDiFelice<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1456,7 +1458,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Rong Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerRong<dim>>(
+            std::make_shared<VANSAssemblerRong<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1465,7 +1467,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Dallavalle Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerDallavalle<dim>>(
+            std::make_shared<VANSAssemblerDallavalle<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
 
@@ -1474,7 +1476,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Koch and Hill Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerKochHill<dim>>(
+            std::make_shared<VANSAssemblerKochHill<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -1482,7 +1484,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Beetstra drag model assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerBeetstra<dim>>(
+            std::make_shared<VANSAssemblerBeetstra<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_model ==
@@ -1490,7 +1492,7 @@ GLSVANSSolver<dim>::setup_assemblers()
         {
           // Gidaspow Model drag Assembler
           particle_fluid_assemblers.push_back(
-            std::make_shared<GLSVansAssemblerGidaspow<dim>>(
+            std::make_shared<VANSAssemblerGidaspow<dim>>(
               this->cfd_dem_simulation_parameters.cfd_dem));
         }
     }
@@ -1498,14 +1500,14 @@ GLSVANSSolver<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerSaffmanMei<dim>>(
+      std::make_shared<VANSAssemblerSaffmanMei<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.magnus_lift_force == true)
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerMagnus<dim>>(
+      std::make_shared<VANSAssemblerMagnus<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -1513,7 +1515,7 @@ GLSVANSSolver<dim>::setup_assemblers()
       true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerViscousTorque<dim>>(
+      std::make_shared<VANSAssemblerViscousTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -1521,38 +1523,38 @@ GLSVANSSolver<dim>::setup_assemblers()
       true)
     // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerVorticalTorque<dim>>(
+      std::make_shared<VANSAssemblerVorticalTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerBuoyancy<dim>>(
+      std::make_shared<VANSAssemblerBuoyancy<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
     // Pressure Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerPressureForce<dim>>(
+      std::make_shared<VANSAssemblerPressureForce<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.shear_force == true)
     // Shear Force
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerShearForce<dim>>(
+      std::make_shared<VANSAssemblerShearForce<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
+      this->assemblers.push_back(std::make_shared<VANSAssemblerBDF<dim>>(
         this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
+  this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
     this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called
@@ -1560,20 +1562,18 @@ GLSVANSSolver<dim>::setup_assemblers()
   // jacobian stored. Core assembler
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelA)
-    this->assemblers.push_back(
-      std::make_shared<GLSVansAssemblerCoreModelA<dim>>(
-        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
+    this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelA<dim>>(
+      this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vans_model ==
       Parameters::VANSModel::modelB)
-    this->assemblers.push_back(
-      std::make_shared<GLSVansAssemblerCoreModelB<dim>>(
-        this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
+    this->assemblers.push_back(std::make_shared<VANSAssemblerCoreModelB<dim>>(
+      this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
 }
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_system_matrix()
+FluidDynamicsVANS<dim>::assemble_system_matrix()
 {
   {
     TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
@@ -1601,8 +1601,8 @@ GLSVANSSolver<dim>::assemble_system_matrix()
       this->dof_handler.begin_active(),
       this->dof_handler.end(),
       *this,
-      &GLSVANSSolver::assemble_local_system_matrix,
-      &GLSVANSSolver::copy_local_matrix_to_global_matrix,
+      &FluidDynamicsVANS::assemble_local_system_matrix,
+      &FluidDynamicsVANS::copy_local_matrix_to_global_matrix,
       scratch_data,
       StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                            this->cell_quadrature->size()));
@@ -1612,7 +1612,7 @@ GLSVANSSolver<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_local_system_matrix(
+FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -1664,7 +1664,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-GLSVANSSolver<dim>::copy_local_matrix_to_global_matrix(
+FluidDynamicsVANS<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -1678,7 +1678,7 @@ GLSVANSSolver<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_system_rhs()
+FluidDynamicsVANS<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -1706,8 +1706,8 @@ GLSVANSSolver<dim>::assemble_system_rhs()
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
     *this,
-    &GLSVANSSolver::assemble_local_system_rhs,
-    &GLSVANSSolver::copy_local_rhs_to_global_rhs,
+    &FluidDynamicsVANS::assemble_local_system_rhs,
+    &FluidDynamicsVANS::copy_local_rhs_to_global_rhs,
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
@@ -1720,7 +1720,7 @@ GLSVANSSolver<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_local_system_rhs(
+FluidDynamicsVANS<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -1773,7 +1773,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-GLSVANSSolver<dim>::copy_local_rhs_to_global_rhs(
+FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -1787,7 +1787,7 @@ GLSVANSSolver<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
+FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(void_fraction_dof_handler,
                            nodal_void_fraction_relevant,
@@ -1796,7 +1796,7 @@ GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
-GLSVANSSolver<dim>::monitor_mass_conservation()
+FluidDynamicsVANS<dim>::monitor_mass_conservation()
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
@@ -1966,7 +1966,7 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::solve()
+FluidDynamicsVANS<dim>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -2041,5 +2041,5 @@ GLSVANSSolver<dim>::solve()
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
-template class GLSVANSSolver<2>;
-template class GLSVANSSolver<3>;
+template class FluidDynamicsVANS<2>;
+template class FluidDynamicsVANS<3>;

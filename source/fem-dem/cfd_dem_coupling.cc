@@ -14,7 +14,7 @@
 // Constructor for the class CFD-DEM class
 template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
-  : GLSVANSSolver<dim>(nsparam)
+  : FluidDynamicsVANS<dim>(nsparam)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
@@ -1469,7 +1469,7 @@ CFDDEMSolver<dim>::solve()
       this->postprocess_cfd_dem();
       this->finish_time_step_fd();
 
-      this->GLSVANSSolver<dim>::monitor_mass_conservation();
+      this->FluidDynamicsVANS<dim>::monitor_mass_conservation();
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         report_particle_statistics();

@@ -40,8 +40,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
-#ifndef lethe_gls_vans_h
-#  define lethe_gls_vans_h
+#ifndef lethe_fluid_dynamics_vans_h
+#  define lethe_fluid_dynamics_vans_h
 
 using namespace dealii;
 
@@ -112,12 +112,12 @@ particle_sphere_intersection_3d(double r_particle,
  */
 
 template <int dim>
-class GLSVANSSolver : public GLSNavierStokesSolver<dim>
+class FluidDynamicsVANS : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam);
+  FluidDynamicsVANS(CFDDEMSimulationParameters<dim> &nsparam);
 
-  ~GLSVANSSolver();
+  ~FluidDynamicsVANS();
 
   virtual void
   solve() override;

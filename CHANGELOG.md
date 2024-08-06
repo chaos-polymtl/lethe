@@ -7,9 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Renamed all the files related to the `lethe-fluid-matrix-free` application: `mf_navier_stokes` to `fluid_dynamics_matrix_free` and `mf_navier_stokes_operators` to `fluid_dynamics_matrix_free_operators`. The main class `MFNavierStokesSolver` was also renamed to `FluidDynamicsMatrixFree`. [#1222](https://github.com/chaos-polymtl/lethe/pull/1222)
+- MINOR Renamed the main file related to the `lethe-fluid-vans` application: `gls_vans` to `fluid_dynamics_vans`. The name of the `GLSVansAssembler...` classes were changed to `VANSAssembler...`, and the main class `GLSVANSSolver` was also renamed to `FluidDynamicsVANS`. [#1225](https://github.com/chaos-polymtl/lethe/pull/1225)
 
-## [Master] - 2024-08-05
+### Changed
+
+- MINOR Renamed all the files related to the `lethe-fluid-matrix-free` application: `mf_navier_stokes` to `fluid_dynamics_matrix_free` and `mf_navier_stokes_operators` to `fluid_dynamics_matrix_free_operators`. The main class `MFNavierStokesSolver` was also renamed to `FluidDynamicsMatrixFree`. [#1222](https://github.com/chaos-polymtl/lethe/pull/1222)
 
 ### Removed
 
