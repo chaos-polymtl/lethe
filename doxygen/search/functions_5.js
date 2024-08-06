@@ -53,7 +53,7 @@ var searchData=
   ['finish_5fsimulation_4649',['finish_simulation',['../classVolumeOfFluid.html#aa14d04810a528f23c4a98d3513c9509d',1,'VolumeOfFluid::finish_simulation()'],['../classTracer.html#ae9356d51b14f4d8db3505e21e179d82c',1,'Tracer::finish_simulation()'],['../classNavierStokesBase.html#ab80853df347a58fc01e89fe9b04a329f',1,'NavierStokesBase::finish_simulation()'],['../classMultiphysicsInterface.html#aaae2db0c237e7348244a5a37caa5f864',1,'MultiphysicsInterface::finish_simulation()'],['../classHeatTransfer.html#a900850f6c5346a85f740fa2a218e223a',1,'HeatTransfer::finish_simulation()'],['../classCahnHilliard.html#a2cb71332d1e345a18e5be0472de4b31e',1,'CahnHilliard::finish_simulation()'],['../classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a',1,'AuxiliaryPhysics::finish_simulation()'],['../classDEMSolver.html#ad1c24643a1822aee849fa22761f63b0a',1,'DEMSolver::finish_simulation()']]],
   ['finish_5fsimulation_5ffd_4650',['finish_simulation_fd',['../classNavierStokesBase.html#a9befe173b4d33ac9c482743b998deae3',1,'NavierStokesBase']]],
   ['finish_5ftime_5fstep_4651',['finish_time_step',['../classNavierStokesBase.html#a66e07e67baaf085649cea34a8aec24a3',1,'NavierStokesBase']]],
-  ['finish_5ftime_5fstep_5ffd_4652',['finish_time_step_fd',['../classGLSVANSSolver.html#a2153ae63cb73dfcc0d31be4963288ad7',1,'GLSVANSSolver']]],
+  ['finish_5ftime_5fstep_5ffd_4652',['finish_time_step_fd',['../classFluidDynamicsVANS.html#ad14a6b5f4d1f15511516d3dae8ea20b3',1,'FluidDynamicsVANS']]],
   ['finish_5ftime_5fstep_5fparticles_4653',['finish_time_step_particles',['../classGLSSharpNavierStokesSolver.html#a0e7555d3864e2910e180fa1f53d503b0',1,'GLSSharpNavierStokesSolver']]],
   ['first_5fdem_5fof_5fcfddem_5fiteration_5fstep_4654',['first_dem_of_cfddem_iteration_step',['../classDEMActionManager.html#a369b92e230920fcaff1f79c102e7bb72',1,'DEMActionManager']]],
   ['flag_5fdofs_5fconnected_5fto_5ffluid_4655',['flag_dofs_connected_to_fluid',['../classNavierStokesBase.html#a625f286aafd1c4ff0ec6f796985fa316',1,'NavierStokesBase']]],
@@ -61,6 +61,7 @@ var searchData=
   ['flowcontrol_4657',['FlowControl',['../classFlowControl.html#aeab13df0da2212c7c37408b69e131f30',1,'FlowControl']]],
   ['fluid_5fdynamics_5fis_5fblock_4658',['fluid_dynamics_is_block',['../classMultiphysicsInterface.html#a02b1ef8ec7a30caa81764aa669a71991',1,'MultiphysicsInterface']]],
   ['fluiddynamicsmatrixfree_4659',['FluidDynamicsMatrixFree',['../classFluidDynamicsMatrixFree.html#a9bec5747e8d454c16fbbc9dd675a95c7',1,'FluidDynamicsMatrixFree']]],
-  ['force_5fon_5fib_4660',['force_on_ib',['../classGLSSharpNavierStokesSolver.html#ab49fd6706ed08d6851c320897fb74fa7',1,'GLSSharpNavierStokesSolver']]],
-  ['foreach_4661',['foreach',['../CMakeLists_8txt.html#a82adabb5ae5860f2f29c791f0357fca0',1,'CMakeLists.txt']]]
+  ['fluiddynamicsvans_4660',['FluidDynamicsVANS',['../classFluidDynamicsVANS.html#a8d3a93bf74d6adb68024be2143e97d18',1,'FluidDynamicsVANS']]],
+  ['force_5fon_5fib_4661',['force_on_ib',['../classGLSSharpNavierStokesSolver.html#ab49fd6706ed08d6851c320897fb74fa7',1,'GLSSharpNavierStokesSolver']]],
+  ['foreach_4662',['foreach',['../CMakeLists_8txt.html#a82adabb5ae5860f2f29c791f0357fca0',1,'CMakeLists.txt']]]
 ];

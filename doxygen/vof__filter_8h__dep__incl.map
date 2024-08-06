@@ -21,9 +21,9 @@
 <area shape="rect" id="node35" href="$navier__stokes__vof__assemblers_8h.html" title=" " alt="" coords="793,458,1032,514"/>
 <area shape="rect" id="node38" href="$navier__stokes__scratch__data_8cc.html" title=" " alt="" coords="1920,213,2103,284"/>
 <area shape="rect" id="node11" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="3009,792,3192,848"/>
-<area shape="rect" id="node13" href="$gls__vans_8h.html" title=" " alt="" coords="2851,577,3033,633"/>
+<area shape="rect" id="node13" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="2851,577,3033,633"/>
 <area shape="rect" id="node15" href="$vans__assemblers_8cc.html" title=" " alt="" coords="2797,458,2980,514"/>
-<area shape="rect" id="node14" href="$gls__vans_8cc.html" title=" " alt="" coords="2803,688,2985,744"/>
+<area shape="rect" id="node14" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="2803,688,2985,744"/>
 <area shape="rect" id="node17" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="2357,577,2554,633"/>
 <area shape="rect" id="node19" href="$gls__nitsche__navier__stokes_8h.html" title=" " alt="" coords="2578,577,2786,633"/>
 <area shape="rect" id="node21" href="$gls__navier__stokes_8cc.html" title=" " alt="" coords="2149,577,2332,633"/>

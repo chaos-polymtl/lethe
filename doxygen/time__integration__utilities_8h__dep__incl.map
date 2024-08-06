@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/core/time_integration_utilities.h" name="/home/runner/work/lethe/lethe/include/core/time_integration_utilities.h">
 <area shape="rect" id="node1" title=" " alt="" coords="2563,5,2745,61"/>
-<area shape="rect" id="node2" href="$gls__vans_8h.html" title=" " alt="" coords="277,591,460,647"/>
+<area shape="rect" id="node2" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="277,591,460,647"/>
 <area shape="rect" id="node6" href="$fluid__dynamics__matrix__free__operators_8h.html" title=" " alt="" coords="2408,109,2591,180"/>
 <area shape="rect" id="node8" href="$fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="2449,584,2632,655"/>
 <area shape="rect" id="node10" href="$navier__stokes__scratch__data_8h.html" title=" " alt="" coords="971,117,1190,173"/>
@@ -23,7 +23,7 @@
 <area shape="rect" id="node45" href="$tracer_8cc.html" title=" " alt="" coords="4181,117,4364,173"/>
 <area shape="rect" id="node46" href="$tracer__assemblers_8cc.html" title=" " alt="" coords="4388,117,4571,173"/>
 <area shape="rect" id="node3" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="244,703,427,759"/>
-<area shape="rect" id="node5" href="$gls__vans_8cc.html" title=" " alt="" coords="451,703,633,759"/>
+<area shape="rect" id="node5" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="451,703,633,759"/>
 <area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="244,807,427,863"/>
 <area shape="rect" id="node7" href="$fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="2263,473,2482,529"/>
 <area shape="rect" id="node9" href="$fluid__dynamics__matrix__free__operators_8cc.html" title=" " alt="" coords="2319,228,2501,299"/>

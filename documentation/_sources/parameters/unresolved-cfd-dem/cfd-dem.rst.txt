@@ -1,7 +1,7 @@
 =======
 CFD-DEM
 =======
-This subsection includes parameters related to multiphase flow simulations using the both the gls_vans solver and the cfd-dem_coupling solver within Lethe.
+This subsection includes parameters related to multiphase flow simulations using the both the `lethe-fluid-vans` solver and the `lethe-fluid-particles` solver within Lethe.
 
 .. code-block:: text
 

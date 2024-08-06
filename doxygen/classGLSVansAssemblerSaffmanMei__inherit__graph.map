@@ -1,4 +1,0 @@
-<map id="GLSVansAssemblerSaffmanMei&lt; dim &gt;" name="GLSVansAssemblerSaffmanMei&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the Lift force using Saffman&#45;Mei model." alt="" coords="5,95,231,136"/>
-<area shape="rect" id="node2" href="$classParticleFluidAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int..." alt="" coords="17,5,219,47"/>
-</map>

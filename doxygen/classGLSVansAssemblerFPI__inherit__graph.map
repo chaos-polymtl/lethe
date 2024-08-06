@@ -1,4 +1,0 @@
-<map id="GLSVansAssemblerFPI&lt; dim &gt;" name="GLSVansAssemblerFPI&lt; dim &gt;">
-<area shape="rect" id="node1" title="Class that assembles the fluid_particle interactions (FPI) for the VANS equations such as the drag fo..." alt="" coords="27,95,193,136"/>
-<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="5,5,215,47"/>
-</map>

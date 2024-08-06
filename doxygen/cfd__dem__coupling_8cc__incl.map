@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/source/fem&#45;dem/cfd_dem_coupling.cc" name="/home/runner/work/lethe/lethe/source/fem&#45;dem/cfd_dem_coupling.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="1339,5,1521,61"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1327,5,1509,61"/>
 <area shape="rect" id="node2" href="$grids_8h.html" title=" " alt="" coords="1534,459,1633,486"/>
 <area shape="rect" id="node18" href="$solutions__output_8h.html" title=" " alt="" coords="593,109,768,136"/>
 <area shape="rect" id="node22" href="$explicit__euler__integrator_8h.html" title=" " alt="" coords="1156,363,1299,404"/>
@@ -48,5 +48,5 @@
 <area shape="rect" id="node45" href="$lagrangian__post__processing_8h.html" title=" " alt="" coords="2081,452,2240,493"/>
 <area shape="rect" id="node46" href="$periodic__boundaries__manipulator_8h.html" title=" " alt="" coords="2907,452,3094,493"/>
 <area shape="rect" id="node48" href="$cfd__dem__simulation__parameters_8h.html" title=" " alt="" coords="1241,452,1459,493"/>
-<area shape="rect" id="node49" href="$gls__vans_8h.html" title=" " alt="" coords="1611,191,1766,218"/>
+<area shape="rect" id="node49" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="1590,184,1774,225"/>
 </map>

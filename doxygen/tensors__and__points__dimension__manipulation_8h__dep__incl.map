@@ -30,11 +30,11 @@
 <area shape="rect" id="node39" href="$write__checkpoint_8h.html" title=" " alt="" coords="4152,213,4335,269"/>
 <area shape="rect" id="node6" href="$ib__particles__dem_8h.html" title=" " alt="" coords="1547,421,1729,477"/>
 <area shape="rect" id="node11" href="$serial__solid_8cc.html" title=" " alt="" coords="1081,421,1264,477"/>
-<area shape="rect" id="node16" href="$gls__vans_8cc.html" title=" " alt="" coords="2459,733,2641,789"/>
+<area shape="rect" id="node16" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="2459,733,2641,789"/>
 <area shape="rect" id="node17" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="1288,421,1471,477"/>
 <area shape="rect" id="node7" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="470,525,667,581"/>
 <area shape="rect" id="node19" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="3863,733,4045,789"/>
-<area shape="rect" id="node20" href="$gls__vans_8h.html" title=" " alt="" coords="3499,629,3681,685"/>
+<area shape="rect" id="node20" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="3499,629,3681,685"/>
 <area shape="rect" id="node21" href="$dem_8cc.html" title=" " alt="" coords="4105,637,4296,678"/>
 <area shape="rect" id="node23" href="$force__chains__visualization_8h.html" title=" " alt="" coords="3683,421,3865,477"/>
 <area shape="rect" id="node25" href="$particle__particle__contact__force_8h.html" title=" " alt="" coords="2757,317,2953,373"/>

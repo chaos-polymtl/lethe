@@ -9,13 +9,13 @@
 <area shape="rect" id="node48" href="$postprocessors__smoothing_8h.html" title=" " alt="" coords="1160,235,1372,291"/>
 <area shape="rect" id="node50" href="$simulation__parameters_8cc.html" title=" " alt="" coords="2809,117,3004,173"/>
 <area shape="rect" id="node3" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="40,703,223,759"/>
-<area shape="rect" id="node5" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="581,591,778,647"/>
-<area shape="rect" id="node7" href="$gls__vans_8h.html" title=" " alt="" coords="322,591,504,647"/>
+<area shape="rect" id="node5" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="322,591,504,647"/>
+<area shape="rect" id="node7" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="581,591,778,647"/>
 <area shape="rect" id="node9" href="$vans__assemblers_8h.html" title=" " alt="" coords="52,473,235,529"/>
 <area shape="rect" id="node11" href="$cfd__dem__simulation__parameters_8cc.html" title=" " alt="" coords="260,473,518,529"/>
 <area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="40,807,223,863"/>
-<area shape="rect" id="node6" href="$gls__sharp__navier__stokes_8cc.html" title=" " alt="" coords="984,703,1186,759"/>
-<area shape="rect" id="node8" href="$gls__vans_8cc.html" title=" " alt="" coords="322,703,504,759"/>
+<area shape="rect" id="node6" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="322,703,504,759"/>
+<area shape="rect" id="node8" href="$gls__sharp__navier__stokes_8cc.html" title=" " alt="" coords="984,703,1186,759"/>
 <area shape="rect" id="node10" href="$vans__assemblers_8cc.html" title=" " alt="" coords="52,591,235,647"/>
 <area shape="rect" id="node13" href="$cahn__hilliard_8h.html" title=" " alt="" coords="2618,591,2800,647"/>
 <area shape="rect" id="node16" href="$heat__transfer_8h.html" title=" " alt="" coords="2882,591,3064,647"/>
