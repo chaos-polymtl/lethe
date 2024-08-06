@@ -21,8 +21,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Conditions for whether a boundary condition should be updated were made less restrictive. Now, each physics is responsible for updating or not their boundary conditions. [#1197](https://github.com/chaos-polymtl/lethe/pull/1197)
 
-## [Master] - 2024-08-05
-
 ### Removed
 
 - MINOR Removed the gear3 DEM integrator. It was never used, it did not possess any unit test and it was not even clear if it still worked. [#1221](https://github.com/chaos-polymtl/lethe/pull/1211)
