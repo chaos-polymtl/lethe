@@ -190,7 +190,7 @@ make_table_scalars_tensors(
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  *
- * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
+ * @param[in] independent_vector Vector of Tensor<1,dim> that serves as the
  * independent variable (e.g., position).
  *
  * @param[in] independent_column_names Vector of strings representing labels of
@@ -228,16 +228,19 @@ make_table_tensors_tensors(
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  *
- * @param[in] independent_values Vector of Tensor<1,dim> that serves as the
+ * @param[in] independent_vector Vector of Tensor<1,dim> that serves as the
  * independent variable (e.g., position).
  *
  * @param[in] independent_column_names Vector of strings representing labels of
  * the independent tensor.
  *
- * @param[in] dependent_vector Vector of scalar that serves as the dependent
- * variable (e.g., energy).
+ * @param[in] dependent_values Vector of of doubles containing
+ * dependent variables values (e.g., force).
  *
  * @param[in] dependent_column_name Label of the dependent variable.
+ *
+ * @param[in] display_precision Integer indicating the precision at which the
+ * table is written.
  *
  * @param[in] display_scientific_notation Boolean indicating if the values
  * should be displayed in scientific notation (true) or not (false).
@@ -305,10 +308,11 @@ sgn(T val)
 
 
 /**
- * @brief Clip a properties between a lower and a higher value
+ * @brief Clip a property between a lower and a higher value
  * @tparam T argument's type
  * @param[in,out] lower Lower admissible value
  * @param[in,out] upper Upper admissible value
+ * @param[in,out] n
  * @return Clipped variable that is not below the lower limit and not above the upper limit
  *
  */
@@ -323,7 +327,7 @@ clip(const T &n, const T &lower, const T &upper)
  * @brief Calculate the equivalent properties for a given phase. Method called
  * in quadrature points loops in Cahn-Hilliard simulations.
  *
- * @param phase Phase value for the given quadrature point
+ * @param phase_cahn_hilliard Phase value for the given quadrature point
  *
  * @param property0 Property value for the fluid with index 0 (fluid for phase = -1)
  *
@@ -352,11 +356,11 @@ calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
 
 /**
  * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.
- * * @param table The table to be filled. Warning ! if the table is empty, it's content will be erased.
+ * @param table The table to be filled. Warning ! if the table is empty, it's content will be erased.
  *
- *    @param file The path the file that will be use to fill up the table.
+ * @param file_name The path the file that will be use to fill up the table.
  *
- *   @param delimiter The delimiter used to read the table.
+ * @param delimiter The delimiter used to read the table.
  */
 void
 fill_table_from_file(TableHandler     &table,
@@ -367,11 +371,11 @@ fill_table_from_file(TableHandler     &table,
  * @brief function that read a file that was build from a dealii table and fill 2 vectors.
  * The first vector contains all the columns names and the second one contained
  * all the column data.
- * * @param map A map used to contain the data based on the columns name.
+ * @param map A map used to contain the data based on the columns name.
  *
- *   @param file The path the file that will be use to fill up the table.
+ * @param file_name The path the file that will be use to fill up the table.
  *
- *   @param delimiter The delimiter used to read the table.
+ * @param delimiter The delimiter used to read the table.
  */
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
@@ -380,11 +384,11 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 
 /**
  * @brief Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data.
- * * @param map Container to be filled with the information in the dealii table.
+ * @param map Container to be filled with the information in the dealii table.
  *
- *   @param file The path the file that will be use to fill up the table.
+ * @param file_name The path the file that will be use to fill up the table.
  *
- *   @param delimiter The delimiter used to read the table.
+ * @param delimiter The delimiter used to read the table.
  */
 void
 fill_string_vectors_from_file(
@@ -394,7 +398,7 @@ fill_string_vectors_from_file(
 
 /**
  * @brief Creates the simulation output folder
- * * @param dirname Output directory name
+ * @param dirname Output directory name
  */
 void
 create_output_folder(const std::string &dirname);

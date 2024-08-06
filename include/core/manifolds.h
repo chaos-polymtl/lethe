@@ -165,7 +165,7 @@ public:
  *
  * @param triangulation The triangulation to manifolds are attached
  *
- * @param manifolds_parameters The information about the type of manifolds attached to the faces
+ * @param manifolds The information about the type of manifolds attached to the faces
  */
 template <int dim, int spacedim = dim>
 void
@@ -180,7 +180,7 @@ attach_manifolds_to_triangulation(
  *
  * @param triangulation The triangulation to manifolds are attached
  *
- * @param std::string Filename of the cad file
+ * @param cad_name Filename of the cad file
  *
  * @param manifold_id Identifier of the manifold
  */
