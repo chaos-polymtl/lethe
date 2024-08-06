@@ -1302,6 +1302,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.post_processing,
         simulation_control_info[0],  // Checkpointed end time
         simulation_control_info[1]); // Checkpointed time step
+
+      this->local_evaluation_point =
+        this->average_velocities->get_average_velocities();
+      this->present_solution = this->local_evaluation_point;
     }
   else
     {
