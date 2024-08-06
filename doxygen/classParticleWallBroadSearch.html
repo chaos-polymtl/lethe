@@ -110,9 +110,9 @@ Private Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticleWallBroadSearch&lt; dim &gt;</h3>
 
-<p>Broad search is used to obtain all the particles located at boundary cells </p>
+<p>Broad search is used to obtain all the particles located at boundary cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00045">45</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00044">44</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a16bf0e16b9afb5df807f635b38928d67"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a16bf0e16b9afb5df807f635b38928d67">&#9670;&nbsp;</a></span>ParticleWallBroadSearch()</h2>
@@ -178,7 +178,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finds a two-layered unordered map of particle iterators which shows the candidate particle-floating wall collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not</p>
+
+<p>Find a two-layered unordered map of particle iterators which shows the candidate particle-floating wall collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">boundary_cells_for_floating_walls</td><td>Boundary cells located adjacent to floating walls </td></tr>
@@ -283,10 +284,11 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finds unordered map of tuples (tuple of particle located in boundary cells, normal vector of the boundary face, a point on the face and the corresponding boundary cell) which shows the candidate particle-wall collision pairs. These collision candidates will be investigated in the fine search to check if they are in contact or not</p>
+
+<p>Finds unordered map of tuples (tuple of particle located in boundary cells, normal vector of the boundary face, a point on the face and the corresponding boundary cell) which shows the candidate particle-wall collision pairs. These collision candidates will be investigated in the fine search to check if they are in contact or not. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">boundary_cells_information</td><td>Information of the boundary cells and faces. <a class="el" href="classThis.html">This</a> is the output of the FindBoundaryCellsInformation class </td></tr>
+    <tr><td class="paramname">boundary_cells_information</td><td>Information of the boundary cells and faces. This is the output of the FindBoundaryCellsInformation class </td></tr>
     <tr><td class="paramname">particle_handler</td><td>Particle handler of particles located in boundary cells </td></tr>
     <tr><td class="paramname">particle_wall_contact_candidates</td><td>A two-layered unordered map of tuples. Each tuple contains a particle located near boundaries, the normal vector of the corresponding face boundary, a point on the boundary and the boundary cell. The contact pair is used in the fine search </td></tr>
   </table>
@@ -382,7 +384,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finds a two-layered unordered map (particle_floating_mesh_contact_candidates) of particle iterators that shows the candidate particle-floating mesh collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not</p>
+
+<p>Find a two-layered unordered map (particle_floating_mesh_contact_candidates) of particle iterators that shows the candidate particle-floating mesh collision candidates. These collision pairs will be investigated in the fine search to check if they are in contact or not. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">solid_surfaces_mesh_information</td><td>Information of the solid surfaces mapped in the background triangulation. </td></tr>
@@ -492,7 +495,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Stores the candidate particle-wall contact pairs. </p>
+<p>Store the candidate particle-wall contact pairs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_iterator</td><td>The particle iterator to start boundary id. </td></tr>
@@ -502,9 +505,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00176">176</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00174">174</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
 
-<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00039">boundary_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00042">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00045">boundary_cells_info_struct&lt; dim &gt;::normal_vector</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00048">boundary_cells_info_struct&lt; dim &gt;::point_on_face</a>.</p>
+<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00038">boundary_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00041">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00044">boundary_cells_info_struct&lt; dim &gt;::normal_vector</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00047">boundary_cells_info_struct&lt; dim &gt;::point_on_face</a>.</p>
 
 </div>
 </div>
@@ -550,7 +553,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Stores the candidate particle-floating wall contact pairs. </p>
+<p>Store the candidate particle-floating wall contact pairs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_iterator</td><td>The particle iterator to start boundary id. </td></tr>
@@ -560,7 +563,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00221">221</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__broad__search_8h_source.html#l00219">219</a> of file <a class="el" href="particle__wall__broad__search_8h_source.html">particle_wall_broad_search.h</a>.</p>
 
 </div>
 </div>

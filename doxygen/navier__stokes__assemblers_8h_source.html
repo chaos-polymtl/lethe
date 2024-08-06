@@ -450,10 +450,10 @@ $(function() {
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="keyword">class </span>GDNavierStokesAssemblerCore : <span class="keyword">public</span> <a class="code" href="classNavierStokesAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="keyword">class </span>BlockNavierStokesAssemblerCore : <span class="keyword">public</span> <a class="code" href="classNavierStokesAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;{</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  GDNavierStokesAssemblerCore(</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  BlockNavierStokesAssemblerCore(</div>
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    std::shared_ptr&lt;SimulationControl&gt; simulation_control,</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>                       gamma)</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    : simulation_control(simulation_control)</div>
@@ -485,11 +485,11 @@ $(function() {
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;};</div>
 <div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="keyword">class </span>GDNavierStokesAssemblerNonNewtonianCore</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="keyword">class </span>BlockNavierStokesAssemblerNonNewtonianCore</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  : <span class="keyword">public</span> <a class="code" href="classNavierStokesAssemblerBase.html">NavierStokesAssemblerBase</a>&lt;dim&gt;</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;{</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  GDNavierStokesAssemblerNonNewtonianCore(</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  BlockNavierStokesAssemblerNonNewtonianCore(</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    std::shared_ptr&lt;SimulationControl&gt; simulation_control,</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>                       gamma)</div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    : simulation_control(simulation_control)</div>

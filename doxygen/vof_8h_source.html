@@ -599,10 +599,10 @@ $(function() {
 <div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="comment">  /**</span></div>
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;<span class="comment">   * @brief Assemble the system for interface sharpening</span></div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;<span class="comment">   *  * This function assembles the weak form of:</span></div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;<span class="comment">   *  $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha)  if 0 &lt;=</span></div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="comment">   * \phi &lt;= c $$</span></div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;<span class="comment">   *  $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha  if c &lt;</span></div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;<span class="comment">   * \phi &lt;= 1 $$</span></div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;<span class="comment">   * \f$ \Phi = c ^ {(1 - \alpha)} * (\phi ^ \alpha)\f$  if \f$ 0 &lt;=</span></div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="comment">   * \phi &lt;= c  \ \f$</span></div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;<span class="comment">   * \f$ \Phi = 1 - (1 - c) ^ {(1 - \alpha)} * (1 - \phi) ^ \alpha \f$ if \f$c &lt;</span></div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;<span class="comment">   * \phi &lt;= 1 \f$</span></div>
 <div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;<span class="comment">   * Reference for sharpening method</span></div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;<span class="comment">   * https://www.sciencedirect.com/science/article/pii/S0045782500002000</span></div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="comment">   *</span></div>
@@ -747,9 +747,9 @@ $(function() {
 <div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;<span class="comment">   * @brief Assembles the matrix and rhs for calculation of the curvature.</span></div>
 <div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;<span class="comment">   *</span></div>
 <div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;<span class="comment">   * Solves:</span></div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="comment">   * $$ v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|) $$</span></div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="comment">   * where $$v$$, $$psi$$, $$eta$$, and $$k$$ are test function, fpg, filter</span></div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="comment">   * value, and curvature.</span></div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="comment">   * \f$v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|)\f$</span></div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="comment">   * where \f$v\f$, \f$\psi\f$, \f$\eta\f$, and \f$k\f$ are test function, fpg,</span></div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="comment">   * filter value, and curvature.</span></div>
 <div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;<span class="comment">   *</span></div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;<span class="comment">   * @param present_projected_phase_fraction_gradient_solution</span></div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;<span class="comment">   */</span></div>

@@ -102,11 +102,9 @@ Private Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class FindCellNeighbors&lt; dim &gt;</h3>
 
-<p>Finds the neighbors lists of all the active cells in the input triangulation. <a class="el" href="classFindCellNeighbors.html#a8c6568ad14815794636715a834599def" title="Finds the neighbor list (without repetition) of all the active cells in the triangulation....">find_cell_neighbors()</a> is written to avoid any repetition, for instance if cell B is recognized as the neighbor of cell A once, cell A will not appear in the neighbor list of cell B again. On the other hand, <a class="el" href="classFindCellNeighbors.html#a797a7daf8c996f6879cf21adfe4ddc3b">find_full_cell_neighbors()</a> function finds the neighbors list with this repetition.</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>Finds the neighbors lists of all the active cells in the input triangulation. <a class="el" href="classFindCellNeighbors.html#a8c6568ad14815794636715a834599def" title="Finds the neighbor list (without repetition) of all the active cells in the triangulation....">find_cell_neighbors()</a> is written to avoid any repetition, for instance if cell B is recognized as the neighbor of cell A once, cell A will not appear in the neighbor list of cell B again. On the other hand, <a class="el" href="classFindCellNeighbors.html#a797a7daf8c996f6879cf21adfe4ddc3b" title="Finds the full neighbor list (with repetition) of all the active cells in the triangulation....">find_full_cell_neighbors()</a> function finds the neighbors list with this repetition. </p>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8h_source.html#l00045">45</a> of file <a class="el" href="find__cell__neighbors_8h_source.html">find_cell_neighbors.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8h_source.html#l00037">37</a> of file <a class="el" href="find__cell__neighbors_8h_source.html">find_cell_neighbors.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a925aa84e12f4ff25f6feef0881ea4276"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a925aa84e12f4ff25f6feef0881ea4276">&#9670;&nbsp;</a></span>FindCellNeighbors()</h2>
@@ -264,7 +262,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finds the full neighbor list (with repetition) of all the active cells in the triangulation. <a class="el" href="classThis.html">This</a> function is used in particle-floating mesh contacts, as in this situation, we need to define all the particles located in the neighbor cells of the background cell (cut by the floating mesh) as contact candidates</p>
+
+<p>Finds the full neighbor list (with repetition) of all the active cells in the triangulation. This function is used in particle-floating mesh contacts, as in this situation, we need to define all the particles located in the neighbor cells of the background cell (cut by the floating mesh) as contact candidates. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the information of the cells </td></tr>

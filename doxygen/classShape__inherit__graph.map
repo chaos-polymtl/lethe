@@ -1,6 +1,6 @@
 <map id="Shape&lt; dim &gt;" name="Shape&lt; dim &gt;">
 <area shape="rect" id="node1" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="228,360,345,387"/>
-<area shape="rect" id="node3" href="$classCompositeShape.html" title=" " alt="" coords="403,5,590,32"/>
+<area shape="rect" id="node3" href="$classCompositeShape.html" title="This class was designed so that specific composite shapes could be defined through the parameter file..." alt="" coords="403,5,590,32"/>
 <area shape="rect" id="node4" href="$classCone.html" title=" " alt="" coords="441,56,552,83"/>
 <area shape="rect" id="node5" href="$classCutHollowSphere.html" title=" " alt="" coords="402,107,591,133"/>
 <area shape="rect" id="node6" href="$classCylinder.html" title=" " alt="" coords="431,157,562,184"/>
@@ -11,9 +11,9 @@
 <area shape="rect" id="node11" href="$classHyperRectangle.html" title=" " alt="" coords="406,411,587,437"/>
 <area shape="rect" id="node12" href="$classOpenCascadeShape.html" title=" " alt="" coords="393,461,600,488"/>
 <area shape="rect" id="node13" href="$classPlane.html" title=" " alt="" coords="440,512,553,539"/>
-<area shape="rect" id="node14" href="$classRBFShape.html" title=" " alt="" coords="425,563,568,589"/>
+<area shape="rect" id="node14" href="$classRBFShape.html" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB..." alt="" coords="425,563,568,589"/>
 <area shape="rect" id="node15" href="$classSphere.html" title=" " alt="" coords="435,613,558,640"/>
-<area shape="rect" id="node16" href="$classSuperquadric.html" title=" " alt="" coords="415,664,578,691"/>
+<area shape="rect" id="node16" href="$classSuperquadric.html" title="This class defines superquadric shapes. Their signed distance function is: ." alt="" coords="415,664,578,691"/>
 <area shape="rect" id="node17" href="$classTorus.html" title=" " alt="" coords="441,715,552,741"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,353,180,394"/>
 </map>

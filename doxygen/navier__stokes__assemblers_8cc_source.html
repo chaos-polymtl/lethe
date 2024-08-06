@@ -1308,7 +1308,7 @@ $(function() {
 <div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160; </div>
 <div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;GDNavierStokesAssemblerNonNewtonianCore&lt;dim&gt;::assemble_matrix(</div>
+<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;BlockNavierStokesAssemblerNonNewtonianCore&lt;dim&gt;::assemble_matrix(</div>
 <div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;  <a class="code" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>         &amp;scratch_data,</div>
 <div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;  <a class="code" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data)</div>
 <div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;{</div>
@@ -1396,7 +1396,7 @@ $(function() {
 <div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160; </div>
 <div class="line"><a name="l01316"></a><span class="lineno"> 1316</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l01317"></a><span class="lineno"> 1317</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;GDNavierStokesAssemblerNonNewtonianCore&lt;dim&gt;::assemble_rhs(</div>
+<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;BlockNavierStokesAssemblerNonNewtonianCore&lt;dim&gt;::assemble_rhs(</div>
 <div class="line"><a name="l01319"></a><span class="lineno"> 1319</span>&#160;  <a class="code" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>         &amp;scratch_data,</div>
 <div class="line"><a name="l01320"></a><span class="lineno"> 1320</span>&#160;  <a class="code" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data)</div>
 <div class="line"><a name="l01321"></a><span class="lineno"> 1321</span>&#160;{</div>
@@ -1464,13 +1464,13 @@ $(function() {
 <div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160;    }</div>
 <div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;}</div>
 <div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160; </div>
-<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>GDNavierStokesAssemblerNonNewtonianCore&lt;2&gt;;</div>
-<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>GDNavierStokesAssemblerNonNewtonianCore&lt;3&gt;;</div>
+<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>BlockNavierStokesAssemblerNonNewtonianCore&lt;2&gt;;</div>
+<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>BlockNavierStokesAssemblerNonNewtonianCore&lt;3&gt;;</div>
 <div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160; </div>
 <div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160; </div>
 <div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;GDNavierStokesAssemblerCore&lt;dim&gt;::assemble_matrix(</div>
+<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;BlockNavierStokesAssemblerCore&lt;dim&gt;::assemble_matrix(</div>
 <div class="line"><a name="l01393"></a><span class="lineno"> 1393</span>&#160;  <a class="code" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>         &amp;scratch_data,</div>
 <div class="line"><a name="l01394"></a><span class="lineno"> 1394</span>&#160;  <a class="code" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data)</div>
 <div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160;{</div>
@@ -1557,7 +1557,7 @@ $(function() {
 <div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160; </div>
 <div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;GDNavierStokesAssemblerCore&lt;dim&gt;::assemble_rhs(</div>
+<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;BlockNavierStokesAssemblerCore&lt;dim&gt;::assemble_rhs(</div>
 <div class="line"><a name="l01480"></a><span class="lineno"> 1480</span>&#160;  <a class="code" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>         &amp;scratch_data,</div>
 <div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160;  <a class="code" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data)</div>
 <div class="line"><a name="l01482"></a><span class="lineno"> 1482</span>&#160;{</div>
@@ -1624,8 +1624,8 @@ $(function() {
 <div class="line"><a name="l01543"></a><span class="lineno"> 1543</span>&#160; </div>
 <div class="line"><a name="l01544"></a><span class="lineno"> 1544</span>&#160; </div>
 <div class="line"><a name="l01545"></a><span class="lineno"> 1545</span>&#160; </div>
-<div class="line"><a name="l01546"></a><span class="lineno"> 1546</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>GDNavierStokesAssemblerCore&lt;2&gt;;</div>
-<div class="line"><a name="l01547"></a><span class="lineno"> 1547</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>GDNavierStokesAssemblerCore&lt;3&gt;;</div>
+<div class="line"><a name="l01546"></a><span class="lineno"> 1546</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>BlockNavierStokesAssemblerCore&lt;2&gt;;</div>
+<div class="line"><a name="l01547"></a><span class="lineno"> 1547</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span>BlockNavierStokesAssemblerCore&lt;3&gt;;</div>
 <div class="line"><a name="l01548"></a><span class="lineno"> 1548</span>&#160; </div>
 <div class="line"><a name="l01549"></a><span class="lineno"> 1549</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l01550"></a><span class="lineno"> 1550</span>&#160;<span class="keywordtype">void</span></div>

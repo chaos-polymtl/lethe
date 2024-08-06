@@ -354,7 +354,7 @@ template&lt;int dim, typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>calculate_average_velocity. <a class="el" href="classThis.html">This</a> function calculates the average velocity of the domain for the solver GLS VANS. </p>
+<p>calculate_average_velocity. This function calculates the average velocity of the domain for the solver GLS VANS. </p>
 <p>Ū = ∫ε(v⋅γ)dΩ/∫εdΩ Where Ū is the average velocity, ε is the void fraction, v is the velocity of the cell, γ is the vector of the cell (flow direction) and dΩ is the volume of the cell.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -419,7 +419,7 @@ template&lt;int dim, typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>calculate_average_velocity. <a class="el" href="classThis.html">This</a> function calculates average velocity from the volumetric flow rate at the selected boundary. </p>
+<p>calculate_average_velocity. This function calculates average velocity from the volumetric flow rate at the selected boundary. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler.</td><td>The argument used to get finite elements</td></tr>
@@ -484,7 +484,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculate the CFL condition on the simulation domain. </p>
-<dl class="section return"><dt>Returns</dt><dd>CFL maximal value in the domain Post-processing function <a class="el" href="classThis.html">This</a> function calculates the maximal CFL value in the domain</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>CFL maximal value in the domain Post-processing function This function calculates the maximal CFL value in the domain</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation</td></tr>
@@ -540,7 +540,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculate the average enstrophy in the simulation domain. </p>
-<dl class="section return"><dt>Returns</dt><dd>average kinetic energy in the domain Post-processing function <a class="el" href="classThis.html">This</a> function calculates the average enstrophy in the simulation domain</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>average kinetic energy in the domain Post-processing function This function calculates the average enstrophy in the simulation domain</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation</td></tr>
@@ -601,7 +601,7 @@ template&lt;int dim, typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>calculate_flow_rate. <a class="el" href="classThis.html">This</a> function calculates the volumetric flow rate at the selected boundary. It actually calculates the flow rate through the summation of the value at each cell surface with the normal vector, the velocity value and the area. </p>
+<p>calculate_flow_rate. This function calculates the volumetric flow rate at the selected boundary. It actually calculates the flow rate through the summation of the value at each cell surface with the normal vector, the velocity value and the area. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler.</td><td>The argument used to get finite elements</td></tr>
@@ -670,7 +670,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculates the force due to the fluid motion on every boundary conditions. </p>
-<dl class="section return"><dt>Returns</dt><dd>std::vector of forces on each boundary condition Post-processing function <a class="el" href="classThis.html">This</a> function calculates the force acting on each of the boundary conditions within the domain. It generates a vector which size is the number of boundary conditions</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>std::vector of forces on each boundary condition Post-processing function This function calculates the force acting on each of the boundary conditions within the domain. It generates a vector which size is the number of boundary conditions</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation</td></tr>
@@ -730,7 +730,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculate the average kinetic energy in the simulation domain. </p>
-<dl class="section return"><dt>Returns</dt><dd>average kinetic energy in the domain Post-processing function <a class="el" href="classThis.html">This</a> function calculates the average kinetic energy in the simulation domain</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>average kinetic energy in the domain Post-processing function This function calculates the average kinetic energy in the simulation domain</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation</td></tr>
@@ -792,7 +792,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculates the L2 norm of the error on velocity and pressure. </p>
-<dl class="section return"><dt>Returns</dt><dd>std::pair&lt;double,double&gt; containing the L2 norm of the error for velocity and pressure Post-processing function <a class="el" href="classThis.html">This</a> function calculates the L2 norm of the error on the velocity and pressure. Since the pressure in GLS is defined up to a given constant, the mean solution of the pressure is removed from both the analytical and the numerical solution to ensure that the convergence can be monitored correctly.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>std::pair&lt;double,double&gt; containing the L2 norm of the error for velocity and pressure Post-processing function This function calculates the L2 norm of the error on the velocity and pressure. Since the pressure in GLS is defined up to a given constant, the mean solution of the pressure is removed from both the analytical and the numerical solution to ensure that the convergence can be monitored correctly.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation.</td></tr>
@@ -1000,7 +1000,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculates the torques due to the fluid motion on every boundary conditions. </p>
-<dl class="section return"><dt>Returns</dt><dd>std::vector of torques on each boundary condition Post-processing function <a class="el" href="classThis.html">This</a> function calculates the torqueacting on each of the boundary conditions within the domain. It generates a vector which size is the number of boundary conditions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>std::vector of torques on each boundary condition Post-processing function This function calculates the torqueacting on each of the boundary conditions within the domain. It generates a vector which size is the number of boundary conditions.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>The dof_handler used for the calculation.</td></tr>

@@ -87,8 +87,8 @@ Inheritance diagram for InsertionPlane&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classInsertionPlane__inherit__graph.png" border="0" usemap="#aInsertionPlane_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aInsertionPlane_3_01dim_01_4_inherit__map" id="aInsertionPlane_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,80,176,107"/>
-<area shape="rect" href="classInsertion.html" title=" " alt="" coords="23,5,158,32"/>
+<area shape="rect" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="5,80,176,107"/>
+<area shape="rect" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="23,5,158,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -173,11 +173,9 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class InsertionPlane&lt; dim &gt;</h3>
 
-<p><a class="el" href="classInsertion.html">Insertion</a> of particles using cells cut by a plane</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<p>Particle insertion using cells cut by a plane. Locally owned cells that are cut by the plane are flagged. From those flagged cells, we insert a particle at their centroids if they are individually empty (contain no particle). <a class="el" href="classThis.html">This</a> way, no significant overlap is occurring on the insertion of new particle which can occur with other insertion method. </p>
+<p><a class="el" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system.">Insertion</a> of particles using cells cut by a plane. Particle insertion using cells cut by a plane. Locally owned cells that are cut by the plane are flagged. From those flagged cells, we insert a particle at their centroids if they are individually empty (contain no particle). This way, no significant overlap is occurring on the insertion of new particle which can occur with other insertion method. </p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00042">42</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00031">31</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad06119c1925f28033d7ece2575969edb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad06119c1925f28033d7ece2575969edb">&#9670;&nbsp;</a></span>InsertionPlane()</h2>
@@ -212,19 +210,19 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The plane insertion class insert particles using a plane define by a point an a normal vector. <a class="el" href="classThis.html">This</a> method of insertion can be useful when dealing with a domain close to be fully filled with particle. In this situation, other insertion method have a high risk to create a big overlap between particles on insertion. The plane insertion method mitigate this risk by insertion at the center of empty cells.</p>
+<p>The plane insertion class insert particles using a plane define by a point an a normal vector. This method of insertion can be useful when dealing with a domain close to be fully filled with particle. In this situation, other insertion method have a high risk to create a big overlap between particles on insertion. The plane insertion method mitigate this risk by insertion at the center of empty cells.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">size_distribution_object_container</td><td>Contains all distribution for each particle type </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="insertion__plane_8cc_source.html#l00011">11</a> of file <a class="el" href="insertion__plane_8cc_source.html">insertion_plane.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00128">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__plane_8cc_source.html#l00092">InsertionPlane&lt; dim &gt;::find_centers_of_inplane_cells()</a>, <a class="el" href="insertion__plane_8cc_source.html#l00042">InsertionPlane&lt; dim &gt;::find_inplane_cells()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00218">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00199">Parameters::Lagrangian::InsertionInfo::insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00201">Parameters::Lagrangian::InsertionInfo::insertion_plane_point</a>, and <a class="el" href="insertion__plane_8h_source.html#l00126">InsertionPlane&lt; dim &gt;::maximum_range_for_randomness</a>.</p>
+<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00117">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__plane_8cc_source.html#l00092">InsertionPlane&lt; dim &gt;::find_centers_of_inplane_cells()</a>, <a class="el" href="insertion__plane_8cc_source.html#l00042">InsertionPlane&lt; dim &gt;::find_inplane_cells()</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00218">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00199">Parameters::Lagrangian::InsertionInfo::insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00201">Parameters::Lagrangian::InsertionInfo::insertion_plane_point</a>, and <a class="el" href="insertion__plane_8h_source.html#l00115">InsertionPlane&lt; dim &gt;::maximum_range_for_randomness</a>.</p>
 
 </div>
 </div>
@@ -275,9 +273,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#a9aaf50f7896e20d9f3a1ee5c644196b0">Insertion&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00096">96</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00085">85</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00128">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__plane_8h_source.html#l00127">InsertionPlane&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
+<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00117">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__plane_8h_source.html#l00116">InsertionPlane&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
 
 </div>
 </div>
@@ -412,7 +410,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted. </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted. </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file. </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file. </td></tr>
   </table>
   </dd>
 </dl>
@@ -421,7 +419,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__plane_8cc_source.html#l00105">105</a> of file <a class="el" href="insertion__plane_8cc_source.html">insertion_plane.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00199">Parameters::Lagrangian::InsertionInfo::insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00201">Parameters::Lagrangian::InsertionInfo::insertion_plane_point</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00087">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
+<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00199">Parameters::Lagrangian::InsertionInfo::insertion_plane_normal_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00201">Parameters::Lagrangian::InsertionInfo::insertion_plane_point</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00038">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00087">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
 </div>
 </div>
@@ -471,9 +469,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#ad090ee85ee022ca32b837150ff4fa728">Insertion&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00084">84</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00073">73</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00128">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__plane_8h_source.html#l00127">InsertionPlane&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
+<p class="reference">References <a class="el" href="insertion__plane_8h_source.html#l00117">InsertionPlane&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__plane_8h_source.html#l00116">InsertionPlane&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
 
 </div>
 </div>
@@ -500,7 +498,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00129">129</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00118">118</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
 </div>
 </div>
@@ -526,7 +524,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00128">128</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00117">117</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
 </div>
 </div>
@@ -552,7 +550,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00126">126</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00115">115</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
 </div>
 </div>
@@ -578,7 +576,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00127">127</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00116">116</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
 </div>
 </div>
@@ -604,7 +602,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00125">125</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__plane_8h_source.html#l00114">114</a> of file <a class="el" href="insertion__plane_8h_source.html">insertion_plane.h</a>.</p>
 
 </div>
 </div>

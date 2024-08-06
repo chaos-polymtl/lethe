@@ -102,10 +102,10 @@ Include dependency graph for update_local_particle_containers.cc:</div>
 <area shape="rect" title=" " alt="" coords="681,377,855,419"/>
 <area shape="rect" href="particle__wall__contact__info_8h.html" title=" " alt="" coords="451,288,645,329"/>
 <area shape="rect" title=" " alt="" coords="905,288,1058,329"/>
-<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="1082,295,1273,322"/>
-<area shape="rect" title=" " alt="" coords="1297,295,1377,322"/>
-<area shape="rect" title=" " alt="" coords="1402,295,1526,322"/>
-<area shape="rect" title=" " alt="" coords="1550,295,1613,322"/>
+<area shape="rect" title=" " alt="" coords="1083,295,1163,322"/>
+<area shape="rect" title=" " alt="" coords="1187,295,1311,322"/>
+<area shape="rect" title=" " alt="" coords="1335,295,1398,322"/>
+<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="1422,295,1613,322"/>
 <area shape="rect" title=" " alt="" coords="256,385,403,411"/>
 </map>
 </div>
@@ -153,27 +153,27 @@ template&lt;int dim, typename pairs_structure , ContactType contact_type&gt; </d
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Updates the iterators to particles in pairs_in_contact (output of particle-object fine search)</p>
+
+<p>Update the iterators to particles in pairs_in_contact (output of particle-object fine search) </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>Dimensionality of the geometry which contains the particles </td></tr>
-    <tr><td class="paramname">pairs_structure</td><td><a class="el" href="namespaceDEM.html">DEM</a> data structure which contains particle-object pairs relevant information </td></tr>
-    <tr><td class="paramname">contact_type</td><td>Contact type of the contact pairs </td></tr>
+    <tr><td class="paramname">pairs_structure</td><td>Adjacent particle-object pairs container type. </td></tr>
+    <tr><td class="paramname">contact_type</td><td>Label of contact type to apply proper manipulation of contact removal in containers.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pairs_in_contact</td><td>Output of particle-object fine search </td></tr>
-    <tr><td class="paramname">particle_container</td><td>Output of update_particle_container function </td></tr>
-    <tr><td class="paramname">clear_contact_structures</td><td>If true, the contact structures will be cleared </td></tr>
+    <tr><td class="paramname">pairs_in_contact</td><td>Output of particle-object fine search. </td></tr>
+    <tr><td class="paramname">particle_container</td><td>Output of update_particle_container function. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="update__local__particle__containers_8cc_source.html#l00037">37</a> of file <a class="el" href="update__local__particle__containers_8cc_source.html">update_local_particle_containers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, <a class="el" href="contact__type_8h_source.html#l00032">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00029">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00031">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00028">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00030">local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00035">particle_floating_mesh</a>, <a class="el" href="contact__type_8h_source.html#l00034">particle_floating_wall</a>, <a class="el" href="contact__type_8h_source.html#l00037">particle_line</a>, <a class="el" href="contact__type_8h_source.html#l00036">particle_point</a>, and <a class="el" href="contact__type_8h_source.html#l00033">particle_wall</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, <a class="el" href="contact__type_8h_source.html#l00029">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00026">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00028">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00025">local_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00027">local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00032">particle_floating_mesh</a>, <a class="el" href="contact__type_8h_source.html#l00031">particle_floating_wall</a>, <a class="el" href="contact__type_8h_source.html#l00034">particle_line</a>, <a class="el" href="contact__type_8h_source.html#l00033">particle_point</a>, and <a class="el" href="contact__type_8h_source.html#l00030">particle_wall</a>.</p>
 
 </div>
 </div>
@@ -260,10 +260,11 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Updates the iterators to local particles in a map of particles (particle_container)</p>
+
+<p>Update the iterators to local particles in a map of particles (particle_container) </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>Dimensionality of the geometry which contains the particles </td></tr>
+    <tr><td class="paramname">dim</td><td>Dimensionality of the geometry which contains the particles</td></tr>
   </table>
   </dd>
 </dl>

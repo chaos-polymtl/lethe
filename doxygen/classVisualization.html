@@ -87,7 +87,7 @@ Inheritance diagram for Visualization&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classVisualization__inherit__graph.png" border="0" usemap="#aVisualization_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aVisualization_3_01dim_01_4_inherit__map" id="aVisualization_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="14,95,175,121"/>
+<area shape="rect" title="Building patches of particle properties for visualization. This function is taken from Aspect and dea..." alt="" coords="14,95,175,121"/>
 <area shape="rect" title=" " alt="" coords="5,5,184,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -120,8 +120,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:adf0742d6d69fdf8c5e700cd121d896b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a001414e0cb474d4fd50fe7531836ec0c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a001414e0cb474d4fd50fe7531836ec0c">dataset_names</a></td></tr>
 <tr class="separator:a001414e0cb474d4fd50fe7531836ec0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a995a7acac02af698d000083b5a24e983"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; unsigned int, unsigned int, std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a995a7acac02af698d000083b5a24e983">vector_datasets</a></td></tr>
-<tr class="separator:a995a7acac02af698d000083b5a24e983"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0e54b68f7a9de9d0381ef8a10d72ff1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; unsigned int, unsigned int, std::string, DataComponentInterpretation::DataComponentInterpretation &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#ae0e54b68f7a9de9d0381ef8a10d72ff1">vector_datasets</a></td></tr>
+<tr class="separator:ae0e54b68f7a9de9d0381ef8a10d72ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7a66851efdc09e22be4d4bb1a82e780"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; std::string, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#ac7a66851efdc09e22be4d4bb1a82e780">properties_to_write</a></td></tr>
 <tr class="separator:ac7a66851efdc09e22be4d4bb1a82e780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -129,11 +129,9 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class Visualization&lt; dim &gt;</h3>
 
-<p>Building patches of particle properties for visualization</p>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="classThis.html">This</a> function is taken from Aspect and dealii and implemented here</dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>Building patches of particle properties for visualization. This function is taken from Aspect and dealii and implemented here. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00044">44</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00039">39</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0deffb9118000ce9568c2cf2f72f0e75"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0deffb9118000ce9568c2cf2f72f0e75">&#9670;&nbsp;</a></span>Visualization()</h2>
@@ -199,11 +197,12 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Carries out building the patches of properties of particles for visualization</p>
+
+<p>Build the patches of properties of particles for visualization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">particle_handler</td><td>The particle handler of active particles for visulization </td></tr>
-    <tr><td class="paramname">properties</td><td>Properties of particles for visulization. <a class="el" href="classThis.html">This</a> is a vector of pairs and each pair contains the property name as the first element and the size of the property as the second element. For vectors only the size of the first element of the vector is defined equal to the dimension </td></tr>
+    <tr><td class="paramname">particle_handler</td><td>The particle handler of active particles for visualization. </td></tr>
+    <tr><td class="paramname">properties</td><td>Properties of particles for visualization. This is a vector of pairs and each pair contains the property name as the first element and the size of the property as the second element. For vectors only the size of the first element of the vector is defined equal to the dimension. </td></tr>
   </table>
   </dd>
 </dl>
@@ -235,6 +234,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Implementation of the corresponding function of the base class. </p>
 
 <p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00196">196</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
@@ -288,6 +288,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Implementation of the corresponding function of the base class. </p>
 
 <p class="definition">Definition at line <a class="el" href="visualization_8cc_source.html#l00189">189</a> of file <a class="el" href="visualization_8cc_source.html">visualization.cc</a>.</p>
@@ -327,12 +328,13 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Prints the data of particles in the deal.II intermediate format </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Print the data of particles in the deal.II intermediate format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data_to_print</td><td>The vector of data to be printed </td></tr>
-    <tr><td class="paramname">background_dh</td><td>The DoFHandler of the background grid </td></tr>
-    <tr><td class="paramname">mpi_communicator</td><td>The MPI communicator </td></tr>
-    <tr><td class="paramname">pcout</td><td>Printing in parallel </td></tr>
+    <tr><td class="paramname">data_to_print</td><td>The vector of data to be printed. </td></tr>
+    <tr><td class="paramname">background_dh</td><td>The DoFHandler of the background grid. </td></tr>
+    <tr><td class="paramname">mpi_communicator</td><td>The MPI communicator. </td></tr>
   </table>
   </dd>
 </dl>
@@ -374,11 +376,12 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Prints the data of particles in the xyz format</p>
+
+<p>Print the data of particles in the xyz format. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">particle_handler</td><td>The particle handler of active particles </td></tr>
-    <tr><td class="paramname">pcout</td><td>Printing in parallel </td></tr>
+    <tr><td class="paramname">particle_handler</td><td>The particle handler of active particles. </td></tr>
+    <tr><td class="paramname">pcout</td><td>Printing in parallel. </td></tr>
   </table>
   </dd>
 </dl>
@@ -411,9 +414,10 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>A list of field names for all data components stored in patches. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00119">119</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00113">113</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -438,9 +442,10 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Output information that is filled by <a class="el" href="classVisualization.html#ab8894f42d0892f05dd90bd982455f264">build_patches()</a> and written by the write function of the base class. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00114">114</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p>Output information that is filled by <a class="el" href="classVisualization.html#ab8894f42d0892f05dd90bd982455f264" title="Build the patches of properties of particles for visualization.">build_patches()</a> and written by the write function of the base class. </p>
+
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00108">108</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -465,14 +470,15 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Particle properties that are written in output files </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00139">139</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p>Particle properties that are written in output files. </p>
+
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00128">128</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
-<a id="a995a7acac02af698d000083b5a24e983"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a995a7acac02af698d000083b5a24e983">&#9670;&nbsp;</a></span>vector_datasets</h2>
+<a id="ae0e54b68f7a9de9d0381ef8a10d72ff1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0e54b68f7a9de9d0381ef8a10d72ff1">&#9670;&nbsp;</a></span>vector_datasets</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -483,7 +489,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::tuple&lt;unsigned int, unsigned int, std::string&gt; &gt; <a class="el" href="classVisualization.html">Visualization</a>&lt; dim &gt;::vector_datasets</td>
+          <td class="memname">std::vector&lt; std::tuple&lt;unsigned int, unsigned int, std::string, DataComponentInterpretation::DataComponentInterpretation&gt; &gt; <a class="el" href="classVisualization.html">Visualization</a>&lt; dim &gt;::vector_datasets</td>
         </tr>
       </table>
   </td>
@@ -492,9 +498,10 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Store which of the data fields are vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00133">133</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00123">123</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>

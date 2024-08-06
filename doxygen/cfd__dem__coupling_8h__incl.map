@@ -5,7 +5,7 @@
 <area shape="rect" id="node23" href="$data__containers_8h.html" title=" " alt="" coords="4977,563,5147,590"/>
 <area shape="rect" id="node35" href="$dem__action__manager_8h.html" title=" " alt="" coords="5172,563,5379,590"/>
 <area shape="rect" id="node40" href="$dem_8h.html" title=" " alt="" coords="3666,206,3762,233"/>
-<area shape="rect" id="node43" href="$dem__contact__manager_8h.html" title=" " alt="" coords="3945,385,4160,411"/>
+<area shape="rect" id="node43" href="$dem__contact__manager_8h.html" title=" " alt="" coords="3933,385,4148,411"/>
 <area shape="rect" id="node45" href="$dem__solver__parameters_8h.html" title=" " alt="" coords="2331,563,2556,590"/>
 <area shape="rect" id="node46" href="$find__contact__detection__step_8h.html" title=" " alt="" coords="3023,377,3226,419"/>
 <area shape="rect" id="node47" href="$lagrangian__post__processing_8h.html" title=" " alt="" coords="3573,377,3732,419"/>
@@ -43,9 +43,9 @@
 <area shape="rect" id="node29" href="$particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="5857,645,6053,687"/>
 <area shape="rect" id="node30" href="$particle__wall__contact__info_8h.html" title=" " alt="" coords="5455,645,5648,687"/>
 <area shape="rect" id="node31" title=" " alt="" coords="4812,645,4965,687"/>
-<area shape="rect" id="node32" href="$unordered__dense_8h.html" title=" " alt="" coords="4989,653,5180,679"/>
-<area shape="rect" id="node33" title=" " alt="" coords="4427,653,4507,679"/>
-<area shape="rect" id="node34" title=" " alt="" coords="5204,653,5328,679"/>
+<area shape="rect" id="node32" title=" " alt="" coords="4427,653,4507,679"/>
+<area shape="rect" id="node33" title=" " alt="" coords="4989,653,5113,679"/>
+<area shape="rect" id="node34" href="$unordered__dense_8h.html" title=" " alt="" coords="5137,653,5328,679"/>
 <area shape="rect" id="node41" href="$pvd__handler_8h.html" title=" " alt="" coords="2681,563,2827,590"/>
 <area shape="rect" id="node42" href="$serial__solid_8h.html" title=" " alt="" coords="2984,474,3124,501"/>
 <area shape="rect" id="node44" href="$find__boundary__cells__information_8h.html" title=" " alt="" coords="3775,467,3959,508"/>

@@ -191,15 +191,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates the simulation output folder. </p>
-<ul>
-<li><dl class="params"><dt>Parameters</dt><dd>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dirname</td><td>Output directory name </td></tr>
   </table>
   </dd>
 </dl>
-</li>
-</ul>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00365">365</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
@@ -238,17 +235,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data. </p>
-<ul>
-<li><dl class="params"><dt>Parameters</dt><dd>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">map</td><td>Container to be filled with the information in the dealii table.</td></tr>
-    <tr><td class="paramname">file</td><td>The path the file that will be use to fill up the table.</td></tr>
+    <tr><td class="paramname">file_name</td><td>The path the file that will be use to fill up the table.</td></tr>
     <tr><td class="paramname">delimiter</td><td>The delimiter used to read the table. </td></tr>
   </table>
   </dd>
 </dl>
-</li>
-</ul>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00314">314</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
@@ -287,17 +281,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file. </p>
-<ul>
-<li><dl class="params"><dt>Parameters</dt><dd>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td>The table to be filled. Warning ! if the table is empty, it's content will be erased.</td></tr>
-    <tr><td class="paramname">file</td><td>The path the file that will be use to fill up the table.</td></tr>
+    <tr><td class="paramname">file_name</td><td>The path the file that will be use to fill up the table.</td></tr>
     <tr><td class="paramname">delimiter</td><td>The delimiter used to read the table. </td></tr>
   </table>
   </dd>
 </dl>
-</li>
-</ul>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00215">215</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
@@ -336,17 +327,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>function that read a file that was build from a dealii table and fill 2 vectors. The first vector contains all the columns names and the second one contained all the column data. </p>
-<ul>
-<li><dl class="params"><dt>Parameters</dt><dd>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">map</td><td>A map used to contain the data based on the columns name.</td></tr>
-    <tr><td class="paramname">file</td><td>The path the file that will be use to fill up the table.</td></tr>
+    <tr><td class="paramname">file_name</td><td>The path the file that will be use to fill up the table.</td></tr>
     <tr><td class="paramname">delimiter</td><td>The delimiter used to read the table. </td></tr>
   </table>
   </dd>
 </dl>
-</li>
-</ul>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00261">261</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
@@ -368,7 +356,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Extract the dimension in which to run Lethe from the the contents of the parameter file. <a class="el" href="classThis.html">This</a> is something that we need to do before processing the parameter file since we need to know whether to use the dim=2 or dim=3 instantiation of the main classes. </p>
+<p>Extract the dimension in which to run Lethe from the the contents of the parameter file. This is something that we need to do before processing the parameter file since we need to know whether to use the dim=2 or dim=3 instantiation of the main classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file_name</td><td>The file name from which dimension is read </td></tr>
@@ -408,7 +396,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get the value of a particular parameter from the contents of the input file. Return an empty string if not found. <a class="el" href="classThis.html">This</a> function is used to read an individual parameter for an input file. <a class="el" href="classThis.html">This</a> function is adapted from ASPECT and is mainly used in parsing the dim of the problem before creating the whole parameter parser </p>
+<p>get the value of a particular parameter from the contents of the input file. Return an empty string if not found. This function is used to read an individual parameter for an input file. This function is adapted from ASPECT and is mainly used in parsing the dim of the problem before creating the whole parameter parser </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file_name</td><td>The file name from which to read a value </td></tr>
@@ -1656,10 +1644,11 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">independent_values</td><td>Vector of Tensor&lt;1,dim&gt; that serves as the independent variable (e.g., position).</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">independent_vector</td><td>Vector of Tensor&lt;1,dim&gt; that serves as the independent variable (e.g., position).</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">independent_column_names</td><td>Vector of strings representing labels of the independent tensor.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dependent_vector</td><td>Vector of scalar that serves as the dependent variable (e.g., energy).</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dependent_values</td><td>Vector of of doubles containing dependent variables values (e.g., force).</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dependent_column_name</td><td>Label of the dependent variable.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">display_precision</td><td>Integer indicating the precision at which the table is written.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">display_scientific_notation</td><td>Boolean indicating if the values should be displayed in scientific notation (true) or not (false).</td></tr>
   </table>
   </dd>
@@ -1835,7 +1824,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">independent_values</td><td>Vector of Tensor&lt;1,dim&gt; that serves as the independent variable (e.g., position).</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">independent_vector</td><td>Vector of Tensor&lt;1,dim&gt; that serves as the independent variable (e.g., position).</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">independent_column_names</td><td>Vector of strings representing labels of the independent tensor.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dependent_vector</td><td>Vector of vectors of Tensor&lt;1,dim&gt; containing dependent variables values (e.g., force).</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dependent_column_names</td><td>Vector of strings representing the labels of dependent variables.</td></tr>

@@ -1,12 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/read_mesh.h" name="/home/runner/work/lethe/lethe/include/dem/read_mesh.h">
-<area shape="rect" id="node1" title=" " alt="" coords="2830,5,3013,61"/>
+<area shape="rect" id="node1" title=" " alt="" coords="2334,5,2517,61"/>
 <area shape="rect" id="node2" href="$dem__solver__parameters_8h.html" title=" " alt="" coords="2211,117,2437,143"/>
 <area shape="rect" id="node34" title=" " alt="" coords="2460,109,2596,151"/>
-<area shape="rect" id="node35" title=" " alt="" coords="2621,117,2822,143"/>
-<area shape="rect" id="node36" title=" " alt="" coords="2846,117,2997,143"/>
-<area shape="rect" id="node37" title=" " alt="" coords="3021,117,3192,143"/>
-<area shape="rect" id="node38" title=" " alt="" coords="3217,117,3290,143"/>
-<area shape="rect" id="node39" title=" " alt="" coords="3315,117,3395,143"/>
 <area shape="rect" id="node3" href="$parameters_8h.html" title=" " alt="" coords="2135,363,2276,389"/>
 <area shape="rect" id="node29" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="2499,281,2717,307"/>
 <area shape="rect" id="node30" href="$simulation__control_8h.html" title=" " alt="" coords="2075,199,2261,225"/>

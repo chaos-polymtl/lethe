@@ -88,10 +88,10 @@ Inheritance diagram for Insertion&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classInsertion__inherit__graph.png" border="0" usemap="#aInsertion_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aInsertion_3_01dim_01_4_inherit__map" id="aInsertion_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,81,140,108"/>
+<area shape="rect" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,81,140,108"/>
 <area shape="rect" href="classInsertionFile.html" title=" " alt="" coords="201,5,358,32"/>
 <area shape="rect" href="classInsertionList.html" title=" " alt="" coords="201,56,358,83"/>
-<area shape="rect" href="classInsertionPlane.html" title=" " alt="" coords="194,107,365,133"/>
+<area shape="rect" href="classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="194,107,365,133"/>
 <area shape="rect" href="classInsertionVolume.html" title=" " alt="" coords="188,157,371,184"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -160,9 +160,9 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class Insertion&lt; dim &gt;</h3>
 
-<p>Base interface for classes that carry out the insertion of particles in the system </p>
+<p>Base interface for classes that carry out the insertion of particles in the system. </p>
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00059">59</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00057">57</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2aad2604d3e0edbc5600115af1c8d846"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2aad2604d3e0edbc5600115af1c8d846">&#9670;&nbsp;</a></span>Insertion()</h2>
@@ -198,19 +198,19 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Carries out the insertion of particles. <a class="el" href="classThis.html">This</a> is the base class of volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
+<p>Carries out the insertion of particles. This is the base class of volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">size_distribution_object_container</td><td>Contains all distribution for each particle type </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="insertion_8cc_source.html#l00007">7</a> of file <a class="el" href="insertion_8cc_source.html">insertion.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion_8h_source.html#l00225">Insertion&lt; dim &gt;::change_to_triangulation</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00192">Parameters::Lagrangian::InsertionInfo::clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00192">Parameters::Lagrangian::InsertionInfo::clear_box_point_2</a>, <a class="el" href="insertion_8h_source.html#l00210">Insertion&lt; dim &gt;::distributions_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion_8h_source.html#l00224">Insertion&lt; dim &gt;::mark_for_update</a>, <a class="el" href="insertion_8h_source.html#l00216">Insertion&lt; dim &gt;::p_max</a>, and <a class="el" href="insertion_8h_source.html#l00216">Insertion&lt; dim &gt;::p_min</a>.</p>
+<p class="reference">References <a class="el" href="insertion_8h_source.html#l00223">Insertion&lt; dim &gt;::change_to_triangulation</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00192">Parameters::Lagrangian::InsertionInfo::clear_box_point_1</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00192">Parameters::Lagrangian::InsertionInfo::clear_box_point_2</a>, <a class="el" href="insertion_8h_source.html#l00208">Insertion&lt; dim &gt;::distributions_objects</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion_8h_source.html#l00222">Insertion&lt; dim &gt;::mark_for_update</a>, <a class="el" href="insertion_8h_source.html#l00214">Insertion&lt; dim &gt;::p_max</a>, and <a class="el" href="insertion_8h_source.html#l00214">Insertion&lt; dim &gt;::p_min</a>.</p>
 
 </div>
 </div>
@@ -266,8 +266,8 @@ template&lt;int dim&gt; </div>
 <p>Carries out assigning the properties of inserted particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
-    <tr><td class="paramname">inserted_this_step_this_proc</td><td>Number of particles that are inserted at each insertion step on each processor. <a class="el" href="classThis.html">This</a> value can change in the last insertion step to reach the desired number of particles </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">inserted_this_step_this_proc</td><td>Number of particles that are inserted at each insertion step on each processor. This value can change in the last insertion step to reach the desired number of particles </td></tr>
     <tr><td class="paramname">current_inserting_particle_type</td><td>Type of inserting particles </td></tr>
     <tr><td class="paramname">particle_properties</td><td>Properties of all inserted particles at each insertion step </td></tr>
   </table>
@@ -276,7 +276,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion_8cc_source.html#l00059">59</a> of file <a class="el" href="insertion_8cc_source.html">insertion.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00045">DEM::fem_force_x</a>, <a class="el" href="dem__properties_8h_source.html#l00046">DEM::fem_force_y</a>, <a class="el" href="dem__properties_8h_source.html#l00047">DEM::fem_force_z</a>, <a class="el" href="dem__properties_8h_source.html#l00048">DEM::fem_torque_x</a>, <a class="el" href="dem__properties_8h_source.html#l00049">DEM::fem_torque_y</a>, <a class="el" href="dem__properties_8h_source.html#l00050">DEM::fem_torque_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00214">Parameters::Lagrangian::InsertionInfo::initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00214">Parameters::Lagrangian::InsertionInfo::initial_vel</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="dem__properties_8h_source.html#l00051">DEM::mass</a>, <a class="el" href="dem__properties_8h_source.html#l00042">DEM::omega_x</a>, <a class="el" href="dem__properties_8h_source.html#l00043">DEM::omega_y</a>, <a class="el" href="dem__properties_8h_source.html#l00044">DEM::omega_z</a>, <a class="el" href="dem__properties_8h_source.html#l00037">DEM::type</a>, and <a class="el" href="dem__properties_8h_source.html#l00052">DEM::volumetric_contribution</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00045">DEM::fem_force_x</a>, <a class="el" href="dem__properties_8h_source.html#l00046">DEM::fem_force_y</a>, <a class="el" href="dem__properties_8h_source.html#l00047">DEM::fem_force_z</a>, <a class="el" href="dem__properties_8h_source.html#l00048">DEM::fem_torque_x</a>, <a class="el" href="dem__properties_8h_source.html#l00049">DEM::fem_torque_y</a>, <a class="el" href="dem__properties_8h_source.html#l00050">DEM::fem_torque_z</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00214">Parameters::Lagrangian::InsertionInfo::initial_omega</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00214">Parameters::Lagrangian::InsertionInfo::initial_vel</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00038">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="dem__properties_8h_source.html#l00051">DEM::mass</a>, <a class="el" href="dem__properties_8h_source.html#l00042">DEM::omega_x</a>, <a class="el" href="dem__properties_8h_source.html#l00043">DEM::omega_y</a>, <a class="el" href="dem__properties_8h_source.html#l00044">DEM::omega_z</a>, <a class="el" href="dem__properties_8h_source.html#l00037">DEM::type</a>, and <a class="el" href="dem__properties_8h_source.html#l00052">DEM::volumetric_contribution</a>.</p>
 
 </div>
 </div>
@@ -319,7 +319,7 @@ template&lt;int dim&gt; </div>
 <p>Carries out finding the maximum number of inserted particles based on the insertion box size. If the requested number of particles for insertion in each insertion step is larger than this maximum, it is limited to this value and a warning is printed. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
     <tr><td class="paramname">pcout</td><td>Printing in parallel </td></tr>
   </table>
   </dd>
@@ -327,7 +327,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion_8cc_source.html#l00128">128</a> of file <a class="el" href="insertion_8cc_source.html">insertion.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00210">Parameters::Lagrangian::InsertionInfo::direction_sequence</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00210">Parameters::Lagrangian::InsertionInfo::direction_sequence</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>.</p>
 
 </div>
 </div>
@@ -367,7 +367,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Deserialize an input archive to the insertion object. Is being used when restarting a simulation. <a class="el" href="classThis.html">This</a> function is overridden by volume_insertion, plane_insertion, list_insertion and from_file_insertion classes. </p>
+<p>Deserialize an input archive to the insertion object. Is being used when restarting a simulation. This function is overridden by volume_insertion, plane_insertion, list_insertion and from_file_insertion classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ar</td><td>Input archive where the attributes are stored. </td></tr>
@@ -461,12 +461,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function is overridden by the volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
+<p>This function is overridden by the volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
   </table>
   </dd>
 </dl>
@@ -536,7 +536,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion_8cc_source.html#l00041">41</a> of file <a class="el" href="insertion_8cc_source.html">insertion.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00415">announce_string()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00419">announce_string()</a>.</p>
 
 </div>
 </div>
@@ -616,7 +616,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Serialize the insertion object to an output archive. Is being used when checkpointing a simulation. <a class="el" href="classThis.html">This</a> function is overridden by volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
+<p>Serialize the insertion object to an output archive. Is being used when checkpointing a simulation. This function is overridden by volume_insertion, plane_insertion, list_insertion and file_insertion classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ar</td><td>Output archive where the attributes are stored. </td></tr>
@@ -651,7 +651,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00200">200</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00198">198</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -677,7 +677,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00200">200</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00198">198</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -703,7 +703,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00225">225</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00223">223</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -729,7 +729,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00210">210</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00208">208</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -755,7 +755,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00221">221</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00219">219</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -781,7 +781,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00219">219</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00217">217</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -807,7 +807,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00192">192</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00190">190</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -833,7 +833,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00206">206</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00204">204</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -859,7 +859,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00224">224</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00222">222</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -885,7 +885,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00203">203</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00201">201</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -911,7 +911,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00195">195</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00193">193</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -937,7 +937,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00216">216</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00214">214</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -963,7 +963,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00216">216</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00214">214</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -989,7 +989,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00229">229</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00227">227</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1015,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00213">213</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion_8h_source.html#l00211">211</a> of file <a class="el" href="insertion_8h_source.html">insertion.h</a>.</p>
 
 </div>
 </div>

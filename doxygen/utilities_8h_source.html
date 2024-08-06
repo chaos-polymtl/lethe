@@ -271,7 +271,7 @@ $(function() {
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment"> * @tparam dim Integer that denotes the number of spatial dimensions.</span></div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment"> * @param[in] independent_values Vector of Tensor&lt;1,dim&gt; that serves as the</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment"> * @param[in] independent_vector Vector of Tensor&lt;1,dim&gt; that serves as the</span></div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment"> * independent variable (e.g., position).</span></div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="comment"> * @param[in] independent_column_names Vector of strings representing labels of</span></div>
@@ -309,360 +309,364 @@ $(function() {
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment"> * @tparam dim Integer that denotes the number of spatial dimensions.</span></div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment"> * @param[in] independent_values Vector of Tensor&lt;1,dim&gt; that serves as the</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment"> * @param[in] independent_vector Vector of Tensor&lt;1,dim&gt; that serves as the</span></div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment"> * independent variable (e.g., position).</span></div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment"> * @param[in] independent_column_names Vector of strings representing labels of</span></div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment"> * the independent tensor.</span></div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment"> * @param[in] dependent_vector Vector of scalar that serves as the dependent</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment"> * variable (e.g., energy).</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment"> * @param[in] dependent_values Vector of of doubles containing</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment"> * dependent variables values (e.g., force).</span></div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment"> * @param[in] dependent_column_name Label of the dependent variable.</span></div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment"> * @param[in] display_scientific_notation Boolean indicating if the values</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment"> * should be displayed in scientific notation (true) or not (false).</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment"> * @param[in] display_precision Integer indicating the precision at which the</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment"> * table is written.</span></div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment"> * @return Table with the independent variables values followed by the dependent</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment"> * variable values.</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;TableHandler</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<a class="code" href="utilities_8h.html#aaa1167f0e0a2bb3cc269b124d4b0158a">make_table_tensors_scalars</a>(</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, dim&gt;&gt; &amp;independent_vector,</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  <span class="keyword">const</span> std::vector&lt;std::string&gt;    &amp;independent_column_names,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;         &amp;dependent_values,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  <span class="keyword">const</span> std::string                 &amp;dependent_column_name,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                 display_precision,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                         display_scientific_notation = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment"> * @brief Calculate the equivalent properties for a given phase. Method called</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment"> * in quadrature points loops in VOF simulations.</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment"> * @param phase Phase value for the given quadrature point</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment"> * @param property0 Property value for the fluid with index 0 (fluid for phase = 0)</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment"> * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno"><a class="line" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">  270</a></span>&#160;<a class="code" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> phase,</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                         <span class="keyword">const</span> <span class="keywordtype">double</span> property0,</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                         <span class="keyword">const</span> <span class="keywordtype">double</span> property1)</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;{</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keywordtype">double</span> property_eq = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * property1 + (1 - <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>) * property0;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="comment">// Limit parameters value (patch)</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="comment">// TODO see if necessary after compression term is added in the</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="comment">// VOF advection equation</span></div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> property_min = std::min(property0, property1);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> property_max = std::max(property0, property1);</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keywordflow">if</span> (property_eq &lt; property_min)</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    {</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      property_eq = property_min;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  <span class="keywordflow">if</span> (property_eq &gt; property_max)</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      property_eq = property_max;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    }</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keywordflow">return</span> property_eq;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment"> * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter</span></div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment"> * @tparam T val argument&#39;s type</span></div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment"> * @param val value of the variable for which we want to evaluate the sign</span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"> * @return an integer -1 or 1 depending of the sign of the phase parameter</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="keywordtype">int</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">  301</a></span>&#160;<a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(T val)</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;{</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <span class="keywordflow">return</span> (<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0) &lt; val) - (val &lt; static_cast&lt;T&gt;(0));</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;}</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment"> * @brief Clip a properties between a lower and a higher value</span></div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment"> * @tparam T argument&#39;s type</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment"> * @param[in,out] lower Lower admissible value</span></div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment"> * @param[in,out] upper Upper admissible value</span></div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment"> * @return Clipped variable that is not below the lower limit and not above the upper limit</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;T</div>
-<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">  317</a></span>&#160;<a class="code" href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">clip</a>(<span class="keyword">const</span> T &amp;n, <span class="keyword">const</span> T &amp;lower, <span class="keyword">const</span> T &amp;upper)</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;{</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  <span class="keywordflow">return</span> std::max(lower, std::min(n, upper));</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;}</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment"> * @brief Calculate the equivalent properties for a given phase. Method called</span></div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment"> * in quadrature points loops in Cahn-Hilliard simulations.</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment"> * @param phase Phase value for the given quadrature point</span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment"> * @param property0 Property value for the fluid with index 0 (fluid for phase = -1)</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment"> * @param[in] display_scientific_notation Boolean indicating if the values</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment"> * should be displayed in scientific notation (true) or not (false).</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment"> * @return Table with the independent variables values followed by the dependent</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment"> * variable values.</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;TableHandler</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<a class="code" href="utilities_8h.html#aaa1167f0e0a2bb3cc269b124d4b0158a">make_table_tensors_scalars</a>(</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, dim&gt;&gt; &amp;independent_vector,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  <span class="keyword">const</span> std::vector&lt;std::string&gt;    &amp;independent_column_names,</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;         &amp;dependent_values,</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  <span class="keyword">const</span> std::string                 &amp;dependent_column_name,</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                 display_precision,</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">bool</span>                         display_scientific_notation = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment"> * @brief Calculate the equivalent properties for a given phase. Method called</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment"> * in quadrature points loops in VOF simulations.</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment"> * @param phase Phase value for the given quadrature point</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment"> * @param property0 Property value for the fluid with index 0 (fluid for phase = 0)</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment"> * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">  273</a></span>&#160;<a class="code" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> phase,</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                         <span class="keyword">const</span> <span class="keywordtype">double</span> property0,</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                         <span class="keyword">const</span> <span class="keywordtype">double</span> property1)</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;{</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keywordtype">double</span> property_eq = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * property1 + (1 - <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>) * property0;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="comment">// Limit parameters value (patch)</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="comment">// TODO see if necessary after compression term is added in the</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="comment">// VOF advection equation</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> property_min = std::min(property0, property1);</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> property_max = std::max(property0, property1);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="keywordflow">if</span> (property_eq &lt; property_min)</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;      property_eq = property_min;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    }</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  <span class="keywordflow">if</span> (property_eq &gt; property_max)</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    {</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;      property_eq = property_max;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <span class="keywordflow">return</span> property_eq;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;}</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"> * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment"> * @tparam T val argument&#39;s type</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment"> * @param val value of the variable for which we want to evaluate the sign</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment"> * @return an integer -1 or 1 depending of the sign of the phase parameter</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="keywordtype">int</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">  304</a></span>&#160;<a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(T val)</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;{</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  <span class="keywordflow">return</span> (<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0) &lt; val) - (val &lt; static_cast&lt;T&gt;(0));</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;}</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment"> * @brief Clip a property between a lower and a higher value</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment"> * @tparam T argument&#39;s type</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment"> * @param[in,out] lower Lower admissible value</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment"> * @param[in,out] upper Upper admissible value</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment"> * @param[in,out] n</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment"> * @return Clipped variable that is not below the lower limit and not above the upper limit</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;T</div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">  321</a></span>&#160;<a class="code" href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">clip</a>(<span class="keyword">const</span> T &amp;n, <span class="keyword">const</span> T &amp;lower, <span class="keyword">const</span> T &amp;upper)</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;{</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;  <span class="keywordflow">return</span> std::max(lower, std::min(n, upper));</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;}</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment"> * @brief Calculate the equivalent properties for a given phase. Method called</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment"> * in quadrature points loops in Cahn-Hilliard simulations.</span></div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment"> * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno"><a class="line" href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">  333</a></span>&#160;<a class="code" href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> phase_cahn_hilliard,</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">double</span> property0,</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">double</span> property1)</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;{</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="keywordtype">double</span> <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;  <span class="keywordflow">if</span> (std::abs(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>) &gt; 1)</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    {</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = <a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>);</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  <span class="keywordtype">double</span> property_avg  = (property0 + property1) * 0.5;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <span class="keywordtype">double</span> property_diff = (property0 - property1) * 0.5;</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  <span class="keywordtype">double</span> property_eq = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * property_diff + property_avg;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  <span class="keywordflow">return</span> property_eq;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;}</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment"> * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.</span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="comment"> * * @param table The table to be filled. Warning ! if the table is empty, it&#39;s content will be erased.</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment"> *    @param file The path the file that will be use to fill up the table.</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment"> *   @param delimiter The delimiter used to read the table.</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<a class="code" href="utilities_8h.html#a120afbe974701b97039517c195e18416">fill_table_from_file</a>(TableHandler     &amp;table,</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                     <span class="keyword">const</span> std::string file_name,</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                     <span class="keyword">const</span> std::string delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment"> * @brief function that read a file that was build from a dealii table and fill 2 vectors.</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment"> * The first vector contains all the columns names and the second one contained</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment"> * all the column data.</span></div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment"> * * @param map A map used to contain the data based on the columns name.</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment"> *   @param file The path the file that will be use to fill up the table.</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment"> *   @param delimiter The delimiter used to read the table.</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<a class="code" href="utilities_8h.html#a5a470018cf7c417efd11a163d465f951">fill_vectors_from_file</a>(std::map&lt;std::string, std::vector&lt;double&gt;&gt; &amp;map,</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                       <span class="keyword">const</span> std::string                           file_name,</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;                       <span class="keyword">const</span> std::string delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment"> * @brief Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data.</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment"> * * @param map Container to be filled with the information in the dealii table.</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment"> *   @param file The path the file that will be use to fill up the table.</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment"> *   @param delimiter The delimiter used to read the table.</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<a class="code" href="utilities_8h.html#a7c64fcbe9b1f3d396d37076c4b40afe8">fill_string_vectors_from_file</a>(</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;  std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; &amp;map,</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  <span class="keyword">const</span> std::string                                file_name,</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <span class="keyword">const</span> std::string                                delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="comment"> * @brief Creates the simulation output folder</span></div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="comment"> * * @param dirname Output directory name</span></div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<a class="code" href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a>(<span class="keyword">const</span> std::string &amp;dirname);</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment"> * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1</span></div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment"> * For example, if the string to be printed is &quot;Tracer&quot; the result will be:</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment"> * -------</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment"> * Tracer</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment"> * -------</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment"> * @param pcout the parallel cout used to print the information</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment"> * @param expression string that will be printed</span></div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment"> * @param delimiter the character used to delimit the printing. Default value is &quot;-&quot;</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno"><a class="line" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">  415</a></span>&#160;<a class="code" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                <span class="keyword">const</span> std::string         expression,</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">char</span>                delimiter = <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;{</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;  pcout &lt;&lt; std::string(expression.size() + 1, delimiter) &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  pcout &lt;&lt; expression &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;  pcout &lt;&lt; std::string(expression.size() + 1, delimiter) &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;}</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="comment"> * @brief Serializes a table using boost serialization feature</span></div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="comment"> * the filename should contain the desired extension</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment"> * @param table The table to be serialized</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment"> * @param filename The file name (including the extension) to be used</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno"><a class="line" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">  432</a></span>&#160;<a class="code" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a>(<span class="keyword">const</span> TableHandler &amp;table, <span class="keyword">const</span> std::string filename)</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;{</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;  std::ofstream                 ofile(filename);</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  boost::archive::text_oarchive oa(ofile, boost::archive::no_header);</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;  oa &lt;&lt; table;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;}</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment"> * @brief Loads a table using boost serialization feature</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment"> * the filename should contain the desired extension</span></div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment"> * @param table The table to be deserialized</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment"> * @param filename The file name (including the extension) to be used</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno"><a class="line" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">  447</a></span>&#160;<a class="code" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a>(TableHandler &amp;table, <span class="keyword">const</span> std::string filename)</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;{</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;  std::ifstream                 ifile(filename);</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;  ia &gt;&gt; table;</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;}</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="comment"> * @brief  get the value of a particular parameter from the contents of the input</span></div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="comment"> * file. Return an empty string if not found. This function is used to read an</span></div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="comment"> * individual parameter for an input file. This function is adapted from ASPECT</span></div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment"> * and is mainly used in parsing the dim of the problem before creating the</span></div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment"> * whole parameter parser</span></div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="comment"> * @param file_name The file name from which to read a value</span></div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="comment"> * @param parameter_name The name of the parameter</span></div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160; </div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;std::string</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<a class="code" href="utilities_8h.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                            <span class="keyword">const</span> std::string &amp;parameter_name);</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;<span class="comment"> * @brief Extract the dimension in which to run Lethe from the</span></div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;<span class="comment"> * the contents of the parameter file. This is something that</span></div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="comment"> * we need to do before processing the parameter file since we</span></div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="comment"> * need to know whether to use the dim=2 or dim=3 instantiation</span></div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="comment"> * of the main classes.</span></div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="comment"> * @param file_name The file name from which dimension is read</span></div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;<a class="code" href="utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a>(<span class="keyword">const</span> std::string &amp;file_name);</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;<span class="comment"> * @brief Extract the maximum number of boundary conditions from the file.</span></div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="comment"> * The number of boundary conditions is linked to the string &quot;number&quot; so</span></div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment"> * this feature will need to be monitored extensively in the future.</span></div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="comment"> * @param file_name The file name from which the number of boundary conditions</span></div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;<span class="comment"> * is read</span></div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;<span class="keywordtype">int</span></div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<a class="code" href="utilities_8h.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a>(<span class="keyword">const</span> std::string &amp;file_name);</div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string. If the</span></div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="comment"> * dimension correspondence of the @p value_string is not equivalent to</span></div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="comment"> * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter</span></div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment"> * separating the elements of the @p value_string is a comma (&quot;,&quot;).</span></div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment"> * @param phase_cahn_hilliard Phase value for the given quadrature point</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment"> * @param property0 Property value for the fluid with index 0 (fluid for phase = -1)</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment"> * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">  337</a></span>&#160;<a class="code" href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> phase_cahn_hilliard,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">double</span> property0,</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">double</span> property1)</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;{</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="keywordtype">double</span> <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  <span class="keywordflow">if</span> (std::abs(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>) &gt; 1)</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = <a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>);</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <span class="keywordtype">double</span> property_avg  = (property0 + property1) * 0.5;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  <span class="keywordtype">double</span> property_diff = (property0 - property1) * 0.5;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  <span class="keywordtype">double</span> property_eq = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * property_diff + property_avg;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160; </div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="keywordflow">return</span> property_eq;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;}</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment"> * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment"> * @param table The table to be filled. Warning ! if the table is empty, it&#39;s content will be erased.</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="comment"> * @param file_name The path the file that will be use to fill up the table.</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="comment"> * @param delimiter The delimiter used to read the table.</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<a class="code" href="utilities_8h.html#a120afbe974701b97039517c195e18416">fill_table_from_file</a>(TableHandler     &amp;table,</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                     <span class="keyword">const</span> std::string file_name,</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                     <span class="keyword">const</span> std::string delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="comment"> * @brief function that read a file that was build from a dealii table and fill 2 vectors.</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment"> * The first vector contains all the columns names and the second one contained</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment"> * all the column data.</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment"> * @param map A map used to contain the data based on the columns name.</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment"> * @param file_name The path the file that will be use to fill up the table.</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment"> * @param delimiter The delimiter used to read the table.</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<a class="code" href="utilities_8h.html#a5a470018cf7c417efd11a163d465f951">fill_vectors_from_file</a>(std::map&lt;std::string, std::vector&lt;double&gt;&gt; &amp;map,</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;                       <span class="keyword">const</span> std::string                           file_name,</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                       <span class="keyword">const</span> std::string delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment"> * @brief Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data.</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment"> * @param map Container to be filled with the information in the dealii table.</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="comment"> * @param file_name The path the file that will be use to fill up the table.</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment"> * @param delimiter The delimiter used to read the table.</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<a class="code" href="utilities_8h.html#a7c64fcbe9b1f3d396d37076c4b40afe8">fill_string_vectors_from_file</a>(</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; &amp;map,</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  <span class="keyword">const</span> std::string                                file_name,</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  <span class="keyword">const</span> std::string                                delimiter = <span class="stringliteral">&quot; &quot;</span>);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="comment"> * @brief Creates the simulation output folder</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment"> * @param dirname Output directory name</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<a class="code" href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a>(<span class="keyword">const</span> std::string &amp;dirname);</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment"> * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment"> * For example, if the string to be printed is &quot;Tracer&quot; the result will be:</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment"> * -------</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment"> * Tracer</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment"> * -------</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment"> * @param pcout the parallel cout used to print the information</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment"> * @param expression string that will be printed</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment"> * @param delimiter the character used to delimit the printing. Default value is &quot;-&quot;</span></div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno"><a class="line" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">  419</a></span>&#160;<a class="code" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                <span class="keyword">const</span> std::string         expression,</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">char</span>                delimiter = <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;{</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;  pcout &lt;&lt; std::string(expression.size() + 1, delimiter) &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  pcout &lt;&lt; expression &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;  pcout &lt;&lt; std::string(expression.size() + 1, delimiter) &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;}</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment"> * @brief Serializes a table using boost serialization feature</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment"> * the filename should contain the desired extension</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment"> * @param table The table to be serialized</span></div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment"> * @param filename The file name (including the extension) to be used</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno"><a class="line" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">  436</a></span>&#160;<a class="code" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a>(<span class="keyword">const</span> TableHandler &amp;table, <span class="keyword">const</span> std::string filename)</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;{</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;  std::ofstream                 ofile(filename);</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;  boost::archive::text_oarchive oa(ofile, boost::archive::no_header);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;  oa &lt;&lt; table;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;}</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment"> * @brief Loads a table using boost serialization feature</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment"> * the filename should contain the desired extension</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment"> * @param table The table to be deserialized</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment"> * @param filename The file name (including the extension) to be used</span></div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno"><a class="line" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">  451</a></span>&#160;<a class="code" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a>(TableHandler &amp;table, <span class="keyword">const</span> std::string filename)</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;{</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;  std::ifstream                 ifile(filename);</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;  ia &gt;&gt; table;</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;}</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment"> * @brief  get the value of a particular parameter from the contents of the input</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment"> * file. Return an empty string if not found. This function is used to read an</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="comment"> * individual parameter for an input file. This function is adapted from ASPECT</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="comment"> * and is mainly used in parsing the dim of the problem before creating the</span></div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;<span class="comment"> * whole parameter parser</span></div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="comment"> * @param file_name The file name from which to read a value</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<span class="comment"> * @param parameter_name The name of the parameter</span></div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160; </div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;std::string</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;<a class="code" href="utilities_8h.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;                            <span class="keyword">const</span> std::string &amp;parameter_name);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="comment"> * @brief Extract the dimension in which to run Lethe from the</span></div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment"> * the contents of the parameter file. This is something that</span></div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="comment"> * we need to do before processing the parameter file since we</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="comment"> * need to know whether to use the dim=2 or dim=3 instantiation</span></div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="comment"> * of the main classes.</span></div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;<span class="comment"> * @param file_name The file name from which dimension is read</span></div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<a class="code" href="utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a>(<span class="keyword">const</span> std::string &amp;file_name);</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;<span class="comment"> * @brief Extract the maximum number of boundary conditions from the file.</span></div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="comment"> * The number of boundary conditions is linked to the string &quot;number&quot; so</span></div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;<span class="comment"> * this feature will need to be monitored extensively in the future.</span></div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<span class="comment"> * @param file_name The file name from which the number of boundary conditions</span></div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="comment"> * is read</span></div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="keywordtype">int</span></div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<a class="code" href="utilities_8h.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a>(<span class="keyword">const</span> std::string &amp;file_name);</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string. If the</span></div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment"> * dimension correspondence of the @p value_string is not equivalent to</span></div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment"> * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment"> * separating the elements of the @p value_string is a comma (&quot;,&quot;).</span></div>
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment"> * @param[in] value_string A string in the parameter file corresponding to a</span></div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment"> * given tensor.</span></div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the @p value_string in the</span></div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment"> * parameter file.</span></div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
-<div class="line"><a name="l00509"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">  509</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string)</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;{</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    Utilities::split_string_list(value_string));</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;  std::vector&lt;double&gt; vector_of_double =</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    Utilities::string_to_double(vector_of_string);</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160; </div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;              ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string +</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                         <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;                         <span class="stringliteral">&quot;or point.&quot;</span>));</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; spacedim; ++i)</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment"> * @param[in] value_string A string in the parameter file corresponding to a</span></div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="comment"> * given tensor.</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the @p value_string in the</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;<span class="comment"> * parameter file.</span></div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
+<div class="line"><a name="l00513"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">  513</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string)</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;{</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    Utilities::split_string_list(value_string));</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;  std::vector&lt;double&gt; vector_of_double =</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160; </div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;              ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string +</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;                         <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;                         <span class="stringliteral">&quot;or point.&quot;</span>));</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;}</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string_0, but it can</span></div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment"> * also allow the usage of deprecated parameters that used to be 3 individual</span></div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment"> * entries instead of a list of values.</span></div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment"> * In the case of a single entry declaration, the delimiter separating the</span></div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment"> * elements of the @p value_string_0 is a comma (&quot;,&quot;).</span></div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; spacedim; ++i)</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160; </div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;}</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment"> * @brief Return the tensor corresponding to the @p value_string_0, but it can</span></div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment"> * also allow the usage of deprecated parameters that used to be 3 individual</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;<span class="comment"> * entries instead of a list of values.</span></div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;<span class="comment"> * In the case of a single entry declaration, the delimiter separating the</span></div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;<span class="comment"> * elements of the @p value_string_0 is a comma (&quot;,&quot;).</span></div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="comment"> * @param[in] value_string_0 A string in the parameter file corresponding to the</span></div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="comment"> * first component of the tensor or to the tensor itself.</span></div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment"> * @param[in] value_1 A double in the parameter file corresponding to the</span></div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment"> * second component of the tensor.</span></div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="comment"> * @param[in] value_2 A double in the parameter file corresponding to the</span></div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="comment"> * third component of the tensor. Only specify if @p spacedim = 3.</span></div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the</span></div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="comment"> * parameter file.</span></div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
-<div class="line"><a name="l00551"></a><span class="lineno"><a class="line" href="utilities_8h.html#abec407d2ea0c7cddba952fe0fb392803">  551</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string_0,</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_1,</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_2 = 0)</div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;{</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    Utilities::split_string_list(value_string_0));</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160; </div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  <span class="comment">// The used parameter is a list of values</span></div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;  <span class="keywordflow">if</span> (vector_of_string.size() &gt; 1)</div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    {</div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;      std::vector&lt;double&gt; vector_of_double =</div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;        Utilities::string_to_double(vector_of_string);</div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;                  ExcMessage(</div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;                    <span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string_0 +</div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;                    <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;                    <span class="stringliteral">&quot;or point.&quot;</span>));</div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; vector_of_double.size(); ++i)</div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        output_tensor[i] = vector_of_double[i];</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;    }</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  <span class="keywordflow">else</span> <span class="comment">// Depreciated individual entries</span></div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;    {</div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;      <span class="comment">// Since the first parameter is the alias of the new parameter,</span></div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;      <span class="comment">// the value of the first parameter is obtained for its entry</span></div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;      output_tensor[0] = Utilities::string_to_double(value_string_0);</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;      output_tensor[1] = value_1;</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;      <span class="keywordflow">if</span> constexpr (spacedim == 3)</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        output_tensor[2] = value_2;</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    }</div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;}</div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160; </div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="comment"> * @remark The function can be use to construct Point&lt;spacedim&gt; objects.</span></div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment"> * @tparam spacedim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="comment"> * @param[in] value_string_0 A string in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="comment"> * first component of the tensor or to the tensor itself.</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="comment"> * @param[in] value_1 A double in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="comment"> * second component of the tensor.</span></div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="comment"> * @param[in] value_2 A double in the parameter file corresponding to the</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="comment"> * third component of the tensor. Only specify if @p spacedim = 3.</span></div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;<span class="comment"> * @return A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the</span></div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;<span class="comment"> * parameter file.</span></div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;<span class="keyword">inline</span> Tensor&lt;1, spacedim&gt;</div>
+<div class="line"><a name="l00555"></a><span class="lineno"><a class="line" href="utilities_8h.html#abec407d2ea0c7cddba952fe0fb392803">  555</a></span>&#160;<a class="code" href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a>(<span class="keyword">const</span> std::string &amp;value_string_0,</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_1,</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">double</span>      &amp;value_2 = 0)</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;{</div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;    Utilities::split_string_list(value_string_0));</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;  Tensor&lt;1, spacedim&gt; output_tensor;</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160; </div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;  <span class="comment">// The used parameter is a list of values</span></div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;  <span class="keywordflow">if</span> (vector_of_string.size() &gt; 1)</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;    {</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;      std::vector&lt;double&gt; vector_of_double =</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;                  ExcMessage(</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;                    <span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string_0 +</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;                    <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;                    <span class="stringliteral">&quot;or point.&quot;</span>));</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; vector_of_double.size(); ++i)</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    }</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;  <span class="keywordflow">else</span> <span class="comment">// Depreciated individual entries</span></div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;    {</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;      <span class="comment">// Since the first parameter is the alias of the new parameter,</span></div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;      <span class="comment">// the value of the first parameter is obtained for its entry</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;      output_tensor[0] = Utilities::string_to_double(value_string_0);</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;      output_tensor[1] = value_1;</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;      <span class="keywordflow">if</span> constexpr (spacedim == 3)</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;        output_tensor[2] = value_2;</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;    }</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;  <span class="keywordflow">return</span> output_tensor;</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;}</div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160; </div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">Small class that is used to store statistics (min,max,total,average) of variables that are used in si...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00041">utilities.h:42</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00054">utilities.h:54</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00052">utilities.h:52</a></div></div>
@@ -672,26 +676,26 @@ $(function() {
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">Variable::phase_cahn_hilliard</a></div><div class="ttdeci">@ phase_cahn_hilliard</div><div class="ttdoc">Phase order scalar field from Cahn Hilliard.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">Variable::phase</a></div><div class="ttdeci">@ phase</div><div class="ttdoc">Phase fraction scalar field from VOF.</div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00311">fluid_dynamics_matrix_free.cc:312</a></div></div>
-<div class="ttc" id="autilities_8h_html_a1169674c9744ed63bfb067efce02df5f"><div class="ttname"><a href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Serializes a table using boost serialization feature the filename should contain the desired extensio...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00432">utilities.h:432</a></div></div>
+<div class="ttc" id="autilities_8h_html_a1169674c9744ed63bfb067efce02df5f"><div class="ttname"><a href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Serializes a table using boost serialization feature the filename should contain the desired extensio...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00436">utilities.h:436</a></div></div>
 <div class="ttc" id="autilities_8h_html_a120afbe974701b97039517c195e18416"><div class="ttname"><a href="utilities_8h.html#a120afbe974701b97039517c195e18416">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string file_name, const std::string delimiter=&quot; &quot;)</div><div class="ttdoc">Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with ...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00215">utilities.cc:215</a></div></div>
-<div class="ttc" id="autilities_8h_html_a1ab31b90bc584c635ec159468ceed9b2"><div class="ttname"><a href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a></div><div class="ttdeci">int sgn(T val)</div><div class="ttdoc">Used in the calculate_properties_ch to retrieve the sign of the phase parameter.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00301">utilities.h:301</a></div></div>
+<div class="ttc" id="autilities_8h_html_a1ab31b90bc584c635ec159468ceed9b2"><div class="ttname"><a href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a></div><div class="ttdeci">int sgn(T val)</div><div class="ttdoc">Used in the calculate_properties_ch to retrieve the sign of the phase parameter.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00304">utilities.h:304</a></div></div>
 <div class="ttc" id="autilities_8h_html_a28e3647b49b871d119c8e19d390d6d66"><div class="ttname"><a href="utilities_8h.html#a28e3647b49b871d119c8e19d390d6d66">add_statistics_to_table_handler</a></div><div class="ttdeci">void add_statistics_to_table_handler(const std::string variable, const statistics stats, TableHandler &amp;table)</div><div class="ttdoc">add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00063">utilities.h:63</a></div></div>
 <div class="ttc" id="autilities_8h_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the the contents of the parameter file....</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00631">utilities.cc:631</a></div></div>
 <div class="ttc" id="autilities_8h_html_a34ac72c0df6c4a24f85c97b22d137520"><div class="ttname"><a href="utilities_8h.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a></div><div class="ttdeci">std::string get_last_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdoc">get the value of a particular parameter from the contents of the input file. Return an empty string i...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00547">utilities.cc:547</a></div></div>
 <div class="ttc" id="autilities_8h_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00365">utilities.cc:365</a></div></div>
-<div class="ttc" id="autilities_8h_html_a56a967052620929f4db03cee351d6890"><div class="ttname"><a href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00415">utilities.h:415</a></div></div>
+<div class="ttc" id="autilities_8h_html_a56a967052620929f4db03cee351d6890"><div class="ttname"><a href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00419">utilities.h:419</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5a470018cf7c417efd11a163d465f951"><div class="ttname"><a href="utilities_8h.html#a5a470018cf7c417efd11a163d465f951">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt;&gt; &amp;map, const std::string file_name, const std::string delimiter=&quot; &quot;)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00261">utilities.cc:261</a></div></div>
-<div class="ttc" id="autilities_8h_html_a6350c3985200701a29d4d02467074843"><div class="ttname"><a href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; value_string_to_tensor(const std::string &amp;value_string)</div><div class="ttdoc">Return the tensor corresponding to the value_string. If the dimension correspondence of the value_str...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00509">utilities.h:509</a></div></div>
-<div class="ttc" id="autilities_8h_html_a704ab7e8f1f853cd7433b31d571df760"><div class="ttname"><a href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Loads a table using boost serialization feature the filename should contain the desired extension.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00447">utilities.h:447</a></div></div>
+<div class="ttc" id="autilities_8h_html_a6350c3985200701a29d4d02467074843"><div class="ttname"><a href="utilities_8h.html#a6350c3985200701a29d4d02467074843">value_string_to_tensor</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; value_string_to_tensor(const std::string &amp;value_string)</div><div class="ttdoc">Return the tensor corresponding to the value_string. If the dimension correspondence of the value_str...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00513">utilities.h:513</a></div></div>
+<div class="ttc" id="autilities_8h_html_a704ab7e8f1f853cd7433b31d571df760"><div class="ttname"><a href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Loads a table using boost serialization feature the filename should contain the desired extension.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00451">utilities.h:451</a></div></div>
 <div class="ttc" id="autilities_8h_html_a7c64fcbe9b1f3d396d37076c4b40afe8"><div class="ttname"><a href="utilities_8h.html#a7c64fcbe9b1f3d396d37076c4b40afe8">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt;&gt; &amp;map, const std::string file_name, const std::string delimiter=&quot; &quot;)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00314">utilities.cc:314</a></div></div>
 <div class="ttc" id="autilities_8h_html_a7d7935807703948c95807db1f02eca18"><div class="ttname"><a href="utilities_8h.html#a7d7935807703948c95807db1f02eca18">make_table_scalars_tensors</a></div><div class="ttdeci">TableHandler make_table_scalars_tensors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00047">utilities.cc:47</a></div></div>
-<div class="ttc" id="autilities_8h_html_a955c2851894d041727c14dff59686f0d"><div class="ttname"><a href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a></div><div class="ttdeci">double calculate_point_property(const double phase, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in VO...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00270">utilities.h:270</a></div></div>
-<div class="ttc" id="autilities_8h_html_a9aaa34d570ccff65aa586904187cfff5"><div class="ttname"><a href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">clip</a></div><div class="ttdeci">T clip(const T &amp;n, const T &amp;lower, const T &amp;upper)</div><div class="ttdoc">Clip a properties between a lower and a higher value.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00317">utilities.h:317</a></div></div>
+<div class="ttc" id="autilities_8h_html_a955c2851894d041727c14dff59686f0d"><div class="ttname"><a href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a></div><div class="ttdeci">double calculate_point_property(const double phase, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in VO...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00273">utilities.h:273</a></div></div>
+<div class="ttc" id="autilities_8h_html_a9aaa34d570ccff65aa586904187cfff5"><div class="ttname"><a href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">clip</a></div><div class="ttdeci">T clip(const T &amp;n, const T &amp;lower, const T &amp;upper)</div><div class="ttdoc">Clip a property between a lower and a higher value.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00321">utilities.h:321</a></div></div>
 <div class="ttc" id="autilities_8h_html_aa286625bb871dd4165a509b7ebc41763"><div class="ttname"><a href="utilities_8h.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a></div><div class="ttdeci">int get_max_number_of_boundary_conditions(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum number of boundary conditions from the file. The number of boundary conditions is...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00697">utilities.cc:697</a></div></div>
 <div class="ttc" id="autilities_8h_html_aa452d8f946645898ce27929b956067eb"><div class="ttname"><a href="utilities_8h.html#aa452d8f946645898ce27929b956067eb">make_table_tensors_tensors</a></div><div class="ttdeci">TableHandler make_table_tensors_tensors(const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00136">utilities.cc:136</a></div></div>
 <div class="ttc" id="autilities_8h_html_aaa1167f0e0a2bb3cc269b124d4b0158a"><div class="ttname"><a href="utilities_8h.html#aaa1167f0e0a2bb3cc269b124d4b0158a">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt;&gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_values, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00177">utilities.cc:177</a></div></div>
 <div class="ttc" id="autilities_8h_html_ab305d2e75368dcfbb1cc79526eb28493"><div class="ttname"><a href="utilities_8h.html#ab305d2e75368dcfbb1cc79526eb28493">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt;&gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cc_source.html#l00010">utilities.cc:10</a></div></div>
-<div class="ttc" id="autilities_8h_html_ac2174ef369010698c8197b717864e4a3"><div class="ttname"><a href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a></div><div class="ttdeci">double calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in Ca...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00333">utilities.h:333</a></div></div>
+<div class="ttc" id="autilities_8h_html_ac2174ef369010698c8197b717864e4a3"><div class="ttname"><a href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a></div><div class="ttdeci">double calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in Ca...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00337">utilities.h:337</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

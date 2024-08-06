@@ -185,11 +185,11 @@ Static Private Attributes</h2></td></tr>
 <tr class="separator:aac5081d95eda43a409d30d646cc0cf20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manage the actions to be performed in the <a class="el" href="namespaceDEM.html">DEM</a> solver and on the <a class="el" href="namespaceDEM.html">DEM</a> part of the coupling CFD-DEM solver. </p>
+<div class="textblock"><p>Manage the actions to be performed in the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver and on the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> part of the coupling CFD-DEM solver. </p>
 <p>Any event that needs some following actions is handled by the action manager. The event communicates to the action manager that it happened and the action manager will change the trigger flags to the actions to be taken. When this action is about to be performed, it checks with the action manager if it should be triggered. Many events can trigger the same actions, but when the action is about to be performed, it only checks if it has to be performed, not what event have happened.</p>
-<p>If you implement a new feature that needs resetting or contact search after (or other actions), you should add a new "step" function to the action manager that will set the trigger to the action to be performed. If you implement new actions, you should add a new trigger flag and a new check function to the action manager. Obviously, you should also have to initialize the trigger in the constructor, and reset it in the reset function called after a <a class="el" href="namespaceDEM.html">DEM</a> iteration. If the action depends on a enabling of a feature, you should add a new function to set the enabled flag. </p>
+<p>If you implement a new feature that needs resetting or contact search after (or other actions), you should add a new "step" function to the action manager that will set the trigger to the action to be performed. If you implement new actions, you should add a new trigger flag and a new check function to the action manager. Obviously, you should also have to initialize the trigger in the constructor, and reset it in the reset function called after a <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iteration. If the action depends on a enabling of a feature, you should add a new function to set the enabled flag. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00028">28</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00043">43</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a52395ec406d911df34d4f8c6752f64a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52395ec406d911df34d4f8c6752f64a0">&#9670;&nbsp;</a></span>DEMActionManager() <span class="overload">[1/2]</span></h2>
@@ -250,7 +250,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Constructor of the <a class="el" href="classDEMActionManager.html" title="Manage the actions to be performed in the DEM solver and on the DEM part of the coupling CFD-DEM solv...">DEMActionManager</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00388">388</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00403">403</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -280,9 +280,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the tangential overlap history needs to be cleared. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00350">350</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00365">365</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_overlap_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00456">clear_tangential_overlap_trigger</a>.</p>
 
 </div>
 </div>
@@ -311,9 +311,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the contact search needs to be performed. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00323">323</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00338">338</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -343,9 +343,9 @@ Static Private Attributes</h2></td></tr>
 <p>Check if the solid objects are enabled to perform some actions that are not handled by triggers of the action manager. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the solid objects are enabled. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00162">162</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00177">177</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">grid_motion_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">grid_motion_enabled</a>.</p>
 
 </div>
 </div>
@@ -374,9 +374,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the repartitioning (load balancing) needs to be performed. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00314">314</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00329">329</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00451">load_balance_trigger</a>.</p>
 
 </div>
 </div>
@@ -405,9 +405,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the mobility status need to be reset to mobile. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00368">368</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00383">383</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00483">mobility_status_reset_trigger</a>.</p>
 
 </div>
 </div>
@@ -437,9 +437,9 @@ Static Private Attributes</h2></td></tr>
 <p>Check if the periodic boundaries are enabled to perform some actions that are not handled by triggers of the action manager. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the periodic boundaries are enabled. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00091">91</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00106">106</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00411">periodic_boundaries_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">periodic_boundaries_enabled</a>.</p>
 
 </div>
 </div>
@@ -468,9 +468,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the containers need to be resized. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00359">359</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00374">374</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00447">resize_containers_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00462">resize_containers_trigger</a>.</p>
 
 </div>
 </div>
@@ -499,9 +499,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if checkpoint needs to be read. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00305">305</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00320">320</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00446">read_checkpoint_trigger</a>.</p>
 
 </div>
 </div>
@@ -530,9 +530,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the solid object has to be searched. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00341">341</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00356">356</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -562,9 +562,9 @@ Static Private Attributes</h2></td></tr>
 <p>Check if the solid objects are enabled to perform some actions that are not handled by triggers of the action manager. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the solid objects are enabled. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00116">116</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00131">131</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00431">solid_objects_enabled</a>.</p>
 
 </div>
 </div>
@@ -594,9 +594,9 @@ Static Private Attributes</h2></td></tr>
 <p>Check if the sparse contacts is enabled to perform some actions that are not handled by triggers of the action manager. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the sparse contacts is enabled. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00141">141</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00156">156</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -625,9 +625,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the sparse contacts cells need to be updated. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00332">332</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00347">347</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00478">sparse_contacts_cells_update_trigger</a>.</p>
 
 </div>
 </div>
@@ -659,9 +659,9 @@ Static Private Attributes</h2></td></tr>
 <li>contact search: might be from a selected frequency for the contact search (frequent method) or from the displacement evaluation (dynamic) </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00246">246</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00261">261</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -688,14 +688,14 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Set trigger that the mobility status need to be reset to mobile at the first <a class="el" href="namespaceDEM.html">DEM</a> time step if the sparse contacts are enabled. </p>
+<p>Set trigger that the mobility status need to be reset to mobile at the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step if the sparse contacts are enabled. </p>
 <p>It trigger:</p><ul>
-<li>mobility status reset: all the mobility status of the cells need to be mobile since the velocity of the particles are not yet computed and the status can not be evaluated. In the case of CFD-DEM, we force the full computation of the particles at the first <a class="el" href="namespaceDEM.html">DEM</a> time step since hydrodynamic forces, which have just been calculated, may change the behavior of particles. </li>
+<li>mobility status reset: all the mobility status of the cells need to be mobile since the velocity of the particles are not yet computed and the status can not be evaluated. In the case of CFD-DEM, we force the full computation of the particles at the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step since hydrodynamic forces, which have just been calculated, may change the behavior of particles. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00279">279</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00294">294</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00483">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -726,7 +726,7 @@ Static Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dem__action__manager_8cc_source.html#l00006">6</a> of file <a class="el" href="dem__action__manager_8cc_source.html">dem_action_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00388">DEMActionManager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00406">instance</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00403">DEMActionManager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">instance</a>.</p>
 
 </div>
 </div>
@@ -753,14 +753,14 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Set trigger for the contact search to be performed at the last <a class="el" href="namespaceDEM.html">DEM</a> iteration of the CFD iteration. </p>
+<p>Set trigger for the contact search to be performed at the last <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iteration of the CFD iteration. </p>
 <p>It triggers:</p><ul>
 <li>contact search: the contact search is performed in order to call the sorting of particles in cells and for the update of the particle reference locations prior of the void fraction calculation. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00296">296</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00311">311</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -797,9 +797,9 @@ Static Private Attributes</h2></td></tr>
 <li>update the sparse contacts cells (if enabled): the sparse contacts cells need to be updated since they only contain local and ghost cells. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00211">211</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00226">226</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00447">resize_containers_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00456">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00451">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00462">resize_containers_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00478">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -865,9 +865,9 @@ Static Private Attributes</h2></td></tr>
 <li>contact search: since there are new particles in the simulation, contact search needs to be performed for all particles. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00231">231</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00246">246</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -896,9 +896,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Reset all triggers to false. TODO: modify the handling of the contact search at counter = 1 because of the resetting of the mobility status. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00060">60</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00075">75</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00436">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00456">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00451">load_balance_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00483">mobility_status_reset_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00446">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00478">sparse_contacts_cells_update_trigger</a>.</p>
 
 </div>
 </div>
@@ -928,9 +928,9 @@ Static Private Attributes</h2></td></tr>
 <p>Set triggers for actions to be performed in the current time step because the simulation starts from restart files (previously called checkpoint step). </p>
 <p>It triggers the reading of checkpoints, the contact search, clearing the contact structures, the solid object mapping (if enabled), and the update of the sparse contacts cells (if enabled). </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00177">177</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00192">192</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00463">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00456">clear_tangential_overlap_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00446">read_checkpoint_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>, <a class="el" href="dem__action__manager_8h_source.html#l00431">solid_objects_enabled</a>, <a class="el" href="dem__action__manager_8h_source.html#l00478">sparse_contacts_cells_update_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -959,9 +959,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag that the grid will motion in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00150">150</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00165">165</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">grid_motion_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00441">grid_motion_enabled</a>.</p>
 
 </div>
 </div>
@@ -990,9 +990,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag that there are periodic boundary in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00079">79</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00094">94</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00411">periodic_boundaries_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00426">periodic_boundaries_enabled</a>.</p>
 
 </div>
 </div>
@@ -1021,9 +1021,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag that there are solid objects in the simulation. Already trigger a solid object search in the background map. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00101">101</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00116">116</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00416">solid_objects_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00431">solid_objects_enabled</a>.</p>
 
 </div>
 </div>
@@ -1052,9 +1052,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag that the sparse contacts is enabled and trigger a mobility status reset to initialize the containers. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00126">126</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00141">141</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00483">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -1084,9 +1084,9 @@ Static Private Attributes</h2></td></tr>
 <p>Set triggers for actions to be performed in the current time step because of a solid object search step. </p>
 <p>It triggers the solid object search and the contact search. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00258">258</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00273">273</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00452">contact_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00458">solid_object_search_trigger</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00467">contact_search_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00473">solid_object_search_trigger</a>.</p>
 
 </div>
 </div>
@@ -1115,9 +1115,9 @@ Static Private Attributes</h2></td></tr>
 
 <p>Check if the default broad search functions should be used. It depends if adaptive sparse contacts is enabled, if so, it is a step where the mobility status are reset. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00379">379</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00394">394</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00468">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00421">sparse_contacts_enabled</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8h_source.html#l00483">mobility_status_reset_trigger</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00436">sparse_contacts_enabled</a>.</p>
 
 </div>
 </div>
@@ -1144,7 +1144,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for clearing the tangential overlap history. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00441">441</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00456">456</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1170,7 +1170,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the contact search. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00452">452</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00467">467</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1196,7 +1196,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for motion of grid in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00426">426</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00441">441</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1222,7 +1222,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Pointer to the unique of the <a class="el" href="classDEMActionManager.html" title="Manage the actions to be performed in the DEM solver and on the DEM part of the coupling CFD-DEM solv...">DEMActionManager</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00406">406</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00421">421</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1248,7 +1248,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for load balancing execution. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00436">436</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00451">451</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1274,7 +1274,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the mobility status reset to mobile status. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00468">468</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00483">483</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1300,7 +1300,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for periodic boundaries in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00411">411</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00426">426</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1326,7 +1326,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for reading the checkpoint. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00431">431</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00446">446</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1352,7 +1352,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for resize the vector dependant of the local particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00447">447</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00462">462</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1378,7 +1378,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the solid object search, mapping the solid with the background triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00458">458</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00473">473</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1404,7 +1404,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for solid objects in the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00416">416</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00431">431</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1430,7 +1430,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag of the trigger for the update of the sparse contacts cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00463">463</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00478">478</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1456,7 +1456,7 @@ Static Private Attributes</h2></td></tr>
 
 <p>Flag for the enabling of the sparse contacts. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00421">421</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__action__manager_8h_source.html#l00436">436</a> of file <a class="el" href="dem__action__manager_8h_source.html">dem_action_manager.h</a>.</p>
 
 </div>
 </div>

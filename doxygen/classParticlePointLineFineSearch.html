@@ -100,11 +100,9 @@ Private Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticlePointLineFineSearch&lt; dim &gt;</h3>
 
-<p><a class="el" href="classThis.html">This</a> class is used for fine particle-point and particle-line contact search. Fine search is used to find all the particles which are physically in contact with boundary lines and points, and obtain all the required information for calculation of the corresponding contact force</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>Handle the fine particle-point and particle-line contact search. Fine search is used to find all the particles which are physically in contact with boundary lines and points, and obtain all the required information for calculation of the corresponding contact force. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__point__line__fine__search_8h_source.html#l00045">45</a> of file <a class="el" href="particle__point__line__fine__search_8h_source.html">particle_point_line_fine_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__point__line__fine__search_8h_source.html#l00039">39</a> of file <a class="el" href="particle__point__line__fine__search_8h_source.html">particle_point_line_fine_search.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a676e040501c53c87fcc70d467ff1e68e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a676e040501c53c87fcc70d467ff1e68e">&#9670;&nbsp;</a></span>ParticlePointLineFineSearch()</h2>
@@ -166,7 +164,9 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> private function is used to find the projection of point_p on a line with beginning and ending vertices of point_a and point_b, respectively </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>This private function is used to find the projection of point_p on a line with beginning and ending vertices of point_a and point_b, respectively. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">point_p</td><td>A point which is going to be projected on the line </td></tr>
     <tr><td class="paramname">point_a</td><td>Beginning point of the line </td></tr>
@@ -207,7 +207,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Iterates over a map of tuples (particle_line_contact_candidates) to see if the particle-line pairs are in contact or not. If they are in contact, the normal overlap, normal vector of contact and contact normal relative velocity are stored in a map which is the output of this function</p>
+
+<p>Iterate over a map of tuples (particle_line_contact_candidates) to see if the particle-line pairs are in contact or not. If they are in contact, the normal overlap, normal vector of contact and contact normal relative velocity are stored in a map which is the output of this function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_line_contact_candidates</td><td>The output of particle-line broad search which shows contact pair candidates </td></tr>
@@ -219,7 +220,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__point__line__fine__search_8cc_source.html#l00089">89</a> of file <a class="el" href="particle__point__line__fine__search_8cc_source.html">particle_point_line_fine_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00036">particle_point_line_contact_info_struct&lt; dim &gt;::particle</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00037">particle_point_line_contact_info_struct&lt; dim &gt;::point_one</a>, and <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00038">particle_point_line_contact_info_struct&lt; dim &gt;::point_two</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00035">particle_point_line_contact_info_struct&lt; dim &gt;::particle</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00036">particle_point_line_contact_info_struct&lt; dim &gt;::point_one</a>, and <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00037">particle_point_line_contact_info_struct&lt; dim &gt;::point_two</a>.</p>
 
 </div>
 </div>
@@ -250,7 +251,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Iterates over a map of pairs (particle_point_contact_candidates) to see if the particle-point pairs are in contact or not. If they are in contact, the normal overlap, normal vector of contact and contact normal relative velocity are stored in a map which is the output of this function</p>
+
+<p>Iterate over a map of pairs (particle_point_contact_candidates) to see if the particle-point pairs are in contact or not. If they are in contact, the normal overlap, normal vector of contact and contact normal relative velocity are stored in a map which is the output of this function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_point_contact_candidates</td><td>The output of particle-point broad search which shows contact pair candidates </td></tr>
@@ -262,7 +264,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__point__line__fine__search_8cc_source.html#l00018">18</a> of file <a class="el" href="particle__point__line__fine__search_8cc_source.html">particle_point_line_fine_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00036">particle_point_line_contact_info_struct&lt; dim &gt;::particle</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, and <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00037">particle_point_line_contact_info_struct&lt; dim &gt;::point_one</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00035">particle_point_line_contact_info_struct&lt; dim &gt;::particle</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">point_nd_to_3d()</a>, and <a class="el" href="particle__point__line__contact__info__struct_8h_source.html#l00036">particle_point_line_contact_info_struct&lt; dim &gt;::point_one</a>.</p>
 
 </div>
 </div>

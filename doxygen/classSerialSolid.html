@@ -194,7 +194,7 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim, int spacedim = dim&gt;<br />
 class SerialSolid&lt; dim, spacedim &gt;</h3>
 
-<p>A class that generates an object to manage a serial triangulation that represents a solid object. <a class="el" href="classThis.html">This</a> class can represent solid objects for which the dimension do not match the spatial dimension. For example, a 2D surface defined in 3D or a line defined in 2D.</p>
+<p>A class that generates an object to manage a serial triangulation that represents a solid object. This class can represent solid objects for which the dimension do not match the spatial dimension. For example, a 2D surface defined in 3D or a line defined in 2D.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the dimensionality of the geometry </td></tr>
@@ -262,7 +262,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Moves the dofs of the solid_triangulation by using the displacement vector. <a class="el" href="classThis.html">This</a> is only used to move the solid triangulation at the correct location when the simulation is restarted. </p>
+<p>Moves the dofs of the solid_triangulation by using the displacement vector. This is only used to move the solid triangulation at the correct location when the simulation is restarted. </p>
 
 <p class="definition">Definition at line <a class="el" href="serial__solid_8cc_source.html#l00405">405</a> of file <a class="el" href="serial__solid_8cc_source.html">serial_solid.cc</a>.</p>
 
@@ -390,7 +390,7 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates the max displacement of the solid object. The max displacement is defined as the L^\infty norm of the displacement components. <a class="el" href="classThis.html">This</a> is a measure of the maximal displacement in any direction. </p>
+<p>Calculates the max displacement of the solid object. The max displacement is defined as the L^\infty norm of the displacement components. This is a measure of the maximal displacement in any direction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reference to the vector of the displacement since the mapping </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="serial__solid_8cc_source.html#l00257">257</a> of file <a class="el" href="serial__solid_8cc_source.html">serial_solid.cc</a>.</p>
@@ -422,7 +422,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns the solid id of the solid object. <a class="el" href="classThis.html">This</a> ID is an unsigned integer which is given to the solid object at compile time and is mostly used when writing files. </p>
+<p>Returns the solid id of the solid object. This ID is an unsigned integer which is given to the solid object at compile time and is mostly used when writing files. </p>
 <dl class="section return"><dt>Returns</dt><dd>id of the solid </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="serial__solid_8h_source.html#l00179">179</a> of file <a class="el" href="serial__solid_8h_source.html">serial_solid.h</a>.</p>
@@ -558,11 +558,11 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Moves the vertices of the solid triangulation. <a class="el" href="classThis.html">This</a> function uses explicitEuler scheme time integrator to displace the vertices of the solid triangulation and stores the displacement in an array in order to allow correct checkpointing of the triangulation. </p>
+<p>Moves the vertices of the solid triangulation. This function uses explicitEuler scheme time integrator to displace the vertices of the solid triangulation and stores the displacement in an array in order to allow correct checkpointing of the triangulation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">time_step</td><td>The time_step value for this iteration</td></tr>
-    <tr><td class="paramname">initial_time</td><td>The initial time (time t) of the timestep. <a class="el" href="classThis.html">This</a> is used to set the time of the velocity function. </td></tr>
+    <tr><td class="paramname">initial_time</td><td>The initial time (time t) of the timestep. This is used to set the time of the velocity function. </td></tr>
   </table>
   </dd>
 </dl>
@@ -593,7 +593,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Moves the vertices of the solid triangulation using the displacement vector. <a class="el" href="classThis.html">This</a> is mostly used when restarting simulations which contain a serial solid in order to replace it at the position it was when the simulation finished. </p>
+<p>Moves the vertices of the solid triangulation using the displacement vector. This is mostly used when restarting simulations which contain a serial solid in order to replace it at the position it was when the simulation finished. </p>
 
 <p class="definition">Definition at line <a class="el" href="serial__solid_8cc_source.html#l00439">439</a> of file <a class="el" href="serial__solid_8cc_source.html">serial_solid.cc</a>.</p>
 

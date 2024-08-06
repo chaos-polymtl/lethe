@@ -104,11 +104,9 @@ Private Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticleParticleBroadSearch&lt; dim &gt;</h3>
 
-<p><a class="el" href="classThis.html">This</a> class is used for broad particle-particle contact search. Broad search is used to obtain all the particle-particle pairs in adjacent cells.</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>This class is used for broad particle-particle contact search. Broad search is used to obtain all the particle-particle pairs in adjacent cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8h_source.html#l00046">46</a> of file <a class="el" href="particle__particle__broad__search_8h_source.html">particle_particle_broad_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8h_source.html#l00043">43</a> of file <a class="el" href="particle__particle__broad__search_8h_source.html">particle_particle_broad_search.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af6b825992185411df03ca780798e2722"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af6b825992185411df03ca780798e2722">&#9670;&nbsp;</a></span>ParticleParticleBroadSearch()</h2>
@@ -168,7 +166,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8cc_source.html#l00012">12</a> of file <a class="el" href="particle__particle__broad__search_8cc_source.html">particle_particle_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00243">DEMContactManager&lt; dim &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00241">DEMContactManager&lt; dim &gt;::cells_local_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00255">DEMContactManager&lt; dim &gt;::ghost_contact_pair_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00253">DEMContactManager&lt; dim &gt;::local_contact_pair_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00242">DEMContactManager&lt; dim &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00240">DEMContactManager&lt; dim &gt;::cells_local_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00254">DEMContactManager&lt; dim &gt;::ghost_contact_pair_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00252">DEMContactManager&lt; dim &gt;::local_contact_pair_candidates</a>.</p>
 
 </div>
 </div>
@@ -206,7 +204,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds a vector of pairs (particle_particle_candidates) which shows the candidate particle-particle collision pairs. These collision pairs will be used in the fine search to investigate if they are in contact or not. <a class="el" href="classThis.html">This</a> version of the function is used when adaptive sparse contacts regards mobility is enable. </p>
+<p>Finds a vector of pairs (particle_particle_candidates) which shows the candidate particle-particle collision pairs. These collision pairs will be used in the fine search to investigate if they are in contact or not. This version of the function is used when adaptive sparse contacts regards mobility is enable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles in the broad search </td></tr>
@@ -218,7 +216,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8cc_source.html#l00137">137</a> of file <a class="el" href="particle__particle__broad__search_8cc_source.html">particle_particle_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00243">DEMContactManager&lt; dim &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00241">DEMContactManager&lt; dim &gt;::cells_local_neighbor_list</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00317">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00255">DEMContactManager&lt; dim &gt;::ghost_contact_pair_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00253">DEMContactManager&lt; dim &gt;::local_contact_pair_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00242">DEMContactManager&lt; dim &gt;::cells_ghost_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00240">DEMContactManager&lt; dim &gt;::cells_local_neighbor_list</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00317">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00254">DEMContactManager&lt; dim &gt;::ghost_contact_pair_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00252">DEMContactManager&lt; dim &gt;::local_contact_pair_candidates</a>.</p>
 
 </div>
 </div>
@@ -261,7 +259,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8cc_source.html#l00313">313</a> of file <a class="el" href="particle__particle__broad__search_8cc_source.html">particle_particle_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00249">DEMContactManager&lt; dim &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00247">DEMContactManager&lt; dim &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00245">DEMContactManager&lt; dim &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00261">DEMContactManager&lt; dim &gt;::ghost_contact_pair_periodic_candidates</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00263">DEMContactManager&lt; dim &gt;::ghost_local_contact_pair_periodic_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00259">DEMContactManager&lt; dim &gt;::local_contact_pair_periodic_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00248">DEMContactManager&lt; dim &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00246">DEMContactManager&lt; dim &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00244">DEMContactManager&lt; dim &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00260">DEMContactManager&lt; dim &gt;::ghost_contact_pair_periodic_candidates</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00262">DEMContactManager&lt; dim &gt;::ghost_local_contact_pair_periodic_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00258">DEMContactManager&lt; dim &gt;::local_contact_pair_periodic_candidates</a>.</p>
 
 </div>
 </div>
@@ -299,7 +297,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds a vector of pairs (particle_particle_candidates) which contains the candidate particle-particle collision pairs. These collision pairs will be used in the fine search to investigate if they are in contact or not. <a class="el" href="classThis.html">This</a> version of the function is used when adaptive sparse contacts regards mobility is enable. </p>
+<p>Finds a vector of pairs (particle_particle_candidates) which contains the candidate particle-particle collision pairs. These collision pairs will be used in the fine search to investigate if they are in contact or not. This version of the function is used when adaptive sparse contacts regards mobility is enable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles in the broad search </td></tr>
@@ -311,7 +309,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8cc_source.html#l00490">490</a> of file <a class="el" href="particle__particle__broad__search_8cc_source.html">particle_particle_broad_search.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00249">DEMContactManager&lt; dim &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00247">DEMContactManager&lt; dim &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00245">DEMContactManager&lt; dim &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00317">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00261">DEMContactManager&lt; dim &gt;::ghost_contact_pair_periodic_candidates</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00263">DEMContactManager&lt; dim &gt;::ghost_local_contact_pair_periodic_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00259">DEMContactManager&lt; dim &gt;::local_contact_pair_periodic_candidates</a>.</p>
+<p class="reference">References <a class="el" href="dem__contact__manager_8h_source.html#l00248">DEMContactManager&lt; dim &gt;::cells_ghost_local_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00246">DEMContactManager&lt; dim &gt;::cells_ghost_periodic_neighbor_list</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00244">DEMContactManager&lt; dim &gt;::cells_local_periodic_neighbor_list</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00317">AdaptiveSparseContacts&lt; dim &gt;::check_cell_mobility()</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00260">DEMContactManager&lt; dim &gt;::ghost_contact_pair_periodic_candidates</a>, <a class="el" href="dem__contact__manager_8h_source.html#l00262">DEMContactManager&lt; dim &gt;::ghost_local_contact_pair_periodic_candidates</a>, and <a class="el" href="dem__contact__manager_8h_source.html#l00258">DEMContactManager&lt; dim &gt;::local_contact_pair_periodic_candidates</a>.</p>
 
 </div>
 </div>
@@ -373,7 +371,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8h_source.html#l00145">145</a> of file <a class="el" href="particle__particle__broad__search_8h_source.html">particle_particle_broad_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__broad__search_8h_source.html#l00142">142</a> of file <a class="el" href="particle__particle__broad__search_8h_source.html">particle_particle_broad_search.h</a>.</p>
 
 </div>
 </div>

@@ -83,24 +83,14 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="dem__solver__parameters_8h_source.html">dem/dem_solver_parameters.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/distributed/tria.h&gt;</code><br />
-<code>#include &lt;deal.II/grid/grid_generator.h&gt;</code><br />
-<code>#include &lt;deal.II/grid/grid_in.h&gt;</code><br />
-<code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
-<code>#include &lt;fstream&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for read_mesh.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="read__mesh_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2read__mesh_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2read__mesh_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2read__mesh_8h">
-<area shape="rect" title=" " alt="" coords="2830,5,3013,61"/>
+<area shape="rect" title=" " alt="" coords="2334,5,2517,61"/>
 <area shape="rect" href="dem__solver__parameters_8h.html" title=" " alt="" coords="2211,117,2437,143"/>
 <area shape="rect" title=" " alt="" coords="2460,109,2596,151"/>
-<area shape="rect" title=" " alt="" coords="2621,117,2822,143"/>
-<area shape="rect" title=" " alt="" coords="2846,117,2997,143"/>
-<area shape="rect" title=" " alt="" coords="3021,117,3192,143"/>
-<area shape="rect" title=" " alt="" coords="3217,117,3290,143"/>
-<area shape="rect" title=" " alt="" coords="3315,117,3395,143"/>
 <area shape="rect" href="parameters_8h.html" title=" " alt="" coords="2135,363,2276,389"/>
 <area shape="rect" href="parameters__lagrangian_8h.html" title=" " alt="" coords="2499,281,2717,307"/>
 <area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="2075,199,2261,225"/>
@@ -184,16 +174,17 @@ template&lt;int dim, int spacedim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Allows periodic faces mapping in triangulation of mesh with boundary ids parameters.</p>
+
+<p>Allow periodic faces mapping in triangulation of mesh with boundary ids parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>Triangulation </td></tr>
-    <tr><td class="paramname">bc_params</td><td>Boundary conditions parameters for <a class="el" href="namespaceDEM.html">DEM</a> </td></tr>
+    <tr><td class="paramname">bc_params</td><td>Boundary conditions parameters for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="read__mesh_8cc_source.html#l00053">53</a> of file <a class="el" href="read__mesh_8cc_source.html">read_mesh.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="read__mesh_8cc_source.html#l00058">58</a> of file <a class="el" href="read__mesh_8cc_source.html">read_mesh.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00421">Parameters::Lagrangian::BCDEM::periodic_boundary_0</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00422">Parameters::Lagrangian::BCDEM::periodic_boundary_1</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00423">Parameters::Lagrangian::BCDEM::periodic_direction</a>.</p>
 
@@ -244,21 +235,22 @@ template&lt;int dim, int spacedim = dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Defines or reads the mesh based on the information provided by the user Gmsh files can also be read in this function</p>
+
+<p>Define or read the mesh based on the information provided by the user. Gmsh file can also be read in this function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mesh_parameters</td><td>Input <a class="el" href="namespaceDEM.html">DEM</a> parameters in the parameter handler file </td></tr>
+    <tr><td class="paramname">mesh_parameters</td><td>Input <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters in the parameter handler file </td></tr>
     <tr><td class="paramname">pcout</td><td>Printing in parallel </td></tr>
     <tr><td class="paramname">restart</td><td>If in restart situation </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation </td></tr>
-    <tr><td class="paramname">bc_params</td><td>Boundary conditions parameters for <a class="el" href="namespaceDEM.html">DEM</a> </td></tr>
+    <tr><td class="paramname">bc_params</td><td>Boundary conditions parameters for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="read__mesh_8cc_source.html#l00008">8</a> of file <a class="el" href="read__mesh_8cc_source.html">read_mesh.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="read__mesh_8cc_source.html#l00013">13</a> of file <a class="el" href="read__mesh_8cc_source.html">read_mesh.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00021">attach_grid_to_triangulation()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00402">Parameters::Lagrangian::BCDEM::bc_types</a>, <a class="el" href="parameters_8h_source.html#l01304">Parameters::Mesh::initial_refinement</a>, <a class="el" href="read__mesh_8cc_source.html#l00053">match_periodic_boundaries()</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ae6ffdec5e14fce371eb7ae99edebbbee">Parameters::Lagrangian::BCDEM::periodic</a>, <a class="el" href="parameters_8h_source.html#l01314">Parameters::Mesh::refine_until_target_size</a>, and <a class="el" href="parameters_8h_source.html#l01320">Parameters::Mesh::target_size</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00021">attach_grid_to_triangulation()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00402">Parameters::Lagrangian::BCDEM::bc_types</a>, <a class="el" href="parameters_8h_source.html#l01304">Parameters::Mesh::initial_refinement</a>, <a class="el" href="read__mesh_8cc_source.html#l00058">match_periodic_boundaries()</a>, <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ae6ffdec5e14fce371eb7ae99edebbbee">Parameters::Lagrangian::BCDEM::periodic</a>, <a class="el" href="parameters_8h_source.html#l01314">Parameters::Mesh::refine_until_target_size</a>, and <a class="el" href="parameters_8h_source.html#l01320">Parameters::Mesh::target_size</a>.</p>
 
 </div>
 </div>

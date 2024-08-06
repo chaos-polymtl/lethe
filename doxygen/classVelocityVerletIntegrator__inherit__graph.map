@@ -1,4 +1,4 @@
 <map id="VelocityVerletIntegrator&lt; dim &gt;" name="VelocityVerletIntegrator&lt; dim &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,181,121"/>
-<area shape="rect" id="node2" href="$classIntegrator.html" title=" " alt="" coords="23,5,164,32"/>
+<area shape="rect" id="node1" title="Implementation of a classical velocity verlet scheme for the integration of the particle motion...." alt="" coords="5,80,181,121"/>
+<area shape="rect" id="node2" href="$classIntegrator.html" title="Base interface for classes that carry out the integration of the velocity and position of particles w..." alt="" coords="23,5,164,32"/>
 </map>

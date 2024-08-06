@@ -6,7 +6,7 @@
 <area shape="rect" id="node29" href="$adaptive__sparse__contacts_8h.html" title=" " alt="" coords="2599,423,2761,464"/>
 <area shape="rect" id="node30" href="$data__containers_8h.html" title=" " alt="" coords="3100,519,3271,546"/>
 <area shape="rect" id="node32" title=" " alt="" coords="3557,691,3693,732"/>
-<area shape="rect" id="node38" title=" " alt="" coords="3688,609,3768,635"/>
+<area shape="rect" id="node37" title=" " alt="" coords="3688,609,3768,635"/>
 <area shape="rect" id="node44" title=" " alt="" coords="3515,512,3690,553"/>
 <area shape="rect" id="node45" href="$dem__solver__parameters_8h.html" title=" " alt="" coords="913,109,1138,136"/>
 <area shape="rect" id="node3" title=" " alt="" coords="593,609,652,635"/>
@@ -42,8 +42,8 @@
 <area shape="rect" id="node34" title=" " alt="" coords="2705,691,2879,732"/>
 <area shape="rect" id="node35" href="$particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="2371,601,2567,643"/>
 <area shape="rect" id="node36" href="$particle__wall__contact__info_8h.html" title=" " alt="" coords="2591,601,2785,643"/>
-<area shape="rect" id="node37" href="$unordered__dense_8h.html" title=" " alt="" coords="3223,609,3414,635"/>
-<area shape="rect" id="node39" title=" " alt="" coords="3438,609,3562,635"/>
+<area shape="rect" id="node38" title=" " alt="" coords="3223,609,3347,635"/>
+<area shape="rect" id="node39" href="$unordered__dense_8h.html" title=" " alt="" coords="3371,609,3562,635"/>
 <area shape="rect" id="node46" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="358,266,575,293"/>
 <area shape="rect" id="node47" href="$simulation__control_8h.html" title=" " alt="" coords="932,184,1119,211"/>
 <area shape="rect" id="node50" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="1119,259,1257,300"/>

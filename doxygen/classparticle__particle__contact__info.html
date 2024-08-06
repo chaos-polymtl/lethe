@@ -102,8 +102,9 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class particle_particle_contact_info&lt; dim &gt;</h3>
 
+<p>Handle the information related to the calculation of the particle-particle contact force. Notably it is responsible for storing information that has to be preserved over multiple iterations of a contact, namely everything related to tangential overlaps. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00034">34</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00033">33</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab0d63d63dfc4e45fa4009edc21a6f888"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab0d63d63dfc4e45fa4009edc21a6f888">&#9670;&nbsp;</a></span>particle_particle_contact_info() <span class="overload">[1/2]</span></h2>
@@ -141,7 +142,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor for cases where the two particle iterators are known. <a class="el" href="classThis.html">This</a> constructor is used everywhere in the regular <a class="el" href="namespaceDEM.html">DEM</a> and unresolved CFD-DEM code. </p>
+<p>Constructor for cases where the two particle iterators are known. This constructor is used everywhere in the regular <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> and unresolved CFD-DEM code. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_one</td><td>The iterator of particle one </td></tr>
@@ -150,7 +151,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00045">45</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00044">44</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 
 </div>
 </div>
@@ -179,9 +180,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Dummy constructor for cases where the two particle iterators are unknown. <a class="el" href="classThis.html">This</a> constructor is only used in the resolved CFD-DEM and should be deprecated eventually. </p>
+<p>Dummy constructor for cases where the two particle iterators are unknown. This constructor is only used in the resolved CFD-DEM and should be deprecated eventually. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00057">57</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00056">56</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 
 </div>
 </div>
@@ -200,7 +201,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00062">62</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00061">61</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 
 </div>
 </div>
@@ -218,7 +219,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00063">63</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00062">62</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 
 </div>
 </div>
@@ -236,7 +237,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00061">61</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__info_8h_source.html#l00060">60</a> of file <a class="el" href="particle__particle__contact__info_8h_source.html">particle_particle_contact_info.h</a>.</p>
 
 </div>
 </div>

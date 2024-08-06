@@ -79,166 +79,182 @@ $(function() {
 <div class="title">force_chains_visualization.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="force__chains__visualization_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="auxiliary__math__functions_8h.html">core/auxiliary_math_functions.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__contact__manager_8h.html">dem/dem_contact_manager.h</a>&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__force_8h.html">dem/particle_particle_contact_force.h</a>&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__info_8h.html">dem/particle_particle_contact_info.h</a>&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="rolling__resistance__torque__models_8h.html">dem/rolling_resistance_torque_models.h</a>&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;boost/range/adaptor/map.hpp&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<a href="force__chains__visualization_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_force_chains_visualization_h</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_force_chains_visualization_h</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#ifndef particles_force_chains_h</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#  define particles_force_chains_h</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * Base class for the particles force chains contact force models.</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * This class does not implement any of the models, but ensures that</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * an interface without template specialization is available. All of the</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * actual implementation of the models are carried out in the</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * ParticlesForceChains class which is templated by the contact model</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * type.</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * @brief Use a ParticleParticleContactForce object to calculate normal forces between</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   * all touching particles. Store normal forces and particles position in</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * vectors.</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * @param container_manager The container manager object that contains</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   * containers to modify of contact pair periodic candidates with other</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   * containers with periodic neighbors lists</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html#aebf3fb5b04b85389fa5b8a38a21b711d">   45</a></span>&#160;  <a class="code" href="classParticlesForceChainsBase.html#aebf3fb5b04b85389fa5b8a38a21b711d">calculate_force_chains</a>(<a class="code" href="classDEMContactManager.html">DEMContactManager&lt;dim&gt;</a> &amp;container_manager) = 0;<span class="comment"></span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * @param dem_parameters DEM parameters declared in the .prm file</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @param mpi_communicator The mpi communicator</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @param folder a string that contains the path where the results are to be saved</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @param group_files the number of vtu files that will be generated.</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * @param iter the iteration number associated with the file</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * @param time the time associated with the file</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">   58</a></span>&#160;  <a class="code" href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">write_force_chains</a>(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                     <a class="code" href="classPVDHandler.html">PVDHandler</a>                     &amp;pvd_handler,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                     <span class="keyword">const</span> MPI_Comm                  mpi_communicator,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                     <span class="keyword">const</span> std::string               folder,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>              iter,</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">double</span>                    time) = 0;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;};</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"> * @brief Class that carries out the calculation of</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"> * particle-particle contact force and the visualization of force chains</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"> * by writing vtu files, pvtu files and a pvd file. Instead of using a</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment"> * inheritance hiearchy to distinguish between the contact model, the class is</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"> * templated with the type of force model and rolling friction model.</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"> * Consequently, the code for each combination of force model is generated at</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"> * compile time.</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"> * @tparam dim The dimension of the problem</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"> * @tparam force_model The particle-particle contact force model</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"> * @tparam rolling_friction_model The rolling resistance model</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keyword">template</span> &lt;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordtype">int</span>                                                       dim,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <a class="code" href="namespaceParameters_1_1Lagrangian.html#a71dab08c2bfee9dee4b2ea9875d43d3b">Parameters::Lagrangian::ParticleParticleContactForceModel</a> force_model,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <a class="code" href="namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt;</div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html">   83</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticlesForceChains.html">ParticlesForceChains</a></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  : <span class="keyword">public</span> <a class="code" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a>&lt;dim&gt;,</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">public</span> <a class="code" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt;dim,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                                        force_model,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                                        rolling_friction_model&gt;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;{</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <a class="code" href="classParticlesForceChains.html">ParticlesForceChains</a>(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">   92</a></span>&#160;  <span class="keyword">virtual</span> <a class="code" href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">~ParticlesForceChains</a>()</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  {}<span class="comment"></span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @brief Create a triangulation with a unique cell (represented by a line)</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * for each normal force between two particles.</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * @param tria Empty triangulation used to create a triangulation with all</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * the vertices needed.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   * @param vertices Vector of points used to create a triangulation</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  multi_general_cell(Triangulation&lt;1, 3&gt;         &amp;tria,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                     <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;vertices);<span class="comment"></span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * @brief Calculate normal forces between all touching particles with</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * ParticleParticleContactForce class&#39; methods. Stock normal forces and</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * particles position in vectors.</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @param container_manager The container manager object that contains</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * containers to modify of contact pair periodic candidates with other</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * containers with periodic neighbors lists</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  calculate_force_chains(<a class="code" href="classDEMContactManager.html">DEMContactManager&lt;dim&gt;</a> &amp;container_manager) <span class="keyword">override</span>;<span class="comment"></span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * @param dem_parameters DEM parameters declared in the .prm file</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @param mpi_communicator The mpi communicator</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @param folder a string that contains the path where the results are to be saved</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param group_files the number of vtu files that will be generated.</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @param iter the iteration number associated with the file</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @param time the time associated with the file</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  write_force_chains(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters,</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                     <a class="code" href="classPVDHandler.html">PVDHandler</a>                     &amp;pvd_handler,</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                     <span class="keyword">const</span> MPI_Comm                  mpi_communicator,</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                     <span class="keyword">const</span> std::string               folder,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>              iter,</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">double</span>                    time) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">  /// vector of normal forces between each touching particles.</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">  137</a></span>&#160;<span class="comment"></span>  std::vector&lt;double&gt; <a class="code" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">force_normal</a>;<span class="comment"></span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">  /// vector of positions of touching particles.</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">  139</a></span>&#160;<span class="comment"></span>  std::vector&lt;Point&lt;3&gt;&gt; <a class="code" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">vertices</a>;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;};</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="auxiliary__math__functions_8h.html">core/auxiliary_math_functions.h</a>&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__contact__manager_8h.html">dem/dem_contact_manager.h</a>&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__force_8h.html">dem/particle_particle_contact_force.h</a>&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__info_8h.html">dem/particle_particle_contact_info.h</a>&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="rolling__resistance__torque__models_8h.html">dem/rolling_resistance_torque_models.h</a>&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;boost/range/adaptor/map.hpp&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * Base class for the particles force chains contact force models.</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * This class does not implement any of the models, but ensures that</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * an interface without template specialization is available. All of the</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> * actual implementation of the models are carried out in the</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"> * ParticlesForceChains class which is templated by the contact model</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> * type.</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @brief Use a ParticleParticleContactForce object to calculate normal forces between</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * all touching particles. Store normal forces and particles position in</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * vectors.</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * @param container_manager The container manager object that contains</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * containers to modify of contact pair periodic candidates with other</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * containers with periodic neighbors lists</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html#aebf3fb5b04b85389fa5b8a38a21b711d">   61</a></span>&#160;  <a class="code" href="classParticlesForceChainsBase.html#aebf3fb5b04b85389fa5b8a38a21b711d">calculate_force_chains</a>(<a class="code" href="classDEMContactManager.html">DEMContactManager&lt;dim&gt;</a> &amp;container_manager) = 0;<span class="comment"></span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @param dem_parameters DEM parameters declared in the .prm file</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * @param mpi_communicator The mpi communicator</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @param folder a string that contains the path where the results are to be saved</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * @param group_files the number of vtu files that will be generated.</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @param iter the iteration number associated with the file</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * @param time the time associated with the file</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">   74</a></span>&#160;  <a class="code" href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">write_force_chains</a>(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters,</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                     <a class="code" href="classPVDHandler.html">PVDHandler</a>                     &amp;pvd_handler,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                     <span class="keyword">const</span> MPI_Comm                  mpi_communicator,</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                     <span class="keyword">const</span> std::string               folder,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>              iter,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">double</span>                    time) = 0;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;};</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"> * @brief Class that carries out the calculation of</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"> * particle-particle contact force and the visualization of force chains</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment"> * by writing vtu files, pvtu files and a pvd file. Instead of using a</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"> * inheritance hiearchy to distinguish between the contact model, the class is</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"> * templated with the type of force model and rolling friction model.</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"> * Consequently, the code for each combination of force model is generated at</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment"> * compile time.</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment"> * @tparam dim The dimension of the problem</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"> * @tparam force_model The particle-particle contact force model</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment"> * @tparam rolling_friction_model The rolling resistance model</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keyword">template</span> &lt;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordtype">int</span>                                                       dim,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <a class="code" href="namespaceParameters_1_1Lagrangian.html#a71dab08c2bfee9dee4b2ea9875d43d3b">Parameters::Lagrangian::ParticleParticleContactForceModel</a> force_model,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <a class="code" href="namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555">Parameters::Lagrangian::RollingResistanceMethod</a> rolling_friction_model&gt;</div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html">   99</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticlesForceChains.html">ParticlesForceChains</a></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  : <span class="keyword">public</span> <a class="code" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a>&lt;dim&gt;,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">public</span> <a class="code" href="classParticleParticleContactForce.html">ParticleParticleContactForce</a>&lt;dim,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                                        force_model,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                        rolling_friction_model&gt;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;{</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <a class="code" href="classParticlesForceChains.html">ParticlesForceChains</a>(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">  108</a></span>&#160;  <span class="keyword">virtual</span> <a class="code" href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">~ParticlesForceChains</a>()</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  {}<span class="comment"></span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * @brief Create a triangulation with a unique cell (represented by a line)</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * for each normal force between two particles.</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @param tria Empty triangulation used to create a triangulation with all</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   * the vertices needed.</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   * @param vertices Vector of points used to create a triangulation</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  multi_general_cell(Triangulation&lt;1, 3&gt;         &amp;tria,</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                     <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;vertices);<span class="comment"></span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @brief Calculate normal forces between all touching particles with</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * ParticleParticleContactForce class&#39; methods. Stock normal forces and</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * particles position in vectors.</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   * @param container_manager The container manager object that contains</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   * containers to modify of contact pair periodic candidates with other</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   * containers with periodic neighbors lists</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  calculate_force_chains(<a class="code" href="classDEMContactManager.html">DEMContactManager&lt;dim&gt;</a> &amp;container_manager) <span class="keyword">override</span>;<span class="comment"></span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * @param dem_parameters DEM parameters declared in the .prm file</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">   * @param mpi_communicator The mpi communicator</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * @param folder a string that contains the path where the results are to be saved</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @param group_files the number of vtu files that will be generated.</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   * @param iter the iteration number associated with the file</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * @param time the time associated with the file</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  write_force_chains(<span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> &amp;dem_parameters,</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                     <a class="code" href="classPVDHandler.html">PVDHandler</a>                     &amp;pvd_handler,</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                     <span class="keyword">const</span> MPI_Comm                  mpi_communicator,</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                     <span class="keyword">const</span> std::string               folder,</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>              iter,</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">double</span>                    time) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">  /// vector of normal forces between each touching particles.</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">  153</a></span>&#160;<span class="comment"></span>  std::vector&lt;double&gt; <a class="code" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">force_normal</a>;<span class="comment"></span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">  /// vector of positions of touching particles.</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">  155</a></span>&#160;<span class="comment"></span>  std::vector&lt;Point&lt;3&gt;&gt; <a class="code" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">vertices</a>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;};</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aauxiliary__math__functions_8h_html"><div class="ttname"><a href="auxiliary__math__functions_8h.html">auxiliary_math_functions.h</a></div></div>
-<div class="ttc" id="aclassDEMContactManager_html"><div class="ttname"><a href="classDEMContactManager.html">DEMContactManager</a></div><div class="ttdoc">Manage the numerous of contact detection search operations in the DEM.</div><div class="ttdef"><b>Definition:</b> <a href="dem__contact__manager_8h_source.html#l00048">dem_contact_manager.h:49</a></div></div>
-<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00030">dem_solver_parameters.h:31</a></div></div>
+<div class="ttc" id="aclassDEMContactManager_html"><div class="ttname"><a href="classDEMContactManager.html">DEMContactManager</a></div><div class="ttdoc">Manage the numerous of contact detection search operations in the DEM.</div><div class="ttdef"><b>Definition:</b> <a href="dem__contact__manager_8h_source.html#l00047">dem_contact_manager.h:48</a></div></div>
+<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00029">dem_solver_parameters.h:30</a></div></div>
 <div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00029">pvd_handler.h:30</a></div></div>
-<div class="ttc" id="aclassParticleParticleContactForce_html"><div class="ttname"><a href="classParticleParticleContactForce.html">ParticleParticleContactForce</a></div><div class="ttdoc">Class that carries out the calculation of particle-particle contact force including non-linear and li...</div><div class="ttdef"><b>Definition:</b> <a href="particle__particle__contact__force_8h_source.html#l00094">particle_particle_contact_force.h:96</a></div></div>
-<div class="ttc" id="aclassParticlesForceChainsBase_html"><div class="ttname"><a href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a></div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00032">force_chains_visualization.h:33</a></div></div>
+<div class="ttc" id="aclassParticleParticleContactForce_html"><div class="ttname"><a href="classParticleParticleContactForce.html">ParticleParticleContactForce</a></div><div class="ttdoc">Class that carries out the calculation of particle-particle contact force including non-linear and li...</div><div class="ttdef"><b>Definition:</b> <a href="particle__particle__contact__force_8h_source.html#l00092">particle_particle_contact_force.h:94</a></div></div>
+<div class="ttc" id="aclassParticlesForceChainsBase_html"><div class="ttname"><a href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a></div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00048">force_chains_visualization.h:49</a></div></div>
 <div class="ttc" id="aclassParticlesForceChainsBase_html_a8318981c0dadb97256317a3bf4273ddd"><div class="ttname"><a href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">ParticlesForceChainsBase::write_force_chains</a></div><div class="ttdeci">virtual void write_force_chains(const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, PVDHandler &amp;pvd_handler, const MPI_Comm mpi_communicator, const std::string folder, const unsigned int iter, const double time)=0</div><div class="ttdoc">Output the force chains in VTU and PVTU files for each iteration and a PVD file.</div></div>
 <div class="ttc" id="aclassParticlesForceChainsBase_html_aebf3fb5b04b85389fa5b8a38a21b711d"><div class="ttname"><a href="classParticlesForceChainsBase.html#aebf3fb5b04b85389fa5b8a38a21b711d">ParticlesForceChainsBase::calculate_force_chains</a></div><div class="ttdeci">virtual void calculate_force_chains(DEMContactManager&lt; dim &gt; &amp;container_manager)=0</div><div class="ttdoc">Use a ParticleParticleContactForce object to calculate normal forces between all touching particles....</div></div>
-<div class="ttc" id="aclassParticlesForceChains_html"><div class="ttname"><a href="classParticlesForceChains.html">ParticlesForceChains</a></div><div class="ttdoc">Class that carries out the calculation of particle-particle contact force and the visualization of fo...</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00083">force_chains_visualization.h:88</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_a38397b0e5bd454c873c9d8298e354cea"><div class="ttname"><a href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">ParticlesForceChains::vertices</a></div><div class="ttdeci">std::vector&lt; Point&lt; 3 &gt; &gt; vertices</div><div class="ttdoc">vector of positions of touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00139">force_chains_visualization.h:139</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_a73f0977a5193266518968e69eac2bcec"><div class="ttname"><a href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">ParticlesForceChains::force_normal</a></div><div class="ttdeci">std::vector&lt; double &gt; force_normal</div><div class="ttdoc">vector of normal forces between each touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00137">force_chains_visualization.h:137</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_adee2f4f5c4833cfac2f4bcb0462dbe6f"><div class="ttname"><a href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">ParticlesForceChains::~ParticlesForceChains</a></div><div class="ttdeci">virtual ~ParticlesForceChains()</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00092">force_chains_visualization.h:92</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html"><div class="ttname"><a href="classParticlesForceChains.html">ParticlesForceChains</a></div><div class="ttdoc">Class that carries out the calculation of particle-particle contact force and the visualization of fo...</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00099">force_chains_visualization.h:104</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_a38397b0e5bd454c873c9d8298e354cea"><div class="ttname"><a href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">ParticlesForceChains::vertices</a></div><div class="ttdeci">std::vector&lt; Point&lt; 3 &gt; &gt; vertices</div><div class="ttdoc">vector of positions of touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00155">force_chains_visualization.h:155</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_a73f0977a5193266518968e69eac2bcec"><div class="ttname"><a href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">ParticlesForceChains::force_normal</a></div><div class="ttdeci">std::vector&lt; double &gt; force_normal</div><div class="ttdoc">vector of normal forces between each touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00153">force_chains_visualization.h:153</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_adee2f4f5c4833cfac2f4bcb0462dbe6f"><div class="ttname"><a href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">ParticlesForceChains::~ParticlesForceChains</a></div><div class="ttdeci">virtual ~ParticlesForceChains()</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00108">force_chains_visualization.h:108</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
 <div class="ttc" id="adem__contact__manager_8h_html"><div class="ttname"><a href="dem__contact__manager_8h.html">dem_contact_manager.h</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="adem__solver__parameters_8h_html"><div class="ttname"><a href="dem__solver__parameters_8h.html">dem_solver_parameters.h</a></div></div>
-<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
+<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
 <div class="ttc" id="anamespaceParameters_1_1Lagrangian_html_a71dab08c2bfee9dee4b2ea9875d43d3b"><div class="ttname"><a href="namespaceParameters_1_1Lagrangian.html#a71dab08c2bfee9dee4b2ea9875d43d3b">Parameters::Lagrangian::ParticleParticleContactForceModel</a></div><div class="ttdeci">ParticleParticleContactForceModel</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00032">parameters_lagrangian.h:33</a></div></div>
 <div class="ttc" id="anamespaceParameters_1_1Lagrangian_html_af8ea30562f3b72ee8bf6e623478d3555"><div class="ttname"><a href="namespaceParameters_1_1Lagrangian.html#af8ea30562f3b72ee8bf6e623478d3555">Parameters::Lagrangian::RollingResistanceMethod</a></div><div class="ttdeci">RollingResistanceMethod</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00042">parameters_lagrangian.h:43</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00311">fluid_dynamics_matrix_free.cc:312</a></div></div>

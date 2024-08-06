@@ -436,7 +436,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class NavierStokesScratchData&lt; dim &gt;</h3>
 
-<p>Class that stores the information required by the assembly procedure for a Navier-Stokes equation. Consequently, this class calculates the velocity (values, gradients, laplacians) and the shape function (values, gradients, laplacians) at all the gauss points for all degrees of freedom and stores it into arrays. Additionally, the use can request that this class gathers additional fields for physics which are coupled to the Navier-Stokes equation, such as the VOF. <a class="el" href="classThis.html">This</a> class serves as a separation between the evaluation at the gauss point of the variables of interest and their use in the assembly, which is carried out by the assembler functions. For more information on this design, the reader can consult deal.II step-9 "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter example, the scratch is a struct instead of a templated class because of the simplicity of step-9. </p>
+<p>Class that stores the information required by the assembly procedure for a Navier-Stokes equation. Consequently, this class calculates the velocity (values, gradients, laplacians) and the shape function (values, gradients, laplacians) at all the gauss points for all degrees of freedom and stores it into arrays. Additionally, the use can request that this class gathers additional fields for physics which are coupled to the Navier-Stokes equation, such as the VOF. This class serves as a separation between the evaluation at the gauss point of the variables of interest and their use in the assembly, which is carried out by the assembler functions. For more information on this design, the reader can consult deal.II step-9 "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter example, the scratch is a struct instead of a templated class because of the simplicity of step-9. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the flow is solved </td></tr>
@@ -509,7 +509,7 @@ template&lt;int dim&gt; </div>
 <p>Constructor. The constructor creates the fe_values that will be used to fill the member variables of the scratch. It also allocated the necessary memory for all member variables. However, it does not do any evaluation, since this needs to be done at the cell level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">simulation_control</td><td>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. <a class="el" href="classThis.html">This</a> is used to extrapolate auxiliary physics solutions in time for transient simulation.</td></tr>
+    <tr><td class="paramname">simulation_control</td><td>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. This is used to extrapolate auxiliary physics solutions in time for transient simulation.</td></tr>
     <tr><td class="paramname">properties_manager</td><td>The <a class="el" href="classPhysicalPropertiesManager.html" title="Class that manages the physical properties model which are required to calculate the various physical...">PhysicalPropertiesManager</a> object that stores physical property models.</td></tr>
     <tr><td class="paramname">fe</td><td>The FESystem used to solve the Navier-Stokes equations</td></tr>
     <tr><td class="paramname">quadrature</td><td>The quadrature to use for the assembly</td></tr>
@@ -550,7 +550,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Copy Constructor. Same as the main constructor. <a class="el" href="classThis.html">This</a> constructor only uses the other scratch to build the FeValues, it does not copy the content of the other scratch into itself since, by definition of the WorkStream mechanism it is assumed that the content of the scratch will be reset on a cell basis. </p>
+<p>Copy Constructor. Same as the main constructor. This constructor only uses the other scratch to build the FeValues, it does not copy the content of the other scratch into itself since, by definition of the WorkStream mechanism it is assumed that the content of the scratch will be reset on a cell basis. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sd</td><td>The scratch data to be copied </td></tr>
@@ -580,7 +580,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Allocates the memory for the scratch. </p>
-<p><a class="el" href="classThis.html">This</a> function allocates the necessary memory for all members of the scratch </p>
+<p>This function allocates the necessary memory for all members of the scratch </p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00009">9</a> of file <a class="el" href="navier__stokes__scratch__data_8cc_source.html">navier_stokes_scratch_data.cc</a>.</p>
 
@@ -602,11 +602,11 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates the physical properties. <a class="el" href="classThis.html">This</a> function calculates the physical properties that may be required by the fluid dynamics problem. Namely the kinematic viscosity and, when required, the density. </p>
+<p>Calculates the physical properties. This function calculates the physical properties that may be required by the fluid dynamics problem. Namely the kinematic viscosity and, when required, the density. </p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00375">375</a> of file <a class="el" href="navier__stokes__scratch__data_8cc_source.html">navier_stokes_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00270">calculate_point_property()</a>, <a class="el" href="utilities_8h_source.html#l00333">calculate_point_property_cahn_hilliard()</a>, <a class="el" href="rheological__model_8h_source.html#l00695">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_fluid</a>, <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00063">set_field_vector()</a>, <a class="el" href="physical__property__model_8h_source.html#l00052">shear_rate</a>, and <a class="el" href="physical__property__model_8h_source.html#l00053">temperature</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00273">calculate_point_property()</a>, <a class="el" href="utilities_8h_source.html#l00337">calculate_point_property_cahn_hilliard()</a>, <a class="el" href="rheological__model_8h_source.html#l00695">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00053">fluid_fluid</a>, <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00063">set_field_vector()</a>, <a class="el" href="physical__property__model_8h_source.html#l00052">shear_rate</a>, and <a class="el" href="physical__property__model_8h_source.html#l00053">temperature</a>.</p>
 
 </div>
 </div>
@@ -1120,7 +1120,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Using the FeValues and the content of the solutions and previous solutions, fills all of the class member of the scratch</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the fe which is used to fill the FeValues</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the fe which is used to fill the FeValues</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for [u,p]</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>The solutions at the previous time steps</td></tr>
     <tr><td class="paramname">forcing_function</td><td>The function describing the momentum/mass source term</td></tr>
@@ -1182,7 +1182,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Reinitialize the content of the scratch for CH. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the CH FE and not the Navier-Stokes FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the CH FE and not the Navier-Stokes FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for [phi] </td></tr>
   </table>
   </dd>
@@ -1281,7 +1281,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Reinitialize the content of the scratch for the heat transfer auxiliary physic. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the heat transfer FE and not the Navier-Stokes FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the heat transfer FE and not the Navier-Stokes FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for temperature</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>Vector of \(n\) <code>VectorType</code> containers of previous temperature solutions. \(n\) depends on the BDF scheme selected for time-stepping. </td></tr>
   </table>
@@ -1365,7 +1365,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Calculates the content of the scratch for the particle fluid interactions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the void fraction FE and not the Navier-Stokes FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the void fraction FE and not the Navier-Stokes FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for [epsilon]</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>The solutions at the previous time steps for [epsilon] </td></tr>
   </table>
@@ -1473,7 +1473,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Reinitialize the content of the scratch for the vof. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the VOF FE and not the Navier-Stokes FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the VOF FE and not the Navier-Stokes FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for [alpha]</td></tr>
     <tr><td class="paramname">current_filtered_solution</td><td>The present value of the solution for [alpha]_filtered</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>The solutions at the previous time steps for [alpha] </td></tr>
@@ -1532,7 +1532,7 @@ template&lt;typename VectorType &gt; </div>
 <p>Reinitialize the content of the scratch for the void fraction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the void fraction FE and not the Navier-Stokes FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the void fraction FE and not the Navier-Stokes FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for [epsilon]</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>The solutions at the previous time steps for [epsilon] </td></tr>
   </table>

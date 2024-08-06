@@ -232,7 +232,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class HeatTransferScratchData&lt; dim &gt;</h3>
 
-<p>Class that stores the information required by the assembly procedure for a heat transfer advection-diffusion equation. Consequently, this class calculates the heat transfer (values, gradients, laplacians) and the shape function (values, gradients, laplacians) at all the gauss points for all degrees of freedom and stores it into arrays. Additionally, the user can request that this class gathers additional fields for physics which are coupled to the heat transfer equation, such as the velocity which is required. <a class="el" href="classThis.html">This</a> class serves as a separation between the evaluation at the gauss point of the variables of interest and their use in the assembly, which is carried out by the assembler methods. For more information on this design, the reader can consult deal.II step-9 "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter example, the scratch is a struct instead of a templated class because of the simplicity of step-9. </p>
+<p>Class that stores the information required by the assembly procedure for a heat transfer advection-diffusion equation. Consequently, this class calculates the heat transfer (values, gradients, laplacians) and the shape function (values, gradients, laplacians) at all the gauss points for all degrees of freedom and stores it into arrays. Additionally, the user can request that this class gathers additional fields for physics which are coupled to the heat transfer equation, such as the velocity which is required. This class serves as a separation between the evaluation at the gauss point of the variables of interest and their use in the assembly, which is carried out by the assembler methods. For more information on this design, the reader can consult deal.II step-9 "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter example, the scratch is a struct instead of a templated class because of the simplicity of step-9. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the flow is solved </td></tr>
@@ -353,7 +353,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Copy Constructor. Same as the main constructor. <a class="el" href="classThis.html">This</a> constructor only uses the other scratch to build the FeValues, it does not copy the content of the other scratch into itself since, by definition of the WorkStream mechanism, it is assumed that the content of the scratch will be reset on a cell basis. </p>
+<p>Copy Constructor. Same as the main constructor. This constructor only uses the other scratch to build the FeValues, it does not copy the content of the other scratch into itself since, by definition of the WorkStream mechanism, it is assumed that the content of the scratch will be reset on a cell basis. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sd</td><td>The scratch data </td></tr>
@@ -383,7 +383,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Allocates the memory for the scratch. </p>
-<p><a class="el" href="classThis.html">This</a> method allocates the necessary memory for all members of the scratch </p>
+<p>This method allocates the necessary memory for all members of the scratch </p>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00009">9</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
 
@@ -405,11 +405,11 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates the physical properties. <a class="el" href="classThis.html">This</a> method calculates the physical properties that may be required by the heat transfer problem. Namely the density, specific heat, thermal conductivity and viscosity (for viscous dissipation). </p>
+<p>Calculates the physical properties. This method calculates the physical properties that may be required by the heat transfer problem. Namely the density, specific heat, thermal conductivity and viscosity (for viscous dissipation). </p>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00144">144</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00270">calculate_point_property()</a>, <a class="el" href="rheological__model_8h_source.html#l00695">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00063">set_field_vector()</a>, <a class="el" href="physical__property__model_8h_source.html#l00052">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00053">temperature</a>, <a class="el" href="physical__property__model_8h_source.html#l00054">temperature_p1</a>, and <a class="el" href="physical__property__model_8h_source.html#l00055">temperature_p2</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00273">calculate_point_property()</a>, <a class="el" href="rheological__model_8h_source.html#l00695">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00063">set_field_vector()</a>, <a class="el" href="physical__property__model_8h_source.html#l00052">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00053">temperature</a>, <a class="el" href="physical__property__model_8h_source.html#l00054">temperature_p1</a>, and <a class="el" href="physical__property__model_8h_source.html#l00055">temperature_p2</a>.</p>
 
 </div>
 </div>
@@ -585,7 +585,7 @@ template&lt;typename VectorType &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the fe which is used to fill the FeValues</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the fe which is used to fill the FeValues</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present value of the solution for the Heat Transfer</td></tr>
     <tr><td class="paramname">previous_solutions</td><td>The solutions at the previous time steps</td></tr>
     <tr><td class="paramname">source_function</td><td>The function describing the Heat Transfer source term </td></tr>
@@ -756,7 +756,7 @@ template&lt;typename VectorType &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. <a class="el" href="classThis.html">This</a> cell must be compatible with the VOF FE and not the Fluid Dynamics FE</td></tr>
+    <tr><td class="paramname">cell</td><td>The cell over which the assembly is being carried. This cell must be compatible with the VOF FE and not the Fluid Dynamics FE</td></tr>
     <tr><td class="paramname">current_solution</td><td>The present solution for the phase value</td></tr>
   </table>
   </dd>

@@ -101,9 +101,9 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticlesForceChainsBase&lt; dim &gt;</h3>
 
-<p>Base class for the particles force chains contact force models. <a class="el" href="classThis.html">This</a> class does not implement any of the models, but ensures that an interface without template specialization is available. All of the actual implementation of the models are carried out in the <a class="el" href="classParticlesForceChains.html" title="Class that carries out the calculation of particle-particle contact force and the visualization of fo...">ParticlesForceChains</a> class which is templated by the contact model type. </p>
+<p>Base class for the particles force chains contact force models. This class does not implement any of the models, but ensures that an interface without template specialization is available. All of the actual implementation of the models are carried out in the <a class="el" href="classParticlesForceChains.html" title="Class that carries out the calculation of particle-particle contact force and the visualization of fo...">ParticlesForceChains</a> class which is templated by the contact model type. </p>
 
-<p class="definition">Definition at line <a class="el" href="force__chains__visualization_8h_source.html#l00032">32</a> of file <a class="el" href="force__chains__visualization_8h_source.html">force_chains_visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="force__chains__visualization_8h_source.html#l00048">48</a> of file <a class="el" href="force__chains__visualization_8h_source.html">force_chains_visualization.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aebf3fb5b04b85389fa5b8a38a21b711d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aebf3fb5b04b85389fa5b8a38a21b711d">&#9670;&nbsp;</a></span>calculate_force_chains()</h2>
@@ -206,7 +206,7 @@ template&lt;int dim&gt; </div>
 <p>Output the force chains in VTU and PVTU files for each iteration and a PVD file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
     <tr><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it </td></tr>
     <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
     <tr><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>

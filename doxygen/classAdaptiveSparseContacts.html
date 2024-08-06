@@ -160,9 +160,9 @@ class AdaptiveSparseContacts&lt; dim &gt;</h3>
 <p>Mechanism that disables contacts computation through mobility status of cells based on granular temperature. </p>
 <p>The general idea behind the algorithm:</p>
 <p>It uses the granular temperature to determinate if particles in a cell are sufficiently mobile that the contact forces are worth computation. A cell having a granular temperature under a threshold (default is 1e-4) will have an inactive or advected status which makes them rejected in the broad search step. There is also an extra layer of mobile cells around the current mobile cells to propagate the motion of particles. Additionally, there is another layer of cells around those mobile cells that are flagged as static_active or advected_active cells.</p>
-<p>While the inactive status makes the particles static (no further handling), the advected status will lead to computation and application of a cell-averaged advected term. <a class="el" href="classThis.html">This</a> term is computed from the last average velocity and acceleration of the particles when the cell had a mobile status, or at the first <a class="el" href="namespaceDEM.html">DEM</a> time step of a CFD iteration in CFD-DEM (ensures an update of the hydrodynamic forces). Those forces are reapplied after each <a class="el" href="namespaceDEM.html">DEM</a> time step.</p>
+<p>While the inactive status makes the particles static (no further handling), the advected status will lead to computation and application of a cell-averaged advected term. This term is computed from the last average velocity and acceleration of the particles when the cell had a mobile status, or at the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step of a CFD iteration in CFD-DEM (ensures an update of the hydrodynamic forces). Those forces are reapplied after each <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step.</p>
 <p>Particles in cells with an inactive status results in skipping the fine contact search, the p-p &amp; p-w forces computation and the velocity and position update. It reduces the computational cost of the simulation when particles are not moving.</p>
-<p>Particles in cells with an advected status results in skipping the fine contact search, the p-p &amp; p-w forces computations but they do have a velocity and position update through the advection term. <a class="el" href="classThis.html">This</a> is critical for CFD-DEM.</p>
+<p>Particles in cells with an advected status results in skipping the fine contact search, the p-p &amp; p-w forces computations but they do have a velocity and position update through the advection term. This is critical for CFD-DEM.</p>
 <p>In summary, cells are flagged using a mobility status:</p><ul>
 <li>mobile (all contacts are calculated, same as if the feature is not enabled)</li>
 <li>static_active (particles with low velocity variance next to mobile particles)</li>
@@ -205,7 +205,7 @@ template&lt;int dim&gt; </div>
 <p>advected (2) The variance of the velocity of the particles in cell is low, suggesting that contact forces are negligible but particles are advected by other forces. Note that there are currently no mechanisms that distinct active vs advected status: advection of particles is a user-defined feature. Advected and active status are detected in the same way, but are not processed the same at the velocity integration step. For advected particles, the last computed cell-averaged velocity and acceleration is used to advect the particles.</p>
 <p>advected_active (3) Same as (1), but particles are advected by the last computed cell-averaged velocity and acceleration.</p>
 <p>mobile (4) The motion of particles in the cell is significant or there is at least one cell neighbor that is mobile by criteria (see the <a class="el" href="classAdaptiveSparseContacts.html#a1d8b13037356224f5087345dd515bd2b" title="Identify of the mobility status of each cell through a node-based identification and check....">identify_mobility_status()</a> description), particles need to be in contact candidate lists at the broad search step and particles are treated as usual (force calculation and integration)</p>
-<p>empty (5) <a class="el" href="classThis.html">This</a> status is only used for the node-based mobility status identification, no cells are flagged as empty, only node can be identified as empty. Without this identification of the empty cells, we cannot identify the cell that have an empty neighbor cell, which is critical for simulations using floating walls or mesh. </p>
+<p>empty (5) This status is only used for the node-based mobility status identification, no cells are flagged as empty, only node can be identified as empty. Without this identification of the empty cells, we cannot identify the cell that have an empty neighbor cell, which is critical for simulations using floating walls or mesh. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9cf65bd3e1a790313fcf3f6b708ab230a4b50b82660d2e04bbb57702a817e7c57"></a>inactive&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a9cf65bd3e1a790313fcf3f6b708ab230a1dac69047120c1373b2e61a2eee90068"></a>static_active&#160;</td><td class="fielddoc"></td></tr>
@@ -234,7 +234,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00027">27</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00008">8</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>
@@ -410,7 +410,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00050">50</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00031">31</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00038">DEM::dp</a>, and <a class="el" href="dem__properties_8h_source.html#l00039">DEM::v_x</a>.</p>
 
@@ -644,7 +644,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00142">142</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00123">123</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>.</p>
 
@@ -743,7 +743,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00191">191</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00126">DEMActionManager::set_sparse_contacts_enabled()</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00141">DEMActionManager::set_sparse_contacts_enabled()</a>.</p>
 
 </div>
 </div>
@@ -787,18 +787,18 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate or update the cell-averaged velocities and accelerations of the cells. <a class="el" href="classThis.html">This</a> is used for the advection of particles during integration and the velocities and accelerations map is fully updated at least at each CFD time step since the first <a class="el" href="namespaceDEM.html">DEM</a> iteration computes every contacts. <a class="el" href="classThis.html">This</a> map is also partially updated when cell is mobile in the Verlet integration (not implemented for other scheme). Since this step loops over all the particles of mobile cells and new values of velocities are computed, this helps to have a more accurate value of the average velocities and accelerations when applied to the particles in next <a class="el" href="namespaceDEM.html">DEM</a> time steps. </p>
+<p>Calculate or update the cell-averaged velocities and accelerations of the cells. This is used for the advection of particles during integration and the velocities and accelerations map is fully updated at least at each CFD time step since the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iteration computes every contacts. This map is also partially updated when cell is mobile in the Verlet integration (not implemented for other scheme). Since this step loops over all the particles of mobile cells and new values of velocities are computed, this helps to have a more accurate value of the average velocities and accelerations when applied to the particles in next <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time steps. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_handler</td><td>The particle handler that contains all the particles. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">g</td><td>The external forces, same for all cells (gravity or other sources). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">force</td><td>The contact or hydrodynamic forces. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>The <a class="el" href="namespaceDEM.html">DEM</a> time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>The <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00375">375</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00356">356</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00006">DEMActionManager::get_action_manager()</a>, <a class="el" href="dem__properties_8h_source.html#l00051">DEM::mass</a>, and <a class="el" href="dem__properties_8h_source.html#l00039">DEM::v_x</a>.</p>
 
@@ -822,7 +822,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Create or update a set of the active and ghost cells so that there is no loop over all the cells of the triangulation for the granular temperature and solid fraction calculation, and during the identification of the mobility status. <a class="el" href="classThis.html">This</a> set prevents 4 iteration steps over all the cells and the verification if the cell is locally owned, ghost or not. <a class="el" href="classThis.html">This</a> set is updated at every load balance step since cells are redistributed among processors. </p>
+<p>Create or update a set of the active and ghost cells so that there is no loop over all the cells of the triangulation for the granular temperature and solid fraction calculation, and during the identification of the mobility status. This set prevents 4 iteration steps over all the cells and the verification if the cell is locally owned, ghost or not. This set is updated at every load balance step since cells are redistributed among processors. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">background_dh</td><td>The DoFHandler of the background grid. </td></tr>
@@ -830,7 +830,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00034">34</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00015">15</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>

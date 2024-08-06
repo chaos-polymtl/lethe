@@ -174,7 +174,7 @@ class AuxiliaryPhysics&lt; dim, VectorType &gt;</h3>
 
 <p>Au auxiliary physics is defined as a physics that is solved on top of a core physics, the latter being the Navier-Stokes equations. Auxiliary physics are simpler physics around which the entire simulation process does not need to be tailored. Examples of auxiliary physics are temperature and concentration. Generally, the auxiliary physics does not affect the core physics. For example, temperature is advected by the fluid flow, but buoyancy effects are not taken into account.</p>
 <p>The auxiliary physics are managed by the multiphysics interface of Lethe.</p>
-<p><a class="el" href="classThis.html">This</a> base class is used to establish all of the routines that an auxiliary physics must be able to provide to the Multiphysics interface. These elements are then called at specific moments of a simulation.</p>
+<p>This base class is used to establish all of the routines that an auxiliary physics must be able to provide to the Multiphysics interface. These elements are then called at specific moments of a simulation.</p>
 <p>Auxiliary physics are templated by the dimension of the problem and the vector type that is used to manage their data.</p>
 <p>Current limitations:</p>
 <ul>
@@ -275,7 +275,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Attach the solution vector to the DataOut provided. <a class="el" href="classThis.html">This</a> function enable the auxiliary physics to output their solution via the core solver. </p>
+<p>Attach the solution vector to the DataOut provided. This function enable the auxiliary physics to output their solution via the core solver. </p>
 
 <p>Implemented in <a class="el" href="classVolumeOfFluid.html#a463bc13b582623393aba7167da3859d8">VolumeOfFluid&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a6955ae103f6915c54838a8a168cf34ab">Tracer&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#af2d9b3b3b73b759f3b6077b49a16b8c4">HeatTransfer&lt; dim &gt;</a>, and <a class="el" href="classCahnHilliard.html#af56ea0db69002200c35099b710677727">CahnHilliard&lt; dim &gt;</a>.</p>
 

@@ -148,7 +148,7 @@ class BoundaryCellsInformation&lt; dim &gt;</h3>
 
 <p>Finds all the boundary cells and faces in the triangulation, for each cell the boundary face is specified and the normal vector as well as a point on the boundary face are obtained. </p>
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00048">48</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00046">46</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a54a435b9367e277de807f74661f84872"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a54a435b9367e277de807f74661f84872">&#9670;&nbsp;</a></span>BoundaryCellsInformation()</h2>
@@ -216,7 +216,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out adding new elements with the boundary cells (cells with boundary faces) and information (point and normal vector) of their neighbor boundary cells to the boundary_cells_information. By adding these elements, the broad and fine searches will search for potential contacts of the particles in each boundary cell with the boundary neighbors of these cells. <a class="el" href="classThis.html">This</a> function is used to solve the problem of late contact detection in triangulations with curved boundaries.</p>
+<p>Carries out adding new elements with the boundary cells (cells with boundary faces) and information (point and normal vector) of their neighbor boundary cells to the boundary_cells_information. By adding these elements, the broad and fine searches will search for potential contacts of the particles in each boundary cell with the boundary neighbors of these cells. This function is used to solve the problem of late contact detection in triangulations with curved boundaries.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">boundary_cells_information</td><td>A container that contains the information of all the boundary cells with boundary faces </td></tr>
@@ -228,7 +228,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8cc_source.html#l00695">695</a> of file <a class="el" href="find__boundary__cells__information_8cc_source.html">find_boundary_cells_information.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00036">boundary_cells_info_struct&lt; dim &gt;::cell</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00042">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>.</p>
+<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00035">boundary_cells_info_struct&lt; dim &gt;::cell</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00041">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>.</p>
 
 </div>
 </div>
@@ -292,7 +292,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8cc_source.html#l00472">472</a> of file <a class="el" href="find__boundary__cells__information_8cc_source.html">find_boundary_cells_information.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00036">boundary_cells_info_struct&lt; dim &gt;::cell</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00042">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>.</p>
+<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00035">boundary_cells_info_struct&lt; dim &gt;::cell</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00041">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>.</p>
 
 </div>
 </div>
@@ -355,7 +355,7 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramname">floating_wall_properties</td><td>Properties of floating walls specified in the parameter handler file </td></tr>
     <tr><td class="paramname">outlet_boundaries</td><td>A vector which contains the outlet boundary IDs </td></tr>
     <tr><td class="paramname">check_diamond_cells</td><td>If true, the diamond shaped cells are found and added to the particle-wall contact search cells </td></tr>
-    <tr><td class="paramname">expand_particle_wall_contact_search</td><td>If true, expands the particle-wall contact search by adding the contact search between particles in the boundary cells with the boundary neighbors of these boundary cells</td></tr>
+    <tr><td class="paramname">expand_particle_wall_contact_search</td><td>If true, expands the particle-wall contact search by adding the contact search between particles in the boundary cells with the boundary neighbors of these boundary cells </td></tr>
     <tr><td class="paramname">pcout</td><td></td></tr>
   </table>
   </dd>
@@ -513,7 +513,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8cc_source.html#l00131">131</a> of file <a class="el" href="find__boundary__cells__information_8cc_source.html">find_boundary_cells_information.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00039">boundary_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00036">boundary_cells_info_struct&lt; dim &gt;::cell</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00042">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00045">boundary_cells_info_struct&lt; dim &gt;::normal_vector</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00048">boundary_cells_info_struct&lt; dim &gt;::point_on_face</a>.</p>
+<p class="reference">References <a class="el" href="boundary__cells__info__struct_8h_source.html#l00038">boundary_cells_info_struct&lt; dim &gt;::boundary_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00035">boundary_cells_info_struct&lt; dim &gt;::cell</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00041">boundary_cells_info_struct&lt; dim &gt;::global_face_id</a>, <a class="el" href="boundary__cells__info__struct_8h_source.html#l00044">boundary_cells_info_struct&lt; dim &gt;::normal_vector</a>, and <a class="el" href="boundary__cells__info__struct_8h_source.html#l00047">boundary_cells_info_struct&lt; dim &gt;::point_on_face</a>.</p>
 
 </div>
 </div>
@@ -630,7 +630,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00087">87</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00085">85</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -659,7 +659,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00113">113</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00111">111</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -688,7 +688,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00105">105</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00103">103</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -717,7 +717,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00095">95</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00093">93</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -775,7 +775,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00269">269</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00267">267</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -801,7 +801,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00238">238</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00236">236</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -827,7 +827,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00273">273</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00271">271</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -853,7 +853,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00252">252</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00250">250</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -879,7 +879,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00263">263</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00261">261</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -905,7 +905,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00287">287</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00285">285</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -931,7 +931,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00288">288</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00286">286</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -957,7 +957,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00244">244</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00242">242</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -983,7 +983,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00277">277</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00275">275</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -1009,7 +1009,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00257">257</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00255">255</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>
@@ -1035,7 +1035,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00284">284</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__boundary__cells__information_8h_source.html#l00282">282</a> of file <a class="el" href="find__boundary__cells__information_8h_source.html">find_boundary_cells_information.h</a>.</p>
 
 </div>
 </div>

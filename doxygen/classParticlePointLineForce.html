@@ -100,11 +100,9 @@ Private Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticlePointLineForce&lt; dim &gt;</h3>
 
-<p>Calculation of the non-linear particle-point and particle-line contact force using the information obtained from the fine search and physical properties of particles and walls. Since the inputs and the calculation method of particle-point and particle-line contact forces are similar, we only used one function for both tasks</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>Calculate the non-linear particle-point and particle-line contact force using the information obtained from the fine search and physical properties of particles and walls. Since the inputs and the calculation method of particle-point and particle-line contact forces are similar, we only used one function for both tasks. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__point__line__contact__force_8h_source.html#l00045">45</a> of file <a class="el" href="particle__point__line__contact__force_8h_source.html">particle_point_line_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__point__line__contact__force_8h_source.html#l00039">39</a> of file <a class="el" href="particle__point__line__contact__force_8h_source.html">particle_point_line_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a657f059cafebd59186799ad817876802"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a657f059cafebd59186799ad817876802">&#9670;&nbsp;</a></span>ParticlePointLineForce()</h2>
@@ -158,11 +156,12 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Carries out the calculation of the particle-line contact force using non-linear (Hertzian) model</p>
+
+<p>Calculate of the particle-line contact force using non-linear (Hertzian) model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_line_pairs_in_contact</td><td>Required information for calculation of the particle-line contact force </td></tr>
-    <tr><td class="paramname">physical_properties</td><td><a class="el" href="namespaceDEM.html">DEM</a> physical_properties declared in the .prm file </td></tr>
+    <tr><td class="paramname">physical_properties</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> physical_properties declared in the .prm file </td></tr>
     <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
   </table>
   </dd>
@@ -207,11 +206,12 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Carries out the calculation of the particle-point contact force using non-linear (Hertzian) model</p>
+
+<p>Calculate of the particle-point contact force using non-linear (Hertzian) model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_point_pairs_in_contact</td><td>Required information for calculation of the particle-point contact force </td></tr>
-    <tr><td class="paramname">physical_properties</td><td><a class="el" href="namespaceDEM.html">DEM</a> physical_properties declared in the .prm file </td></tr>
+    <tr><td class="paramname">physical_properties</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> physical_properties declared in the .prm file </td></tr>
     <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
   </table>
   </dd>
@@ -264,7 +264,9 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> private function is used to find the projection of point_p on a line with beginning and ending vertices of point_a and point_b, respectively </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>This private function is used to find the projection of point_p on a line with beginning and ending vertices of point_a and point_b, respectively. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">point_p</td><td>A point which is going to be projected on the line </td></tr>
     <tr><td class="paramname">point_a</td><td>Beginning point of the line </td></tr>

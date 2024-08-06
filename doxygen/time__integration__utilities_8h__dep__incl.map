@@ -8,7 +8,7 @@
 <area shape="rect" id="node15" href="$gls__sharp__navier__stokes_8cc.html" title=" " alt="" coords="1837,703,2039,759"/>
 <area shape="rect" id="node17" href="$gls__nitsche__navier__stokes_8cc.html" title=" " alt="" coords="5,703,220,759"/>
 <area shape="rect" id="node18" href="$gls__navier__stokes_8cc.html" title=" " alt="" coords="939,591,1121,647"/>
-<area shape="rect" id="node22" href="$gd__navier__stokes_8cc.html" title=" " alt="" coords="1904,591,2087,647"/>
+<area shape="rect" id="node22" href="$fluid__dynamics__block_8cc.html" title=" " alt="" coords="1903,591,2087,647"/>
 <area shape="rect" id="node27" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="1645,473,1828,529"/>
 <area shape="rect" id="node29" href="$navier__stokes__cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="1363,465,1569,536"/>
 <area shape="rect" id="node31" href="$navier__stokes__vof__assemblers_8cc.html" title=" " alt="" coords="2507,473,2751,529"/>
@@ -40,7 +40,7 @@
 <area shape="rect" id="node20" href="$isothermal__compressible__navier__stokes__assembler_8cc.html" title=" " alt="" coords="769,465,979,536"/>
 <area shape="rect" id="node23" href="$isothermal__compressible__navier__stokes__vof__assembler_8cc.html" title=" " alt="" coords="1145,584,1384,655"/>
 <area shape="rect" id="node25" href="$navier__stokes__base_8h.html" title=" " alt="" coords="1797,354,1980,410"/>
-<area shape="rect" id="node26" href="$gd__navier__stokes_8h.html" title=" " alt="" coords="1904,473,2087,529"/>
+<area shape="rect" id="node26" href="$fluid__dynamics__block_8h.html" title=" " alt="" coords="1904,473,2087,529"/>
 <area shape="rect" id="node35" href="$vof_8h.html" title=" " alt="" coords="2886,361,3083,403"/>
 <area shape="rect" id="node38" href="$vof__assemblers_8h.html" title=" " alt="" coords="3027,235,3209,291"/>
 <area shape="rect" id="node40" href="$vof__scratch__data_8cc.html" title=" " alt="" coords="2768,235,2951,291"/>

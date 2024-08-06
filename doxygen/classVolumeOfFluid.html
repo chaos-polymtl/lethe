@@ -543,7 +543,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Assembles the matrix and rhs for calculation of the curvature. </p>
-<p>Solves: $$ v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|) $$ where $$v$$, $$psi$$, $$eta$$, and $$k$$ are test function, fpg, filter value, and curvature.</p>
+<p>Solves: \(v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|)\) where \(v\), \(\psi\), \(\eta\), and \(k\) are test function, fpg, filter value, and curvature.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">present_projected_phase_fraction_gradient_solution</td><td></td></tr>
@@ -593,7 +593,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble the system for interface sharpening. </p>
 <ul>
-<li><a class="el" href="classThis.html">This</a> function assembles the weak form of: $$ \Phi = c ^ (1 - \alpha) * (\phi ^ \alpha) if 0 &lt;= \phi &lt;= c $$ $$ \Phi = 1 - (1 - c) ^ (1 - \alpha) * (1 - \phi) ^ \alpha if c &lt; \phi &lt;= 1 $$ Reference for sharpening method <a href="https://www.sciencedirect.com/science/article/pii/S0045782500002000">https://www.sciencedirect.com/science/article/pii/S0045782500002000</a></li>
+<li>This function assembles the weak form of: \( \Phi = c ^ {(1 - \alpha)} * (\phi ^ \alpha)\) if \( 0 &lt;= \phi &lt;= c \ \) \( \Phi = 1 - (1 - c) ^ {(1 - \alpha)} * (1 - \phi) ^ \alpha \) if \(c &lt; \phi &lt;= 1 \) Reference for sharpening method <a href="https://www.sciencedirect.com/science/article/pii/S0045782500002000">https://www.sciencedirect.com/science/article/pii/S0045782500002000</a></li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -650,7 +650,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Assemble the local matrix for a given cell. </p>
-<p><a class="el" href="classThis.html">This</a> function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
+<p>This function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell</td><td>The cell for which the local matrix is assembled.</td></tr>
@@ -777,7 +777,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Call for the assembly of the matrix and the right-hand side. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd><a class="el" href="classThis.html">This</a> function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l00031">31</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
@@ -875,7 +875,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Call for the assembly of the right-hand side. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd><a class="el" href="classThis.html">This</a> function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l00040">40</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
@@ -971,7 +971,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Attach the solution vector to the DataOut provided. <a class="el" href="classThis.html">This</a> function enable the auxiliary physics to output their solution via the core solver. </p>
+<p>Attach the solution vector to the DataOut provided. This function enable the auxiliary physics to output their solution via the core solver. </p>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#adf185a85398b75121b700d94b49fac05">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
@@ -2036,7 +2036,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l00752">752</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00415">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01228">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="utilities_8cc_source.html#l00047">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00010">make_table_scalars_vectors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00419">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01228">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="utilities_8cc_source.html#l00047">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00010">make_table_scalars_vectors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -2098,7 +2098,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02056">2056</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="utilities_8h_source.html#l00447">deserialize_table()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#afaf982762668ab166df8919c45a58ee1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="utilities_8h_source.html#l00451">deserialize_table()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -2531,7 +2531,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Limit the phase fractions between 0 and 1. <a class="el" href="classThis.html">This</a> is necessary before interface sharpening. More information can be found in step_41 of deal.II tutorials: <a href="https://www.dealii.org/current/doxygen/deal.II/step_41.html">https://www.dealii.org/current/doxygen/deal.II/step_41.html</a>. </p>
+<p>Limit the phase fractions between 0 and 1. This is necessary before interface sharpening. More information can be found in step_41 of deal.II tutorials: <a href="https://www.dealii.org/current/doxygen/deal.II/step_41.html">https://www.dealii.org/current/doxygen/deal.II/step_41.html</a>. </p>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02573">2573</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
@@ -2565,7 +2565,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02014">2014</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00432">serialize_table()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00436">serialize_table()</a>.</p>
 
 </div>
 </div>

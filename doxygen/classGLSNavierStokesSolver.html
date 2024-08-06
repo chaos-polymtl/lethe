@@ -474,7 +474,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Assembles an L2_projection matrix for the velocity and the pressure. <a class="el" href="classThis.html">This</a> L2 projection matrix can be used to set the initial condition for the Navier-Stokes problem. </p>
+<p>Assembles an L2_projection matrix for the velocity and the pressure. This L2 projection matrix can be used to set the initial condition for the Navier-Stokes problem. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__navier__stokes_8cc_source.html#l01277">1277</a> of file <a class="el" href="gls__navier__stokes_8cc_source.html">gls_navier_stokes.cc</a>.</p>
 
@@ -525,7 +525,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Assemble the local matrix for a given cell. </p>
-<p><a class="el" href="classThis.html">This</a> function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
+<p>This function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell</td><td>The cell for which the local matrix is assembled.</td></tr>
@@ -885,7 +885,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="gls__navier__stokes_8cc_source.html#l01119">1119</a> of file <a class="el" href="gls__navier__stokes_8cc_source.html">gls_navier_stokes.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ad43c33b8e3d5435d9cbe65c156887a02">Parameters::LinearSolver::gmres</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a1dbb598cb79bfd4936b225bb4caa77ee">Parameters::L2projection</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a2e69977b7c3df8d5c77016255b4006f2">Parameters::nodal</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="read__checkpoint_8cc_source.html#l00008">read_checkpoint()</a>, <a class="el" href="physics__solver_8h_source.html#l00177">PhysicsSolver&lt; VectorType &gt;::solve_non_linear_system()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a2ac1ff5ff990bc0a4b3afa2286b9e55f">Parameters::viscous</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#a7ece063bedde5ef9c3897750dd272114ad43c33b8e3d5435d9cbe65c156887a02">Parameters::LinearSolver::gmres</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a1dbb598cb79bfd4936b225bb4caa77ee">Parameters::L2projection</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a2e69977b7c3df8d5c77016255b4006f2">Parameters::nodal</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="read__checkpoint_8cc_source.html#l00014">read_checkpoint()</a>, <a class="el" href="physics__solver_8h_source.html#l00177">PhysicsSolver&lt; VectorType &gt;::solve_non_linear_system()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a2ac1ff5ff990bc0a4b3afa2286b9e55f">Parameters::viscous</a>.</p>
 
 </div>
 </div>
@@ -1068,7 +1068,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>solve Solves the Navier-Stokes problem </p>
-<p><a class="el" href="classThis.html">This</a> functions solves the problem defined by the Navier-Stokes parameter by iterating through time or through the mesh refinements. </p>
+<p>This functions solves the problem defined by the Navier-Stokes parameter by iterating through time or through the mesh refinements. </p>
 
 <p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#a70f7a56a430f8a306fddee4404b81d9a">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#ae34cb3b31e3196c91b2840505440a3db">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a473773b3e74c60de99b47ee5a707016d">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt; dim &gt;</a>.</p>
 

@@ -88,7 +88,7 @@ Inheritance diagram for InsertionVolume&lt; dim &gt;:</div>
 <div class="center"><img src="classInsertionVolume__inherit__graph.png" border="0" usemap="#aInsertionVolume_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aInsertionVolume_3_01dim_01_4_inherit__map" id="aInsertionVolume_3_01dim_01_4_inherit__map">
 <area shape="rect" title=" " alt="" coords="5,80,188,107"/>
-<area shape="rect" href="classInsertion.html" title=" " alt="" coords="29,5,164,32"/>
+<area shape="rect" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="29,5,164,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -172,7 +172,7 @@ Additional Inherited Members</h2></td></tr>
 class InsertionVolume&lt; dim &gt;</h3>
 
 
-<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00029">29</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00026">26</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a578575596925a3cd489b987746a62b19"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a578575596925a3cd489b987746a62b19">&#9670;&nbsp;</a></span>InsertionVolume()</h2>
@@ -213,12 +213,13 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The constructor investigates if the insertion box is large enough to handle to insert the desired number of particles with the specified insertion parameters. If the insertion box is not adequately large, the number of inserted particles at each insertion step is updated. It also finds the insertion points in each direction (number_of_particles_x_direction, number_of_particles_y_direction and number_of_particles_z_direction).</p>
+
+<p>The constructor investigates if the insertion box is large enough to handleto insert the desired number of particles with the specified insertion parameters. If the insertion box is not adequately large, the number of inserted particles at each insertion step is updated. It also finds the insertion points in each direction (number_of_particles_x_direction, number_of_particles_y_direction and number_of_particles_z_direction). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">size_distribution_object_container</td><td>Contains all distribution for each particle type </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
     <tr><td class="paramname">maximum_particle_diameter</td><td>Maximum particle diameter based on values defined in the parameter handler </td></tr>
   </table>
   </dd>
@@ -226,7 +227,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__volume_8cc_source.html#l00011">11</a> of file <a class="el" href="insertion__volume_8cc_source.html">insertion_volume.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__volume_8h_source.html#l00128">InsertionVolume&lt; dim &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion_8h_source.html#l00192">Insertion&lt; dim &gt;::inserted_this_step</a>, and <a class="el" href="insertion_8h_source.html#l00203">Insertion&lt; dim &gt;::maximum_diameter</a>.</p>
+<p class="reference">References <a class="el" href="insertion__volume_8h_source.html#l00126">InsertionVolume&lt; dim &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion_8h_source.html#l00190">Insertion&lt; dim &gt;::inserted_this_step</a>, and <a class="el" href="insertion_8h_source.html#l00201">Insertion&lt; dim &gt;::maximum_diameter</a>.</p>
 
 </div>
 </div>
@@ -272,7 +273,8 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Creates a vector of random numbers with size of particles which are going to be inserted at each insertion step</p>
+
+<p>Creates a vector of random numbers with size of particles which are going to be inserted at each insertion step. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">random_container</td><td>A vector of random numbers </td></tr>
@@ -332,9 +334,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#a9aaf50f7896e20d9f3a1ee5c644196b0">Insertion&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00090">90</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
-
-<p class="reference">References <a class="el" href="insertion__volume_8h_source.html#l00128">InsertionVolume&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__volume_8h_source.html#l00132">InsertionVolume&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00088">88</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
 
 </div>
 </div>
@@ -507,14 +507,15 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Converts id of particles to volume insertion location</p>
+
+<p>Converts id of particles to volume insertion location. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">insertion_location</td><td><a class="el" href="classInsertion.html">Insertion</a> location of the particle </td></tr>
+    <tr><td class="paramname">insertion_location</td><td><a class="el" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system.">Insertion</a> location of the particle </td></tr>
     <tr><td class="paramname">id</td><td>Particle_id </td></tr>
     <tr><td class="paramname">random_number1</td><td>A random number to create randomness in volume insertion </td></tr>
     <tr><td class="paramname">random_number2</td><td>A random number to create randomness in volume insertion </td></tr>
-    <tr><td class="paramname">insertion_information</td><td><a class="el" href="namespaceDEM.html">DEM</a> insertion parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">insertion_information</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> insertion parameters declared in the .prm file </td></tr>
   </table>
   </dd>
 </dl>
@@ -562,12 +563,13 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out the volume insertion of particles.</p>
+
+<p>Carries out the volume insertion of particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted </td></tr>
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the cells in which the particles are inserted </td></tr>
-    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html">DEM</a> parameters declared in the .prm file </td></tr>
+    <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
   </table>
   </dd>
 </dl>
@@ -576,7 +578,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="insertion__volume_8cc_source.html#l00033">33</a> of file <a class="el" href="insertion__volume_8cc_source.html">insertion_volume.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00040">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00218">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00087">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00220">Parameters::Lagrangian::InsertionInfo::seed_for_insertion</a>.</p>
+<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00039">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00218">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00038">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00087">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00063">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00220">Parameters::Lagrangian::InsertionInfo::seed_for_insertion</a>.</p>
 
 </div>
 </div>
@@ -626,9 +628,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#ad090ee85ee022ca32b837150ff4fa728">Insertion&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00078">78</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
-
-<p class="reference">References <a class="el" href="insertion__volume_8h_source.html#l00128">InsertionVolume&lt; dim &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__volume_8h_source.html#l00132">InsertionVolume&lt; dim &gt;::particles_of_each_type_remaining</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00076">76</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
 
 </div>
 </div>
@@ -655,7 +655,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00128">128</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00126">126</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
 
 </div>
 </div>
@@ -681,7 +681,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00132">132</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__volume_8h_source.html#l00130">130</a> of file <a class="el" href="insertion__volume_8h_source.html">insertion_volume.h</a>.</p>
 
 </div>
 </div>

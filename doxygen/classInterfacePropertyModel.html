@@ -122,7 +122,7 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:ae5c76554a4701ba2a5b401f3ae57d559"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract class that defines the interface for a interface property model. Interface property model provides an abstract interface to calculate the value of an interface property or a vector of interface property value for given field value. By default, the interface does not require that all (or any) fields be specified. <a class="el" href="classThis.html">This</a> is why a map is used to pass the dependent variable. To allow for the calculation of the appropriate jacobian matrix (when that is necessary) the interface also provides a jacobian function, which must provide the derivative with respect to the field specified as an argument. </p>
+<div class="textblock"><p>Abstract class that defines the interface for a interface property model. Interface property model provides an abstract interface to calculate the value of an interface property or a vector of interface property value for given field value. By default, the interface does not require that all (or any) fields be specified. This is why a map is used to pass the dependent variable. To allow for the calculation of the appropriate jacobian matrix (when that is necessary) the interface also provides a jacobian function, which must provide the derivative with respect to the field specified as an argument. </p>
 
 <p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00036">36</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -270,7 +270,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>numerical_jacobian Calculates the jacobian through a forward finite difference (Euler) approximation. <a class="el" href="classThis.html">This</a> approach, although not preferable, is meant as a fall-back when calculating the jacobian manually is too difficult. </p>
+<p>numerical_jacobian Calculates the jacobian through a forward finite difference (Euler) approximation. This approach, although not preferable, is meant as a fall-back when calculating the jacobian manually is too difficult. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">fields_values</td><td>The values of the various fields </td></tr>
@@ -415,7 +415,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>vector_numerical_jacobian Calculates the vector of jacobian through forward finite difference (Euler) approximation. <a class="el" href="classThis.html">This</a> approach, although not preferable, is meant as a fall-back when calculating the jacobian manually is too difficult. </p>
+<p>vector_numerical_jacobian Calculates the vector of jacobian through forward finite difference (Euler) approximation. This approach, although not preferable, is meant as a fall-back when calculating the jacobian manually is too difficult. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">field_vectors</td><td></td></tr>

@@ -87,10 +87,10 @@ Inheritance diagram for ParticleWallContactForce&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classParticleWallContactForce__inherit__graph.png" border="0" usemap="#aParticleWallContactForce_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aParticleWallContactForce_3_01dim_01_4_inherit__map" id="aParticleWallContactForce_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,71,188,112"/>
+<area shape="rect" title="Base interface for classes that carry out the calculation of particle&#45;wall contact force." alt="" coords="5,71,188,112"/>
 <area shape="rect" href="classParticleWallJKRForce.html" title="Calculation of the JKR particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="258,5,413,47"/>
-<area shape="rect" href="classParticleWallLinearForce.html" title=" " alt="" coords="249,71,422,112"/>
-<area shape="rect" href="classParticleWallNonLinearForce.html" title=" " alt="" coords="236,136,435,177"/>
+<area shape="rect" href="classParticleWallLinearForce.html" title="Calculate particle&#45;wall contact force using the information obtained from the fine search and physica..." alt="" coords="249,71,422,112"/>
+<area shape="rect" href="classParticleWallNonLinearForce.html" title="Calculate the non&#45;linear particle&#45;wall contact force using the information obtained from the fine sea..." alt="" coords="236,136,435,177"/>
 <area shape="rect" href="classParticleWallDMTForce.html" title="Calculation of the DMT particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="483,136,645,177"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -174,7 +174,7 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticleWallContactForce&lt; dim &gt;</h3>
 
-<p>Base interface for classes that carry out the calculation of particle-wall contact force </p>
+<p>Base interface for classes that carry out the calculation of particle-wall contact force. </p>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00042">42</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -206,7 +206,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00045">45</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00043">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00412">Parameters::Lagrangian::BCDEM::boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00415">Parameters::Lagrangian::BCDEM::boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00409">Parameters::Lagrangian::BCDEM::boundary_translational_velocity</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00418">Parameters::Lagrangian::BCDEM::point_on_rotation_axis</a>.</p>
+<p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00042">DEMSolverParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00412">Parameters::Lagrangian::BCDEM::boundary_rotational_speed</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00415">Parameters::Lagrangian::BCDEM::boundary_rotational_vector</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00409">Parameters::Lagrangian::BCDEM::boundary_translational_velocity</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00418">Parameters::Lagrangian::BCDEM::point_on_rotation_axis</a>.</p>
 
 </div>
 </div>
@@ -293,7 +293,8 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out applying the calculated force and torque on the particle in contact with the given wall, for both non-linear and linear contact force calculations</p>
+
+<p>Apply the calculated force and torque on the particle in contact with the given wall, for both non-linear and linear contact force calculations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">forces_and_torques</td><td>A tuple which contains: 1, normal force, 2, tangential force, 3, tangential torque and 4, rolling resistance torque of a contact pair </td></tr>
@@ -305,7 +306,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00190">190</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00191">191</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -350,7 +351,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> function is used to calculate the total force and total torque on each boundary </p>
+<p>This function is used to calculate the total force and total torque on each boundary </p>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00155">155</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
@@ -413,7 +414,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_floating_mesh_in_contact</td><td>A container that stores the information of particle-floating mesh contact </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html">DEM</a> time step </td></tr>
+    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step </td></tr>
     <tr><td class="paramname">torque</td><td>Torque acting on particles </td></tr>
     <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
     <tr><td class="paramname">solids</td><td>Floating solids </td></tr>
@@ -472,11 +473,12 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out the calculation of the particle-wall contact force using the contact pair information obtained from the particle-wall fine search and physical properties of particles and walls</p>
+
+<p>Carries out the calculation of the particle-wall contact force using the contact pair information obtained from the particle-wall fine search and physical properties of particles and walls. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_wall_pairs_in_contact</td><td>Required information for the calculation of the particle-wall contact force </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html">DEM</a> time step </td></tr>
+    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step </td></tr>
     <tr><td class="paramname">torque</td><td>Torque acting on particles </td></tr>
     <tr><td class="paramname">force</td><td>Force acting on particles </td></tr>
   </table>
@@ -522,7 +524,9 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> function is used to find the projection of vector_a on vector_b </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>This function is used to find the projection of vector_a on vector_b. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">vector_a</td><td>A vector which is going to be projected on vector_b </td></tr>
     <tr><td class="paramname">vector_b</td><td>The projection vector of vector_a </td></tr>
@@ -531,7 +535,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The projection of vector_a on vector_b </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00129">129</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00130">130</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -614,7 +618,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> function is used to initialize a map of vectors to zero with the member class boundary index which has the keys as information </p>
+<p>This function is used to initialize a map of vectors to zero with the member class boundary index which has the keys as information </p>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00174">174</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
@@ -641,7 +645,8 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classThis.html">This</a> function sums all the forces and torques from all the MPI processes </p>
+
+<p>This function sums all the forces and torques from all the MPI processes. </p>
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8cc_source.html#l00187">187</a> of file <a class="el" href="particle__wall__contact__force_8cc_source.html">particle_wall_contact_force.cc</a>.</p>
 
@@ -694,12 +699,13 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out updating the contact pair information for both non-linear and linear contact force calculations</p>
+
+<p>Update the contact pair information for both non-linear and linear contact force calculations. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">contact_pair_information</td><td>Contact information of a particle-wall pair in neighborhood </td></tr>
     <tr><td class="paramname">particle_properties</td><td>Properties of particle in contact </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html">DEM</a> time step </td></tr>
+    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step </td></tr>
   </table>
   </dd>
 </dl>
@@ -769,12 +775,13 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out updating the contact pair information for particle-floating wall contacts</p>
+
+<p>Update the contact pair information for particle-floating wall contacts. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">contact_pair_information</td><td>Contact information of a particle-wall pair in neighborhood </td></tr>
     <tr><td class="paramname">particle_properties</td><td>Properties of particle in contact </td></tr>
-    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html">DEM</a> time step </td></tr>
+    <tr><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step </td></tr>
     <tr><td class="paramname">cut_cell_translational_velocity</td><td>Translational velocity of the cut cell </td></tr>
     <tr><td class="paramname">cut_cell_rotational_veclocity</td><td>Rotational veclocity of the cut cell </td></tr>
     <tr><td class="paramname">center_of_rotation_particle_distance</td><td>distance between particle and the center of rotation of the floating mesh </td></tr>
@@ -811,7 +818,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00266">266</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00268">268</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -837,7 +844,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00246">246</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00248">248</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -863,7 +870,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00247">247</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00249">249</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -889,7 +896,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00245">245</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00247">247</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -915,7 +922,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00264">264</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00266">266</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -941,7 +948,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00265">265</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00267">267</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -967,7 +974,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00255">255</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00257">257</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -993,7 +1000,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00254">254</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00256">256</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1019,7 +1026,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00256">256</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00258">258</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1045,7 +1052,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00258">258</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00260">260</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1071,7 +1078,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00243">243</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00245">245</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1097,7 +1104,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00253">253</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00255">255</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1123,7 +1130,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00257">257</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00259">259</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1149,7 +1156,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00252">252</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00254">254</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1175,7 +1182,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00261">261</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00263">263</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1201,7 +1208,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00259">259</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00261">261</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1227,7 +1234,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00250">250</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00252">252</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1260,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00248">248</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00250">250</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1286,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00262">262</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00264">264</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>
@@ -1305,7 +1312,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00267">267</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00269">269</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 
 </div>
 </div>

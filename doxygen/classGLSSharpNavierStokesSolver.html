@@ -559,12 +559,12 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Assemble the local matrix for a given cell. </p>
-<p><a class="el" href="classThis.html">This</a> function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
+<p>This function is used by the WorkStream class to assemble the system matrix. It is a thread safe function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell</td><td>The cell for which the local matrix is assembled.</td></tr>
     <tr><td class="paramname">scratch_data</td><td>The scratch data which is used to store the calculated finite element information at the gauss point. See the documentation for <a class="el" href="classNavierStokesScratchData.html" title="Class that stores the information required by the assembly procedure for a Navier-Stokes equation....">NavierStokesScratchData</a> for more information</td></tr>
-    <tr><td class="paramname">copy_data</td><td>The copy data which is used to store the results of the assembly over a cell <a class="el" href="classThis.html">This</a> function is modified compared to the GLS function to take into account the cells that are cut or inside a particle </td></tr>
+    <tr><td class="paramname">copy_data</td><td>The copy data which is used to store the results of the assembly over a cell This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle </td></tr>
   </table>
   </dd>
 </dl>
@@ -663,7 +663,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Call for the assembly of the matrix and the right hand side. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd><a class="el" href="classThis.html">This</a> function is to be deprecated when the non-linear solvers have been refactored to call for rhs and matrix assembly seperately. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>This function is to be deprecated when the non-linear solvers have been refactored to call for rhs and matrix assembly seperately. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8h_source.html#l00164">164</a> of file <a class="el" href="gls__sharp__navier__stokes_8h_source.html">gls_sharp_navier_stokes.h</a>.</p>
 
@@ -697,7 +697,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Call for the assembly of the right hand side. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd><a class="el" href="classThis.html">This</a> function is to be deprecated when the non-linear solvers have been refactored to call for rhs and matrix assembly seperately.</dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>This function is to be deprecated when the non-linear solvers have been refactored to call for rhs and matrix assembly seperately.</dd></dl>
 <p>Modified version of assemble_matrix_and_rhs to include the presence of extra steps. For more detail see the same function in the <a class="el" href="gls__navier__stokes_8h.html">gls_navier_stokes.h</a> solver. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8h_source.html#l00203">203</a> of file <a class="el" href="gls__sharp__navier__stokes_8h_source.html">gls_sharp_navier_stokes.h</a>.</p>
@@ -796,7 +796,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Evaluate the L2 error on the computational domain if an analytical solution is given. <a class="el" href="classThis.html">This</a> function is slightly different from its standard GLS counterpart as the cells that are cut by an immersed boundary should not be taken into account in the error evaluation. See "computation domain" definition in: L. Barbeau, S. Étienne, C. Béguin &amp; B. Blais, «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,» Computers &amp; Fluids, 2020, in press, ref. CAF-D-20-0077. </p>
+<p>Evaluate the L2 error on the computational domain if an analytical solution is given. This function is slightly different from its standard GLS counterpart as the cells that are cut by an immersed boundary should not be taken into account in the error evaluation. See "computation domain" definition in: L. Barbeau, S. Étienne, C. Béguin &amp; B. Blais, «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,» Computers &amp; Fluids, 2020, in press, ref. CAF-D-20-0077. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l01802">1802</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -900,7 +900,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return a bool to define if a cell is cut by an IB. <a class="el" href="classThis.html">This</a> function is built to handle special cases where the level set is always positive. </p>
+<p>Return a bool to define if a cell is cut by an IB. This function is built to handle special cases where the level set is always positive. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell,the</td><td>cell that we verify whether it is cut or not.</td></tr>
@@ -990,7 +990,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function checks if all particles are spheres. If one of them is not, the code will use the regular generate_cut_cells function. If all particles are spheres, it uses the optimized_generate_cut_cells. </p>
+<p>This function checks if all particles are spheres. If one of them is not, the code will use the regular generate_cut_cells function. If all particles are spheres, it uses the optimized_generate_cut_cells. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00051">51</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1022,7 +1022,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Copy local cell information to global matrix <a class="el" href="classThis.html">This</a> function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. </p>
+<p>Copy local cell information to global matrix This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. </p>
 
 <p>Reimplemented from <a class="el" href="classGLSNavierStokesSolver.html#aa1266bef5027374a8ddecc9a4eb080d3">GLSNavierStokesSolver&lt; dim &gt;</a>.</p>
 
@@ -1058,7 +1058,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Copy local cell rhs information to global rhs <a class="el" href="classThis.html">This</a> function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. </p>
+<p>Copy local cell rhs information to global rhs This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. </p>
 
 <p>Reimplemented from <a class="el" href="classGLSNavierStokesSolver.html#a173f622ae3b3bfa73f68d2d17081ad7d">GLSNavierStokesSolver&lt; dim &gt;</a>.</p>
 
@@ -1090,7 +1090,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Defines the particle structure and value based on the parameter file. <a class="el" href="classThis.html">This</a> structure gives access to the position, velocity, force and other proprieties of each IB particle. All the variables defined for each of the particle are described in the class: IBparticle. see: \ib_particle.h. </p>
+<p>Defines the particle structure and value based on the parameter file. This structure gives access to the position, velocity, force and other proprieties of each IB particle. All the variables defined for each of the particle are described in the class: IBparticle. see: \ib_particle.h. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00768">768</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1192,7 +1192,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function abstracts the generation of cell candidates that possibly are cut. </p>
+<p>This function abstracts the generation of cell candidates that possibly are cut. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00647">647</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1220,7 +1220,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function creates a map (cut_cells_map) that indicates if a cell is cut, and the particle id of the particle that cut it. </p>
+<p>This function creates a map (cut_cells_map) that indicates if a cell is cut, and the particle id of the particle that cut it. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00075">75</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1341,7 +1341,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function is only applied if all particles are spheres. It creates two maps (cut_cells_map and cells_inside_map) to access the cells cut by particles and inside the particles, respectively. The map keys are the particle's IDs. The algorithm was optimized to reduce the cost of this step. </p>
+<p>This function is only applied if all particles are spheres. It creates two maps (cut_cells_map and cells_inside_map) to access the cells cut by particles and inside the particles, respectively. The map keys are the particle's IDs. The algorithm was optimized to reduce the cost of this step. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00509">509</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1587,7 +1587,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>sets up the vector of assembler functions <a class="el" href="classThis.html">This</a> function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. Refer to 2 different assembler depending on what type of equations is assembled inside the particles. </p>
+<p>sets up the vector of assembler functions This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle. Refer to 2 different assembler depending on what type of equations is assembled inside the particles. </p>
 
 <p>Reimplemented from <a class="el" href="classGLSNavierStokesSolver.html#ac8fb59a2a39f6b2680a5fb50762a1737">GLSNavierStokesSolver&lt; dim &gt;</a>.</p>
 
@@ -1650,7 +1650,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>solve Solves the Navier-Stokes problem </p>
-<p><a class="el" href="classThis.html">This</a> functions solves the problem defined by the Navier-Stokes parameter by iterating through time or through the mesh refinements. </p>
+<p>This functions solves the problem defined by the Navier-Stokes parameter by iterating through time or through the mesh refinements. </p>
 
 <p>Reimplemented from <a class="el" href="classGLSNavierStokesSolver.html#ab0b0983381a34bf2fa122936db0ebf47">GLSNavierStokesSolver&lt; dim &gt;</a>.</p>
 
@@ -1682,7 +1682,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function updates the precalculations for every immersed particle. </p>
+<p>This function updates the precalculations for every immersed particle. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l04840">4840</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1712,7 +1712,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Map the vertex index to the cell that includes that vertex. <a class="el" href="classThis.html">This</a> map is used to find all the cell close to a specific vertex. </p>
+<p>Map the vertex index to the cell that includes that vertex. This map is used to find all the cell close to a specific vertex. </p>
 
 <p class="definition">Definition at line <a class="el" href="gls__sharp__navier__stokes_8cc_source.html#l00041">41</a> of file <a class="el" href="gls__sharp__navier__stokes_8cc_source.html">gls_sharp_navier_stokes.cc</a>.</p>
 
@@ -1742,7 +1742,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart <a class="el" href="classThis.html">This</a> function stores all the previous' particles states in one file. Each row corresponds to one particle state. The file is structured as follows: </p>
+<p>Write a gls_sharp simulation checkpointing to allow for gls_sharp simulation restart This function stores all the previous' particles states in one file. Each row corresponds to one particle state. The file is structured as follows: </p>
 <p>P0 state at time t</p>
 <p>P0 state at time t-dt</p>
 <p>P0 state at time t-2dt</p>

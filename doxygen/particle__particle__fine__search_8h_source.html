@@ -93,86 +93,80 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_particle_particle_fine_search_h</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_particle_particle_fine_search_h</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__info_8h.html">dem/particle_particle_contact_info.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/tensor.h&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__info_8h.html">dem/particle_particle_contact_info.h</a>&gt;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle.h&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;boost/range/adaptor/map.hpp&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/tensor.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle.h&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">class </span><a class="code" href="classDEMContactManager.html">DEMContactManager</a>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;boost/range/adaptor/map.hpp&gt;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">class </span><a class="code" href="classDEMContactManager.html">DEMContactManager</a>;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#ifndef particle_particle_fine_search_h</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#  define particle_particle_fine_search_h</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * This class is used for local-local and local-ghost fine particle-particle</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * contact search. Fine search is used to find all the particle pairs which are</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * physically in contact and obtain all the required information for calculation</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * of the contact force</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"> * @note</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"> * @author Shahab Golshan, Polytechnique Montreal 2019-</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classParticleParticleFineSearch.html">   50</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;{</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * Iterates over a vector of maps (pairs_in_contact) to see if the particles</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * which were in contact in the last time step, are still in contact or not.</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * If they are still in contact it will update the collision info, including</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * tangential overlap, based on new properties of the particle pair, if they</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * are not in contact anymore it will delete the pair from the</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * pairs_in_contact and also its information from pairs_in_contact_info.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * Then it iterates over the contact candidates from broad search to see if</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * they already exist in the pairs_in_contact or not, if they are not in the</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * pairs_in_contact and they have overlap, the pair will be added to the</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * pairs_in_contact and its contact information will be stored in the</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * corresponding element of the pairs_in_contact_info</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @param particle_container A container that is used to obtain iterators to</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * particles using their ids</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @param adjacent_particles A map of maps which stores all the required</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * information for calculation of the contact force of particle pairs</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * @param contact_pair_candidates The output of broad search which shows</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   * contact pair candidates</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @param neighborhood_threshold A value which defines the neighbor particles</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * @param periodic_offset A tensor of the periodic offset to change the</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * particle location of the particles on the periodic boundary 1 side,</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * the tensor as 0.0 values by default</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  particle_particle_fine_search(</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aabe47013c692c38e2901a7aeca47aa43">DEM::dem_data_structures&lt;dim&gt;::particle_index_iterator_map</a> <span class="keyword">const</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      &amp;particle_container,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a401f88b28f64a3ca48c19e15ac57efdf">DEM::dem_data_structures&lt;dim&gt;::adjacent_particle_pairs</a></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      &amp;adjacent_particles,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a719904c6b3202732c1ba0d40b949b7ab">DEM::dem_data_structures&lt;dim&gt;::particle_particle_candidates</a></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                        &amp;contact_pair_candidates,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>         neighborhood_threshold,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">const</span> Tensor&lt;1, dim&gt; periodic_offset = Tensor&lt;1, dim&gt;());</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;};</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* particle_particle_fine_search_h */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="aclassDEMContactManager_html"><div class="ttname"><a href="classDEMContactManager.html">DEMContactManager</a></div><div class="ttdoc">Manage the numerous of contact detection search operations in the DEM.</div><div class="ttdef"><b>Definition:</b> <a href="dem__contact__manager_8h_source.html#l00048">dem_contact_manager.h:49</a></div></div>
-<div class="ttc" id="aclassParticleParticleFineSearch_html"><div class="ttname"><a href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a></div><div class="ttdef"><b>Definition:</b> <a href="particle__particle__fine__search_8h_source.html#l00050">particle_particle_fine_search.h:51</a></div></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * @brief This class is used for local-local and local-ghost fine</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * particle-particle contact search. Fine search is used to find all the</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * particle pairs which are physically in contact and obtain all the required</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * information for calculation of the contact force.</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classParticleParticleFineSearch.html">   45</a></span>&#160;<span class="keyword">class </span><a class="code" href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;{</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <a class="code" href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @brief Iterates over a vector of maps (pairs_in_contact) to see if the</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * particles which were in contact in the last time step, are still in contact</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * or not. If they are still in contact it will update the collision info,</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * including tangential overlap, based on new properties of the particle pair,</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * if they are not in contact anymore it will delete the pair from the</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * pairs_in_contact and also its information from pairs_in_contact_info.</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * Then it iterates over the contact candidates from broad search to see if</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * they already exist in the pairs_in_contact or not, if they are not in the</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * pairs_in_contact and they have overlap, the pair will be added to the</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * pairs_in_contact and its contact information will be stored in the</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * corresponding element of the pairs_in_contact_info</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * @param particle_container A container that is used to obtain iterators to</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * particles using their ids</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @param adjacent_particles A map of maps which stores all the required</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * information for calculation of the contact force of particle pairs</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * @param contact_pair_candidates The output of broad search which shows</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * contact pair candidates</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * @param neighborhood_threshold A value which defines the neighbor particles</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @param periodic_offset A tensor of the periodic offset to change the</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * particle location of the particles on the periodic boundary 1 side,</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * the tensor as 0.0 values by default</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  particle_particle_fine_search(</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aabe47013c692c38e2901a7aeca47aa43">DEM::dem_data_structures&lt;dim&gt;::particle_index_iterator_map</a> <span class="keyword">const</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      &amp;particle_container,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a401f88b28f64a3ca48c19e15ac57efdf">DEM::dem_data_structures&lt;dim&gt;::adjacent_particle_pairs</a></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      &amp;adjacent_particles,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a719904c6b3202732c1ba0d40b949b7ab">DEM::dem_data_structures&lt;dim&gt;::particle_particle_candidates</a></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                        &amp;contact_pair_candidates,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>         neighborhood_threshold,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">const</span> Tensor&lt;1, dim&gt; periodic_offset = Tensor&lt;1, dim&gt;());</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;};</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassDEMContactManager_html"><div class="ttname"><a href="classDEMContactManager.html">DEMContactManager</a></div><div class="ttdoc">Manage the numerous of contact detection search operations in the DEM.</div><div class="ttdef"><b>Definition:</b> <a href="dem__contact__manager_8h_source.html#l00047">dem_contact_manager.h:48</a></div></div>
+<div class="ttc" id="aclassParticleParticleFineSearch_html"><div class="ttname"><a href="classParticleParticleFineSearch.html">ParticleParticleFineSearch</a></div><div class="ttdoc">This class is used for local-local and local-ghost fine particle-particle contact search....</div><div class="ttdef"><b>Definition:</b> <a href="particle__particle__fine__search_8h_source.html#l00045">particle_particle_fine_search.h:46</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00311">fluid_dynamics_matrix_free.cc:312</a></div></div>

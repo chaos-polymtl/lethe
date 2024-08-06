@@ -88,7 +88,7 @@ Inheritance diagram for RBFShape&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classRBFShape__inherit__graph.png" border="0" usemap="#aRBFShape_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aRBFShape_3_01dim_01_4_inherit__map" id="aRBFShape_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="21,169,164,196"/>
+<area shape="rect" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB..." alt="" coords="21,169,164,196"/>
 <area shape="rect" href="classShape.html" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="34,95,151,121"/>
 <area shape="rect" title=" " alt="" coords="5,5,180,47"/>
 </map>
@@ -349,6 +349,13 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class RBFShape&lt; dim &gt;</h3>
 
+<p>RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RBF), which have a defined support radius and basis function. A collection of nodes and weights compose the object. Outside of the domain covered by the nodes, the distance is computed by using the distance to a bounding box instead. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Dimension of the shape </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02645">2645</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
@@ -374,7 +381,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Enum class defining types of <a class="el" href="classRBF.html">RBF</a> kernel functions that could be used in the class. </p>
+<p>Enum class defining types of RBF kernel functions that could be used in the class. </p>
 <p>Class taken from Optimad Bitpit. <a href="https://github.com/optimad/bitpit">https://github.com/optimad/bitpit</a> </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2060a8058a7a5a439d772319f39ec66ba72baef04098f035e8a320b03ad197818"></a>CUSTOM&#160;</td><td class="fielddoc"></td></tr>
@@ -433,11 +440,11 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>An <a class="el" href="classRBFShape.html">RBFShape</a> represents a physical object by describing its signed distance field with a linear combination of radial basis functions. Each radial basis function has a location and properties that are used in the sum. </p>
+<p>An <a class="el" href="classRBFShape.html" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB...">RBFShape</a> represents a physical object by describing its signed distance field with a linear combination of radial basis functions. Each radial basis function has a location and properties that are used in the sum. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shape_arguments_str</td><td>the name of the file used to load the data </td></tr>
-    <tr><td class="paramname">position</td><td>the location of the <a class="el" href="classRBF.html">RBF</a> shape </td></tr>
+    <tr><td class="paramname">position</td><td>the location of the RBF shape </td></tr>
     <tr><td class="paramname">orientation</td><td>the orientation of the shape with respect to each main axis </td></tr>
   </table>
   </dd>
@@ -1162,7 +1169,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Establishes which nodes bring a non null contribution to the <a class="el" href="classRBF.html">RBF</a>. </p>
+<p>Establishes which nodes bring a non null contribution to the RBF. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell</td><td>the cell for which the likely nodes are to be found </td></tr>
@@ -1571,11 +1578,11 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the analytical gradient of the distance for the current <a class="el" href="classRBF.html">RBF</a>. </p>
+<p>Return the analytical gradient of the distance for the current RBF. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1631,7 +1638,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1656,8 +1663,8 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the bounding box around the nodes which enables distance calculation even if the <a class="el" href="classRBF.html">RBF</a> nodes don't cover the whole domain. </p>
-<p>A bounding box is constructed around the collection of nodes defining the <a class="el" href="classRBF.html">RBF</a>. It solves an issue where the collection of nodes is located only around the object itself, which would result in an undefined distance when the value is evaluated outside of all support radii. The hyper rectangle shape doesn't have this limitation, as its distance can be evaluated anywhere. The distance computed by an <a class="el" href="classRBF.html">RBF</a> object will therefore use an approximated distance when the evaluation point is too far. </p>
+<p>Initializes the bounding box around the nodes which enables distance calculation even if the RBF nodes don't cover the whole domain. </p>
+<p>A bounding box is constructed around the collection of nodes defining the RBF. It solves an issue where the collection of nodes is located only around the object itself, which would result in an undefined distance when the value is evaluated outside of all support radii. The hyper rectangle shape doesn't have this limitation, as its distance can be evaluated anywhere. The distance computed by an RBF object will therefore use an approximated distance when the evaluation point is too far. </p>
 
 <p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01854">1854</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
@@ -1753,7 +1760,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Load <a class="el" href="classRBF.html">RBF</a> data from file. To be called at initialization, after repartitioning or when shape has moved. <a class="el" href="classThis.html">This</a> function is used only for <a class="el" href="classRBF.html">RBF</a> shapes and its composites at the moment. </p>
+<p>Load RBF data from file. To be called at initialization, after repartitioning or when shape has moved. This function is used only for RBF shapes and its composites at the moment. </p>
 
 <p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02126">2126</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
@@ -1793,7 +1800,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>the reference to the new dof_handler </td></tr>
-    <tr><td class="paramname">mesh_based_precalculations</td><td>mesh-based precalculations that can lead to slight shape misrepresentation (if <a class="el" href="classRBF.html">RBF</a> typed) </td></tr>
+    <tr><td class="paramname">mesh_based_precalculations</td><td>mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed) </td></tr>
   </table>
   </dd>
 </dl>
@@ -1816,7 +1823,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Rotate <a class="el" href="classRBF.html">RBF</a> nodes in the global reference frame (the reference frame of the triangulation). </p>
+<p>Rotate RBF nodes in the global reference frame (the reference frame of the triangulation). </p>
 
 <p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02271">2271</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
@@ -1914,7 +1921,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dof_handler</td><td>the reference to the new dof_handler </td></tr>
-    <tr><td class="paramname">mesh_based_precalculations</td><td>mesh-based precalculations that can lead to slight shape misrepresentation (if <a class="el" href="classRBF.html">RBF</a> typed) </td></tr>
+    <tr><td class="paramname">mesh_based_precalculations</td><td>mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed) </td></tr>
   </table>
   </dd>
 </dl>
@@ -1959,11 +1966,11 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the evaluation of the signed distance function of this solid at the given point evaluation point. The computation and addition of the bounding box distance are necessary since the <a class="el" href="classRBF.html">RBF</a> nodes may not cover the whole simulation domain. In that case, it is assumed that the distance from the <a class="el" href="classRBF.html">RBF</a> object is approximately the same as the distance from the corresponding bounding box. </p>
+<p>Return the evaluation of the signed distance function of this solid at the given point evaluation point. The computation and addition of the bounding box distance are necessary since the RBF nodes may not cover the whole simulation domain. In that case, it is assumed that the distance from the RBF object is approximately the same as the distance from the corresponding bounding box. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2021,7 +2028,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>

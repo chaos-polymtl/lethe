@@ -85,9 +85,9 @@ Inheritance diagram for Integrator&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classIntegrator__inherit__graph.png" border="0" usemap="#aIntegrator_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aIntegrator_3_01dim_01_4_inherit__map" id="aIntegrator_3_01dim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="115,5,257,32"/>
-<area shape="rect" href="classExplicitEulerIntegrator.html" title=" " alt="" coords="5,80,172,121"/>
-<area shape="rect" href="classVelocityVerletIntegrator.html" title=" " alt="" coords="197,80,373,121"/>
+<area shape="rect" title="Base interface for classes that carry out the integration of the velocity and position of particles w..." alt="" coords="115,5,257,32"/>
+<area shape="rect" href="classExplicitEulerIntegrator.html" title="Implementation of a classical explicit euler scheme for the integration of the particle motion...." alt="" coords="5,80,172,121"/>
+<area shape="rect" href="classVelocityVerletIntegrator.html" title="Implementation of a classical velocity verlet scheme for the integration of the particle motion...." alt="" coords="197,80,373,121"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -108,9 +108,9 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class Integrator&lt; dim &gt;</h3>
 
-<p>Base interface for classes that carry out the integration of the velocity and position of particles with inertia </p>
+<p>Base interface for classes that carry out the integration of the velocity and position of particles with inertia. </p>
 
-<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00037">37</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00034">34</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0814e3ffd4eb6f2f003d5ba8436b5718"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0814e3ffd4eb6f2f003d5ba8436b5718">&#9670;&nbsp;</a></span>Integrator()</h2>
@@ -136,9 +136,10 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The constructor to the integrator class is currently blank Eventually it might be a good idea to have the integration class contain the index to the velocity property, the force property and the acceleration property manually </p>
 
-<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00046">46</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
+<p>The constructor to the integrator class is currently blank Eventually it might be a good idea to have the integration class contain the index to the velocity property, the force property and the acceleration property manually. </p>
+
+<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00043">43</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
 
 </div>
 </div>
@@ -167,7 +168,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00049">49</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="integrator_8h_source.html#l00046">46</a> of file <a class="el" href="integrator_8h_source.html">integrator.h</a>.</p>
 
 </div>
 </div>
@@ -231,7 +232,8 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out integrating of particles' velocity and position.</p>
+
+<p>Integrate particles' velocity and position. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>
@@ -383,7 +385,8 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Carries out integrating of new particles' location after insertion.</p>
+
+<p>Integrate new particles' location after insertion. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler whose particle motion we wish to integrate </td></tr>

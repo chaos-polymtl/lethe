@@ -1,5 +1,5 @@
 <map id="ParticleParticleContactForce&lt; dim, force_model, rolling_friction_model &gt;" name="ParticleParticleContactForce&lt; dim, force_model, rolling_friction_model &gt;">
 <area shape="rect" id="node1" title="Class that carries out the calculation of particle&#45;particle contact force including non&#45;linear and li..." alt="" coords="5,95,208,151"/>
 <area shape="rect" id="node3" href="$classParticlesForceChains.html" title="Class that carries out the calculation of particle&#45;particle contact force and the visualization of fo..." alt="" coords="7,199,207,255"/>
-<area shape="rect" id="node2" href="$classParticleParticleContactForceBase.html" title=" " alt="" coords="5,5,208,47"/>
+<area shape="rect" id="node2" href="$classParticleParticleContactForceBase.html" title="Base class for the particle&#45;particle contact force models This class does not implement any of the mo..." alt="" coords="5,5,208,47"/>
 </map>

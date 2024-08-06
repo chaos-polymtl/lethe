@@ -171,11 +171,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Attaches CAD manifolds using IGES files to boundaries of the triangulation <a class="el" href="classThis.html">This</a> function attaches a CAD manifold to the faces of a triangulation. Note that this only works in 3D. </p>
+<p>Attaches CAD manifolds using IGES files to boundaries of the triangulation This function attaches a CAD manifold to the faces of a triangulation. Note that this only works in 3D. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>The triangulation to manifolds are attached</td></tr>
-    <tr><td class="paramname">std::string</td><td>Filename of the cad file</td></tr>
+    <tr><td class="paramname">cad_name</td><td>Filename of the cad file</td></tr>
     <tr><td class="paramname">manifold_id</td><td>Identifier of the manifold </td></tr>
   </table>
   </dd>
@@ -373,7 +373,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>The triangulation to manifolds are attached</td></tr>
-    <tr><td class="paramname">manifolds_parameters</td><td>The information about the type of manifolds attached to the faces </td></tr>
+    <tr><td class="paramname">manifolds</td><td>The information about the type of manifolds attached to the faces </td></tr>
   </table>
   </dd>
 </dl>

@@ -246,7 +246,7 @@ Static Protected Attributes</h2></td></tr>
 <tr class="separator:ad8d8dd2869b00c75cc6a3deda208c789"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> class is responsible for the control of steady-state and transient simulations carried out with Lethe. <a class="el" href="classThis.html">This</a> base class is a pure virtual class and cannot be instantiated. However, it stores the core variables which are necessary for its serialization (write and read) </p>
+<div class="textblock"><p>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> class is responsible for the control of steady-state and transient simulations carried out with Lethe. This base class is a pure virtual class and cannot be instantiated. However, it stores the core variables which are necessary for its serialization (write and read) </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00030">30</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -266,7 +266,7 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The simulation control class is constructed by a simple parameter structure from which it draws it's arguments. <a class="el" href="classThis.html">This</a> structure is not kept internally. <a class="el" href="classThis.html">This</a> means that require information is copied from the struct to the class. </p>
+<p>The simulation control class is constructed by a simple parameter structure from which it draws it's arguments. This structure is not kept internally. This means that require information is copied from the struct to the class. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">param</td><td>Structure of the parameters for the simulation control </td></tr>
@@ -1329,7 +1329,7 @@ Static Protected Attributes</h2></td></tr>
 <p>Manually force the value of the time step for the present iteration. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">new_time_step</td><td>The new value of the time step. <a class="el" href="classThis.html">This</a> time step is appended to the time step history </td></tr>
+    <tr><td class="paramname">new_time_step</td><td>The new value of the time step. This time step is appended to the time step history </td></tr>
   </table>
   </dd>
 </dl>
@@ -1367,7 +1367,7 @@ Static Protected Attributes</h2></td></tr>
 <p>Suggest the value of the time step for the next iteration. Note that for adaptative simulations this time step may be altered. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">new_time_step</td><td>The new value of the time step. <a class="el" href="classThis.html">This</a> time step is not added to the time step vector </td></tr>
+    <tr><td class="paramname">new_time_step</td><td>The new value of the time step. This time step is not added to the time step vector </td></tr>
   </table>
   </dd>
 </dl>

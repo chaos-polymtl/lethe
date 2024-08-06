@@ -92,11 +92,9 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
 class ParticleParticleFineSearch&lt; dim &gt;</h3>
 
-<p><a class="el" href="classThis.html">This</a> class is used for local-local and local-ghost fine particle-particle contact search. Fine search is used to find all the particle pairs which are physically in contact and obtain all the required information for calculation of the contact force</p>
-<dl class="section note"><dt>Note</dt><dd></dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Shahab Golshan, Polytechnique Montreal 2019- </dd></dl>
+<p>This class is used for local-local and local-ghost fine particle-particle contact search. Fine search is used to find all the particle pairs which are physically in contact and obtain all the required information for calculation of the contact force. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8h_source.html#l00050">50</a> of file <a class="el" href="particle__particle__fine__search_8h_source.html">particle_particle_fine_search.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8h_source.html#l00045">45</a> of file <a class="el" href="particle__particle__fine__search_8h_source.html">particle_particle_fine_search.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a454a5838e83a4877af5f5309ddb41c54"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a454a5838e83a4877af5f5309ddb41c54">&#9670;&nbsp;</a></span>ParticleParticleFineSearch()</h2>
@@ -162,7 +160,8 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Iterates over a vector of maps (pairs_in_contact) to see if the particles which were in contact in the last time step, are still in contact or not. If they are still in contact it will update the collision info, including tangential overlap, based on new properties of the particle pair, if they are not in contact anymore it will delete the pair from the pairs_in_contact and also its information from pairs_in_contact_info. Then it iterates over the contact candidates from broad search to see if they already exist in the pairs_in_contact or not, if they are not in the pairs_in_contact and they have overlap, the pair will be added to the pairs_in_contact and its contact information will be stored in the corresponding element of the pairs_in_contact_info</p>
+
+<p>Iterates over a vector of maps (pairs_in_contact) to see if the particles which were in contact in the last time step, are still in contact or not. If they are still in contact it will update the collision info, including tangential overlap, based on new properties of the particle pair, if they are not in contact anymore it will delete the pair from the pairs_in_contact and also its information from pairs_in_contact_info. Then it iterates over the contact candidates from broad search to see if they already exist in the pairs_in_contact or not, if they are not in the pairs_in_contact and they have overlap, the pair will be added to the pairs_in_contact and its contact information will be stored in the corresponding element of the pairs_in_contact_info. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_container</td><td>A container that is used to obtain iterators to particles using their ids </td></tr>

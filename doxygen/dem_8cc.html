@@ -83,6 +83,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="solutions__output_8h_source.html">core/solutions_output.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="data__containers_8h_source.html">dem/data_containers.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="dem_8h_source.html">dem/dem.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="dem__post__processing_8h_source.html">dem/dem_post_processing.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="distributions_8h_source.html">dem/distributions.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="explicit__euler__integrator_8h_source.html">dem/explicit_euler_integrator.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="find__contact__detection__step_8h_source.html">dem/find_contact_detection_step.h</a>&gt;</code><br />
@@ -91,7 +92,6 @@ $(function() {
 <code>#include &lt;<a class="el" href="insertion__list_8h_source.html">dem/insertion_list.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="insertion__plane_8h_source.html">dem/insertion_plane.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="insertion__volume_8h_source.html">dem/insertion_volume.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="post__processing_8h_source.html">dem/post_processing.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="read__checkpoint_8h_source.html">dem/read_checkpoint.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="read__mesh_8h_source.html">dem/read_mesh.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="set__particle__particle__contact__force__model_8h_source.html">dem/set_particle_particle_contact_force_model.h</a>&gt;</code><br />
@@ -108,56 +108,56 @@ Include dependency graph for dem.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="dem_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2dem_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2dem_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2dem_8cc">
-<area shape="rect" title=" " alt="" coords="2881,5,3072,47"/>
-<area shape="rect" href="manifolds_8h.html" title=" " alt="" coords="715,102,846,129"/>
-<area shape="rect" title=" " alt="" coords="753,273,888,315"/>
-<area shape="rect" href="solutions__output_8h.html" title=" " alt="" coords="1512,102,1687,129"/>
-<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="1049,370,1219,397"/>
-<area shape="rect" href="dem_8h.html" title=" " alt="" coords="1962,102,2058,129"/>
-<area shape="rect" href="find__contact__detection__step_8h.html" title=" " alt="" coords="2174,184,2377,225"/>
-<area shape="rect" href="distributions_8h.html" title=" " alt="" coords="3020,191,3168,218"/>
-<area shape="rect" href="explicit__euler__integrator_8h.html" title=" " alt="" coords="2585,95,2728,136"/>
-<area shape="rect" href="input__parameter__inspection_8h.html" title=" " alt="" coords="2955,95,3118,136"/>
-<area shape="rect" href="insertion__file_8h.html" title=" " alt="" coords="2804,281,2955,307"/>
-<area shape="rect" href="insertion__list_8h.html" title=" " alt="" coords="2979,281,3129,307"/>
-<area shape="rect" href="insertion__plane_8h.html" title=" " alt="" coords="3632,281,3799,307"/>
-<area shape="rect" href="insertion__volume_8h.html" title=" " alt="" coords="3256,281,3436,307"/>
-<area shape="rect" href="post__processing_8h.html" title=" " alt="" coords="381,102,553,129"/>
-<area shape="rect" href="read__checkpoint_8h.html" title=" " alt="" coords="2401,191,2576,218"/>
-<area shape="rect" href="read__mesh_8h.html" title=" " alt="" coords="2854,370,2993,397"/>
-<area shape="rect" href="set__particle__particle__contact__force__model_8h.html" title=" " alt="" coords="3294,95,3481,136"/>
-<area shape="rect" href="set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="3356,363,3533,404"/>
-<area shape="rect" href="velocity__verlet__integrator_8h.html" title=" " alt="" coords="3555,95,3707,136"/>
-<area shape="rect" href="write__checkpoint_8h.html" title=" " alt="" coords="2651,191,2830,218"/>
-<area shape="rect" title=" " alt="" coords="3783,95,3923,136"/>
-<area shape="rect" title=" " alt="" coords="3947,102,4107,129"/>
-<area shape="rect" title=" " alt="" coords="4131,102,4217,129"/>
-<area shape="rect" title=" " alt="" coords="4241,102,4315,129"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="341,191,455,218"/>
-<area shape="rect" title=" " alt="" coords="765,184,935,225"/>
-<area shape="rect" title=" " alt="" coords="1963,363,2099,404"/>
-<area shape="rect" title=" " alt="" coords="480,184,639,225"/>
-<area shape="rect" title=" " alt="" coords="663,191,741,218"/>
-<area shape="rect" title=" " alt="" coords="796,549,949,575"/>
-<area shape="rect" title=" " alt="" coords="1061,184,1220,225"/>
-<area shape="rect" title=" " alt="" coords="1244,184,1403,225"/>
-<area shape="rect" href="pvd__handler_8h.html" title=" " alt="" coords="2124,370,2269,397"/>
-<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="1348,452,1501,493"/>
-<area shape="rect" title=" " alt="" coords="2750,541,2886,583"/>
-<area shape="rect" href="particle__particle__contact__info_8h.html" title=" " alt="" coords="469,452,629,493"/>
-<area shape="rect" title=" " alt="" coords="149,541,324,583"/>
-<area shape="rect" href="particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="248,452,444,493"/>
-<area shape="rect" href="particle__wall__contact__info_8h.html" title=" " alt="" coords="31,452,224,493"/>
-<area shape="rect" title=" " alt="" coords="1119,452,1272,493"/>
-<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="704,459,895,486"/>
-<area shape="rect" title=" " alt="" coords="2630,459,2710,486"/>
-<area shape="rect" title=" " alt="" coords="919,459,1043,486"/>
-<area shape="rect" title=" " alt="" coords="2039,459,2101,486"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="2294,370,2462,397"/>
-<area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="2127,281,2267,307"/>
-<area shape="rect" href="adaptive__sparse__contacts_8h.html" title=" " alt="" coords="1630,273,1793,315"/>
-<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="1732,370,1939,397"/>
-<area shape="rect" href="dem__contact__manager_8h.html" title=" " alt="" coords="1580,191,1795,218"/>
+<area shape="rect" title=" " alt="" coords="1999,5,2190,47"/>
+<area shape="rect" href="manifolds_8h.html" title=" " alt="" coords="411,102,541,129"/>
+<area shape="rect" title=" " alt="" coords="451,273,586,315"/>
+<area shape="rect" href="solutions__output_8h.html" title=" " alt="" coords="903,102,1078,129"/>
+<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="1372,370,1543,397"/>
+<area shape="rect" href="dem_8h.html" title=" " alt="" coords="1415,102,1511,129"/>
+<area shape="rect" href="find__contact__detection__step_8h.html" title=" " alt="" coords="1933,184,2136,225"/>
+<area shape="rect" href="dem__post__processing_8h.html" title=" " alt="" coords="40,102,248,129"/>
+<area shape="rect" href="distributions_8h.html" title=" " alt="" coords="1090,191,1238,218"/>
+<area shape="rect" href="explicit__euler__integrator_8h.html" title=" " alt="" coords="1535,95,1678,136"/>
+<area shape="rect" href="input__parameter__inspection_8h.html" title=" " alt="" coords="1116,95,1279,136"/>
+<area shape="rect" href="insertion__file_8h.html" title=" " alt="" coords="1754,102,1905,129"/>
+<area shape="rect" href="insertion__list_8h.html" title=" " alt="" coords="1929,102,2079,129"/>
+<area shape="rect" href="insertion__plane_8h.html" title=" " alt="" coords="2103,102,2270,129"/>
+<area shape="rect" href="insertion__volume_8h.html" title=" " alt="" coords="2294,102,2474,129"/>
+<area shape="rect" href="read__checkpoint_8h.html" title=" " alt="" coords="2302,191,2477,218"/>
+<area shape="rect" href="read__mesh_8h.html" title=" " alt="" coords="2755,281,2893,307"/>
+<area shape="rect" href="set__particle__particle__contact__force__model_8h.html" title=" " alt="" coords="2600,95,2787,136"/>
+<area shape="rect" href="set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="2941,273,3118,315"/>
+<area shape="rect" href="velocity__verlet__integrator_8h.html" title=" " alt="" coords="2861,95,3013,136"/>
+<area shape="rect" href="write__checkpoint_8h.html" title=" " alt="" coords="2501,191,2680,218"/>
+<area shape="rect" title=" " alt="" coords="3089,95,3229,136"/>
+<area shape="rect" title=" " alt="" coords="3253,102,3413,129"/>
+<area shape="rect" title=" " alt="" coords="3437,102,3523,129"/>
+<area shape="rect" title=" " alt="" coords="3547,102,3621,129"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="5,191,120,218"/>
+<area shape="rect" title=" " alt="" coords="145,184,314,225"/>
+<area shape="rect" title=" " alt="" coords="2193,363,2329,404"/>
+<area shape="rect" title=" " alt="" coords="338,184,497,225"/>
+<area shape="rect" title=" " alt="" coords="521,191,599,218"/>
+<area shape="rect" title=" " alt="" coords="889,549,1042,575"/>
+<area shape="rect" title=" " alt="" coords="725,184,883,225"/>
+<area shape="rect" title=" " alt="" coords="907,184,1066,225"/>
+<area shape="rect" href="pvd__handler_8h.html" title=" " alt="" coords="2354,370,2499,397"/>
+<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="2209,452,2362,493"/>
+<area shape="rect" title=" " alt="" coords="2521,541,2657,583"/>
+<area shape="rect" href="particle__particle__contact__info_8h.html" title=" " alt="" coords="944,452,1104,493"/>
+<area shape="rect" title=" " alt="" coords="1787,541,1962,583"/>
+<area shape="rect" href="particle__point__line__contact__info__struct_8h.html" title=" " alt="" coords="1886,452,2082,493"/>
+<area shape="rect" href="particle__wall__contact__info_8h.html" title=" " alt="" coords="1669,452,1862,493"/>
+<area shape="rect" title=" " alt="" coords="1129,452,1282,493"/>
+<area shape="rect" title=" " alt="" coords="739,459,819,486"/>
+<area shape="rect" title=" " alt="" coords="1306,459,1430,486"/>
+<area shape="rect" title=" " alt="" coords="2438,459,2501,486"/>
+<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="1454,459,1645,486"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="1951,370,2119,397"/>
+<area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="2191,281,2331,307"/>
+<area shape="rect" href="adaptive__sparse__contacts_8h.html" title=" " alt="" coords="1640,273,1803,315"/>
+<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="1618,370,1825,397"/>
+<area shape="rect" href="dem__contact__manager_8h.html" title=" " alt="" coords="1517,191,1731,218"/>
 </map>
 </div>
 </div>

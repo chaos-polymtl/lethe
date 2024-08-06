@@ -89,7 +89,7 @@ Inheritance diagram for Shape&lt; dim &gt;:</div>
 <div class="center"><img src="classShape__inherit__graph.png" border="0" usemap="#aShape_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aShape_3_01dim_01_4_inherit__map" id="aShape_3_01dim_01_4_inherit__map">
 <area shape="rect" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="228,360,345,387"/>
-<area shape="rect" href="classCompositeShape.html" title=" " alt="" coords="403,5,590,32"/>
+<area shape="rect" href="classCompositeShape.html" title="This class was designed so that specific composite shapes could be defined through the parameter file..." alt="" coords="403,5,590,32"/>
 <area shape="rect" href="classCone.html" title=" " alt="" coords="441,56,552,83"/>
 <area shape="rect" href="classCutHollowSphere.html" title=" " alt="" coords="402,107,591,133"/>
 <area shape="rect" href="classCylinder.html" title=" " alt="" coords="431,157,562,184"/>
@@ -100,9 +100,9 @@ Inheritance diagram for Shape&lt; dim &gt;:</div>
 <area shape="rect" href="classHyperRectangle.html" title=" " alt="" coords="406,411,587,437"/>
 <area shape="rect" href="classOpenCascadeShape.html" title=" " alt="" coords="393,461,600,488"/>
 <area shape="rect" href="classPlane.html" title=" " alt="" coords="440,512,553,539"/>
-<area shape="rect" href="classRBFShape.html" title=" " alt="" coords="425,563,568,589"/>
+<area shape="rect" href="classRBFShape.html" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB..." alt="" coords="425,563,568,589"/>
 <area shape="rect" href="classSphere.html" title=" " alt="" coords="435,613,558,640"/>
-<area shape="rect" href="classSuperquadric.html" title=" " alt="" coords="415,664,578,691"/>
+<area shape="rect" href="classSuperquadric.html" title="This class defines superquadric shapes. Their signed distance function is: ." alt="" coords="415,664,578,691"/>
 <area shape="rect" href="classTorus.html" title=" " alt="" coords="441,715,552,741"/>
 <area shape="rect" title=" " alt="" coords="5,353,180,394"/>
 </map>
@@ -349,7 +349,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Most value functions assume that the particle's position is at the origin and that the shape is aligned with one of the main axes. <a class="el" href="classThis.html">This</a> function returns a point that is rotated and translated, in accordance with the current shape position and orientation, so that subsequent calculations for the value function are made more easily; it abstracts a step that is required in the value function for most shapes. </p>
+<p>Most value functions assume that the particle's position is at the origin and that the shape is aligned with one of the main axes. This function returns a point that is rotated and translated, in accordance with the current shape position and orientation, so that subsequent calculations for the value function are made more easily; it abstracts a step that is required in the value function for most shapes. </p>
 <p>Returns the centered and aligned point used on the levelset evaluation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -389,14 +389,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Check if the bounding box of this shape and another one are overlapping. <a class="el" href="classThis.html">This</a> function uses the Separating Axis Theorem (SAT) to perform the bounding box check. </p>
+<p>Check if the bounding box of this shape and another one are overlapping. This function uses the Separating Axis Theorem (SAT) to perform the bounding box check. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shape</td><td>The shape with which the distance is evaluated </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classThis.html">This</a> function returns false if the shapes are not overlapping. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>This function returns false if the shapes are not overlapping. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00755">755</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
@@ -522,7 +522,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p</td><td>The point at which the evaluation is performed </td></tr>
-    <tr><td class="paramname">closest_point</td><td>The reference to the closest point. <a class="el" href="classThis.html">This</a> point will be modified by the function. </td></tr>
+    <tr><td class="paramname">closest_point</td><td>The reference to the closest point. This point will be modified by the function. </td></tr>
     <tr><td class="paramname">cell_guess</td><td>A guess of the cell containing the evaluation point, which is useful to reduce computation time </td></tr>
   </table>
   </dd>
@@ -612,14 +612,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. <a class="el" href="classThis.html">This</a> behavior can be modified using the appropriate parameter. </p>
+<p>Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shape</td><td>The shape with which the distance is evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">candidate_points</td><td><a class="el" href="classThis.html">This</a> is the initial guess points used in the calculation. </td></tr>
-    <tr><td class="paramname">precision</td><td><a class="el" href="classThis.html">This</a> is the precision of the distance between the two shapes. </td></tr>
-    <tr><td class="paramname">exact_distance_outside_of_contact</td><td><a class="el" href="classThis.html">This</a> is a boolean to force the exact distance evaluation if the shapes are not in contact. </td></tr>
+    <tr><td class="paramname">candidate_points</td><td>This is the initial guess points used in the calculation. </td></tr>
+    <tr><td class="paramname">precision</td><td>This is the precision of the distance between the two shapes. </td></tr>
+    <tr><td class="paramname">exact_distance_outside_of_contact</td><td>This is a boolean to force the exact distance evaluation if the shapes are not in contact. </td></tr>
   </table>
   </dd>
 </dl>
@@ -686,14 +686,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the distance, the center point, and the unit normal vector between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The unit normal vector is defined using the closest surface point of the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. <a class="el" href="classThis.html">This</a> behavior can be modified by setting exact_distance_outside_of_contact to true. </p>
+<p>Return the distance, the center point, and the unit normal vector between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The unit normal vector is defined using the closest surface point of the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified by setting exact_distance_outside_of_contact to true. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shape</td><td>The shape with which the distance is evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">candidate_points</td><td><a class="el" href="classThis.html">This</a> is the initial guess points used in the calculation. </td></tr>
-    <tr><td class="paramname">precision</td><td><a class="el" href="classThis.html">This</a> is the precision of the distance between the two shapes. </td></tr>
-    <tr><td class="paramname">exact_distance_outside_of_contact</td><td><a class="el" href="classThis.html">This</a> is a boolean to force the exact distance evaluation if the shapes are not in contact. </td></tr>
+    <tr><td class="paramname">candidate_points</td><td>This is the initial guess points used in the calculation. </td></tr>
+    <tr><td class="paramname">precision</td><td>This is the precision of the distance between the two shapes. </td></tr>
+    <tr><td class="paramname">exact_distance_outside_of_contact</td><td>This is a boolean to force the exact distance evaluation if the shapes are not in contact. </td></tr>
   </table>
   </dd>
 </dl>
@@ -938,7 +938,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1052,7 +1052,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function returns a point in a string of text. <a class="el" href="classThis.html">This</a> is used in the cache of the shape. </p>
+<p>This function returns a point in a string of text. This is used in the cache of the shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>is the point that is transformed to its text form. </td></tr>
@@ -1082,7 +1082,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classThis.html">This</a> function applies the inverse operation of align_and_center. </p>
+<p>This function applies the inverse operation of align_and_center. </p>
 <p>Returns the centered and aligned point used on the levelset evaluation in the global reference frame.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1416,7 +1416,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1472,7 +1472,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">evaluation_point</td><td>The point at which the function will be evaluated </td></tr>
     <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
-    <tr><td class="paramname">component</td><td><a class="el" href="classThis.html">This</a> parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
+    <tr><td class="paramname">component</td><td>This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II. </td></tr>
   </table>
   </dd>
 </dl>
