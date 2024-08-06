@@ -302,13 +302,9 @@ public:
 
 private:
   // Broad search objects
-  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
-  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+  ParticleWallBroadSearch<dim> particle_wall_broad_search_object;
 
   // Fine search objects
-  ParticleParticleFineSearch<dim>  particle_particle_fine_search_object;
-  ParticleWallFineSearch<dim>      particle_wall_fine_search_object;
   ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
 };
 

@@ -620,7 +620,7 @@ DEMSolver<dim>::finish_simulation()
   // Outputting force and torques over boundary
   if (parameters.forces_torques.calculate_force_torque)
     {
-      write_forces_torques_output_results<dim>(
+      write_forces_torques_output_results(
         parameters.forces_torques.force_torque_output_name,
         parameters.forces_torques.output_frequency,
         triangulation.get_boundary_ids(),

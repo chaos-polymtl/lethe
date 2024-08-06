@@ -1,22 +1,23 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/particle_wall_contact_info.h>
 #include <dem/particle_wall_fine_search.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 #include <boost/math/special_functions/sign.hpp>
 
+#include <vector>
 
 using namespace dealii;
-
-template <int dim>
-ParticleWallFineSearch<dim>::ParticleWallFineSearch()
-{}
+using namespace DEM;
 
 template <int dim>
 void
-ParticleWallFineSearch<dim>::particle_wall_fine_search(
-  const typename DEM::dem_data_structures<dim>::particle_wall_candidates
+particle_wall_fine_search(
+  const typename dem_data_structures<dim>::particle_wall_candidates
     &particle_wall_contact_pair_candidates,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+  typename dem_data_structures<dim>::particle_wall_in_contact
     &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
@@ -66,12 +67,12 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
 
 template <int dim>
 void
-ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
-  const typename DEM::dem_data_structures<
-    dim>::particle_floating_wall_candidates &particle_floating_wall_candidates,
+particle_floating_wall_fine_search(
+  const typename dem_data_structures<dim>::particle_floating_wall_candidates
+    &particle_floating_wall_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      simulation_time,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+  typename dem_data_structures<dim>::particle_wall_in_contact
     &particle_floating_wall_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -160,11 +161,10 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 
 template <int dim>
 void
-ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
-  const typename DEM::dem_data_structures<
-    dim>::particle_floating_mesh_candidates
+particle_floating_mesh_fine_search(
+  const typename dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
     &particle_floating_mesh_in_contact)
 {
   for (unsigned int solid_counter = 0;
@@ -194,5 +194,48 @@ ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
     }
 }
 
-template class ParticleWallFineSearch<2>;
-template class ParticleWallFineSearch<3>;
+template void
+particle_wall_fine_search<2>(
+  const typename dem_data_structures<2>::particle_wall_candidates
+    &particle_wall_contact_pair_candidates,
+  typename dem_data_structures<2>::particle_wall_in_contact
+    &particle_wall_pairs_in_contact);
+
+template void
+particle_wall_fine_search<3>(
+  const typename dem_data_structures<3>::particle_wall_candidates
+    &particle_wall_contact_pair_candidates,
+  typename dem_data_structures<3>::particle_wall_in_contact
+    &particle_wall_pairs_in_contact);
+
+template void
+particle_floating_wall_fine_search<2>(
+  const typename dem_data_structures<2>::particle_floating_wall_candidates
+    &particle_floating_wall_candidates,
+  const Parameters::Lagrangian::FloatingWalls<2> &floating_wall_properties,
+  const double                                    simulation_time,
+  typename dem_data_structures<2>::particle_wall_in_contact
+    &particle_floating_wall_pairs_in_contact);
+
+template void
+particle_floating_wall_fine_search<3>(
+  const typename dem_data_structures<3>::particle_floating_wall_candidates
+    &particle_floating_wall_candidates,
+  const Parameters::Lagrangian::FloatingWalls<3> &floating_wall_properties,
+  const double                                    simulation_time,
+  typename dem_data_structures<3>::particle_wall_in_contact
+    &particle_floating_wall_pairs_in_contact);
+
+template void
+particle_floating_mesh_fine_search<2>(
+  const typename dem_data_structures<2>::particle_floating_mesh_candidates
+    &particle_floating_mesh_contact_candidates,
+  typename dem_data_structures<2>::particle_floating_mesh_in_contact
+    &particle_floating_mesh_in_contact);
+
+template void
+particle_floating_mesh_fine_search<3>(
+  const typename dem_data_structures<3>::particle_floating_mesh_candidates
+    &particle_floating_mesh_contact_candidates,
+  typename dem_data_structures<3>::particle_floating_mesh_in_contact
+    &particle_floating_mesh_in_contact);
