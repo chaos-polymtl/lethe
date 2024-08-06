@@ -28,8 +28,6 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
-using namespace dealii;
-
 template <int dim>
 class DEMContactManager;
 
@@ -130,9 +128,9 @@ template <int dim>
 inline void
 store_candidates(
   const types::particle_index &main_particle_id,
-  const typename Particles::ParticleHandler<
+  const typename dealii::Particles::ParticleHandler<
     dim>::particle_iterator_range::iterator &particle_begin,
-  const typename Particles::ParticleHandler<dim>::particle_iterator_range
+  const typename dealii::Particles::ParticleHandler<dim>::particle_iterator_range
     &particles_to_evaluate,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &contact_pair_candidates);

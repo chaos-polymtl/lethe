@@ -34,30 +34,51 @@ using namespace dealii;
  * are in contact or not.
  *
  * @param particle_handler Particle handler of particles located in boundary
- * cells
+ * cells.
  * @param boundary_cells_with_points A container of cells which are located at
- * boundaries with only one vertex
- *
- * @return A map of pairs. Each element of map (pair) contains a contact pair
- * (particle located near boundaries with vertices and the vertex location)
+ * boundaries with only one vertex.
+ * @param particle_point_contact_candidates The map of particle-point pairs.
+ * Each element of map (pair) contains a contact pair particle located near
+ * boundaries with vertices and the vertex location).
  */
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_candidates
+void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-    &boundary_cells_with_points);
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+    &particle_point_contact_candidates);
+
+/**
+ * @brief Find a map of pairs (pair of particle and the boundary vertex
+ * location) which shows the candidate particle-point collision pairs. These
+ * collision pairs will be investigated in the fine search to check if they
+ * are in contact or not.
+ *
+ * @param particle_handler Particle handler of particles located in boundary
+ * cells.
+ * @param boundary_cells_with_points A container of cells which are located at
+ * boundaries with only one vertex.
+ * @param particle_point_contact_candidates The map of particle-point pairs.
+ * Each element of map (pair) contains a contact pair particle located near
+ * boundaries with vertices and the vertex location).
+ * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
+ * status checks.
+ */
 
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_candidates
+void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                                    &boundary_cells_with_points,
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+                                    &particle_point_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
 /**
@@ -67,11 +88,12 @@ find_particle_point_contact_pairs(
  * investigated in the fine search to check if they are in contact or not.
  *
  * @param particle_handler Particle handler of particles located in boundary
- * cells
+ * cells.
  * @param boundary_cells_with_lines A container of cells which are located at
- * boundaries with only one line
- * @return A map of tuples. Each element of map (tuple) contains a particle
- * and the locations of beginning and ending vertices of the boundary lines
+ * boundaries with only one line.
+ * @param particle_line_contact_candidates Each element of map (tuple) contains
+ * a particle and the locations of beginning and ending vertices of the boundary
+ * lines.
  */
 template <int dim>
 typename DEM::dem_data_structures<dim>::particle_line_candidates
@@ -81,8 +103,26 @@ find_particle_line_contact_pairs(
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines);
+               Point<dim>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+    &particle_line_contact_candidates);
 
+/**
+ * @brief Find a map of tuples (tuple of particle and the locations of
+ * beginning and ending vertices of the boundary lines) which shows the
+ * candidate particle-line collision pairs. These collision pairs will be
+ * investigated in the fine search to check if they are in contact or not.
+ *
+ * @param particle_handler Particle handler of particles located in boundary
+ * cells.
+ * @param boundary_cells_with_lines A container of cells which are located at
+ * boundaries with only one line.
+ * @param particle_line_contact_candidates Each element of map (tuple) contains
+ * a particle and the locations of beginning and ending vertices of the boundary
+ * lines.
+ * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
+ * status checks.
+ */
 template <int dim>
 typename DEM::dem_data_structures<dim>::particle_line_candidates
 find_particle_line_contact_pairs(
@@ -91,8 +131,9 @@ find_particle_line_contact_pairs(
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>>         &boundary_cells_with_lines,
+               Point<dim>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+                                    &particle_line_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object);
-
 
 #endif

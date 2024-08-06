@@ -1,11 +1,13 @@
 #include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 
+using namespace DEM;
+
 template <int dim>
 void
 DEMContactManager<dim>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+  const typename dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information)
 {
   // Get action manager
@@ -42,8 +44,8 @@ DEMContactManager<dim>::update_contacts()
   // search step with local_contact_pair_candidates
   update_fine_search_candidates<
     dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+    typename dem_data_structures<dim>::adjacent_particle_pairs,
+    typename dem_data_structures<dim>::particle_particle_candidates,
     ContactType::local_particle_particle>(local_adjacent_particles,
                                           local_contact_pair_candidates);
 
@@ -51,8 +53,8 @@ DEMContactManager<dim>::update_contacts()
   // search step with global_contact_pair_candidates
   update_fine_search_candidates<
     dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+    typename dem_data_structures<dim>::adjacent_particle_pairs,
+    typename dem_data_structures<dim>::particle_particle_candidates,
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
                                           ghost_contact_pair_candidates);
 
@@ -64,8 +66,8 @@ DEMContactManager<dim>::update_contacts()
       // local_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-        typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::local_periodic_particle_particle>(
         local_periodic_adjacent_particles,
         local_contact_pair_periodic_candidates);
@@ -75,8 +77,8 @@ DEMContactManager<dim>::update_contacts()
       // ghost_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-        typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::ghost_periodic_particle_particle>(
         ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates);
@@ -86,8 +88,8 @@ DEMContactManager<dim>::update_contacts()
       // ghost_local_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-        typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::ghost_local_periodic_particle_particle>(
         ghost_local_periodic_adjacent_particles,
         ghost_local_contact_pair_periodic_candidates);
@@ -97,8 +99,8 @@ DEMContactManager<dim>::update_contacts()
   // search step with particle_wall_contact_candidates
   update_fine_search_candidates<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
-    typename DEM::dem_data_structures<dim>::particle_wall_candidates,
+    typename dem_data_structures<dim>::particle_wall_in_contact,
+    typename dem_data_structures<dim>::particle_wall_candidates,
     ContactType::particle_wall>(particle_wall_in_contact,
                                 particle_wall_candidates);
 
@@ -106,8 +108,8 @@ DEMContactManager<dim>::update_contacts()
   // of fine search step with particle_floating_wall_contact_candidates
   update_fine_search_candidates<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
-    typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates,
+    typename dem_data_structures<dim>::particle_wall_in_contact,
+    typename dem_data_structures<dim>::particle_floating_wall_candidates,
     ContactType::particle_floating_wall>(particle_floating_wall_in_contact,
                                          particle_floating_wall_candidates);
 
@@ -119,9 +121,9 @@ DEMContactManager<dim>::update_contacts()
     {
       update_fine_search_candidates<
         dim,
-        typename DEM::dem_data_structures<
+        typename dem_data_structures<
           dim>::particle_floating_wall_from_mesh_in_contact,
-        typename DEM::dem_data_structures<
+        typename dem_data_structures<
           dim>::particle_floating_wall_from_mesh_candidates,
         ContactType::particle_floating_mesh>(
         particle_floating_mesh_in_contact[solid_counter],
@@ -140,14 +142,14 @@ DEMContactManager<dim>::update_local_particles_in_cells(
   // Update contact containers for local particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+    typename dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::local_particle_particle>(local_adjacent_particles,
                                           particle_container);
 
   // Update contact containers for ghost particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+    typename dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
                                           particle_container);
 
@@ -158,7 +160,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
         local_periodic_adjacent_particles, particle_container);
 
@@ -166,7 +168,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
         ghost_periodic_adjacent_particles, particle_container);
 
@@ -174,7 +176,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_local_periodic_particle_particle>(
         ghost_local_periodic_adjacent_particles, particle_container);
     }
@@ -182,13 +184,13 @@ DEMContactManager<dim>::update_local_particles_in_cells(
   // Update contact containers for particle-wall pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
+    typename dem_data_structures<dim>::particle_wall_in_contact,
     ContactType::particle_wall>(particle_wall_in_contact, particle_container);
 
   // Update contact containers for particle-floating wall pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
+    typename dem_data_structures<dim>::particle_wall_in_contact,
     ContactType::particle_floating_wall>(particle_floating_wall_in_contact,
                                          particle_container);
 
@@ -200,7 +202,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
     {
       update_contact_container_iterators<
         dim,
-        typename DEM::dem_data_structures<
+        typename dem_data_structures<
           dim>::particle_floating_wall_from_mesh_in_contact,
         ContactType::particle_floating_mesh>(
         particle_floating_mesh_in_contact[solid_counter], particle_container);
@@ -209,13 +211,13 @@ DEMContactManager<dim>::update_local_particles_in_cells(
   // Update contact containers for particle-line pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_point_line_contact_info,
+    typename dem_data_structures<dim>::particle_point_line_contact_info,
     ContactType::particle_point>(particle_lines_in_contact, particle_container);
 
   // Update contact containers for particle-point pairs in contact
   update_contact_container_iterators<
     dim,
-    typename DEM::dem_data_structures<dim>::particle_point_line_contact_info,
+    typename dem_data_structures<dim>::particle_point_line_contact_info,
     ContactType::particle_point>(particle_points_in_contact,
                                  particle_container);
 }
@@ -270,7 +272,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   if (action_manager->use_default_broad_search_functions())
     {
       // Particle-wall contact candidates
-      particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+      find_particle_wall_contact_pairs<dim>(
         boundary_cell_object.get_boundary_cells_information(),
         particle_handler,
         particle_wall_candidates);
@@ -278,41 +280,41 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
       // Particle-floating wall contact pairs
       if (floating_walls.floating_walls_number > 0)
         {
-          particle_wall_broad_search_object
-            .find_particle_floating_wall_contact_pairs(
-              boundary_cell_object.get_boundary_cells_with_floating_walls(),
-              particle_handler,
-              floating_walls,
-              simulation_time,
-              particle_floating_wall_candidates);
+          find_particle_floating_wall_contact_pairs<dim>(
+            boundary_cell_object.get_boundary_cells_with_floating_walls(),
+            particle_handler,
+            floating_walls,
+            simulation_time,
+            particle_floating_wall_candidates);
         }
 
       // Particle-floating mesh broad search
       if (action_manager->check_solid_objects_enabled())
         {
-          particle_wall_broad_search_object
-            .particle_solid_surfaces_contact_search(
-              solid_surfaces_mesh_info,
-              particle_handler,
-              particle_floating_mesh_candidates,
-              total_neighbor_list);
+          particle_solid_surfaces_contact_search<dim>(
+            solid_surfaces_mesh_info,
+            particle_handler,
+            particle_floating_mesh_candidates,
+            total_neighbor_list);
         }
 
-      particle_point_candidates = find_particle_point_contact_pairs<dim>(
+      find_particle_point_contact_pairs<dim>(
         particle_handler,
-        boundary_cell_object.get_boundary_cells_with_points());
+        boundary_cell_object.get_boundary_cells_with_points(),
+        particle_point_candidates);
 
       if constexpr (dim == 3)
         {
-          particle_line_candidates = find_particle_line_contact_pairs<dim>(
+          find_particle_line_contact_pairs<dim>(
             particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines());
+            boundary_cell_object.get_boundary_cells_with_lines(),
+            particle_line_candidates);
         }
     }
   else
     {
       // Particle-wall contact candidates
-      particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+      find_particle_wall_contact_pairs<dim>(
         boundary_cell_object.get_boundary_cells_information(),
         particle_handler,
         particle_wall_candidates,
@@ -321,38 +323,38 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
       // Particle-floating wall contact pairs
       if (floating_walls.floating_walls_number > 0)
         {
-          particle_wall_broad_search_object
-            .find_particle_floating_wall_contact_pairs(
-              boundary_cell_object.get_boundary_cells_with_floating_walls(),
-              particle_handler,
-              floating_walls,
-              simulation_time,
-              particle_floating_wall_candidates,
-              sparse_contacts_object);
+          find_particle_floating_wall_contact_pairs<dim>(
+            boundary_cell_object.get_boundary_cells_with_floating_walls(),
+            particle_handler,
+            floating_walls,
+            simulation_time,
+            particle_floating_wall_candidates,
+            sparse_contacts_object);
         }
 
       // Particle-floating mesh broad search
       if (action_manager->check_solid_objects_enabled())
         {
-          particle_wall_broad_search_object
-            .particle_solid_surfaces_contact_search(
-              solid_surfaces_mesh_info,
-              particle_handler,
-              particle_floating_mesh_candidates,
-              total_neighbor_list,
-              sparse_contacts_object);
+          particle_solid_surfaces_contact_search<dim>(
+            solid_surfaces_mesh_info,
+            particle_handler,
+            particle_floating_mesh_candidates,
+            total_neighbor_list,
+            sparse_contacts_object);
         }
 
-      particle_point_candidates = find_particle_point_contact_pairs<dim>(
+      find_particle_point_contact_pairs<dim>(
         particle_handler,
         boundary_cell_object.get_boundary_cells_with_points(),
+        particle_point_candidates,
         sparse_contacts_object);
 
       if constexpr (dim == 3)
         {
-          particle_line_candidates = find_particle_line_contact_pairs<dim>(
+          find_particle_line_contact_pairs<dim>(
             particle_handler,
             boundary_cell_object.get_boundary_cells_with_lines(),
+            particle_line_candidates,
             sparse_contacts_object);
         }
     }
@@ -411,8 +413,8 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
   const double                                      neighborhood_threshold)
 {
   // Particle - wall fine search
-  particle_wall_fine_search<dim>(
-    particle_wall_candidates, particle_wall_in_contact);
+  particle_wall_fine_search<dim>(particle_wall_candidates,
+                                 particle_wall_in_contact);
 
   // Particle - floating wall fine search
   if (floating_walls.floating_walls_number > 0)
@@ -431,15 +433,15 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
         particle_floating_mesh_candidates, particle_floating_mesh_in_contact);
     }
 
-  particle_points_in_contact =
-    particle_point_line_fine_search_object.particle_point_fine_search(
-      particle_point_candidates, neighborhood_threshold);
+  particle_point_fine_search<dim>(particle_point_candidates,
+                                  neighborhood_threshold,
+                                  particle_points_in_contact);
 
   if constexpr (dim == 3)
     {
-      particle_lines_in_contact =
-        particle_point_line_fine_search_object.particle_line_fine_search(
-          particle_line_candidates, neighborhood_threshold);
+      particle_line_fine_search<dim>(particle_line_candidates,
+                                     neighborhood_threshold,
+                                     particle_lines_in_contact);
     }
 }
 
