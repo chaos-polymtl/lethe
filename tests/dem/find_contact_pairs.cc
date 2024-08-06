@@ -63,11 +63,9 @@ test()
 
   // Finding cell neighbors list, it is required for finding the broad search
   // pairs in the container_manager
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           container_manager.cells_local_neighbor_list,
+                           container_manager.cells_ghost_neighbor_list);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction

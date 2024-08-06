@@ -286,4 +286,4 @@ private:
   bool display_pw_contact_expansion_warning = true;
 };
 
-#endif /* find_boundary_cells_information_h */
+#endif

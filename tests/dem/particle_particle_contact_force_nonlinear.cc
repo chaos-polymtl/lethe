@@ -91,14 +91,12 @@ test()
 
   // Creating containers manager for finding cell neighbor and also broad and
   // fine particle-particle search objects
-  DEMContactManager<dim> container_manager;
+  DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           contact_manager.cells_local_neighbor_list,
+                           contact_manager.cells_ghost_neighbor_list);
 
 
   // Inserting two particles in contact
@@ -154,18 +152,17 @@ test()
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
-      container_manager.particle_container[particle_iterator->get_id()] =
+      contact_manager.particle_container[particle_iterator->get_id()] =
         particle_iterator;
     }
 
   // Dummy Adaptive sparse contacts object and particle-particle broad search
   AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
-  container_manager.execute_particle_particle_broad_search(
+  contact_manager.execute_particle_particle_broad_search(
     particle_handler, dummy_adaptive_sparse_contacts);
 
   // Calling fine search
-  container_manager.execute_particle_particle_fine_search(
-    neighborhood_threshold);
+  contact_manager.execute_particle_particle_fine_search(neighborhood_threshold);
 
   // Calling linear force
   ParticleParticleContactForce<
@@ -175,7 +172,7 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact_force(
-    container_manager, dt, torque, force);
+    contact_manager, dt, torque, force);
 
   // Output
   auto particle = particle_handler.begin();

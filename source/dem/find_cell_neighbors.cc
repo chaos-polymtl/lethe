@@ -1,21 +1,16 @@
 #include <dem/find_cell_neighbors.h>
 
-using namespace dealii;
-
-// The constructor of this class is empty
-template <int dim>
-FindCellNeighbors<dim>::FindCellNeighbors()
-{}
+using namespace DEM;
 
 // This function finds the neighbor list (without repetition) of all the active
 // cells in the triangulation
 template <int dim>
 void
-FindCellNeighbors<dim>::find_cell_neighbors(
+find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+  typename dem_data_structures<dim>::cells_neighbor_list
     &cells_local_neighbor_list,
-  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+  typename dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_neighbor_list)
 {
   // The output vectors of the function are cells_local_neighbor_list and
@@ -23,14 +18,14 @@ FindCellNeighbors<dim>::find_cell_neighbors(
   // of all local cells; while the second contains all the ghost cells of all
   // local cells. They are two vectors with size of the number of active cells.
   // The first elements of all vectors are the main cells
-  typename DEM::dem_data_structures<dim>::cell_vector local_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_vector ghost_neighbor_vector;
+  typename dem_data_structures<dim>::cell_vector local_neighbor_vector;
+  typename dem_data_structures<dim>::cell_vector ghost_neighbor_vector;
 
   // This vector is used to avoid repetition of adjacent cells. For instance if
   // cell B is recognized as the neighbor of cell A, cell A will not be added to
   // the neighbor list of cell B again. This is done using the total_cell_list
   // vector
-  typename DEM::dem_data_structures<dim>::cell_set total_cell_list;
+  typename dem_data_structures<dim>::cell_set total_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -104,26 +99,24 @@ FindCellNeighbors<dim>::find_cell_neighbors(
 
 template <int dim>
 void
-FindCellNeighbors<dim>::find_cell_periodic_neighbors(
+find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+  const typename dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+  typename dem_data_structures<dim>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
-  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+  typename dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_periodic_neighbor_list,
-  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+  typename dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list)
 {
-  typename DEM::dem_data_structures<dim>::cell_vector
-    local_periodic_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_vector
-    ghost_periodic_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_vector
+  typename dem_data_structures<dim>::cell_vector local_periodic_neighbor_vector;
+  typename dem_data_structures<dim>::cell_vector ghost_periodic_neighbor_vector;
+  typename dem_data_structures<dim>::cell_vector
     ghost_local_periodic_neighbor_vector;
 
-  typename DEM::dem_data_structures<dim>::cell_set total_cell_list;
-  typename DEM::dem_data_structures<dim>::cell_set total_ghost_cell_list;
+  typename dem_data_structures<dim>::cell_set total_cell_list;
+  typename dem_data_structures<dim>::cell_set total_ghost_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -154,15 +147,14 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           total_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
-          typename DEM::dem_data_structures<dim>::cell_vector
-            periodic_neighbor_list;
+          typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
-          get_periodic_neighbor_list(cell,
-                                     coinciding_vertex_groups,
-                                     vertex_to_coinciding_vertex_group,
-                                     v_to_c,
-                                     periodic_neighbor_list);
+          get_periodic_neighbor_list<dim>(cell,
+                                          coinciding_vertex_groups,
+                                          vertex_to_coinciding_vertex_group,
+                                          v_to_c,
+                                          periodic_neighbor_list);
 
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
@@ -229,15 +221,14 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           total_ghost_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
-          typename DEM::dem_data_structures<dim>::cell_vector
-            periodic_neighbor_list;
+          typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
-          get_periodic_neighbor_list(cell,
-                                     coinciding_vertex_groups,
-                                     vertex_to_coinciding_vertex_group,
-                                     v_to_c,
-                                     periodic_neighbor_list);
+          get_periodic_neighbor_list<dim>(cell,
+                                          coinciding_vertex_groups,
+                                          vertex_to_coinciding_vertex_group,
+                                          v_to_c,
+                                          periodic_neighbor_list);
 
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
@@ -274,9 +265,9 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
 // the main cell to search for possible collisions with the floating mesh.
 template <int dim>
 void
-FindCellNeighbors<dim>::find_full_cell_neighbors(
+find_full_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+  typename dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list)
 {
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
@@ -318,14 +309,14 @@ FindCellNeighbors<dim>::find_full_cell_neighbors(
 }
 template <int dim>
 void
-FindCellNeighbors<dim>::get_periodic_neighbor_list(
+get_periodic_neighbor_list(
   const typename Triangulation<dim>::active_cell_iterator &cell,
   const std::map<unsigned int, std::vector<unsigned int>>
                                              &coinciding_vertex_groups,
   const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
   const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-                                                      &v_to_c,
-  typename DEM::dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
+                                                 &v_to_c,
+  typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
 {
   // Loop over vertices of the cell
   for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
@@ -360,5 +351,75 @@ FindCellNeighbors<dim>::get_periodic_neighbor_list(
     }
 }
 
-template class FindCellNeighbors<2>;
-template class FindCellNeighbors<3>;
+template void
+find_cell_neighbors<2>(
+  const parallel::distributed::Triangulation<2> &triangulation,
+  typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list);
+
+template void
+find_cell_neighbors<3>(
+  const parallel::distributed::Triangulation<3> &triangulation,
+  typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list);
+
+template void
+find_cell_periodic_neighbors<2>(
+  const parallel::distributed::Triangulation<2> &triangulation,
+  const typename DEM::dem_data_structures<2>::periodic_boundaries_cells_info
+    &periodic_boundaries_cells_information,
+  typename DEM::dem_data_structures<2>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  typename DEM::dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  typename DEM::dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list);
+
+template void
+find_cell_periodic_neighbors<3>(
+  const parallel::distributed::Triangulation<3> &triangulation,
+  const typename DEM::dem_data_structures<3>::periodic_boundaries_cells_info
+    &periodic_boundaries_cells_information,
+  typename DEM::dem_data_structures<3>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  typename DEM::dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  typename DEM::dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list);
+
+
+template void
+find_full_cell_neighbors<2>(
+  const parallel::distributed::Triangulation<2> &triangulation,
+  typename dem_data_structures<2>::cells_total_neighbor_list
+    &cells_total_neighbor_list);
+
+template void
+find_full_cell_neighbors<3>(
+  const parallel::distributed::Triangulation<3> &triangulation,
+  typename dem_data_structures<3>::cells_total_neighbor_list
+    &cells_total_neighbor_list);
+
+template void
+get_periodic_neighbor_list<2>(
+  const typename Triangulation<2>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+                                             &coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<2>::active_cell_iterator>>
+                                                    &v_to_c,
+  typename DEM::dem_data_structures<2>::cell_vector &periodic_neighbor_list);
+
+template void
+get_periodic_neighbor_list<3>(
+  const typename Triangulation<3>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+                                             &coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<3>::active_cell_iterator>>
+                                                    &v_to_c,
+  typename DEM::dem_data_structures<3>::cell_vector &periodic_neighbor_list);
