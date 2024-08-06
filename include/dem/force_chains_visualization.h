@@ -19,6 +19,7 @@
 
 #include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
+#include <core/pvd_handler.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
