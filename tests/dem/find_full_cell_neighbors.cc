@@ -51,9 +51,7 @@ test()
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     cells_total_neighbor_list;
 
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_full_cell_neighbors(triangulation,
-                                                cells_total_neighbor_list);
+  find_full_cell_neighbors<dim>(triangulation, cells_total_neighbor_list);
 
   // Output
   int i = 0;
