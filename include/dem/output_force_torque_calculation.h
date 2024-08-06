@@ -12,17 +12,15 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
+#ifndef lethe_output_force_torque_calculation_h
+#define lethe_output_force_torque_calculation_h
+
 #include <dem/data_containers.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/mpi.h>
 #include <deal.II/base/table_handler.h>
-
-#ifndef lethe_output_force_torque_calculation_h
-#  define lethe_output_force_torque_calculation_h
 
 /**
  * @brief write_forces_torques_output_locally
@@ -94,4 +92,4 @@ write_forces_torques_output_results(
     }
 }
 
-#endif // lethe_output_force_torque_calculation_h
+#endif

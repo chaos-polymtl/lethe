@@ -14,14 +14,14 @@
  * ---------------------------------------------------------------------
  */
 
+#ifndef lethe_rolling_resistance_torque_models_h
+#define lethe_rolling_resistance_torque_models_h
+
 #include <core/dem_properties.h>
 
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
-
-#ifndef rolling_resistance_torque_models_h
-#  define rolling_resistance_torque_models_h
 
 /**
  * @brief

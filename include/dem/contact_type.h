@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
 #ifndef lethe_contact_type_h
@@ -20,9 +19,7 @@
 
 /**
  * @brief Label for particle-object contact type.
- *
  */
-
 enum ContactType
 {
   local_particle_particle,
@@ -37,4 +34,4 @@ enum ContactType
   particle_line
 };
 
-#endif // lethe_contact_type_h
+#endif

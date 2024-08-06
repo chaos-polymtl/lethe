@@ -12,11 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
-#ifndef grid_motion_h
-#define grid_motion_h
+#ifndef lethe_grid_motion_h
+#define lethe_grid_motion_h
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>

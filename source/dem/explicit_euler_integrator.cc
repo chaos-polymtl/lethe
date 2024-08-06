@@ -33,11 +33,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties and location once
       // to improve efficiency
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      types::particle_index particle_id = particle->get_id();
-#else
       types::particle_index particle_id = particle->get_local_index();
-#endif
 
       auto          particle_properties = particle->get_properties();
       Tensor<1, 3> &particle_torque     = torque[particle_id];
@@ -53,6 +49,7 @@ ExplicitEulerIntegrator<dim>::integrate(
       if constexpr (dim == 2)
         particle_position = point_nd_to_3d(particle->get_location());
 
+      Tensor<1, 3> acceleration;
       for (int d = 0; d < 3; ++d)
         {
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;

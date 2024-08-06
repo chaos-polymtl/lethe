@@ -12,12 +12,11 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
 
 
-#ifndef periodic_boundaries_manipulator_h
-#define periodic_boundaries_manipulator_h
+#ifndef lethe_periodic_boundaries_manipulator_h
+#define lethe_periodic_boundaries_manipulator_h
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>

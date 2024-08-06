@@ -14,6 +14,9 @@
  * ---------------------------------------------------------------------
  */
 
+#ifndef lethe_particle_particle_broad_search_h
+#define lethe_particle_particle_broad_search_h
+
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
@@ -25,21 +28,15 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+using namespace dealii;
+
 template <int dim>
 class DEMContactManager;
 
-using namespace dealii;
-
-#ifndef particle_particle_broad_search_h
-#  define particle_particle_broad_search_h
-
 /**
- * This class is used for broad particle-particle contact search. Broad search
- * is used to obtain all the particle-particle pairs in adjacent cells.
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * @brief This class is used for broad particle-particle contact search.
+ * Broad search is used to obtain all the particle-particle pairs in adjacent
+ * cells.
  */
 
 template <int dim>
@@ -181,4 +178,4 @@ private:
   }
 };
 
-#endif /* particle_particle_broad_search_h */
+#endif

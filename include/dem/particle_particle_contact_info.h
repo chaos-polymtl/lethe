@@ -12,24 +12,23 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_particle_contact_info_struct_h
+#define lethe_particle_particle_contact_info_struct_h
+
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef particle_particle_contact_info_struct_h
-#  define particle_particle_contact_info_struct_h
+using namespace dealii;
 
-/** @brief
- * This class handles the information related to the calculation of the
+/**
+ * @brief Handle the information related to the calculation of the
  * particle-particle contact force. Notably it is responsible for storing
  * information that has to be preserved over multiple iterations of a contact,
  * namely everything related to tangential overlaps
  */
-
-using namespace dealii;
-
 template <int dim>
 class particle_particle_contact_info
 {

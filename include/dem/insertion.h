@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_insertion_h
+#define lethe_insertion_h
 
 #include <core/dem_properties.h>
 
@@ -47,14 +49,10 @@
 
 using namespace dealii;
 
-#ifndef insertion_h
-#  define insertion_h
-
 /**
- * Base interface for classes that carry out the insertion of particles in the
- * system
+ * @brief Base interface for classes that carry out the insertion of particles
+ * in the system.
  */
-
 template <int dim>
 class Insertion
 {

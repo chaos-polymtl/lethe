@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef lethe_particle_wall_broad_search_h
+#define lethe_particle_wall_broad_search_h
+
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
@@ -31,16 +34,12 @@
 #include <iostream>
 #include <vector>
 
-
 using namespace dealii;
 
-#ifndef particle_wall_broad_search_h
-#  define particle_wall_broad_search_h
-
 /**
- * Broad search is used to obtain all the particles located at boundary cells
+ * @brief Broad search is used to obtain all the particles located at boundary
+ * cells.
  */
-
 template <int dim>
 class ParticleWallBroadSearch
 {
@@ -48,7 +47,7 @@ public:
   ParticleWallBroadSearch();
 
   /**
-   * Finds unordered map of tuples (tuple of particle located in
+   * @brief Finds unordered map of tuples (tuple of particle located in
    * boundary cells, normal vector of the boundary face, a
    * point on the face and the corresponding boundary cell) which shows the
    * candidate particle-wall collision pairs. These collision candidates will be
@@ -63,7 +62,6 @@ public:
    * the corresponding face boundary, a point on the boundary and the boundary
    * cell. The contact pair is used in the fine search
    */
-
   void
   find_particle_wall_contact_pairs(
     const std::map<int, boundary_cells_info_struct<dim>>
@@ -82,7 +80,7 @@ public:
     const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
   /**
-   * Finds a two-layered unordered map of particle iterators which shows the
+   * @brief Find a two-layered unordered map of particle iterators which shows the
    * candidate particle-floating wall collision candidates. These collision
    * pairs will be investigated in the fine search to check if they are in
    * contact or not
@@ -94,8 +92,9 @@ public:
    * @param floating_wall_properties Properties of the floating walls specified
    * in the parameter handler file
    * @param simulation_time Simulation time
-   * @param particle_floating_wall_candidates Output of particle-floating wall broad search
-   * which contains all the particle-floating wall collision candidates
+   * @param particle_floating_wall_candidates Output of particle-floating wall
+   * broad search which contains all the particle-floating wall collision
+   * candidates
    */
 
   void
@@ -124,7 +123,7 @@ public:
     const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
   /**
-   * Finds a two-layered unordered map
+   * @brief Find a two-layered unordered map
    * (particle_floating_mesh_contact_candidates) of particle iterators that
    * shows the candidate particle-floating mesh collision candidates. These
    * collision pairs will be investigated in the fine search to check if they
@@ -140,7 +139,6 @@ public:
    * @param sparse_contacts_object The object that contains the
    * information about the mobility status of cells
    */
-
   void
   particle_solid_surfaces_contact_search(
     const typename DEM::dem_data_structures<
@@ -164,7 +162,7 @@ public:
 
 private:
   /**
-   * @brief Stores the candidate particle-wall contact pairs.
+   * @brief Store the candidate particle-wall contact pairs.
    *
    * @param particle_iterator The particle iterator to start boundary id.
    * @param boundary_cells_content The info of the current boundary cell to
@@ -210,7 +208,7 @@ private:
   }
 
   /**
-   * @brief Stores the candidate particle-floating wall contact pairs.
+   * @brief Store the candidate particle-floating wall contact pairs.
    *
    * @param particle_iterator The particle iterator to start boundary id.
    * @param floating_wall_id The floating wall id.
@@ -247,4 +245,4 @@ private:
   }
 };
 
-#endif /* particle_wall_broad_search_h */
+#endif

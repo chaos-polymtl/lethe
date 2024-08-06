@@ -12,9 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
- *
  */
+
+#ifndef lethe_find_cell_neighbors_h
+#define lethe_find_cell_neighbors_h
 
 #include <dem/data_containers.h>
 
@@ -22,25 +23,16 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-
 using namespace dealii;
 
-#ifndef find_cell_neighbors_h
-#  define find_cell_neighbors_h
-
 /**
- * Finds the neighbors lists of all the active cells in the input triangulation.
+ * @brief Finds the neighbors lists of all the active cells in the input triangulation.
  * find_cell_neighbors() is written to avoid any repetition, for instance if
  * cell B is recognized as the neighbor of cell A once, cell A will not appear
  * in the neighbor list of cell B again. On the other hand,
  * find_full_cell_neighbors() function finds the neighbors list with this
  * repetition.
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
-
 template <int dim>
 class FindCellNeighbors
 {
@@ -99,7 +91,6 @@ public:
    * ghost cell number) of vectors (local adjacent cells of each ghost cell).
    * First element of each set shows the main ghost cell itself
    */
-
   void
   find_cell_periodic_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
@@ -113,8 +104,8 @@ public:
       &cells_ghost_local_periodic_neighbor_list);
 
   /**
-   * Finds the full neighbor list (with repetition) of all the active cells in
-   * the triangulation. This function is used in particle-floating mesh
+   * @brief Finds the full neighbor list (with repetition) of all the active
+   * cells in the triangulation. This function is used in particle-floating mesh
    * contacts, as in this situation, we need to define all the particles located
    * in the neighbor cells of the background cell (cut by the floating mesh) as
    * contact candidates
@@ -123,7 +114,6 @@ public:
    * @param cells_total_neighbor_list An unordered_map (with size of the local
    * cell number) of vectors (all adjacent cells of each local cell)
    */
-
   void
   find_full_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
@@ -158,7 +148,6 @@ private:
    * @param periodic_neighbor_list A vector which is the list of periodic cell
    * neighbors
    */
-
   void
   get_periodic_neighbor_list(
     const typename Triangulation<dim>::active_cell_iterator &cell,
@@ -172,4 +161,4 @@ private:
       &periodic_neighbor_list);
 };
 
-#endif /* find_cell_neighbors_h */
+#endif
