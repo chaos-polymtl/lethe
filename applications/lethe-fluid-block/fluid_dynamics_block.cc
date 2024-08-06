@@ -1,4 +1,4 @@
-#include <solvers/gd_navier_stokes.h>
+#include <solvers/fluid_dynamics_block.h>
 
 #include <deal.II/base/convergence_table.h>
 
@@ -30,10 +30,10 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "gd_navier_stokes_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid-block",
+                                   "lethe-fluid-nitsche"));
 
-          GDNavierStokesSolver<2> problem(NSparam);
+          FluidDynamicsBlock<2> problem(NSparam);
           problem.solve();
         }
 
@@ -48,10 +48,10 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "gd_navier_stokes_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid-block",
+                                   "lethe-fluid-nitsche"));
 
-          GDNavierStokesSolver<3> problem(NSparam);
+          FluidDynamicsBlock<3> problem(NSparam);
           problem.solve();
         }
 

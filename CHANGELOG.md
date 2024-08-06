@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-06
+
+### Changed
+
+- MINOR Renamed the main file related to the `lethe-fluid-block` application: `gd_navier_stokes` to `fluid_dynamics_block`. The name of the `GDNavierStokesAssembler...` classes were changed to `BlockNavierStokesAssembler...`, and the main class `GDNavierStokesSolver` was also renamed to `FluidDynamicsBlock`. [#1226](https://github.com/chaos-polymtl/lethe/pull/1226)
+
 ## [Master] - 2024-08-05
 
 ### Changed
