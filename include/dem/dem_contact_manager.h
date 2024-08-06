@@ -299,13 +299,6 @@ public:
 
   // Containers with other information
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
-
-private:
-  // Broad search objects
-  ParticleWallBroadSearch<dim> particle_wall_broad_search_object;
-
-  // Fine search objects
-  ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
 };
 
-#endif // lethe_dem_contact_manager_h
+#endif
