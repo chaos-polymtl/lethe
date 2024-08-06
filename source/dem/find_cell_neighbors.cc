@@ -370,25 +370,25 @@ find_cell_neighbors<3>(
 template void
 find_cell_periodic_neighbors<2>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  const typename DEM::dem_data_structures<2>::periodic_boundaries_cells_info
+  const typename dem_data_structures<2>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename DEM::dem_data_structures<2>::cells_neighbor_list
+  typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
-  typename DEM::dem_data_structures<2>::cells_neighbor_list
+  typename dem_data_structures<2>::cells_neighbor_list
     &cells_ghost_periodic_neighbor_list,
-  typename DEM::dem_data_structures<2>::cells_neighbor_list
+  typename dem_data_structures<2>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list);
 
 template void
 find_cell_periodic_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  const typename DEM::dem_data_structures<3>::periodic_boundaries_cells_info
+  const typename dem_data_structures<3>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename DEM::dem_data_structures<3>::cells_neighbor_list
+  typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
-  typename DEM::dem_data_structures<3>::cells_neighbor_list
+  typename dem_data_structures<3>::cells_neighbor_list
     &cells_ghost_periodic_neighbor_list,
-  typename DEM::dem_data_structures<3>::cells_neighbor_list
+  typename dem_data_structures<3>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list);
 
 
@@ -411,8 +411,8 @@ get_periodic_neighbor_list<2>(
                                              &coinciding_vertex_groups,
   const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
   const std::vector<std::set<typename Triangulation<2>::active_cell_iterator>>
-                                                    &v_to_c,
-  typename DEM::dem_data_structures<2>::cell_vector &periodic_neighbor_list);
+                                               &v_to_c,
+  typename dem_data_structures<2>::cell_vector &periodic_neighbor_list);
 
 template void
 get_periodic_neighbor_list<3>(
@@ -421,5 +421,5 @@ get_periodic_neighbor_list<3>(
                                              &coinciding_vertex_groups,
   const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
   const std::vector<std::set<typename Triangulation<3>::active_cell_iterator>>
-                                                    &v_to_c,
-  typename DEM::dem_data_structures<3>::cell_vector &periodic_neighbor_list);
+                                               &v_to_c,
+  typename dem_data_structures<3>::cell_vector &periodic_neighbor_list);

@@ -98,7 +98,7 @@ private:
   move_grid_rotational(Triangulation<dim, spacedim> &triangulation);
 
   /**
-   * Carries out translational motion of the triangulation
+   * @brief Carries out translational motion of the triangulation
    *
    * @param triangulation Triangulation
    */
@@ -128,4 +128,4 @@ private:
 };
 
 
-#endif /* grid_motion_h */
+#endif
