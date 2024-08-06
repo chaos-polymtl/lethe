@@ -130,8 +130,8 @@ store_candidates(
   const types::particle_index &main_particle_id,
   const typename dealii::Particles::ParticleHandler<
     dim>::particle_iterator_range::iterator &particle_begin,
-  const typename dealii::Particles::ParticleHandler<dim>::particle_iterator_range
-    &particles_to_evaluate,
+  const typename dealii::Particles::ParticleHandler<
+    dim>::particle_iterator_range &particles_to_evaluate,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &contact_pair_candidates);
 
