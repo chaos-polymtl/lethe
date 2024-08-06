@@ -12,14 +12,14 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
   auto action_manager = DEMActionManager::get_action_manager();
 
   // Find cell neighbors
-  cell_neighbors_object.find_cell_neighbors(triangulation,
-                                            cells_local_neighbor_list,
-                                            cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           cells_local_neighbor_list,
+                           cells_ghost_neighbor_list);
 
   // Find cell periodic neighbors
   if (action_manager->check_periodic_boundaries_enabled())
     {
-      cell_neighbors_object.find_cell_periodic_neighbors(
+      find_cell_periodic_neighbors<dim>(
         triangulation,
         periodic_boundaries_cells_information,
         cells_local_periodic_neighbor_list,
@@ -30,8 +30,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
   // Get total (with repetition) neighbors list for floating mesh.
   if (action_manager->check_solid_objects_enabled())
     {
-      cell_neighbors_object.find_full_cell_neighbors(triangulation,
-                                                     total_neighbor_list);
+      find_full_cell_neighbors<dim>(triangulation, total_neighbor_list);
     }
 }
 

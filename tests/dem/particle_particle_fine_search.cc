@@ -63,14 +63,12 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
 
-  DEMContactManager<dim> container_manager;
+  DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           contact_manager.cells_local_neighbor_list,
+                           contact_manager.cells_ghost_neighbor_list);
 
   // Inserting two particles in contact
   Point<3> position1 = {0.4, 0, 0};
@@ -119,24 +117,23 @@ test()
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
-      container_manager.particle_container[particle_iterator->get_id()] =
+      contact_manager.particle_container[particle_iterator->get_id()] =
         particle_iterator;
     }
 
   // Dummy Adaptive sparse contacts object and particle-particle broad search
   AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
-  container_manager.execute_particle_particle_broad_search(
+  contact_manager.execute_particle_particle_broad_search(
     particle_handler, dummy_adaptive_sparse_contacts);
 
   // Calling fine search
-  container_manager.execute_particle_particle_fine_search(
-    neighborhood_threshold);
+  contact_manager.execute_particle_particle_fine_search(neighborhood_threshold);
 
   // Output
   for (auto adjacent_particles_iterator =
-         container_manager.local_adjacent_particles.begin();
+         contact_manager.local_adjacent_particles.begin();
        adjacent_particles_iterator !=
-       container_manager.local_adjacent_particles.end();
+       contact_manager.local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
       auto information_iterator =

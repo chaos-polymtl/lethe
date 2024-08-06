@@ -310,9 +310,6 @@ private:
   ParticleParticleFineSearch<dim>  particle_particle_fine_search_object;
   ParticleWallFineSearch<dim>      particle_wall_fine_search_object;
   ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
-
-  // Other relevant objects
-  FindCellNeighbors<dim> cell_neighbors_object;
 };
 
 #endif // lethe_dem_contact_manager_h
