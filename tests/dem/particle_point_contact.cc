@@ -125,11 +125,9 @@ test()
   // Particle-point broad search
   std::unordered_map<unsigned int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-                                    contact_candidates;
-  ParticlePointLineBroadSearch<dim> broad_search_object;
+    contact_candidates;
 
   // Particle-point fine search
-  ParticlePointLineFineSearch<dim> fine_search_object;
   std::unordered_map<unsigned int, particle_point_line_contact_info_struct<dim>>
     contact_information;
 
@@ -156,14 +154,14 @@ test()
       force[particle->get_id()][1] = 0;
       force[particle->get_id()][2] = 0;
 
-      contact_candidates =
-        broad_search_object.find_particle_point_contact_pairs(
-          particle_handler,
-          boundary_cells_object.get_boundary_cells_with_points());
+      find_particle_point_contact_pairs<dim>(
+        particle_handler,
+        boundary_cells_object.get_boundary_cells_with_points(),
+        contact_candidates);
 
-      contact_information =
-        fine_search_object.particle_point_fine_search(contact_candidates,
-                                                      neighborhood_threshold);
+      particle_point_fine_search<dim>(contact_candidates,
+                                      neighborhood_threshold,
+                                      contact_information);
 
       force_object.calculate_particle_point_contact_force(
         &contact_information,

@@ -117,10 +117,6 @@ test()
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;
-  typename dem_data_structures<2>::adjacent_particle_pairs
-    cleared_local_adjacent_particles;
-  typename dem_data_structures<2>::adjacent_particle_pairs
-    cleared_ghost_adjacent_particles;
 
   DEMContactManager<dim> contact_manager;
 
@@ -129,9 +125,7 @@ test()
                            contact_manager.cells_local_neighbor_list,
                            contact_manager.cells_ghost_neighbor_list);
 
-  // Creating broad search, fine search and particle-particle force objects
-  ParticleParticleBroadSearch<dim> broad_search_object;
-  ParticleParticleFineSearch<dim>  fine_search_object;
+  // Creating particle-particle force objects
   ParticleParticleContactForce<
     dim,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
