@@ -4,12 +4,8 @@
 using namespace dealii;
 
 template <int dim>
-ParticleParticleBroadSearch<dim>::ParticleParticleBroadSearch()
-{}
-
-template <int dim>
 void
-ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
+find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager)
 {
@@ -53,10 +49,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               std::next(particle_in_main_cell, 1),
-                               particles_in_main_cell,
-                               local_contact_pair_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    std::next(particle_in_main_cell, 1),
+                                    particles_in_main_cell,
+                                    local_contact_pair_candidates);
             }
 
           // Going through neighbor cells of the main cell
@@ -75,10 +71,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_neighbor_cell.begin(),
-                                   particles_in_neighbor_cell,
-                                   local_contact_pair_candidates);
+                  store_candidates<dim>(particle_in_main_cell->get_id(),
+                                        particles_in_neighbor_cell.begin(),
+                                        particles_in_neighbor_cell,
+                                        local_contact_pair_candidates);
                 }
             }
         }
@@ -122,10 +118,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_neighbor_cell.begin(),
-                                   particles_in_neighbor_cell,
-                                   ghost_contact_pair_candidates);
+                  store_candidates<dim>(particle_in_main_cell->get_id(),
+                                        particles_in_neighbor_cell.begin(),
+                                        particles_in_neighbor_cell,
+                                        ghost_contact_pair_candidates);
                 }
             }
         }
@@ -134,7 +130,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
 
 template <int dim>
 void
-ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
+find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager,
   const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
@@ -189,10 +185,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               std::next(particle_in_main_cell, 1),
-                               particles_in_main_cell,
-                               local_contact_pair_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    std::next(particle_in_main_cell, 1),
+                                    particles_in_main_cell,
+                                    local_contact_pair_candidates);
             }
         }
 
@@ -229,10 +225,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_neighbor_cell.begin(),
-                               particles_in_neighbor_cell,
-                               local_contact_pair_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    particles_in_neighbor_cell.begin(),
+                                    particles_in_neighbor_cell,
+                                    local_contact_pair_candidates);
             }
         }
     }
@@ -298,10 +294,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_neighbor_cell.begin(),
-                               particles_in_neighbor_cell,
-                               ghost_contact_pair_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    particles_in_neighbor_cell.begin(),
+                                    particles_in_neighbor_cell,
+                                    ghost_contact_pair_candidates);
             }
         }
     }
@@ -310,7 +306,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
 
 template <int dim>
 void
-ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
+find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager)
 {
@@ -373,10 +369,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_periodic_neighbor_cell.begin(),
-                                   particles_in_periodic_neighbor_cell,
-                                   local_contact_pair_periodic_candidates);
+                  store_candidates<dim>(
+                    particle_in_main_cell->get_id(),
+                    particles_in_periodic_neighbor_cell.begin(),
+                    particles_in_periodic_neighbor_cell,
+                    local_contact_pair_periodic_candidates);
                 }
             }
         }
@@ -425,10 +422,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particle_in_main_cell->get_id(),
-                                   particles_in_periodic_neighbor_cell.begin(),
-                                   particles_in_periodic_neighbor_cell,
-                                   ghost_contact_pair_periodic_candidates);
+                  store_candidates<dim>(
+                    particle_in_main_cell->get_id(),
+                    particles_in_periodic_neighbor_cell.begin(),
+                    particles_in_periodic_neighbor_cell,
+                    ghost_contact_pair_periodic_candidates);
                 }
             }
         }
@@ -474,7 +472,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(
+                  store_candidates<dim>(
                     particle_in_main_cell->get_id(),
                     particles_in_periodic_neighbor_cell.begin(),
                     particles_in_periodic_neighbor_cell,
@@ -487,7 +485,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
 
 template <int dim>
 void
-ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
+find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   DEMContactManager<dim>                  &container_manager,
   const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
@@ -571,10 +569,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
-                               particles_in_periodic_neighbor_cell,
-                               local_contact_pair_periodic_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    particles_in_periodic_neighbor_cell.begin(),
+                                    particles_in_periodic_neighbor_cell,
+                                    local_contact_pair_periodic_candidates);
             }
         }
     }
@@ -642,10 +640,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
-                               particles_in_periodic_neighbor_cell,
-                               ghost_contact_pair_periodic_candidates);
+              store_candidates<dim>(particle_in_main_cell->get_id(),
+                                    particles_in_periodic_neighbor_cell.begin(),
+                                    particles_in_periodic_neighbor_cell,
+                                    ghost_contact_pair_periodic_candidates);
             }
         }
     }
@@ -710,14 +708,93 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(particle_in_main_cell->get_id(),
-                               particles_in_periodic_neighbor_cell.begin(),
-                               particles_in_periodic_neighbor_cell,
-                               ghost_local_contact_pair_periodic_candidates);
+              store_candidates<dim>(
+                particle_in_main_cell->get_id(),
+                particles_in_periodic_neighbor_cell.begin(),
+                particles_in_periodic_neighbor_cell,
+                ghost_local_contact_pair_periodic_candidates);
             }
         }
     }
 }
 
-template class ParticleParticleBroadSearch<2>;
-template class ParticleParticleBroadSearch<3>;
+template <int dim>
+void
+store_candidates(
+  const types::particle_index &main_particle_id,
+  const typename Particles::ParticleHandler<
+    dim>::particle_iterator_range::iterator &particle_begin,
+  const typename Particles::ParticleHandler<dim>::particle_iterator_range
+    &particles_to_evaluate,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &contact_pair_candidates)
+{
+  // Find the contact candidate container of the main particle
+  auto candidates_container_it = contact_pair_candidates.find(main_particle_id);
+
+  // Reserve arbitrary vector capacity and store if the particle does not have
+  // contact candidate yet
+  if (candidates_container_it == contact_pair_candidates.end())
+    {
+      std::vector<types::particle_index> candidates_container;
+      candidates_container.reserve(40);
+
+      // Insert the empty vector and get the iterator to the inserted element
+      // prior storing the particle ids
+      auto pair_it_bool =
+        contact_pair_candidates.emplace(main_particle_id, candidates_container);
+      candidates_container_it = pair_it_bool.first;
+    }
+
+  // Store particle ids from the selected particle iterator
+  for (auto particle_iterator = particle_begin;
+       particle_iterator != particles_to_evaluate.end();
+       ++particle_iterator)
+    {
+      candidates_container_it->second.emplace_back(particle_iterator->get_id());
+    }
+}
+
+template void
+find_particle_particle_contact_pairs<2>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  DEMContactManager<2>                  &container_manager);
+
+template void
+find_particle_particle_contact_pairs<3>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  DEMContactManager<3>                  &container_manager);
+
+template void
+find_particle_particle_contact_pairs<2>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  DEMContactManager<2>                  &container_manager,
+  const AdaptiveSparseContacts<2>       &sparse_contacts_object);
+
+template void
+find_particle_particle_contact_pairs<3>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  DEMContactManager<3>                  &container_manager,
+  const AdaptiveSparseContacts<3>       &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<2>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  DEMContactManager<2>                  &container_manager);
+
+template void
+find_particle_particle_periodic_contact_pairs<3>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  DEMContactManager<3>                  &container_manager);
+
+template void
+find_particle_particle_periodic_contact_pairs<2>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  DEMContactManager<2>                  &container_manager,
+  const AdaptiveSparseContacts<2>       &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<3>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  DEMContactManager<3>                  &container_manager,
+  const AdaptiveSparseContacts<3>       &sparse_contacts_object);

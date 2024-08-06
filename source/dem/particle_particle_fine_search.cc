@@ -4,12 +4,8 @@
 using namespace dealii;
 
 template <int dim>
-ParticleParticleFineSearch<dim>::ParticleParticleFineSearch()
-{}
-
-template <int dim>
 void
-ParticleParticleFineSearch<dim>::particle_particle_fine_search(
+particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
     &particle_container,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -99,5 +95,24 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
     }
 }
 
-template class ParticleParticleFineSearch<2>;
-template class ParticleParticleFineSearch<3>;
+template void
+particle_particle_fine_search<2>(
+  typename DEM::dem_data_structures<2>::particle_index_iterator_map const
+    &particle_container,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &adjacent_particles,
+  const typename DEM::dem_data_structures<2>::particle_particle_candidates
+                    &contact_pair_candidates,
+  const double       neighborhood_threshold,
+  const Tensor<1, 2> periodic_offset = Tensor<1, 2>());
+
+template void
+particle_particle_fine_search<3>(
+  typename DEM::dem_data_structures<3>::particle_index_iterator_map const
+    &particle_container,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &adjacent_particles,
+  const typename DEM::dem_data_structures<3>::particle_particle_candidates
+                    &contact_pair_candidates,
+  const double       neighborhood_threshold,
+  const Tensor<1, 3> periodic_offset = Tensor<1, 3>());
