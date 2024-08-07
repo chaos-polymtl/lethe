@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR Renamed the main file related to the `lethe-fluid-sharp` application: `gls_sharp_navier_stokes` to `fluid_dynamics_sharp`. The name of the `GLSSharpNavierStokesSolver` class was changed to `FluidDynamicsSharp`. [#1231](https://github.com/chaos-polymtl/lethe/pull/1231)
+
+### Changed
+
 - MINOR Renamed the main file related to the `lethe-fluid-nitsche` application: `gls_nitsche_navier_stokes` to `fluid_dynamics_nitsche`. The name of the `GLSNitscheNavierStokesSolver` class was changed to `FluidDynamicsNitsche`. [#1228](https://github.com/chaos-polymtl/lethe/pull/1228)
 
 ## [Master] - 2024-08-06

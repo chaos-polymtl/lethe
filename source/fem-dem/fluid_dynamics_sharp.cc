@@ -10,7 +10,7 @@
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
-#include <fem-dem/gls_sharp_navier_stokes.h>
+#include <fem-dem/fluid_dynamics_sharp.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -23,7 +23,7 @@
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
-GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
+FluidDynamicsSharp<dim>::FluidDynamicsSharp(
   CFDDEMSimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam.cfd_parameters)
   , cfd_dem_parameters(p_nsparam)
@@ -32,13 +32,13 @@ GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
 {}
 
 template <int dim>
-GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
+FluidDynamicsSharp<dim>::~FluidDynamicsSharp()
 {}
 
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
+FluidDynamicsSharp<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertices
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
@@ -48,7 +48,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
+FluidDynamicsSharp<dim>::check_whether_all_particles_are_sphere()
 {
   all_spheres = false;
 
@@ -72,7 +72,7 @@ GLSSharpNavierStokesSolver<dim>::check_whether_all_particles_are_sphere()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
+FluidDynamicsSharp<dim>::generate_cut_cells_map()
 {
   // Potential amelioration of this function. This function could try to use the
   // information of the previous cut cell mapping as an initial guess of the new
@@ -362,8 +362,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::refinement_control(
-  const bool initial_refinement)
+FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
 {
   // We add a post-refinement check to update precalculations only if needed.
   // Two booleans are used: the first one is used to update the precalculations,
@@ -449,7 +448,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
 
 template <int dim>
 bool
-GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
+FluidDynamicsSharp<dim>::cell_cut_by_p_absolute_distance(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   std::map<types::global_dof_index, Point<dim>>        &support_points,
   unsigned int                                          p)
@@ -506,7 +505,7 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
+FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
 {
   TimerOutput::Scope t(this->computing_timer, "Optmize cut cells mapping");
   MappingQ1<dim>     mapping;
@@ -644,7 +643,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 
 template <int dim>
 std::pair<bool, bool>
-GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
+FluidDynamicsSharp<dim>::generate_cut_cell_candidates(
   const typename DoFHandler<dim>::cell_iterator &cell,
   const unsigned int                             p_id)
 {
@@ -765,7 +764,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cell_candidates(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::define_particles()
+FluidDynamicsSharp<dim>::define_particles()
 {
   some_particles_are_coupled = false;
   // initialized the particles
@@ -824,7 +823,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::refine_ib()
+FluidDynamicsSharp<dim>::refine_ib()
 {
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
@@ -968,7 +967,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::force_on_ib()
+FluidDynamicsSharp<dim>::force_on_ib()
 {
   // This function defines the force and torque applied on an Immersed Boundary
   // based on the sharp edge method on a hyper_sphere of dim=2 or dim=3
@@ -1018,8 +1017,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
   Assert(this->simulation_parameters.physical_properties_manager
            .density_is_constant(),
-         RequiresConstantDensity(
-           "GLSSharpNavierStokesSolver<dim>::force_on_ib"));
+         RequiresConstantDensity("FluidDynamicsSharp<dim>::force_on_ib"));
 
   int  order = this->simulation_parameters.particlesParameters->order;
   auto density_model =
@@ -1644,7 +1642,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::write_force_ib()
+FluidDynamicsSharp<dim>::write_force_ib()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Output forces on immersed boundary");
@@ -1673,7 +1671,7 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
+FluidDynamicsSharp<dim>::output_field_hook(DataOut<dim> &data_out)
 {
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
@@ -1734,7 +1732,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
+FluidDynamicsSharp<dim>::postprocess_fd(bool firstIter)
 {
   bool enable =
     this->simulation_parameters.analytical_solution->calculate_error();
@@ -1799,7 +1797,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 
 template <int dim>
 std::pair<double, double>
-GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
+FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
   QGauss<dim>        quadrature_formula(this->number_quadrature_points + 1);
@@ -2087,7 +2085,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::integrate_particles()
+FluidDynamicsSharp<dim>::integrate_particles()
 {
   particle_residual = 0;
 
@@ -2128,7 +2126,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
              ->enable_lubrication_force and
            some_particles_are_coupled),
          RequiresConstantViscosity(
-           "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+           "FluidDynamicsSharp<dim>::integrate_particles"));
 
   double h_min =
     dr * this->simulation_parameters.particlesParameters->lubrication_range_min;
@@ -2147,7 +2145,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
       Assert(this->simulation_parameters.physical_properties_manager
                .density_is_constant(),
              RequiresConstantDensity(
-               "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
+               "FluidDynamicsSharp<dim>::integrate_particles"));
       this->simulation_parameters.physical_properties_manager.get_density(0);
       auto density_model =
         this->simulation_parameters.physical_properties_manager.get_density(0);
@@ -2667,7 +2665,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
+FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
   std::vector<IBParticle<dim>> particles)
 {
   properties_to_write = particles[0].get_properties_name();
@@ -2727,14 +2725,14 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
 
 template <int dim>
 const std::vector<DataOutBase::Patch<0, dim>> &
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_patches() const
+FluidDynamicsSharp<dim>::Visualization_IB::get_patches() const
 {
   return patches;
 }
 
 template <int dim>
 std::vector<std::string>
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_dataset_names() const
+FluidDynamicsSharp<dim>::Visualization_IB::get_dataset_names() const
 {
   return dataset_names;
 }
@@ -2745,19 +2743,18 @@ std::vector<
              unsigned int,
              std::string,
              DataComponentInterpretation::DataComponentInterpretation>>
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::get_nonscalar_data_ranges()
-  const
+FluidDynamicsSharp<dim>::Visualization_IB::get_nonscalar_data_ranges() const
 {
   return vector_datasets;
 }
 
 template <int dim>
-GLSSharpNavierStokesSolver<dim>::Visualization_IB::~Visualization_IB()
+FluidDynamicsSharp<dim>::Visualization_IB::~Visualization_IB()
 {}
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
+FluidDynamicsSharp<dim>::finish_time_step_particles()
 {
   // Store information about the particle used for the integration and print the
   // results if requested.
@@ -3105,7 +3102,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::sharp_edge()
+FluidDynamicsSharp<dim>::sharp_edge()
 {
   // This function defines an Immersed Boundary based on the sharp edge method
   // on a solid of dim=2 or dim=3
@@ -3864,7 +3861,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::setup_assemblers()
+FluidDynamicsSharp<dim>::setup_assemblers()
 {
   this->assemblers.clear();
   assemblers_inside_ib.clear();
@@ -3987,7 +3984,7 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
+FluidDynamicsSharp<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -4064,7 +4061,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
+FluidDynamicsSharp<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local || copy_data.cell_is_cut)
@@ -4080,7 +4077,7 @@ GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
+FluidDynamicsSharp<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -4157,7 +4154,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
+FluidDynamicsSharp<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local || copy_data.cell_is_cut)
@@ -4172,7 +4169,7 @@ GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::write_checkpoint()
+FluidDynamicsSharp<dim>::write_checkpoint()
 {
   this->GLSNavierStokesSolver<dim>::write_checkpoint();
 
@@ -4315,7 +4312,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::read_checkpoint()
+FluidDynamicsSharp<dim>::read_checkpoint()
 {
   this->GLSNavierStokesSolver<dim>::read_checkpoint();
 
@@ -4550,7 +4547,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
+FluidDynamicsSharp<dim>::load_particles_from_file()
 {
   using dealii::numbers::PI;
   TimerOutput::Scope t(this->computing_timer,
@@ -4837,7 +4834,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
+FluidDynamicsSharp<dim>::update_precalculations_for_ib()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Update precalculated shape distance");
@@ -4851,7 +4848,7 @@ GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::solve()
+FluidDynamicsSharp<dim>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -4943,5 +4940,5 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
 // Pre-compile the 2D and 3D versopm solver to ensure that the library is
 // valid before we actually compile the final solver
-template class GLSSharpNavierStokesSolver<2>;
-template class GLSSharpNavierStokesSolver<3>;
+template class FluidDynamicsSharp<2>;
+template class FluidDynamicsSharp<3>;
