@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include "solvers/gls_nitsche_navier_stokes.h"
+#include "solvers/fluid_dynamics_nitsche.h"
 
 int
 main(int argc, char *argv[])
@@ -43,7 +43,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSNitscheNavierStokesSolver<2> problem_22(NSparam);
+          FluidDynamicsNitsche<2> problem_22(NSparam);
           problem_22.solve();
         }
 
@@ -56,7 +56,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSNitscheNavierStokesSolver<3> problem_33(NSparam);
+          FluidDynamicsNitsche<3> problem_33(NSparam);
           problem_33.solve();
         }
 
