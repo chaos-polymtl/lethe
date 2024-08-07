@@ -21,7 +21,6 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_force.h>
-#include <dem/particle_wall_contact_info.h>
 
 #include <deal.II/particles/particle.h>
 

@@ -1,5 +1,12 @@
+#include <core/dem_properties.h>
+
+#include <dem/contact_info.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/particle_particle_fine_search.h>
+
+#include <deal.II/particles/particle.h>
+
+#include <boost/range/adaptor/map.hpp>
 
 using namespace dealii;
 

@@ -18,9 +18,9 @@
 #define lethe_particle_particle_broad_search_h
 
 #include <dem/adaptive_sparse_contacts.h>
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/particle_particle_contact_info.h>
 
 #include <deal.II/distributed/tria.h>
 

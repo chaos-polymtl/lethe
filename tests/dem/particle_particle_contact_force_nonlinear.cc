@@ -36,11 +36,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_contact_manager.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_fine_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
