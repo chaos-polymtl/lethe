@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include "fem-dem/gls_sharp_navier_stokes.h"
+#include "fem-dem/fluid_dynamics_sharp.h"
 
 int
 main(int argc, char *argv[])

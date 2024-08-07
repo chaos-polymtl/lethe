@@ -10,7 +10,7 @@
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
-#include <fem-dem/gls_sharp_navier_stokes.h>
+#include <fem-dem/fluid_dynamics_sharp.h>
 
 #include <deal.II/base/work_stream.h>
 

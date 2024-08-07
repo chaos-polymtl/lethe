@@ -36,7 +36,7 @@ using namespace dealii;
 
 /**
  * @brief A solver class for the DEM used in conjunction with IB particles and
- * gls_sharp_navier_stokes. This class defines and uses some functions of the
+ * fluid_dynamics_sharp. This class defines and uses some functions of the
  * DEM class that have been modified and simplified to be compatible with
  * IB_particles.
  *
