@@ -80,7 +80,7 @@ add_library(lethe-dem
   ../../include/dem/particle_particle_fine_search.h
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h
-  ../../include/dem/particle_point_line_contact_info_struct.h
+  ../../include/dem/particle_point_line_contact_info.h
   ../../include/dem/particle_point_line_fine_search.h
   ../../include/dem/particle_wall_broad_search.h
   ../../include/dem/particle_wall_contact_force.h
