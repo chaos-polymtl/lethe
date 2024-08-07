@@ -21,20 +21,29 @@
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/particles/particle_iterator.h>
-
-/**
- * @brief Handle information related to the calculation of the particle-point
- * and particle-line contact forces.
- */
-
 using namespace dealii;
 
+/**
+ * @brief Handle information related to the calculation of the particle-line contact forces.
+ */
+
 template <int dim>
-struct particle_point_line_contact_info_struct
+struct particle_line_contact_info
 {
   Particles::ParticleIterator<dim> particle;
   Point<3>                         point_one;
   Point<3>                         point_two;
+};
+
+/**
+ * @brief Handle information related to the calculation of the particle-point
+ * contact forces.
+ */
+template <int dim>
+struct particle_point_contact_info
+{
+  Particles::ParticleIterator<dim> particle;
+  Point<3>                         point;
 };
 
 #endif

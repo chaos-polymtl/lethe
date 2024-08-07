@@ -128,7 +128,7 @@ test()
     contact_candidates;
 
   // Particle-point fine search
-  std::unordered_map<unsigned int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<unsigned int, particle_point_line_contact_info<dim>>
     contact_information;
 
   ParticlePointLineForce<dim>   force_object;
