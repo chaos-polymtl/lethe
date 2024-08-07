@@ -371,13 +371,13 @@ public:
 
   virtual void
   value_list(const std::vector<Point<dim>> &points,
-             std::vector<double> &          values,
+             std::vector<double>           &values,
              const unsigned int             component = 0) const override;
 };
 
 template <int dim>
 double
-BoundaryValues<dim>::value(const Point<dim> & p,
+BoundaryValues<dim>::value(const Point<dim>  &p,
                            const unsigned int component) const
 {
   Assert(component == 0, ExcIndexRange(component, 0, 1));
@@ -397,7 +397,7 @@ BoundaryValues<dim>::value(const Point<dim> & p,
 template <int dim>
 void
 BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
-                                std::vector<double> &          values,
+                                std::vector<double>           &values,
                                 const unsigned int             component) const
 {
   AssertDimension(values.size(), points.size());
@@ -518,7 +518,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
 
   switch (parameters.geometry)
     {
-        case Settings::hyperball: {
+      case Settings::hyperball:
+        {
           SphericalManifold<dim>                boundary_manifold;
           TransfiniteInterpolationManifold<dim> inner_manifold;
 
@@ -534,11 +535,13 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
 
           break;
         }
-        case Settings::hypercube: {
+      case Settings::hypercube:
+        {
           GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
-        case Settings::hypercube_with_hole: {
+      case Settings::hypercube_with_hole:
+        {
           GridGenerator::hyper_cube_with_cylindrical_hole(triangulation,
                                                           0.3,
                                                           1.0);
@@ -547,7 +550,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
           triangulation.set_manifold(1, manifold_description);
           break;
         }
-        case Settings::hyperrectangle: {
+      case Settings::hyperrectangle:
+        {
           std::vector<unsigned int> repetitions(dim);
           for (unsigned int i = 0; i < dim - 1; i++)
             {
@@ -1359,7 +1363,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   switch (parameters.preconditioner)
     {
-        case Settings::amg: {
+      case Settings::amg:
+        {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
 
@@ -1377,7 +1382,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
                       preconditioner);
           break;
         }
-        case Settings::gmg: {
+      case Settings::gmg:
+        {
           MGTransferPrebuilt<VectorType> mg_transfer(mg_constrained_dofs);
           mg_transfer.build(dof_handler);
 
@@ -1438,7 +1444,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
                        preconditioner);
           break;
         }
-        case Settings::ilu: {
+      case Settings::ilu:
+        {
           TrilinosWrappers::PreconditionILU                 preconditioner;
           TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
           preconditioner.initialize(system_matrix, data_ilu);
@@ -1793,24 +1800,28 @@ main(int argc, char *argv[])
     {
       switch (parameters.dimension)
         {
-            case 2: {
+          case 2:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixBasedAdvectionDiffusion<2, 1>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixBasedAdvectionDiffusion<2, 2>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixBasedAdvectionDiffusion<2, 3>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
@@ -1821,24 +1832,28 @@ main(int argc, char *argv[])
               break;
             }
 
-            case 3: {
+          case 3:
+            {
               switch (parameters.element_order)
                 {
-                    case 1: {
+                  case 1:
+                    {
                       MatrixBasedAdvectionDiffusion<3, 1>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
                       break;
                     }
-                    case 2: {
+                  case 2:
+                    {
                       MatrixBasedAdvectionDiffusion<3, 2>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();
 
                       break;
                     }
-                    case 3: {
+                  case 3:
+                    {
                       MatrixBasedAdvectionDiffusion<3, 3>
                         advection_diffusion_problem(parameters);
                       advection_diffusion_problem.run();

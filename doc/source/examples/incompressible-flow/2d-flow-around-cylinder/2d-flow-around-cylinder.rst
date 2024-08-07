@@ -31,7 +31,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 -----------------------
 Description of the Case
 -----------------------
-We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken from the article by Blais *et al.* `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_):
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken from the article by Blais *et al.* [#blais2016]_):
 
 .. image:: images/geometry-description.png
     :alt: The geometry
@@ -43,7 +43,7 @@ We simulate the flow around a fixed cylinder with a constant upstream fluid velo
 Parameter File
 --------------
 
-Only the subsections of the parameter file that change significantly in comparison to :doc:`../2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow` and :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow` examples are explained in this section.
+Only the subsections of the parameter file that change significantly in comparison to :doc:`../2d-lid-driven-cavity-flow/lid-driven-cavity-flow` and :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow` examples are explained in this section.
 
 Mesh
 ~~~~~
@@ -283,4 +283,4 @@ Possibilities for Extension
 Reference
 ----------
 
-`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ 	B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” *Comput. Chem. Eng.*, vol. 85, pp. 136–146, Feb. 2016, doi: 10.1016/j.compchemeng.2015.10.019.
+.. [#blais2016] \B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” *Comput. Chem. Eng.*, vol. 85, pp. 136–146, Feb. 2016, doi: `10.1016/j.compchemeng.2015.10.019 <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_\.

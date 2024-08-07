@@ -545,8 +545,9 @@ namespace Parameters
       prm.get_double("cahn hilliard mobility constant");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_parameters(
+  ConstrainSolidDomain<dim>::declare_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        number_of_constraints)
   {
@@ -557,11 +558,31 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Enable/disable (true/false) the solid domain constraining feature.");
+
+      prm.declare_entry(
+        "enable domain restriction with plane",
+        "false",
+        Patterns::Bool(),
+        "Enable/disable (true/false) the definition of a plane for geometrical\n"
+        " restrictions on the domain where the solid domain constraining feature\n"
+        " is applied.");
+      std::string default_entry_sting = (dim == 2) ? "0., 0." : "0., 0., 0.";
+      prm.declare_entry("restriction plane point",
+                        default_entry_sting,
+                        Patterns::List(Patterns::Double()),
+                        "Domain restriction plane point coordinates.");
+      prm.declare_entry(
+        "restriction plane normal vector",
+        default_entry_sting,
+        Patterns::List(Patterns::Double()),
+        "Domain restriction plane outward pointing normal vector.");
+
       prm.declare_entry(
         "number of constraints",
         "0",
         Patterns::Integer(),
         "Number of solid constraints (maximum of 1 per fluid).");
+
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
       this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
@@ -578,12 +599,13 @@ namespace Parameters
           prm.leave_subsection();
         }
     }
-
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::declare_default_entries(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::declare_default_entries(
+    dealii::ParameterHandler &prm)
   {
     prm.declare_entry("fluid id",
                       "0",
@@ -607,12 +629,22 @@ namespace Parameters
                       "considered as a solid.");
   }
 
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_parameters(dealii::ParameterHandler &prm)
+  ConstrainSolidDomain<dim>::parse_parameters(dealii::ParameterHandler &prm)
   {
     prm.enter_subsection("constrain stasis");
     {
-      this->enable                = prm.get_bool("enable");
+      this->enable = prm.get_bool("enable");
+
+      // Restriction plane parameters
+      this->enable_domain_restriction_with_plane =
+        prm.get_bool("enable domain restriction with plane");
+      this->restriction_plane_point =
+        value_string_to_tensor<dim>(prm.get("restriction plane point"));
+      this->restriction_plane_normal_vector =
+        value_string_to_tensor<dim>(prm.get("restriction plane normal vector"));
+
       this->number_of_constraints = prm.get_integer("number of constraints");
 
       // Resize vectors
@@ -634,9 +666,9 @@ namespace Parameters
     }
   }
 
-
+  template <int dim>
   void
-  ConstrainSolidDomain::parse_constraint_parameters(
+  ConstrainSolidDomain<dim>::parse_constraint_parameters(
     dealii::ParameterHandler &prm,
     const unsigned int        constraint_id)
   {
@@ -1775,6 +1807,12 @@ namespace Parameters
                         "Enable calculation of flow rate at boundaries.");
 
       prm.declare_entry(
+        "calculate tracer flow rate",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of tracer flow rate at boundaries.");
+
+      prm.declare_entry(
         "initial time",
         "0.0",
         Patterns::Double(),
@@ -1794,6 +1832,11 @@ namespace Parameters
                         "flow_rate",
                         Patterns::FileName(),
                         "File output volumetric flux");
+
+      prm.declare_entry("tracer flow rate name",
+                        "tracer_flow_rate",
+                        Patterns::FileName(),
+                        "Output file name for tracer flow rate");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -1965,16 +2008,18 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop         = prm.get_bool("calculate pressure drop");
-      inlet_boundary_id               = prm.get_integer("inlet boundary id");
-      outlet_boundary_id              = prm.get_integer("outlet boundary id");
-      calculate_flow_rate             = prm.get_bool("calculate flow rate");
-      initial_time                    = prm.get_double("initial time");
-      kinetic_energy_output_name      = prm.get("kinetic energy name");
-      pressure_drop_output_name       = prm.get("pressure drop name");
-      flow_rate_output_name           = prm.get("flow rate name");
-      enstrophy_output_name           = prm.get("enstrophy name");
-      pressure_power_output_name      = prm.get("pressure power name");
+      calculate_pressure_drop      = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id            = prm.get_integer("inlet boundary id");
+      outlet_boundary_id           = prm.get_integer("outlet boundary id");
+      calculate_flow_rate          = prm.get_bool("calculate flow rate");
+      calculate_tracer_flow_rate   = prm.get_bool("calculate tracer flow rate");
+      initial_time                 = prm.get_double("initial time");
+      kinetic_energy_output_name   = prm.get("kinetic energy name");
+      pressure_drop_output_name    = prm.get("pressure drop name");
+      flow_rate_output_name        = prm.get("flow rate name");
+      tracer_flow_rate_output_name = prm.get("tracer flow rate name");
+      enstrophy_output_name        = prm.get("enstrophy name");
+      pressure_power_output_name   = prm.get("pressure power name");
       viscous_dissipation_output_name = prm.get("viscous dissipation name");
       apparent_viscosity_output_name  = prm.get("apparent viscosity name");
       output_frequency                = prm.get_integer("output frequency");
@@ -2469,6 +2514,11 @@ namespace Parameters
                           Patterns::Integer(),
                           "mg minimum number of cells for coarse level");
 
+        prm.declare_entry("mg int level",
+                          "-1",
+                          Patterns::Integer(),
+                          "mg int level");
+
         prm.declare_entry(
           "mg enable hessians in jacobian",
           "true",
@@ -2484,6 +2534,12 @@ namespace Parameters
                           "0.5",
                           Patterns::Double(),
                           "mg smoother relaxation for lsmg or gcmg");
+
+        prm.declare_entry("mg smoother preconditioner type",
+                          "inverse diagonal",
+                          Patterns::Selection(
+                            "inverse diagonal|additive schwarz method"),
+                          "Preconditioner of smoother");
 
         prm.declare_entry("mg smoother eig estimation",
                           "false",
@@ -2517,6 +2573,17 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "use elements with linear interpolation for coarse grid");
+
+        prm.declare_entry("mg coarsening type",
+                          "h",
+                          Patterns::Selection("h|p|hp|ph"),
+                          "mg coarsening type for gcmg");
+
+        prm.declare_entry("mg p coarsening type",
+                          "decrease by one",
+                          Patterns::Selection(
+                            "decrease by one|bisect|go to one"),
+                          "mg p coarsening type for gcmg");
 
         prm.declare_entry("mg gmres max iterations",
                           "2000",
@@ -2636,13 +2703,26 @@ namespace Parameters
 
         mg_min_level       = prm.get_integer("mg min level");
         mg_level_min_cells = prm.get_integer("mg level min cells");
+        mg_int_level       = prm.get_integer("mg int level");
         mg_enable_hessians_jacobian =
           prm.get_bool("mg enable hessians in jacobian");
         Assert(enable_hessians_jacobian || !mg_enable_hessians_jacobian,
                ExcNotImplemented());
 
-        mg_smoother_iterations     = prm.get_integer("mg smoother iterations");
-        mg_smoother_relaxation     = prm.get_double("mg smoother relaxation");
+        mg_smoother_iterations = prm.get_integer("mg smoother iterations");
+        mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
+
+        const std::string mg_smoother_preconditioner_type =
+          prm.get("mg smoother preconditioner type");
+        if (mg_smoother_preconditioner_type == "inverse diagonal")
+          this->mg_smoother_preconditioner_type =
+            MultigridSmootherPreconditionerType::InverseDiagonal;
+        else if (mg_smoother_preconditioner_type == "additive schwarz method")
+          this->mg_smoother_preconditioner_type =
+            MultigridSmootherPreconditionerType::AdditiveSchwarzMethod;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
         eig_estimation_smoothing_range =
           prm.get_double("eig estimation smoothing range");
@@ -2673,6 +2753,42 @@ namespace Parameters
             "Error, invalid coarse grid solver type. Choices are gmres, amg, ilu or direct.");
 
         mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
+
+        const std::string mg_coarsening_type = prm.get("mg coarsening type");
+        if (mg_coarsening_type == "h")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::h;
+        else if (mg_coarsening_type == "p")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::p;
+        else if (mg_coarsening_type == "hp")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::hp;
+        else if (mg_coarsening_type == "ph")
+          this->mg_coarsening_type = MultigridCoarseningSequenceType::ph;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
+        const std::string mg_p_coarsening_type =
+          prm.get("mg p coarsening type");
+        if (mg_p_coarsening_type == "decrease by one")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::decrease_by_one;
+        else if (mg_p_coarsening_type == "bisect")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::bisect;
+        else if (mg_p_coarsening_type == "go to one")
+          this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
+            PolynomialCoarseningSequenceType::go_to_one;
+        else
+          AssertThrow(false, ExcNotImplemented());
+
+        AssertThrow((!mg_use_fe_q_iso_q1) ||
+                      (this->mg_coarsening_type ==
+                       MultigridCoarseningSequenceType::h),
+                    ExcNotImplemented());
+
+        AssertThrow((preconditioner != PreconditionerType::lsmg) ||
+                      (this->mg_coarsening_type ==
+                       MultigridCoarseningSequenceType::h),
+                    ExcNotImplemented());
 
         mg_gmres_max_iterations = prm.get_integer("mg gmres max iterations");
         mg_gmres_tolerance      = prm.get_double("mg gmres tolerance");
@@ -3818,8 +3934,12 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  // Explicitly instantiate template classes and structs
   template class Laser<2>;
   template class Laser<3>;
   template class IBParticles<2>;
   template class IBParticles<3>;
+  template struct ConstrainSolidDomain<2>;
+  template struct ConstrainSolidDomain<3>;
+
 } // namespace Parameters

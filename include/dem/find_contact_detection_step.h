@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_find_contact_detection_step_h
+#define lethe_find_contact_detection_step_h
 
 #include <core/dem_properties.h>
 #include <core/serial_solid.h>
@@ -24,12 +26,8 @@
 
 using namespace dealii;
 
-#ifndef find_contact_detection_step_h
-#  define find_contact_detection_step_h
-
 /**
- * @brief Carries out finding steps for dynamic contact search for particle-particle
- * contacts
+ * @brief Find steps for dynamic contact search for particle-particle contacts.
  *
  * @param particle_handler
  * @param dt DEM time step
@@ -50,13 +48,12 @@ using namespace dealii;
  */
 
 template <int dim>
-bool
+void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
   const double                     dt,
   const double                     smallest_contact_search_criterion,
   MPI_Comm                        &mpi_communicator,
-  const bool                       sorting_in_subdomains_step,
   std::vector<double>             &displacement,
   const bool                       parallel_update = true);
 
@@ -72,7 +69,7 @@ find_particle_contact_detection_step(
  */
 
 template <int dim>
-bool
+void
 find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);

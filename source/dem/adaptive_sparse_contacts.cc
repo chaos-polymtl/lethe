@@ -1,21 +1,3 @@
-/* ---------------------------------------------------------------------
-*
-* Copyright (C) 2019 - 2022 by the Lethe authors
-*
-* This file is part of the Lethe library
-*
-* The Lethe library is free software; you can use it, redistribute
-* it, and/or modify it under the terms of the GNU Lesser General
-* Public License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-* The full text of the license can be found in the file LICENSE at
-* the top level of the Lethe distribution.
-*
-* ---------------------------------------------------------------------
-
-*
-*/
-
 #include <dem/adaptive_sparse_contacts.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -24,6 +6,8 @@
 
 template <int dim>
 AdaptiveSparseContacts<dim>::AdaptiveSparseContacts()
+  : sparse_contacts_enabled(false)
+  , advect_particles_enabled(false)
 {}
 
 template <int dim>
@@ -31,13 +15,14 @@ void
 AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
   const DoFHandler<dim> &background_dh)
 {
+  if (!sparse_contacts_enabled)
+    return;
+
   local_and_ghost_cells.clear();
   for (const auto &cell : background_dh.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
-        {
-          local_and_ghost_cells.insert(cell);
-        }
+        local_and_ghost_cells.insert(cell);
     }
 }
 
@@ -141,8 +126,24 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
   const unsigned int                     n_active_cells,
   MPI_Comm                               mpi_communicator)
 {
+  // If the sparse contacts are not enabled, exit the function
+  if (!sparse_contacts_enabled)
+    return;
+
   // Reset cell status containers
   cell_mobility_status.clear();
+
+  // Reset all status to mobile if mobility status needs to be reset
+  if (DEMActionManager::get_action_manager()->check_mobility_status_reset())
+    {
+      for (auto cell : local_and_ghost_cells)
+        {
+          assign_mobility_status(cell->active_cell_index(),
+                                 mobility_status::mobile);
+        }
+
+      return;
+    }
 
   // Get a copy of the active & ghost cells set to iterate over and remove cell
   // of the set when the mobility status is known. It avoids unnecessary
@@ -358,6 +359,13 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
   const std::vector<Tensor<1, 3>> &force,
   const double                     dt)
 {
+  // If the sparse contacts is disabled, exit the function.
+  // Also, if the mobility status do not need to be reset, which only happens
+  // at first dem iteration of the cfd iteration
+  if (!sparse_contacts_enabled ||
+      !DEMActionManager::get_action_manager()->check_mobility_status_reset())
+    return;
+
   cell_velocities_accelerations.clear();
 
   // Tensors for velocity and acceleration * dt computation

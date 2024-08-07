@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Simon Gauvin, Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 /*
@@ -37,6 +34,8 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 
 
 using namespace dealii;
@@ -558,9 +557,12 @@ namespace Parameters
    * @remark Pressure DOFs in "solid" cells that are next to "fluid" cells are
    * not constrained.
    *
+   * @tparam dim Number of dimensions of the problem (2D or 3D).
+   *
    * @note At the moment, only the temperature field is used to constrain the
    * "solid" domain.
    */
+  template <int dim>
   struct ConstrainSolidDomain
   {
     /// Enable/disable (@p true/false) the solid domain constraining feature.
@@ -581,6 +583,18 @@ namespace Parameters
 
     /// Upper threshold values of the constraining field (temperature)
     std::vector<double> temperature_max_values;
+
+    /// Enable/disable (@p true/false) the definition of a plane for geometrical
+    /// restrictions on the domain where the stasis constraint is applied.
+    bool enable_domain_restriction_with_plane;
+
+    /// Coordinates of a point on the restriction plane for the stasis
+    /// constraint application domain
+    Point<dim> restriction_plane_point;
+
+    /// Outward-pointing normal vector from the restricted domain to define the
+    /// restriction plane for the stasis constraint application domain
+    Tensor<1, dim> restriction_plane_normal_vector;
 
     /**
      * @brief Declare the parameters.
@@ -869,6 +883,9 @@ namespace Parameters
     /// Enable flow rate post-processing
     bool calculate_flow_rate;
 
+    /// Enable tracer flow rate post-processing
+    bool calculate_tracer_flow_rate;
+
     /// Set initial time to start calculations for velocities
     double initial_time;
 
@@ -886,6 +903,9 @@ namespace Parameters
 
     /// Prefix for flow rate output
     std::string flow_rate_output_name;
+
+    /// Prefix for tracer flow rate output
+    std::string tracer_flow_rate_output_name;
 
     /// Prefix for the enstrophy output
     std::string enstrophy_output_name;
@@ -1169,14 +1189,39 @@ namespace Parameters
     /// MG minimum number of cells per level
     int mg_level_min_cells;
 
+    /// MG intermediate level
+    int mg_int_level;
+
     /// MG enable hessians in jacobian
     bool mg_enable_hessians_jacobian;
+
+    /// Type of multigrid
+    enum class MultigridCoarseningSequenceType
+    {
+      h,
+      p,
+      hp,
+      ph
+    };
+    MultigridCoarseningSequenceType mg_coarsening_type;
+
+    /// Type of p coarsening sequence
+    MGTransferGlobalCoarseningTools::PolynomialCoarseningSequenceType
+      mg_p_coarsening_type;
 
     /// MG smoother number of iterations
     int mg_smoother_iterations;
 
     /// MG smoother relaxation parameter
     double mg_smoother_relaxation;
+
+    /// Type of preconditioner for the MG smoother
+    enum class MultigridSmootherPreconditionerType
+    {
+      InverseDiagonal,
+      AdditiveSchwarzMethod
+    };
+    MultigridSmootherPreconditionerType mg_smoother_preconditioner_type;
 
     /// MG eigenvalue estimation for smoother relaxation parameter
     bool mg_smoother_eig_estimation;

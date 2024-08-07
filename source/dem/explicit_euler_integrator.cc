@@ -33,11 +33,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties and location once
       // to improve efficiency
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      types::particle_index particle_id = particle->get_id();
-#else
       types::particle_index particle_id = particle->get_local_index();
-#endif
 
       auto          particle_properties = particle->get_properties();
       Tensor<1, 3> &particle_torque     = torque[particle_id];
@@ -53,6 +49,7 @@ ExplicitEulerIntegrator<dim>::integrate(
       if constexpr (dim == 2)
         particle_position = point_nd_to_3d(particle->get_location());
 
+      Tensor<1, 3> acceleration;
       for (int d = 0; d < 3; ++d)
         {
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
@@ -91,15 +88,27 @@ ExplicitEulerIntegrator<dim>::integrate(
 template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
-  Particles::ParticleHandler<dim> & /* particle_handler */,
-  const Tensor<1, 3> & /* g */,
-  const double /* dt */,
-  std::vector<Tensor<1, 3>> & /* torque */,
-  std::vector<Tensor<1, 3>> & /* force */,
-  const std::vector<double> & /* MOI */,
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Tensor<1, 3>              &g,
+  const double                     dt,
+  std::vector<Tensor<1, 3>>       &torque,
+  std::vector<Tensor<1, 3>>       &force,
+  const std::vector<double>       &MOI,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
   AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
 {
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  bool use_default_function =
+    !action_manager->check_sparse_contacts_enabled() ||
+    action_manager->check_mobility_status_reset();
+
+  if (use_default_function)
+    {
+      integrate(particle_handler, g, dt, torque, force, MOI);
+      return;
+    }
+
   throw std::runtime_error(
     "Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.");
 }

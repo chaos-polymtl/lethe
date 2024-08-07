@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_lagrangian_post_processing_h
+#define lethe_lagrangian_post_processing_h
 
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
@@ -30,9 +32,6 @@
 #include <vector>
 
 using namespace dealii;
-
-#ifndef lagrangian_post_processing_h
-#  define lagrangian_post_processing_h
 
 /**
  * This class deals with Lagrangian post-processing. At the moment, calculation
@@ -125,4 +124,4 @@ private:
   Vector<double> granular_temperature_average;
 };
 
-#endif /* lagrangian_post_processing_h */
+#endif

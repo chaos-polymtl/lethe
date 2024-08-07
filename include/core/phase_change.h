@@ -26,6 +26,7 @@ using namespace dealii;
  * a temperature T
  *
  * @param T temperature at which to calculate the liquid fraction
+ * @param phase_change_parameters
  * @return value of the liquid_fraction
  *
  */
@@ -46,8 +47,8 @@ calculate_liquid_fraction(
  * a temperature T
  *
  * @param T temperature at which to calculate the liquid fraction
- * @param solidus temperature
- * @param liquidus temperature
+ * @param T_solidus temperature
+ * @param T_liquidus temperature
  * @return value of the liquid_fraction
  *
  */

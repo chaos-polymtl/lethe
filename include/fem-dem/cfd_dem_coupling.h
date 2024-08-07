@@ -15,17 +15,23 @@
  *
  */
 
+
+#ifndef lethe_dem_cfd_coupling_h
+#define lethe_dem_cfd_coupling_h
+
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/gls_vans.h>
+#include <fem-dem/fluid_dynamics_vans.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <deal.II/base/work_stream.h>
@@ -39,267 +45,171 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-#ifndef lethe_dem_cfd_coupling_h
-#  define lethe_dem_cfd_coupling_h
-
 using namespace dealii;
 
+/**
+ * @brief Solver using the GLS Volume-averaged Navier-Stokes (VANS) solver for
+ * fluid and the soft-sphere model of the discrete element method (DEM) to
+ * simulate solid-fluid flow with two-way coupling.
+ */
 template <int dim>
-class CFDDEMSolver : public GLSVANSSolver<dim>
+class CFDDEMSolver : public FluidDynamicsVANS<dim>
 {
-  using FuncPtrType = bool (CFDDEMSolver<dim>::*)(const unsigned int &counter);
-  FuncPtrType check_contact_search_step;
-  FuncPtrType check_load_balance_step;
-
 public:
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
   ~CFDDEMSolver();
 
+  /**
+   * @brief Engine of the CFD-DEM solver. Calls all the necessary functions to
+   * set parameters, solve the simulation, and finish the simulation.
+   */
   virtual void
   solve() override;
 
-  /**
-   * The cell_weight() function indicates to the triangulation how much
-   * computational work is expected to happen on this cell, and consequently
-   * how the domain needs to be partitioned so that every MPI rank receives a
-   * roughly equal amount of work (potentially not an equal number of cells).
-   * While the function is called from the outside, it is connected to the
-   * corresponding signal from inside this class, therefore it can be private.
-   * This function is the key component that allow us to dynamically balance the
-   * computational load. The function attributes a weight to
-   * every cell that represents the computational work on this cell. Here the
-   * majority of work is expected to happen on the particles, therefore the
-   * return value of this function (representing "work for this cell") is
-   * calculated based on the number of particles in the current cell.
-   * The function is connected to the cell_weight() signal inside the
-   * triangulation, and will be called once per cell, whenever the triangulation
-   * repartitions the domain between ranks (the connection is created inside the
-   * particles_generation() function of this class).
-   */
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
-    const CellStatus status) const;
-#  endif
-
-
-  /**
-   * @brief Manages the call to the load balancing. Returns true if
-   * load balancing is performed
-   *
-   */
-  void
-  load_balance();
-
-protected:
 private:
   /**
-   * @brief Carries out the DEM calculations in the DEM_CFD solver. Particle-particle and particle-wall contact force calculations, integration and update_ghost
+   * @brief Set up the various parameters related to the DEM.
    */
   void
-  dem_iterator(unsigned int counter);
+  dem_setup_parameters();
 
   /**
-   * @brief Carries out the particle-particle and particle-wall contact searches, sort_particles_into_subdomains_and_cells and exchange_ghost
+   * @brief Initialize the distribution type for the particles, and sets the
+   * maximum particle diameter and the neighborhood threshold squared in the
+   * process.
    */
   void
-  dem_contact_build(unsigned int counter);
+  setup_distribution_type();
 
   /**
-   * @brief Sets up the various parameters related to the DEM contacts
-   */
-  void
-  dem_setup_contact_parameters();
-
-  /**
-   * @brief Connect triangulation for load balancing and particles
-   */
-  void
-  manage_triangulation_connections();
-
-  /**
-   * @brief Carries out the initialization of DEM parameters
-   */
-  void
-  initialize_dem_parameters();
-
-  /**
-   * @brief write DEM_output_results
-   * Post-processing as parallel VTU files
-   */
-  void
-  write_DEM_output_results();
-
-  /**
-   * @brief Carries out the fine particled-wall contact detection
+   * @brief Set the integration method.
    *
-   */
-  void
-  particle_wall_fine_search();
-
-  /**
-   * @brief Calculates particles-wall contact forces
-   *
-   */
-  void
-  particle_wall_contact_force();
-
-  /**
-   * @brief Updates moment of inertia container after sorting particles
-   * into subdomains
-   *
-   */
-  void
-  update_moment_of_inertia(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
-
-  /**
-   * Sets the chosen integration method in the parameter handler file
-   *
-   * @return A pointer to the integration object
+   * @return The pointer to the integration object
    */
   std::shared_ptr<Integrator<dim>>
   set_integrator_type();
 
   /**
-   * Adds fluid-particle interaction force to the "force" container
+   * @brief Initialize some DEM parameters.
+   */
+  void
+  initialize_dem_parameters();
+
+  /**
+   * @brief Read the DEM restart files from a DEM simulation.
+   */
+  void
+  read_dem();
+
+  /**
+   * @brief Write the CFD-DEM restart files.
+   */
+  void
+  write_checkpoint() override;
+
+  /**
+   * @brief Read the CFD-DEM restart files.
+   */
+  void
+  read_checkpoint() override;
+
+  /**
+   * @brief Execute the contact detection method.
    *
+   * @param[in] counter The DEM iteration.
+   */
+  void
+  check_contact_detection_method(unsigned int counter);
+
+  /**
+   * @brief Check if a load balancing is required according to the load
+   * balancing method and perform it if necessary.
+   */
+  void
+  load_balance();
+
+  /**
+   * @brief Add fluid-particle interaction force to the "force" container.
    */
   void
   add_fluid_particle_interaction_force();
 
   /**
-   * Adds fluid-particle interaction torque to the "torque" container
-   *
+   * @brief Add fluid-particle interaction torque to the "torque" container.
    */
   void
   add_fluid_particle_interaction_torque();
 
   /**
-   * Sets the chosen particle-particle contact force model in the parameter
-   * handler file
-   *
-   * @return A pointer to the particle-particle contact force object
+   * @brief Calculate particles-wall contact forces.
    */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-  set_particle_particle_contact_force();
+  void
+  particle_wall_contact_force();
 
   /**
-   * Sets the chosen particle-wall contact force model in the parameter handler
-   * file
-   *
-   * @return A pointer to the particle-wall contact force object
+   * @brief Post-processing as parallel VTU files.
    */
-  std::shared_ptr<ParticleWallContactForce<dim>>
-  set_particle_wall_contact_force();
-
   void
-  read_dem();
+  write_dem_output_results();
 
+  /**
+   * @brief Calculate statistics on the particles and report them to the
+   * terminal. This function is notably used to monitor the time min, max and
+   * total performed contact searches, and the instant min, max, avg and total
+   * values of the linear velocity, angular velocity, linear kinetic energy and
+   * angular kinetic.
+   */
   void
-  write_checkpoint() override;
+  report_particle_statistics();
 
-  void
-  read_checkpoint() override;
-
+  /**
+   * @brief Print the final summary of the particles.
+   */
   void
   print_particles_summary();
 
   /**
-   * @brief dem_post_process_results
-   */
-  void
-  dem_post_process_results();
-
-  /**
-   * @brief postprocess
-   * Post-process fluid dynamics after an iteration
+   * @brief Post-process fluid dynamics after an iteration.
    */
   void
   postprocess_fd(bool first_iteration) override;
 
   /**
-   * @brief postprocess for cfd-dem
-   * Post-process cfd-dem after an iteration
+   * @brief Post-process cfd-dem after an iteration.
    */
   void
   postprocess_cfd_dem();
 
   /**
-   * @brief dynamic_flow_control
-   * Dynamic flow control calculation that take into account the void fraction
-   * for the average velocity calculation
+   * @brief Dynamic flow control calculation that take into account the void
+   * fraction for the average velocity calculation.
    */
   void
   dynamic_flow_control() override;
 
   /**
-   * @brief Checks all the conditions that require a contact search step. The
-   * check of conditions is done in order of suspected frequency occurrence.
-   *
-   * @param counter The counter of DEM iterations in a CFD iteration.
+   * @brief Execute the sorting of particle into subdomains and cells, and
+   * reinitialize the containers dependent on the local particle ids.
    */
-  inline bool
-  contact_search_step(const unsigned int counter)
-  {
-    if (contact_detection_step)
-      {
-        // Contact search step according to the contact detection method
-        return true;
-      }
-    else if (counter == (coupling_frequency - 1) &&
-             (contact_search_counter == 0))
-      {
-        // Ensure that the contact search is executed at least once per CFD time
-        // step.
-        return true;
-      }
-    else if (has_sparse_contacts && (counter == 1))
-      {
-        // First mobility status identification of the CFD time step (from the
-        // velocity computed at the first DEM time step (counter = 0) of the CFD
-        // time step) The contact search is executed to make sure the mobility
-        // status of cell match the particles that are in.
-        return true;
-      }
-    else if (load_balance_step)
-      {
-        // Needs to update contacts since particles/cells may have been
-        // distributed to a different subdomain
-        return true;
-      }
-    else if ((this->simulation_control->is_at_start() && (counter == 0)) ||
-             checkpoint_step)
-      {
-        // First contact search of the simulation
-        return true;
-      }
-    else if (has_periodic_boundaries && particle_displaced_in_pbc)
-      {
-        // Particles have been displaced in periodic boundaries
-        return true;
-      }
-    else
-      {
-        return false;
-      }
-  }
+  void
+  sort_particles_into_subdomains_and_cells();
+
+  /**
+   * @brief Execute a complete DEM iteration, including the particle-particle
+   * and particle-wall contact force calculations, integration.
+   */
+  void
+  dem_iterator(unsigned int counter);
+
+  /**
+   * @brief Check if a contact search has to be performed and execute it if so.
+   */
+  void
+  dem_contact_build(unsigned int counter);
+
 
   unsigned int                               coupling_frequency;
-  bool                                       contact_detection_step;
-  bool                                       checkpoint_step;
-  bool                                       load_balance_step;
   Tensor<1, 3>                               g;
   std::vector<Tensor<1, 3>>                  torque;
   std::vector<Tensor<1, 3>>                  force;
@@ -311,6 +221,7 @@ private:
   double                                     smallest_contact_search_criterion;
 
   DEMContactManager<dim>           contact_manager;
+  LagrangianLoadBalancing<dim>     load_balancing;
   ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>> integrator_object;
   std::shared_ptr<Insertion<dim>>  insertion_object;
@@ -336,14 +247,9 @@ private:
   // Information for periodic boundaries
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   Tensor<1, dim>                     periodic_offset;
-  bool                               has_periodic_boundaries;
-  bool                               particle_displaced_in_pbc;
 
   // Object handling the sparse contacts
   AdaptiveSparseContacts<dim> sparse_contacts_object;
-
-  // Flag to indicate if sparse contacts are used
-  bool has_sparse_contacts;
 
   // Counter of contact searches in a CFD iteration
   unsigned int contact_search_counter;
@@ -353,7 +259,6 @@ private:
 
   // Storage of statistics about time and contact lists
   statistics contact_list;
-  statistics simulation_time;
 
   DEM::DEMProperties<dim> properties_class;
 
@@ -370,5 +275,7 @@ private:
   /// Post-processing variables to output total fluid volume and total particles
   /// volume
   TableHandler table_phase_volumes;
+
+  DEMActionManager *dem_action_manager;
 };
 #endif

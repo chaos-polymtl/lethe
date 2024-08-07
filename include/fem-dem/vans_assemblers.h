@@ -64,12 +64,11 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class GLSVansAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
+class VANSAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerCoreModelB(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerCoreModelB(std::shared_ptr<SimulationControl> simulation_control,
+                          Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -106,12 +105,11 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class GLSVansAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
+class VANSAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerCoreModelA(
-    std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerCoreModelA(std::shared_ptr<SimulationControl> simulation_control,
+                          Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -153,11 +151,11 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerBDF : public NavierStokesAssemblerBase<dim>
+class VANSAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
-                      Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
+                   Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -201,10 +199,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -237,10 +235,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerRong : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerRong(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerRong(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -269,10 +267,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -317,10 +315,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerKochHill(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerKochHill(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -358,10 +356,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerBeetstra : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerBeetstra : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBeetstra(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerBeetstra(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -407,10 +405,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerGidaspow(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerGidaspow(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -441,12 +439,11 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerSaffmanMei(
-    Parameters::Lagrangian::LagrangianPhysicalProperties
-      lagrangian_physical_properties)
+  VANSAssemblerSaffmanMei(Parameters::Lagrangian::LagrangianPhysicalProperties
+                            lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
@@ -477,11 +474,11 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerMagnus(Parameters::Lagrangian::LagrangianPhysicalProperties
-                           lagrangian_physical_properties)
+  VANSAssemblerMagnus(Parameters::Lagrangian::LagrangianPhysicalProperties
+                        lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
@@ -506,7 +503,7 @@ public:
  * M_viscous_rotation = pi * pow(dp, 3) * mu * (- omega_p)
  *
  * The complete model described by Derksen is composed of
- * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
+ * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -514,10 +511,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerViscousTorque(
+  VANSAssemblerViscousTorque(
     Parameters::Lagrangian::LagrangianPhysicalProperties
       lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
@@ -543,7 +540,7 @@ public:
  * M_viscous_vorticity = pi * pow(dp, 3) * mu * (0.5 * vorticity)
  *
  * The complete model described by Derksen is composed of
- * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
+ * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -551,10 +548,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerVorticalTorque(
+  VANSAssemblerVorticalTorque(
     Parameters::Lagrangian::LagrangianPhysicalProperties
       lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
@@ -586,11 +583,11 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBuoyancy(Parameters::Lagrangian::LagrangianPhysicalProperties
-                             lagrangian_physical_properties)
+  VANSAssemblerBuoyancy(Parameters::Lagrangian::LagrangianPhysicalProperties
+                          lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
 
   {}
@@ -619,10 +616,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerPressureForce(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerPressureForce(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -648,10 +645,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
+class VANSAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerShearForce(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerShearForce(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -677,10 +674,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerFPI : public NavierStokesAssemblerBase<dim>
+class VANSAssemblerFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerFPI(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerFPI(Parameters::CFDDEM cfd_dem)
     : cfd_dem(cfd_dem)
 
   {}

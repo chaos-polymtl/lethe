@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
  */
 
 

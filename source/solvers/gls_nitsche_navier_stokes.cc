@@ -12,10 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Carole-Anne Daunais, Valérie Bibeau, Polytechnique
- Montreal, 2020-
  */
 
 #include <core/bdf.h>
@@ -66,7 +62,7 @@ template <bool assemble_matrix>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble Nitsche restriction");
+  TimerOutput::Scope t(this->computing_timer, "Nitsche assemble restriction");
 
   Assert(
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
@@ -532,7 +528,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces(
   const unsigned int i_solid,
   bool               first_solid_forces)
 {
-  TimerOutput::Scope t(this->computing_timer, "calculate_force_on_solid");
+  TimerOutput::Scope t(this->computing_timer, "Calculate force on solid");
 
   std::vector<Tensor<1, spacedim>> force;
   std::vector<unsigned int>        solid_indices;
@@ -616,7 +612,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
   const unsigned int i_solid,
   bool               first_solid_torques)
 {
-  TimerOutput::Scope t(this->computing_timer, "calculate_torque_on_solid");
+  TimerOutput::Scope t(this->computing_timer, "Calculate torque on solid");
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<unsigned int> solid_indices;
@@ -711,7 +707,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   if (!this->simulation_parameters.restart_parameters.restart)
     {
       TimerOutput::Scope t(this->computing_timer,
-                           "Nitsche solid mesh and particles");
+                           "Nitsche setup solid mesh and particles");
       for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
         {
           solids[i_solid]->initial_setup();
@@ -742,7 +738,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
       this->simulation_control->print_progression(this->pcout);
 
       {
-        TimerOutput::Scope t(this->computing_timer, "Nitsche particles motion");
+        TimerOutput::Scope t(this->computing_timer, "Nitsche move particles");
         for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
           {
             if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
@@ -1016,7 +1012,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
   this->GLSNavierStokesSolver<spacedim>::read_checkpoint();
 
   TimerOutput::Scope t(this->computing_timer,
-                       "Reload Nitsche solid mesh and particles");
+                       "Nitsche reload solid mesh and particles");
 
   // Reload initial configurations
   // This must be done after the background triangulation is read

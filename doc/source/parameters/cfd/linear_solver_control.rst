@@ -190,9 +190,15 @@ AMG preconditioner
 .. seealso::
 	For more information about the ``amg`` preconditioner parameters, the reader is referred to the deal.II documentation for the `AMG preconditioner <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_ and its `Additional Data <https://www.dealii.org/current/doxygen/deal.II/structTrilinosWrappers_1_1PreconditionAMG_1_1AdditionalData.html>`_.
 
-------------------------------
-LSMG and GCMG preconditioners
-------------------------------
+--------------------------
+Multigrid preconditioners
+--------------------------
+
+Lethe supports two types of geometric multigrid preconditioners that only differ when dealing with locally-refined meshes:
+
+* Global coarsening ``gcmg``: coarsens all cells simultaneously, i.e., each level contains all the cells at their most refined state. 
+
+* Local smoothing ``lsmg``: uses the refinement hierarchy to create the multigrid levels and to perform smoothing refinement level by refinement level, i.e., cells of less refined parts of the mesh are skipped.
 
 Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: ``gmres``, ``amg``, ``ilu`` and ``direct``. The ``gmres`` coarse-grid solver supports two preconditioners ``amg`` and ``ilu``. 
 
@@ -202,6 +208,7 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg verbosity                   = quiet
     set mg min level                   = -1
     set mg level min cells             = -1
+    set mg int level                   = -1
     set mg enable hessians in jacobian = true
 
     # Relaxation smoother parameters
@@ -252,3 +259,27 @@ Different parameters for the main components of the two geometric multigrid algo
 
 .. tip::
   Evaluating terms involving the hessian is expensive. Therefore, one can turn on or off those terms in the mg level operators to improve performance by setting ``mg enable hessians in jacobian`` to ``false``. This is useful for certain problems and must be used carefully.
+
+.. tip::
+  The ``mg int level`` option only works for ``gcmg`` preconditioner. It allows to choose an intermediate level as coarse grid solver and to perform several multigrid v-cycles there.
+
+In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying two additional parameters:
+
+.. code-block:: text
+
+    set mg coarsening type             = p
+    set mg p coarsening type           = decrease by one
+
+This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree `p` of the shape functions. Three strategies to create the `p-multigrid` levels can be used by specifying the ``mg p coarsening type`` parameter:
+
+* ``bisect``: half polynomial degree.
+
+* ``decrease by one``: decrease the polynomial degree by one for every level.
+
+* ``go to one``: decrease the polynomial degree to one directly.
+
+In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the ``mg coarsening type`` parameter:
+
+* ``hp``: first levels with different mesh and then levels with different degree `p`.
+
+* ``ph``: first levels with different degree `p` and then levels with different mesh.

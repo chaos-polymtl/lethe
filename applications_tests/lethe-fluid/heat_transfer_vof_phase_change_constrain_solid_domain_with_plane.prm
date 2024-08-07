@@ -1,0 +1,214 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.04
+  set time step        = 0.01
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer  = true
+  set buoyancy force = true
+  set VOF            = true
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection temperature
+    set Function expression = 28
+  end
+  subsection VOF
+    set Function expression = if(y>=0.125, 0, 1)
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = 0 ; -1 ; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids      = 2
+  set reference temperature = 29.8
+
+  subsection fluid 0
+    set thermal conductivity    = 0.040516842071415184
+    set thermal expansion model = phase_change
+    set thermal expansion model = phase_change
+    set specific heat model     = phase_change
+    subsection phase change
+      set latent enthalpy      = 200
+      set liquidus temperature = 29.8
+      set solidus temperature  = 29.6
+      set viscosity liquid     = 0.0007366698558439125
+      set viscosity solid      = 10
+    end
+  end
+  subsection fluid 1
+    set thermal conductivity    = 0.040516842071415184
+    set thermal expansion model = phase_change
+    set thermal expansion model = phase_change
+    set specific heat model     = phase_change
+    subsection phase change
+      set latent enthalpy      = 200
+      set liquidus temperature = 34.8
+      set solidus temperature  = 34.6
+      set viscosity liquid     = 0.0007366698558439125
+      set viscosity solid      = 10
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 3, 2 : 0, 0 : 1, 0.714 : true
+  set initial refinement = 4
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = temperature
+    subsection value
+      set Function expression = 38
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = temperature
+    subsection value
+      set Function expression = 28
+    end
+  end
+end
+
+#---------------------------------------------------
+# Constrain Stasis
+#---------------------------------------------------
+
+subsection constrain stasis
+  set enable                               = true
+  set enable domain restriction with plane = true
+  set restriction plane point              = 0.0, 0.0
+  set restriction plane normal vector      = -1.0, 1.0
+  set number of constraints                = 2
+  subsection constraint 0
+    set fluid id                 = 0
+    set phase fraction tolerance = 1e-4
+    set min temperature          = 0
+    set max temperature          = 28
+  end
+  subsection constraint 1
+    set fluid id                 = 1
+    set phase fraction tolerance = 1e-4
+    set min temperature          = 0
+    set max temperature          = 33
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = verbose
+  set calculate pressure drop     = true
+  set calculate mass conservation = true
+  set calculate barycenter        = true
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set tolerance      = 1e-5
+    set max iterations = 30
+    set verbosity      = quiet
+  end
+  subsection fluid dynamics
+    set tolerance      = 1e-6
+    set max iterations = 5
+    set verbosity      = quiet
+  end
+  subsection VOF
+    set tolerance      = 1e-9
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = quiet
+    set minimum residual   = 1e-7
+    set max krylov vectors = 1000
+  end
+  subsection heat transfer
+    set verbosity        = quiet
+    set minimum residual = 1e-8
+  end
+  subsection VOF
+    set verbosity        = quiet
+    set minimum residual = 1e-10
+  end
+end

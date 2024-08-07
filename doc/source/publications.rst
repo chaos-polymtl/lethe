@@ -7,7 +7,9 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2024
 ----
 
-* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin et B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model,” Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
+* `L. Barbeau, S. Étienne, C. Béguin et B. Blais, “Solid-fluid force modeling: Insights from comparing a reduced order model for a pair of particles with resolved CFD-DEM”, International Journal of Multiphase Flow, p. 104882, 2024 <https://doi.org/10.1016/j.ijmultiphaseflow.2024.104882>`_.  
+
+* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin et B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model”, Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
 
 2023
 ----

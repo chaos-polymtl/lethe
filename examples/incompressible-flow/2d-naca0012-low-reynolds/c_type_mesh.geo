@@ -1,5 +1,4 @@
 //Gmsh project created on Thu Jan 19 11:58:52 2023
-//Author : Pierre Laurentin
 
 //Greatly inspired of https://github.com/ComputationalDomain/CMesh_rae69ck-il of the "Computational Domain" YouTube channel (https://www.youtube.com/@computational_domain)
 

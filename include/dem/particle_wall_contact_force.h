@@ -14,6 +14,9 @@
  * ---------------------------------------------------------------------
  */
 
+#ifndef lethe_particle_wall_contact_force_h
+#define lethe_particle_wall_contact_force_h
+
 #include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
 #include <core/serial_solid.h>
@@ -30,12 +33,9 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_contact_force_h
-#  define particle_wall_contact_force_h
-
 /**
- * Base interface for classes that carry out the calculation of particle-wall
- * contact force
+ * @brief Base interface for classes that carry out the calculation of
+ * particle-wall contact force.
  */
 
 template <int dim>
@@ -52,6 +52,7 @@ public:
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
     effective_surface_energy.resize(n_particle_types);
+    effective_hamaker_constant.resize(n_particle_types);
     model_parameter_beta.resize(n_particle_types);
 
     this->boundary_translational_velocity_map =
@@ -68,7 +69,7 @@ public:
   {}
 
   /**
-   * Carries out the calculation of the particle-wall contact force using the
+   * @brief Carries out the calculation of the particle-wall contact force using the
    * contact pair information obtained from the particle-wall fine search and
    * physical properties of particles and walls
    *
@@ -118,7 +119,8 @@ public:
     return torque_on_walls;
   }
 
-  /** This function is used to find the projection of vector_a on
+  /**
+   * @brief This function is used to find the projection of vector_a on
    * vector_b
    * @param vector_a A vector which is going to be projected on vector_b
    * @param vector_b The projection vector of vector_a
@@ -135,7 +137,7 @@ public:
 
 protected:
   /**
-   * Carries out updating the contact pair information for both non-linear and
+   * @brief Update the contact pair information for both non-linear and
    * linear contact force calculations
    *
    * @param contact_pair_information Contact information of a particle-wall pair
@@ -151,7 +153,7 @@ protected:
     const double                     dt);
 
   /**
-   * Carries out updating the contact pair information for particle-floating
+   * @brief Update the contact pair information for particle-floating
    * wall contacts
    *
    * @param contact_pair_information Contact information of a particle-wall pair
@@ -173,7 +175,7 @@ protected:
     const double                     center_of_rotation_particle_distance);
 
   /**
-   * Carries out applying the calculated force and torque on the particle in
+   * @brief Apply the calculated force and torque on the particle in
    * contact with the given wall, for both non-linear and linear contact force
    * calculations
    *
@@ -233,14 +235,14 @@ protected:
   std::map<unsigned int, Tensor<1, 3>>
   initialize();
 
-  /** This function sums all the forces and torques from all the
+  /**
+   * @brief This function sums all the forces and torques from all the
    * MPI processes
    */
   void
   mpi_correction_over_calculation_of_forces_and_torques();
 
   double effective_radius;
-  double effective_mass;
   std::unordered_map<unsigned int, Tensor<1, 3>>
                                            boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
@@ -255,6 +257,7 @@ protected:
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
   std::vector<double> effective_surface_energy;
+  std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
@@ -266,4 +269,4 @@ protected:
   const unsigned int              vertices_per_triangle = 3;
 };
 
-#endif /* particle_wall_contact_force_h */
+#endif

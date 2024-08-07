@@ -12,10 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Bruno Blais, Polytechnique Montreal, 2019-
-*/
+ */
 
 #include "fem-dem/gls_sharp_navier_stokes.h"
 

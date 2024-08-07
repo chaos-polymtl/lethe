@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_dem_h
+#define lethe_dem_h
 
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
@@ -21,14 +23,17 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/force_chains_visualization.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
+#include <dem/load_balancing.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>
@@ -49,14 +54,11 @@
 #include <iostream>
 #include <unordered_set>
 
-#ifndef lethe_dem_h
-#  define lethe_dem_h
-
 using namespace DEM;
 
 /**
- * The DEM class which initializes all the required parameters and iterates over
- * the DEM iterator
+ * @brief Solver using the soft-sphere model of the discrete element method
+ * (DEM) to simulate granular systems.
  */
 template <int dim>
 class DEMSolver
@@ -65,360 +67,465 @@ public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
   /**
-   * Initialiazes all the required parameters and iterates over the DEM iterator
-   * (DEM engine).
+   * @brief Engine of the DEM solver. Calls all the necessary functions to set
+   * parameters, solve the simulation, and finish the simulation.
    */
   void
   solve();
 
 private:
   /**
-   * The cell_weight() function indicates to the triangulation how much
-   * computational work is expected to happen on this cell, and consequently
-   * how the domain needs to be partitioned so that every MPI rank receives a
-   * roughly equal amount of work (potentially not an equal number of cells).
-   * While the function is called from the outside, it is connected to the
-   * corresponding signal from inside this class, therefore it can be private.
-   * This function is the key component that allow us to dynamically balance the
-   * computational load. The function attributes a weight to
-   * every cell that represents the computational work on this cell. Here the
-   * majority of work is expected to happen on the particles, therefore the
-   * return value of this function (representing "work for this cell") is
-   * calculated based on the number of particles in the current cell.
-   * The function is connected to the cell_weight() signal inside the
-   * triangulation, and will be called once per cell, whenever the triangulation
-   * repartitions the domain between ranks (the connection is created inside the
-   * particles_generation() function of this class).
+   * @brief Set the parameters for the DEM simulation
    */
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
-  unsigned int
-  cell_weight(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
-    const CellStatus status) const;
-#  endif
+  void
+  setup_parameters();
 
   /**
-   * Similar to the cell_weight() function, this function is used when the cell
-   * weight is adapted to the mobility status. For instance, if the
-   * cell is inactive, its computational load will be significantly lower than
-   * if it is a mobile cell since there is no force calculation and no velocity
-   * integration for the particles that lie within it. The weight of the cells
-   * must thus be adapted to the status of the cell.
-   *
-   * cell load = cell weight + load balancing factor * n particles * particle
-   * weight
-   *
-   * @param cell The cell for which the load is calculated
-   *
-   * @param status The status of the cell used to inform functions in derived
-   * classes how the cell with the given cell iterator is going to change
-   *
-   * @param mobility_status The mobility status of the cell
+   * @brief Initialize the distribution type for the particles, and sets the
+   * maximum particle diameter and the neighborhood threshold squared in the
+   * process.
    */
-
-#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-  unsigned int
-  cell_weight_with_mobility_status(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
-#  else
-  unsigned int
-  cell_weight_with_mobility_status(
-    const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
-    const CellStatus status) const;
-#  endif
+  void
+  setup_distribution_type();
 
   /**
-   * @brief Sets the right iteration check function according to the chosen contact detection method.
-   *
-   * @return Return a function. This function returns a bool indicating if the contact search should be carried out in the current iteration.
+   * @brief Set up the solid object containers with serial objects.
+   * TODO: Modify this set up once the solid volumes are fully implemented.
    */
-  inline std::function<bool()>
+  void
+  setup_solid_objects();
+
+  /**
+   * @brief Set up the pointers to the functions and classes according to the
+   * parameters.
+   */
+  void
+  setup_functions_and_pointers();
+
+  /**
+   * @brief Set the iteration check function according to the chosen
+   * contact detection method.
+   *
+   * @return Contact detection method function.
+   */
+  inline std::function<void()>
   set_contact_search_iteration_function();
 
   /**
-   * @brief Establish if this is a contact detection iteration using the constant contact detection frequency.
-   * If the iteration number is a multiple of the frequency, this iteration is
-   * considered to be a contact detection iteration.
+   * @brief Set the insertion method.
    *
-   * @return bool indicating if the contact search should be carried out in the current iteration.
-   */
-  inline bool
-  check_contact_search_iteration_constant();
-
-  /**
-   * @brief Establish if this is a contact detection iteration using the maximal displacement of the particles.
-   * If this particle displacement surpasses a threshold, this iteration is a
-   * contact detection iteration.
-   *
-   * @return bool indicating if the contact search should be carried out in the current iteration.
-   */
-  inline bool
-  check_contact_search_iteration_dynamic();
-
-  /**
-   * @brief Sets the right contact iteration check function according to the chosen load balancing method.
-   *
-   * @return Return a function. This function returns a bool indicating if the current time step is a load balance iteration.
-   */
-  inline std::function<bool()>
-  set_load_balance_iteration_check_function();
-
-  /**
-   * @brief For `load balance method = once`, determines whether the present is the load balance step.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_once();
-
-  /**
-   * @brief Determine whether the present is a load-balance step given a user-defined frequency.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_frequent();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method. The dynamic method
-   * uses the load imbalance between the core as a load balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_dynamic();
-
-  /**
-   * @brief Establish if this is a load-balance step using the dynamic method when the sparse contacts mechanism is enabled.
-   * The dynamic method uses the load imbalance between the core as a load
-   * balancing criteria.
-   *
-   * @return bool indicating if this is a load balance iteration.
-   */
-  inline bool
-  check_load_balance_with_sparse_contacts();
-
-  /**
-   * @brief Manages the call to the load balance by first identifying if
-   * load balancing is required and then performing the load balance.
-   */
-  void
-  load_balance();
-
-  /**
-   * @brief Manages the call to the particle insertion. Returns true if
-   * particles were inserted
-   *
-   */
-  bool
-  insert_particles();
-
-  /**
-   * @brief Updates moment of inertia container after sorting particles
-   * into subdomains
-   *
-   */
-  void
-  update_moment_of_inertia(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
-
-
-  /**
-   * @brief Calculates particles-wall contact forces
-   *
-   */
-  void
-  particle_wall_contact_force();
-
-  /**
-   * @brief finish_simulation
-   * Finishes the simulation by calling all
-   * the post-processing elements that are required
-   */
-  void
-  finish_simulation();
-
-  /**
-   * Sets the chosen insertion method in the parameter handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the insertion object
+   * @return The pointer to the insertion object
    */
   std::shared_ptr<Insertion<dim>>
-  set_insertion_type(const DEMSolverParameters<dim> &dem_parameters);
+  set_insertion_type();
 
   /**
-   * Sets the chosen integration method in the parameter handler file
+   * @brief Set the integration method.
    *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the integration object
+   * @return The pointer to the integration object
    */
   std::shared_ptr<Integrator<dim>>
-  set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
+  set_integrator_type();
 
   /**
-   * Sets the chosen particle-particle contact force model in the parameter
-   * handler file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-particle contact force object
+   * @brief Set up the triangulation dependent parameters after the reading of
+   * the mesh and/or the simulation restart.
    */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
-  set_particle_particle_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
+  void
+  setup_triangulation_dependent_parameters();
 
   /**
-   * Sets the chosen particle-wall contact force model in the parameter handler
-   * file
-   *
-   * @param dem_parameters DEM parameters
-   * @return A pointer to the particle-wall contact force object
-   */
-  std::shared_ptr<ParticleWallContactForce<dim>>
-  set_particle_wall_contact_force(
-    const DEMSolverParameters<dim> &dem_parameters);
-
-  /**
-   * Sets the background degree of freedom used for parallel grid output
-   *
+   * @brief Set up the background degree of freedom used for parallel grid
+   * output or mapping of periodic dofs when using periodic boundaries.
    */
   void
   setup_background_dofs();
 
   /**
-   * @brief write_output_results
-   * Generates VTU file with particles information for visualization and
-   * post-processing
-   * Post-processing as parallel VTU files
+   * @brief Check if a load balancing is required according to the load
+   * balancing method and perform it if necessary.
+   */
+  void
+  load_balance();
+
+  /**
+   * @brief Establish if this is a contact detection iteration using the
+   * constant contact detection frequency.
+   * If the iteration number is a multiple of the frequency, this iteration is
+   * considered to be a contact detection iteration.
+   */
+  inline void
+  check_contact_search_iteration_constant();
+
+  /**
+   * @brief Establish if this is a contact detection iteration using the
+   * maximal displacement of the particles. If this particle displacement
+   * surpasses a threshold, this iteration is a contact detection iteration.
+   */
+  inline void
+  check_contact_search_iteration_dynamic();
+
+  /**
+   * @brief Check if particles have to be inserted at this iteration and
+   * perform it if necessary.
+   */
+  void
+  insert_particles();
+
+  /**
+   * @brief Calculates particles-wall contact forces.
+   */
+  void
+  particle_wall_contact_force();
+
+  /**
+   * @brief Move all solid objects.
+   */
+  void
+  move_solid_objects();
+
+  /**
+   * @brief Execute the last post-processing at the end of the simulation and
+   * output test results if necessary.
+   */
+  void
+  finish_simulation();
+
+  /**
+   * @brief Generate VTU file with particles information for visualization.
    */
   void
   write_output_results();
 
   /**
-   * @brief post_process_results Calculates average velocity and other post-processed quantities that need to be outputted to files
+   * @brief Calculate average velocity and other post-processed quantities that
+   * need to be outputted to files.
    */
   void
   post_process_results();
 
-
   /**
-   * @brief reports_statistics Calculates statistics on the particles and report them to the terminal. This function is notably used to calculate min/max/avg/total values of the linear kinetic energy, angular kinetic energy, linear velocity, angular velocity
+   * @brief Calculate statistics on the particles and report them to the
+   * terminal. This function is notably used to monitor the time min, max and
+   * total performed contact searches, and the instant min, max, avg and total
+   * values of the linear velocity, angular velocity, linear kinetic energy and
+   * angular kinetic.
    */
   void
   report_statistics();
 
-  MPI_Comm                                  mpi_communicator;
-  const unsigned int                        n_mpi_processes;
-  const unsigned int                        this_mpi_process;
-  ConditionalOStream                        pcout;
-  DEMSolverParameters<dim>                  parameters;
+  /**
+   * @brief Execute the sorting of particle into subdomains and cells, and
+   * reinitialize the containers dependent on the local particle ids.
+   */
+  void
+  sort_particles_into_subdomains_and_cells();
+
+  /**
+   * @brief The MPI communicator used for the parallel simulation.
+   */
+  MPI_Comm mpi_communicator;
+
+  /**
+   * @brief The number of MPI processes used for the parallel simulation.
+   */
+  const unsigned int n_mpi_processes;
+
+  /**
+   * @brief The rank of the current MPI process.
+   */
+  const unsigned int this_mpi_process;
+
+  /**
+   * @brief The output stream used for the parallel simulation, only used by
+   * the process 0.
+   */
+  ConditionalOStream pcout;
+
+  /**
+   * @brief The parameters of the DEM simulation.
+   */
+  DEMSolverParameters<dim> parameters;
+
+  /**
+   * @brief The distributed triangulation used for the DEM simulation.
+   */
   parallel::distributed::Triangulation<dim> triangulation;
 
-  MappingQGeneric<dim>                 mapping;
-  bool                                 particles_insertion_step;
-  unsigned int                         contact_build_number;
-  TimerOutput                          computing_timer;
-  double                               smallest_contact_search_criterion;
-  double                               smallest_floating_mesh_mapping_criterion;
-  Particles::ParticleHandler<dim, dim> particle_handler;
-  bool                                 contact_detection_step;
-  bool                                 load_balance_step;
-  bool                                 checkpoint_step;
-  Tensor<1, 3>                         g;
+  /**
+   * @brief The polynomial mapping. The mapping is first order in DEM
+   * simulations.
+   */
+  MappingQGeneric<dim> mapping;
 
-  DEM::DEMProperties<dim>                  properties_class;
-  std::vector<std::pair<std::string, int>> properties =
-    properties_class.get_properties_name();
-  double             neighborhood_threshold_squared;
-  double             maximum_particle_diameter;
+  /**
+   * @brief The particle handler that manages the particles.
+   */
+  Particles::ParticleHandler<dim, dim> particle_handler;
+
+  /**
+   * @brief The action manager that manages the actions triggered by events.
+   */
+  DEMActionManager *action_manager;
+
+  /**
+   * @brief The timer that keeps track of the time spent in some functions.
+   * Currently theses functions are: load balancing and VTU output.
+   */
+  TimerOutput computing_timer;
+
+  /**
+   * @brief The properties of the DEM simulation.
+   */
+  DEM::DEMProperties<dim> properties_class;
+
+  /**
+   * @brief The acceleration acting on the particles.
+   */
+  Tensor<1, 3> g;
+
+  /**
+   * @brief The contact search frequency criterion for the dynamic contact
+   * detection method.
+   * The value is the smallest value between those two quantities:
+   * - The diameter of the smallest active cell of a triangulation minus the
+   *   largest particle radius.
+   *   \f$D_{c,min} - D_{p,max} / 2\f$
+   * - A security factor on the neighboring threshold times the largest particle
+   *   radius.
+   *   \f$factor * (neighborhood_threshold - 1) * D_{p,max} / 2\f$
+   */
+  double smallest_contact_search_criterion;
+
+  /**
+   * @brief The smallest solid object mapping criterion.
+   * The value is \f$2^-0.5 * D_{c,min}\f$
+   */
+  double smallest_solid_object_mapping_criterion;
+
+  /**
+   * @brief The neighborhood threshold squared.
+   *        \f$(\text{neighborhood_threshold} * D_{p,max})^2\f$
+   */
+  double neighborhood_threshold_squared;
+
+  /**
+   * @brief The maximum particle diameter.
+   */
+  double maximum_particle_diameter;
+
+  /**
+   * @brief The frequency of the contact searches.
+   */
   const unsigned int contact_detection_frequency;
+
+  /**
+   * @brief The frequency of the insertion of particles
+   */
   const unsigned int insertion_frequency;
 
-  // Initilization of classes and building objects
-  DEMContactManager<dim>             contact_manager;
+  /**
+   * @brief The counter to keep track of the number of contact search.
+   */
+  unsigned int contact_build_number;
+
+  /**
+   * @brief The manager of all the contact search operations.
+   */
+  DEMContactManager<dim> contact_manager;
+
+  /**
+   * @brief The load balancing handler.
+   */
+  LagrangianLoadBalancing<dim> load_balancing;
+
+  /**
+   * @brief The simulation control (DEM Transient).
+   */
   std::shared_ptr<SimulationControl> simulation_control;
-  BoundaryCellsInformation<dim>      boundary_cell_object;
-  std::shared_ptr<GridMotion<dim>>   grid_motion_object;
-  ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>   integrator_object;
-  std::shared_ptr<Insertion<dim>>    insertion_object;
+
+  /**
+   * @brief The boundary cells object.
+   */
+  BoundaryCellsInformation<dim> boundary_cell_object;
+
+  /**
+   * @brief The grid motion object.
+   */
+  std::shared_ptr<GridMotion<dim>> grid_motion_object;
+
+  /**
+   * @brief The particle-particle contact force object.
+   */
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
-  std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
+
+  /**
+   * @brief The particle-wall contact force object.
+   */
   std::shared_ptr<ParticleWallContactForce<dim>>
-                                particle_wall_contact_force_object;
-  Visualization<dim>            visualization_object;
+    particle_wall_contact_force_object;
+
+  /**
+   * @brief The particle-point-line contact force object.
+   */
+  ParticlePointLineForce<dim> particle_point_line_contact_force_object;
+
+  /**
+   * @brief The particle force chains post-processing object.
+   */
+  std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
+
+  /**
+   * @brief The post-processing object.
+   */
   LagrangianPostProcessing<dim> post_processing_object;
-  PVDHandler                    particles_pvdhandler;
-  PVDHandler                    particles_pvdhandler_force_chains;
 
+  /**
+   * @brief The integrator object.
+   */
+  std::shared_ptr<Integrator<dim>> integrator_object;
+
+  /**
+   * @brief The insertion object.
+   */
+  std::shared_ptr<Insertion<dim>> insertion_object;
+
+  /**
+   * @brief The visualization object.
+   */
+  Visualization<dim> visualization_object;
+
+  /**
+   * @brief The particle PVD handler.
+   */
+  PVDHandler particles_pvdhandler;
+
+  /**
+   * @brief The force chains PVD handler.
+   */
+  PVDHandler particles_pvdhandler_force_chains;
+
+  /**
+   * @brief The vector of torque of particles.
+   */
   std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       displacement;
-  std::vector<double>       MOI;
 
-  // Mesh and boundary information
+  /**
+   * @brief The vector of force of particles.
+   */
+  std::vector<Tensor<1, 3>> force;
+
+  /**
+   * @brief The displacement tracking of particles for the dynamic contact
+   * detection.
+   */
+  std::vector<double> displacement;
+
+  /**
+   * @brief The moment of inertia of particles.
+   */
+  std::vector<double> MOI;
+
+  /**
+   * @brief The vector of vector of pairs of the mapping of the background mesh
+   * to the solid surface.
+   */
   typename dem_data_structures<dim>::solid_surfaces_mesh_information
     solid_surfaces_mesh_info;
+
+  /**
+   * @brief The vector of vector of pairs of the mapping of the background mesh
+   * to the solid volume.
+   */
   typename dem_data_structures<dim>::solid_volumes_mesh_info
     solid_volumes_mesh_info;
+
+  /**
+   * @brief The map of the point and normal vector of grid.
+   * Only used with grid motion.
+   */
   typename dem_data_structures<dim>::boundary_points_and_normal_vectors
     updated_boundary_points_and_normal_vectors;
+
+  /**
+   * @brief The boundary information of the forces.
+   */
   typename dem_data_structures<dim>::vector_on_boundary
     forces_boundary_information;
+
+  /**
+   * @brief The torques boundary information.
+   */
   typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
+
+  /**
+   * @brief The periodic boundaries cells information map.
+   * Only used with a simulation with periodic boundaries.
+   */
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information;
 
-  // Information for periodic boundaries
+  /**
+   * @brief The periodic boundaries manipulator.
+   * Only used with a simulation with periodic boundaries.
+   */
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
-  Tensor<1, dim>                     periodic_offset;
-  bool                               has_periodic_boundaries;
 
-  // Information for parallel grid processing
+  /**
+   * @brief The background degree of freedom handler uses for parallel grid
+   * processing.
+   */
   DoFHandler<dim> background_dh;
-  PVDHandler      grid_pvdhandler;
-  bool            has_solid_objects;
 
-  // Storage of statistics about time and contact lists
+  /**
+   * @brief The grid PVD handler.
+   */
+  PVDHandler grid_pvdhandler;
+
+  /**
+   * @brief The storage of statistics about time and contact lists
+   */
   statistics contact_list;
-  statistics simulation_time;
 
-  // Solid DEM objects
+  /**
+   * @brief The container of the solid surfaces.
+   */
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solid_surfaces;
-  std::vector<std::shared_ptr<SerialSolid<dim, dim>>>     solid_volumes;
 
-  // Distribution objects
+  /**
+   * @brief The container of the solid volumes.
+   */
+  std::vector<std::shared_ptr<SerialSolid<dim, dim>>> solid_volumes;
+
+  /**
+   * @brief The container of the distribution objects.
+   */
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
 
-  // Adaptive sparce contacts (ASC) in cells object
+  /**
+   * @brief The object handling the adaptive sparse contacts (ASC).
+   * Only used with the ASC method.
+   */
   AdaptiveSparseContacts<dim> sparse_contacts_object;
 
-  // Flag to indicate if sparse contacts are enabled
-  bool has_sparse_contacts;
-
-  // Contraints for the background grid needed for ASC with PBC
+  /**
+   * @brief The constraints for the background grid needed for the adaptive sparse.
+   */
   AffineConstraints<double> background_constraints;
 
-  // Load balancing iteration check function
+  /**
+   * @brief The pointer to the function that checks if a load balancing is
+   * required.
+   */
   std::function<bool()> load_balance_iteration_check_function;
 
-  // Contact detection iteration check function
-  std::function<bool()> contact_detection_iteration_check_function;
+  /**
+   * @brief The pointer to the contact detection function that checks if a
+   * contact search is required.
+   */
+  std::function<void()> contact_detection_iteration_check_function;
 };
 
 #endif

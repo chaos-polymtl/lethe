@@ -47,7 +47,8 @@ namespace Parameters
   /** @brief Class to account for different phase fraction filtering types:
    * - none: no filter wil be applied on the calculated phase fraction
    * - tanh: the tanh filter function will be applied to the phase fraction,
-   * a $$\beta$$ parameter influencing the interface definition must be defined
+   * a \f$\beta\f$ parameter influencing the interface definition must be
+   * defined
    */
   enum class FilterType
   {

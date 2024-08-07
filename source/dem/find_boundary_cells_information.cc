@@ -1,6 +1,7 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/find_boundary_cells_information.h>
 
 #include <deal.II/distributed/tria.h>
@@ -229,6 +230,10 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
   typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
     &updated_boundary_points_and_normal_vectors)
 {
+  // If there is no grid motion, exit the function
+  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
+    return;
+
   // Initialize a simple quadrature for on the system. This will be used to
   // obtain a single sample point on the boundary faces
   const FE_Q<dim>   fe(1);

@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_wall_jkr_force_h
+#define lethe_particle_wall_jkr_force_h
 
 #include <core/dem_properties.h>
 
@@ -29,15 +31,11 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_jkr_force_h
-#  define particle_wall_jkr_force_h
-
 /**
  * @brief Calculation of the JKR particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
  */
-
 template <int dim>
 class ParticleWallJKRForce : public ParticleWallContactForce<dim>
 {

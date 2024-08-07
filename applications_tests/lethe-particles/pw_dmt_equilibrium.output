@@ -2,8 +2,7 @@
 *********************
 Running on 1 rank(s)
 *********************
-DEM time-step is 0.11331% of Rayleigh time step
-Warning: It is recommended to increase the time-step
+DEM time-step is 7.16634% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
@@ -14,13 +13,13 @@ This feature is useful in geometries with concave boundaries.
 *********************************************************************
 
 *****************************************************************
-Transient iteration: 10000    Time: 10       Time step: 0.001
+Transient iteration: 10000    Time: 0.1      Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      |
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 1.0000e+00 |
-| Velocity magnitude           | 7.6385e-04 | 7.6385e-04  | 7.6385e-04 | 7.6385e-04 |
+| Velocity magnitude           | 2.0555e-16 | 2.0555e-16  | 2.0555e-16 | 2.0555e-16 |
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
-| Translational kinetic energy | 3.1772e-03 | 3.1772e-03  | 3.1772e-03 | 3.1772e-03 |
+| Translational kinetic energy | 2.8758e-41 | 2.8758e-41  | 2.8758e-41 | 2.8758e-41 |
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
 id, type, dp, x, y, z
-0 0 2.00000 0.9586 1.0000 1.0000
+0 0 0.00010 0.0000 0.0010 0.0010

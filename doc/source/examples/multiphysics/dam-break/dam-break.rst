@@ -2,7 +2,7 @@
 Dam-Break
 ==========================
 
-This example simulates the dam break experiments of Martin and Moyce `[1] <https://doi.org/10.1098/rsta.1952.0006>`_.
+This example simulates the dam break experiments of Martin and Moyce [#martin1952]_.
 
 
 ----------------------------------
@@ -258,7 +258,7 @@ Run
 
 to execute this post-processing code, where ``./output`` is the directory that contains the simulation results.
 In post-processing, the maximum dimensionless lateral position of the liquid phase is tracked
-through time and compared with the experiments of Martin and Moyce (1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_.
+through time and compared with the experiments of Martin and Moyce (1952) [#martin1952]_.
 The following figure shows the result of the post-processing, with a good agreement between the simulation and the experiment:
 
 .. image:: images/xmax-t.png
@@ -280,4 +280,4 @@ and refines the meshes on the interface.
 References
 ----------------------------
 
-`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ J. C. Martin *et al.*, “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” *Philos. Trans. R. Soc. Lond. Ser. Math. Phys. Sci.*, vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: 10.1098/rsta.1952.0006.
+.. [#martin1952] \J. C. Martin *et al.*, “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” *Philos. Trans. R. Soc. Lond. Ser. Math. Phys. Sci.*, vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: `10.1098/rsta.1952.0006 <https://doi.org/10.1098/rsta.1952.0006>`_\.

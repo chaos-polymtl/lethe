@@ -3,6 +3,88 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-06
+
+### Changed
+
+- MINOR Renamed the main file related to the `lethe-fluid-block` application: `gd_navier_stokes` to `fluid_dynamics_block`. The name of the `GDNavierStokesAssembler...` classes were changed to `BlockNavierStokesAssembler...`, and the main class `GDNavierStokesSolver` was also renamed to `FluidDynamicsBlock`. [#1226](https://github.com/chaos-polymtl/lethe/pull/1226)
+
+## [Master] - 2024-08-05
+
+### Changed
+
+- MINOR Renamed the main file related to the `lethe-fluid-vans` application: `gls_vans` to `fluid_dynamics_vans`. The name of the `GLSVansAssembler...` classes were changed to `VANSAssembler...`, and the main class `GLSVANSSolver` was also renamed to `FluidDynamicsVANS`. [#1225](https://github.com/chaos-polymtl/lethe/pull/1225)
+
+### Changed
+
+- MINOR Renamed all the files related to the `lethe-fluid-matrix-free` application: `mf_navier_stokes` to `fluid_dynamics_matrix_free` and `mf_navier_stokes_operators` to `fluid_dynamics_matrix_free_operators`. The main class `MFNavierStokesSolver` was also renamed to `FluidDynamicsMatrixFree`. [#1222](https://github.com/chaos-polymtl/lethe/pull/1222)
+
+### Added
+
+- MINOR A post-processing feature for the tracer flow rate through boundaries is added. This allows to produce data useful for residence time distribution analyses. [#1197](https://github.com/chaos-polymtl/lethe/pull/1197)
+
+### Fixed
+
+- MINOR Conditions for whether a boundary condition should be updated were made less restrictive. Now, each physics is responsible for updating or not their boundary conditions. [#1197](https://github.com/chaos-polymtl/lethe/pull/1197)
+
+### Removed
+
+- MINOR Removed the gear3 DEM integrator. It was never used, it did not possess any unit test and it was not even clear if it still worked. [#1221](https://github.com/chaos-polymtl/lethe/pull/1211)
+
+## [Master] - 2024-08-01
+
+### Added
+
+- MINOR The possibility to specify an intermediate level as coarse grid solver for the gcmg preconditioner was added as a parameter. It allows to perform several v-cycles at the level chosen. [#1211](https://github.com/chaos-polymtl/lethe/pull/1211)
+
+## [Master] - 2024-07-31
+
+### Fixed
+
+- MINOR The Coulomb's criterion was wrong in the particle-particle contact force for Hertz-Mindlin with limit force, Hertz and Linear in DEM. The normal force norm was explicitly positive when doing normal_force.norm(), making the Coulomb's criterion always positive even if the particles are in repulsion, so in slidling. This has been fixed using the same method as for Hertz-Mindlin with limit overlap is calculated. [#1216](https://github.com/chaos-polymtl/lethe/pull/1216)
+
+### Added
+
+- MINOR P-multigrid was added to the gcmg preconditioner of the lethe-fluid-matrix-free application. It supports three different coarsening strategies to define the degree p of the different levels. It also allows to use hybrid hp- and ph-multigrid strategies. [#1209](https://github.com/chaos-polymtl/lethe/pull/1209)
+
+## [Master] - 2024-07-24
+
+### Changed
+
+- MINOR Forces a contact search at the last DEM iteration of a CFD iteration for more robustness related to the update of the reference location of the particles prior the void fraction calculation [#1205](https://github.com/chaos-polymtl/lethe/pull/1205)
+
+## [Master] - 2024-07-23
+
+### Changed
+
+- MINOR PBC with QCM in CFD-DEM are working without forcing the particle displacement at the last DEM iteration of the CFD iteration. It is removed. [#1204](https://github.com/chaos-polymtl/lethe/pull/1204)
+
+## [Master] - 2024-07-21
+
+### Changed
+
+- MINOR The load balancing functions of the DEM and coupling CFD-DEM solvers are encapsulated in a new class, removing the duplicated code. [#1199](https://github.com/chaos-polymtl/lethe/pull/1199)
+
+### Fixed
+
+- MINOR The load balancing is fixed and working for the coupling CFD-DEM solver. It was not working after a small refactoring. An application test is also added. [#1199](https://github.com/chaos-polymtl/lethe/pull/1199)
+
+## [Master] - 2024-07-20
+
+### Fixed
+
+- MINOR The ratio of the critical Rayleigh time step was wrong in CFD-DEM and was modified as done in DEM. [#1203](https://github.com/chaos-polymtl/lethe/pull/1203)
+
+## [Master] - 2024-07-14
+
+### Added
+
+- MINOR Following the implementation of temperature-dependent solid domain constraint for both single-phase and two-phase flows, a need for an additional condition was identified. Indeed, in some simulations, splatters may happen, and with the previous implementation, splatter could freeze "mid-air" which is non-physical and therefore undesired. A plane to divide the domain in two parts and only the one in the opposite direction to the normal vector is considered for stasis constraints to be applied. The plane is defined through a point and an outward pointing normal vector. [#1193](https://github.com/chaos-polymtl/lethe/pull/1193)
+
+### Fixed
+
+- MINOR Previously, the pressure DOFs were also constrained with the "constrain stasis" feature, but this resulted in an ill-posed problem when sources terms in the momentum equation were pressure-dependent. Therefore, the constraints on pressure DOFs are now removed. [#1193](https://github.com/chaos-polymtl/lethe/pull/1193)
+
 ## [Master] - 2024-07-12
 
 ### Added
@@ -14,8 +96,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR The multigrid output now also prints the workload imbalance and vertical communication efficiency of the multigrid hierarchy being used. In addition, the mulrigrid timers now print the min max and average times correctly with the appropriate rank. [#1194](https://github.com/chaos-polymtl/lethe/pull/1194)
-
-## [Master] - 2024-07-09
 
 ### Fixed
 

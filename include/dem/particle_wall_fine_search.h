@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_particle_wall_fine_search_h
+#define lethe_particle_wall_fine_search_h
 
 #include <core/dem_properties.h>
 
@@ -30,18 +32,11 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_fine_search_h
-#  define particle_wall_fine_search_h
-
 /**
- * This class is used for fine particle-wall contact search. Fine search
+ * @brief This class is used for fine particle-wall contact search. Fine search
  * is used to find all the particles which are physically in contact with
  * system boundaries and obtain all the required information for calculation
- * of the corresponding particle-wall contact force
- *
- * @note
- *
- * @author Shahab Golshan, Polytechnique Montreal 2019-
+ * of the corresponding particle-wall contact force.
  */
 
 template <int dim>
@@ -51,7 +46,7 @@ public:
   ParticleWallFineSearch();
 
   /**
-   * Iterates over the contact candidates from particle-wall broad search
+   * @brief Iterate over the contact candidates from particle-wall broad search
    * (particle_wall_contact_pair_candidates) to add new contact pairs to the
    * particle_wall_pairs_in_contact container
    *
@@ -71,7 +66,7 @@ public:
       &particle_wall_pairs_in_contact);
 
   /**
-   * Iterates over the contact candidates from particle-floating wall broad
+   * @brief Iterate over the contact candidates from particle-floating wall broad
    * search (particle_floating_wall_candidates) to add new contact pairs to the
    * particle_floating_wall_pairs_in_contact container
    *
@@ -97,7 +92,7 @@ public:
 
 
   /**
-   * Iterates over the contact candidates from particle-floating mesh broad
+   * @brief Iterate over the contact candidates from particle-floating mesh broad
    * search (particle_floating_mesh_contact_candidates) to add new contact pairs
    * to the particle_floating_mesh_in_contact container
    *
@@ -116,4 +111,4 @@ public:
       &particle_floating_mesh_in_contact);
 };
 
-#endif /* particle_wall_fine_search_h */
+#endif

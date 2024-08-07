@@ -12,31 +12,30 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_integrator_h
+#define lethe_integrator_h
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
+#include <dem/dem_action_manager.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
-#ifndef integration_h
-#  define integration_h
-
 /**
- * Base interface for classes that carry out the integration of the velocity and
+ * @brief Base interface for classes that carry out the integration of the velocity and
  * position of particles with inertia
  */
-
 template <int dim>
 class Integrator
 {
 public:
   /**
-   * The constructor to the integrator class is currently blank
+   * @brief The constructor to the integrator class is currently blank
    * Eventually it might be a good idea to have the integration class contain
    * the index to the velocity property, the force property and the acceleration
    * property manually
@@ -48,7 +47,7 @@ public:
   {}
 
   /**
-   * Carries out integrating of new particles' location after insertion.
+   * @brief Integrate new particles' location after insertion.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -68,7 +67,7 @@ public:
     const std::vector<double>       &MOI) = 0;
 
   /**
-   * Carries out integrating of particles' velocity and position.
+   * @brief Integrate particles' velocity and position.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate

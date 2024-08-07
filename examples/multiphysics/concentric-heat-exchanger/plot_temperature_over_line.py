@@ -1,7 +1,5 @@
 """
 Postprocessing code for the concentric heat exchanger to extract the temperature profile
-
-Author : Bruno Blais
 """
 
 # Modules

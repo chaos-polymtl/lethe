@@ -3,7 +3,9 @@ add_library(lethe-dem
   adaptive_sparse_contacts.cc
   data_containers.cc
   dem.cc
+  dem_action_manager.cc
   dem_contact_manager.cc
+  dem_post_processing.cc
   dem_solver_parameters.cc
   distributions.cc
   explicit_euler_integrator.cc
@@ -11,7 +13,6 @@ add_library(lethe-dem
   find_cell_neighbors.cc
   find_contact_detection_step.cc
   force_chains_visualization.cc
-  gear3_integrator.cc
   grid_motion.cc
   input_parameter_inspection.cc
   insertion.cc
@@ -21,6 +22,7 @@ add_library(lethe-dem
   insertion_volume.cc
   integrator.cc
   lagrangian_post_processing.cc
+  load_balancing.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
@@ -36,7 +38,6 @@ add_library(lethe-dem
   particle_wall_linear_force.cc
   particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
-  post_processing.cc
   read_checkpoint.cc
   read_mesh.cc
   set_particle_particle_contact_force_model.cc
@@ -52,6 +53,9 @@ add_library(lethe-dem
   ../../include/dem/contact_type.h
   ../../include/dem/data_containers.h
   ../../include/dem/dem.h
+  ../../include/dem/dem_action_manager.h
+  ../../include/dem/dem_contact_manager.h
+  ../../include/dem/dem_post_processing.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/distributions.h
   ../../include/dem/explicit_euler_integrator.h
@@ -59,7 +63,6 @@ add_library(lethe-dem
   ../../include/dem/find_cell_neighbors.h
   ../../include/dem/find_contact_detection_step.h
   ../../include/dem/force_chains_visualization.h
-  ../../include/dem/gear3_integrator.h
   ../../include/dem/grid_motion.h
   ../../include/dem/input_parameter_inspection.h
   ../../include/dem/insertion.h
@@ -69,6 +72,7 @@ add_library(lethe-dem
   ../../include/dem/insertion_volume.h
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
+  ../../include/dem/load_balancing.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
@@ -87,7 +91,6 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h
   ../../include/dem/periodic_boundaries_manipulator.h
-  ../../include/dem/post_processing.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
   ../../include/dem/rolling_resistance_torque_models.h

@@ -1,17 +1,17 @@
 Running on 1 MPI rank(s)...
-DEM time-step is 2.186842813% of Rayleigh time step
-Reading DEM checkpoint 
-Finished reading DEM checkpoint 
-10000 particles are in the simulation 
+DEM time-step is 2.433653979% of Rayleigh time step
+Reading DEM checkpoint
+Finished reading DEM checkpoint
+10000 particles are in the simulation
    Number of active cells:       4500
    Number of degrees of freedom: 21504
    Volume of triangulation:      0.001
 ---------------------------------------------------------------
-Initializing DEM parameters 
+Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-Finished initializing DEM parameters 
-DEM time-step is 1e-05 s 
+Finished initializing DEM parameters
+DEM time-step is 1e-05 s
 --------------
 Void Fraction
 --------------
@@ -29,9 +29,10 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 0
-Finished 10 DEM iterations 
+DEM contact search at dem step 9
+Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -9.927954112e-13 s^-1
+Global continuity equation error: -9.927948932e-13 s^-1
 Max local continuity error: 3.259717897e-07 s^-1
 
 *******************************************************************************
@@ -49,8 +50,8 @@ DEM
 DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.610416394e-11 s^-1
-Max local continuity error: 2.995123279e-07 s^-1
+Global continuity equation error: -2.610416101e-11 s^-1
+Max local continuity error: 2.995123318e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.00435085
@@ -67,8 +68,8 @@ DEM
 DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.645275856e-14 s^-1
-Max local continuity error: 3.087833707e-07 s^-1
+Global continuity equation error: -1.647223237e-14 s^-1
+Max local continuity error: 3.087833732e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.00414328
@@ -85,8 +86,8 @@ DEM
 DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.339365065e-12 s^-1
-Max local continuity error: 3.101869778e-07 s^-1
+Global continuity equation error: 1.339368461e-12 s^-1
+Max local continuity error: 3.101869803e-07 s^-1
 
 *********************************************************************************
 Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.00401515
@@ -103,5 +104,5 @@ DEM
 DEM contact search at dem step 9
 Finished 10 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.406903281e-13 s^-1
-Max local continuity error: 3.083656873e-07 s^-1
+Global continuity equation error: 7.40686304e-13 s^-1
+Max local continuity error: 3.0836569e-07 s^-1

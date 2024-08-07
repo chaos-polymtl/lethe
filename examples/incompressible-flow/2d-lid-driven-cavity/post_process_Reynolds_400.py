@@ -4,8 +4,6 @@ This code extracts the u velocity along the y axis at x=0.5 and compares
 it to the results of Ghia et al.
 
 This comparison is similar to what is done in the step-57 of deal.II
-
-Author : Bruno Blais
 """
 
 # Modules

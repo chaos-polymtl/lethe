@@ -55,9 +55,11 @@ This subsection controls the post-processing other than the forces and torque on
     #---------------------------------------------------
     # Multiphysics post-processing
     #---------------------------------------------------
-    # Tracer statistics
+    # Tracer postprocessing
     set calculate tracer statistics      = false
     set tracer statistics name           = tracer_statistics
+    set calculate tracer flow rate       = false
+    set tracer flow rate name            = tracer_flow_rate
 
     # Thermal postprocessing
     set postprocessed fluid              = both

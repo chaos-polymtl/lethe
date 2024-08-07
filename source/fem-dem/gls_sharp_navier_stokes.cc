@@ -41,7 +41,7 @@ void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertices
-  TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+  TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 }
@@ -83,7 +83,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
-  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
+  TimerOutput::Scope t(this->computing_timer, "Map cut cells");
   std::map<types::global_dof_index, Point<dim>> support_points;
 
   // A vector of the unordered map. Each map stores if a point is inside or
@@ -438,7 +438,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
     {
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
-          TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+          TimerOutput::Scope t(this->computing_timer, "Remove RBF nodes");
           particles[p_i].remove_superfluous_data(
             this->dof_handler, particles[p_i].mesh_based_precalculations);
         }
@@ -508,7 +508,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
 {
-  TimerOutput::Scope t(this->computing_timer, "optimized_cut_cells_mapping");
+  TimerOutput::Scope t(this->computing_timer, "Optmize cut cells mapping");
   MappingQ1<dim>     mapping;
   unsigned int       max_children = GeometryInfo<dim>::max_children_per_cell;
 
@@ -826,8 +826,9 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
-  TimerOutput::Scope t(this->computing_timer, "refine_around_ib");
-  Point<dim>         center_immersed;
+  TimerOutput::Scope                            t(this->computing_timer,
+                       "Refine around immersed boundary");
+  Point<dim>                                    center_immersed;
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
@@ -972,7 +973,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // This function defines the force and torque applied on an Immersed Boundary
   // based on the sharp edge method on a hyper_sphere of dim=2 or dim=3
 
-  TimerOutput::Scope t(this->computing_timer, "new force_eval");
+  TimerOutput::Scope t(this->computing_timer,
+                       "Evaluate force on immersed boundary");
 
   const FEValuesExtractors::Scalar pressure(dim);
   const FEValuesExtractors::Vector velocities(0);
@@ -1644,7 +1646,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::write_force_ib()
 {
-  TimerOutput::Scope t(this->computing_timer, "output_forces_ib");
+  TimerOutput::Scope t(this->computing_timer,
+                       "Output forces on immersed boundary");
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       {
@@ -2089,7 +2092,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   particle_residual = 0;
 
 
-  TimerOutput::Scope t(this->computing_timer, "integrate particles");
+  TimerOutput::Scope t(this->computing_timer, "Integrate particles");
   // Integrate the velocity of the particle. If integrate motion is set to
   // true in the parameter this function will also integrate the force to update
   // the velocity. Otherwise the velocity is kept constant
@@ -3107,7 +3110,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // This function defines an Immersed Boundary based on the sharp edge method
   // on a solid of dim=2 or dim=3
 
-  TimerOutput::Scope t(this->computing_timer, "assemble_sharp");
+  TimerOutput::Scope t(this->computing_timer, "Assemble sharp");
   using dealii::numbers::PI;
   Point<dim>                                                  center_immersed;
   Point<dim>                                                  pressure_bridge;
@@ -4539,7 +4542,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   update_precalculations_for_ib();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      TimerOutput::Scope t(this->computing_timer, "removing_rbf_nodes");
+      TimerOutput::Scope t(this->computing_timer, "Remove RBF nodes");
       particles[p_i].remove_superfluous_data(
         this->dof_handler, particles[p_i].mesh_based_precalculations);
     }
@@ -4837,7 +4840,7 @@ void
 GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
 {
   TimerOutput::Scope t(this->computing_timer,
-                       "update_precalculations_shape_distance");
+                       "Update precalculated shape distance");
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       particles[p_i].update_precalculations(
@@ -4882,24 +4885,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
 
-      bool refinement_step;
-      if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-        refinement_step =
-          this->simulation_control->get_step_number() %
-            this->simulation_parameters.mesh_adaptation.frequency !=
-          0;
-      else
-        refinement_step = this->simulation_control->get_step_number() == 0;
-      if (refinement_step ||
-          this->simulation_parameters.mesh_adaptation.type ==
-            Parameters::MeshAdaptation::Type::none ||
-          this->simulation_control->is_at_start())
-        {
-          // We allow the physics to update their boundary conditions
-          // according to their own parameters
-          this->update_boundary_conditions();
-          this->multiphysics->update_boundary_conditions();
-        }
+      // We allow the physics to update their boundary conditions
+      // according to their own parameters
+      this->update_boundary_conditions();
+      this->multiphysics->update_boundary_conditions();
 
       if (some_particles_are_coupled == false)
         integrate_particles();

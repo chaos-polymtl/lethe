@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020 -
  */
 
 #include <core/solid_objects_parameters.h>

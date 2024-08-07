@@ -12,13 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
 /**
- * @ brief In this test, the performance of non-linear (Hertzian)
+ * @brief In this test, the performance of non-linear (Hertzian)
  * particle-particle contact force  is checked.
  */
 
@@ -81,6 +78,8 @@ test()
   dem_parameters.lagrangian_physical_properties
     .rolling_friction_coefficient_particle[0] = 0.1;
   dem_parameters.lagrangian_physical_properties.surface_energy_particle[0] = 0.;
+  dem_parameters.lagrangian_physical_properties.hamaker_constant_particle[0] =
+    0.;
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
@@ -159,7 +158,10 @@ test()
         particle_iterator;
     }
 
-  container_manager.execute_particle_particle_broad_search(particle_handler);
+  // Dummy Adaptive sparse contacts object and particle-particle broad search
+  AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+  container_manager.execute_particle_particle_broad_search(
+    particle_handler, dummy_adaptive_sparse_contacts);
 
   // Calling fine search
   container_manager.execute_particle_particle_fine_search(

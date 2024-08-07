@@ -12,20 +12,19 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_dem_solver_parameters_h
+#define lethe_dem_solver_parameters_h
+
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
 #include <core/solid_objects_parameters.h>
 
-#ifndef parameters_DEM_h
-#  define parameters_DEM_h
-
 /**
- * Handles all the parameters declared in the parameter handler file
+ * @brief Handles all the parameters declared in the parameter handler file.
  */
-
 template <int dim>
 class DEMSolverParameters
 {
@@ -93,4 +92,4 @@ public:
   }
 };
 
-#endif /* parameters_DEM_h */
+#endif

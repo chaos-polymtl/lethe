@@ -1,3 +1,4 @@
+#include <dem/dem_action_manager.h>
 #include <dem/grid_motion.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -12,22 +13,40 @@ GridMotion<dim, spacedim>::GridMotion(
   const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
   const double                                        dem_time_step)
 {
-  // Setting grid motion type
-  if (grid_motion_parameters.motion_type ==
-      Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational)
+  auto action_manager = DEMActionManager::get_action_manager();
+
+  switch (grid_motion_parameters.motion_type)
     {
-      grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
-      rotation_angle =
-        grid_motion_parameters.grid_rotational_speed * dem_time_step;
-      rotation_axis = grid_motion_parameters.grid_rotational_axis;
-    }
-  else if (grid_motion_parameters.motion_type ==
-           Parameters::Lagrangian::GridMotion<
-             spacedim>::MotionType::translational)
-    {
-      grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
-      shift_vector =
-        grid_motion_parameters.grid_translational_velocity * dem_time_step;
+      case Parameters::Lagrangian::GridMotion<spacedim>::MotionType::none:
+        {
+          grid_motion = &GridMotion<dim, spacedim>::no_motion;
+          break;
+        }
+      case Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational:
+        {
+          // Communicate to the action manager that there is a grid motion
+          action_manager->set_grid_motion_enabled();
+
+          grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
+          rotation_angle =
+            grid_motion_parameters.grid_rotational_speed * dem_time_step;
+          rotation_axis = grid_motion_parameters.grid_rotational_axis;
+          break;
+        }
+      case Parameters::Lagrangian::GridMotion<
+        spacedim>::MotionType::translational:
+        {
+          // Flag and communicate to the action manager that there is a
+          // grid motion
+          action_manager->set_grid_motion_enabled();
+
+          grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
+          shift_vector =
+            grid_motion_parameters.grid_translational_velocity * dem_time_step;
+          break;
+        }
+      default:
+        AssertThrow(false, ExcNotImplemented());
     }
 }
 
@@ -83,6 +102,10 @@ GridMotion<dim, spacedim>::
       spacedim>::boundary_points_and_normal_vectors
       &updated_boundary_points_and_normal_vectors)
 {
+  // If there is no grid motion, exit the function
+  if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
+    return;
+
   for (auto &[particle_id, pairs_in_contact_content] :
        particle_wall_pairs_in_contact)
     {

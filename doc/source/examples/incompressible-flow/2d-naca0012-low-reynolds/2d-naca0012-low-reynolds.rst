@@ -42,7 +42,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The problem is transient. An adaptative time step is used to ensure that the CFL :math:`<10` condition is obtained. This boundary for the CFL number was chosen to get relevant results while having reasonable simulation times. The reader is referred to the :doc:`../2d-lid‐driven-cavity-flow/lid‐driven-cavity-flow` example for a better understanding of the time step adaptation to keep the CFL below a certain threshold. A second-order backward differentiation (BDF2) scheme was chosen.
+The problem is transient. An adaptative time step is used to ensure that the CFL :math:`<10` condition is obtained. This boundary for the CFL number was chosen to get relevant results while having reasonable simulation times. The reader is referred to the :doc:`../2d-lid-driven-cavity-flow/lid-driven-cavity-flow` example for a better understanding of the time step adaptation to keep the CFL below a certain threshold. A second-order backward differentiation (BDF2) scheme was chosen.
 
 .. code-block:: text
 
@@ -249,7 +249,7 @@ The following average pressure and velocity fields are obtained for an angle of 
 .. image:: image/average_velocity.png
 
 
-It is already noticeable that the higher the angle of attack, the greater the pressure gradient. Following this observation, the lift coefficient :math:`C_L` is expected to increase with the angle of attack until stall condition is reached. The variation of the lift and drag coefficients are given below with a comparison to the work of Kouser *et al.* `[1] <https://doi.org/10.1177/17568293211055656>`_. Both coefficients are computed using the following formula:
+It is already noticeable that the higher the angle of attack, the greater the pressure gradient. Following this observation, the lift coefficient :math:`C_L` is expected to increase with the angle of attack until stall condition is reached. The variation of the lift and drag coefficients are given below with a comparison to the work of Kouser *et al.* [#kouser2021]_. Both coefficients are computed using the following formula:
 
 .. math::
         C_L = \frac{F_L}{0.5\rho_{\infty} u_{\infty}^2 S} \; \; \; \; \; C_D = \frac{F_D}{0.5\rho_{\infty} u_{\infty}^2 S}
@@ -258,7 +258,7 @@ with :math:`F_L` and :math:`F_D`, respectively, the lift and drag forces. Those 
         
 .. image:: image/cl_cd_results_plot.png
 
-The results obtained fit the drag and lift coefficients found by Kouser *et al.* `[1] <https://doi.org/10.1177/17568293211055656>`_. Note that the value given for the :math:`C_D` and :math:`C_L` coefficients are Root Mean Squared (RMS) values. The time span considered is 25s long (between 15 :math:`\text{s}` and 40 :math:`\text{s}`). The first 15 seconds were not considered to let the system reach a pseudo-steady state.
+The results obtained fit the drag and lift coefficients found by Kouser *et al.* [#kouser2021]_. Note that the value given for the :math:`C_D` and :math:`C_L` coefficients are Root Mean Squared (RMS) values. The time span considered is 25s long (between 15 :math:`\text{s}` and 40 :math:`\text{s}`). The first 15 seconds were not considered to let the system reach a pseudo-steady state.
 
 One can also see the low-velocity zones on the upper part of the airfoil, which corresponds to the recirculating zone: the ``noslip`` condition on the NACA imposes a zero velocity condition on the fluid. The following streamline representation helps to see the movements of the fluid inside the recirculating zone: 
 
@@ -285,7 +285,7 @@ In order to retrieve the frequency of the vortex shedding, one can look at the f
 
 .. image:: image/plot_cl_time.png
 
-The best mathematical tool available to make a spectral analysis is a Fourier transform, which is performed below, with literature results (Kouser *et al.* (2021) `[1] <https://doi.org/10.1177/17568293211055656>`_) for comparison:
+The best mathematical tool available to make a spectral analysis is a Fourier transform, which is performed below, with literature results (Kouser *et al.* (2021) [#kouser2021]_) for comparison:
 
 .. image:: image/fft_cl_comparison.png
 
@@ -300,17 +300,17 @@ Possibilities for Extension
 
 - **Going 3D**: the mesh can be extruded into the third dimension. Some modifications will be required in the boundary conditions, and getting the correct boundaries id is not trivial. However, with periodic boundary conditions set on the sides of the box, spanwise effects can be taken into account, which should yield much better results.
 
-- **Validate for higher Reynolds numbers**: Literature is available for comparison at :math:`Re=10000` at Yamaguchi *et al.* (2013) `[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_ and :math:`Re=23000` at Kojima *et al.* (2013) `[3] <https://doi.org/10.2514/1.C031849>`_.
+- **Validate for higher Reynolds numbers**: Literature is available for comparison at :math:`Re=10000` at Yamaguchi *et al.* (2013) [#yuta2013]_ and :math:`Re=23000` at Kojima *et al.* (2013) [#kojima2013]_.
 
 
 ----------
 References
 ----------
 
-`[1] <https://doi.org/10.1177/17568293211055656>`_ T. Kouser, Y. Xiong, D. Yang, and S. Peng, “Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re=1000,” *Int. J. Micro Air Veh.*, vol. 13, p. 17568293211055656, Jan. 2021, doi: 10.1177/17568293211055656.
+.. [#kouser2021] \T. Kouser, Y. Xiong, D. Yang, and S. Peng, “Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re=1000,” *Int. J. Micro Air Veh.*, vol. 13, p. 17568293211055656, Jan. 2021, doi: `10.1177/17568293211055656 <https://doi.org/10.1177/17568293211055656>`_\.
 
-`[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_ Y. Yuta, O. Tomohisa, and M. Akinori, “1201 Pressure Distribution on a Naca0012 Airfoil at Low Reynolds Numbers,” *Proc. Int. Conf. Jets Wakes Separated Flows ICJWSF*, vol. 2013.4, p. 1201-1 - 1201-5 , 2013, doi: 10.1299/jsmeicjwsf.2013.4._1201-\1_.
+.. [#yuta2013] \Y. Yuta, O. Tomohisa, and M. Akinori, “1201 Pressure Distribution on a Naca0012 Airfoil at Low Reynolds Numbers,” *Proc. Int. Conf. Jets Wakes Separated Flows ICJWSF*, vol. 2013.4, p. 1201-1 - 1201-5 , 2013, doi: `10.1299/jsmeicjwsf.2013.4._1201-\1_ <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_\.
 
-`[3] <https://doi.org/10.2514/1.C031849>`_ R. Kojima, T. Nonomura, A. Oyama, and K. Fujii, “Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils,” *J. Aircr.*, vol. 50, no. 1, pp. 187–196, Jan. 2013, doi: 10.2514/1.C031849.
+.. [#kojima2013] \R. Kojima, T. Nonomura, A. Oyama, and K. Fujii, “Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils,” *J. Aircr.*, vol. 50, no. 1, pp. 187–196, Jan. 2013, doi: `10.2514/1.C031849 <https://doi.org/10.2514/1.C031849>`_\.
 
 

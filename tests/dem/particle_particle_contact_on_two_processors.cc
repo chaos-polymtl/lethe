@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
 /**
@@ -107,6 +104,8 @@ test()
   dem_parameters.lagrangian_physical_properties
     .rolling_friction_coefficient_particle[0] = 0.1;
   dem_parameters.lagrangian_physical_properties.surface_energy_particle[0] = 0.;
+  dem_parameters.lagrangian_physical_properties.hamaker_constant_particle[0] =
+    0.;
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
@@ -211,12 +210,13 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      container_manager.update_local_particles_in_cells(particle_handler,
-                                                        false);
+      container_manager.update_local_particles_in_cells(particle_handler);
 
-      // Calling broad search
+      // Dummy Adaptive sparse contacts object and particle-particle broad
+      // search
+      AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
       container_manager.execute_particle_particle_broad_search(
-        particle_handler);
+        particle_handler, dummy_adaptive_sparse_contacts);
 
       // Calling fine search
       container_manager.execute_particle_particle_fine_search(

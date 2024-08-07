@@ -2,16 +2,17 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
@@ -153,8 +154,8 @@ compute_quadrature(
   std::vector<Point<spacedim>> all_points;
   std::vector<double>          all_JxWs;
 
-  for (const auto & subsection_0 : subsections_0)
-    for (const auto & subsection_1 : subsections_1)
+  for (const auto &subsection_0 : subsections_0)
+    for (const auto &subsection_1 : subsections_1)
       {
         const auto [points, JxWs] =
           compute_quadrature<structdim, spacedim>(subsection_0.first,
@@ -191,9 +192,7 @@ public:
     , dof_handler(dof_handler)
     , constraints(constraints)
     , quadrature(quadrature)
-    , panalty_factor(
-        compute_pentaly_factor(dof_handler.get_fe().degree,
-                               1.0))
+    , panalty_factor(compute_pentaly_factor(dof_handler.get_fe().degree, 1.0))
     , valid_system(false)
   {
     typename MatrixFree<dim, Number, VectorizedArrayType>::AdditionalData data;
@@ -207,43 +206,42 @@ public:
 
     const double radius = 0.5; // TODO
 
-    const auto compute_penalty_parameter = [&](const auto & cell)
-      {
-    const dealii::FiniteElement<dim> &fe =
-      matrix_free.get_dof_handler().get_fe();
-    const unsigned int degree = fe.degree;
+    const auto compute_penalty_parameter = [&](const auto &cell) {
+      const dealii::FiniteElement<dim> &fe =
+        matrix_free.get_dof_handler().get_fe();
+      const unsigned int degree = fe.degree;
 
-    dealii::QGauss<dim>   quadrature(degree + 1);
-    dealii::FEValues<dim> fe_values(mapping,
-                                    fe,
-                                    quadrature,
-                                    dealii::update_JxW_values);
+      dealii::QGauss<dim>   quadrature(degree + 1);
+      dealii::FEValues<dim> fe_values(mapping,
+                                      fe,
+                                      quadrature,
+                                      dealii::update_JxW_values);
 
-    dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
-    dealii::FEFaceValues<dim> fe_face_values(mapping,
-                                             fe,
-                                             face_quadrature,
-                                             dealii::update_JxW_values);
+      dealii::QGauss<dim - 1>   face_quadrature(degree + 1);
+      dealii::FEFaceValues<dim> fe_face_values(mapping,
+                                               fe,
+                                               face_quadrature,
+                                               dealii::update_JxW_values);
 
-          fe_values.reinit(cell);
+      fe_values.reinit(cell);
 
-          Number volume = 0;
-          for (unsigned int q = 0; q < quadrature.size(); ++q)
-            volume += fe_values.JxW(q);
+      Number volume = 0;
+      for (unsigned int q = 0; q < quadrature.size(); ++q)
+        volume += fe_values.JxW(q);
 
-          Number surface_area = 0;
-          for (const auto f : cell->face_indices())
-            {
-              fe_face_values.reinit(cell, f);
-              const Number factor =
-                (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
-                                                                            0.5;
-              for (unsigned int q = 0; q < face_quadrature.size(); ++q)
-                surface_area += fe_face_values.JxW(q) * factor;
-            }
+      Number surface_area = 0;
+      for (const auto f : cell->face_indices())
+        {
+          fe_face_values.reinit(cell, f);
+          const Number factor =
+            (cell->at_boundary(f) && !cell->has_periodic_neighbor(f)) ? 1. :
+                                                                        0.5;
+          for (unsigned int q = 0; q < face_quadrature.size(); ++q)
+            surface_area += fe_face_values.JxW(q) * factor;
+        }
 
-          return surface_area / volume;
-      };
+      return surface_area / volume;
+    };
 
     for (const auto &cell_0 : tria.active_cell_iterators())
       for (const auto &face_0 : cell_0->face_iterators())
@@ -273,14 +271,18 @@ public:
                   for (const auto &p : points)
                     normal.emplace_back(p / p.norm());
 
-                  const Number penalty_parameter = std::min(
-                    compute_penalty_parameter(cell_0),
-                    compute_penalty_parameter(cell_1)
-                  );
-                  
+                  const Number penalty_parameter =
+                    std::min(compute_penalty_parameter(cell_0),
+                             compute_penalty_parameter(cell_1));
 
-                  all_intersections.emplace_back(
-                    JxWs, cell_0, points_0, cell_1, points_1, normal, penalty_parameter);
+
+                  all_intersections.emplace_back(JxWs,
+                                                 cell_0,
+                                                 points_0,
+                                                 cell_1,
+                                                 points_1,
+                                                 normal,
+                                                 penalty_parameter);
                 }
   }
 
@@ -327,11 +329,13 @@ public:
     FEPointEvaluation<1, dim, dim, double> phi_p(
       mapping, dof_handler.get_fe(), update_values | update_gradients);
 
-    Vector<double> buffer_0;
-    Vector<double> buffer_1;
-
-    for (const auto &[JxWs, cell_0, points_0, cell_1, points_1, normals, penalty_parameter] :
-         all_intersections)
+    for (const auto &[JxWs,
+                      cell_0,
+                      points_0,
+                      cell_1,
+                      points_1,
+                      normals,
+                      penalty_parameter] : all_intersections)
       {
         const auto cell_dof_0 = cell_0->as_dof_handler_iterator(dof_handler);
         const auto cell_dof_1 = cell_1->as_dof_handler_iterator(dof_handler);
@@ -340,8 +344,11 @@ public:
         phi_p.reinit(cell_1, points_1);
 
         // gather
+        Vector<double> buffer_0;
         buffer_0.reinit(cell_dof_0->get_fe().n_dofs_per_cell());
         cell_dof_0->get_dof_values(src, buffer_0);
+
+        Vector<double> buffer_1;
         buffer_1.reinit(cell_dof_1->get_fe().n_dofs_per_cell());
         cell_dof_1->get_dof_values(src, buffer_1);
 
@@ -353,7 +360,7 @@ public:
         for (const auto q : phi_m.quadrature_point_indices())
           {
             const auto normal = normals[q];
-            const auto JxW    = JxWs [q];
+            const auto JxW    = JxWs[q];
 
             const auto value_m = phi_m.get_value(q);
             const auto value_p = phi_p.get_value(q);
@@ -361,8 +368,9 @@ public:
             const auto gradient_m = phi_m.get_gradient(q);
             const auto gradient_p = phi_p.get_gradient(q);
 
-            const auto jump_value   = (value_m - value_p) * 0.5 * JxW;
-            const auto avg_gradient = normal * (gradient_m + gradient_p) * 0.5 * JxW;
+            const auto jump_value = (value_m - value_p) * 0.5 * JxW;
+            const auto avg_gradient =
+              normal * (gradient_m + gradient_p) * 0.5 * JxW;
 
             const double sigma = penalty_parameter * panalty_factor;
 
@@ -418,6 +426,36 @@ public:
         else
           DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
 
+        // for coupling term
+        for (const auto &[JxWs,
+                          cell_0,
+                          points_0,
+                          cell_1,
+                          points_1,
+                          normals,
+                          penalty_parameter] : all_intersections)
+          {
+            const auto cell_dof_0 =
+              cell_0->as_dof_handler_iterator(dof_handler);
+            const auto cell_dof_1 =
+              cell_1->as_dof_handler_iterator(dof_handler);
+
+            std::vector<types::global_dof_index> dof_indices_0(
+              cell_dof_0->get_fe().n_dofs_per_cell());
+            std::vector<types::global_dof_index> dof_indices_1(
+              cell_dof_1->get_fe().n_dofs_per_cell());
+
+            cell_dof_0->get_dof_indices(dof_indices_0);
+            cell_dof_1->get_dof_indices(dof_indices_1);
+
+            constraints.add_entries_local_to_global(dof_indices_0,
+                                                    dof_indices_1,
+                                                    dsp);
+            constraints.add_entries_local_to_global(dof_indices_1,
+                                                    dof_indices_0,
+                                                    dsp);
+          }
+
         dsp.compress();
 
         system_matrix.reinit(dsp);
@@ -434,6 +472,147 @@ public:
           &PoissonOperator<dim, Number, VectorizedArrayType>::
             do_vmult_cell_single,
           this);
+
+        // for coupling term
+        FEPointEvaluation<1, dim, dim, double> phi_m(
+          mapping, dof_handler.get_fe(), update_values | update_gradients);
+        FEPointEvaluation<1, dim, dim, double> phi_p(
+          mapping, dof_handler.get_fe(), update_values | update_gradients);
+
+        for (const auto &[JxWs,
+                          cell_0,
+                          points_0,
+                          cell_1,
+                          points_1,
+                          normals,
+                          penalty_parameter] : all_intersections)
+          {
+            const auto cell_dof_0 =
+              cell_0->as_dof_handler_iterator(dof_handler);
+            const auto cell_dof_1 =
+              cell_1->as_dof_handler_iterator(dof_handler);
+
+            phi_m.reinit(cell_0, points_0);
+            phi_p.reinit(cell_1, points_1);
+
+            const unsigned int n_dofs_per_cell_0 =
+              cell_dof_0->get_fe().n_dofs_per_cell();
+            const unsigned int n_dofs_per_cell_1 =
+              cell_dof_1->get_fe().n_dofs_per_cell();
+
+            Vector<double> buffer_0;
+            buffer_0.reinit(n_dofs_per_cell_0);
+
+            Vector<double> buffer_1;
+            buffer_1.reinit(n_dofs_per_cell_1);
+
+            std::vector<types::global_dof_index> dof_indices_0(
+              cell_dof_0->get_fe().n_dofs_per_cell());
+            std::vector<types::global_dof_index> dof_indices_1(
+              cell_dof_0->get_fe().n_dofs_per_cell());
+
+            cell_dof_0->get_dof_indices(dof_indices_0);
+            cell_dof_1->get_dof_indices(dof_indices_1);
+
+            // evaluate
+            phi_m.evaluate(buffer_0, EvaluationFlags::values);
+            phi_p.evaluate(buffer_1, EvaluationFlags::values);
+
+            for (unsigned int b = 0; b < 2; ++b)
+              {
+                FullMatrix<double> matrix_0;
+                FullMatrix<double> matrix_1;
+
+                if (b == 0)
+                  {
+                    matrix_0.reinit(n_dofs_per_cell_0, n_dofs_per_cell_0);
+                    matrix_1.reinit(n_dofs_per_cell_1, n_dofs_per_cell_0);
+                  }
+                else
+                  {
+                    matrix_0.reinit(n_dofs_per_cell_0, n_dofs_per_cell_1);
+                    matrix_1.reinit(n_dofs_per_cell_1, n_dofs_per_cell_1);
+                  }
+
+                for (unsigned int j = 0;
+                     j < (b == 0 ? n_dofs_per_cell_0 : n_dofs_per_cell_1);
+                     ++j)
+                  {
+                    buffer_0 = 0.0;
+                    buffer_1 = 0.0;
+
+                    if (b == 0)
+                      buffer_0[j] = 1.0;
+                    else
+                      buffer_1[j] = 1.0;
+
+                    phi_m.evaluate(buffer_0, EvaluationFlags::values);
+                    phi_p.evaluate(buffer_1, EvaluationFlags::values);
+
+                    // quadrature loop
+                    for (const auto q : phi_m.quadrature_point_indices())
+                      {
+                        const auto normal = normals[q];
+                        const auto JxW    = JxWs[q];
+
+                        const auto value_m = phi_m.get_value(q);
+                        const auto value_p = phi_p.get_value(q);
+
+                        const auto gradient_m = phi_m.get_gradient(q);
+                        const auto gradient_p = phi_p.get_gradient(q);
+
+                        const auto jump_value = (value_m - value_p) * 0.5 * JxW;
+                        const auto avg_gradient =
+                          normal * (gradient_m + gradient_p) * 0.5 * JxW;
+
+                        const double sigma = penalty_parameter * panalty_factor;
+
+                        phi_m.submit_gradient(-jump_value * normal, q);
+                        phi_m.submit_value(+jump_value * sigma * 2.0 -
+                                             avg_gradient,
+                                           q);
+
+                        phi_p.submit_gradient(-jump_value * normal, q);
+                        phi_p.submit_value(-jump_value * sigma * 2.0 +
+                                             avg_gradient,
+                                           q);
+                      }
+
+                    // integrate
+                    phi_m.test_and_sum(buffer_0, EvaluationFlags::values);
+                    phi_p.test_and_sum(buffer_1, EvaluationFlags::values);
+
+                    for (unsigned int i = 0; i < n_dofs_per_cell_0; ++i)
+                      matrix_0[i][j] = buffer_0[i];
+                    for (unsigned int i = 0; i < n_dofs_per_cell_1; ++i)
+                      matrix_1[i][j] = buffer_1[i];
+                  }
+
+
+                if (b == 0)
+                  {
+                    constraints.distribute_local_to_global(matrix_0,
+                                                           dof_indices_0,
+                                                           system_matrix);
+                    constraints.distribute_local_to_global(matrix_1,
+                                                           dof_indices_1,
+                                                           dof_indices_0,
+                                                           system_matrix);
+                  }
+                else
+                  {
+                    constraints.distribute_local_to_global(matrix_0,
+                                                           dof_indices_0,
+                                                           dof_indices_1,
+                                                           system_matrix);
+                    constraints.distribute_local_to_global(matrix_1,
+                                                           dof_indices_1,
+                                                           system_matrix);
+                  }
+              }
+          }
+
+        system_matrix.compress(VectorOperation::add);
 
         this->valid_system = true;
       }
@@ -452,7 +631,8 @@ private:
                          std::vector<Point<dim>>,
                          typename Triangulation<dim>::active_cell_iterator,
                          std::vector<Point<dim>>,
-                         std::vector<Tensor<1, dim, Number>>, Number>>
+                         std::vector<Tensor<1, dim, Number>>,
+                         Number>>
     all_intersections;
 
   void
@@ -491,7 +671,7 @@ private:
   }
 
   mutable TrilinosWrappers::SparseMatrix system_matrix;
-  const Number panalty_factor;
+  const Number                           panalty_factor;
   mutable bool                           valid_system;
 };
 
@@ -577,7 +757,8 @@ main(int argc, char **argv)
 
   ReductionControl reduction_control(10000, 1e-20, 1e-4);
 
-  TrilinosWrappers::PreconditionAMG preconditioner;
+  TrilinosWrappers::PreconditionAMG
+    preconditioner; // TrilinosWrappers::SolverDirect
   preconditioner.initialize(op.get_system_matrix());
 
   SolverGMRES<VectorType> solver(reduction_control);

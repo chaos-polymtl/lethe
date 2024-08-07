@@ -35,7 +35,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
   set particle refinement factor   = 0
 
 
-* The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the gls_vans solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
+* The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the `lethe-fluid-vans` solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
 * The ``dem_file_name`` parameter specifies the prefix of the dem files that must be read.
 * The ``l2 smoothing factor`` is a smoothing length used for smoothing the L2 projection of the void fraction to avoid sharp discontinuities which can lead to instabilities in the simulation.
 * The ``l2 lower bound`` and ``l2 upper bound`` are the minimum and maximum values around which the void fraction is bounded. This is important especially for upper bounds as the void fraction can sometimes slightly exceed a value of 1 when projected.

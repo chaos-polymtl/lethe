@@ -54,8 +54,8 @@ tensor_nd_to_3d(const Tensor<1, dim> &tensor)
  * If the vector is tensor given is two-dimensional, do nothing and return the
  * tensor.
  *
- * @param point_2d Two-dimensional input point
- * @return point_3d Three-dimensional output point
+ * @param tensor Three-dimensional input tensor
+ * @return tensor_2d Three-dimensional output tensor
  *
  */
 template <int dim>
@@ -73,7 +73,7 @@ tensor_nd_to_2d(const Tensor<1, dim> &tensor)
  * element of the three-dimensional point (in z direction) is set to zero.
  * If the point given is already 3d, do nothing and return the point.
  *
- * @param point_2d Two-dimensional input point
+ * @param point Two-dimensional input point
  * @return point_3d Three-dimensional output point
  *
  */
@@ -98,8 +98,8 @@ point_nd_to_3d(const Point<dim> &point)
  * If the point given is already two dimensional, do nothing and return the
  * point.
  *
- * @param point_2d Two-dimensional input point
- * @return point_3d Three-dimensional output point
+ * @param point Three-dimensional input point
+ * @return point_2d Two-dimensional output point
  *
  */
 template <int dim>

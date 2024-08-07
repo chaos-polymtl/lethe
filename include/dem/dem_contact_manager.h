@@ -12,8 +12,10 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
- *
  */
+
+#ifndef lethe_dem_contact_manager_h
+#define lethe_dem_contact_manager_h
 
 #include <core/serial_solid.h>
 
@@ -34,9 +36,6 @@
 #include <deal.II/particles/particle_handler.h>
 
 using namespace DEM;
-
-#ifndef lethe_dem_contact_manager_h
-#  define lethe_dem_contact_manager_h
 
 /**
  * @brief Manage the numerous of contact detection search operations in the DEM.
@@ -72,9 +71,7 @@ public:
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-               periodic_boundaries_cells_information,
-    const bool has_periodic_boundaries = false,
-    const bool has_solid_objects       = false);
+      periodic_boundaries_cells_information);
 
   /**
    * @brief Execute functions to clear and update the neighbor lists of all the
@@ -93,9 +90,7 @@ public:
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-               periodic_boundaries_cells_information,
-    const bool has_periodic_boundaries = false,
-    const bool has_solid_objects       = false)
+      periodic_boundaries_cells_information)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
@@ -105,9 +100,7 @@ public:
     total_neighbor_list.clear();
 
     execute_cell_neighbors_search(triangulation,
-                                  periodic_boundaries_cells_information,
-                                  has_periodic_boundaries,
-                                  has_solid_objects);
+                                  periodic_boundaries_cells_information);
   }
 
   /**
@@ -125,7 +118,7 @@ public:
    * containers if required.
    */
   void
-  update_contacts(const bool has_periodic_boundaries = false);
+  update_contacts();
 
   /**
    * @breif Execute functions to update the particle iterators in local-local
@@ -143,27 +136,7 @@ public:
    */
   void
   update_local_particles_in_cells(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    const bool                             clear_contact_structures,
-    const bool                             has_periodic_boundaries = false);
-
-  /**
-   * @brief Execute the particle-particle broad searches.
-   *
-   * Calls proper functions to find the candidates of local and ghost
-   * particle-particle contact pairs and the periodic particle-particle contacts
-   * if required. These contact pairs will be used in the fine search step to
-   * investigate if they are in contact.
-   *
-   * @param[in] particle_handler Storage of particles and their accessor
-   * functions. search[in]
-   * @param has_periodic_boundaries Allow manipulations of periodic containers
-   * if required.
-   */
-  void
-  execute_particle_particle_broad_search(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const bool                               has_periodic_boundaries = false);
+    const Particles::ParticleHandler<dim> &particle_handler);
 
   /**
    * @brief Execute the particle-particle broad searches with adaptive sparse
@@ -172,8 +145,9 @@ public:
    * Calls proper functions to find the candidates of local and ghost
    * particle-particle contact pairs and the periodic particle-particle contacts
    * if required. These contact pairs will be used in the fine search step to
-   * investigate if they are in contact. This version of the function is used
-   * when adaptive sparse contacts regards mobility is enabled.
+   * investigate if they are in contact.
+   * It checks if the adaptive sparse contacts is enabled and use proper
+   * functions.
    *
    * @param[in,out] particle_handler Storage of particles and their accessor
    * functions.
@@ -185,35 +159,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const AdaptiveSparseContacts<dim>       &sparse_particle_contact_object,
-    const bool                               has_periodic_boundaries = false);
-
-  /**
-   * @brief Execute the particle-wall broad searches.
-   *
-   * Calls proper functions to find the candidates of particle-wall contact
-   * pairs and the particle-floating wall or particle-floating mesh if required.
-   * These contact pairs will be used in the fine search step to investigate if
-   * they are in contact.
-   *
-   * @param[in] particle_handler Storage of particles and their accessor
-   * functions.
-   * @param[in] boundary_cells_object Information of the boundary cells and
-   * faces.
-   * @param[in] solid_surfaces_mesh_info Mapping of solid surfaces meshes.
-   * @param[in] floating_wall Properties of the floating walls.
-   * @param[in] simulation_time Current simulation time.
-   * @param[in] has_solid_objects Allow dealing with floating mesh neighbors.
-   */
-  void
-  execute_particle_wall_broad_search(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    BoundaryCellsInformation<dim>         &boundary_cell_object,
-    const typename dem_data_structures<dim>::solid_surfaces_mesh_information
-                                                      solid_surfaces_mesh_info,
-    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-    const double                                      simulation_time,
-    const bool has_solid_objects = false);
+    const AdaptiveSparseContacts<dim>       &sparse_particle_contact_object);
 
   /**
    * @brief Execute the particle-wall broad searches with adaptive sparse
@@ -222,8 +168,9 @@ public:
    * Calls proper functions to find the candidates of particle-wall contact
    * pairs and the particle-floating wall or particle-floating mesh if required.
    * These contact pairs will be used in the fine search step to investigate if
-   * they are in contact. This version of the function is used when adaptive
-   * sparse contacts regards mobility is enabled.
+   * they are in contact.
+   * It checks if the adaptive sparse contacts is enabled and use proper
+   * functions.
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.
@@ -244,8 +191,7 @@ public:
                                                       solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const AdaptiveSparseContacts<dim> &sparse_particle_contact_object,
-    const bool                         has_solid_objects = false);
+    const AdaptiveSparseContacts<dim> &sparse_particle_contact_object);
 
   /**
    * @brief Execute the particle-particles fine searches.
@@ -262,8 +208,7 @@ public:
   void
   execute_particle_particle_fine_search(
     const double         neighborhood_threshold,
-    const bool           has_periodic_boundaries = false,
-    const Tensor<1, dim> periodic_offset         = Tensor<1, dim>());
+    const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
 
   /**
    * @brief Execute the particle-wall fine searches.
@@ -280,8 +225,7 @@ public:
   execute_particle_wall_fine_search(
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const double                                      neighborhood_threshold,
-    const bool has_solid_objects = false);
+    const double                                      neighborhood_threshold);
 
 
   // Container with the iterators to all local and ghost particles

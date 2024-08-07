@@ -12,9 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
 /**
@@ -106,8 +103,12 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, pt3_info.first);
 
+  // Dummy Adaptive sparse contacts object for next call
+  AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+
   // Calling broad search function
-  container_manager.execute_particle_particle_broad_search(particle_handler);
+  container_manager.execute_particle_particle_broad_search(
+    particle_handler, dummy_adaptive_sparse_contacts);
 
   // Output
   for (auto pairs_iterator =

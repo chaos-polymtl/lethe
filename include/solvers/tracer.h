@@ -77,6 +77,8 @@ public:
           simulation_parameters.fem_parameters.tracer_order);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        face_quadrature =
+          std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
       }
     else
       {
@@ -85,6 +87,7 @@ public:
           simulation_parameters.fem_parameters.tracer_order);
         mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
     // Allocate solution transfer
@@ -366,6 +369,27 @@ private:
   void
   calculate_tracer_statistics();
 
+
+  /**
+   * Post-processing. Calculate the tracer flow rate at every boundary.
+   *
+   * @param current_solution_fd current solution for the fluid dynamics, parsed
+   * by postprocess
+   *
+   * @return values of the tracer flow rate at each boundary
+   *
+   * @tparam GlobalVectorType The type of the global vector used for the tracer physic
+   */
+  template <typename GlobalVectorType>
+  std::vector<double>
+  postprocess_tracer_flow_rate(const GlobalVectorType &current_solution_fd);
+
+  /**
+   * @brief Writes the tracer flow rates to an output file
+   */
+  void
+  write_tracer_flow_rates(const std::vector<double> tracer_flow_rate_vector);
+
   /**
    * @brief Writes the tracer statistics to an output file
    */
@@ -384,11 +408,13 @@ private:
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
 
-  // Finite element spce
+  // Finite element space
   std::shared_ptr<FiniteElement<dim>> fe;
+
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>    mapping;
-  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 
   ConvergenceTable error_table;
@@ -422,8 +448,9 @@ private:
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<TracerAssemblerBase<dim>>> assemblers;
 
-  // Tracer statistics table
+  // Tracer post-processing tables
   TableHandler statistics_table;
+  TableHandler tracer_flow_rate_table;
 };
 
 

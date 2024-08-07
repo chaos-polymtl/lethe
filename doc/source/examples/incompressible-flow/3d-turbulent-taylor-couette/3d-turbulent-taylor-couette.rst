@@ -20,16 +20,16 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-turbulent-taylor-couette``).
 
 - Parameter file: ``tc-matrix-free.prm``
-- Reference data files from Wang and Jourdan (2021): `[1] <https://doi.org/10.1186/s42774-021-00071-0>`_ (``enstrophy_wang_p%.dat``)
+- Reference data files from Wang and Jourdan (2021): [#wang2021]_ (``enstrophy_wang_p%.dat``)
 - Postprocessing Python scripts: ``tc-postprocessing.py`` and ``tc-functions.py``
 
 ------------------------
 Description of the Case
 ------------------------
 
-The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation `[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ .
+The Taylor-Couette flow occurs in the annular space between two coaxial cylinders with different angular velocities. For a laminar flow, an analytical solution exists (see `Taylor-Couette Flow <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_). As the Reynolds number increases, the flow undergoes a transition where Taylor vortices emerge (symmetrical vortices in the radial-vertical plane). Eventually, as the flow becomes fully turbulent, a chaotic vortex structure appears with intense fluid agitation [#wikipedia2024]_ .
 
-This example is drawn from a case study by Wang and Jourdan `[1] <https://doi.org/10.1186/s42774-021-00071-0>`_. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.
+This example is drawn from a case study by Wang and Jourdan [#wang2021]_. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.
 
 The inner cylinder rotates counterclockwise at a constant angular velocity :math:`\omega`, while the outer cylinder remains fixed. Periodic boundary conditions are applied to the upper and lower openings of the annular section. The following figure illustrates the geometry of this case:
 
@@ -163,7 +163,7 @@ In the present case, the Reynolds number is defined as: :math:`Re = \frac{Ud}{\n
   subsection physical properties
     set number of fluids = 1
     subsection fluid 0
-      set kinematic viscosity = 0.000625
+      set kinematic viscosity = 6.25e-5
     end
   end
 
@@ -334,6 +334,6 @@ Possibilities for Extension
 References
 ------------
 
-`[1] <https://doi.org/10.1186/s42774-021-00071-0>`_ Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: 10.1186/s42774-021-00071-0.
+.. [#wang2021] \Z. J. Wang and E. Jourdan, “Benchmark for scale-resolving simulation with curved walls: the Taylor Couette flow,” Advances in Aerodynamics, vol. 3, no. 1, Jun. 2021, doi: `10.1186/s42774-021-00071-0 <https://doi.org/10.1186/s42774-021-00071-0>`_\.
 
-`[2] <https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow>`_ “Taylor–Couette flow,” *Wikipedia*. Feb. 15, 2024. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow
+.. [#wikipedia2024] \“Taylor–Couette flow,” *Wikipedia*. Feb. 15, 2024. Available: https://en.wikipedia.org/wiki/Taylor%E2%80%93Couette_flow\.
