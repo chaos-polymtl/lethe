@@ -279,10 +279,11 @@ public:
     particle_floating_wall_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_points_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
+  typename dem_data_structures<dim>::particle_line_in_contact
     particle_lines_in_contact;
+  typename dem_data_structures<dim>::particle_point_in_contact
+    particle_points_in_contact;
+
 
   // Container with all the contact information of adjacent
   // local/ghost-local for pairwise contact force calculation

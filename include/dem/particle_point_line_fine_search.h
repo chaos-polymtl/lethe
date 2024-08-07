@@ -20,7 +20,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/particle_point_line_contact_info_struct.h>
+#include <dem/particle_point_line_contact_info.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -48,7 +48,7 @@ particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 /**
@@ -70,7 +70,7 @@ particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 /**

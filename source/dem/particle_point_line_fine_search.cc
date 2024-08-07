@@ -15,7 +15,7 @@ particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_point_in_contact
     &particle_point_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search. If a particle-point
@@ -60,14 +60,10 @@ particle_point_fine_search(
       // particle-point pair are in contact
       if (square_distance > neighborhood_threshold)
         {
-          // Creating a sample from the particle_point_line_contact_info_struct
-          // and adding contact info to the sample
-          particle_point_line_contact_info_struct<dim> contact_info;
-          contact_info.particle  = particle;
-          contact_info.point_one = vertex_location_3d;
-
-          particle_point_pairs_in_contact.insert(
-            {particle->get_id(), contact_info});
+          // Adding contact info to the sample
+          particle_point_pairs_in_contact.emplace(
+            particle->get_id(),
+            particle_point_contact_info<dim>{particle, vertex_location_3d});
         }
     }
 }
@@ -83,7 +79,7 @@ particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_line_in_contact
     &particle_line_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search. If a particle-line
@@ -142,15 +138,13 @@ particle_line_fine_search(
       // contact
       if (square_distance > neighborhood_threshold)
         {
-          // Creating a sample from the particle_point_line_contact_info_struct
+          // Creating a sample from the particle_point_line_contact_info
           // and adding contact info to the sample
-          particle_point_line_contact_info_struct<dim> contact_info;
-          contact_info.particle  = particle;
-          contact_info.point_one = vertex_one_location_3d;
-          contact_info.point_two = vertex_two_location_3d;
-
-          particle_line_pairs_in_contact.insert(
-            {particle->get_id(), contact_info});
+          particle_line_pairs_in_contact.emplace(
+            particle->get_id(),
+            particle_line_contact_info<dim>{particle,
+                                            vertex_one_location_3d,
+                                            vertex_two_location_3d});
         }
     }
 }
@@ -174,7 +168,7 @@ particle_point_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<2>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
@@ -182,7 +176,7 @@ particle_point_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<3>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
@@ -190,7 +184,7 @@ particle_line_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<2>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
@@ -198,5 +192,5 @@ particle_line_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<3>::particle_line_in_contact
     &particle_line_pairs_in_contact);

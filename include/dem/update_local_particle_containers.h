@@ -19,7 +19,7 @@
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/particle_point_line_contact_info_struct.h>
+#include <dem/particle_point_line_contact_info.h>
 
 #include <deal.II/particles/particle_handler.h>
 
