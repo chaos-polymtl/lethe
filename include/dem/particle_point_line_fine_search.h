@@ -17,15 +17,7 @@
 #ifndef lethe_particle_point_line_fine_search_h
 #define lethe_particle_point_line_fine_search_h
 
-#include <core/dem_properties.h>
-
 #include <dem/data_containers.h>
-#include <dem/particle_point_line_contact_info.h>
-
-#include <deal.II/particles/particle_handler.h>
-
-#include <iostream>
-#include <vector>
 
 using namespace dealii;
 

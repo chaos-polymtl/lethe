@@ -17,9 +17,9 @@
 #ifndef lethe_update_local_particle_containers_h
 #define lethe_update_local_particle_containers_h
 
+#include <dem/contact_info.h>
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/particle_point_line_contact_info.h>
 
 #include <deal.II/particles/particle_handler.h>
 

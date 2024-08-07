@@ -33,10 +33,10 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
+#include <dem/contact_info.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
-#include <dem/particle_particle_contact_info.h>
 #include <dem/particle_particle_fine_search.h>
 
 // Tests (with common definitions)

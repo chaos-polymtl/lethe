@@ -36,7 +36,6 @@
 // Lethe
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>
-#include <dem/particle_wall_contact_info.h>
 #include <dem/particle_wall_fine_search.h>
 
 // Tests (with common definitions)

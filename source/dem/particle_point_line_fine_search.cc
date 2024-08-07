@@ -1,7 +1,10 @@
+#include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/contact_info.h>
 #include <dem/particle_point_line_fine_search.h>
 
+#include <deal.II/particles/particle_handler.h>
 using namespace dealii;
 
 // In this function, the output of particle-point broad search is investigated
