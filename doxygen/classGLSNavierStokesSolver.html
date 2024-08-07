@@ -90,12 +90,12 @@ Inheritance diagram for GLSNavierStokesSolver&lt; dim &gt;:</div>
 <div class="center"><img src="classGLSNavierStokesSolver__inherit__graph.png" border="0" usemap="#aGLSNavierStokesSolver_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aGLSNavierStokesSolver_3_01dim_01_4_inherit__map" id="aGLSNavierStokesSolver_3_01dim_01_4_inherit__map">
 <area shape="rect" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="533,71,708,112"/>
-<area shape="rect" href="classFluidDynamicsVANS.html" title=" " alt="" coords="785,5,950,47"/>
-<area shape="rect" href="classGLSNitscheNavierStokesSolver.html" title=" " alt="" coords="756,71,979,112"/>
-<area shape="rect" href="classGLSSharpNavierStokesSolver.html" title=" " alt="" coords="762,136,973,177"/>
+<area shape="rect" href="classFluidDynamicsNitsche.html" title=" " alt="" coords="777,5,945,47"/>
+<area shape="rect" href="classFluidDynamicsVANS.html" title=" " alt="" coords="779,71,944,112"/>
+<area shape="rect" href="classGLSSharpNavierStokesSolver.html" title=" " alt="" coords="756,136,967,177"/>
 <area shape="rect" href="classNavierStokesBase.html" title=" " alt="" coords="267,71,485,112"/>
 <area shape="rect" href="classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,78,219,105"/>
-<area shape="rect" href="classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1027,13,1201,39"/>
+<area shape="rect" href="classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1015,78,1189,105"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -629,7 +629,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#acd0e5d1440fce356191c71832a2e90f3">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a974ecf952de2c591b36555d005cf57e6">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#acfd25108dae4492000ed0216e934a8da">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a974ecf952de2c591b36555d005cf57e6">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#acfd25108dae4492000ed0216e934a8da">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="gls__navier__stokes_8cc_source.html#l00689">689</a> of file <a class="el" href="gls__navier__stokes_8cc_source.html">gls_navier_stokes.cc</a>.</p>
 
@@ -663,7 +663,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a74110493860247f4ed2da56ef3050f08">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#adc2f133cbe8624efa07b77cacc9d41ae">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a9b222ec9a849417ff21f0555ee578921">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#a3c3dfff46c060f2d01d5cf241745755b">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a9b222ec9a849417ff21f0555ee578921">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#a3c3dfff46c060f2d01d5cf241745755b">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="gls__navier__stokes_8cc_source.html#l00900">900</a> of file <a class="el" href="gls__navier__stokes_8cc_source.html">gls_navier_stokes.cc</a>.</p>
 
@@ -1070,7 +1070,7 @@ template&lt;int dim&gt; </div>
 <p>solve Solves the Navier-Stokes problem </p>
 <p>This functions solves the problem defined by the Navier-Stokes parameter by iterating through time or through the mesh refinements. </p>
 
-<p>Reimplemented in <a class="el" href="classGLSNitscheNavierStokesSolver.html#a70f7a56a430f8a306fddee4404b81d9a">GLSNitscheNavierStokesSolver&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#ae34cb3b31e3196c91b2840505440a3db">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a473773b3e74c60de99b47ee5a707016d">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsNitsche.html#ab4ab3f511025e1c27b9957d38c9229c3">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#ae34cb3b31e3196c91b2840505440a3db">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a473773b3e74c60de99b47ee5a707016d">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="gls__navier__stokes_8cc_source.html#l01803">1803</a> of file <a class="el" href="gls__navier__stokes_8cc_source.html">gls_navier_stokes.cc</a>.</p>
 

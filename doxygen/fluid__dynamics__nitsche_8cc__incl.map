@@ -1,5 +1,5 @@
-<map id="/home/runner/work/lethe/lethe/source/solvers/gls_nitsche_navier_stokes.cc" name="/home/runner/work/lethe/lethe/source/solvers/gls_nitsche_navier_stokes.cc">
-<area shape="rect" id="node1" title=" " alt="" coords="1040,5,1255,61"/>
+<map id="/home/runner/work/lethe/lethe/source/solvers/fluid_dynamics_nitsche.cc" name="/home/runner/work/lethe/lethe/source/solvers/fluid_dynamics_nitsche.cc">
+<area shape="rect" id="node1" title=" " alt="" coords="1049,5,1245,61"/>
 <area shape="rect" id="node2" href="$bdf_8h.html" title=" " alt="" coords="3951,385,4037,411"/>
 <area shape="rect" id="node10" href="$utilities_8h.html" title=" " alt="" coords="429,563,543,590"/>
 <area shape="rect" id="node15" title=" " alt="" coords="5,645,145,687"/>
@@ -8,10 +8,10 @@
 <area shape="rect" id="node23" href="$manifolds_8h.html" title=" " alt="" coords="302,295,433,322"/>
 <area shape="rect" id="node27" href="$solutions__output_8h.html" title=" " alt="" coords="1137,295,1312,322"/>
 <area shape="rect" id="node31" href="$time__integration__utilities_8h.html" title=" " alt="" coords="954,199,1117,240"/>
-<area shape="rect" id="node32" href="$gls__nitsche__navier__stokes_8h.html" title=" " alt="" coords="2734,109,2881,151"/>
-<area shape="rect" id="node48" title=" " alt="" coords="3056,109,3233,151"/>
-<area shape="rect" id="node49" title=" " alt="" coords="3257,109,3400,151"/>
-<area shape="rect" id="node50" title=" " alt="" coords="3425,109,3579,151"/>
+<area shape="rect" id="node32" href="$fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="2722,109,2893,151"/>
+<area shape="rect" id="node48" title=" " alt="" coords="3063,109,3240,151"/>
+<area shape="rect" id="node49" title=" " alt="" coords="3264,109,3407,151"/>
+<area shape="rect" id="node50" title=" " alt="" coords="3431,109,3586,151"/>
 <area shape="rect" id="node3" href="$parameters_8h.html" title=" " alt="" coords="1677,474,1818,501"/>
 <area shape="rect" id="node8" title=" " alt="" coords="3921,653,3984,679"/>
 <area shape="rect" id="node18" title=" " alt="" coords="3990,474,4131,501"/>
