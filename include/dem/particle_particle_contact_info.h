@@ -30,36 +30,11 @@ using namespace dealii;
  * namely everything related to tangential overlaps
  */
 template <int dim>
-class particle_particle_contact_info
+struct particle_particle_contact_info
 {
-public:
-  /** @brief Constructor for cases where the two particle iterators are known.
-   *  This constructor is used everywhere in the regular DEM and unresolved
-   * CFD-DEM code
-   *
-   *  @param particle_one The iterator of particle one
-   *  @param particle_two The iterator of particle two
-   */
-
-  inline particle_particle_contact_info(
-    Particles::ParticleIterator<dim> &particle_one,
-    Particles::ParticleIterator<dim> &particle_two)
-    : particle_one(particle_one)
-    , particle_two(particle_two)
-  {}
-
-  /** @brief Dummy constructor for cases where the two particle iterators are unknown.
-   *  This constructor is only used in the resolved CFD-DEM and should be
-   * deprecated eventually.
-   */
-
-  inline particle_particle_contact_info()
-  {}
-
-
-  Tensor<1, 3>                     tangential_overlap;
   Particles::ParticleIterator<dim> particle_one;
   Particles::ParticleIterator<dim> particle_two;
+  Tensor<1, 3>                     tangential_overlap;
 };
 
-#endif /* particle_particle_contact_info_struct_h */
+#endif
