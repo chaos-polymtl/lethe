@@ -9,7 +9,7 @@ add_library(lethe-solvers
   flow_control.cc
   fluid_dynamics_block.cc
   gls_navier_stokes.cc
-  gls_nitsche_navier_stokes.cc
+  fluid_dynamics_nitsche.cc
   heat_transfer.cc
   heat_transfer_assemblers.cc
   heat_transfer_scratch_data.cc
@@ -49,7 +49,7 @@ add_library(lethe-solvers
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
   ../../include/solvers/gls_navier_stokes.h
-  ../../include/solvers/gls_nitsche_navier_stokes.h
+  ../../include/solvers/fluid_dynamics_nitsche.h
   ../../include/solvers/heat_transfer.h
   ../../include/solvers/heat_transfer_assemblers.h
   ../../include/solvers/heat_transfer_scratch_data.h

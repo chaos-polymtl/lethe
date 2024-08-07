@@ -45,8 +45,8 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "gls_navier_stokes_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid",
+                                   "lethe-fluid-nitsche"));
 
           GLSNavierStokesSolver<2> problem(NSparam);
           problem.solve();
@@ -63,8 +63,8 @@ main(int argc, char *argv[])
 
           AssertThrow(NSparam.nitsche->number_solids == 0,
                       SolidWarning(NSparam.nitsche->number_solids,
-                                   "gls_navier_stokes_2d",
-                                   "gls_nitsche_navier_stokes_22"));
+                                   "lethe-fluid",
+                                   "lethe-fluid-nitsche"));
 
           GLSNavierStokesSolver<3> problem(NSparam);
           problem.solve();
