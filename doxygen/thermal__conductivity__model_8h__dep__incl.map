@@ -1,8 +1,8 @@
 <map id="/home/runner/work/lethe/lethe/include/core/thermal_conductivity_model.h" name="/home/runner/work/lethe/lethe/include/core/thermal_conductivity_model.h">
-<area shape="rect" id="node1" title=" " alt="" coords="2435,5,2632,61"/>
+<area shape="rect" id="node1" title=" " alt="" coords="2329,5,2527,61"/>
 <area shape="rect" id="node2" href="$heat__transfer__scratch__data_8h.html" title=" " alt="" coords="1958,562,2173,618"/>
-<area shape="rect" id="node9" href="$physical__properties__manager_8h.html" title=" " alt="" coords="2419,109,2648,165"/>
-<area shape="rect" id="node50" href="$thermal__conductivity__model_8cc.html" title=" " alt="" coords="2673,109,2866,165"/>
+<area shape="rect" id="node9" href="$physical__properties__manager_8h.html" title=" " alt="" coords="2313,109,2543,165"/>
+<area shape="rect" id="node50" href="$thermal__conductivity__model_8cc.html" title=" " alt="" coords="2567,109,2761,165"/>
 <area shape="rect" id="node3" href="$heat__transfer_8h.html" title=" " alt="" coords="2126,792,2309,848"/>
 <area shape="rect" id="node7" href="$heat__transfer__assemblers_8h.html" title=" " alt="" coords="2017,681,2223,737"/>
 <area shape="rect" id="node8" href="$heat__transfer__scratch__data_8cc.html" title=" " alt="" coords="1758,673,1941,744"/>
@@ -34,8 +34,8 @@
 <area shape="rect" id="node20" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="595,1000,778,1056"/>
 <area shape="rect" id="node22" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="725,792,907,848"/>
 <area shape="rect" id="node23" href="$vans__assemblers_8cc.html" title=" " alt="" coords="466,792,649,848"/>
-<area shape="rect" id="node25" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="1020,792,1217,848"/>
-<area shape="rect" id="node26" href="$gls__sharp__navier__stokes_8cc.html" title=" " alt="" coords="1085,896,1288,952"/>
+<area shape="rect" id="node25" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="1034,792,1217,848"/>
+<area shape="rect" id="node26" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="1097,896,1282,952"/>
 <area shape="rect" id="node30" href="$navier__stokes__base_8h.html" title=" " alt="" coords="1661,562,1843,618"/>
 <area shape="rect" id="node31" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="1551,681,1734,737"/>
 <area shape="rect" id="node36" href="$postprocessing__cfd_8cc.html" title=" " alt="" coords="1293,681,1475,737"/>

@@ -1,12 +1,12 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/gls_navier_stokes.h" name="/home/runner/work/lethe/lethe/include/solvers/gls_navier_stokes.h">
-<area shape="rect" id="node1" title=" " alt="" coords="539,5,721,61"/>
-<area shape="rect" id="node2" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="212,109,395,165"/>
-<area shape="rect" id="node6" href="$gls__sharp__navier__stokes_8h.html" title=" " alt="" coords="422,109,619,165"/>
-<area shape="rect" id="node8" href="$fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="644,109,835,165"/>
-<area shape="rect" id="node10" href="$gls__navier__stokes_8cc.html" title=" " alt="" coords="859,109,1041,165"/>
-<area shape="rect" id="node3" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,213,188,269"/>
-<area shape="rect" id="node5" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,213,395,269"/>
-<area shape="rect" id="node4" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,317,188,373"/>
-<area shape="rect" id="node7" href="$gls__sharp__navier__stokes_8cc.html" title=" " alt="" coords="419,213,622,269"/>
-<area shape="rect" id="node9" href="$fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="647,213,843,269"/>
+<area shape="rect" id="node1" title=" " alt="" coords="423,5,605,61"/>
+<area shape="rect" id="node2" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,109,189,165"/>
+<area shape="rect" id="node4" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="317,109,500,165"/>
+<area shape="rect" id="node8" href="$fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="524,109,715,165"/>
+<area shape="rect" id="node10" href="$gls__navier__stokes_8cc.html" title=" " alt="" coords="739,109,921,165"/>
+<area shape="rect" id="node3" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,213,191,269"/>
+<area shape="rect" id="node5" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="215,213,397,269"/>
+<area shape="rect" id="node7" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="421,213,604,269"/>
+<area shape="rect" id="node6" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="215,317,397,373"/>
+<area shape="rect" id="node9" href="$fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="628,213,824,269"/>
 </map>

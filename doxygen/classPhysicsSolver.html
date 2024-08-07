@@ -99,10 +99,10 @@ Inheritance diagram for PhysicsSolver&lt; VectorType &gt;:</div>
 <area shape="rect" href="classTracer.html" title=" " alt="" coords="577,107,693,133"/>
 <area shape="rect" href="classVolumeOfFluid.html" title=" " alt="" coords="548,157,721,184"/>
 <area shape="rect" href="classGLSNavierStokesSolver.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="547,209,722,250"/>
-<area shape="rect" href="classFluidDynamicsNitsche.html" title=" " alt="" coords="799,143,967,185"/>
-<area shape="rect" href="classFluidDynamicsVANS.html" title=" " alt="" coords="800,209,965,250"/>
-<area shape="rect" href="classGLSSharpNavierStokesSolver.html" title=" " alt="" coords="777,274,988,315"/>
-<area shape="rect" href="classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1036,216,1211,243"/>
+<area shape="rect" href="classFluidDynamicsNitsche.html" title=" " alt="" coords="777,143,945,185"/>
+<area shape="rect" href="classFluidDynamicsSharp.html" title=" " alt="" coords="783,209,939,250"/>
+<area shape="rect" href="classFluidDynamicsVANS.html" title=" " alt="" coords="779,274,944,315"/>
+<area shape="rect" href="classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="993,281,1168,308"/>
 <area shape="rect" href="classFluidDynamicsBlock.html" title=" " alt="" coords="557,278,712,319"/>
 <area shape="rect" href="classFluidDynamicsMatrixFree.html" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="540,358,729,399"/>
 </map>
@@ -287,7 +287,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>assemble_system_matrix Assembles the matrix </p>
 
-<p>Implemented in <a class="el" href="classVolumeOfFluid.html#a8db592cde33c435214ee106048e27aa0">VolumeOfFluid&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a6c10ff5606b5cf3ba53ab44bd1e8a076">Tracer&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ac1df90eac6ba3018476e093af21e3899">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classGLSNavierStokesSolver.html#ab5be2c153e6a0158ad52cb45b19f4ee8">GLSNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#ae1ce4a6097c6d9e696e4f3c559d47a2c">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#ae1b44b54aa3e2630217d8e6a9c6a767b">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#a6500525903349398640b028bba2d6437">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a974ecf952de2c591b36555d005cf57e6">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#acfd25108dae4492000ed0216e934a8da">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVolumeOfFluid.html#a8db592cde33c435214ee106048e27aa0">VolumeOfFluid&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a6c10ff5606b5cf3ba53ab44bd1e8a076">Tracer&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ac1df90eac6ba3018476e093af21e3899">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classGLSNavierStokesSolver.html#ab5be2c153e6a0158ad52cb45b19f4ee8">GLSNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#ae1ce4a6097c6d9e696e4f3c559d47a2c">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#ae1b44b54aa3e2630217d8e6a9c6a767b">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#a6500525903349398640b028bba2d6437">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#acfd25108dae4492000ed0216e934a8da">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#a28e8d65fe3624e6070e80829558d7134">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -318,7 +318,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>assemble_system_rhs Assembles the rhs </p>
 
-<p>Implemented in <a class="el" href="classVolumeOfFluid.html#aa4652c5727f3b4e7fe98ee8c6c5d7672">VolumeOfFluid&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ad8ca9f8d848ec5159227bd766471f5c6">Tracer&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ac6daf4b154211a7ba283dc66c3380d51">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classGLSNavierStokesSolver.html#a77a043e1f19097afeca90c1abaa1b60a">GLSNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#a839bbea86a96cd0863792f58b6c5aeeb">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#a996a4a5506a53b025dae696bd9c2c6e7">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#aafcec0aa61b2e3a963457ab1360cf72a">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classGLSSharpNavierStokesSolver.html#a9b222ec9a849417ff21f0555ee578921">GLSSharpNavierStokesSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsVANS.html#a3c3dfff46c060f2d01d5cf241745755b">FluidDynamicsVANS&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVolumeOfFluid.html#aa4652c5727f3b4e7fe98ee8c6c5d7672">VolumeOfFluid&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ad8ca9f8d848ec5159227bd766471f5c6">Tracer&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ac6daf4b154211a7ba283dc66c3380d51">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classGLSNavierStokesSolver.html#a77a043e1f19097afeca90c1abaa1b60a">GLSNavierStokesSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#a839bbea86a96cd0863792f58b6c5aeeb">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#a996a4a5506a53b025dae696bd9c2c6e7">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#aafcec0aa61b2e3a963457ab1360cf72a">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsVANS.html#a3c3dfff46c060f2d01d5cf241745755b">FluidDynamicsVANS&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#a18d94faa17dda7c4111534a12c198bd1">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Default way to evaluate the residual for the nonlinear solver. Some application may use more complex evaluation of the residual and override this method. </p>
 
-<p>Reimplemented in <a class="el" href="classGLSSharpNavierStokesSolver.html#a1b9543423cca2589f4c05666246d40bc">GLSSharpNavierStokesSolver&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classFluidDynamicsSharp.html#a84ad77a2439c541b39467e8c4713b3e2">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00128">128</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 

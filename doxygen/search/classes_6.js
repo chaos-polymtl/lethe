@@ -15,6 +15,5 @@ var searchData=
   ['glsnavierstokesvofassemblermarangoni_3643',['GLSNavierStokesVOFAssemblerMarangoni',['../classGLSNavierStokesVOFAssemblerMarangoni.html',1,'']]],
   ['glsnavierstokesvofassemblernonnewtoniancore_3644',['GLSNavierStokesVOFAssemblerNonNewtonianCore',['../classGLSNavierStokesVOFAssemblerNonNewtonianCore.html',1,'']]],
   ['glsnavierstokesvofassemblerstf_3645',['GLSNavierStokesVOFAssemblerSTF',['../classGLSNavierStokesVOFAssemblerSTF.html',1,'']]],
-  ['glssharpnavierstokessolver_3646',['GLSSharpNavierStokesSolver',['../classGLSSharpNavierStokesSolver.html',1,'']]],
-  ['gridmotion_3647',['GridMotion',['../classGridMotion.html',1,'GridMotion&lt; dim, spacedim &gt;'],['../classParameters_1_1Lagrangian_1_1GridMotion.html',1,'Parameters::Lagrangian::GridMotion&lt; dim &gt;']]]
+  ['gridmotion_3646',['GridMotion',['../classGridMotion.html',1,'GridMotion&lt; dim, spacedim &gt;'],['../classParameters_1_1Lagrangian_1_1GridMotion.html',1,'Parameters::Lagrangian::GridMotion&lt; dim &gt;']]]
 ];
