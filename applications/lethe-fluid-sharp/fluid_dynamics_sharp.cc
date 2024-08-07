@@ -42,7 +42,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSSharpNavierStokesSolver<2> problem(NSparam);
+          FluidDynamicsSharp<2> problem(NSparam);
           problem.solve();
         }
 
@@ -55,7 +55,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          GLSSharpNavierStokesSolver<3> problem(NSparam);
+          FluidDynamicsSharp<3> problem(NSparam);
           problem.solve();
         }
 
