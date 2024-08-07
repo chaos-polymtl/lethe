@@ -31,6 +31,8 @@ public:
    */
   MeshController(const unsigned int target_number_of_elements)
     : target_number_of_elements(target_number_of_elements)
+    , previous_number_of_elements(0)
+    , previous_mesh_control_error(0.0)
   {}
   virtual ~MeshController()
   {}
