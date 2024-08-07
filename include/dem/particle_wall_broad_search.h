@@ -20,6 +20,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 

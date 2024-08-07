@@ -19,9 +19,9 @@
 
 #include <core/dem_properties.h>
 
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_point_line_contact_info.h>
 
 #include <iostream>
 #include <vector>

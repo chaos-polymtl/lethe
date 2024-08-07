@@ -55,8 +55,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 template <int dim>
 void
 DEMSolver<dim>::setup_parameters()
-{ // Print simulation starting information
-
+{
+  // Print simulation starting information
   pcout << std::endl;
   std::stringstream ss;
   ss << "Running on " << n_mpi_processes << " rank(s)";

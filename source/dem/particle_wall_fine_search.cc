@@ -1,6 +1,6 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <dem/particle_wall_contact_info.h>
+#include <dem/contact_info.h>
 #include <dem/particle_wall_fine_search.h>
 
 #include <deal.II/particles/particle_handler.h>

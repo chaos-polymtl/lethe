@@ -18,6 +18,7 @@
 #define lethe_particle_point_line_broad_search_h
 
 #include <dem/adaptive_sparse_contacts.h>
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 
 #include <deal.II/distributed/tria.h>

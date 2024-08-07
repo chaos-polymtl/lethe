@@ -17,17 +17,10 @@
 #ifndef lethe_particle_particle_fine_search_h
 #define lethe_particle_particle_fine_search_h
 
-#include <core/dem_properties.h>
-
 #include <dem/data_containers.h>
-#include <dem/particle_particle_contact_info.h>
 
 #include <deal.II/base/tensor.h>
 
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-
-#include <boost/range/adaptor/map.hpp>
 
 template <int dim>
 class DEMContactManager;

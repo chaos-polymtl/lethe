@@ -18,9 +18,7 @@
 #define lethe_data_containers_h
 
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/particle_particle_contact_info.h>
-#include <dem/particle_point_line_contact_info.h>
-#include <dem/particle_wall_contact_info.h>
+#include <dem/contact_info.h>
 
 #include <deal.II/base/tensor.h>
 
