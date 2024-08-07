@@ -43,12 +43,12 @@ using namespace dealii;
  */
 
 template <int dim>
-class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
+class FluidDynamicsSharp : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSSharpNavierStokesSolver(CFDDEMSimulationParameters<dim> &nsparam);
+  FluidDynamicsSharp(CFDDEMSimulationParameters<dim> &nsparam);
 
-  ~GLSSharpNavierStokesSolver();
+  ~FluidDynamicsSharp();
 
   void
   solve() override;
