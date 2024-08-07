@@ -21,7 +21,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/gls_nitsche_navier_stokes.h>
+#include <solvers/fluid_dynamics_nitsche.h>
 
 #include <deal.II/base/multithread_info.h>
 
@@ -32,9 +32,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
-// Constructor for class GLSNitscheNavierStokesSolver
+// Constructor for class FluidDynamicsNitsche
 template <int dim, int spacedim>
-GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
+FluidDynamicsNitsche<dim, spacedim>::FluidDynamicsNitsche(
   SimulationParameters<spacedim> &p_nsparam)
   : GLSNavierStokesSolver<spacedim>(p_nsparam)
 {
@@ -60,7 +60,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
 template <int dim, int spacedim>
 template <bool assemble_matrix>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
+FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
 {
   TimerOutput::Scope t(this->computing_timer, "Nitsche assemble restriction");
 
@@ -238,7 +238,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
 template <>
 Tensor<1, 3>
-GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
+FluidDynamicsNitsche<2, 3>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<3>> &solid_ph =
@@ -334,7 +334,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
 
 template <int dim, int spacedim>
 Tensor<1, spacedim>
-GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
+FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> &solid_ph =
@@ -418,7 +418,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
 
 template <int dim, int spacedim>
 Tensor<1, 3>
-GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
+FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
@@ -524,7 +524,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces(
+FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_forces(
   const unsigned int i_solid,
   bool               first_solid_forces)
 {
@@ -608,7 +608,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
+FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_torques(
   const unsigned int i_solid,
   bool               first_solid_torques)
 {
@@ -691,7 +691,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
+FluidDynamicsNitsche<dim, spacedim>::solve()
 {
   // Fluid setup
   read_mesh_and_manifolds(
@@ -817,7 +817,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
+FluidDynamicsNitsche<dim, spacedim>::output_solid_particles(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &particle_handler =
@@ -845,7 +845,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
+FluidDynamicsNitsche<dim, spacedim>::output_solid_triangulation(
   const unsigned int i_solid)
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -905,7 +905,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::refine_mesh()
+FluidDynamicsNitsche<dim, spacedim>::refine_mesh()
 {
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
@@ -946,7 +946,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::refine_mesh()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs()
+FluidDynamicsNitsche<dim, spacedim>::assemble_matrix_and_rhs()
 {
   this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix();
 
@@ -957,7 +957,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs()
+FluidDynamicsNitsche<dim, spacedim>::assemble_rhs()
 {
   this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
 
@@ -966,7 +966,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
+FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
 {
   // Write solid base checkpoint
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
@@ -1007,7 +1007,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
+FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
 {
   this->GLSNavierStokesSolver<spacedim>::read_checkpoint();
 
@@ -1070,6 +1070,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library
 // is valid before we actually compile the solver This greatly helps with
 // debugging
-template class GLSNitscheNavierStokesSolver<2>;
-template class GLSNitscheNavierStokesSolver<2, 3>;
-template class GLSNitscheNavierStokesSolver<3>;
+template class FluidDynamicsNitsche<2>;
+template class FluidDynamicsNitsche<2, 3>;
+template class FluidDynamicsNitsche<3>;

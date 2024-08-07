@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_gls_nitsche_navier_stokes_h
-#define lethe_gls_nitsche_navier_stokes_h
+#ifndef lethe_fluid_dynamics_nitsche_h
+#define lethe_fluid_dynamics_nitsche_h
 
 #include <core/exceptions.h>
 #include <core/solid_base.h>
@@ -38,10 +38,10 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim = dim>
-class GLSNitscheNavierStokesSolver : public GLSNavierStokesSolver<spacedim>
+class FluidDynamicsNitsche : public GLSNavierStokesSolver<spacedim>
 {
 public:
-  GLSNitscheNavierStokesSolver(SimulationParameters<spacedim> &nsparam);
+  FluidDynamicsNitsche(SimulationParameters<spacedim> &nsparam);
 
   virtual void
   solve() override;
