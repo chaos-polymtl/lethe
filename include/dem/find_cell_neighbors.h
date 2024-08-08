@@ -29,8 +29,9 @@ using namespace dealii;
  * @brief Finds the neighbor list (without repetition) of all the active
  * cells in the triangulation. It gets the vertices of the cells to get lists
  * of the neighbor for each cells. There is some check to prevent repetition
- * of a cell in a list (up to 4 vertices can have the same cell in common in
- * 3D). 2 types of container are used for cell neighbors : local-local cells
+ * of a cell in a list (up to 8 vertices can have the same cell in common in
+ * 3D).
+ * 2 types of container are used for cell neighbors : local-local cells
  * and local-ghost cells.
  *
  * @param triangulation Triangulation to access the information of the cells
@@ -55,8 +56,9 @@ find_cell_neighbors(
  * active cells in the triangulation. It gets the coinciding vertices of the
  * cells at the periodic boundary 0 to get lists of the periodic neighbor
  * cells on the periodic boundary 1 for each cells. There is some check to
- * prevent repetition of a cell in a list (up to 4 vertices can have the
- * same cell in common in 3D). Also, 3 types of container are used for
+ * prevent repetition of a cell in a list (up to 8 vertices can have the
+ * same cell in common in 3D).
+ * 3 types of container are used for
  * periodic mapping of cell neighbors : local-local cells, local-ghost cells
  * and ghost-local cells. The last container is necessary since the mapping
  * are only from periodic boundary 0 to periodic boundary 1 and the

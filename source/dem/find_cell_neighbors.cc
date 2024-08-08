@@ -2,8 +2,6 @@
 
 using namespace DEM;
 
-// This function finds the neighbor list (without repetition) of all the active
-// cells in the triangulation
 template <int dim>
 void
 find_cell_neighbors(
@@ -307,6 +305,7 @@ find_full_cell_neighbors(
         }
     }
 }
+
 template <int dim>
 void
 get_periodic_neighbor_list(
