@@ -26,81 +26,50 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
-  auto &local_adjacent_particles = contact_manager.local_adjacent_particles;
-  auto &ghost_adjacent_particles = contact_manager.ghost_adjacent_particles;
-  auto &local_periodic_adjacent_particles =
-    contact_manager.local_periodic_adjacent_particles;
-  auto &ghost_periodic_adjacent_particles =
-    contact_manager.ghost_periodic_adjacent_particles;
-  auto &ghost_local_periodic_adjacent_particles =
-    contact_manager.ghost_local_periodic_adjacent_particles;
-
-  // Contact forces calculations of local-local and local-ghost particle
-  // pairs are performed in separate loops
-
-  // Set the force_calculation_threshold_distance. This is useful for non-
-  // contact cohesive force models such as the DMT force model. This is used in
-  // every loop.
-  const double force_calculation_threshold_distance =
-    set_force_calculation_threshold_distance();
-
-  // Looping over local_adjacent_particles values with iterator
-  // adjacent_particles_list
+  // Calculating the contact forces the local-local adjacent particles.
   for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
+       contact_manager.local_adjacent_particles | boost::adaptors::map_values)
     {
-      if (!adjacent_particles_list.empty())
-        {
-          execute_contact_calculation<ContactType::local_particle_particle>(
-              adjacent_particles_list, torque, force, dt);
-        }
+      execute_contact_calculation<ContactType::local_particle_particle>(
+        adjacent_particles_list, torque, force, dt);
     }
 
-  // Doing the same calculations for local-ghost particle pairs
-
-  // Looping over ghost_adjacent_particles with iterator
-  // adjacent_particles_iterator
+  // Calculating the contact forces the local-ghost adjacent particles.
   for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
+       contact_manager.ghost_adjacent_particles | boost::adaptors::map_values)
     {
-      if (!adjacent_particles_list.empty())
-        {
-          execute_contact_calculation<ContactType::ghost_particle_particle>(
-              adjacent_particles_list, torque, force, dt);
-        }
+      execute_contact_calculation<ContactType::ghost_particle_particle>(
+        adjacent_particles_list, torque, force, dt);
     }
 
+  // Calculating the contact forces the local-local periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       local_periodic_adjacent_particles | boost::adaptors::map_values)
+       contact_manager.local_periodic_adjacent_particles |
+         boost::adaptors::map_values)
     {
-      if (!periodic_adjacent_particles_list.empty())
-        {
-          execute_contact_calculation<
-            ContactType::local_periodic_particle_particle>(
-            periodic_adjacent_particles_list, torque, force, dt);
-        }
+      execute_contact_calculation<
+        ContactType::local_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, dt);
     }
 
+  // Calculating the contact forces the local-ghost periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       ghost_periodic_adjacent_particles | boost::adaptors::map_values)
+       contact_manager.ghost_periodic_adjacent_particles |
+         boost::adaptors::map_values)
     {
-      if (!periodic_adjacent_particles_list.empty())
-        {
-          execute_contact_calculation<
-            ContactType::ghost_periodic_particle_particle>(
-            periodic_adjacent_particles_list, torque, force, dt);
-        }
+      execute_contact_calculation<
+        ContactType::ghost_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, dt);
     }
 
+  // Calculating the contact forces the ghost-local periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
+       contact_manager.ghost_local_periodic_adjacent_particles |
+         boost::adaptors::map_values)
     {
-      if (!periodic_adjacent_particles_list.empty())
-        {
-          execute_contact_calculation<
-            ContactType::ghost_local_periodic_particle_particle>(
-            periodic_adjacent_particles_list, torque, force, dt);
-        }
+      execute_contact_calculation<
+        ContactType::ghost_local_periodic_particle_particle>(
+        periodic_adjacent_particles_list, torque, force, dt);
     }
 }
 

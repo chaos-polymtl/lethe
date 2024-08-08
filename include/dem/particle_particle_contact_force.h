@@ -216,6 +216,147 @@ protected:
       normal_unit_vector;
   }
 
+
+  inline Point<3>
+  get_location(const Particles::ParticleIterator<dim> &particle) &
+  {
+    if constexpr (dim == 3)
+      return particle->get_location();
+
+    if constexpr (dim == 2)
+      return point_nd_to_3d(particle->get_location());
+  }
+
+  inline Point<3>
+  get_periodic_location(const Particles::ParticleIterator<dim> &particle) &
+  {
+    if constexpr (dim == 3)
+      return (particle->get_location() - this->periodic_offset);
+
+    if constexpr (dim == 2)
+      return point_nd_to_3d(particle->get_location() - this->periodic_offset);
+  }
+
+  inline void
+  calculate_particle_particle_contact(
+    particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1, 3>                  &tangential_relative_velocity,
+    const double                         normal_relative_velocity_value,
+    const Tensor<1, 3>                  &normal_unit_vector,
+    const double                         normal_overlap,
+    const ArrayView<const double>       &particle_one_properties,
+    const ArrayView<const double>       &particle_two_properties,
+    Tensor<1, 3>                        &normal_force,
+    Tensor<1, 3>                        &tangential_force,
+    Tensor<1, 3>                        &particle_one_tangential_torque,
+    Tensor<1, 3>                        &particle_two_tangential_torque,
+    Tensor<1, 3>                        &rolling_resistance_torque)
+  {
+    using namespace Parameters::Lagrangian;
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::linear)
+      {
+        calculate_linear_contact(contact_info,
+                                 tangential_relative_velocity,
+                                 normal_relative_velocity_value,
+                                 normal_unit_vector,
+                                 normal_overlap,
+                                 particle_one_properties,
+                                 particle_two_properties,
+                                 normal_force,
+                                 tangential_force,
+                                 particle_one_tangential_torque,
+                                 particle_two_tangential_torque,
+                                 rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::hertz)
+      {
+        this->calculate_hertz_contact(contact_info,
+                                      tangential_relative_velocity,
+                                      normal_relative_velocity_value,
+                                      normal_unit_vector,
+                                      normal_overlap,
+                                      particle_one_properties,
+                                      particle_two_properties,
+                                      normal_force,
+                                      tangential_force,
+                                      particle_one_tangential_torque,
+                                      particle_two_tangential_torque,
+                                      rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model ==
+                  ParticleParticleContactForceModel::hertz_mindlin_limit_force)
+      {
+        calculate_hertz_mindlin_limit_force_contact(
+          contact_info,
+          tangential_relative_velocity,
+          normal_relative_velocity_value,
+          normal_unit_vector,
+          normal_overlap,
+          particle_one_properties,
+          particle_two_properties,
+          normal_force,
+          tangential_force,
+          particle_one_tangential_torque,
+          particle_two_tangential_torque,
+          rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::
+                                     hertz_mindlin_limit_overlap)
+      {
+        calculate_hertz_mindlin_limit_overlap_contact(
+          contact_info,
+          tangential_relative_velocity,
+          normal_relative_velocity_value,
+          normal_unit_vector,
+          normal_overlap,
+          particle_one_properties,
+          particle_two_properties,
+          normal_force,
+          tangential_force,
+          particle_one_tangential_torque,
+          particle_two_tangential_torque,
+          rolling_resistance_torque);
+      }
+
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::hertz_JKR)
+      {
+        this->calculate_hertz_JKR_contact(contact_info,
+                                          tangential_relative_velocity,
+                                          normal_relative_velocity_value,
+                                          normal_unit_vector,
+                                          normal_overlap,
+                                          particle_one_properties,
+                                          particle_two_properties,
+                                          normal_force,
+                                          tangential_force,
+                                          particle_one_tangential_torque,
+                                          particle_two_tangential_torque,
+                                          rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::DMT)
+      {
+        this->calculate_DMT_contact(contact_info,
+                                    tangential_relative_velocity,
+                                    normal_relative_velocity_value,
+                                    normal_unit_vector,
+                                    normal_overlap,
+                                    particle_one_properties,
+                                    particle_two_properties,
+                                    normal_force,
+                                    tangential_force,
+                                    particle_one_tangential_torque,
+                                    particle_two_tangential_torque,
+                                    rolling_resistance_torque);
+      }
+  }
+
+private:
   /**
    * @brief Apply the calculated force and torque on the local-local
    * particle pair in contact.
@@ -1177,7 +1318,6 @@ protected:
     return 0.;
   }
 
-private:
   /**
    * @brief Returns the index for accessing the properties vectors for a given
    * combinations of particle types.
@@ -1191,7 +1331,6 @@ private:
   {
     return i * n_particle_types + j;
   }
-
 
   /**
    * @brief Set every containers needed to carry the particle-particle force calculation.
@@ -1296,145 +1435,6 @@ private:
       }
   }
 
-  inline Point<3>
-  get_location(const Particles::ParticleIterator<dim> &particle) &
-  {
-    if constexpr (dim == 3)
-      return particle->get_location();
-
-    if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location());
-  }
-
-  inline Point<3>
-  get_periodic_location(const Particles::ParticleIterator<dim> &particle) &
-  {
-    if constexpr (dim == 3)
-      return (particle->get_location() - this->periodic_offset);
-
-    if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location() - this->periodic_offset);
-  }
-
-  inline void
-  calculate_particle_particle_contact(
-    particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1, 3>                  &tangential_relative_velocity,
-    const double                         normal_relative_velocity_value,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque)
-  {
-    using namespace Parameters::Lagrangian;
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::linear)
-      {
-        calculate_linear_contact(contact_info,
-                                 tangential_relative_velocity,
-                                 normal_relative_velocity_value,
-                                 normal_unit_vector,
-                                 normal_overlap,
-                                 particle_one_properties,
-                                 particle_two_properties,
-                                 normal_force,
-                                 tangential_force,
-                                 particle_one_tangential_torque,
-                                 particle_two_tangential_torque,
-                                 rolling_resistance_torque);
-      }
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::hertz)
-      {
-        this->calculate_hertz_contact(contact_info,
-                                      tangential_relative_velocity,
-                                      normal_relative_velocity_value,
-                                      normal_unit_vector,
-                                      normal_overlap,
-                                      particle_one_properties,
-                                      particle_two_properties,
-                                      normal_force,
-                                      tangential_force,
-                                      particle_one_tangential_torque,
-                                      particle_two_tangential_torque,
-                                      rolling_resistance_torque);
-      }
-
-    if constexpr (contact_model ==
-                  ParticleParticleContactForceModel::hertz_mindlin_limit_force)
-      {
-        calculate_hertz_mindlin_limit_force_contact(
-          contact_info,
-          tangential_relative_velocity,
-          normal_relative_velocity_value,
-          normal_unit_vector,
-          normal_overlap,
-          particle_one_properties,
-          particle_two_properties,
-          normal_force,
-          tangential_force,
-          particle_one_tangential_torque,
-          particle_two_tangential_torque,
-          rolling_resistance_torque);
-      }
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::
-                                     hertz_mindlin_limit_overlap)
-      {
-        calculate_hertz_mindlin_limit_overlap_contact(
-          contact_info,
-          tangential_relative_velocity,
-          normal_relative_velocity_value,
-          normal_unit_vector,
-          normal_overlap,
-          particle_one_properties,
-          particle_two_properties,
-          normal_force,
-          tangential_force,
-          particle_one_tangential_torque,
-          particle_two_tangential_torque,
-          rolling_resistance_torque);
-      }
-
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::hertz_JKR)
-      {
-        this->calculate_hertz_JKR_contact(contact_info,
-                                          tangential_relative_velocity,
-                                          normal_relative_velocity_value,
-                                          normal_unit_vector,
-                                          normal_overlap,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          normal_force,
-                                          tangential_force,
-                                          particle_one_tangential_torque,
-                                          particle_two_tangential_torque,
-                                          rolling_resistance_torque);
-      }
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::DMT)
-      {
-        this->calculate_DMT_contact(contact_info,
-                                    tangential_relative_velocity,
-                                    normal_relative_velocity_value,
-                                    normal_unit_vector,
-                                    normal_overlap,
-                                    particle_one_properties,
-                                    particle_two_properties,
-                                    normal_force,
-                                    tangential_force,
-                                    particle_one_tangential_torque,
-                                    particle_two_tangential_torque,
-                                    rolling_resistance_torque);
-      }
-  }
-
   template <ContactType contact_type>
   inline void
   execute_contact_calculation(
@@ -1444,10 +1444,11 @@ private:
     std::vector<Tensor<1, 3>> &force,
     const double               dt)
   {
+    // No contact calculation if no adjacent particles
+    if (adjacent_particles_list.empty())
+      return;
+
     // Define local variables which will be used within the contact calculation
-    //  Namely: normal and tangential contact forces, tangential and rolling
-    //  torques, normal unit vector of the contact and contact relative velocity
-    //  in the normal direction
     Tensor<1, 3> normal_unit_vector;
     Tensor<1, 3> normal_force;
     Tensor<1, 3> tangential_force;
@@ -1456,6 +1457,11 @@ private:
     Tensor<1, 3> rolling_resistance_torque;
     double       normal_relative_velocity_value;
     Tensor<1, 3> tangential_relative_velocity;
+
+    // Set the threshold distance for contact force, this is useful for non-
+    // contact cohesive force models such as the DMT.
+    const double force_calculation_threshold_distance =
+      set_force_calculation_threshold_distance();
 
     // Gather information about particle 1 and set it up.
     auto first_contact_info      = adjacent_particles_list.begin();
@@ -1495,14 +1501,13 @@ private:
             particle_two_location = get_periodic_location(particle_two);
           }
 
-
         // Calculation of normal overlap
         double normal_overlap =
           0.5 * (particle_one_properties[PropertiesIndex::dp] +
                  particle_two_properties[PropertiesIndex::dp]) -
           particle_one_location.distance(particle_two_location);
 
-        if (normal_overlap > 0.0)
+        if (normal_overlap > force_calculation_threshold_distance)
           {
             if constexpr (contact_type ==
                             ContactType::local_particle_particle ||
