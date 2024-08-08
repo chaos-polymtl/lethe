@@ -18,8 +18,8 @@
 #define lethe_set_particle_particle_contact_force_model_h
 
 #include <dem/dem_solver_parameters.h>
-#  include <dem/force_chains_visualization.h>
-#  include <dem/particle_particle_contact_force.h>
+#include <dem/force_chains_visualization.h>
+#include <dem/particle_particle_contact_force.h>
 
 
 /**

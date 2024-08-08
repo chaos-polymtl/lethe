@@ -52,7 +52,7 @@ public:
    * @brief Calculate the contact forces using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
-   * @param container_manager Manager of contact containers giving the contact
+   * @param contact_manager Manager of contact containers giving the contact
    * pair candidates information for calculation of the particle-particle
    * contact forces.
    * @param dt DEM time step.
@@ -61,7 +61,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &container_manager,
+    DEMContactManager<dim>    &contact_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
@@ -106,7 +106,7 @@ public:
    * @brief Calculate the contact forces using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
-   * @param container_manager Manager of contact containers giving the contact
+   * @param contact_manager Manager of contact containers giving the contact
    * pair candidates information for calculation of the particle-particle
    * contact forces.
    * @param dt DEM time step.
@@ -115,7 +115,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &container_manager,
+    DEMContactManager<dim>    &contact_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;

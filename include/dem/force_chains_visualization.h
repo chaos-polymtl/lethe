@@ -53,12 +53,12 @@ public:
    * all touching particles. Store normal forces and particles position in
    * vectors.
    *
-   * @param container_manager The container manager object that contains
+   * @param contact_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
    */
   virtual void
-  calculate_force_chains(DEMContactManager<dim> &container_manager) = 0;
+  calculate_force_chains(DEMContactManager<dim> &contact_manager) = 0;
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
@@ -123,12 +123,12 @@ public:
    * ParticleParticleContactForce class' methods. Stock normal forces and
    * particles position in vectors.
    *
-   * @param container_manager The container manager object that contains
+   * @param contact_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
    */
   void
-  calculate_force_chains(DEMContactManager<dim> &container_manager) override;
+  calculate_force_chains(DEMContactManager<dim> &contact_manager) override;
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
@@ -149,9 +149,10 @@ public:
                      const double                    time) override;
 
 private:
-  /// vector of normal forces between each touching particles.
+  // vector of normal forces between each touching particles.
   std::vector<double> force_normal;
-  /// vector of positions of touching particles.
+
+  // vector of positions of touching particles.
   std::vector<Point<3>> vertices;
 };
 

@@ -15,20 +15,15 @@
  */
 
 #ifndef lethe_set_particle_wall_contact_force_model_h
-#  define lethe_set_particle_wall_contact_force_model_h
+#define lethe_set_particle_wall_contact_force_model_h
 
-#  include <dem/dem_solver_parameters.h>
+#include <dem/dem_solver_parameters.h>
 #  include <dem/particle_wall_dmt_force.h>
 #  include <dem/particle_wall_jkr_force.h>
 #  include <dem/particle_wall_linear_force.h>
 #  include <dem/particle_wall_nonlinear_force.h>
 
 #  include <deal.II/distributed/tria.h>
-
-using namespace std;
-
-#  ifndef set_particle_wall_contact_force_model_h
-#    define set_particle_wall_contact_force_model_h
 
 /**
  * @brief Set the selected particle-wall contact force model in the parameter
@@ -44,4 +39,4 @@ set_particle_wall_contact_force_model(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation);
 
-#  endif
+#endif
