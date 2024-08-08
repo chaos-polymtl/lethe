@@ -26,15 +26,6 @@
 using namespace dealii;
 
 /**
- * @brief Finds the neighbors lists of all the active cells in the input triangulation.
- * find_cell_neighbors() is written to avoid any repetition, for instance if
- * cell B is recognized as the neighbor of cell A once, cell A will not appear
- * in the neighbor list of cell B again. On the other hand,
- * find_full_cell_neighbors() function finds the neighbors list with this
- * repetition.
- */
-
-/**
  * @brief Finds the neighbor list (without repetition) of all the active
  * cells in the triangulation. It gets the vertices of the cells to get lists
  * of the neighbor for each cells. There is some check to prevent repetition
@@ -116,7 +107,6 @@ find_full_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list);
-
 
 /**
  * @brief Generate a periodic neighbor cells list of the cell. With the
