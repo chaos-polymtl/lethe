@@ -597,9 +597,9 @@ $(function() {
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;                              *this-&gt;cell_quadrature,</div>
 <div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;                              update_values | update_JxW_values);</div>
 <div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160; </div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;  QGauss&lt;dim&gt;            quadrature_formula(this-&gt;cell_quadrature-&gt;size());</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  QGauss&lt;dim&gt; quadrature_formula(dof_handler_fd-&gt;get_fe().degree + 1);</div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160; </div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;  FEValues&lt;dim&gt; fe_values_fd(*this-&gt;mapping,</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                             dof_handler_fd-&gt;get_fe(),</div>
@@ -701,10 +701,10 @@ $(function() {
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;                              *this-&gt;cell_quadrature,</div>
 <div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;                              update_values | update_JxW_values);</div>
 <div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160; </div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  QGauss&lt;dim&gt;            quadrature_formula(this-&gt;cell_quadrature-&gt;size());</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160; </div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160; </div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;  QGauss&lt;dim&gt;   quadrature_formula(dof_handler_fd-&gt;get_fe().degree + 1);</div>
 <div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;  FEValues&lt;dim&gt; fe_values_fd(*this-&gt;mapping,</div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;                             dof_handler_fd-&gt;get_fe(),</div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;                             quadrature_formula,</div>

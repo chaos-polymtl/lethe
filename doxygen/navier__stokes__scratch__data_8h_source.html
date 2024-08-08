@@ -514,9 +514,9 @@ $(function() {
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                  current_solution, this-&gt;face_velocity_laplacians[face]);</div>
 <div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160; </div>
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                <span class="comment">// Gather pressure (values, gradient)</span></div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                this-&gt;fe_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>].get_function_values(</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                this-&gt;fe_face_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>].get_function_values(</div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                  current_solution, this-&gt;face_pressure_values[face]);</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                this-&gt;fe_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>].get_function_gradients(</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                this-&gt;fe_face_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>].get_function_gradients(</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;                  current_solution, this-&gt;face_pressure_gradients[face]);</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_faces_q_points; ++q)</div>
