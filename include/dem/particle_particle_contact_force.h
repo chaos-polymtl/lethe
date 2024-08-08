@@ -99,7 +99,6 @@ class ParticleParticleContactForce
 public:
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters);
 
-
   virtual ~ParticleParticleContactForce()
   {}
 
@@ -525,8 +524,6 @@ protected:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
-  template <
-    Parameters::Lagrangian::ParticleParticleContactForceModel contact_model>
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -650,7 +647,6 @@ protected:
                                           normal_force,
                                           normal_unit_vector);
   }
-
 
   /**
    * @brief Calculate the particle-particle non-linear contact force and torque
@@ -1085,7 +1081,7 @@ protected:
                         Tensor<1, 3> &particle_two_tangential_torque,
                         Tensor<1, 3> &rolling_resistance_torque)
   {
-    constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
+    constexpr double M_2PI = 2. * M_PI;
 
     // Calculation of effective radius and mass
     auto [effective_radius, effective_mass] =
@@ -1096,15 +1092,17 @@ protected:
       particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
       particle_two_properties[PropertiesIndex::type];
-    const unsigned int property_index =
+    const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
-    const double F_po = M_2PI * this->effective_radius *
-                        this->effective_surface_energy.at(property_index);
+    const double surface_energy = this->effective_surface_energy[pair_index];
+    const double hamaker_constant =
+      this->effective_hamaker_constant[pair_index];
+
+    const double F_po = M_2PI * effective_radius * surface_energy;
 
     const double delta_0 =
-      -std::sqrt(this->effective_hamaker_constant.at(property_index) *
-                 this->effective_radius / (6. * F_po));
+      -std::sqrt(hamaker_constant * effective_radius / (6. * F_po));
 
     // Cohesive force. This will need to be added to the
     // first vector inside the tuple.
@@ -1115,8 +1113,7 @@ protected:
       {
         cohesive_term = -F_po;
 
-        this->template calculate_hertz_mindlin_limit_overlap_contact<
-          Parameters::Lagrangian::ParticleParticleContactForceModel::DMT>(
+        calculate_hertz_mindlin_limit_overlap_contact(
           contact_info,
           tangential_relative_velocity,
           normal_relative_velocity_value,
@@ -1140,8 +1137,7 @@ protected:
     // constant. It needs to be computed.
     else
       {
-        cohesive_term = -this->effective_hamaker_constant.at(property_index) *
-                        effective_radius /
+        cohesive_term = -hamaker_constant * effective_radius /
                         (6. * Utilities::fixed_power<2>(normal_overlap));
         contact_info.tangential_overlap.clear();
       }
@@ -1157,8 +1153,8 @@ protected:
   double
   set_force_calculation_threshold_distance()
   {
-    if constexpr (force_model == Parameters::Lagrangian::
-                                   ParticleParticleContactForceModel::DMT)
+    if constexpr (contact_model == Parameters::Lagrangian::
+                                     ParticleParticleContactForceModel::DMT)
       {
         // We are looking for the maximum hamaker constant and minimum surface
         // energy to compute the biggest distance at which force will be
@@ -1300,8 +1296,6 @@ private:
       }
   }
 
-
-
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
   {
@@ -1339,22 +1333,6 @@ private:
   {
     using namespace Parameters::Lagrangian;
 
-    if constexpr (contact_model == ParticleParticleContactForceModel::DMT)
-      {
-        this->calculate_DMT_contact(contact_info,
-                                    tangential_relative_velocity,
-                                    normal_relative_velocity_value,
-                                    normal_unit_vector,
-                                    normal_overlap,
-                                    particle_one_properties,
-                                    particle_two_properties,
-                                    normal_force,
-                                    tangential_force,
-                                    particle_one_tangential_torque,
-                                    particle_two_tangential_torque,
-                                    rolling_resistance_torque);
-      }
-
     if constexpr (contact_model == ParticleParticleContactForceModel::linear)
       {
         calculate_linear_contact(contact_info,
@@ -1385,22 +1363,6 @@ private:
                                       particle_one_tangential_torque,
                                       particle_two_tangential_torque,
                                       rolling_resistance_torque);
-      }
-
-    if constexpr (contact_model == ParticleParticleContactForceModel::hertz_JKR)
-      {
-        this->calculate_hertz_JKR_contact(contact_info,
-                                          tangential_relative_velocity,
-                                          normal_relative_velocity_value,
-                                          normal_unit_vector,
-                                          normal_overlap,
-                                          particle_one_properties,
-                                          particle_two_properties,
-                                          normal_force,
-                                          tangential_force,
-                                          particle_one_tangential_torque,
-                                          particle_two_tangential_torque,
-                                          rolling_resistance_torque);
       }
 
     if constexpr (contact_model ==
@@ -1438,8 +1400,40 @@ private:
           particle_two_tangential_torque,
           rolling_resistance_torque);
       }
-  }
 
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::hertz_JKR)
+      {
+        this->calculate_hertz_JKR_contact(contact_info,
+                                          tangential_relative_velocity,
+                                          normal_relative_velocity_value,
+                                          normal_unit_vector,
+                                          normal_overlap,
+                                          particle_one_properties,
+                                          particle_two_properties,
+                                          normal_force,
+                                          tangential_force,
+                                          particle_one_tangential_torque,
+                                          particle_two_tangential_torque,
+                                          rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::DMT)
+      {
+        this->calculate_DMT_contact(contact_info,
+                                    tangential_relative_velocity,
+                                    normal_relative_velocity_value,
+                                    normal_unit_vector,
+                                    normal_overlap,
+                                    particle_one_properties,
+                                    particle_two_properties,
+                                    normal_force,
+                                    tangential_force,
+                                    particle_one_tangential_torque,
+                                    particle_two_tangential_torque,
+                                    rolling_resistance_torque);
+      }
+  }
 
   template <ContactType contact_type>
   inline void
@@ -1579,8 +1573,6 @@ private:
                   rolling_resistance_torque);
               }
 
-
-
             if constexpr (contact_type ==
                             ContactType::local_particle_particle ||
                           contact_type ==
@@ -1650,8 +1642,6 @@ private:
       }
   }
 
-
-
   // Members of the class
   // Contact model parameter. It is calculated in the constructor for
   // different combinations of particle types. For different combinations, a
@@ -1668,4 +1658,4 @@ private:
   const double        dmt_cut_off_threshold;
 };
 
-#endif /* particle_particle_contact_force_h */
+#endif
