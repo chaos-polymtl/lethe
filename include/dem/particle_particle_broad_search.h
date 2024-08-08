@@ -52,8 +52,8 @@ find_particle_particle_contact_pairs(
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
  * candidate particle-particle collision pairs. These collision pairs will be
  * used in the fine search to investigate if they are in contact or not.
- * This version of the function is used when adaptive sparse contacts regards
- * mobility is enable.
+ * This version of the function is used when adaptive sparse contacts is
+ * enabled.
  *
  * @param particle_handler The particle handler of particles in the broad
  * search
@@ -91,8 +91,8 @@ find_particle_particle_periodic_contact_pairs(
  * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
  * candidate particle-particle collision pairs. These collision pairs will be
  * used in the fine search to investigate if they are in contact or not.
- * This version of the function is used when adaptive sparse contacts regards
- * mobility is enable.
+ * This version of the function is used when adaptive sparse contacts is
+ * enabled.
  *
  * @param particle_handler The particle handler of particles in the broad
  * search
