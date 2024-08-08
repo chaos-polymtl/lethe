@@ -85,8 +85,7 @@ test()
   DataOut<3> data_out;
   data_out.attach_dof_handler(solid_dh);
 
-  const bool        mapping_all = true;
-  const MappingQ<3> mapping(1, mapping_all);
+  const MappingQ<3> mapping(1);
   data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
 
   PVDHandler pvdhandler;
