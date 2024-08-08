@@ -237,16 +237,17 @@ To monitor the kinetic energy and the enstrophy, we set calculation to ``true`` 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 2``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 10 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 2``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
     subsection simulation control
-      set method            = bdf3
-      set time step         = 0.0125
-      set number mesh adapt = 0    
+      set method            = bdf2
+      set time step         = 0.01
+      set adapt             = true
+      set max cfl           = 1
       set time end          = 60  
-      set output frequency  = 2    
+      set output frequency  = 10    
       set subdivision       = 2
     end
 
