@@ -9,7 +9,7 @@ Features
 ---------
 
 - Solvers: ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
-- Transient problem using ``bdf3`` time integrator
+- Transient problem using ``bdf2`` time integrator
 - Demonstrates the implementation of initial conditions for velocity and pressure 
 - Demonstrates the postprocessing of the enstrophy
 
