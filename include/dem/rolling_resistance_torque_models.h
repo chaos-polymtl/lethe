@@ -34,7 +34,6 @@ no_rolling_resistance_torque(
   const double /*effective_rolling_friction_coefficient*/,
   const double /*normal_force_norm*/,
   const Tensor<1, 3> & /*normal_contact_vector*/)
-
 {
   // No rolling resistance torque model. When this model is use, the rolling
   // friction is zero.
@@ -61,8 +60,7 @@ constant_rolling_resistance_torque(
 {
   // For calculation of rolling resistance torque, we need to obtain
   // omega_ij using rotational velocities of particles one and two
-  Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity,
-    omega_ij, omega_ij_direction;
+  Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity;
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
@@ -71,8 +69,9 @@ constant_rolling_resistance_torque(
         particle_two_properties[DEM::PropertiesIndex::omega_x + d];
     }
 
-  omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
-  omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
+  Tensor<1, 3> omega_ij =
+    particle_one_angular_velocity - particle_two_angular_velocity;
+  Tensor<1, 3> omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   // Calculation of rolling resistance torque
   return (-effective_rolling_friction_coefficient * effective_r *
@@ -98,9 +97,7 @@ viscous_rolling_resistance_torque(
 {
   // For calculation of rolling resistance torque, we need to obtain
   // omega_ij using rotational velocities of particles one and two
-  Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity,
-    omega_ij, omega_ij_direction;
-
+  Tensor<1, 3> particle_one_angular_velocity, particle_two_angular_velocity;
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
@@ -109,8 +106,9 @@ viscous_rolling_resistance_torque(
         particle_two_properties[DEM::PropertiesIndex::omega_x + d];
     }
 
-  omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
-  omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
+  Tensor<1, 3> omega_ij =
+    particle_one_angular_velocity - particle_two_angular_velocity;
+  Tensor<1, 3> omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   Tensor<1, 3> v_omega =
     cross_product_3d(particle_one_angular_velocity,
