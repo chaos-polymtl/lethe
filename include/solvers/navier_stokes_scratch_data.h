@@ -433,9 +433,9 @@ public:
                   current_solution, this->face_velocity_laplacians[face]);
 
                 // Gather pressure (values, gradient)
-                this->fe_values[pressure].get_function_values(
+                this->fe_face_values[pressure].get_function_values(
                   current_solution, this->face_pressure_values[face]);
-                this->fe_values[pressure].get_function_gradients(
+                this->fe_face_values[pressure].get_function_gradients(
                   current_solution, this->face_pressure_gradients[face]);
 
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
