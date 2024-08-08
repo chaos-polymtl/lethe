@@ -367,9 +367,9 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info,
+  typename DEM::dem_data_structures<2>::particle_point_in_contact,
   ContactType::particle_point>(
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<2>::particle_point_in_contact
     &pairs_in_contact,
   const typename DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
@@ -377,9 +377,9 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info,
+  typename DEM::dem_data_structures<3>::particle_point_in_contact,
   ContactType::particle_point>(
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<3>::particle_point_in_contact
     &pairs_in_contact,
   const typename DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
@@ -388,9 +388,9 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info,
+  typename DEM::dem_data_structures<2>::particle_line_in_contact,
   ContactType::particle_line>(
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<2>::particle_line_in_contact
     &pairs_in_contact,
   const typename DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
@@ -398,9 +398,9 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info,
+  typename DEM::dem_data_structures<3>::particle_line_in_contact,
   ContactType::particle_line>(
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<3>::particle_line_in_contact
     &pairs_in_contact,
   const typename DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);

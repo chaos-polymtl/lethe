@@ -14,7 +14,7 @@ ParticlePointLineForce<dim>::ParticlePointLineForce()
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  const typename DEM::dem_data_structures<dim>::particle_point_in_contact
     *particle_point_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
                             &physical_properties,
@@ -42,7 +42,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
       if constexpr (dim == 2)
         particle_location_3d = point_nd_to_3d(particle->get_location());
 
-      const Point<3> point = contact_information->point_one;
+      const Point<3> point = contact_information->point;
       double         normal_overlap =
         ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
         point.distance(particle_location_3d);
@@ -138,7 +138,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+  const typename DEM::dem_data_structures<dim>::particle_line_in_contact
     *particle_line_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
                             &physical_properties,

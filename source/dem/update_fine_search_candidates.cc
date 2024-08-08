@@ -1,4 +1,4 @@
-#include <dem/contact_type.h>
+#include <dem/contact_info.h>
 #include <dem/update_fine_search_candidates.h>
 
 using namespace dealii;

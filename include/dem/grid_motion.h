@@ -17,9 +17,9 @@
 #ifndef lethe_grid_motion_h
 #define lethe_grid_motion_h
 
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_wall_contact_info.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -98,7 +98,7 @@ private:
   move_grid_rotational(Triangulation<dim, spacedim> &triangulation);
 
   /**
-   * Carries out translational motion of the triangulation
+   * @brief Carries out translational motion of the triangulation
    *
    * @param triangulation Triangulation
    */
@@ -128,4 +128,4 @@ private:
 };
 
 
-#endif /* grid_motion_h */
+#endif

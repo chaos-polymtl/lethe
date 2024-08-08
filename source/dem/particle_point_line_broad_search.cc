@@ -1,26 +1,20 @@
 #include <dem/particle_point_line_broad_search.h>
 
 using namespace dealii;
-
-// Constructor
-template <int dim>
-ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
-{}
+using namespace DEM;
 
 // This function finds all the particle-point contact candidates
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_candidates
-ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
+void
+find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-    &boundary_cells_with_points)
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+    &particle_point_contact_candidates)
 {
-  std::unordered_map<types::particle_index,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    particle_point_contact_candidates;
-
   // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
@@ -62,23 +56,20 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
           ++contact_candidate_counter;
         }
     }
-  return particle_point_contact_candidates;
 }
 
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_candidates
-ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
+void
+find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                                    &boundary_cells_with_points,
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+                                    &particle_point_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
-  std::unordered_map<types::particle_index,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    particle_point_contact_candidates;
-
   // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
@@ -126,25 +117,21 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
           ++contact_candidate_counter;
         }
     }
-  return particle_point_contact_candidates;
 }
 
 // This function finds all the particle-line contact candidates
 template <int dim>
 typename DEM::dem_data_structures<dim>::particle_line_candidates
-ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
+find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines)
+               Point<dim>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+    &particle_line_contact_candidates)
 {
-  std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    particle_line_contact_candidates;
-
   // Defining and resetting a local particle-line candidate counter. This is
   // used as a key to the output map
   unsigned int contact_candidate_counter = 0;
@@ -197,20 +184,17 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
 
 template <int dim>
 typename DEM::dem_data_structures<dim>::particle_line_candidates
-ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
+find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>>         &boundary_cells_with_lines,
+               Point<dim>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+                                    &particle_line_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
-  std::unordered_map<
-    types::particle_index,
-    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    particle_line_contact_candidates;
-
   // Defining and resetting a local particle-line candidate counter. This is
   // used as a key to the output map
   unsigned int contact_candidate_counter = 0;
@@ -255,16 +239,102 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
           // boundary line) and adding it to the
           // particle_line_contact_candidates map. This map is the output of
           // this function
-          particle_line_contact_candidates.insert(
-            {contact_candidate_counter,
-             std::make_tuple(particles_in_cell_iterator,
-                             first_vertex_location,
-                             second_vertex_location)});
+          particle_line_contact_candidates.emplace(
+            contact_candidate_counter,
+            std::make_tuple(particles_in_cell_iterator,
+                            first_vertex_location,
+                            second_vertex_location));
           ++contact_candidate_counter;
         }
     }
+
   return particle_line_contact_candidates;
 }
 
-template class ParticlePointLineBroadSearch<2>;
-template class ParticlePointLineBroadSearch<3>;
+template typename DEM::dem_data_structures<2>::particle_line_candidates
+find_particle_line_contact_pairs(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<2>::active_cell_iterator,
+               Point<2>,
+               Point<2>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<2>::particle_line_candidates
+    &particle_line_contact_candidates);
+
+template typename DEM::dem_data_structures<3>::particle_line_candidates
+find_particle_line_contact_pairs(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<3>::active_cell_iterator,
+               Point<3>,
+               Point<3>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<3>::particle_line_candidates
+    &particle_line_contact_candidates);
+
+template typename DEM::dem_data_structures<2>::particle_line_candidates
+find_particle_line_contact_pairs(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<2>::active_cell_iterator,
+               Point<2>,
+               Point<2>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<2>::particle_line_candidates
+                                  &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+
+template typename DEM::dem_data_structures<3>::particle_line_candidates
+find_particle_line_contact_pairs(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<3>::active_cell_iterator,
+               Point<3>,
+               Point<3>>> &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<3>::particle_line_candidates
+                                  &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<3> &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<2>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::pair<typename Triangulation<2>::active_cell_iterator, Point<2>>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<2>::particle_point_candidates
+    &particle_point_contact_candidates);
+
+template void
+find_particle_point_contact_pairs<3>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::pair<typename Triangulation<3>::active_cell_iterator, Point<3>>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<3>::particle_point_candidates
+    &particle_point_contact_candidates);
+
+template void
+find_particle_point_contact_pairs<2>(
+  const Particles::ParticleHandler<2> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::pair<typename Triangulation<2>::active_cell_iterator, Point<2>>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<2>::particle_point_candidates
+                                  &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+
+template void
+find_particle_point_contact_pairs<3>(
+  const Particles::ParticleHandler<3> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::pair<typename Triangulation<3>::active_cell_iterator, Point<3>>>
+    &boundary_cells_with_points,
+  typename DEM::dem_data_structures<3>::particle_point_candidates
+                                  &particle_point_contact_candidates,
+  const AdaptiveSparseContacts<3> &sparse_contacts_object);

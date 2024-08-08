@@ -19,8 +19,7 @@
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/particle_particle_contact_info.h>
-#include <dem/particle_wall_contact_info.h>
+
 
 /**
  * @brief Manage removing repetitions and adding new contact pairs to the

@@ -154,16 +154,14 @@ test(double coefficient_of_restitution)
                        Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
   // P-W broad search
-  ParticleWallBroadSearch<dim> particle_wall_broad_search_object;
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     particle_wall_contact_list;
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+  find_particle_wall_contact_pairs<dim>(
     boundary_cells_object.get_boundary_cells_information(),
     particle_handler,
     particle_wall_contact_list);
 
   // P-W fine search
-  ParticleWallFineSearch<dim> particle_wall_fine_search_object;
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                                   particle_wall_contact_information;
   ParticleWallNonLinearForce<dim> particle_wall_force_object(dem_parameters);
@@ -174,8 +172,8 @@ test(double coefficient_of_restitution)
   for (double time = 0; time < 0.0001; time += dt)
     {
       // If particle and wall are in contact
-      particle_wall_fine_search_object.particle_wall_fine_search(
-        particle_wall_contact_list, particle_wall_contact_information);
+      particle_wall_fine_search<dim>(particle_wall_contact_list,
+                                     particle_wall_contact_information);
 
       particle_wall_force_object.calculate_particle_wall_contact_force(
         particle_wall_contact_information, dt, torque, force);

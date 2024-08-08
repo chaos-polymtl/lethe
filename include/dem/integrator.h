@@ -96,4 +96,4 @@ public:
             AdaptiveSparseContacts<dim> &sparse_contacts_object) = 0;
 };
 
-#endif /* integration_h */
+#endif

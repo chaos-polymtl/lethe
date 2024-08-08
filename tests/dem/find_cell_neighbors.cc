@@ -52,10 +52,9 @@ test()
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(triangulation,
-                                           cells_local_neighbor_list,
-                                           cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           cells_local_neighbor_list,
+                           cells_ghost_neighbor_list);
 
   // Output
   int i = 0;

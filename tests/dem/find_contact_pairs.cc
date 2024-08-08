@@ -58,16 +58,14 @@ test()
 
   MappingQ1<dim> mapping;
 
-  DEMContactManager<dim>          container_manager;
+  DEMContactManager<dim>          contact_manager;
   Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 
   // Finding cell neighbors list, it is required for finding the broad search
-  // pairs in the container_manager
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  // pairs in the contact_manager
+  find_cell_neighbors<dim>(triangulation,
+                           contact_manager.cells_local_neighbor_list,
+                           contact_manager.cells_ghost_neighbor_list);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -107,13 +105,13 @@ test()
   AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
 
   // Calling broad search function
-  container_manager.execute_particle_particle_broad_search(
+  contact_manager.execute_particle_particle_broad_search(
     particle_handler, dummy_adaptive_sparse_contacts);
 
   // Output
   for (auto pairs_iterator =
-         container_manager.local_contact_pair_candidates.begin();
-       pairs_iterator != container_manager.local_contact_pair_candidates.end();
+         contact_manager.local_contact_pair_candidates.begin();
+       pairs_iterator != contact_manager.local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
@@ -127,8 +125,8 @@ test()
     }
 
   for (auto pairs_iterator =
-         container_manager.local_contact_pair_candidates.begin();
-       pairs_iterator != container_manager.local_contact_pair_candidates.end();
+         contact_manager.local_contact_pair_candidates.begin();
+       pairs_iterator != contact_manager.local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
