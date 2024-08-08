@@ -308,6 +308,9 @@ public:
 
   // Containers with other information
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
+
+private:
+  Tensor<1, dim> periodic_offset = Tensor<1, dim>();
 };
 
 #endif
