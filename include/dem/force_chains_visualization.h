@@ -59,7 +59,11 @@ public:
    * containers with periodic neighbors lists
    */
   virtual void
-  calculate_force_chains(DEMContactManager<dim> &contact_manager) = 0;
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles) = 0;
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
@@ -119,7 +123,11 @@ public:
    * containers with periodic neighbors lists
    */
   void
-  calculate_force_chains(DEMContactManager<dim> &contact_manager) override;
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles) override;
 
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.

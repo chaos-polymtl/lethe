@@ -53,6 +53,7 @@ find_particle_point_contact_pairs(
           particle_point_contact_candidates.insert(
             {contact_candidate_counter,
              std::make_pair(particles_in_cell_iterator, vertex_location)});
+
           ++contact_candidate_counter;
         }
     }

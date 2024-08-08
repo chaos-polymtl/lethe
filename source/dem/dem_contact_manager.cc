@@ -234,24 +234,44 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
   // The first broad search is the default one for sparse contacts
   if (action_manager->use_default_broad_search_functions())
     {
-      find_particle_particle_contact_pairs<dim>(particle_handler, *this);
+      find_particle_particle_contact_pairs<dim>(particle_handler,
+                                                cells_local_neighbor_list,
+                                                cells_ghost_neighbor_list,
+                                                local_contact_pair_candidates,
+                                                ghost_contact_pair_candidates);
 
       if (action_manager->check_periodic_boundaries_enabled())
         {
-          find_particle_particle_periodic_contact_pairs<dim>(particle_handler,
-                                                             *this);
+          find_particle_particle_periodic_contact_pairs<dim>(
+            particle_handler,
+            cells_local_periodic_neighbor_list,
+            cells_ghost_periodic_neighbor_list,
+            cells_ghost_local_periodic_neighbor_list,
+            local_contact_pair_periodic_candidates,
+            ghost_contact_pair_periodic_candidates,
+            ghost_local_contact_pair_periodic_candidates);
         }
     }
   else
     {
       find_particle_particle_contact_pairs<dim>(particle_handler,
-                                                *this,
+                                                cells_local_neighbor_list,
+                                                cells_ghost_neighbor_list,
+                                                local_contact_pair_candidates,
+                                                ghost_contact_pair_candidates,
                                                 sparse_contacts_object);
 
       if (action_manager->check_periodic_boundaries_enabled())
         {
           find_particle_particle_periodic_contact_pairs<dim>(
-            particle_handler, *this, sparse_contacts_object);
+            particle_handler,
+            cells_local_periodic_neighbor_list,
+            cells_ghost_periodic_neighbor_list,
+            cells_ghost_local_periodic_neighbor_list,
+            local_contact_pair_periodic_candidates,
+            ghost_contact_pair_periodic_candidates,
+            ghost_local_contact_pair_periodic_candidates,
+            sparse_contacts_object);
         }
     }
 }

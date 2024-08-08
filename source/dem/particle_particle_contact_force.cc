@@ -21,14 +21,23 @@ template <int                               dim,
 void
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &contact_manager,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_periodic_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_periodic_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
   // Calculating the contact forces the local-local adjacent particles.
   for (auto &&adjacent_particles_list :
-       contact_manager.local_adjacent_particles | boost::adaptors::map_values)
+       local_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::local_particle_particle>(
         adjacent_particles_list, torque, force, dt);
@@ -36,7 +45,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Calculating the contact forces the local-ghost adjacent particles.
   for (auto &&adjacent_particles_list :
-       contact_manager.ghost_adjacent_particles | boost::adaptors::map_values)
+       ghost_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::ghost_particle_particle>(
         adjacent_particles_list, torque, force, dt);
@@ -44,8 +53,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Calculating the contact forces the local-local periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       contact_manager.local_periodic_adjacent_particles |
-         boost::adaptors::map_values)
+       local_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
@@ -54,8 +62,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Calculating the contact forces the local-ghost periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       contact_manager.ghost_periodic_adjacent_particles |
-         boost::adaptors::map_values)
+       ghost_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
@@ -64,8 +71,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Calculating the contact forces the ghost-local periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       contact_manager.ghost_local_periodic_adjacent_particles |
-         boost::adaptors::map_values)
+       ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(

@@ -34,7 +34,6 @@
 #include <vector>
 
 using namespace dealii;
-using namespace DEM;
 
 /**
  * @brief Base class for the particle-particle contact force models
@@ -64,7 +63,16 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &contact_manager,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
@@ -118,7 +126,16 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &contact_manager,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
@@ -218,7 +235,6 @@ protected:
       (contact_info.tangential_overlap * normal_unit_vector) *
       normal_unit_vector;
   }
-
 
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
@@ -432,9 +448,6 @@ private:
    *
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
-   *
-   * TODO: check if we return the values or pass them by references instead of
-   * member variables
    */
   inline std::tuple<double, double>
   find_effective_radius_and_mass(

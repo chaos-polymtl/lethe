@@ -73,19 +73,23 @@ template <int                               dim,
           RollingResistanceMethod           rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  calculate_force_chains(DEMContactManager<dim> &contact_manager)
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles)
 {
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       contact_manager.local_adjacent_particles | boost::adaptors::map_values)
+       local_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation(adjacent_particles_list);
     }
 
   // Calculate force for local-ghost particle pairs
   for (auto &&adjacent_particles_list :
-       contact_manager.ghost_adjacent_particles | boost::adaptors::map_values)
+       ghost_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation(adjacent_particles_list);
     }
@@ -140,8 +144,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   std::ofstream pvd_output(pvdPrefix.c_str());
   DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
 }
-
-
 
 // No resistance
 template class ParticlesForceChains<2,

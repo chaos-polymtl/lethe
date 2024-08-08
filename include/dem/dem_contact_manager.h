@@ -113,9 +113,6 @@ public:
    * Contact pairs are local particle-particle, ghost particle-particle,
    * particle-wall, particle-floating wall contacts and particle-floating mesh
    * contacts.
-   *
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
    */
   void
   update_contacts();
@@ -236,6 +233,68 @@ public:
     this->periodic_offset = offset;
   }
 
+
+  inline typename dem_data_structures<dim>::particle_floating_mesh_in_contact &
+  get_particle_floating_mesh_in_contact()
+  {
+    return particle_floating_mesh_in_contact;
+  }
+
+  inline typename dem_data_structures<dim>::particle_wall_in_contact &
+  get_particle_floating_wall_in_contact()
+  {
+    return particle_floating_wall_in_contact;
+  }
+
+  inline typename dem_data_structures<dim>::particle_wall_in_contact &
+  get_particle_wall_in_contact()
+  {
+    return particle_wall_in_contact;
+  }
+
+  inline typename dem_data_structures<dim>::particle_line_in_contact &
+  get_particle_lines_in_contact()
+  {
+    return particle_lines_in_contact;
+  }
+
+  inline typename dem_data_structures<dim>::particle_point_in_contact &
+  get_particle_points_in_contact()
+  {
+    return particle_points_in_contact;
+  }
+
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_local_adjacent_particles()
+  {
+    return local_adjacent_particles;
+  }
+
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_ghost_adjacent_particles()
+  {
+    return ghost_adjacent_particles;
+  }
+
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_local_periodic_adjacent_particles()
+  {
+    return local_periodic_adjacent_particles;
+  }
+
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_ghost_periodic_adjacent_particles()
+  {
+    return ghost_periodic_adjacent_particles;
+  }
+
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_ghost_local_periodic_adjacent_particles()
+  {
+    return ghost_local_periodic_adjacent_particles;
+  }
+
+private:
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
     particle_container;
