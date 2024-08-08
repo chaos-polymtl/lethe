@@ -518,7 +518,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-  QGauss<dim>            quadrature_formula(dof_handler_fd->get_fe().degree+1);
+  QGauss<dim> quadrature_formula(dof_handler_fd->get_fe().degree + 1);
 
   FEValues<dim> fe_values_fd(*this->mapping,
                              dof_handler_fd->get_fe(),
@@ -623,7 +623,7 @@ VolumeOfFluid<dim>::calculate_momentum(
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  QGauss<dim>            quadrature_formula(dof_handler_fd->get_fe().degree + 1);
+  QGauss<dim>   quadrature_formula(dof_handler_fd->get_fe().degree + 1);
   FEValues<dim> fe_values_fd(*this->mapping,
                              dof_handler_fd->get_fe(),
                              quadrature_formula,
