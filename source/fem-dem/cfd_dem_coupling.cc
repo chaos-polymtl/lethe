@@ -814,7 +814,10 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    contact_manager.particle_wall_in_contact, dem_time_step, torque, force);
+    contact_manager.get_particle_wall_in_contact(),
+    dem_time_step,
+    torque,
+    force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
@@ -830,7 +833,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        contact_manager.particle_floating_wall_in_contact,
+        contact_manager.get_particle_floating_wall_in_contact(),
         dem_time_step,
         torque,
         force);
@@ -838,7 +841,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
-      &contact_manager.particle_points_in_contact,
+      &contact_manager.get_particle_points_in_contact(),
       dem_parameters.lagrangian_physical_properties,
       force);
 
@@ -846,7 +849,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
-          &contact_manager.particle_lines_in_contact,
+          &contact_manager.get_particle_lines_in_contact(),
           dem_parameters.lagrangian_physical_properties,
           force);
     }
@@ -1206,10 +1209,15 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particle-particle contact force
   particle_particle_contact_force_object
-    ->calculate_particle_particle_contact_force(contact_manager,
-                                                dem_time_step,
-                                                torque,
-                                                force);
+    ->calculate_particle_particle_contact_force(
+      contact_manager.get_local_adjacent_particles(),
+      contact_manager.get_ghost_adjacent_particles(),
+      contact_manager.get_local_periodic_adjacent_particles(),
+      contact_manager.get_ghost_periodic_adjacent_particles(),
+      contact_manager.get_ghost_local_periodic_adjacent_particles(),
+      dem_time_step,
+      torque,
+      force);
 
   // Particles-walls contact force:
   particle_wall_contact_force();

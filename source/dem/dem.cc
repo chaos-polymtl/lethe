@@ -218,8 +218,6 @@ DEMSolver<dim>::setup_solid_objects()
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
       action_manager->set_solid_objects_enabled();
-      contact_manager.particle_floating_mesh_in_contact.resize(
-        solid_surfaces.size() + solid_volumes.size());
     }
 }
 
@@ -504,7 +502,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    contact_manager.particle_wall_in_contact,
+    contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
     torque,
     force);
@@ -521,7 +519,7 @@ DEMSolver<dim>::particle_wall_contact_force()
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        contact_manager.particle_floating_wall_in_contact,
+        contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
         torque,
         force);
@@ -532,7 +530,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
-          contact_manager.particle_floating_mesh_in_contact,
+          contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
           torque,
           force,
@@ -541,7 +539,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
-      &contact_manager.particle_points_in_contact,
+      &contact_manager.get_particle_points_in_contact(),
       parameters.lagrangian_physical_properties,
       force);
 
@@ -549,7 +547,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
-          &contact_manager.particle_lines_in_contact,
+          &contact_manager.get_particle_lines_in_contact(),
           parameters.lagrangian_physical_properties,
           force);
     }
@@ -685,7 +683,9 @@ DEMSolver<dim>::write_output_results()
       // Force chains visualization
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
-      particles_force_chains_object->calculate_force_chains(contact_manager);
+      particles_force_chains_object->calculate_force_chains(
+        contact_manager.get_local_adjacent_particles(),
+        contact_manager.get_ghost_adjacent_particles());
       particles_force_chains_object->write_force_chains(
         parameters,
         particles_pvdhandler_force_chains,
@@ -984,7 +984,14 @@ DEMSolver<dim>::solve()
       // Particle-particle contact force
       particle_particle_contact_force_object
         ->calculate_particle_particle_contact_force(
-          contact_manager, simulation_control->get_time_step(), torque, force);
+          contact_manager.get_local_adjacent_particles(),
+          contact_manager.get_ghost_adjacent_particles(),
+          contact_manager.get_local_periodic_adjacent_particles(),
+          contact_manager.get_ghost_periodic_adjacent_particles(),
+          contact_manager.get_ghost_local_periodic_adjacent_particles(),
+          simulation_control->get_time_step(),
+          torque,
+          force);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
@@ -995,7 +1002,7 @@ DEMSolver<dim>::solve()
       // search and they are not updated in the contact force calculations.
       grid_motion_object
         ->update_boundary_points_and_normal_vectors_in_contact_list(
-          contact_manager.particle_wall_in_contact,
+          contact_manager.get_particle_wall_in_contact(),
           updated_boundary_points_and_normal_vectors);
 
       // Move solid objects (if solid object)

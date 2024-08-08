@@ -20,8 +20,8 @@
 #include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
 
-#include <dem/contact_type.h>
 #include <dem/contact_info.h>
+#include <dem/contact_type.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
@@ -34,7 +34,6 @@
 #include <vector>
 
 using namespace dealii;
-using namespace DEM;
 
 /**
  * @brief Base class for the particle-particle contact force models
@@ -52,16 +51,36 @@ public:
    * @brief Calculate the contact forces using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
-   * @param contact_manager Manager of contact containers giving the contact
-   * pair candidates information for calculation of the particle-particle
-   * contact forces.
+   * @param local_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local particle-particle contact forces.
+   * @param ghost_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local-ghost particle-particle contact
+   * forces.
+   * @param local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local periodic
+   * particle-particle contact forces.
+   * @param ghost_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost periodic
+   * particle-particle contact forces.
+   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the ghost-local periodic
+   * particle-particle contact forces.
    * @param dt DEM time step.
    * @param torque Torque acting on particles.
    * @param force Force acting on particles.
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &contact_manager,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
@@ -106,16 +125,36 @@ public:
    * @brief Calculate the contact forces using the contact pair information
    * obtained in the fine search and physical properties of particles.
    *
-   * @param contact_manager Manager of contact containers giving the contact
-   * pair candidates information for calculation of the particle-particle
-   * contact forces.
+   * @param local_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local particle-particle contact forces.
+   * @param ghost_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local-ghost particle-particle contact
+   * forces.
+   * @param local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local periodic
+   * particle-particle contact forces.
+   * @param ghost_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost periodic
+   * particle-particle contact forces.
+   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the ghost-local periodic
+   * particle-particle contact forces.
    * @param dt DEM time step.
    * @param torque Torque acting on particles.
    * @param force Force acting on particles.
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &contact_manager,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_periodic_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                              &ghost_local_periodic_adjacent_particles,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
@@ -160,7 +199,6 @@ protected:
     // Defining relative contact velocity
     Tensor<1, 3> contact_relative_velocity;
 
-
     // Assigning velocities and angular velocities of particles
     contact_relative_velocity[0] =
       particle_one_properties[PropertiesIndex::v_x] -
@@ -180,14 +218,12 @@ protected:
     particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
     particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
 
-
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
       0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
              particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
       normal_unit_vector));
-
 
     // Calculation of normal relative velocity. Note that in the
     // following line the product acts as inner product since both
@@ -202,13 +238,12 @@ protected:
       contact_relative_velocity -
       (normal_relative_velocity_value * normal_unit_vector);
 
-    // Calculation of new tangential_overlap, since this value is
-    // history-dependent it needs the value at previous time-step
-    // This variable is the main reason that we have iteration over
-    // two different vectors : tangential_overlap of the particles
-    // which were already in contact needs to
-    // modified using its history, while the tangential_overlaps of
-    // new particles are equal to zero
+    // Calculation of new tangential_overlap, since this value is history-
+    // dependent it needs the value at previous time-step. This variable is the
+    // main reason that we have iteration over  two different vectors :
+    // tangential_overlap of the particles which were already in contact needs
+    // to modified using its history, while the tangential_overlaps of new
+    // particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_overlap += tangential_relative_velocity * dt;
     contact_info.tangential_overlap -=
@@ -216,7 +251,11 @@ protected:
       normal_unit_vector;
   }
 
-
+  /**
+   * @brief Get the location of the particle.
+   *
+   * @param particle The particle to get the location from.
+   */
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
   {
@@ -227,6 +266,11 @@ protected:
       return point_nd_to_3d(particle->get_location());
   }
 
+  /**
+   * @brief Get the shifted location of the particle on the periodic boundary.
+   *
+   * @param particle The particle to get the location from.
+   */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle) &
   {
@@ -237,20 +281,40 @@ protected:
       return point_nd_to_3d(particle->get_location() - this->periodic_offset);
   }
 
+  /**
+   * @brief Calculate the particle-particle contact force and torque
+   * according to the contact model.
+   *
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact.
+   * @param[in] tangential_relative_velocity Tangential relative velocity.
+   * @param[in] normal_relative_velocity_value Normal relative contact velocity.
+   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_overlap Contact normal overlap.
+   * @param[in] particle_one_properties Properties of particle one in contact.
+   * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[out] normal_force Contact normal force.
+   * @param[out] tangential_force Contact tangential force.
+   * @param[out] particle_one_tangential_torque Contact tangential torque on
+   * particle one.
+   * @param[out] particle_two_tangential_torque Contact tangential torque on
+   * particle two.
+   * @param[out] rolling_resistance_torque Contact rolling resistance torque.
+   */
   inline void
-  calculate_particle_particle_contact(
-    particle_particle_contact_info<dim> &contact_info,
-    const Tensor<1, 3>                  &tangential_relative_velocity,
-    const double                         normal_relative_velocity_value,
-    const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap,
-    const ArrayView<const double>       &particle_one_properties,
-    const ArrayView<const double>       &particle_two_properties,
-    Tensor<1, 3>                        &normal_force,
-    Tensor<1, 3>                        &tangential_force,
-    Tensor<1, 3>                        &particle_one_tangential_torque,
-    Tensor<1, 3>                        &particle_two_tangential_torque,
-    Tensor<1, 3>                        &rolling_resistance_torque)
+  calculate_contact(particle_particle_contact_info<dim> &contact_info,
+                    const Tensor<1, 3> &tangential_relative_velocity,
+                    const double        normal_relative_velocity_value,
+                    const Tensor<1, 3> &normal_unit_vector,
+                    const double        normal_overlap,
+                    const ArrayView<const double> &particle_one_properties,
+                    const ArrayView<const double> &particle_two_properties,
+                    Tensor<1, 3>                  &normal_force,
+                    Tensor<1, 3>                  &tangential_force,
+                    Tensor<1, 3> &particle_one_tangential_torque,
+                    Tensor<1, 3> &particle_two_tangential_torque,
+                    Tensor<1, 3> &rolling_resistance_torque)
   {
     using namespace Parameters::Lagrangian;
 
@@ -429,9 +493,6 @@ private:
    *
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
-   *
-   * TODO: check if we return the values or pass them by references instead of
-   * member variables
    */
   inline std::tuple<double, double>
   find_effective_radius_and_mass(
@@ -454,6 +515,17 @@ private:
     return std::make_tuple(effective_radius, effective_mass);
   }
 
+  /**
+   * @brief Calculate the rolling resistance torque acting on the particles
+   * according to the rolling resistance model.
+   *
+   * @param[in] effective_radius Effective radius of the particle pair.
+   * @param[in] particle_one_properties Properties of particle one in contact.
+   * @param[in] particle_two_properties Properties of particle two in contact.
+   * @param[out] normal_force Contact normal force.
+   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[out] tangential_force Contact tangential force.
+   */
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
     const double                   effective_radius,
@@ -465,7 +537,6 @@ private:
   {
     using namespace Parameters::Lagrangian;
 
-    // Calculation of caused by rolling resistance torque
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::no_resistance)
       {
@@ -476,6 +547,7 @@ private:
                                             normal_force.norm(),
                                             normal_unit_vector);
       }
+
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::constant_resistance)
       {
@@ -641,7 +713,6 @@ private:
                                           normal_force);
   }
 
-
   /**
    * @brief Calculate the particle-particle non-linear contact force and torque
    * based on the updated values in contact_info. It uses the Hertz-Mindlin
@@ -716,7 +787,7 @@ private:
 
     // Calculate the normal spring constant using the following formula:
     // kn = 4/3 * Ye * sqrt(Re * delta_n)
-    // TODO this is 0.666667
+    // TODO this is 0.66667
     double normal_spring_constant = 0.66665 * model_parameter_sn;
 
     // Calculate the normal damping constants from the following equation:
@@ -860,7 +931,7 @@ private:
 
     // Calculate the normal spring constant using the following formula:
     // kn = 4/3 * Ye * sqrt(Re * delta_n)
-    // TODO this is 0.666667
+    // TODO this is 0.66667
     double normal_spring_constant = 0.66665 * model_parameter_sn;
 
     // Calculate the normal damping constants from the following equation:
@@ -1042,7 +1113,6 @@ private:
                                           normal_force,
                                           normal_unit_vector);
   }
-
 
   /**
    * @brief Carries out the calculation of the particle-particle non-linear contact
@@ -1292,7 +1362,7 @@ private:
    * @return minimum overlap for the force calculation.
    */
   double
-  set_force_calculation_threshold_distance()
+  get_force_calculation_threshold_distance()
   {
     if constexpr (contact_model == Parameters::Lagrangian::
                                      ParticleParticleContactForceModel::DMT)
@@ -1309,7 +1379,7 @@ private:
           *(std::min_element(this->effective_surface_energy.begin(),
                              this->effective_surface_energy.end()));
 
-        // Return the critical delta_0. We but a minus sign in front since a
+        // Return the critical delta_0. We put a minus sign in front of since a
         // positive overlap means that particles are in contact.
         return -std::sqrt(
           max_effective_hamaker_constant /
@@ -1319,11 +1389,11 @@ private:
   }
 
   /**
-   * @brief Returns the index for accessing the properties vectors for a given
+   * @brief Return the index for accessing the properties vectors for a given
    * combinations of particle types.
    *
    * @param i First particle type index.
-   * @param i Second particle type index.
+   * @param j Second particle type index.
    * @return index associated with the combinations of particle types.
    */
   inline unsigned int
@@ -1333,14 +1403,16 @@ private:
   }
 
   /**
-   * @brief Set every containers needed to carry the particle-particle force calculation.
+   * @brief Set every containers needed to carry the particle-particle force
+   * calculation.
    *
    * @param dem_parameters DEM parameters declared in the .prm file.
    */
   void
   set_effective_properties(const DEMSolverParameters<dim> &dem_parameters)
   {
-    auto properties  = dem_parameters.lagrangian_physical_properties;
+    auto properties = dem_parameters.lagrangian_physical_properties;
+
     n_particle_types = properties.particle_type_number;
     effective_youngs_modulus.resize(n_particle_types * n_particle_types);
     effective_shear_modulus.resize(n_particle_types * n_particle_types);
@@ -1435,6 +1507,16 @@ private:
       }
   }
 
+  /**
+   * @brief Execute the contact calculation step for the particle-particle
+   * contact according to the contact type
+   *
+   * @param adjacent_particles_list Container of the adjacent particles of a
+   * particles
+   * @param torque Torque acting on particles.
+   * @param force Force acting on particles.
+   * @param dt DEM time step.
+   */
   template <ContactType contact_type>
   inline void
   execute_contact_calculation(
@@ -1458,11 +1540,6 @@ private:
     double       normal_relative_velocity_value;
     Tensor<1, 3> tangential_relative_velocity;
 
-    // Set the threshold distance for contact force, this is useful for non-
-    // contact cohesive force models such as the DMT.
-    const double force_calculation_threshold_distance =
-      set_force_calculation_threshold_distance();
-
     // Gather information about particle 1 and set it up.
     auto first_contact_info      = adjacent_particles_list.begin();
     auto particle_one            = first_contact_info->second.particle_one;
@@ -1483,7 +1560,7 @@ private:
         auto particle_two            = contact_info.particle_two;
         auto particle_two_properties = particle_two->get_properties();
 
-        // Get particle 2 location in dimension independent way
+        // Get particle 2 location
         Point<3> particle_two_location;
         if constexpr (contact_type == ContactType::local_particle_particle ||
                       contact_type == ContactType::ghost_particle_particle)
@@ -1491,6 +1568,7 @@ private:
             particle_two_location = get_location(particle_two);
           }
 
+        // Get particle 2 location in periodic boundary
         if constexpr (contact_type ==
                         ContactType::local_periodic_particle_particle ||
                       contact_type ==
@@ -1507,8 +1585,18 @@ private:
                  particle_two_properties[PropertiesIndex::dp]) -
           particle_one_location.distance(particle_two_location);
 
+        // Get the threshold distance for contact force, this is useful for non-
+        // contact cohesive force models such as the DMT.
+        const double force_calculation_threshold_distance =
+          get_force_calculation_threshold_distance();
+
         if (normal_overlap > force_calculation_threshold_distance)
           {
+            // Update of contact information and calculation of contact force
+            // are the same for all local-local and local-ghost contact.
+            // However, they are based on particle two for ghost-local periodic
+            // contact, where particle one is the ghost particle, so the order
+            // of particles given to the function are reversed.
             if constexpr (contact_type ==
                             ContactType::local_particle_particle ||
                           contact_type ==
@@ -1518,10 +1606,7 @@ private:
                           contact_type ==
                             ContactType::ghost_periodic_particle_particle)
               {
-                // This means that the adjacent particles are in contact
-                // Since the normal overlap is already calculated, we update
-                // this element of the container here. The rest of information
-                // are updated using the following function
+                // Update all the information
                 this->update_contact_information(contact_info,
                                                  tangential_relative_velocity,
                                                  normal_relative_velocity_value,
@@ -1532,27 +1617,25 @@ private:
                                                  particle_two_location,
                                                  dt);
 
-                this->calculate_particle_particle_contact(
-                  contact_info,
-                  tangential_relative_velocity,
-                  normal_relative_velocity_value,
-                  normal_unit_vector,
-                  normal_overlap,
-                  particle_one_properties,
-                  particle_two_properties,
-                  normal_force,
-                  tangential_force,
-                  particle_one_tangential_torque,
-                  particle_two_tangential_torque,
-                  rolling_resistance_torque);
+                // Calculation the contact force
+                this->calculate_contact(contact_info,
+                                        tangential_relative_velocity,
+                                        normal_relative_velocity_value,
+                                        normal_unit_vector,
+                                        normal_overlap,
+                                        particle_one_properties,
+                                        particle_two_properties,
+                                        normal_force,
+                                        tangential_force,
+                                        particle_one_tangential_torque,
+                                        particle_two_tangential_torque,
+                                        rolling_resistance_torque);
               }
+
             if constexpr (contact_type ==
                           ContactType::ghost_local_periodic_particle_particle)
               {
-                // This means that the adjacent particles are in contact
-                // Since the normal overlap is already calculated, we update
-                // this element of the container here. The rest of information
-                // are updated using the following function
+                // Update all the information
                 this->update_contact_information(contact_info,
                                                  tangential_relative_velocity,
                                                  normal_relative_velocity_value,
@@ -1563,21 +1646,23 @@ private:
                                                  particle_one_location,
                                                  dt);
 
-                this->calculate_particle_particle_contact(
-                  contact_info,
-                  tangential_relative_velocity,
-                  normal_relative_velocity_value,
-                  normal_unit_vector,
-                  normal_overlap,
-                  particle_two_properties,
-                  particle_one_properties,
-                  normal_force,
-                  tangential_force,
-                  particle_two_tangential_torque,
-                  particle_one_tangential_torque,
-                  rolling_resistance_torque);
+                // Calculation the contact force
+                this->calculate_contact(contact_info,
+                                        tangential_relative_velocity,
+                                        normal_relative_velocity_value,
+                                        normal_unit_vector,
+                                        normal_overlap,
+                                        particle_two_properties,
+                                        particle_one_properties,
+                                        normal_force,
+                                        tangential_force,
+                                        particle_two_tangential_torque,
+                                        particle_one_tangential_torque,
+                                        rolling_resistance_torque);
               }
 
+            // Apply the calculated forces and torques on both particles
+            // of the pair for local-local contacts
             if constexpr (contact_type ==
                             ContactType::local_particle_particle ||
                           contact_type ==
@@ -1589,8 +1674,6 @@ private:
                 Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
                 Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
-                // Apply the calculated forces and torques on the particle
-                // pair
                 this->apply_force_and_torque_on_local_particles(
                   normal_force,
                   tangential_force,
@@ -1603,12 +1686,12 @@ private:
                   particle_two_force);
               }
 
+            // Apply the calculated forces and torques only on the local
+            // particle of the pair for local-ghost contacts
             if constexpr (contact_type ==
                             ContactType::ghost_periodic_particle_particle ||
                           contact_type == ContactType::ghost_particle_particle)
               {
-                // Apply the calculated forces and torques on the particle
-                // pair
                 this->apply_force_and_torque_on_single_local_particle(
                   normal_force,
                   tangential_force,
@@ -1618,6 +1701,8 @@ private:
                   particle_one_force);
               }
 
+            // Apply the calculated forces and torques only on the local
+            // particle of the pair for ghost-local contacts
             if constexpr (contact_type ==
                           ContactType::ghost_local_periodic_particle_particle)
               {
@@ -1627,8 +1712,6 @@ private:
                 Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
                 Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
-                // Apply the calculated forces and torques on the particle
-                // pair
                 this->apply_force_and_torque_on_single_local_particle(
                   normal_force,
                   tangential_force,
@@ -1640,7 +1723,7 @@ private:
           }
         else
           {
-            // if the adjacent pair is not in contact anymore, only the
+            // If the adjacent pair is not in contact anymore, only the
             // tangential overlap is set to zero
             contact_info.tangential_overlap.clear();
           }

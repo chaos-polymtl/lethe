@@ -28,9 +28,6 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
-template <int dim>
-class DEMContactManager;
-
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
  * candidate particle-particle collision pairs. These collision pairs will be
@@ -46,7 +43,14 @@ template <int dim>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager);
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_candidates);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -67,8 +71,15 @@ template <int dim>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object);
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+                                    &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -85,7 +96,18 @@ template <int dim>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager);
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -106,8 +128,19 @@ template <int dim>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object);
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
 
 /**
  * @brief Stores the candidate particle-particle collision pairs with a given

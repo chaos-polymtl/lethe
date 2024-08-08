@@ -1,26 +1,26 @@
 #include <dem/dem_contact_manager.h>
 #include <dem/particle_particle_broad_search.h>
 
-using namespace dealii;
+using namespace DEM;
 
 template <int dim>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager)
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_candidates)
 {
-  // Pre-fetch and clear containers
-  auto &local_contact_pair_candidates =
-    container_manager.local_contact_pair_candidates;
-  auto &ghost_contact_pair_candidates =
-    container_manager.ghost_contact_pair_candidates;
-  auto &cells_local_neighbor_list = container_manager.cells_local_neighbor_list;
-  auto &cells_ghost_neighbor_list = container_manager.cells_ghost_neighbor_list;
+  // Clear containers
   local_contact_pair_candidates.clear();
   ghost_contact_pair_candidates.clear();
 
   // First we handle the local-local candidate pairs
-
   // Looping over the potential cells which may contain particles.
   // This includes the cell itself as well as the neighbouring cells that
   // were identified.
@@ -132,16 +132,17 @@ template <int dim>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+                                    &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
-  // Pre-fetch and clear containers
-  auto &local_contact_pair_candidates =
-    container_manager.local_contact_pair_candidates;
-  auto &ghost_contact_pair_candidates =
-    container_manager.ghost_contact_pair_candidates;
-  auto &cells_local_neighbor_list = container_manager.cells_local_neighbor_list;
-  auto &cells_ghost_neighbor_list = container_manager.cells_ghost_neighbor_list;
+  // Clear containers
   local_contact_pair_candidates.clear();
   ghost_contact_pair_candidates.clear();
 
@@ -308,22 +309,20 @@ template <int dim>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager)
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates)
 {
-  // Pre-fetch and clear containers
-  auto &local_contact_pair_periodic_candidates =
-    container_manager.local_contact_pair_periodic_candidates;
-  auto &ghost_contact_pair_periodic_candidates =
-    container_manager.ghost_contact_pair_periodic_candidates;
-  auto &ghost_local_contact_pair_periodic_candidates =
-    container_manager.ghost_local_contact_pair_periodic_candidates;
-  auto &cells_local_periodic_neighbor_list =
-    container_manager.cells_local_periodic_neighbor_list;
-  auto &cells_ghost_periodic_neighbor_list =
-    container_manager.cells_ghost_periodic_neighbor_list;
-  auto &cells_ghost_local_periodic_neighbor_list =
-    container_manager.cells_ghost_local_periodic_neighbor_list;
-
+  // Clear containers
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
   ghost_local_contact_pair_periodic_candidates.clear();
@@ -432,7 +431,7 @@ find_particle_particle_periodic_contact_pairs(
         }
     }
 
-  // Looping over cells_ghost_local_neighbor_list
+  // Looping over cells_ghost_local_periodic_neighbor_list
   for (auto cell_periodic_neighbor_list_iterator =
          cells_ghost_local_periodic_neighbor_list.begin();
        cell_periodic_neighbor_list_iterator !=
@@ -487,23 +486,21 @@ template <int dim>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  DEMContactManager<dim>                  &container_manager,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<dim>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
-  // Pre-fetch and clear containers
-  auto &local_contact_pair_periodic_candidates =
-    container_manager.local_contact_pair_periodic_candidates;
-  auto &ghost_contact_pair_periodic_candidates =
-    container_manager.ghost_contact_pair_periodic_candidates;
-  auto &ghost_local_contact_pair_periodic_candidates =
-    container_manager.ghost_local_contact_pair_periodic_candidates;
-  auto &cells_local_periodic_neighbor_list =
-    container_manager.cells_local_periodic_neighbor_list;
-  auto &cells_ghost_periodic_neighbor_list =
-    container_manager.cells_ghost_periodic_neighbor_list;
-  auto &cells_ghost_local_periodic_neighbor_list =
-    container_manager.cells_ghost_local_periodic_neighbor_list;
-
+  // Clear containers
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
   ghost_local_contact_pair_periodic_candidates.clear();
@@ -579,8 +576,6 @@ find_particle_particle_periodic_contact_pairs(
 
   // Now we go through the local-ghost pairs (the first iterator shows a local
   // particles, and the second a ghost particle)
-
-  // Looping over cells_ghost_neighbor_list
   for (auto cell_periodic_neighbor_list_iterator =
          cells_ghost_periodic_neighbor_list.begin();
        cell_periodic_neighbor_list_iterator !=
@@ -648,7 +643,7 @@ find_particle_particle_periodic_contact_pairs(
         }
     }
 
-  // Looping over cells_ghost_local_neighbor_list
+  // Looping over cells_ghost_local_periodic_neighbor_list
   for (auto cell_periodic_neighbor_list_iterator =
          cells_ghost_local_periodic_neighbor_list.begin();
        cell_periodic_neighbor_list_iterator !=
@@ -726,7 +721,7 @@ store_candidates(
     dim>::particle_iterator_range::iterator &particle_begin,
   const typename Particles::ParticleHandler<dim>::particle_iterator_range
     &particles_to_evaluate,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+  typename dem_data_structures<dim>::particle_particle_candidates
     &contact_pair_candidates)
 {
   // Find the contact candidate container of the main particle
@@ -758,43 +753,115 @@ store_candidates(
 template void
 find_particle_particle_contact_pairs<2>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
-  DEMContactManager<2>                  &container_manager);
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_candidates);
 
 template void
 find_particle_particle_contact_pairs<3>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
-  DEMContactManager<3>                  &container_manager);
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_candidates);
 
 template void
 find_particle_particle_contact_pairs<2>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
-  DEMContactManager<2>                  &container_manager,
-  const AdaptiveSparseContacts<2>       &sparse_contacts_object);
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+                                  &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<2> &sparse_contacts_object);
 
 template void
 find_particle_particle_contact_pairs<3>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
-  DEMContactManager<3>                  &container_manager,
-  const AdaptiveSparseContacts<3>       &sparse_contacts_object);
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+                                  &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<3> &sparse_contacts_object);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
-  DEMContactManager<2>                  &container_manager);
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates);
 
 template void
 find_particle_particle_periodic_contact_pairs<3>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
-  DEMContactManager<3>                  &container_manager);
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_local_contact_pair_periodic_candidates);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
-  DEMContactManager<2>                  &container_manager,
-  const AdaptiveSparseContacts<2>       &sparse_contacts_object);
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+                                  &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<2> &sparse_contacts_object);
 
 template void
 find_particle_particle_periodic_contact_pairs<3>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
-  DEMContactManager<3>                  &container_manager,
-  const AdaptiveSparseContacts<3>       &sparse_contacts_object);
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+                                  &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<3> &sparse_contacts_object);

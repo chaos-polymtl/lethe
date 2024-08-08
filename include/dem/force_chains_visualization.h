@@ -59,7 +59,11 @@ public:
    * containers with periodic neighbors lists
    */
   virtual void
-  calculate_force_chains(DEMContactManager<dim> &contact_manager) = 0;
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles) = 0;
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
    *
@@ -114,23 +118,32 @@ public:
    * ParticleParticleContactForce class' methods. Stock normal forces and
    * particles position in vectors.
    *
-   * @param contact_manager The container manager object that contains
-   * containers to modify of contact pair periodic candidates with other
-   * containers with periodic neighbors lists
+   * @param local_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local particle-particle contact forces.
+   * @param ghost_adjacent_particles Container of the contact pair candidates
+   * information for calculation of the local-ghost particle-particle contact
+   * forces.
    */
   void
-  calculate_force_chains(DEMContactManager<dim> &contact_manager) override;
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles) override;
 
   /**
-   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
+   * @brief Output the force chains in VTU and PVTU files for each iteration and
+   * a PVD file.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
-   * @param mpi_communicator The mpi communicator
-   * @param folder a string that contains the path where the results are to be saved
+   * @param dem_parameters DEM parameters declared in the .prm file.
+   * @param pvd_handler a PVDHandler to store the information about the file
+   * name and time associated with it.
+   * @param mpi_communicator The mpi communicator.
+   * @param folder a string that contains the path where the results are to be
+   * saved.
    * @param group_files the number of vtu files that will be generated.
-   * @param iter the iteration number associated with the file
-   * @param time the time associated with the file
+   * @param iter the iteration number associated with the file.
+   * @param time the time associated with the file.
    */
   void
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
@@ -141,6 +154,16 @@ public:
                      const double                    time) override;
 
 private:
+  /**
+   * @brief Execute the contact calculation step for the particle-particle
+   * contact only for local-local and local-ghost contacts with no periodicity.
+   * This is a simplified version of the contact calculation of the
+   * particle-particle contact forces class, without the other contact types and
+   * the update of the particles forces, torques and tangential overlap.
+   *
+   * @param adjacent_particles_list Container of the adjacent particles of a
+   * particles.
+   */
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
@@ -151,9 +174,6 @@ private:
       return;
 
     // Define local variables which will be used within the contact calculation
-    //  Namely: normal and tangential contact forces, tangential and rolling
-    //  torques, normal unit vector of the contact and contact relative velocity
-    //  in the normal direction
     Tensor<1, 3> normal_unit_vector;
     Tensor<1, 3> normal_force;
     Tensor<1, 3> tangential_force;
@@ -198,19 +218,18 @@ private:
                                        particle_one_location,
                                        particle_two_location);
 
-            this->calculate_particle_particle_contact(
-              contact_info,
-              tangential_relative_velocity,
-              normal_relative_velocity_value,
-              normal_unit_vector,
-              normal_overlap,
-              particle_one_properties,
-              particle_two_properties,
-              normal_force,
-              tangential_force,
-              particle_one_tangential_torque,
-              particle_two_tangential_torque,
-              rolling_resistance_torque);
+            this->calculate_contact(contact_info,
+                                    tangential_relative_velocity,
+                                    normal_relative_velocity_value,
+                                    normal_unit_vector,
+                                    normal_overlap,
+                                    particle_one_properties,
+                                    particle_two_properties,
+                                    normal_force,
+                                    tangential_force,
+                                    particle_one_tangential_torque,
+                                    particle_two_tangential_torque,
+                                    rolling_resistance_torque);
           }
 
         vertices.push_back(particle_one_location);
@@ -256,7 +275,6 @@ private:
     // Defining relative contact velocity
     Tensor<1, 3> contact_relative_velocity;
 
-
     // Assigning velocities and angular velocities of particles
     contact_relative_velocity[0] =
       particle_one_properties[PropertiesIndex::v_x] -
@@ -276,14 +294,12 @@ private:
     particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
     particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
 
-
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
       0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
              particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
       normal_unit_vector));
-
 
     // Calculation of normal relative velocity. Note that in the
     // following line the product acts as inner product since both
@@ -311,10 +327,14 @@ private:
   multi_general_cell(Triangulation<1, 3>         &tria,
                      const std::vector<Point<3>> &vertices);
 
-  // vector of normal forces between each touching particles.
+  /**
+   * @brief Vector of normal forces between each touching particles.
+   */
   std::vector<double> force_normal;
 
-  // vector of positions of touching particles.
+  /**
+   * @brief Vector of positions of touching particles.
+   */
   std::vector<Point<3>> vertices;
 };
 #endif

@@ -158,7 +158,6 @@ particle_floating_wall_fine_search(
     }
 }
 
-
 template <int dim>
 void
 particle_floating_mesh_fine_search(
@@ -167,6 +166,9 @@ particle_floating_mesh_fine_search(
   typename dem_data_structures<dim>::particle_floating_mesh_in_contact
     &particle_floating_mesh_in_contact)
 {
+  particle_floating_mesh_in_contact.resize(
+    particle_floating_mesh_contact_candidates.size());
+
   for (unsigned int solid_counter = 0;
        solid_counter < particle_floating_mesh_contact_candidates.size();
        ++solid_counter)
