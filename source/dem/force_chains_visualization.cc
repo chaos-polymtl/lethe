@@ -75,10 +75,10 @@ template <
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
 ParticlesForceChains<dim, contact_model, rolling_friction_model>::
-  calculate_force_chains(DEMContactManager<dim> &container_manager)
+  calculate_force_chains(DEMContactManager<dim> &contact_manager)
 {
-  auto &local_adjacent_particles = container_manager.local_adjacent_particles;
-  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  auto &local_adjacent_particles = contact_manager.local_adjacent_particles;
+  auto &ghost_adjacent_particles = contact_manager.ghost_adjacent_particles;
 
   // Define local variables which will be used within the contact calculation
   //  Namely: normal and tangential contact forces, tangential and rolling

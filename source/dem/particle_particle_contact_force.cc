@@ -21,19 +21,19 @@ template <int                               dim,
 void
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   calculate_particle_particle_contact_force(
-    DEMContactManager<dim>    &container_manager,
+    DEMContactManager<dim>    &contact_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
-  auto &local_adjacent_particles = container_manager.local_adjacent_particles;
-  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  auto &local_adjacent_particles = contact_manager.local_adjacent_particles;
+  auto &ghost_adjacent_particles = contact_manager.ghost_adjacent_particles;
   auto &local_periodic_adjacent_particles =
-    container_manager.local_periodic_adjacent_particles;
+    contact_manager.local_periodic_adjacent_particles;
   auto &ghost_periodic_adjacent_particles =
-    container_manager.ghost_periodic_adjacent_particles;
+    contact_manager.ghost_periodic_adjacent_particles;
   auto &ghost_local_periodic_adjacent_particles =
-    container_manager.ghost_local_periodic_adjacent_particles;
+    contact_manager.ghost_local_periodic_adjacent_particles;
 
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -51,8 +51,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     {
       if (!adjacent_particles_list.empty())
         {
-          this
-            ->execute_contact_calculation<ContactType::local_particle_particle>(
+          execute_contact_calculation<ContactType::local_particle_particle>(
               adjacent_particles_list, torque, force, dt);
         }
     }
@@ -66,8 +65,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     {
       if (!adjacent_particles_list.empty())
         {
-          this
-            ->execute_contact_calculation<ContactType::ghost_particle_particle>(
+          execute_contact_calculation<ContactType::ghost_particle_particle>(
               adjacent_particles_list, torque, force, dt);
         }
     }
@@ -77,7 +75,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     {
       if (!periodic_adjacent_particles_list.empty())
         {
-          this->execute_contact_calculation<
+          execute_contact_calculation<
             ContactType::local_periodic_particle_particle>(
             periodic_adjacent_particles_list, torque, force, dt);
         }
@@ -88,7 +86,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     {
       if (!periodic_adjacent_particles_list.empty())
         {
-          this->execute_contact_calculation<
+          execute_contact_calculation<
             ContactType::ghost_periodic_particle_particle>(
             periodic_adjacent_particles_list, torque, force, dt);
         }
@@ -99,7 +97,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     {
       if (!periodic_adjacent_particles_list.empty())
         {
-          this->execute_contact_calculation<
+          execute_contact_calculation<
             ContactType::ghost_local_periodic_particle_particle>(
             periodic_adjacent_particles_list, torque, force, dt);
         }
