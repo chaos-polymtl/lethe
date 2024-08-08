@@ -390,7 +390,6 @@ find_cell_periodic_neighbors<3>(
   typename dem_data_structures<3>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list);
 
-
 template void
 find_full_cell_neighbors<2>(
   const parallel::distributed::Triangulation<2> &triangulation,
@@ -402,23 +401,3 @@ find_full_cell_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
   typename dem_data_structures<3>::cells_total_neighbor_list
     &cells_total_neighbor_list);
-
-template void
-get_periodic_neighbor_list<2>(
-  const typename Triangulation<2>::active_cell_iterator &cell,
-  const std::map<unsigned int, std::vector<unsigned int>>
-                                             &coinciding_vertex_groups,
-  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
-  const std::vector<std::set<typename Triangulation<2>::active_cell_iterator>>
-                                               &v_to_c,
-  typename dem_data_structures<2>::cell_vector &periodic_neighbor_list);
-
-template void
-get_periodic_neighbor_list<3>(
-  const typename Triangulation<3>::active_cell_iterator &cell,
-  const std::map<unsigned int, std::vector<unsigned int>>
-                                             &coinciding_vertex_groups,
-  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
-  const std::vector<std::set<typename Triangulation<3>::active_cell_iterator>>
-                                               &v_to_c,
-  typename dem_data_structures<3>::cell_vector &periodic_neighbor_list);
