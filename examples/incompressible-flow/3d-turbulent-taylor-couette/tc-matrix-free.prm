@@ -4,21 +4,23 @@
 set dimension = 3
 
 #---------------------------------------------------
-# Simulation Control 
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf3
-  set output name       = taylor-couette
-  set output path       = ./output/
-  set time end          = 60
-  set time step         = 0.0125
-  set output frequency  = 2
-  set subdivision       = 2
+  set method           = bdf2
+  set output name      = taylor-couette
+  set output path      = ./output/
+  set time end         = 60
+  set adapt            = true
+  set max cfl          = 1
+  set time step        = 0.01
+  set output frequency = 10
+  set subdivision      = 2
 end
 
 #------------------------ ---------------------------
-# Physical Properties 
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -28,7 +30,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Initial conditions 
+# Initial conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -46,20 +48,19 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii 
+  set type               = dealii
   set grid type          = cylinder_shell
   set grid arguments     = 3.14159265359 : 0.5 : 1.0 : 5 : 4 : true
   set initial refinement = 4
 end
-
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
 
 subsection forces
-  set verbosity        = quiet   # Output force and torques in log <quiet|verbose>
-  set calculate torque = true    # Enable torque calculation
+  set verbosity        = quiet # Output force and torques in log <quiet|verbose>
+  set calculate torque = true  # Enable torque calculation
 end
 
 #---------------------------------------------------
@@ -67,8 +68,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 2      #3 for Q3
-  set pressure order = 2      #3 for Q3
+  set velocity order = 2 #3 for Q3
+  set pressure order = 2 #3 for Q3
 end
 
 #---------------------------------------------------
@@ -76,23 +77,21 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-
   # Kinetic energy calculation
-  set calculate kinetic energy         = true
+  set calculate kinetic energy = true
 
   # Enstrophy calculation
-  set calculate enstrophy              = true
+  set calculate enstrophy = true
 end
-
 
 #---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number                = 3
   set fix pressure constant = true
-  subsection bc 0          
+  subsection bc 0
     set type = function
     subsection u
       set Function expression = -y
@@ -104,10 +103,10 @@ subsection boundary conditions
       set Function expression = 0
     end
   end
-  subsection bc 1       
+  subsection bc 1
     set type = noslip
   end
-  subsection bc 2            
+  subsection bc 2
     set type               = periodic
     set id                 = 2
     set periodic_id        = 3
@@ -116,8 +115,17 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set tolerance = 1e-3
