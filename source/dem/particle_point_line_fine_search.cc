@@ -1,12 +1,11 @@
+#include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/contact_info.h>
 #include <dem/particle_point_line_fine_search.h>
 
+#include <deal.II/particles/particle_handler.h>
 using namespace dealii;
-
-template <int dim>
-ParticlePointLineFineSearch<dim>::ParticlePointLineFineSearch()
-{}
 
 // In this function, the output of particle-point broad search is investigated
 // to see if the pairs are in contact or not. If they are in contact, the normal
@@ -14,16 +13,14 @@ ParticlePointLineFineSearch<dim>::ParticlePointLineFineSearch()
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-ParticlePointLineFineSearch<dim>::particle_point_fine_search(
+void
+particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
               &particle_point_contact_candidates,
-  const double neighborhood_threshold)
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<dim>::particle_point_in_contact
+    &particle_point_pairs_in_contact)
 {
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    particle_point_pairs_in_contact;
-
   // Iterating over contact candidates from broad search. If a particle-point
   // pair is in contact (distance > 0) it is inserted into the output of this
   // function (particle_point_pairs_in_contact)
@@ -66,17 +63,12 @@ ParticlePointLineFineSearch<dim>::particle_point_fine_search(
       // particle-point pair are in contact
       if (square_distance > neighborhood_threshold)
         {
-          // Creating a sample from the particle_point_line_contact_info_struct
-          // and adding contact info to the sample
-          particle_point_line_contact_info_struct<dim> contact_info;
-          contact_info.particle  = particle;
-          contact_info.point_one = vertex_location_3d;
-
-          particle_point_pairs_in_contact.insert(
-            {particle->get_id(), contact_info});
+          // Adding contact info to the sample
+          particle_point_pairs_in_contact.emplace(
+            particle->get_id(),
+            particle_point_contact_info<dim>{particle, vertex_location_3d});
         }
     }
-  return particle_point_pairs_in_contact;
 }
 
 // In this function, the output of particle-line broad search is investigated
@@ -85,16 +77,14 @@ ParticlePointLineFineSearch<dim>::particle_point_fine_search(
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-ParticlePointLineFineSearch<dim>::particle_line_fine_search(
+void
+particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates
               &particle_line_contact_candidates,
-  const double neighborhood_threshold)
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<dim>::particle_line_in_contact
+    &particle_line_pairs_in_contact)
 {
-  std::unordered_map<types::particle_index,
-                     particle_point_line_contact_info_struct<dim>>
-    particle_line_pairs_in_contact;
-
   // Iterating over contact candidates from broad search. If a particle-line
   // pair is in contact (distance > 0) it is inserted into the output of this
   // function (particle_line_pairs_in_contact)
@@ -114,7 +104,6 @@ ParticlePointLineFineSearch<dim>::particle_line_fine_search(
       auto     particle_properties = particle->get_properties();
       Point<3> vertex_one_location_3d;
       Point<3> vertex_two_location_3d;
-
 
       if constexpr (dim == 3)
         {
@@ -152,25 +141,21 @@ ParticlePointLineFineSearch<dim>::particle_line_fine_search(
       // contact
       if (square_distance > neighborhood_threshold)
         {
-          // Creating a sample from the particle_point_line_contact_info_struct
+          // Creating a sample from the particle_point_line_contact_info
           // and adding contact info to the sample
-          particle_point_line_contact_info_struct<dim> contact_info;
-          contact_info.particle  = particle;
-          contact_info.point_one = vertex_one_location_3d;
-          contact_info.point_two = vertex_two_location_3d;
-
-          particle_line_pairs_in_contact.insert(
-            {particle->get_id(), contact_info});
+          particle_line_pairs_in_contact.emplace(
+            particle->get_id(),
+            particle_line_contact_info<dim>{particle,
+                                            vertex_one_location_3d,
+                                            vertex_two_location_3d});
         }
     }
-  return particle_line_pairs_in_contact;
 }
 
-template <int dim>
 Point<3>
-ParticlePointLineFineSearch<dim>::find_projection_point(const Point<3> &point_p,
-                                                        const Point<3> &point_a,
-                                                        const Point<3> &point_b)
+find_projection_point(const Point<3> &point_p,
+                      const Point<3> &point_a,
+                      const Point<3> &point_b)
 {
   Tensor<1, 3> vector_ab = point_b - point_a;
   Tensor<1, 3> vector_ap = point_p - point_a;
@@ -181,5 +166,34 @@ ParticlePointLineFineSearch<dim>::find_projection_point(const Point<3> &point_p,
   return projection;
 }
 
-template class ParticlePointLineFineSearch<2>;
-template class ParticlePointLineFineSearch<3>;
+template void
+particle_point_fine_search<2>(
+  const typename DEM::dem_data_structures<2>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+template void
+particle_point_fine_search<3>(
+  const typename DEM::dem_data_structures<3>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+template void
+particle_line_fine_search<2>(
+  const typename DEM::dem_data_structures<2>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_line_in_contact
+    &particle_line_pairs_in_contact);
+
+template void
+particle_line_fine_search<3>(
+  const typename DEM::dem_data_structures<3>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_line_in_contact
+    &particle_line_pairs_in_contact);

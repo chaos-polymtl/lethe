@@ -55,8 +55,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 template <int dim>
 void
 DEMSolver<dim>::setup_parameters()
-{ // Print simulation starting information
-
+{
+  // Print simulation starting information
   pcout << std::endl;
   std::stringstream ss;
   ss << "Running on " << n_mpi_processes << " rank(s)";
@@ -620,7 +620,7 @@ DEMSolver<dim>::finish_simulation()
   // Outputting force and torques over boundary
   if (parameters.forces_torques.calculate_force_torque)
     {
-      write_forces_torques_output_results<dim>(
+      write_forces_torques_output_results(
         parameters.forces_torques.force_torque_output_name,
         parameters.forces_torques.output_frequency,
         triangulation.get_boundary_ids(),
@@ -703,16 +703,15 @@ DEMSolver<dim>::post_process_results()
   if (parameters.post_processing.Lagrangian_post_processing &&
       simulation_control->is_output_iteration())
     {
-      post_processing_object.write_post_processing_results(
-        triangulation,
-        grid_pvdhandler,
-        background_dh,
-        particle_handler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator,
-        sparse_contacts_object);
+      write_post_processing_results<dim>(triangulation,
+                                         grid_pvdhandler,
+                                         background_dh,
+                                         particle_handler,
+                                         parameters,
+                                         simulation_control->get_current_time(),
+                                         simulation_control->get_step_number(),
+                                         mpi_communicator,
+                                         sparse_contacts_object);
     }
 }
 
@@ -822,7 +821,6 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
   // Exchange ghost particles
   particle_handler.exchange_ghost_particles(true);
 }
-
 
 template <int dim>
 void

@@ -3,7 +3,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>
 
 using namespace dealii;
