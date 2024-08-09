@@ -112,7 +112,7 @@ particle_sphere_intersection_3d(double r_particle,
  */
 
 template <int dim>
-class FluidDynamicsVANS : public GLSNavierStokesSolver<dim>
+class FluidDynamicsVANS : public FluidDynamicsMatrixBased<dim>
 {
 public:
   FluidDynamicsVANS(CFDDEMSimulationParameters<dim> &nsparam);

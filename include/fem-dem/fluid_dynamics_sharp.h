@@ -43,7 +43,7 @@ using namespace dealii;
  */
 
 template <int dim>
-class FluidDynamicsSharp : public GLSNavierStokesSolver<dim>
+class FluidDynamicsSharp : public FluidDynamicsMatrixBased<dim>
 {
 public:
   FluidDynamicsSharp(CFDDEMSimulationParameters<dim> &nsparam);
@@ -183,7 +183,7 @@ private:
         else
           generate_cut_cells_map();
       }
-    this->GLSNavierStokesSolver<dim>::assemble_system_matrix();
+    this->FluidDynamicsMatrixBased<dim>::assemble_system_matrix();
 
     sharp_edge();
   }
@@ -202,7 +202,7 @@ private:
   virtual void
   assemble_rhs()
   {
-    this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
+    this->FluidDynamicsMatrixBased<dim>::assemble_system_rhs();
   }
 
   /**

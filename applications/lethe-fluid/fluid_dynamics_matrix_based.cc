@@ -48,7 +48,7 @@ main(int argc, char *argv[])
                                    "lethe-fluid",
                                    "lethe-fluid-nitsche"));
 
-          GLSNavierStokesSolver<2> problem(NSparam);
+          FluidDynamicsMatrixBased<2> problem(NSparam);
           problem.solve();
         }
 
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
                                    "lethe-fluid",
                                    "lethe-fluid-nitsche"));
 
-          GLSNavierStokesSolver<3> problem(NSparam);
+          FluidDynamicsMatrixBased<3> problem(NSparam);
           problem.solve();
         }
       else

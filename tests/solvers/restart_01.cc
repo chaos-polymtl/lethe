@@ -80,11 +80,11 @@ MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
 
 
 template <int dim>
-class RestartNavierStokes : public GLSNavierStokesSolver<dim>
+class RestartNavierStokes : public FluidDynamicsMatrixBased<dim>
 {
 public:
   RestartNavierStokes(SimulationParameters<dim> nsparam)
-    : GLSNavierStokesSolver<dim>(nsparam)
+    : FluidDynamicsMatrixBased<dim>(nsparam)
   {}
   void
   run();

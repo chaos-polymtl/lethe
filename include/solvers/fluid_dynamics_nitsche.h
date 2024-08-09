@@ -38,7 +38,7 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim = dim>
-class FluidDynamicsNitsche : public GLSNavierStokesSolver<spacedim>
+class FluidDynamicsNitsche : public FluidDynamicsMatrixBased<spacedim>
 {
 public:
   FluidDynamicsNitsche(SimulationParameters<spacedim> &nsparam);
