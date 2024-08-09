@@ -36,7 +36,7 @@
 template <int dim, int spacedim>
 FluidDynamicsNitsche<dim, spacedim>::FluidDynamicsNitsche(
   SimulationParameters<spacedim> &p_nsparam)
-  : GLSNavierStokesSolver<spacedim>(p_nsparam)
+  : FluidDynamicsMatrixBased<spacedim>(p_nsparam)
 {
   const unsigned int n_solids =
     this->simulation_parameters.nitsche->number_solids;
@@ -948,9 +948,9 @@ template <int dim, int spacedim>
 void
 FluidDynamicsNitsche<dim, spacedim>::assemble_matrix_and_rhs()
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix();
+  this->FluidDynamicsMatrixBased<spacedim>::assemble_system_matrix();
 
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
+  this->FluidDynamicsMatrixBased<spacedim>::assemble_system_rhs();
 
   assemble_nitsche_restriction<true>();
 }
@@ -959,7 +959,7 @@ template <int dim, int spacedim>
 void
 FluidDynamicsNitsche<dim, spacedim>::assemble_rhs()
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
+  this->FluidDynamicsMatrixBased<spacedim>::assemble_system_rhs();
 
   assemble_nitsche_restriction<false>();
 }
@@ -980,7 +980,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
     }
 
   // Call regular checkpointing routine
-  this->GLSNavierStokesSolver<spacedim>::write_checkpoint();
+  this->FluidDynamicsMatrixBased<spacedim>::write_checkpoint();
 
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
@@ -1009,7 +1009,7 @@ template <int dim, int spacedim>
 void
 FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
 {
-  this->GLSNavierStokesSolver<spacedim>::read_checkpoint();
+  this->FluidDynamicsMatrixBased<spacedim>::read_checkpoint();
 
   TimerOutput::Scope t(this->computing_timer,
                        "Nitsche reload solid mesh and particles");

@@ -1023,7 +1023,7 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
     << "---------------------------------------------------------------"
     << std::endl;
 
-  this->GLSNavierStokesSolver<dim>::postprocess_fd(first_iteration);
+  this->FluidDynamicsMatrixBased<dim>::postprocess_fd(first_iteration);
 
   // Visualization
   if (this->simulation_control->is_output_iteration())
