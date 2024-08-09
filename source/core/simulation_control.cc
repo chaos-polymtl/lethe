@@ -177,6 +177,37 @@ SimulationControl::read(std::string prefix)
   time_step = time_step_vector[0];
 }
 
+std::vector<double>
+SimulationControl::get_checkpointed_simulation_control_info(std::string prefix)
+{
+  std::string   filename = prefix + ".simulationcontrol";
+  std::ifstream input(filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(filename));
+
+  // Store the time steps and last checkpointed time without modifying the
+  // simulation control information
+  std::vector<double> time_steps(time_step_vector.size());
+  double              last_checkpointed_time;
+
+  // Returned vector with the last checkpointed time and time step
+  std::vector<double> simulation_control_info(2);
+
+  std::string buffer;
+  std::getline(input, buffer);
+  for (unsigned int i = 0; i < time_step_vector.size(); ++i)
+    input >> buffer >> time_steps[i];
+  input >> buffer >> buffer;
+  input >> buffer >> last_checkpointed_time;
+  input >> buffer >> buffer;
+
+  // Fix the current time as final checkpointed time
+  simulation_control_info[0] = last_checkpointed_time;
+
+  // Fix time step to be the last time_step that was used
+  simulation_control_info[1] = time_steps[0];
+
+  return simulation_control_info;
+}
 
 SimulationControlTransient::SimulationControlTransient(
   Parameters::SimulationControl param)

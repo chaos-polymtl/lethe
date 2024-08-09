@@ -475,8 +475,20 @@ public:
 
   void
   save(std::string filename);
+
+  /**
+   * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   */
   void
   read(std::string filename);
+
+  /**
+   * @brief Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information.
+   *
+   * @return A vector containing the last checkpointed file and time step.
+   */
+  std::vector<double>
+  get_checkpointed_simulation_control_info(std::string filename);
 };
 
 

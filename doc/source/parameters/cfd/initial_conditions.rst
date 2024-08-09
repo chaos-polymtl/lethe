@@ -7,7 +7,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 .. code-block:: text
 
   subsection initial conditions
-    # Type of initial conditions. Choices are L2projection, viscous or nodal
+    # Type of initial conditions. Choices are L2projection, viscous, nodal or average_velocity_profile
     set type                = nodal
 
     # Kinematic viscosity for viscous initial conditions
@@ -46,10 +46,15 @@ It is often necessary to set-up complex initial conditions when simulating trans
         set alpha      = 0.5
       end
     end
+
+    subsection average velocity profile
+      set checkpoint folder    = ./
+      set checkpoint file name = restart
+    end
   end
 
 
-* The ``type`` parameter indicates which strategy is used to impose the initial conditions. The choices are : ``L2projection``, ``viscous``, ``nodal`` or ``ramp``.
+* The ``type`` parameter indicates which strategy is used to impose the initial conditions. The choices are : ``L2projection``, ``viscous``, ``nodal``, ``ramp`` or ``average_velocity_profile``.
 
 * The ``kinematic viscosity`` parameter controls the kinematic viscosity that is  used to solve the Navier-Stokes equations when the viscous initial condition is chosen.
 
@@ -95,3 +100,11 @@ Likewise, in the ``subection n``, the parameters for ramping on the ``n`` value 
 
 .. math::
   n_{i+1} = n_i + \alpha (n_{\text{end}} - n_i)
+
+
+* The subsection ``average velocity profile`` uses the time averaged fluid velocity calculated in a previous simulation as an initial condition. This is useful when the flow dynamics and the subphysics reach a pseudo-steady state at different time scales. Physics can then be run independently, one to solve for the fluid dynamics and one for the subphysics. To use this feature, the user should launch a simulation with the fluid mechanics solver while using the time averaging and checkpointing feature. Once the time average of the velocity field is sufficiently established, the simulation should be stopped and a new simulation can be restarted without the fluid mechanics solver. The subphysics can then be solved using a larger time step.
+
+.. important::
+   * If only an auxiliary physic must be solved without the fluid dynamics, ``set fluid dynamics = false`` needs to be specified in the ``multiphysics`` section. The average velocity field will then be used for the whole duration of the simulation.
+   * This feature uses the checkpoint mechanism to load the time averaged velocity field. Make sure to activate checkpointing in the restart section of the first simulation. 
+   * The same mesh needs to be used for the fluid dynamics and the auxiliary physics simulations. The mesh should not be modified between the two simulations.

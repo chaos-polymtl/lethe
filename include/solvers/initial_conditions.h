@@ -34,7 +34,8 @@ namespace Parameters
     L2projection,
     viscous,
     nodal,
-    ramp
+    ramp,
+    average_velocity_profile
   };
 
   struct Ramp_n
@@ -108,6 +109,10 @@ namespace Parameters
     Functions::ParsedFunction<dim> cahn_hilliard =
       Functions::ParsedFunction<dim>(2);
 
+    // Path to the checkpointed average velocity profile
+    std::string average_velocity_folder;
+    std::string average_velocity_file_name;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -120,11 +125,13 @@ namespace Parameters
   {
     prm.enter_subsection("initial conditions");
     {
-      prm.declare_entry("type",
-                        "nodal",
-                        Patterns::Selection("L2projection|viscous|nodal|ramp"),
-                        "Type of initial condition"
-                        "Choices are <L2projection|viscous|nodal|ramp>.");
+      prm.declare_entry(
+        "type",
+        "nodal",
+        Patterns::Selection(
+          "L2projection|viscous|nodal|ramp|average_velocity_profile"),
+        "Type of initial condition"
+        "Choices are <L2projection|viscous|nodal|ramp|average_velocity_profile>.");
       prm.enter_subsection("uvwp");
       uvwp.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
@@ -163,6 +170,18 @@ namespace Parameters
       cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
 
+      prm.enter_subsection("average velocity profile");
+      prm.declare_entry(
+        "checkpoint folder",
+        "./",
+        Patterns::FileName(),
+        "the path leading to the checkpointed average velocity profile");
+      prm.declare_entry("checkpoint file name",
+                        "restart",
+                        Patterns::FileName(),
+                        "checkpoint file name");
+      prm.leave_subsection();
+
       ramp.declare_parameters(prm);
     }
     prm.leave_subsection();
@@ -183,6 +202,8 @@ namespace Parameters
         type = InitialConditionType::nodal;
       else if (op == "ramp")
         type = InitialConditionType::ramp;
+      else if (op == "average_velocity_profile")
+        type = InitialConditionType::average_velocity_profile;
 
       kinematic_viscosity = prm.get_double("kinematic viscosity");
       prm.enter_subsection("uvwp");
@@ -213,6 +234,12 @@ namespace Parameters
 
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("average velocity profile");
+      average_velocity_folder    = prm.get("checkpoint folder");
+      average_velocity_file_name = prm.get("checkpoint file name");
+
       prm.leave_subsection();
     }
     prm.leave_subsection();
