@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
-#include "solvers/gls_navier_stokes.h"
+#include "solvers/fluid_dynamics_matrix_based.h"
 
 int
 main(int argc, char *argv[])

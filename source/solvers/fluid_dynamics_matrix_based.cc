@@ -21,7 +21,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
 #include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>

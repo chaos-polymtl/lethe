@@ -20,7 +20,7 @@
 #include <core/shape.h>
 #include <core/vector.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
@@ -157,7 +157,7 @@ private:
   /*
    Modified version of assemble_matrix_and_rhs to include the presence of
    extra steps. For more detail see the same function in the
-   gls_navier_stokes.h solver.
+   fluid_dynamics_matrix_based.h solver.
    */
 
   virtual void
@@ -197,7 +197,7 @@ private:
    *
    * Modified version of assemble_matrix_and_rhs to include the presence of
    * extra steps. For more detail see the same function in the
-   * gls_navier_stokes.h solver.
+   * fluid_dynamics_matrix_based.h solver.
    */
   virtual void
   assemble_rhs()

@@ -20,7 +20,7 @@
 #include <core/exceptions.h>
 #include <core/solid_base.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 
 #include <deal.II/lac/trilinos_vector.h>
 
@@ -112,7 +112,7 @@ private:
   }
 
   /**
-   * @brief Same as in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
+   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver
@@ -121,7 +121,7 @@ private:
   assemble_matrix_and_rhs();
 
   /**
-   * @brief Same as in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
+   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when rhs is assembled
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver

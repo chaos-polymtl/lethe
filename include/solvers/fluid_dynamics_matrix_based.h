@@ -13,8 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lethe_gls_navier_stokes_h
-#define lethe_gls_navier_stokes_h
+#ifndef lethe_fluid_dynamics_matrix_based_h
+#define lethe_fluid_dynamics_matrix_based_h
 
 #include <core/exceptions.h>
 #include <core/vector.h>
