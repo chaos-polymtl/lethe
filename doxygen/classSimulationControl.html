@@ -175,6 +175,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad4b380eac156a8a92904e8e6c0b20a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade7863ae81ced6bb2a0445ddc54e9f54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#ade7863ae81ced6bb2a0445ddc54e9f54">read</a> (std::string filename)</td></tr>
 <tr class="separator:ade7863ae81ced6bb2a0445ddc54e9f54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addf9f8069232726803351cdca4b05c1d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#addf9f8069232726803351cdca4b05c1d">get_checkpointed_simulation_control_info</a> (std::string filename)</td></tr>
+<tr class="separator:addf9f8069232726803351cdca4b05c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -428,6 +430,31 @@ Static Protected Attributes</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00414">414</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 <p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00071">CFL</a>.</p>
+
+</div>
+</div>
+<a id="addf9f8069232726803351cdca4b05c1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#addf9f8069232726803351cdca4b05c1d">&#9670;&nbsp;</a></span>get_checkpointed_simulation_control_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; double &gt; SimulationControl::get_checkpointed_simulation_control_info </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector containing the last checkpointed file and time step. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00181">181</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00058">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -1205,6 +1232,8 @@ Static Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00162">162</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 

@@ -447,7 +447,6 @@
   # Cahn-Hilliard equations
   set cahn hilliard                   = false
 
-  set use time average velocity field = false
 end
 </pre></div>
 </div>
@@ -488,13 +487,6 @@ end
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>The VOF solver is used in the example <a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html"><span class="doc">Dam-Break</span></a>.</p>
-</div>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">time</span> <span class="pre">average</span> <span class="pre">velocity</span> <span class="pre">field</span></code>:  controls if the advection of the subphysics is done using the average velocity field instead of the current velocity field. This is useful when the flow dynamics and the subphysics reach a pseudo-steady state at different time scales. To use this feature, the user should launch a simulation with the fluid mechanics solver and use the time averaging feature. Once the time average of the velocity field is sufficiently established, the simulation should be stopped and restarted without the fluid mechanics solver. The subphysics can then be solved using a larger time step.</p></li>
-</ul>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>The subphysic must also be enabled in the first part of the simulation (for example, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">heat</span> <span class="pre">transfer</span> <span class="pre">=</span> <span class="pre">true</span></code>).</p>
 </div>
 </section>
 

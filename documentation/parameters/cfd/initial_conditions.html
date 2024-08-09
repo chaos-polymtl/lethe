@@ -431,7 +431,7 @@
 <h1>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h1>
 <p>It is often necessary to set-up complex initial conditions when simulating transient problems. Furthermore, setting a coherent initial condition can greatly help the convergence of steady-state problems. Lethe offers three different strategies to set initial conditions : Nodal (through a function), L2 projection (through a function) and viscous. The viscous strategy solves the same CFD problem but with a user-defined kinematic viscosity. This can allow the user to initialize the velocity field with a Stokes-like flow for which convergence can be obtained more easily.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
-  # Type of initial conditions. Choices are L2projection, viscous or nodal
+  # Type of initial conditions. Choices are L2projection, viscous, nodal or average_velocity_profile
   set type                = nodal
 
   # Kinematic viscosity for viscous initial conditions
@@ -470,11 +470,16 @@
       set alpha      = 0.5
     end
   end
+
+  subsection average velocity profile
+    set checkpoint folder    = ./
+    set checkpoint file name = restart
+  end
 end
 </pre></div>
 </div>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter indicates which strategy is used to impose the initial conditions. The choices are : <code class="docutils literal notranslate"><span class="pre">L2projection</span></code>, <code class="docutils literal notranslate"><span class="pre">viscous</span></code>, <code class="docutils literal notranslate"><span class="pre">nodal</span></code> or <code class="docutils literal notranslate"><span class="pre">ramp</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter indicates which strategy is used to impose the initial conditions. The choices are : <code class="docutils literal notranslate"><span class="pre">L2projection</span></code>, <code class="docutils literal notranslate"><span class="pre">viscous</span></code>, <code class="docutils literal notranslate"><span class="pre">nodal</span></code>, <code class="docutils literal notranslate"><span class="pre">ramp</span></code> or <code class="docutils literal notranslate"><span class="pre">average_velocity_profile</span></code>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> parameter controls the kinematic viscosity that is  used to solve the Navier-Stokes equations when the viscous initial condition is chosen.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">uvwp</span></code> allows the user to select a function (velocity-pressure) to set a nodal or L2 projection initial condition.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">VOF</span></code> defines the areas where both fluids lay at the initial state (see section <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>). In this example, the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> is used with a boolean condition to establish the region where the fluid indicator is <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>: <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(condition,</span> <span class="pre">value</span> <span class="pre">if</span> <span class="pre">true,</span> <span class="pre">value</span> <span class="pre">if</span> <span class="pre">false)</span></code>. <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(x&lt;0.5</span> <span class="pre">&amp;</span> <span class="pre">y&lt;1,</span> <span class="pre">1,</span> <span class="pre">0)</span></code> means that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> initially fills the surface where <code class="docutils literal notranslate"><span class="pre">x&lt;0.5</span></code> and <code class="docutils literal notranslate"><span class="pre">y&lt;1</span></code>, the rest being filled with <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>.</p>
@@ -528,6 +533,17 @@ end
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[n_{i+1} = n_i + \alpha (n_{\text{end}} - n_i)\]</div>
+</div>
+<ul class="simple">
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">average</span> <span class="pre">velocity</span> <span class="pre">profile</span></code> uses the time averaged fluid velocity calculated in a previous simulation as an initial condition. This is useful when the flow dynamics and the subphysics reach a pseudo-steady state at different time scales. Physics can then be run independently, one to solve for the fluid dynamics and one for the subphysics. To use this feature, the user should launch a simulation with the fluid mechanics solver while using the time averaging and checkpointing feature. Once the time average of the velocity field is sufficiently established, the simulation should be stopped and a new simulation can be restarted without the fluid mechanics solver. The subphysics can then be solved using a larger time step.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>If only an auxiliary physic must be solved without the fluid dynamics, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">fluid</span> <span class="pre">dynamics</span> <span class="pre">=</span> <span class="pre">false</span></code> needs to be specified in the <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> section. The average velocity field will then be used for the whole duration of the simulation.</p></li>
+<li><p>This feature uses the checkpoint mechanism to load the time averaged velocity field. Make sure to activate checkpointing in the restart section of the first simulation.</p></li>
+<li><p>The same mesh needs to be used for the fluid dynamics and the auxiliary physics simulations. The mesh should not be modified between the two simulations.</p></li>
+</ul>
 </div>
 </section>
 
