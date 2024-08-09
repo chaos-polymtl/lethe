@@ -46,9 +46,7 @@ template <int dim>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+  const std::unordered_map<std::string, cell_point_info<dim>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<dim>::particle_point_candidates
     &particle_point_contact_candidates);
@@ -74,9 +72,7 @@ template <int dim>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+  const std::unordered_map<std::string, cell_point_info<dim>>
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<dim>::particle_point_candidates
                                     &particle_point_contact_candidates,

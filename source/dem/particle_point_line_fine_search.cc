@@ -32,41 +32,35 @@ particle_point_fine_search(
     {
       // Get the value of the map (pair candidate) from the
       // contact_pair_candidates_iterator
-      auto pair_candidates = &contact_pair_candidates_iterator->second;
+      const particle_point_contact_info<dim> &pair_candidates =
+        contact_pair_candidates_iterator->second;
 
-      // Get the particle, particle properties and boundary vertex location once
-      // to improve efficiency
-      auto     particle            = std::get<0>(*pair_candidates);
-      auto     particle_properties = particle->get_properties();
-      Point<3> vertex_location_3d;
+      // Get the particle, particle diameter and boundary vertex location once
+      Particles::ParticleIterator<dim> particle = pair_candidates.particle;
+      double                           particle_diameter =
+        particle->get_properties()[DEM::PropertiesIndex::dp];
 
-      if constexpr (dim == 3)
-        vertex_location_3d = std::get<1>(*pair_candidates);
-
-      if constexpr (dim == 2)
-        vertex_location_3d = point_nd_to_3d(std::get<1>(*pair_candidates));
-
-      Point<3> particle_location_3d;
-      if constexpr (dim == 3)
-        particle_location_3d = particle->get_location();
-
-      if constexpr (dim == 2)
-        particle_location_3d = point_nd_to_3d(particle->get_location());
+      Point<3> vertex_location   = pair_candidates.point;
+      Point<3> particle_location = [&] {
+        if constexpr (dim == 3)
+          return particle->get_location();
+        else
+          return point_nd_to_3d(particle->get_location());
+      }();
 
       // Calculation of the square_distance between the particle and boundary
       // vertex
       const double square_distance =
-        ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
-        vertex_location_3d.distance_square(particle_location_3d);
+        (particle_diameter / 2.0) -
+        vertex_location.distance_square(particle_location);
 
-      // If the distance is larger than neighberhood threshold, then the
+      // If the distance is larger than neighborhood threshold, then the
       // particle-point pair are in contact
       if (square_distance > neighborhood_threshold)
         {
           // Adding contact info to the sample
-          particle_point_pairs_in_contact.emplace(
-            particle->get_id(),
-            particle_point_contact_info<dim>{particle, vertex_location_3d});
+          particle_point_pairs_in_contact.emplace(particle->get_id(),
+                                                  pair_candidates);
         }
     }
 }
@@ -99,20 +93,20 @@ particle_line_fine_search(
       const particle_line_contact_info<dim> &pair_candidates =
         contact_pair_candidates_iterator->second;
 
-      // Get the particle, particle properties and the locations of beginning
-      // and ending vertices of the boundary line once to improve efficiency
+      // Get the particle, particle diameter and the locations of beginning
+      // and ending vertices of the boundary line
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
-      ArrayView<double> particle_properties     = particle->get_properties();
+      double                           particle_diameter =
+        particle->get_properties()[DEM::PropertiesIndex::dp];
 
       Point<3> vertex_one_location = pair_candidates.point_one;
       Point<3> vertex_two_location = pair_candidates.point_two;
-      Point<3> particle_location;
-
-      if constexpr (dim == 3)
-        particle_location = particle->get_location();
-
-      if constexpr (dim == 2)
-        particle_location = point_nd_to_3d(particle->get_location());
+      Point<3> particle_location   = [&] {
+        if constexpr (dim == 3)
+          return particle->get_location();
+        else
+          return point_nd_to_3d(particle->get_location());
+      }();
 
       // For finding the particle-line distance, the projection of the particle
       // on the line should be obtained
@@ -122,7 +116,7 @@ particle_line_fine_search(
 
       // Calculation of the distance between the particle and boundary line
       const double square_distance =
-        ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
+        (particle_diameter / 2.0) -
         projection.distance_square(particle_location);
 
       // If the distance is positive, then the particle-line pair are in

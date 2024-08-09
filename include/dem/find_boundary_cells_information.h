@@ -88,9 +88,7 @@ public:
     return boundary_cells_information;
   }
 
-  std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>> &
+  std::unordered_map<std::string, cell_point_info<dim>> &
   get_boundary_cells_with_points()
   {
     return boundary_cells_with_points;
@@ -248,9 +246,7 @@ private:
     local_cells_with_boundary_lines;
 
   // Structure that contains the boundary cells which have a point
-  std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+  std::unordered_map<std::string, cell_point_info<dim>>
     boundary_cells_with_points;
 
   // Structure that contains the boundary cells with floating walls
