@@ -12,7 +12,7 @@
 template <int dim>
 FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
-  : GLSNavierStokesSolver<dim>(nsparam.cfd_parameters)
+  : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
   , void_fraction_dof_handler(*this->triangulation)
   , fe_void_fraction(nsparam.cfd_parameters.fem_parameters.void_fraction_order)
@@ -57,7 +57,7 @@ template <int dim>
 void
 FluidDynamicsVANS<dim>::setup_dofs()
 {
-  GLSNavierStokesSolver<dim>::setup_dofs();
+  FluidDynamicsMatrixBased<dim>::setup_dofs();
 
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
   locally_owned_dofs_voidfraction =
@@ -172,7 +172,7 @@ FluidDynamicsVANS<dim>::finish_time_step_fd()
   // ensure that the checkpointed information is correct
   percolate_void_fraction();
 
-  GLSNavierStokesSolver<dim>::finish_time_step();
+  FluidDynamicsMatrixBased<dim>::finish_time_step();
 }
 
 template <int dim>

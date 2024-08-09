@@ -21,11 +21,11 @@
 
 #include <deal.II/lac/full_matrix.h>
 
-// Constructor for class GLSNavierStokesSolver
+// Constructor for class FluidDynamicsSharp
 template <int dim>
 FluidDynamicsSharp<dim>::FluidDynamicsSharp(
   CFDDEMSimulationParameters<dim> &p_nsparam)
-  : GLSNavierStokesSolver<dim>(p_nsparam.cfd_parameters)
+  : FluidDynamicsMatrixBased<dim>(p_nsparam.cfd_parameters)
   , cfd_dem_parameters(p_nsparam)
   , all_spheres(true)
   , combined_shapes()
@@ -4171,7 +4171,7 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::write_checkpoint()
 {
-  this->GLSNavierStokesSolver<dim>::write_checkpoint();
+  this->FluidDynamicsMatrixBased<dim>::write_checkpoint();
 
 
   // Write a table with all the relevant properties of the particle in a table.
@@ -4314,7 +4314,7 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::read_checkpoint()
 {
-  this->GLSNavierStokesSolver<dim>::read_checkpoint();
+  this->FluidDynamicsMatrixBased<dim>::read_checkpoint();
 
   TimerOutput::Scope t(this->computing_timer,
                        "Reset Sharp-Edge particle information");

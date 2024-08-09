@@ -5,7 +5,7 @@
 // Lethe
 #include <core/parameters.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/simulation_parameters.h>
 
@@ -80,11 +80,11 @@ MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
 
 
 template <int dim>
-class RestartNavierStokes : public GLSNavierStokesSolver<dim>
+class RestartNavierStokes : public FluidDynamicsMatrixBased<dim>
 {
 public:
   RestartNavierStokes(SimulationParameters<dim> nsparam)
-    : GLSNavierStokesSolver<dim>(nsparam)
+    : FluidDynamicsMatrixBased<dim>(nsparam)
   {}
   void
   run();
