@@ -130,9 +130,8 @@ namespace DEM
       particle_point_in_contact;
 
     // <particle id, (particle iterator, point, point)>
-    typedef std::unordered_map<
-      types::particle_index,
-      std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+    typedef std::unordered_map<types::particle_index,
+                               particle_line_contact_info<dim>>
       particle_line_candidates;
 
     // <particle id, (particle iterator, point)>

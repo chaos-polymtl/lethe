@@ -87,7 +87,7 @@ particle_line_fine_search(
 {
   // Iterating over contact candidates from broad search. If a particle-line
   // pair is in contact (distance > 0) it is inserted into the output of this
-  // function (particle_line_pairs_in_contact)
+  // function (particle_line_pairs_in_contact);
   for (auto contact_pair_candidates_iterator =
          particle_line_contact_candidates.begin();
        contact_pair_candidates_iterator !=
@@ -96,46 +96,34 @@ particle_line_fine_search(
     {
       // Get the value of the map (pair candidate) from the
       // contact_pair_candidates_iterator
-      auto pair_candidates = &contact_pair_candidates_iterator->second;
+      const particle_line_contact_info<dim> &pair_candidates =
+        contact_pair_candidates_iterator->second;
 
       // Get the particle, particle properties and the locations of beginning
       // and ending vertices of the boundary line once to improve efficiency
-      auto     particle            = std::get<0>(*pair_candidates);
-      auto     particle_properties = particle->get_properties();
-      Point<3> vertex_one_location_3d;
-      Point<3> vertex_two_location_3d;
+      Particles::ParticleIterator<dim> particle = pair_candidates.particle;
+      ArrayView<double> particle_properties     = particle->get_properties();
+
+      Point<3> vertex_one_location = pair_candidates.point_one;
+      Point<3> vertex_two_location = pair_candidates.point_two;
+      Point<3> particle_location;
 
       if constexpr (dim == 3)
-        {
-          vertex_one_location_3d = std::get<1>(*pair_candidates);
-          vertex_two_location_3d = std::get<2>(*pair_candidates);
-        }
+        particle_location = particle->get_location();
 
       if constexpr (dim == 2)
-        {
-          vertex_one_location_3d =
-            point_nd_to_3d(std::get<1>(*pair_candidates));
-          vertex_two_location_3d =
-            point_nd_to_3d(std::get<2>(*pair_candidates));
-        }
-
-      Point<3> particle_location_3d;
-      if constexpr (dim == 3)
-        particle_location_3d = particle->get_location();
-
-      if constexpr (dim == 2)
-        particle_location_3d = point_nd_to_3d(particle->get_location());
+        particle_location = point_nd_to_3d(particle->get_location());
 
       // For finding the particle-line distance, the projection of the particle
       // on the line should be obtained
-      Point<3> projection = find_projection_point(particle_location_3d,
-                                                  vertex_one_location_3d,
-                                                  vertex_two_location_3d);
+      Point<3> projection = find_projection_point(particle_location,
+                                                  vertex_one_location,
+                                                  vertex_two_location);
 
       // Calculation of the distance between the particle and boundary line
       const double square_distance =
         ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
-        projection.distance_square(particle_location_3d);
+        projection.distance_square(particle_location);
 
       // If the distance is positive, then the particle-line pair are in
       // contact
@@ -143,11 +131,8 @@ particle_line_fine_search(
         {
           // Creating a sample from the particle_point_line_contact_info
           // and adding contact info to the sample
-          particle_line_pairs_in_contact.emplace(
-            particle->get_id(),
-            particle_line_contact_info<dim>{particle,
-                                            vertex_one_location_3d,
-                                            vertex_two_location_3d});
+          particle_line_pairs_in_contact.emplace(particle->get_id(),
+                                                 pair_candidates);
         }
     }
 }

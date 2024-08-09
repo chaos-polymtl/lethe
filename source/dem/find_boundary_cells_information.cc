@@ -378,11 +378,24 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                     {
                       for (auto &map_iterator : cell_boundary_lines)
                         {
-                          boundary_cells_with_lines.insert(
-                            {cell_id_string,
-                             std::make_tuple(cell,
-                                             map_iterator.second.first,
-                                             map_iterator.second.second)});
+                          Point<3> vertex_one, vertex_two;
+
+                          if constexpr (dim == 3)
+                            {
+                              vertex_one = map_iterator.second.first;
+                              vertex_two = map_iterator.second.second;
+                            }
+
+                          if constexpr (dim == 2)
+                            {
+                              vertex_one =
+                                point_nd_to_3d(map_iterator.second.first);
+                              vertex_two =
+                                point_nd_to_3d(map_iterator.second.second);
+                            }
+                          boundary_cells_with_lines.emplace(
+                            cell_id_string,
+                            cell_line_info<dim>{cell, vertex_one, vertex_two});
 
                           // Add the cell to local_cells_with_boundary_lines to
                           // be used in

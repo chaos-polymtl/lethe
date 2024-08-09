@@ -114,6 +114,19 @@ struct particle_line_contact_info
 };
 
 /**
+ * @brief Handle information related to the calculation of the particle-line
+ * contact forces. TODO
+ */
+template <int dim>
+struct cell_line_info
+{
+  typename Triangulation<dim>::active_cell_iterator cell;
+  Point<3>                                          point_one;
+  Point<3>                                          point_two;
+};
+
+
+/**
  * @brief Handle information related to the calculation of the particle-point
  * contact forces.
  */

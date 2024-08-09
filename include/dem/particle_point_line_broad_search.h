@@ -97,14 +97,11 @@ find_particle_point_contact_pairs(
  * lines.
  */
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_line_candidates
+void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<dim>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
     &particle_line_contact_candidates);
 
@@ -125,14 +122,11 @@ find_particle_line_contact_pairs(
  * status checks.
  */
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_line_candidates
+void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<dim>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
                                     &particle_line_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object);

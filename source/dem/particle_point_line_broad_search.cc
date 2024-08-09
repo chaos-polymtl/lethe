@@ -15,6 +15,9 @@ find_particle_point_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_point_candidates
     &particle_point_contact_candidates)
 {
+  // Clear the candidate map
+  particle_point_contact_candidates.clear();
+
   // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
@@ -70,6 +73,9 @@ find_particle_point_contact_pairs(
                                     &particle_point_contact_candidates,
   const AdaptiveSparseContacts<dim> &sparse_contacts_object)
 {
+  // Clear the candidate map
+  particle_point_contact_candidates.clear();
+
   // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
@@ -121,17 +127,17 @@ find_particle_point_contact_pairs(
 
 // This function finds all the particle-line contact candidates
 template <int dim>
-typename DEM::dem_data_structures<dim>::particle_line_candidates
+void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<dim>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
     &particle_line_contact_candidates)
 {
+  // Clear the candidates map
+  particle_line_contact_candidates.clear();
+
   // Defining and resetting a local particle-line candidate counter. This is
   // used as a key to the output map
   unsigned int contact_candidate_counter = 0;
@@ -145,154 +151,119 @@ find_particle_line_contact_pairs(
        map_iterator != boundary_cells_with_lines.end();
        ++map_iterator)
     {
-      auto cells_with_boundary_lines_information = &map_iterator->second;
-
-      // Getting the cell and the locations of boundary vertices (beginning and
-      // ending points of the boundary line) as local variables
-      auto cell_with_boundary_line =
-        std::get<0>(*cells_with_boundary_lines_information);
-
-      Point<dim> first_vertex_location =
-        std::get<1>(*cells_with_boundary_lines_information);
-      Point<dim> second_vertex_location =
-        std::get<2>(*cells_with_boundary_lines_information);
+      const cell_line_info<dim> &cells_with_boundary_lines_info =
+        map_iterator->second;
 
       // Finding particles located in the corresponding cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell =
-          particle_handler.particles_in_cell(cell_with_boundary_line);
-
-      for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
-             iterator particles_in_cell_iterator = particles_in_cell.begin();
-           particles_in_cell_iterator != particles_in_cell.end();
-           ++particles_in_cell_iterator)
-        {
-          // Making the tuple (particle, beginning and ending points of the
-          // boundary line) and adding it to the
-          // particle_line_contact_candidates map. This map is the output of
-          // this function
-          particle_line_contact_candidates.insert(
-            {contact_candidate_counter,
-             std::make_tuple(particles_in_cell_iterator,
-                             first_vertex_location,
-                             second_vertex_location)});
-          ++contact_candidate_counter;
-        }
-    }
-  return particle_line_contact_candidates;
-}
-
-template <int dim>
-typename DEM::dem_data_structures<dim>::particle_line_candidates
-find_particle_line_contact_pairs(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>> &boundary_cells_with_lines,
-  typename DEM::dem_data_structures<dim>::particle_line_candidates
-                                    &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
-{
-  // Defining and resetting a local particle-line candidate counter. This is
-  // used as a key to the output map
-  unsigned int contact_candidate_counter = 0;
-
-  // Iterating over the  boundary_cells_with_lines which is the output of
-  // the find_boundary_cells_information class.
-  // This vector contains all the required information of the boundary
-  // cells with lines. In this loop we find the particles located in each of
-  // these boundary cells with lines
-  for (auto map_iterator = boundary_cells_with_lines.begin();
-       map_iterator != boundary_cells_with_lines.end();
-       ++map_iterator)
-    {
-      auto cells_with_boundary_lines_information = &map_iterator->second;
-
-      // Getting the cell and the locations of boundary vertices (beginning and
-      // ending points of the boundary line) as local variables
-      auto cell_with_boundary_line =
-        std::get<0>(*cells_with_boundary_lines_information);
-
-      // If main cell has status other than mobile, skip to next cell
-      unsigned int main_cell_mobility_status =
-        sparse_contacts_object.check_cell_mobility(cell_with_boundary_line);
-      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
-        continue;
-
-      Point<dim> first_vertex_location =
-        std::get<1>(*cells_with_boundary_lines_information);
-      Point<dim> second_vertex_location =
-        std::get<2>(*cells_with_boundary_lines_information);
-
-      // Finding particles located in the corresponding cell
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell =
-          particle_handler.particles_in_cell(cell_with_boundary_line);
+        particles_in_cell = particle_handler.particles_in_cell(
+          cells_with_boundary_lines_info.cell);
 
       for (auto particles_in_cell_iterator = particles_in_cell.begin();
            particles_in_cell_iterator != particles_in_cell.end();
            ++particles_in_cell_iterator)
         {
-          // Making the tuple (particle, beginning and ending points of the
-          // boundary line) and adding it to the
-          // particle_line_contact_candidates map. This map is the output of
-          // this function
+          // Adding the particle line contact info to the
+          // particle_line_contact_candidates map.
           particle_line_contact_candidates.emplace(
             contact_candidate_counter,
-            std::make_tuple(particles_in_cell_iterator,
-                            first_vertex_location,
-                            second_vertex_location));
+            particle_line_contact_info<dim>{
+              particles_in_cell_iterator,
+              cells_with_boundary_lines_info.point_one,
+              cells_with_boundary_lines_info.point_two});
           ++contact_candidate_counter;
         }
     }
-
-  return particle_line_contact_candidates;
 }
 
-template typename DEM::dem_data_structures<2>::particle_line_candidates
+template <int dim>
+void
 find_particle_line_contact_pairs(
+  const Particles::ParticleHandler<dim> &particle_handler,
+  const std::unordered_map<std::string, cell_line_info<dim>>
+    &boundary_cells_with_lines,
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+                                    &particle_line_contact_candidates,
+  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+{
+  // Clear the candidates map
+  particle_line_contact_candidates.clear();
+
+  // Defining and resetting a local particle-line candidate counter. This is
+  // used as a key to the output map
+  unsigned int contact_candidate_counter = 0;
+
+  // Iterating over the  boundary_cells_with_lines which is the output of
+  // the find_boundary_cells_information class.
+  // This vector contains all the required information of the boundary
+  // cells with lines. In this loop we find the particles located in each of
+  // these boundary cells with lines
+  for (auto map_iterator = boundary_cells_with_lines.begin();
+       map_iterator != boundary_cells_with_lines.end();
+       ++map_iterator)
+    {
+      const cell_line_info<dim> &cells_with_boundary_lines_info =
+        map_iterator->second;
+
+      // If main cell has status other than mobile, skip to next cell
+      unsigned int main_cell_mobility_status =
+        sparse_contacts_object.check_cell_mobility(
+          cells_with_boundary_lines_info.cell);
+      if (main_cell_mobility_status != AdaptiveSparseContacts<dim>::mobile)
+        continue;
+
+      // Finding particles located in the corresponding cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(
+          cells_with_boundary_lines_info.cell);
+
+      for (auto particles_in_cell_iterator = particles_in_cell.begin();
+           particles_in_cell_iterator != particles_in_cell.end();
+           ++particles_in_cell_iterator)
+        {
+          // Adding the particle line contact info to the
+          // particle_line_contact_candidates map.
+          particle_line_contact_candidates.emplace(
+            contact_candidate_counter,
+            particle_line_contact_info<dim>{
+              particles_in_cell_iterator,
+              cells_with_boundary_lines_info.point_one,
+              cells_with_boundary_lines_info.point_two});
+          ++contact_candidate_counter;
+        }
+    }
+}
+
+template void
+find_particle_line_contact_pairs<2>(
   const Particles::ParticleHandler<2> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<2>::active_cell_iterator,
-               Point<2>,
-               Point<2>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<2>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<2>::particle_line_candidates
     &particle_line_contact_candidates);
 
-template typename DEM::dem_data_structures<3>::particle_line_candidates
-find_particle_line_contact_pairs(
+template void
+find_particle_line_contact_pairs<3>(
   const Particles::ParticleHandler<3> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<3>::active_cell_iterator,
-               Point<3>,
-               Point<3>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<3>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<3>::particle_line_candidates
     &particle_line_contact_candidates);
 
-template typename DEM::dem_data_structures<2>::particle_line_candidates
-find_particle_line_contact_pairs(
+template void
+find_particle_line_contact_pairs<2>(
   const Particles::ParticleHandler<2> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<2>::active_cell_iterator,
-               Point<2>,
-               Point<2>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<2>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<2>::particle_line_candidates
                                   &particle_line_contact_candidates,
   const AdaptiveSparseContacts<2> &sparse_contacts_object);
 
-template typename DEM::dem_data_structures<3>::particle_line_candidates
-find_particle_line_contact_pairs(
+template void
+find_particle_line_contact_pairs<3>(
   const Particles::ParticleHandler<3> &particle_handler,
-  const std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<3>::active_cell_iterator,
-               Point<3>,
-               Point<3>>> &boundary_cells_with_lines,
+  const std::unordered_map<std::string, cell_line_info<3>>
+    &boundary_cells_with_lines,
   typename DEM::dem_data_structures<3>::particle_line_candidates
                                   &particle_line_contact_candidates,
   const AdaptiveSparseContacts<3> &sparse_contacts_object);
