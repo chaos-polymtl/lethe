@@ -9,7 +9,7 @@ PATH = os.getcwd()
 # User input
 CASE_PREFIX = 'cylinder_u_'
 PRM_FILE = 'cylinder.prm'
-LETHE_EXEC = 'gls_navier_stokes_2d'
+LETHE_EXEC = 'lethe-fluid'
 
 for root, directories, files in os.walk(PATH):
 
