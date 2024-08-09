@@ -134,7 +134,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                        dsp,
                        this->mpi_communicator);
 
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile)
     {
       this->average_velocities->initialize_vectors(
         this->locally_owned_dofs,
@@ -176,7 +179,10 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
-  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile)
     {
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
@@ -1265,6 +1271,38 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
                       << std::endl;
           this->pcout << "*********************************" << std::endl;
         }
+    }
+  else if (initial_condition_type ==
+           Parameters::InitialConditionType::average_velocity_profile)
+    {
+      announce_string(this->pcout,
+                      "Initial condition using average velocity profile");
+
+      std::string checkpoint_file_name =
+        this->simulation_parameters.initial_condition->average_velocity_folder +
+        this->simulation_parameters.initial_condition
+          ->average_velocity_file_name;
+
+      // The average velocity profile needs to come from the results of a
+      // simulation. The checkpoint/restart mechanism is used to obtain all the
+      // simulations information necessary to restart the simulation. The same
+      // mesh needs to be used, but new physics can be added to the simulation.
+      this->set_solution_from_checkpoint(checkpoint_file_name);
+
+      auto simulation_control_info =
+        this->simulation_control->get_checkpointed_simulation_control_info(
+          checkpoint_file_name);
+
+      // Calculate the the average velocities
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        this->simulation_parameters.post_processing,
+        simulation_control_info[0],  // Checkpointed end time
+        simulation_control_info[1]); // Checkpointed time step
+
+      this->local_evaluation_point =
+        this->average_velocities->get_average_velocities();
+      this->present_solution = this->local_evaluation_point;
     }
   else
     {
