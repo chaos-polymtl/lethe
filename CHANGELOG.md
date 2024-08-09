@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-09
+
+### Changed
+
+- MINOR Renamed the main file related to the `lethe-fluid` application: `gls_navier_stokes` to `fluid_dynamics_matrix_based`. The name of the `GLSNavierStokesSolver` class was changed to `FluidDynamicsMatrixBased`. [#1236](https://github.com/chaos-polymtl/lethe/pull/1236)
+
 ## [Master] - 2024-08-07
 
 ### Changed

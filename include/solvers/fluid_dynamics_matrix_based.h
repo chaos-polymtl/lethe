@@ -13,8 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lethe_gls_navier_stokes_h
-#define lethe_gls_navier_stokes_h
+#ifndef lethe_fluid_dynamics_matrix_based_h
+#define lethe_fluid_dynamics_matrix_based_h
 
 #include <core/exceptions.h>
 #include <core/vector.h>
@@ -41,12 +41,12 @@ using namespace dealii;
  */
 
 template <int dim>
-class GLSNavierStokesSolver
+class FluidDynamicsMatrixBased
   : public NavierStokesBase<dim, GlobalVectorType, IndexSet>
 {
 public:
-  GLSNavierStokesSolver(SimulationParameters<dim> &nsparam);
-  ~GLSNavierStokesSolver();
+  FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam);
+  ~FluidDynamicsMatrixBased();
 
   /**
    * @brief solve Solves the Navier-Stokes problem
@@ -130,7 +130,7 @@ protected:
    * @brief Define the zero constraints used to solved the problem that change
    * with other physics' solutions.
    *
-   * It differs from GLSNavierStokesSolver::define_zero_constraints as it
+   * It differs from FluidDynamicsMatrixBased::define_zero_constraints as it
    * changes in time depending on the physics' solutions. Currently, it is only
    * used to constraint solid with the temperature's evolution.
    */

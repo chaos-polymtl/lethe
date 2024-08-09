@@ -21,7 +21,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
 #include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
@@ -45,9 +45,9 @@
 
 
 
-// Constructor for class GLSNavierStokesSolver
+// Constructor for class FluidDynamicsMatrixBased
 template <int dim>
-GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
+FluidDynamicsMatrixBased<dim>::FluidDynamicsMatrixBased(
   SimulationParameters<dim> &p_nsparam)
   : NavierStokesBase<dim, GlobalVectorType, IndexSet>(p_nsparam)
 {
@@ -61,14 +61,14 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
 }
 
 template <int dim>
-GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
+FluidDynamicsMatrixBased<dim>::~FluidDynamicsMatrixBased()
 {
   this->dof_handler.clear();
 }
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_dofs_fd()
+FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup DOFs");
 
@@ -177,7 +177,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
+FluidDynamicsMatrixBased<dim>::update_multiphysics_time_average_solution()
 {
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
@@ -192,7 +192,7 @@ GLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::update_boundary_conditions()
+FluidDynamicsMatrixBased<dim>::update_boundary_conditions()
 {
   if (!this->simulation_parameters.boundary_conditions.time_dependent)
     return;
@@ -226,7 +226,7 @@ GLSNavierStokesSolver<dim>::update_boundary_conditions()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::define_non_zero_constraints()
+FluidDynamicsMatrixBased<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -314,7 +314,7 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::define_zero_constraints()
+FluidDynamicsMatrixBased<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -393,7 +393,7 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::define_dynamic_zero_constraints()
+FluidDynamicsMatrixBased<dim>::define_dynamic_zero_constraints()
 {
   if (!this->simulation_parameters.constrain_solid_domain.enable)
     return;
@@ -434,7 +434,7 @@ GLSNavierStokesSolver<dim>::define_dynamic_zero_constraints()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_assemblers()
+FluidDynamicsMatrixBased<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
@@ -692,7 +692,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_system_matrix()
+FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
@@ -758,8 +758,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
     *this,
-    &GLSNavierStokesSolver::assemble_local_system_matrix,
-    &GLSNavierStokesSolver::copy_local_matrix_to_global_matrix,
+    &FluidDynamicsMatrixBased::assemble_local_system_matrix,
+    &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
@@ -769,7 +769,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
+FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -885,7 +885,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
+FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -903,7 +903,7 @@ GLSNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_system_rhs()
+FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -971,8 +971,8 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
     *this,
-    &GLSNavierStokesSolver::assemble_local_system_rhs,
-    &GLSNavierStokesSolver::copy_local_rhs_to_global_rhs,
+    &FluidDynamicsMatrixBased::assemble_local_system_rhs,
+    &FluidDynamicsMatrixBased::copy_local_rhs_to_global_rhs,
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
@@ -986,7 +986,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
+FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
@@ -1102,7 +1102,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
+FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -1122,7 +1122,7 @@ GLSNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
  **/
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::set_initial_condition_fd(
+FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -1312,7 +1312,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_L2_projection()
+FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
@@ -1395,8 +1395,9 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                const bool /* renewed_matrix */)
+FluidDynamicsMatrixBased<dim>::solve_linear_system(
+  const bool initial_step,
+  const bool /* renewed_matrix */)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1432,7 +1433,7 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_preconditioner()
+FluidDynamicsMatrixBased<dim>::setup_preconditioner()
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
@@ -1457,7 +1458,7 @@ GLSNavierStokesSolver<dim>::setup_preconditioner()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_ILU()
+FluidDynamicsMatrixBased<dim>::setup_ILU()
 {
   TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
@@ -1477,7 +1478,7 @@ GLSNavierStokesSolver<dim>::setup_ILU()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_AMG()
+FluidDynamicsMatrixBased<dim>::setup_AMG()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
@@ -1550,9 +1551,10 @@ GLSNavierStokesSolver<dim>::setup_AMG()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
-                                               const double absolute_residual,
-                                               const double relative_residual)
+FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
 {
   const unsigned int max_iter = 3;
   unsigned int       iter     = 0;
@@ -1694,7 +1696,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 // it will go back to its original value at the end of the restart process.
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
+FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
   const bool   initial_step,
   const double absolute_residual,
   const double relative_residual)
@@ -1801,9 +1803,10 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
-                                                const double absolute_residual,
-                                                const double relative_residual)
+FluidDynamicsMatrixBased<dim>::solve_system_direct(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
@@ -1838,7 +1841,7 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve()
+FluidDynamicsMatrixBased<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
@@ -1888,5 +1891,5 @@ GLSNavierStokesSolver<dim>::solve()
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
-template class GLSNavierStokesSolver<2>;
-template class GLSNavierStokesSolver<3>;
+template class FluidDynamicsMatrixBased<2>;
+template class FluidDynamicsMatrixBased<3>;

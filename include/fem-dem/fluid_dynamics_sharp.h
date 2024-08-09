@@ -20,7 +20,7 @@
 #include <core/shape.h>
 #include <core/vector.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
@@ -43,7 +43,7 @@ using namespace dealii;
  */
 
 template <int dim>
-class FluidDynamicsSharp : public GLSNavierStokesSolver<dim>
+class FluidDynamicsSharp : public FluidDynamicsMatrixBased<dim>
 {
 public:
   FluidDynamicsSharp(CFDDEMSimulationParameters<dim> &nsparam);
@@ -157,7 +157,7 @@ private:
   /*
    Modified version of assemble_matrix_and_rhs to include the presence of
    extra steps. For more detail see the same function in the
-   gls_navier_stokes.h solver.
+   fluid_dynamics_matrix_based.h solver.
    */
 
   virtual void
@@ -183,7 +183,7 @@ private:
         else
           generate_cut_cells_map();
       }
-    this->GLSNavierStokesSolver<dim>::assemble_system_matrix();
+    this->FluidDynamicsMatrixBased<dim>::assemble_system_matrix();
 
     sharp_edge();
   }
@@ -197,12 +197,12 @@ private:
    *
    * Modified version of assemble_matrix_and_rhs to include the presence of
    * extra steps. For more detail see the same function in the
-   * gls_navier_stokes.h solver.
+   * fluid_dynamics_matrix_based.h solver.
    */
   virtual void
   assemble_rhs()
   {
-    this->GLSNavierStokesSolver<dim>::assemble_system_rhs();
+    this->FluidDynamicsMatrixBased<dim>::assemble_system_rhs();
   }
 
   /**

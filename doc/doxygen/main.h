@@ -23,7 +23,7 @@
       physics_solver:e -> navier_stokes_base:w [dir=back];
       physics_solver:e -> auxiliary_physics:w [dir=back];
 
-      navier_stokes_base_1 [label=<<B>GLSNavierStokesSolver</B> <br/>(lethe-fluid)>,href="https://chaos-polymtl.github.io/lethe/doxygen/classGLSNavierStokesSolver.html", tooltip="GLSNavierStokesSolver"];
+      navier_stokes_base_1 [label=<<B>FluidDynamicsMatrixBased</B> <br/>(lethe-fluid)>,href="https://chaos-polymtl.github.io/lethe/doxygen/classFluidDynamicsMatrixBased.html", tooltip="FluidDynamicsMatrixBased"];
       navier_stokes_base_2 [label=<<B>FluidDynamicsBlock</B> <br/> (lethe-fluid-block)>,href="https://chaos-polymtl.github.io/lethe/doxygen/classFluidDynamicsBlock.html", tooltip="FluidDynamicsBlock"];
       navier_stokes_base_3 [label=<<B>FluidDynamicsMatrixFree</B> <br/> (lethe-fluid-matrix-free)>,href="https://chaos-polymtl.github.io/lethe/doxygen/classFluidDynamicsMatrixFree.html", tooltip="FluidDynamicsMatrixFree"];
 

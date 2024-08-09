@@ -8,4 +8,4 @@
 #SBATCH --output=%x-%j.out
 
 source $HOME/.dealii
-srun $HOME/lethe/inst/bin/gls_navier_stokes_2d cylinder.prm
+srun $HOME/lethe/inst/bin/lethe-fluid cylinder.prm

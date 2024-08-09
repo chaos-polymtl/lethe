@@ -8,7 +8,7 @@ add_library(lethe-solvers
   cahn_hilliard_scratch_data.cc
   flow_control.cc
   fluid_dynamics_block.cc
-  gls_navier_stokes.cc
+  fluid_dynamics_matrix_based.cc
   fluid_dynamics_nitsche.cc
   heat_transfer.cc
   heat_transfer_assemblers.cc
@@ -48,7 +48,7 @@ add_library(lethe-solvers
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
-  ../../include/solvers/gls_navier_stokes.h
+  ../../include/solvers/fluid_dynamics_matrix_based.h
   ../../include/solvers/fluid_dynamics_nitsche.h
   ../../include/solvers/heat_transfer.h
   ../../include/solvers/heat_transfer_assemblers.h

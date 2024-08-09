@@ -104,7 +104,7 @@ because it
 but the `lethe-fluid` application
 [links only to `lethe-solvers`](applications/lethe-fluid/CMakeLists.txt)
 because it
-[includes only solvers headers](applications/lethe-fluid/gls_navier_stokes.cc),
+[includes only solvers headers](applications/lethe-fluid/fluid_dynamics_matrix_based.cc),
 and `lethe-core` is a transitive dependency of `lethe-solvers`.
 
 ## Dependencies between Lethe's libraries

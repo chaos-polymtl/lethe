@@ -22,7 +22,7 @@
 #include <core/parameters.h>
 #include <core/time_integration_utilities.h>
 
-#include <solvers/gls_navier_stokes.h>
+#include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/postprocessing_cfd.h>
 
 #include <dem/dem.h>
@@ -112,7 +112,7 @@ particle_sphere_intersection_3d(double r_particle,
  */
 
 template <int dim>
-class FluidDynamicsVANS : public GLSNavierStokesSolver<dim>
+class FluidDynamicsVANS : public FluidDynamicsMatrixBased<dim>
 {
 public:
   FluidDynamicsVANS(CFDDEMSimulationParameters<dim> &nsparam);
