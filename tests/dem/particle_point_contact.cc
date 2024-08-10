@@ -37,6 +37,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/contact_info.h>
+#include <dem/contact_type.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_point_line_broad_search.h>
@@ -124,12 +125,11 @@ test()
                        Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
   // Particle-point broad search
-  std::unordered_map<unsigned int,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
     contact_candidates;
 
   // Particle-point fine search
-  std::unordered_map<unsigned int, particle_point_contact_info<dim>>
+  typename DEM::dem_data_structures<dim>::particle_point_in_contact
     contact_information;
 
   ParticlePointLineForce<dim>   force_object;

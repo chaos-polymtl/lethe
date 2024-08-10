@@ -67,7 +67,6 @@ find_particle_point_contact_pairs(
  * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
  * status checks.
  */
-
 template <int dim>
 void
 find_particle_point_contact_pairs(
