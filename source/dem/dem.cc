@@ -43,9 +43,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
-  , contact_detection_frequency(
-      parameters.model_parameters.contact_detection_frequency)
-  , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , contact_build_number(0)
   , background_dh(triangulation)
   , size_distribution_object_container(
@@ -466,21 +463,23 @@ template <int dim>
 inline void
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
-  find_particle_contact_detection_step<dim>(
-    particle_handler,
-    simulation_control->get_time_step(),
-    smallest_contact_search_criterion,
-    mpi_communicator,
-    displacement,
-    (simulation_control->get_step_number() % contact_detection_frequency) == 0);
+  const bool parallel_update =
+    (simulation_control->get_step_number() %
+     parameters.model_parameters.contact_detection_frequency) == 0;
+  find_particle_contact_detection_step<dim>(particle_handler,
+                                            simulation_control->get_time_step(),
+                                            smallest_contact_search_criterion,
+                                            mpi_communicator,
+                                            displacement,
+                                            parallel_update);
 }
 
 template <int dim>
 inline void
 DEMSolver<dim>::check_contact_search_iteration_constant()
 {
-  if ((simulation_control->get_step_number() % contact_detection_frequency) ==
-      0)
+  if ((simulation_control->get_step_number() %
+       parameters.model_parameters.contact_detection_frequency) == 0)
     action_manager->contact_detection_step();
 }
 
@@ -488,7 +487,8 @@ template <int dim>
 void
 DEMSolver<dim>::insert_particles()
 {
-  if ((simulation_control->get_step_number() % insertion_frequency) == 1)
+  if ((simulation_control->get_step_number() %
+       parameters.insertion_info.insertion_frequency) == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
 

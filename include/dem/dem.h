@@ -315,16 +315,6 @@ private:
   double maximum_particle_diameter;
 
   /**
-   * @brief The frequency of the contact searches.
-   */
-  const unsigned int contact_detection_frequency;
-
-  /**
-   * @brief The frequency of the insertion of particles
-   */
-  const unsigned int insertion_frequency;
-
-  /**
    * @brief The counter to keep track of the number of contact search.
    */
   unsigned int contact_build_number;
