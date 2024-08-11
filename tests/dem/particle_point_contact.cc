@@ -36,6 +36,8 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <dem/contact_info.h>
+#include <dem/contact_type.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_point_line_broad_search.h>
@@ -123,14 +125,11 @@ test()
                        Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
   // Particle-point broad search
-  std::unordered_map<unsigned int,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-                                    contact_candidates;
-  ParticlePointLineBroadSearch<dim> broad_search_object;
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+    contact_candidates;
 
   // Particle-point fine search
-  ParticlePointLineFineSearch<dim> fine_search_object;
-  std::unordered_map<unsigned int, particle_point_line_contact_info_struct<dim>>
+  typename DEM::dem_data_structures<dim>::particle_point_in_contact
     contact_information;
 
   ParticlePointLineForce<dim>   force_object;
@@ -156,14 +155,14 @@ test()
       force[particle->get_id()][1] = 0;
       force[particle->get_id()][2] = 0;
 
-      contact_candidates =
-        broad_search_object.find_particle_point_contact_pairs(
-          particle_handler,
-          boundary_cells_object.get_boundary_cells_with_points());
+      find_particle_point_contact_pairs<dim>(
+        particle_handler,
+        boundary_cells_object.get_boundary_cells_with_points(),
+        contact_candidates);
 
-      contact_information =
-        fine_search_object.particle_point_fine_search(contact_candidates,
-                                                      neighborhood_threshold);
+      particle_point_fine_search<dim>(contact_candidates,
+                                      neighborhood_threshold,
+                                      contact_information);
 
       force_object.calculate_particle_point_contact_force(
         &contact_information,

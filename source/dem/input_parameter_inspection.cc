@@ -79,7 +79,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
   if (parameters.grid_motion.motion_type ==
       Parameters::Lagrangian::GridMotion<dim>::MotionType::rotational)
     {
-      if (dim == 2)
+      if constexpr (dim == 2)
         {
           if (parameters.grid_motion.grid_rotational_axis != 0 &&
               parameters.grid_motion.grid_rotational_axis != 1)
@@ -87,7 +87,8 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
               "Specified grid rotational axis is not valid, use 0 for rotation around x"
               " axis or 1 for rotation around y axis.");
         }
-      else if (dim == 3)
+
+      if constexpr (dim == 3)
         {
           if (parameters.grid_motion.grid_rotational_axis != 0 &&
               parameters.grid_motion.grid_rotational_axis != 1 &&
@@ -100,13 +101,13 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
 }
 
 template void
-input_parameter_inspection(const DEMSolverParameters<2> &dem_parameters,
-                           const ConditionalOStream     &pcout,
-                           const std::vector<std::shared_ptr<Distribution>>
-                             &size_distribution_object_container);
+input_parameter_inspection<2>(const DEMSolverParameters<2> &dem_parameters,
+                              const ConditionalOStream     &pcout,
+                              const std::vector<std::shared_ptr<Distribution>>
+                                &size_distribution_object_container);
 
 template void
-input_parameter_inspection(const DEMSolverParameters<3> &dem_parameters,
-                           const ConditionalOStream     &pcout,
-                           const std::vector<std::shared_ptr<Distribution>>
-                             &size_distribution_object_container);
+input_parameter_inspection<3>(const DEMSolverParameters<3> &dem_parameters,
+                              const ConditionalOStream     &pcout,
+                              const std::vector<std::shared_ptr<Distribution>>
+                                &size_distribution_object_container);

@@ -35,18 +35,17 @@ using namespace dealii;
  * dynamic contact search steps. This value is defined as the minimum of
  * particle-particle and particle-wall displacement threshold values
  * @param mpi_communicator
- * @param sorting_in_subdomains_step True if it is insertion, load-
- * balance or contact detection step
  * @param displacement Displacement of particles since last sorting step
- * @param parallel_update Update the identification of the contact detection step in parallel.
- * If this parameter is set to false, the distance will be calculated but the
+ * @param parallel_update Update the identification of the contact detection
+ * step in parallel. If this parameter is set to false, the distance will be
+ * calculated but the
  * logical OR statement won't be called and a false value will be returned. In
  * essence, this will only update the displacement.
- * @return Returns true if the maximum cumulative
- * displacement of particles exceeds the threshold and false otherwise
  *
- */
+ * @return Returns true if the maximum cumulative displacement of particles
+ * exceeds the threshold and false otherwise
 
+ */
 template <int dim>
 void
 find_particle_contact_detection_step(
@@ -58,16 +57,14 @@ find_particle_contact_detection_step(
   const bool                       parallel_update = true);
 
 /**
- * @brief Carries out finding steps for dynamic contact search in particle-floating
+ * @brief Find steps for dynamic contact search in particle-floating
  * mesh contacts
  *
  * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced
  * @param solids All solid objects used in the simulation
  * @return Returns true if the maximum cumulative
  * displacement of particles exceeds the threshold and false otherwise
- *
  */
-
 template <int dim>
 void
 find_floating_mesh_mapping_step(
