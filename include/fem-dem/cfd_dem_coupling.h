@@ -266,11 +266,10 @@ private:
   PVDHandler grid_pvdhandler;
   PVDHandler particles_pvdhandler;
 
-  DEMSolverParameters<dim>      dem_parameters;
-  double                        dem_time_step;
-  const unsigned int            this_mpi_process;
-  const unsigned int            n_mpi_processes;
-  LagrangianPostProcessing<dim> dem_post_processing_object;
+  DEMSolverParameters<dim> dem_parameters;
+  double                   dem_time_step;
+  const unsigned int       this_mpi_process;
+  const unsigned int       n_mpi_processes;
 
   /// Post-processing variables to output total fluid volume and total particles
   /// volume

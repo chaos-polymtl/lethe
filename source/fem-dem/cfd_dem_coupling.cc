@@ -947,8 +947,7 @@ CFDDEMSolver<dim>::report_particle_statistics()
         dynamic_cast<parallel::distributed::Triangulation<dim> *>(
           &*this->triangulation);
 
-
-      dem_post_processing_object.write_post_processing_results(
+      write_post_processing_results<dim>(
         *parallel_triangulation,
         grid_pvdhandler,
         this->dof_handler,

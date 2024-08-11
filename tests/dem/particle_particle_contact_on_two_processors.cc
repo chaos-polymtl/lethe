@@ -117,23 +117,15 @@ test()
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;
-  typename dem_data_structures<2>::adjacent_particle_pairs
-    cleared_local_adjacent_particles;
-  typename dem_data_structures<2>::adjacent_particle_pairs
-    cleared_ghost_adjacent_particles;
 
-  DEMContactManager<dim> container_manager;
+  DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  find_cell_neighbors<dim>(triangulation,
+                           contact_manager.cells_local_neighbor_list,
+                           contact_manager.cells_ghost_neighbor_list);
 
-  // Creating broad search, fine search and particle-particle force objects
-  ParticleParticleBroadSearch<dim> broad_search_object;
-  ParticleParticleFineSearch<dim>  fine_search_object;
+  // Creating particle-particle force objects
   ParticleParticleContactForce<
     dim,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
@@ -210,27 +202,27 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      container_manager.update_local_particles_in_cells(particle_handler);
+      contact_manager.update_local_particles_in_cells(particle_handler);
 
       // Dummy Adaptive sparse contacts object and particle-particle broad
       // search
       AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
-      container_manager.execute_particle_particle_broad_search(
+      contact_manager.execute_particle_particle_broad_search(
         particle_handler, dummy_adaptive_sparse_contacts);
 
       // Calling fine search
-      container_manager.execute_particle_particle_fine_search(
+      contact_manager.execute_particle_particle_fine_search(
         neighborhood_threshold);
 
       // Integration
       // Calling non-linear force
       nonlinear_force_object.calculate_particle_particle_contact_force(
-        container_manager, dt, torque, force);
+        contact_manager, dt, torque, force);
 
       // Integration
       integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
-      container_manager.update_contacts();
+      contact_manager.update_contacts();
 
       if (iteration % output_frequency == 0)
         {

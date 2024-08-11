@@ -18,6 +18,7 @@
 #define lethe_find_boundary_cells_information_h
 
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/contact_info.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
@@ -87,19 +88,13 @@ public:
     return boundary_cells_information;
   }
 
-  std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>> &
+  std::unordered_map<std::string, cell_point_info<dim>> &
   get_boundary_cells_with_points()
   {
     return boundary_cells_with_points;
   }
 
-  std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>> &
+  std::unordered_map<std::string, cell_line_info<dim>> &
   get_boundary_cells_with_lines()
   {
     return boundary_cells_with_lines;
@@ -242,11 +237,7 @@ private:
     global_boundary_cells_information;
 
   // Structure that contains the boundary cells which have a line
-  std::unordered_map<
-    std::string,
-    std::tuple<typename Triangulation<dim>::active_cell_iterator,
-               Point<dim>,
-               Point<dim>>>
+  std::unordered_map<std::string, cell_line_info<dim>>
     boundary_cells_with_lines;
 
   // A vector of all the local cells with boundary lines. This vector is used in
@@ -255,9 +246,7 @@ private:
     local_cells_with_boundary_lines;
 
   // Structure that contains the boundary cells which have a point
-  std::unordered_map<
-    std::string,
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+  std::unordered_map<std::string, cell_point_info<dim>>
     boundary_cells_with_points;
 
   // Structure that contains the boundary cells with floating walls
@@ -286,4 +275,4 @@ private:
   bool display_pw_contact_expansion_warning = true;
 };
 
-#endif /* find_boundary_cells_information_h */
+#endif

@@ -18,9 +18,7 @@
 #define lethe_data_containers_h
 
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/particle_particle_contact_info.h>
-#include <dem/particle_point_line_contact_info_struct.h>
-#include <dem/particle_wall_contact_info.h>
+#include <dem/contact_info.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -121,21 +119,24 @@ namespace DEM
                                          Particles::ParticleIterator<dim>>
       particle_index_iterator_map;
 
-    // <particle id, point-line info>
+    // <particle id, line info>
     typedef std::unordered_map<types::particle_index,
-                               particle_point_line_contact_info_struct<dim>>
-      particle_point_line_contact_info;
+                               particle_line_contact_info<dim>>
+      particle_line_in_contact;
 
-    // <particle id, (particle iterator, point, point)>
-    typedef std::unordered_map<
-      types::particle_index,
-      std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+    // <particle id, point info>
+    typedef std::unordered_map<types::particle_index,
+                               particle_point_contact_info<dim>>
+      particle_point_in_contact;
+
+    // <particle id, line info>
+    typedef std::unordered_map<types::particle_index,
+                               particle_line_contact_info<dim>>
       particle_line_candidates;
 
     // <particle id, (particle iterator, point)>
-    typedef std::unordered_map<
-      types::particle_index,
-      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+    typedef std::unordered_map<types::particle_index,
+                               particle_point_contact_info<dim>>
       particle_point_candidates;
 
     // <particle id, <global face id, particle iterator>>
