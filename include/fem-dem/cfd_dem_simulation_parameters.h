@@ -25,7 +25,7 @@ public:
   DEMSolverParameters<dim>  dem_parameters;
 
   std::shared_ptr<Parameters::VoidFractionParameters<dim>> void_fraction;
-  Parameters::CFDDEM                             cfd_dem;
+  Parameters::CFDDEM                                       cfd_dem;
 
   void
   declare(ParameterHandler             &prm,
