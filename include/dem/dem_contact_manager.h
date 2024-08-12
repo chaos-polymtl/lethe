@@ -306,6 +306,24 @@ public:
     return ghost_local_periodic_adjacent_particles;
   }
 
+  /**
+   * @brief Return the local particle-particle contact candidates.
+   */
+  inline typename dem_data_structures<dim>::particle_particle_candidates &
+  get_local_contact_pair_candidates()
+  {
+    return local_contact_pair_candidates;
+  }
+
+  /**
+   * @brief Return the ghost particle-particle contact candidates.
+   */
+  inline typename dem_data_structures<dim>::particle_particle_candidates &
+  get_ghost_contact_pair_candidates()
+  {
+    return ghost_contact_pair_candidates;
+  }
+
 private:
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map

@@ -90,9 +90,9 @@ test()
   DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  find_cell_neighbors<dim>(triangulation,
-                           contact_manager.cells_local_neighbor_list,
-                           contact_manager.cells_ghost_neighbor_list);
+  typename dem_data_structures<dim>::periodic_boundaries_cells_info
+    dummy_pbc_info;
+  contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
 
   // Inserting two particles in contact
@@ -143,14 +143,7 @@ test()
   for (auto &moi_val : MOI)
     moi_val = 1;
 
-  // Calling broad search
-  for (auto particle_iterator = particle_handler.begin();
-       particle_iterator != particle_handler.end();
-       ++particle_iterator)
-    {
-      contact_manager.particle_container[particle_iterator->get_id()] =
-        particle_iterator;
-    }
+  contact_manager.update_local_particles_in_cells(particle_handler);
 
   // Dummy Adaptive sparse contacts object and particle-particle broad search
   AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
@@ -168,7 +161,14 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
     nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact_force(
-    contact_manager, dt, torque, force);
+    contact_manager.get_local_adjacent_particles(),
+    contact_manager.get_ghost_adjacent_particles(),
+    contact_manager.get_local_periodic_adjacent_particles(),
+    contact_manager.get_ghost_periodic_adjacent_particles(),
+    contact_manager.get_ghost_local_periodic_adjacent_particles(),
+    dt,
+    torque,
+    force);
 
   // Output
   auto particle = particle_handler.begin();

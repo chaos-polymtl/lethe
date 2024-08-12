@@ -121,9 +121,9 @@ test()
   DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  find_cell_neighbors<dim>(triangulation,
-                           contact_manager.cells_local_neighbor_list,
-                           contact_manager.cells_ghost_neighbor_list);
+  typename dem_data_structures<dim>::periodic_boundaries_cells_info
+    dummy_pbc_info;
+  contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
   // Creating particle-particle force objects
   ParticleParticleContactForce<
@@ -217,7 +217,14 @@ test()
       // Integration
       // Calling non-linear force
       nonlinear_force_object.calculate_particle_particle_contact_force(
-        contact_manager, dt, torque, force);
+        contact_manager.get_local_adjacent_particles(),
+        contact_manager.get_ghost_adjacent_particles(),
+        contact_manager.get_local_periodic_adjacent_particles(),
+        contact_manager.get_ghost_periodic_adjacent_particles(),
+        contact_manager.get_ghost_local_periodic_adjacent_particles(),
+        dt,
+        torque,
+        force);
 
       // Integration
       integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);

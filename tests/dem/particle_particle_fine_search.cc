@@ -66,9 +66,9 @@ test()
   DEMContactManager<dim> contact_manager;
 
   // Finding cell neighbors
-  find_cell_neighbors<dim>(triangulation,
-                           contact_manager.cells_local_neighbor_list,
-                           contact_manager.cells_ghost_neighbor_list);
+  typename dem_data_structures<dim>::periodic_boundaries_cells_info
+    dummy_pbc_info;
+  contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
   // Inserting two particles in contact
   Point<3> position1 = {0.4, 0, 0};
@@ -112,14 +112,7 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  // Calling broad search
-  for (auto particle_iterator = particle_handler.begin();
-       particle_iterator != particle_handler.end();
-       ++particle_iterator)
-    {
-      contact_manager.particle_container[particle_iterator->get_id()] =
-        particle_iterator;
-    }
+  contact_manager.update_local_particles_in_cells(particle_handler);
 
   // Dummy Adaptive sparse contacts object and particle-particle broad search
   AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
@@ -130,10 +123,11 @@ test()
   contact_manager.execute_particle_particle_fine_search(neighborhood_threshold);
 
   // Output
-  for (auto adjacent_particles_iterator =
-         contact_manager.local_adjacent_particles.begin();
-       adjacent_particles_iterator !=
-       contact_manager.local_adjacent_particles.end();
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    local_adjacent_particles = contact_manager.get_local_adjacent_particles();
+
+  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
+       adjacent_particles_iterator != local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
       auto information_iterator =

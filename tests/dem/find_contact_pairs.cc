@@ -63,9 +63,9 @@ test()
 
   // Finding cell neighbors list, it is required for finding the broad search
   // pairs in the contact_manager
-  find_cell_neighbors<dim>(triangulation,
-                           contact_manager.cells_local_neighbor_list,
-                           contact_manager.cells_ghost_neighbor_list);
+  typename dem_data_structures<dim>::periodic_boundaries_cells_info
+    dummy_pbc_info;
+  contact_manager.execute_cell_neighbors_search(triangulation, dummy_pbc_info);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -109,9 +109,12 @@ test()
     particle_handler, dummy_adaptive_sparse_contacts);
 
   // Output
-  for (auto pairs_iterator =
-         contact_manager.local_contact_pair_candidates.begin();
-       pairs_iterator != contact_manager.local_contact_pair_candidates.end();
+  typename dem_data_structures<dim>::particle_particle_candidates
+    local_contact_pair_candidates =
+      contact_manager.get_local_contact_pair_candidates();
+
+  for (auto pairs_iterator = local_contact_pair_candidates.begin();
+       pairs_iterator != local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
@@ -124,9 +127,8 @@ test()
                   << " and particle " << *candidate_iterator << std::endl;
     }
 
-  for (auto pairs_iterator =
-         contact_manager.local_contact_pair_candidates.begin();
-       pairs_iterator != contact_manager.local_contact_pair_candidates.end();
+  for (auto pairs_iterator = local_contact_pair_candidates.begin();
+       pairs_iterator != local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
