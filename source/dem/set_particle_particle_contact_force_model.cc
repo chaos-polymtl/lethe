@@ -1,4 +1,3 @@
-#include <dem/effective_properties.h>
 #include <dem/force_chains_visualization.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 
@@ -74,11 +73,6 @@ set_particle_particle_contact_force_model(
           break;
         }
     }
-
-  // Set the effective properties according to the types
-  DEMEffectiveProperties<dim>::get_effective_properties()
-    ->set_effective_properties(dem_parameters);
-
   return particle_particle_contact_force_object;
 }
 

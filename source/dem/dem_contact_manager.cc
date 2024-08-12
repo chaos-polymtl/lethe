@@ -211,13 +211,13 @@ DEMContactManager<dim>::update_local_particles_in_cells(
   // Update contact containers for particle-line pairs in contact
   update_contact_container_iterators<
     dim,
-    typename dem_data_structures<dim>::particle_line_candidates,
+    typename dem_data_structures<dim>::particle_line_in_contact,
     ContactType::particle_line>(particle_lines_in_contact, particle_container);
 
   // Update contact containers for particle-point pairs in contact
   update_contact_container_iterators<
     dim,
-    typename dem_data_structures<dim>::particle_point_candidates,
+    typename dem_data_structures<dim>::particle_point_in_contact,
     ContactType::particle_point>(particle_points_in_contact,
                                  particle_container);
 }

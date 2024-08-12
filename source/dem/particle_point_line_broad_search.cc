@@ -47,7 +47,7 @@ find_particle_point_contact_pairs(
           // this function
           particle_point_contact_candidates.emplace(
             contact_candidate_counter,
-            particle_point_info<dim>{
+            particle_point_contact_info<dim>{
               particles_in_cell_iterator,
               cells_with_boundary_points_information.point});
           ++contact_candidate_counter;
@@ -106,7 +106,7 @@ find_particle_point_contact_pairs(
           // this function
           particle_point_contact_candidates.emplace(
             contact_candidate_counter,
-            particle_point_info<dim>{
+            particle_point_contact_info<dim>{
               particles_in_cell_iterator,
               cells_with_boundary_points_information.point});
           ++contact_candidate_counter;
@@ -156,9 +156,10 @@ find_particle_line_contact_pairs(
           // particle_line_contact_candidates map.
           particle_line_contact_candidates.emplace(
             contact_candidate_counter,
-            particle_line_info<dim>{particles_in_cell_iterator,
-                                    cells_with_boundary_lines_info.point_one,
-                                    cells_with_boundary_lines_info.point_two});
+            particle_line_contact_info<dim>{
+              particles_in_cell_iterator,
+              cells_with_boundary_lines_info.point_one,
+              cells_with_boundary_lines_info.point_two});
           ++contact_candidate_counter;
         }
     }
@@ -213,9 +214,10 @@ find_particle_line_contact_pairs(
           // particle_line_contact_candidates map.
           particle_line_contact_candidates.emplace(
             contact_candidate_counter,
-            particle_line_info<dim>{particles_in_cell_iterator,
-                                    cells_with_boundary_lines_info.point_one,
-                                    cells_with_boundary_lines_info.point_two});
+            particle_line_contact_info<dim>{
+              particles_in_cell_iterator,
+              cells_with_boundary_lines_info.point_one,
+              cells_with_boundary_lines_info.point_two});
           ++contact_candidate_counter;
         }
     }

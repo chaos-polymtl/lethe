@@ -120,11 +120,23 @@ namespace DEM
       particle_index_iterator_map;
 
     // <particle id, line info>
-    typedef std::unordered_map<types::particle_index, particle_line_info<dim>>
+    typedef std::unordered_map<types::particle_index,
+                               particle_line_contact_info<dim>>
+      particle_line_in_contact;
+
+    // <particle id, point info>
+    typedef std::unordered_map<types::particle_index,
+                               particle_point_contact_info<dim>>
+      particle_point_in_contact;
+
+    // <particle id, line info>
+    typedef std::unordered_map<types::particle_index,
+                               particle_line_contact_info<dim>>
       particle_line_candidates;
 
     // <particle id, (particle iterator, point)>
-    typedef std::unordered_map<types::particle_index, particle_point_info<dim>>
+    typedef std::unordered_map<types::particle_index,
+                               particle_point_contact_info<dim>>
       particle_point_candidates;
 
     // <particle id, <global face id, particle iterator>>
