@@ -247,6 +247,7 @@ FluidDynamicsVANS<dim>::calculate_void_fraction(const double time,
   announce_string(this->pcout, "Void Fraction");
 
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
+
   if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
     {
