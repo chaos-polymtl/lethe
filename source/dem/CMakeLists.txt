@@ -8,6 +8,7 @@ add_library(lethe-dem
   dem_post_processing.cc
   dem_solver_parameters.cc
   distributions.cc
+  effective_properties.cc
   explicit_euler_integrator.cc
   find_boundary_cells_information.cc
   find_cell_neighbors.cc
@@ -59,6 +60,7 @@ add_library(lethe-dem
   ../../include/dem/dem_post_processing.h
   ../../include/dem/dem_solver_parameters.h
   ../../include/dem/distributions.h
+  ../../include/dem/effective_properties.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h

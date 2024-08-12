@@ -102,11 +102,11 @@ public:
 };
 
 /**
- * @brief Handle information related to the calculation of the particle-line
- * contact forces.
+ * @brief Handle information related to particle-line info for the calculation
+ * of the particle-line contact forces.
  */
 template <int dim>
-struct particle_line_contact_info
+struct particle_line_info
 {
   Particles::ParticleIterator<dim> particle;
   Point<3>                         point_one;
@@ -118,7 +118,7 @@ struct particle_line_contact_info
  * contact forces.
  */
 template <int dim>
-struct particle_point_contact_info
+struct particle_point_info
 {
   Particles::ParticleIterator<dim> particle;
   Point<3>                         point;

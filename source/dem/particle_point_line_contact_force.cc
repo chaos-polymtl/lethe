@@ -13,7 +13,7 @@ ParticlePointLineForce<dim>::ParticlePointLineForce() = default;
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_point_in_contact
+  const typename DEM::dem_data_structures<dim>::particle_point_candidates
     *particle_point_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
                             &physical_properties,
@@ -137,7 +137,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
 template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
-  const typename DEM::dem_data_structures<dim>::particle_line_in_contact
+  const typename DEM::dem_data_structures<dim>::particle_line_candidates
     *particle_line_pairs_in_contact,
   const Parameters::Lagrangian::LagrangianPhysicalProperties
                             &physical_properties,

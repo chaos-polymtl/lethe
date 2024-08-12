@@ -18,7 +18,7 @@ particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_point_in_contact
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
     &particle_point_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search. If a particle-point
@@ -32,7 +32,7 @@ particle_point_fine_search(
     {
       // Get the value of the map (pair candidate) from the
       // contact_pair_candidates_iterator
-      const particle_point_contact_info<dim> &pair_candidates =
+      const particle_point_info<dim> &pair_candidates =
         contact_pair_candidates_iterator->second;
 
       // Get the particle, particle diameter and boundary vertex location once
@@ -76,7 +76,7 @@ particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<dim>::particle_line_in_contact
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
     &particle_line_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search. If a particle-line
@@ -90,7 +90,7 @@ particle_line_fine_search(
     {
       // Get the value of the map (pair candidate) from the
       // contact_pair_candidates_iterator
-      const particle_line_contact_info<dim> &pair_candidates =
+      const particle_line_info<dim> &pair_candidates =
         contact_pair_candidates_iterator->second;
 
       // Get the particle, particle diameter and the locations of beginning
@@ -150,7 +150,7 @@ particle_point_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_in_contact
+  typename DEM::dem_data_structures<2>::particle_point_candidates
     &particle_point_pairs_in_contact);
 
 template void
@@ -158,7 +158,7 @@ particle_point_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_in_contact
+  typename DEM::dem_data_structures<3>::particle_point_candidates
     &particle_point_pairs_in_contact);
 
 template void
@@ -166,7 +166,7 @@ particle_line_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_line_in_contact
+  typename DEM::dem_data_structures<2>::particle_line_candidates
     &particle_line_pairs_in_contact);
 
 template void
@@ -174,5 +174,5 @@ particle_line_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_line_in_contact
+  typename DEM::dem_data_structures<3>::particle_line_candidates
     &particle_line_pairs_in_contact);
