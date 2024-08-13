@@ -14,11 +14,13 @@
 #include <deal.II/lac/affine_constraints.h>
 
 /**
- * @brief Class that has all the common elements of a physics solver. It creates the nonlinear solver
- * as specified by the user using the parameters file and provides all the
- * necessary elements needed by the solver to solve a physics problem.
+ * @brief Contains all the common elements of a physics solver. It creates
+ * the non-linear solver as specified by the user using the parameters file and
+ * provides all the necessary elements needed by the solver to solve a physics
+ * problem.
  *
- * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
+ * @param non_linear_solver_parameters A set of parameters that will be used to
+ * construct the non-linear solver
  */
 template <typename VectorType>
 class PhysicsSolver
@@ -53,10 +55,11 @@ public:
   /**
    * @brief solve_linear_system Solves the linear system of equations
    *
-   * @param initial_step Provides the linear solver with indication if this solution is the first
-   * one for the system of equation or not
+   * @param initial_step Provides the linear solver with indication if this
+   * solution is the first one for the system of equation or not
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
+   * @param renewed_matrix Indicates to the linear solve if the system matrix
+   * has been recalculated or not
    */
   virtual void
   solve_linear_system(const bool initial_step,
@@ -65,7 +68,8 @@ public:
   /**
    * @brief solve_non_linear_system Solves the non linear system of equations
    *
-   * @param first_iteration Indicates whether it is the first iteration of the non linear solver
+   * @param first_iteration Indicates whether it is the first iteration of the
+   * non-linear solver
    */
   void
   solve_non_linear_system(const bool first_iteration);
@@ -82,9 +86,9 @@ public:
   }
 
   /**
-   * @brief Getter methods that give access to the private attributes of the physics being solved.
-   * These methods must be provided by the physics as they are the key to solve
-   * a problem using Lethe.
+   * @brief Getter methods that give access to the private attributes of the
+   * physics being solved. These methods must be provided by the physics as they
+   * are the key to solve a problem using Lethe.
    */
   virtual VectorType &
   get_evaluation_point() = 0;
