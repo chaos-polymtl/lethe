@@ -2593,7 +2593,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 {
   // This is a penalty parameter for limiting the phase fraction
   // in the range of [0,1]. According to step 41, this parameter depends
-  // on the problem itself and needs to be chosen large enough (for example
+  // on the problem itself and needs to be chosen large enough (for example,
   // there is no convergence using the penalty_parameter = 1)
   const double penalty_parameter = 100;
 
