@@ -1,4 +1,4 @@
-name: CI-Warnings
+name: CI-Lethe-with-dealii-vectors
 
 on: 
   push:
