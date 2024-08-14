@@ -7,9 +7,11 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2024
 ----
 
-* `L. Barbeau, S. Étienne, C. Béguin et B. Blais, “Solid-fluid force modeling: Insights from comparing a reduced order model for a pair of particles with resolved CFD-DEM”, International Journal of Multiphase Flow, p. 104882, 2024 <https://doi.org/10.1016/j.ijmultiphaseflow.2024.104882>`_.  
+* `L. Prieto Saavedra, C. E. N. Radburn, A. Collard-Daigneault, and B. Blais, “An implicit large-Eddy simulation perspective on the flow over periodic hills,” Computers & Fluids, p. 106390, 2024 <https://doi.org/10.1016/j.compfluid.2024.106390>`_.
 
-* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin et B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model”, Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
+* `L. Barbeau, S. Étienne, C. Béguin et B. Blais, “Solid-fluid force modeling: Insights from comparing a reduced order model for a pair of particles with resolved CFD-DEM”, International Journal of Multiphase Flow, p. 104882, 2024 <https://doi.org/10.1016/j.ijmultiphaseflow.2024.104882>`_.
+
+* `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin, and B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model”, Computers & Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
 
 2023
 ----
@@ -51,6 +53,4 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `L. Prieto Saavedra, C. E. N. Radburn, A. Collard-Daigneault and B. Blais, "An implicit large-eddy simulation perspective on the flow over periodic hills", June 2022 <https://doi.org/10.48550/arXiv.2206.08145>`_.
-
-
+* `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, August 2024 <https://doi.org/10.48550/arXiv.2408.04711>`_.
