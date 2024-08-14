@@ -1405,8 +1405,8 @@ CahnHilliard<dim>::apply_phase_filter()
 
   const FEValuesExtractors::Scalar phase_order(0);
 
-  TrilinosWrappers::MPI::Vector filtered_solution_owned(
-    this->locally_owned_dofs, mpi_communicator);
+  GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
+                                           mpi_communicator);
   filtered_solution_owned = this->present_solution;
 
   filtered_solution.reinit(this->present_solution);
