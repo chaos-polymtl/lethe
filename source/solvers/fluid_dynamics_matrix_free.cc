@@ -2417,8 +2417,14 @@ FluidDynamicsMatrixFree<dim>::update_multiphysics_time_average_solution()
         this->average_velocities->get_average_velocities());
       this->multiphysics_average_velocities = temp_average_velocities;
 
+#ifndef LETHE_USE_LDV
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics, &this->multiphysics_average_velocities);
+#else
+      this->multiphysics->set_time_average_solution(
+        PhysicsID::fluid_dynamics,
+        &this->average_velocities->get_average_velocities());
+#endif
     }
 }
 
@@ -2548,8 +2554,13 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   convert_vector_dealii_to_trilinos(temp_solution, this->present_solution);
   multiphysics_present_solution = temp_solution;
 
+#ifndef LETHE_USE_LDV
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->multiphysics_present_solution);
+#else
+  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
+                                   &this->present_solution);
+#endif
 
   // Convert the previous solutions to multiphysics vector type and provide them
   // to the multiphysics interface
@@ -2571,8 +2582,13 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
       this->multiphysics_previous_solutions[i] = temp_previous_solutions[i];
     }
 
+#ifndef LETHE_USE_LDV
   this->multiphysics->set_previous_solutions(
     PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
+#else
+  this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
+                                             &this->previous_solutions);
+#endif
 }
 
 template <int dim>
