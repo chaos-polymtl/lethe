@@ -474,7 +474,7 @@ private:
   AffineConstraints<double>      nonzero_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType  filtered_solution;
+  GlobalVectorType               filtered_solution;
 
 
   // Previous solutions vectors
