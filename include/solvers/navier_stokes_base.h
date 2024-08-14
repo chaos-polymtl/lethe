@@ -485,7 +485,7 @@ protected:
   get_cell_temperature_values(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const DoFHandler<dim>                                *dof_handler_ht,
-    const TrilinosWrappers::MPI::Vector                  &temperature_solution,
+    const GlobalVectorType                               &temperature_solution,
     std::vector<double> &local_temperature_values)
   {
     const typename DoFHandler<dim>::active_cell_iterator temperature_cell(
@@ -515,8 +515,8 @@ protected:
   get_cell_filtered_phase_fraction_values(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const DoFHandler<dim>                                *dof_handler_vof,
-    const TrilinosWrappers::MPI::Vector &filtered_phase_fraction_solution,
-    std::vector<double>                 &local_filtered_phase_fraction_values)
+    const GlobalVectorType &filtered_phase_fraction_solution,
+    std::vector<double>    &local_filtered_phase_fraction_values)
   {
     const typename DoFHandler<dim>::active_cell_iterator vof_cell(
       &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_vof);

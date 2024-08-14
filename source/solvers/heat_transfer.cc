@@ -778,6 +778,7 @@ double
 HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
 {
   double solution_maximum, solution_minimum;
+#ifndef LETHE_USE_LDV
   if (is_steady(simulation_parameters.simulation_control.method))
     {
       solution_maximum = this->present_solution.max();
@@ -788,6 +789,7 @@ HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
       solution_maximum = this->previous_solutions[0].max();
       solution_minimum = this->previous_solutions[0].min();
     }
+#endif
 
   // Calculate delta_T_ref.
   double delta_T_ref =
