@@ -32,7 +32,7 @@ Sharp-Edge Immersed Boundary Method
 
 * `L. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin, and B. Blais, “High-order moving immersed boundary and its application to a resolved cfd-dem model,” Computers Fluids, vol. 268, p. 106094, 2024 <https://doi.org/10.1016/j.compfluid.2023.106094>`_.
 
-* `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, 2024 <https://arxiv.org/abs/2408.04711>`_.
+* `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, 2024 <https://doi.org/10.48550/arXiv.2408.04711>`_.
 
 Nitsche Immersed Boundary Method
 ------------------------------------
