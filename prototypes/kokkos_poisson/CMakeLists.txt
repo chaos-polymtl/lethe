@@ -1,0 +1,2 @@
+add_executable(kokkos_poisson kokkos_poisson.cc)
+deal_ii_setup_target(kokkos_poisson)
