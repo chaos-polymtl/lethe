@@ -65,6 +65,7 @@ add_library(lethe-core
   ../../include/core/phase_change.h
   ../../include/core/physical_property_model.h
   ../../include/core/physics_solver.h
+  ../../include/core/physics_subequations_solver.h
   ../../include/core/pvd_handler.h
   ../../include/core/rheological_model.h
   ../../include/core/serial_solid.h
