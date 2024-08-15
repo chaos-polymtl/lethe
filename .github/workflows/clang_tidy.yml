@@ -51,7 +51,8 @@ jobs:
             trilinos-all-dev \
             petsc-dev \
             libmetis-dev \
-            libhdf5-mpi-dev 
+            libhdf5-mpi-dev \
+            dealii
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
