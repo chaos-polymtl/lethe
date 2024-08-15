@@ -42,7 +42,7 @@ echo "SRC-DIR=$SRC"
 
 # enable MPI (to get MPI warnings)
 # export compile commands (so that run-clang-tidy.py works)
-ARGS=("-D" "-D" "CMAKE_EXPORT_COMPILE_COMMANDS=ON" "-D" "CMAKE_BUILD_TYPE=Debug" "$@")
+ARGS=("-D" "CMAKE_EXPORT_COMPILE_COMMANDS=ON" "-D" "CMAKE_BUILD_TYPE=Debug" "$@")
 
 # for a list of checks, see /.clang-tidy
 cat "$SRC/.clang-tidy"
