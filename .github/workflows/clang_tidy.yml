@@ -52,7 +52,7 @@ jobs:
             petsc-dev \
             libmetis-dev \
             libhdf5-mpi-dev \
-            dealii-9.5.1
+            deal.ii
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
