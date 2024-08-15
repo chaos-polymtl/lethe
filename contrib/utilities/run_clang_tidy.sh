@@ -57,9 +57,9 @@ CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) 
 cmake --build . 
 
 # generate allheaders.h
-(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
+#(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
 
-# finally run clang-tidy on deal.II
+# finally run clang-tidy on lethe
 #
 # pipe away stderr (just contains nonsensical "x warnings generated")
 # pipe output to output.txt
