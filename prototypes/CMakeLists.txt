@@ -1,6 +1,7 @@
 add_subdirectory(chorin_navier_stokes)
 add_subdirectory(direct_gls_navier_stokes)
 add_subdirectory(direct_steady_navier_stokes)
+add_subdirectory(kokkos_poisson)
 add_subdirectory(matrix_based_non_linear_poisson)
 add_subdirectory(matrix_free_non_linear_poisson)
 add_subdirectory(matrix_based_advection_diffusion)
