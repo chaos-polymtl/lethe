@@ -54,6 +54,9 @@ namespace SourceTerms
       tracer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
       cahn_hilliard_source =
         std::make_shared<Functions::ParsedFunction<dim>>(2);
+      reactive_species_source =
+        std::make_shared<Functions::ParsedFunction<dim>>(
+          4); // TODO Change to a flexible number of species
     }
 
     virtual void
@@ -75,6 +78,9 @@ namespace SourceTerms
 
     /// Cahn-Hilliard source
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
+
+    // Reactive species source
+    std::shared_ptr<Functions::ParsedFunction<dim>> reactive_species_source;
   };
 
   template <int dim>
@@ -103,6 +109,11 @@ namespace SourceTerms
     cahn_hilliard_source->declare_parameters(prm, 2);
     prm.leave_subsection();
 
+    prm.enter_subsection("reactive species");
+    reactive_species_source->declare_parameters(
+      prm, 4); // TODO Change to a flexible number of species
+    prm.leave_subsection();
+
     prm.leave_subsection();
   }
 
@@ -127,6 +138,10 @@ namespace SourceTerms
 
     prm.enter_subsection("cahn hilliard");
     cahn_hilliard_source->parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("reactive species");
+    reactive_species_source->parse_parameters(prm);
     prm.leave_subsection();
 
     prm.leave_subsection();

@@ -23,12 +23,12 @@
 
 enum PhysicsID : unsigned int
 {
-  fluid_dynamics = 0,
-  heat_transfer  = 1,
-  tracer         = 2,
-  VOF            = 3,
-  cahn_hilliard  = 4,
-  reactions      = 5
+  fluid_dynamics   = 0,
+  heat_transfer    = 1,
+  tracer           = 2,
+  VOF              = 3,
+  cahn_hilliard    = 4,
+  reactive_species = 5
 };
 
 /**
@@ -48,7 +48,9 @@ enum class Variable : unsigned int
   /// Phase order scalar field from Cahn Hilliard
   phase_cahn_hilliard = 4,
   /// Chemical potential scalar field from Cahn Hilliard
-  chemical_potential_cahn_hilliard = 5
+  chemical_potential_cahn_hilliard = 5,
+  /// Reactive species concentration field from Reactive species
+  concentration_reactive_species = 6
 };
 
 /**
@@ -67,8 +69,10 @@ get_physics_id(std::string physics_name)
     return PhysicsID::tracer;
   else if (physics_name == "VOF")
     return PhysicsID::VOF;
-  else
+  else if (physics_name == "cahn hilliard")
     return PhysicsID::cahn_hilliard;
+  else
+    return PhysicsID::reactive_species;
 }
 
 #endif

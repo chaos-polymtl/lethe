@@ -1019,6 +1019,9 @@ namespace Parameters
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;
 
+    // Interpolation order reactive species
+    unsigned int reactive_species_order;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

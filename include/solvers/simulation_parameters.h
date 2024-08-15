@@ -56,7 +56,9 @@ public:
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-                                      boundary_conditions_cahn_hilliard;
+    boundary_conditions_cahn_hilliard;
+  BoundaryConditions::ReactiveSpeciesBoundaryConditions<dim>
+                                      boundary_conditions_reactive_species;
   Parameters::InitialConditions<dim> *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
   SourceTerms::SourceTerm<dim>                  source_term;
@@ -480,7 +482,8 @@ private:
                                             "heat transfer",
                                             "tracer",
                                             "VOF",
-                                            "cahn hilliard"};
+                                            "cahn hilliard",
+                                            "reactive species"};
 };
 
 #endif

@@ -59,6 +59,9 @@ namespace BoundaryConditions
     cahn_hilliard_dirichlet_phase_order,
     cahn_hilliard_angle_of_contact,
     cahn_hilliard_free_angle,
+    // for reactive species
+    reactive_species_noflux,
+    reactive_species_dirichlet,
   };
 
   /**
@@ -128,6 +131,19 @@ namespace BoundaryConditions
     // Cahn-Hilliard variables
     Functions::ParsedFunction<dim> phi;
     Functions::ParsedFunction<dim> eta;
+  };
+
+  /**
+   * @brief This class manages the functions associated with function-type boundary conditions
+   * of the Reactive species equations
+   *
+   */
+  template <int dim>
+  class ReactiveSpeciesBoundaryFunctions
+  {
+  public:
+    // Reactive species variables
+    Functions::ParsedFunction<dim> dirichlet;
   };
 
   /**
@@ -1008,6 +1024,169 @@ namespace BoundaryConditions
   }
 
   /**
+   * @brief This class manages the boundary conditions for the Reactive species solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
+   * double passed to the deal.ii ConstantFunction
+   */
+
+  template <int dim>
+  class ReactiveSpeciesBoundaryConditions : public BoundaryConditions<dim>
+  {
+  public:
+    std::vector<double>                    concentration_dirichlet_value;
+    ReactiveSpeciesBoundaryFunctions<dim> *bcFunctions;
+
+    void
+    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    void
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int number_of_boundary_conditions);
+    void
+    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Declares the default parameters for a boundary condition id i_bc
+   * i.e. Dirichlet condition (ConstantFunction) with value 0
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition id.
+   */
+  template <int dim>
+  void
+  ReactiveSpeciesBoundaryConditions<dim>::declareDefaultEntry(
+    ParameterHandler  &prm,
+    const unsigned int i_bc)
+  {
+    prm.declare_entry(
+      "type",
+      "noflux",
+      Patterns::Selection("noflux|dirichlet"),
+      "Type of boundary condition for the Reactive species equations"
+      "Choices are <noflux|dirichlet>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(i_bc, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+
+    prm.enter_subsection("dirichlet");
+    bcFunctions[i_bc].phi.declare_parameters(prm);
+    prm.leave_subsection();
+
+    return;
+  }
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+  template <int dim>
+  void
+  ReactiveSpeciesBoundaryConditions<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int number_of_boundary_conditions)
+  {
+    prm.enter_subsection("boundary conditions reactive species");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time dependent");
+
+      this->id.resize(number_of_boundary_conditions);
+      this->type.resize(number_of_boundary_conditions);
+      bcFunctions = new ReactiveSpeciesBoundaryFunctions<
+        dim>[number_of_boundary_conditions];
+
+      for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            declareDefaultEntry(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition number (and not necessarily its id).
+   */
+
+  template <int dim>
+  void
+  ReactiveSpeciesBoundaryConditions<dim>::parse_boundary(
+    ParameterHandler  &prm,
+    const unsigned int i_bc)
+  {
+    const std::string op = prm.get("type");
+    if (op == "noflux")
+      {
+        this->type[i_bc] = BoundaryType::reactive_species_noflux;
+      }
+    if (op == "dirichlet")
+      {
+        this->type[i_bc] = BoundaryType::reactive_species_dirichlet;
+        prm.enter_subsection("dirichlet");
+        bcFunctions[i_bc].dirichlet.parse_parameters(prm);
+        prm.leave_subsection();
+      }
+
+    this->id[i_bc] = prm.get_integer("id");
+  }
+
+  /**
+   * @brief Parse the boundary conditions
+   * Calls parse_boundary method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  ReactiveSpeciesBoundaryConditions<dim>::parse_parameters(
+    ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions reactive species");
+    {
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->concentration_dirichlet_value.resize(this->size);
+
+      for (unsigned int n = 0; n < this->size; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+
+  /**
    * @brief This class manages the boundary conditions for VOF solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
@@ -1303,6 +1482,65 @@ CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
       return phi->value(p);
     }
   else if (component == 1)
+    {
+      return 0.;
+    }
+  return 0.;
+}
+
+
+
+/**
+ * @brief Class that implements a boundary conditions for the Reactive species equation
+ * where the concentrations are defined using individual functions
+ */
+template <int dim>
+class ReactiveSpeciesFunctionDefined : public Function<dim>
+{
+  // TODO Change for a flexible number of species
+private:
+  Functions::ParsedFunction<dim> *dirichlet;
+
+public:
+  ReactiveSpeciesFunctionDefined(Functions::ParsedFunction<dim> *p_dirichlet)
+    : Function<dim>(4)
+    , dirichlet(p_dirichlet)
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type for the Reactive species equations
+ *
+ * @param p A point (generally a gauss point)
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+template <int dim>
+double
+ReactiveSpeciesFunctionDefined<dim>::value(const Point<dim>  &p,
+                                           const unsigned int component) const
+{
+  // TODO Change for a flexible number of species
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return dirichlet->value(p);
+    }
+  else if (component == 1)
+    {
+      return 0.;
+    }
+  else if (component == 2)
+    {
+      return 0.;
+    }
+  else if (component == 3)
     {
       return 0.;
     }

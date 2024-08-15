@@ -85,6 +85,26 @@ namespace Parameters
   };
 
   /**
+   * @brief ReactiveSpecies_PhaseFilter - Defines the parameters for the phase filtration of Reactive species physics
+   */
+  struct ReactiveSpecies_PhaseFilter
+  {
+    // Type of filter
+    Parameters::FilterType type;
+
+    // \f$beta\f$ value for the tanh filter
+    double beta;
+
+    // Type of verbosity for the phase filter
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief VOF_InterfaceSharpening - Defines the parameters for
    * interface sharpening in the VOF solver.
    */
@@ -220,6 +240,27 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct ReactiveSpecies
+  {
+    // Smoothing parameter \f$\xi\f$ in the Reactive species equations
+    // (potential equation)
+    double potential_smoothing_coefficient;
+
+    // Epsilon set strategy (automatic|manual)
+    Parameters::EpsilonSetMethod epsilon_set_method;
+
+    // Epsilon value in the Reactive species equations
+    double epsilon;
+
+    // Phase filtration parameters
+    Parameters::ReactiveSpecies_PhaseFilter reactive_species_phase_filter;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations
    * and handles sub-physics parameters.
@@ -231,13 +272,15 @@ namespace Parameters
     bool tracer;
     bool VOF;
     bool cahn_hilliard;
+    bool reactive_species;
 
     // subparameters for heat_transfer
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF          vof_parameters;
-    Parameters::CahnHilliard cahn_hilliard_parameters;
+    Parameters::VOF             vof_parameters;
+    Parameters::CahnHilliard    cahn_hilliard_parameters;
+    Parameters::ReactiveSpecies reactive_species_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);
