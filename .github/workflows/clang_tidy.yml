@@ -38,6 +38,8 @@ jobs:
       - name: Setup
         run: |
           # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:ginggs/deal.ii-9.4.0-backports
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs \
             clang-12 \
