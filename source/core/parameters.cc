@@ -1453,6 +1453,11 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
+      prm.declare_entry(
+        "reactive species order",
+        "1",
+        Patterns::Integer(),
+        "interpolation order for reactive species in the Reactive species equations");
     }
     prm.leave_subsection();
   }
@@ -1471,6 +1476,7 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
+      reactive_species_order = prm.get_integer("reactive species order");
     }
     prm.leave_subsection();
   }

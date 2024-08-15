@@ -175,6 +175,11 @@ namespace Parameters
       cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
 
+      prm.enter_subsection("reactive species");
+      reactive_species.declare_parameters(
+        prm, 4); // TODO Change to more flexible number of species
+      prm.leave_subsection();
+
       prm.enter_subsection("average velocity profile");
       prm.declare_entry(
         "checkpoint folder",
@@ -239,6 +244,10 @@ namespace Parameters
 
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("reactive species");
+      reactive_species.parse_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("average velocity profile");

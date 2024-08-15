@@ -983,6 +983,8 @@ namespace Parameters
     /// prefix for the total volume output in cfd-dem simulation
     std::string phase_volumes_output_name;
 
+    // TODO Implement postprocessors for the reactive species physics
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

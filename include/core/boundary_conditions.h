@@ -1076,7 +1076,7 @@ namespace BoundaryConditions
                       "Mesh id for boundary conditions");
 
     prm.enter_subsection("dirichlet");
-    bcFunctions[i_bc].phi.declare_parameters(prm);
+    bcFunctions[i_bc].dirichlet.declare_parameters(prm);
     prm.leave_subsection();
 
     return;

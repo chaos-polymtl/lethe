@@ -55,6 +55,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Cahn-Hilliard calculation <true|false>");
 
+    prm.declare_entry("reactive species",
+                      "false",
+                      Patterns::Bool(),
+                      "Reactive species calculation <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       "false",
@@ -70,6 +75,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 
   vof_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
+  reactive_species_parameters.declare_parameters(prm);
 }
 
 void
