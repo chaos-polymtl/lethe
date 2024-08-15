@@ -1296,6 +1296,8 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       this->local_evaluation_point =
         this->average_velocities->get_average_velocities();
       this->present_solution = this->local_evaluation_point;
+
+      this->multiphysics->read_checkpoint();
     }
   else
     {
