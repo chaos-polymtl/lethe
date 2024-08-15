@@ -42,7 +42,7 @@ echo "SRC-DIR=$SRC"
 
 # enable MPI (to get MPI warnings)
 # export compile commands (so that run-clang-tidy.py works)
-ARGS=("-D" "DEAL_II_WITH_MPI=ON" "-D" "CMAKE_EXPORT_COMPILE_COMMANDS=ON" "-D" "CMAKE_BUILD_TYPE=Debug" "$@")
+ARGS=("-D" "-D" "CMAKE_EXPORT_COMPILE_COMMANDS=ON" "-D" "CMAKE_BUILD_TYPE=Debug" "$@")
 
 # for a list of checks, see /.clang-tidy
 cat "$SRC/.clang-tidy"
@@ -54,7 +54,7 @@ fi
 
 CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
-cmake --build . --target expand_all_instantiations || (echo "make expand_all_instantiations failed!"; false) || exit 3
+cmake --build . 
 
 # generate allheaders.h
 (cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
