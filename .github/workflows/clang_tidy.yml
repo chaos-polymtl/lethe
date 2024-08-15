@@ -30,9 +30,9 @@ jobs:
         dealii_version: ["master"]
     
     # Run steps in container of dealii's master branch
-    container:
-      image: dealii/dealii:${{ matrix.dealii_version }}-focal
-      options: --user root
+    #container:
+    #  image: dealii/dealii:${{ matrix.dealii_version }}-focal
+    #  options: --user root
 
     steps:
       - name: Setup
@@ -44,15 +44,20 @@ jobs:
           sudo apt-get install -y --no-install-recommends nodejs \
             clang-12 \
             clang-tidy-12 \
-
-          echo "Github actions is sane!"
-          echo "Running build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
+            numdiff \
+            libboost-all-dev \
+            libcgal-dev \
+            libp4est-dev \
+            trilinos-all-dev \
+            petsc-dev \
+            libmetis-dev \
+            libhdf5-mpi-dev
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: tidy
+      - name: Tidy
         run: |
           mkdir build
           cd build
