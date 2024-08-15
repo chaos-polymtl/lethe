@@ -109,6 +109,11 @@ namespace Parameters
     Functions::ParsedFunction<dim> cahn_hilliard =
       Functions::ParsedFunction<dim>(2);
 
+    // Reactive species
+    Functions::ParsedFunction<dim> reactive_species =
+      Functions::ParsedFunction<dim>(
+        4); // TODO Change to a flexible number of species
+
     // Path to the checkpointed average velocity profile
     std::string average_velocity_folder;
     std::string average_velocity_file_name;

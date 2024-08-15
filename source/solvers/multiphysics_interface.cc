@@ -1,6 +1,7 @@
 #include <solvers/cahn_hilliard.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/reactive_species.h>
 #include <solvers/tracer.h>
 #include <solvers/vof.h>
 
@@ -141,6 +142,23 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       active_physics.push_back(PhysicsID::cahn_hilliard);
       physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
+    }
+
+  if (multiphysics_parameters.reactive_species)
+    {
+      verbosity[PhysicsID::reactive_species] =
+        (nsparam.non_linear_solver.at(PhysicsID::reactive_species).verbosity !=
+           Parameters::Verbosity::quiet ||
+         nsparam.linear_solver.at(PhysicsID::reactive_species).verbosity !=
+           Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+      active_physics.push_back(PhysicsID::reactive_species);
+      physics[PhysicsID::reactive_species] =
+        std::make_shared<ReactiveSpecies<dim>>(this,
+                                               nsparam,
+                                               p_triangulation,
+                                               p_simulation_control);
     }
 }
 

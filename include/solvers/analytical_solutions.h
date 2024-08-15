@@ -74,6 +74,7 @@ namespace AnalyticalSolutions
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)
+      , reactive_species(4) // TODO Change to a flexible number of species
     {}
 
     /**
@@ -163,6 +164,12 @@ namespace AnalyticalSolutions
      * and the chemical potential.
      */
     Functions::ParsedFunction<dim> cahn_hilliard;
+
+    /**
+     * ParsedFunction that contains the analytical solution for the
+     * concentration of reactive species.
+     */
+    Functions::ParsedFunction<dim> reactive_species;
   };
 } // namespace AnalyticalSolutions
 

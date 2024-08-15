@@ -92,6 +92,10 @@ public:
       {
         announce_string(pcout, "Cahn-Hilliard");
       }
+    else if (physics_id == PhysicsID::reactive_species)
+      {
+        announce_string(pcout, "Reactive Species");
+      }
   }
 
   /**
@@ -879,7 +883,8 @@ private:
                                             {VOF, true},
                                             {heat_transfer, false},
                                             {tracer, false},
-                                            {cahn_hilliard, true}};
+                                            {cahn_hilliard, true},
+                                            {reactive_species, false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

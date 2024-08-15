@@ -28,6 +28,10 @@ add_library(lethe-solvers
   postprocessing_cfd.cc
   postprocessing_velocities.cc
   postprocessors_smoothing.cc
+  reactive_species.cc
+  reactive_species_assemblers.cc
+  reactive_species_filter.cc
+  reactive_species_scratch_data.cc
   simulation_parameters.cc
   source_terms.cc
   tracer.cc
@@ -72,6 +76,10 @@ add_library(lethe-solvers
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
+  ../../include/solvers/reactive_species.h
+  ../../include/solvers/reactive_species_assemblers.h
+  ../../include/solvers/reactive_species_filter.h
+  ../../include/solvers/reactive_species_scratch_data.h
   ../../include/solvers/tracer.h
   ../../include/solvers/tracer_assemblers.h
   ../../include/solvers/tracer_drift_velocity.h
