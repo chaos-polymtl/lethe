@@ -126,7 +126,7 @@ public:
 
 private:
   /**
-   * @brief Set the up AMG object needed for coarse-grid solver or
+   * @brief Set up AMG object needed for coarse-grid solver or
    * preconditioning.
    *
    */
@@ -134,7 +134,7 @@ private:
   setup_AMG();
 
   /**
-   * @brief Set the up ILU object needed for coarse-grid solver or
+   * @brief Set up ILU object needed for coarse-grid solver or
    * preconditioning.
    *
    */
