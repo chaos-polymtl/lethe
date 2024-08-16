@@ -56,10 +56,11 @@ test()
     deallog << "Order 1: ";
 
 
-    for (unsigned int v = 0; v < out_values.size(); ++v)
+    for (const auto &val : out_values)
       {
-        deallog << out_values[v] << " ";
+        deallog << val << " ";
       }
+
     deallog << std::endl;
   }
 
@@ -71,10 +72,11 @@ test()
     deallog << "Order 2 constant time steps: ";
 
 
-    for (unsigned int v = 0; v < out_values.size(); ++v)
+    for (const auto &val : out_values)
       {
-        deallog << out_values[v] << " ";
+        deallog << val << " ";
       }
+
     deallog << std::endl;
   }
 
@@ -86,10 +88,11 @@ test()
     deallog << "Order 2 variable time steps: ";
 
 
-    for (unsigned int v = 0; v < out_values.size(); ++v)
+    for (const auto &val : out_values)
       {
-        deallog << out_values[v] << " ";
+        deallog << val << " ";
       }
+
     deallog << std::endl;
   }
 
@@ -101,10 +104,11 @@ test()
     deallog << "Order 3 constant time steps: ";
 
 
-    for (unsigned int v = 0; v < out_values.size(); ++v)
+    for (const auto &val : out_values)
       {
-        deallog << out_values[v] << " ";
+        deallog << val << " ";
       }
+
     deallog << std::endl;
   }
 }
