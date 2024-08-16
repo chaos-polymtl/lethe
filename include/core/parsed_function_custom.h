@@ -81,9 +81,9 @@ public:
    * @param[in] constants_list Constants used by the expressions
    */
   void
-  initialize(const std::string vnames,
-             const std::string expression,
-             const std::string constants_list);
+  initialize(const std::string &vnames,
+             const std::string &expression,
+             const std::string &constants_list);
 
   /**
    * @brief Evaluate all components at the evaluation point

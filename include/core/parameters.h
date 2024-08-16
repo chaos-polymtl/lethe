@@ -384,12 +384,12 @@ namespace Parameters
     {}
 
     void
-    declare_parameters(ParameterHandler &prm,
-                       std::string       material_prefix,
-                       unsigned int      id);
+    declare_parameters(ParameterHandler  &prm,
+                       const std::string &material_prefix,
+                       unsigned int       id);
     void
     parse_parameters(ParameterHandler    &prm,
-                     std::string          material_prefix,
+                     const std::string   &material_prefix,
                      const unsigned int   id,
                      const Dimensionality dimensions);
 
@@ -815,8 +815,8 @@ namespace Parameters
     // z =2) value of the beam_orientation parameter
     unsigned int beam_orientation_coordinate;
 
-    // beam_direction shows the direction of laser beam (either in positive (1)
-    // or negative (0) direction
+    // beam_direction shows the direction of laser beam (either in positive
+    // (true) or negative (false) direction
     bool beam_direction;
 
     // Based on the laser beam orientation, the integer values of a

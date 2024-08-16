@@ -6,7 +6,7 @@
 using namespace dealii;
 
 void
-PVDHandler::save(std::string prefix)
+PVDHandler::save(const std::string &prefix)
 {
   std::string   filename = prefix + ".pvdhandler";
   std::ofstream output(filename.c_str());
@@ -20,7 +20,7 @@ PVDHandler::save(std::string prefix)
 }
 
 void
-PVDHandler::read(std::string prefix)
+PVDHandler::read(const std::string &prefix)
 {
   times_and_names.clear();
   std::string   filename = prefix + ".pvdhandler";

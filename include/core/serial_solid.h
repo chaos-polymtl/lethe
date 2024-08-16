@@ -201,7 +201,8 @@ public:
    * @param simulation_control The simulation control object
    */
   void
-  write_output_results(std::shared_ptr<SimulationControl> simulation_control);
+  write_output_results(
+    const std::shared_ptr<SimulationControl> &simulation_control);
 
   /**
    * @brief read solid base triangulation checkpoint and replaces the

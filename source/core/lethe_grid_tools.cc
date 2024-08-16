@@ -913,7 +913,7 @@ LetheGridTools::find_cells_around_flat_cell(
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     &vertices_cell_map)
 {
-  TriaActiveIterator<DoFCellAccessor<dim, dim, 0>> starting_cell =
+  TriaActiveIterator<DoFCellAccessor<dim, dim, false>> starting_cell =
     find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
   std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
@@ -1257,13 +1257,13 @@ LetheGridTools::find_particle_triangle_projection(
       vector_to_plane              = p_0 - particle_position;
 
       // A bool variable for region 0
-      bool region_zero = 0;
+      bool region_zero = false;
 
       // Check to see if the particle is located on the correct side (with
       // respect to the normal vector) of the triangle
       if (vector_to_plane * unit_normal > 0)
         {
-          unit_normal = -1.0 * unit_normal;
+          unit_normal *= -1.0;
         }
 
       double distance_squared = scalar_product(vector_to_plane, unit_normal);
@@ -1349,7 +1349,7 @@ LetheGridTools::find_particle_triangle_projection(
               if constexpr (dim == 2)
                 unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
-              region_zero = 1;
+              region_zero = true;
             }
         }
       else

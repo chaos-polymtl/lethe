@@ -973,9 +973,9 @@ namespace Parameters
   }
 
   void
-  Material::declare_parameters(ParameterHandler &prm,
-                               std::string       material_prefix,
-                               unsigned int      id)
+  Material::declare_parameters(ParameterHandler  &prm,
+                               const std::string &material_prefix,
+                               unsigned int       id)
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1081,7 +1081,7 @@ namespace Parameters
 
   void
   Material::parse_parameters(ParameterHandler                &prm,
-                             std::string                      material_prefix,
+                             const std::string               &material_prefix,
                              const unsigned int               id,
                              const Parameters::Dimensionality dimensions)
   {
@@ -1671,7 +1671,7 @@ namespace Parameters
       op = prm.get("beam orientation");
       if (op == "x+")
         {
-          beam_direction                     = 1;
+          beam_direction                     = true;
           beam_orientation                   = BeamOrientation::x_plus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
@@ -1680,7 +1680,7 @@ namespace Parameters
         }
       else if (op == "x-")
         {
-          beam_direction                     = 0;
+          beam_direction                     = false;
           beam_orientation                   = BeamOrientation::x_minus;
           beam_orientation_coordinate        = 0;
           perpendicular_plane_coordinate_one = 1;
@@ -1689,7 +1689,7 @@ namespace Parameters
         }
       else if (op == "y+")
         {
-          beam_direction                     = 1;
+          beam_direction                     = true;
           beam_orientation                   = BeamOrientation::y_plus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
@@ -1698,7 +1698,7 @@ namespace Parameters
         }
       else if (op == "y-")
         {
-          beam_direction                     = 0;
+          beam_direction                     = false;
           beam_orientation                   = BeamOrientation::y_minus;
           perpendicular_plane_coordinate_one = 0;
           beam_orientation_coordinate        = 1;
@@ -1709,7 +1709,7 @@ namespace Parameters
         {
           if constexpr (dim == 3)
             {
-              beam_direction                     = 1;
+              beam_direction                     = true;
               beam_orientation                   = BeamOrientation::z_plus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;
@@ -1722,7 +1722,7 @@ namespace Parameters
         {
           if constexpr (dim == 3)
             {
-              beam_direction                     = 0;
+              beam_direction                     = false;
               beam_orientation                   = BeamOrientation::z_minus;
               perpendicular_plane_coordinate_one = 0;
               perpendicular_plane_coordinate_two = 1;

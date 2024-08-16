@@ -472,7 +472,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::write_output_results(
-  std::shared_ptr<SimulationControl> simulation_control)
+  std::shared_ptr<SimulationControl> &simulation_control)
 {
   if (!output_bool)
     return;
