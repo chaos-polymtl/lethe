@@ -212,9 +212,9 @@ make_table_tensors_scalars(
 }
 
 void
-fill_table_from_file(TableHandler     &table,
-                     const std::string file_name,
-                     const std::string delimiter)
+fill_table_from_file(TableHandler      &table,
+                     const std::string &file_name,
+                     const std::string &delimiter)
 {
   table.clear();
   std::ifstream myfile(file_name);

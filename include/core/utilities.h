@@ -363,9 +363,9 @@ calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
  * @param delimiter The delimiter used to read the table.
  */
 void
-fill_table_from_file(TableHandler     &table,
-                     const std::string file_name,
-                     const std::string delimiter = " ");
+fill_table_from_file(TableHandler      &table,
+                     const std::string &file_name,
+                     const std::string &delimiter = " ");
 
 /**
  * @brief function that read a file that was build from a dealii table and fill 2 vectors.

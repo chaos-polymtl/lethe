@@ -472,23 +472,31 @@ public:
     return bdf_coefs;
   }
 
-
+  /**
+   * @brief Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
   void
-  save(std::string filename);
+  save(const std::string &prefix);
 
   /**
    * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
    */
   void
-  read(std::string filename);
+  read(const std::string &prefix);
 
   /**
    * @brief Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information.
    *
+   * @param prefix The prefix of the checkpoint of the simulation
+   *
    * @return A vector containing the last checkpointed file and time step.
    */
   std::vector<double>
-  get_checkpointed_simulation_control_info(std::string filename);
+  get_checkpointed_simulation_control_info(const std::string &prefix);
 };
 
 

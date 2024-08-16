@@ -472,7 +472,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
 template <int dim, int spacedim>
 void
 SerialSolid<dim, spacedim>::write_output_results(
-  std::shared_ptr<SimulationControl> &simulation_control)
+  const std::shared_ptr<SimulationControl> &simulation_control)
 {
   if (!output_bool)
     return;
@@ -541,7 +541,7 @@ SerialSolid<dim, spacedim>::write_output_results(
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::write_checkpoint(std::string prefix)
+SerialSolid<dim, spacedim>::write_checkpoint(const std::string &prefix)
 {
   // Checkpoint the DOF Handler
   {
@@ -567,7 +567,7 @@ SerialSolid<dim, spacedim>::write_checkpoint(std::string prefix)
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::read_checkpoint(std::string prefix)
+SerialSolid<dim, spacedim>::read_checkpoint(const std::string &prefix)
 {
   // Import dof handler
   {

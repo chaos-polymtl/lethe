@@ -146,7 +146,7 @@ SimulationControl::is_verbose_iteration()
 }
 
 void
-SimulationControl::save(std::string prefix)
+SimulationControl::save(const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ofstream output(filename.c_str());
@@ -159,7 +159,7 @@ SimulationControl::save(std::string prefix)
 }
 
 void
-SimulationControl::read(std::string prefix)
+SimulationControl::read(const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ifstream input(filename.c_str());
@@ -178,7 +178,8 @@ SimulationControl::read(std::string prefix)
 }
 
 std::vector<double>
-SimulationControl::get_checkpointed_simulation_control_info(std::string prefix)
+SimulationControl::get_checkpointed_simulation_control_info(
+  const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ifstream input(filename.c_str());
