@@ -186,8 +186,8 @@ attach_manifolds_to_triangulation(
  */
 void
 attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &triangulation,
-                       std::string                                cad_name,
-                       unsigned int                               manifold_id);
+                       const std::string                         &cad_name,
+                       const unsigned int                         manifold_id);
 
 void
 attach_cad_to_manifold(

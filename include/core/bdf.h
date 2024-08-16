@@ -50,7 +50,7 @@ using namespace dealii;
 Vector<double>
 calculate_bdf_coefficients(
   const Parameters::SimulationControl::TimeSteppingMethod method,
-  const std::vector<double>                               time_steps);
+  const std::vector<double>                              &time_steps);
 
 
 /**
