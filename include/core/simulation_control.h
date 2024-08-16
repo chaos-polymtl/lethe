@@ -165,7 +165,7 @@ public:
    *
    **/
 
-  SimulationControl(const Parameters::SimulationControl param);
+  SimulationControl(const Parameters::SimulationControl &param);
 
   /**
    * @brief Pure virtual function to control the progression of the simulation.
@@ -526,7 +526,7 @@ protected:
 
 
 public:
-  SimulationControlTransient(Parameters::SimulationControl param);
+  SimulationControlTransient(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -551,7 +551,7 @@ public:
 class SimulationControlTransientDEM : public SimulationControlTransient
 {
 public:
-  SimulationControlTransientDEM(Parameters::SimulationControl param);
+  SimulationControlTransientDEM(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -579,7 +579,8 @@ protected:
   calculate_time_step() override;
 
 public:
-  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param);
+  SimulationControlTransientDynamicOutput(
+    const Parameters::SimulationControl &param);
 
 
   /**
@@ -593,7 +594,7 @@ public:
 class SimulationControlSteady : public SimulationControl
 {
 public:
-  SimulationControlSteady(Parameters::SimulationControl param);
+  SimulationControlSteady(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -614,7 +615,7 @@ public:
 class SimulationControlAdjointSteady : public SimulationControlTransient
 {
 public:
-  SimulationControlAdjointSteady(Parameters::SimulationControl param);
+  SimulationControlAdjointSteady(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;

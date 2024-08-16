@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-SimulationControl::SimulationControl(const Parameters::SimulationControl param)
+SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
@@ -211,7 +211,7 @@ SimulationControl::get_checkpointed_simulation_control_info(
 }
 
 SimulationControlTransient::SimulationControlTransient(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControl(param)
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
@@ -288,7 +288,7 @@ SimulationControlTransient::calculate_time_step()
 }
 
 SimulationControlTransientDEM::SimulationControlTransientDEM(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
 {}
 
@@ -313,7 +313,8 @@ SimulationControlTransientDEM::print_progression(
 
 
 SimulationControlTransientDynamicOutput::
-  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param)
+  SimulationControlTransientDynamicOutput(
+    const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
   , time_step_forced_output(false)
   // To be fixed for restarts
@@ -368,7 +369,7 @@ SimulationControlTransientDynamicOutput::is_output_iteration()
 
 
 SimulationControlSteady::SimulationControlSteady(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControl(param)
 {}
 
@@ -439,7 +440,7 @@ SimulationControlAdjointSteady::is_at_end()
 }
 
 SimulationControlAdjointSteady::SimulationControlAdjointSteady(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
 {}
 
