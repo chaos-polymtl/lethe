@@ -259,8 +259,8 @@ fill_table_from_file(TableHandler      &table,
 
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
-                       std::string                                 file,
-                       const std::string                           delimiter)
+                       const std::string                          &file,
+                       const std::string                          &delimiter)
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
@@ -313,8 +313,8 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 void
 fill_string_vectors_from_file(
   std::map<std::string, std::vector<std::string>> &map,
-  std::string                                      file,
-  const std::string                                delimiter)
+  const std::string                               &file,
+  const std::string                               &delimiter)
 {
   std::ifstream myfile(file);
   AssertThrow(myfile, ExcFileNotOpen(file));

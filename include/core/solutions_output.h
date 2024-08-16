@@ -55,8 +55,8 @@ template <int dim, int spacedim = dim>
 void
 write_vtu_and_pvd(PVDHandler                            &pvd_handler,
                   const DataOutInterface<dim, spacedim> &data_out,
-                  const std::string                      folder,
-                  const std::string                      file_prefix,
+                  const std::string                     &folder,
+                  const std::string                     &file_prefix,
                   const double                           time,
                   const unsigned int                     iter,
                   const unsigned int                     group_files,
@@ -80,7 +80,7 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
 template <int dim>
 void
 write_boundaries_vtu(const DataOutFaces<dim> &data_out,
-                     const std::string        folder,
+                     const std::string       &folder,
                      const double             time,
                      const unsigned int       iter,
                      const MPI_Comm          &mpi_communicator,

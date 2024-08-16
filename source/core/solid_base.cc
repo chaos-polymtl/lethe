@@ -276,7 +276,7 @@ SolidBase<3, 3>::translate_grid(const Tensor<1, 3> translation)
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
+SolidBase<dim, spacedim>::load_triangulation(const std::string &filename_tria)
 {
   // Load solid triangulation from given file
   // Currently we only load the triangulation without loading the particles,
@@ -393,7 +393,7 @@ SolidBase<dim, spacedim>::setup_particles()
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::load_particles(const std::string filename_part)
+SolidBase<dim, spacedim>::load_particles(const std::string &filename_part)
 {
   // Setup particles handler
   setup_particles_handler();
@@ -717,7 +717,7 @@ SolidBase<dim, spacedim>::print_particle_positions()
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
+SolidBase<dim, spacedim>::write_checkpoint(const std::string &prefix)
 {
   // First, manage the serialization of the particle information.
   // The particles are attached to the background triangulation and not
@@ -754,7 +754,7 @@ SolidBase<dim, spacedim>::write_checkpoint(std::string prefix)
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::read_checkpoint(std::string prefix)
+SolidBase<dim, spacedim>::read_checkpoint(const std::string &prefix)
 {
   // Setup an un-refined triangulation before loading if we have a fully
   // distributed triangulation. If we have a fully distributed triangulation,
