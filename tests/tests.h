@@ -20,7 +20,6 @@
 
 #include <deal.II/base/config.h>
 
-#include <deal.II/base/cuda.h>
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/job_identifier.h>
 #include <deal.II/base/logstream.h>

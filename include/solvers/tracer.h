@@ -432,9 +432,6 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
 
-  // Immersed solid signed distance function with immersed solid solver
-  std::shared_ptr<Function<dim>> immersed_solid_signed_distance_function;
-
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;
 

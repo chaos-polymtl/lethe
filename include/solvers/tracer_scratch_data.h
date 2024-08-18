@@ -159,8 +159,16 @@ public:
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
     source_function->value_list(quadrature_points, source);
+
     if (properties_manager.field_is_required(field::levelset))
-      levelset_function->value_list(quadrature_points, sdf_values);
+      {
+        Assert(
+          levelset_function != nullptr,
+          ExcMessage(
+            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+
+        levelset_function->value_list(quadrature_points, sdf_values);
+      }
 
     if (dim == 2)
       this->cell_size =

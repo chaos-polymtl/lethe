@@ -51,10 +51,9 @@ Tracer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
-  // We get the immersed function, which is null when no immersed solids are
-  // involved.
-  immersed_solid_signed_distance_function =
-    this->multiphysics->get_immersed_solid_signed_distance_function();
+  // Update the source term time
+  simulation_parameters.source_term.tracer_source->set_time(
+    simulation_control->get_current_time());
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -89,14 +88,13 @@ Tracer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  auto source_term = simulation_parameters.source_term.tracer_source;
-  source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      &(*source_term),
-                      &(*immersed_solid_signed_distance_function));
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    &(*simulation_parameters.source_term.tracer_source),
+    &(*this->multiphysics->get_immersed_solid_signed_distance_function()));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -193,10 +191,9 @@ Tracer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
-  // We get the immersed function, which is null when no immersed solids are
-  // involved
-  immersed_solid_signed_distance_function =
-    this->multiphysics->get_immersed_solid_signed_distance_function();
+  // Update the source term time
+  simulation_parameters.source_term.tracer_source->set_time(
+    simulation_control->get_current_time());
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -234,11 +231,12 @@ Tracer<dim>::assemble_local_system_rhs(
   auto source_term = simulation_parameters.source_term.tracer_source;
   source_term->set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      &(*source_term),
-                      &(*immersed_solid_signed_distance_function));
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    &(*source_term),
+    (this->multiphysics->get_immersed_solid_signed_distance_function()));
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -650,11 +648,9 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                                                               n_q_points_face));
                       face_quadrature_points =
                         fe_face_values_tracer.get_quadrature_points();
-                      immersed_solid_signed_distance_function =
-                        this->multiphysics
-                          ->get_immersed_solid_signed_distance_function();
-                      this->immersed_solid_signed_distance_function->value_list(
-                        face_quadrature_points, levelset_values);
+                      this->multiphysics
+                        ->get_immersed_solid_signed_distance_function()
+                        ->value_list(face_quadrature_points, levelset_values);
                       set_field_vector(field::levelset,
                                        levelset_values,
                                        fields);
