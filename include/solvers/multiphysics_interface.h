@@ -567,14 +567,16 @@ public:
   /**
    * @brief Request immersed solid signed distance function
    */
-  std::shared_ptr<Function<dim>>
+  Function<dim> *
   get_immersed_solid_signed_distance_function();
 
   /**
    * @brief Share immersed solid signed distance function
+   *
+   * @param function The immersed solid signed distance function
    */
   void
-    set_immersed_solid_signed_distance_function(std::shared_ptr<Function<dim>>);
+  set_immersed_solid_signed_distance_function(Function<dim> *function);
 
   /**
    * @brief Request the previous solutions of a given physics
@@ -921,7 +923,7 @@ private:
   GlobalVectorType *reynolds_stress_solutions;
 
   // Immersed solid signed distance function to be used by auxiliary physics
-  std::shared_ptr<Function<dim>> immersed_solid_signed_distance_function;
+  Function<dim> *immersed_solid_signed_distance_function;
 
   // past (minus 1) solution
   std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;

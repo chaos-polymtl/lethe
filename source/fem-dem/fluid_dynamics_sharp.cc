@@ -817,7 +817,7 @@ FluidDynamicsSharp<dim>::define_particles()
   combined_shapes =
     std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
   this->multiphysics->set_immersed_solid_signed_distance_function(
-    combined_shapes);
+    &(*combined_shapes));
 }
 
 
