@@ -870,7 +870,6 @@ LetheGridTools::cell_cut_by_flat(
   if (condition_B2)
     {
       bool condition_C2 = false;
-      manifold_points.clear();
       for (const auto face : cell->face_indices())
         {
           auto face_iter = cell->face(face);

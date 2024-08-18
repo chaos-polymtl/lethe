@@ -817,7 +817,7 @@ FluidDynamicsSharp<dim>::define_particles()
   combined_shapes =
     std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
   this->multiphysics->set_immersed_solid_signed_distance_function(
-    combined_shapes);
+    &(*combined_shapes));
 }
 
 
@@ -4341,15 +4341,15 @@ FluidDynamicsSharp<dim>::read_checkpoint()
   std::map<std::string, std::vector<double>> restart_data;
   fill_vectors_from_file(restart_data, filename);
 
-  // Implement the data  in the particles.
+  // Implement the data in the particles.
   if constexpr (dim == 2)
     {
       unsigned int row = 0;
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][row] == p_i and
-                 row < restart_data["ID"].size())
+          while (row < restart_data["ID"].size() &&
+                 restart_data["ID"][row] == p_i)
             {
               if (j == 0)
                 {
@@ -4415,8 +4415,8 @@ FluidDynamicsSharp<dim>::read_checkpoint()
       for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
         {
           unsigned int j = 0;
-          while (restart_data["ID"][row] == p_i and
-                 row < restart_data["ID"].size())
+          while (row < restart_data["ID"].size() &&
+                 restart_data["ID"][row] == p_i)
             {
               if (j == 0)
                 {
