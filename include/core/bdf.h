@@ -78,10 +78,10 @@ calculate_bdf_coefficients(
  * calculation of BDF coefficients.
  */
 Vector<double>
-delta(const unsigned int   order,
-      const unsigned int   n,
-      const unsigned int   j,
-      const Vector<double> times);
+delta(const unsigned int    order,
+      const unsigned int    n,
+      const unsigned int    j,
+      const Vector<double> &times);
 
 
 

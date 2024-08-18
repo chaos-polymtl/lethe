@@ -231,11 +231,11 @@ fill_table_from_file(TableHandler      &table,
       std::vector<std::string> list_of_words_base =
         Utilities::split_string_list(line, delimiter);
       std::vector<std::string> list_of_words_clean;
-      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+      for (const auto &word : list_of_words_base)
         {
-          if (list_of_words_base[i] != "")
+          if (word != "")
             {
-              list_of_words_clean.push_back(list_of_words_base[i]);
+              list_of_words_clean.push_back(word);
             }
         }
       //  If it's the first line, we only initialize the variable names.
@@ -278,11 +278,11 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
       std::vector<std::string> list_of_words_base =
         Utilities::split_string_list(line, delimiter);
       std::vector<std::string> list_of_words_clean;
-      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+      for (const auto &word : list_of_words_base)
         {
-          if (list_of_words_base[i] != "")
+          if (word != "")
             {
-              list_of_words_clean.push_back(list_of_words_base[i]);
+              list_of_words_clean.push_back(word);
             }
         }
       // check if the line is contained words or numbers.

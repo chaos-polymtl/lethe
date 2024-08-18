@@ -74,10 +74,10 @@ calculate_bdf_coefficients(
 }
 
 Vector<double>
-delta(const unsigned int   p,
-      const unsigned int   n,
-      const unsigned int   j,
-      const Vector<double> times)
+delta(const unsigned int    p,
+      const unsigned int    n,
+      const unsigned int    j,
+      const Vector<double> &times)
 {
   if (j == 0)
     {

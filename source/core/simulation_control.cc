@@ -167,8 +167,8 @@ SimulationControl::read(const std::string &prefix)
 
   std::string buffer;
   std::getline(input, buffer);
-  for (unsigned int i = 0; i < time_step_vector.size(); ++i)
-    input >> buffer >> time_step_vector[i];
+  for (auto &time_step_value : time_step_vector)
+    input >> buffer >> time_step_value;
   input >> buffer >> CFL;
   input >> buffer >> current_time;
   input >> buffer >> iteration_number;

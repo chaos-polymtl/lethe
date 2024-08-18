@@ -12,10 +12,9 @@ PVDHandler::save(const std::string &prefix)
   std::ofstream output(filename.c_str());
   output << times_and_names.size() << std::endl;
   output << "Time File" << std::endl;
-  for (unsigned int i = 0; i < times_and_names.size(); ++i)
+  for (const auto &time_name : times_and_names)
     {
-      output << times_and_names[i].first << " " << times_and_names[i].second
-             << std::endl;
+      output << time_name.first << " " << time_name.second << std::endl;
     }
 }
 
