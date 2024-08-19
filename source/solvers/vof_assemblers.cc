@@ -40,7 +40,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
 
-      // Store JxW in local variable for faster access;
+      // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
       // Define tolerance to avoid division by zero

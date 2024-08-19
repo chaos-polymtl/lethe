@@ -35,6 +35,9 @@ add_library(lethe-solvers
   tracer_drift_velocity.cc
   tracer_scratch_data.cc
   vof.cc
+  vof_algebraic_reinitialization.cc
+  vof_algebraic_reinitialization_assemblers.cc
+  vof_algebraic_reinitialization_scratch_data.cc
   vof_assemblers.cc
   vof_filter.cc
   vof_scratch_data.cc
@@ -65,6 +68,7 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_scratch_data.h
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h
+  ../../include/solvers/physics_subequations_solver.h
   ../../include/solvers/postprocessing_cfd.h
   ../../include/solvers/postprocessing_velocities.h
   ../../include/solvers/postprocessors_smoothing.h
@@ -77,6 +81,9 @@ add_library(lethe-solvers
   ../../include/solvers/tracer_drift_velocity.h
   ../../include/solvers/tracer_scratch_data.h
   ../../include/solvers/vof.h
+  ../../include/solvers/vof_algebraic_reinitialization.h
+  ../../include/solvers/vof_algebraic_reinitialization_assemblers.h
+  ../../include/solvers/vof_algebraic_reinitialization_scratch_data.h
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_filter.h
   ../../include/solvers/vof_scratch_data.h

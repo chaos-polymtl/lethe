@@ -98,6 +98,7 @@ public:
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
   {
     allocate();
+    gather_vof_algebraic_reinit = false;
   }
 
   /**
@@ -124,6 +125,12 @@ public:
                    update_values | update_gradients)
   {
     allocate();
+
+    if (sd.gather_vof_algebraic_reinit)
+      enable_algebraic_reinitialization(
+        sd.fe_values_vof_algebraic_reinit->get_fe(),
+        sd.fe_values_vof_algebraic_reinit->get_quadrature(),
+        sd.fe_values_vof_algebraic_reinit->get_mapping());
   }
 
 
@@ -283,6 +290,26 @@ public:
       }
   }
 
+  /**
+   * @brief Enables the collection of data from the algebraic reinitialization
+   * of the interface using the scratch.
+   *
+   * @param fe_vof_algebraic_reinit FiniteElement associated with the
+   * VOFAlgebraicReinitialization
+   *
+   * @param quadrature Quadrature rule of the VOFAlgebraicReinitialization
+   * problem assembly
+   *
+   * @param mapping Mapping for the VOFAlgebraicReinitialization problem
+   * assembly
+   */
+  void
+  enable_algebraic_reinitialization(
+    const FiniteElement<dim> &fe_vof_algebraic_reinit,
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping);
+
+
   // For velocity solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -326,6 +353,14 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
   std::vector<double>                      velocity_divergences;
+
+  /**
+   * Scratch component for the algebraic reinitialization of the interface
+   */
+  bool                             gather_vof_algebraic_reinit;
+  std::vector<double>              reinitialized_phase_values;
+  std::vector<std::vector<double>> previous_reinitialized_phase_values;
+  std::shared_ptr<FEValues<dim>>   fe_values_vof_algebraic_reinit;
 };
 
 #endif

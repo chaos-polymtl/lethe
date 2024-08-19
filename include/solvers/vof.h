@@ -329,7 +329,7 @@ public:
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
+   * only support imposing nodal values, but some physics additionally support
    * the use of L2 projection or steady-state solutions.
    */
   void
@@ -727,7 +727,6 @@ private:
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               solution_pw;
   GlobalVectorType               filtered_solution;
 
   // Previous solutions vectors

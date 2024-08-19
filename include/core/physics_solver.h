@@ -31,8 +31,8 @@
  * provides all the necessary elements needed by the solver to solve a physics
  * problem.
  *
- * @param non_linear_solver_parameters A set of parameters that will be used to
- * construct the non-linear solver
+ * @param[in] non_linear_solver_parameters Set of parameters that will be used
+ * to construct the non-linear solver.
  */
 template <typename VectorType>
 class PhysicsSolver
@@ -46,48 +46,48 @@ public:
   }
 
   /**
-   * @brief assemble_system_matrix Assembles the matrix
+   * @brief Assembles the matrix.
    */
   virtual void
   assemble_system_matrix() = 0;
 
   /**
-   * @brief assemble_system_rhs Assembles the rhs
+   * @brief Assembles the right-hand side (rhs).
    */
   virtual void
   assemble_system_rhs() = 0;
 
   /**
-   * @brief Set up preconditioner.
+   * @brief Sets up the preconditioner.
    *
    */
   virtual void
   setup_preconditioner() = 0;
 
   /**
-   * @brief solve_linear_system Solves the linear system of equations
+   * @brief Solves the linear system of equations.
    *
-   * @param initial_step Provides the linear solver with indication if this
-   * solution is the first one for the system of equation or not
+   * @param[in] initial_step Provides the linear solver with indication if this
+   * solution is the first one for the system of equation or not.
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix
-   * has been recalculated or not
+   * @param[in] renewed_matrix Indicates to the linear solve if the system
+   * matrix has been recalculated or not.
    */
   virtual void
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true) = 0;
 
   /**
-   * @brief solve_non_linear_system Solves the non linear system of equations
+   * @brief Solves the non linear system of equations.
    *
-   * @param first_iteration Indicates whether it is the first iteration of the
-   * non-linear solver
+   * @param[in] first_iteration Indicates whether it is the first iteration of
+   * the non-linear solver or not.
    */
   void
   solve_non_linear_system(const bool first_iteration);
 
   /**
-   * @brief Applies constraints to a local_evaluation_point
+   * @brief Applies constraints to a local_evaluation_point.
    */
   virtual void
   apply_constraints()

@@ -116,7 +116,7 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the VOF equations. For example, if a BDF1 scheme is
+ * integration for the VOF equation. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *

@@ -49,5 +49,21 @@ VOFScratchData<dim>::allocate()
                                      std::vector<double>(this->n_dofs));
 }
 
+template <int dim>
+void
+VOFScratchData<dim>::enable_algebraic_reinitialization(
+  const FiniteElement<dim> &fe_vof_algebraic_reinit,
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
+{
+  this->gather_vof_algebraic_reinit = true;
+  this->fe_values_vof_algebraic_reinit =
+    std::make_shared<FEValues<dim>>(mapping,
+                                    fe_vof_algebraic_reinit,
+                                    quadrature,
+                                    update_values | update_gradients);
+  this->reinitialized_phase_values = std::vector<double>(this->n_q_points);
+}
+
 template class VOFScratchData<2>;
 template class VOFScratchData<3>;
