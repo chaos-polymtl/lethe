@@ -1705,7 +1705,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
   data_out.build_patches(mapping, fe.degree, DataOut<dim>::curved_inner_cells);
 
   DataOutBase::VtkFlags flags;
-  flags.compression_level = DataOutBase::VtkFlags::best_speed;
+  flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(flags);
 
   std::string test_case = "";

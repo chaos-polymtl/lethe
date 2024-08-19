@@ -2266,7 +2266,7 @@ MatrixFreeNavierStokes<dim>::output_results(const unsigned int cycle) const
   data_out.build_patches();
 
   DataOutBase::VtkFlags flags;
-  flags.compression_level = DataOutBase::VtkFlags::best_speed;
+  flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(flags);
 
   data_out.write_vtu_with_pvtu_record(parameters.output_path,
