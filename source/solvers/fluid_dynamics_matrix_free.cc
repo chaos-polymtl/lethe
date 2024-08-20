@@ -240,6 +240,7 @@ public:
     this->patches.resize(patches.size());
     for (unsigned int c = 0; c < patches.size(); ++c)
       {
+        this->patches[c].resize(0);
         this->patches[c].reserve(patches[c].size());
 
         for (const auto &i : patches[c])
@@ -1214,6 +1215,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
     }
   else
     AssertThrow(false, ExcNotImplemented());
+
+  mg_smoother_preconditioners.resize(this->minlevel, this->maxlevel);
 }
 
 template <int dim>
@@ -1317,7 +1320,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           VectorType diagonal_vector;
           this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
-          smoother_data[level].preconditioner =
+          mg_smoother_preconditioners[level] =
             std::make_shared<MyDiagonalMatrix<VectorType>>(diagonal_vector);
         }
       else if (this->simulation_parameters.linear_solver
@@ -1326,18 +1329,24 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                Parameters::LinearSolver::MultigridSmootherPreconditionerType::
                  AdditiveSchwarzMethod)
         {
-          smoother_data[level].preconditioner =
-            std::make_shared<PreconditionASM<VectorType>>(
-              this->mg_operators[level]
-                ->get_system_matrix_free()
-                .get_dof_handler(),
-              this->mg_operators[level]->get_system_matrix(),
-              this->mg_operators[level]->get_sparsity_pattern(),
-              this->mg_operators[level]
-                ->get_system_matrix_free()
-                .get_affine_constraints(),
-              this->mg_operators[level]->get_vector_partitioner());
+          if (mg_smoother_preconditioners[level] == nullptr)
+            mg_smoother_preconditioners[level] =
+              std::make_shared<PreconditionASM<VectorType>>();
+
+          static_cast<PreconditionASM<VectorType> *>(
+            mg_smoother_preconditioners[level].get())
+            ->initialize(this->mg_operators[level]
+                           ->get_system_matrix_free()
+                           .get_dof_handler(),
+                         this->mg_operators[level]->get_system_matrix(),
+                         this->mg_operators[level]->get_sparsity_pattern(),
+                         this->mg_operators[level]
+                           ->get_system_matrix_free()
+                           .get_affine_constraints(),
+                         this->mg_operators[level]->get_vector_partitioner());
         }
+
+      smoother_data[level].preconditioner = mg_smoother_preconditioners[level];
 
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

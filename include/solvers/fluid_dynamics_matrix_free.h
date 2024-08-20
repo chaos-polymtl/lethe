@@ -173,6 +173,10 @@ private:
   MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_interface_in;
 
+  /// Preconditioners associated to smoothers
+  mutable MGLevelObject<std::shared_ptr<PreconditionBase<VectorType>>>
+    mg_smoother_preconditioners;
+
   /// Smoother object
   std::shared_ptr<
     MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>
