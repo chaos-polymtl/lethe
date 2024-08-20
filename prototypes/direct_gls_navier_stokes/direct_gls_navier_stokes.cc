@@ -535,7 +535,7 @@ DirectSteadyGLSNavierStokes<dim>::refine_mesh()
   triangulation.execute_coarsening_and_refinement();
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
-  solution_transfer.interpolate(present_solution, tmp);
+  solution_transfer.interpolate(tmp);
   nonzero_constraints.distribute(tmp);
   initialize_system();
   present_solution = tmp;
@@ -550,7 +550,7 @@ DirectSteadyGLSNavierStokes<dim>::refine_mesh_uniform()
   triangulation.refine_global(1);
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
-  solution_transfer.interpolate(present_solution, tmp);
+  solution_transfer.interpolate(tmp);
   nonzero_constraints.distribute(tmp);
   initialize_system();
   present_solution = tmp;
