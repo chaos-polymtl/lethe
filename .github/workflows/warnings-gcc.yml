@@ -1,41 +1,39 @@
-name: CI-Debug
+name: CI-Warnings
 
 on: 
-# Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
     # Runs on every push on master branch
     branches:
       - master
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   pull_request:
     paths-ignore:
       - 'doc/**'
       - 'contrib/**'
       - 'examples/**'
-    
+
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
   cancel-in-progress: true
 
-
 env:
-  COMPILE_JOBS: 18
-  TEST_JOBS: 12
-
+  COMPILE_JOBS: 4
+  MULTI_CORE_TESTS_REGEX: "mpirun=2"
 
 jobs:
   build:
     name: Build (deal.ii:${{ matrix.dealii_version }})
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        dealii_version: ["master"]
+        dealii_version: ["master-focal", "v9.6.0-jammy"]
     
     # Run steps in container of dealii's master branch
     container:
-      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      image: dealii/dealii:${{ matrix.dealii_version }}
       options: --user root
 
     steps:
@@ -55,23 +53,11 @@ jobs:
         uses: actions/checkout@v2
 
       #
-      # Debug
+      # Warnings
       #
-      - name: Compile Lethe (Debug-deal.ii:${{ matrix.dealii_version }})
+      - name: Compile Lethe to check for warnings (deal.ii:${{ matrix.dealii_version }})
         run: |
-          mkdir build-debug
-          cd build-debug
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug
+          mkdir build-warnings
+          cd build-warnings
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
           make -j${{ env.COMPILE_JOBS }}
-
-      # These tests require a single core each so we will run them in parallel
-      - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
-        run: |
-          #Allow OMPI to run as root
-          export OMPI_ALLOW_RUN_AS_ROOT=1
-          export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
-          cd build-debug
-          ctest -N
-
-          # Run in parallel
-          ctest --output-on-failure -j${{ env.TEST_JOBS }} 
