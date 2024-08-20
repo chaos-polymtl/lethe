@@ -1217,7 +1217,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::output_results(
   data_out.build_patches(mapping, fe.degree, DataOut<dim>::curved_inner_cells);
 
   DataOutBase::VtkFlags flags;
-  flags.compression_level = DataOutBase::VtkFlags::best_speed;
+  flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(flags);
   data_out.write_vtu_with_pvtu_record(parameters.output_path,
                                       parameters.output_name +
