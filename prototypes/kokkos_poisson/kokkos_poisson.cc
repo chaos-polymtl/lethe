@@ -339,10 +339,13 @@ main(int argc, char **argv)
 
   run<dim, fe_degree, 1, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, 1, MemorySpace::Default>(n_refinements, table);
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
   run<dim, fe_degree, dim, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, dim, MemorySpace::Default>(n_refinements, table);
   run<dim, fe_degree, dim + 1, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, dim + 1, MemorySpace::Default>(n_refinements, table);
+#endif
 
   table.write_text(std::cout);
 }
