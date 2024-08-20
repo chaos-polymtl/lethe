@@ -84,6 +84,6 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out,
                      const double             time,
                      const unsigned int       iter,
                      const MPI_Comm          &mpi_communicator,
-                     const std::string  file_prefix = std::string("boundaries"),
+                     const std::string &file_prefix = std::string("boundaries"),
                      const unsigned int digits      = 5);
 #endif

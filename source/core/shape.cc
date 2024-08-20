@@ -1638,7 +1638,7 @@ CompositeShape<dim>::set_layer_thickening(const double layer_thickening)
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
+RBFShape<dim>::RBFShape(const std::string  &shape_arguments_str,
                         const Point<dim>   &position,
                         const Tensor<1, 3> &orientation)
   : Shape<dim>(1, position, orientation)

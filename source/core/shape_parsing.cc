@@ -212,104 +212,102 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                   std::vector<std::string> list_of_words_base =
                     Utilities::split_string_list(line, ";");
                   std::vector<std::string> list_of_words_clean;
-                  for (unsigned int j = 0; j < list_of_words_base.size(); ++j)
+                  for (const auto &word : list_of_words_base)
                     {
                       if (list_of_words_base[j] != "")
-                        {
-                          list_of_words_clean.push_back(list_of_words_base[j]);
-                        }
+                        list_of_words_clean.emplace_back(word);
                     }
-                  if (parsing_shapes)
+                }
+              if (parsing_shapes)
+                {
+                  unsigned int identifier    = stoi(list_of_words_clean[0]);
+                  std::string  type          = list_of_words_clean[1];
+                  std::string  arguments_str = list_of_words_clean[2];
+                  std::replace(arguments_str.begin(),
+                               arguments_str.end(),
+                               ':',
+                               ';');
+                  std::string position_str    = list_of_words_clean[3];
+                  std::string orientation_str = list_of_words_clean[4];
+
+                  std::vector<std::string> position_str_component =
+                    Utilities::split_string_list(position_str, ":");
+                  std::vector<std::string> orientation_str_component =
+                    Utilities::split_string_list(orientation_str, ":");
+
+                  std::vector<double> temp_position_vec =
+                    Utilities::string_to_double(position_str_component);
+                  std::vector<double> temp_orientation_vec =
+                    Utilities::string_to_double(orientation_str_component);
+
+                  Point<dim> temp_position;
+                  Point<3>   temp_orientation =
+                    Point<3>({temp_orientation_vec[0],
+                              temp_orientation_vec[1],
+                              temp_orientation_vec[2]});
+                  temp_position[0] = temp_position_vec[0];
+                  temp_position[1] = temp_position_vec[1];
+                  if constexpr (dim == 3)
+                    temp_position[2] = temp_position_vec[2];
+
+                  std::shared_ptr<Shape<dim>> shape_temp;
+                  shape_temp = ShapeGenerator::initialize_shape(type,
+                                                                arguments_str,
+                                                                Point<dim>(),
+                                                                Tensor<1, 3>());
+                  shape_temp->set_position(temp_position);
+                  shape_temp->set_orientation(temp_orientation);
+                  components[identifier] = shape_temp->static_copy();
+                }
+              else if (parsing_operations)
+                {
+                  unsigned int identifier    = stoi(list_of_words_clean[0]);
+                  std::string  type          = list_of_words_clean[1];
+                  std::string  arguments_str = list_of_words_clean[2];
+                  std::vector<std::string> arguments_str_component =
+                    Utilities::split_string_list(arguments_str, ":");
+
+                  unsigned int first_shape  = stoi(arguments_str_component[0]);
+                  unsigned int second_shape = stoi(arguments_str_component[1]);
+                  if (type == "union")
                     {
-                      unsigned int identifier    = stoi(list_of_words_clean[0]);
-                      std::string  type          = list_of_words_clean[1];
-                      std::string  arguments_str = list_of_words_clean[2];
-                      std::replace(arguments_str.begin(),
-                                   arguments_str.end(),
-                                   ':',
-                                   ';');
-                      std::string position_str    = list_of_words_clean[3];
-                      std::string orientation_str = list_of_words_clean[4];
-
-                      std::vector<std::string> position_str_component =
-                        Utilities::split_string_list(position_str, ":");
-                      std::vector<std::string> orientation_str_component =
-                        Utilities::split_string_list(orientation_str, ":");
-
-                      std::vector<double> temp_position_vec =
-                        Utilities::string_to_double(position_str_component);
-                      std::vector<double> temp_orientation_vec =
-                        Utilities::string_to_double(orientation_str_component);
-
-                      Point<dim> temp_position;
-                      Point<3>   temp_orientation =
-                        Point<3>({temp_orientation_vec[0],
-                                  temp_orientation_vec[1],
-                                  temp_orientation_vec[2]});
-                      temp_position[0] = temp_position_vec[0];
-                      temp_position[1] = temp_position_vec[1];
-                      if constexpr (dim == 3)
-                        temp_position[2] = temp_position_vec[2];
-
-                      std::shared_ptr<Shape<dim>> shape_temp;
-                      shape_temp = ShapeGenerator::initialize_shape(
-                        type, arguments_str, Point<dim>(), Tensor<1, 3>());
-                      shape_temp->set_position(temp_position);
-                      shape_temp->set_orientation(temp_orientation);
-                      components[identifier] = shape_temp->static_copy();
+                      operations[identifier] = std::make_tuple(
+                        CompositeShape<dim>::BooleanOperation::Union,
+                        first_shape,
+                        second_shape);
                     }
-                  else if (parsing_operations)
+                  else if (type == "difference")
                     {
-                      unsigned int identifier    = stoi(list_of_words_clean[0]);
-                      std::string  type          = list_of_words_clean[1];
-                      std::string  arguments_str = list_of_words_clean[2];
-                      std::vector<std::string> arguments_str_component =
-                        Utilities::split_string_list(arguments_str, ":");
-
-                      unsigned int first_shape =
-                        stoi(arguments_str_component[0]);
-                      unsigned int second_shape =
-                        stoi(arguments_str_component[1]);
-                      if (type == "union")
-                        {
-                          operations[identifier] = std::make_tuple(
-                            CompositeShape<dim>::BooleanOperation::Union,
-                            first_shape,
-                            second_shape);
-                        }
-                      else if (type == "difference")
-                        {
-                          operations[identifier] = std::make_tuple(
-                            CompositeShape<dim>::BooleanOperation::Difference,
-                            first_shape,
-                            second_shape);
-                        }
-                      else if (type == "intersection")
-                        {
-                          operations[identifier] = std::make_tuple(
-                            CompositeShape<dim>::BooleanOperation::Intersection,
-                            first_shape,
-                            second_shape);
-                        }
+                      operations[identifier] = std::make_tuple(
+                        CompositeShape<dim>::BooleanOperation::Difference,
+                        first_shape,
+                        second_shape);
+                    }
+                  else if (type == "intersection")
+                    {
+                      operations[identifier] = std::make_tuple(
+                        CompositeShape<dim>::BooleanOperation::Intersection,
+                        first_shape,
+                        second_shape);
                     }
                 }
             }
-          myfile.close();
-          shape = std::make_shared<CompositeShape<dim>>(components,
-                                                        operations,
-                                                        position,
-                                                        orientation);
         }
-      else
-        throw std::invalid_argument(file_name);
+      myfile.close();
+      shape = std::make_shared<CompositeShape<dim>>(components,
+                                                    operations,
+                                                    position,
+                                                    orientation);
     }
-  else if (type == "opencascade")
-    {
-      shape = std::make_shared<OpenCascadeShape<dim>>(file_name,
-                                                      position,
-                                                      orientation);
-    }
-  return shape;
+  else
+    throw std::invalid_argument(file_name);
+}
+else if (type == "opencascade")
+{
+  shape =
+    std::make_shared<OpenCascadeShape<dim>>(file_name, position, orientation);
+}
+return shape;
 }
 
 template std::shared_ptr<Shape<2>>

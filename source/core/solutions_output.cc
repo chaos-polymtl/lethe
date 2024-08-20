@@ -77,7 +77,7 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
                      const double,
                      const unsigned int iter,
                      const MPI_Comm    &mpi_communicator,
-                     const std::string  file_prefix,
+                     const std::string &file_prefix,
                      const unsigned int digits)
 {
   const int my_id = Utilities::MPI::this_mpi_process(mpi_communicator);
