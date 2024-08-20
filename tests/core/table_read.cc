@@ -52,16 +52,11 @@ test()
   std::map<std::string, std::vector<double>> vectors;
   fill_vectors_from_file(vectors, table_file_name);
 
-  for (std::map<std::string, std::vector<double>>::iterator it =
-         vectors.begin();
-       it != vectors.end();
-       ++it)
+  for (const auto &it : vectors)
     {
-      deallog << it->first << std::endl;
-      for (unsigned int j = 0; j < it->second.size(); ++j)
-        {
-          deallog << it->second[j] << std::endl;
-        }
+      deallog << it.first << std::endl;
+      for (const auto &j : it.second)
+        deallog << j << std::endl;
     }
 }
 

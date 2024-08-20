@@ -30,11 +30,11 @@ test()
   shapes[1] = rectangle;
 
   // Creation of maps of operations
-  typedef std::map<
-    unsigned int,
-    std::tuple<CompositeShape<3>::BooleanOperation, unsigned int, unsigned int>>
-                                              operation_map;
-  typedef CompositeShape<3>::BooleanOperation boolean_operation;
+  using operation_map     = std::map<unsigned int,
+                                 std::tuple<CompositeShape<3>::BooleanOperation,
+                                            unsigned int,
+                                            unsigned int>>;
+  using boolean_operation = CompositeShape<3>::BooleanOperation;
 
   operation_map operation_union;
   operation_union[2] = std::make_tuple(boolean_operation::Union, 0, 1);

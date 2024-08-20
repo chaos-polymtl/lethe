@@ -165,7 +165,7 @@ public:
    *
    **/
 
-  SimulationControl(const Parameters::SimulationControl param);
+  SimulationControl(const Parameters::SimulationControl &param);
 
   /**
    * @brief Pure virtual function to control the progression of the simulation.
@@ -472,23 +472,31 @@ public:
     return bdf_coefs;
   }
 
-
+  /**
+   * @brief Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
   void
-  save(std::string filename);
+  save(const std::string &prefix);
 
   /**
    * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
    */
   void
-  read(std::string filename);
+  read(const std::string &prefix);
 
   /**
    * @brief Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information.
    *
+   * @param prefix The prefix of the checkpoint of the simulation
+   *
    * @return A vector containing the last checkpointed file and time step.
    */
   std::vector<double>
-  get_checkpointed_simulation_control_info(std::string filename);
+  get_checkpointed_simulation_control_info(const std::string &prefix);
 };
 
 
@@ -518,7 +526,7 @@ protected:
 
 
 public:
-  SimulationControlTransient(Parameters::SimulationControl param);
+  SimulationControlTransient(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -543,7 +551,7 @@ public:
 class SimulationControlTransientDEM : public SimulationControlTransient
 {
 public:
-  SimulationControlTransientDEM(Parameters::SimulationControl param);
+  SimulationControlTransientDEM(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -571,7 +579,8 @@ protected:
   calculate_time_step() override;
 
 public:
-  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param);
+  SimulationControlTransientDynamicOutput(
+    const Parameters::SimulationControl &param);
 
 
   /**
@@ -585,7 +594,7 @@ public:
 class SimulationControlSteady : public SimulationControl
 {
 public:
-  SimulationControlSteady(Parameters::SimulationControl param);
+  SimulationControlSteady(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -606,7 +615,7 @@ public:
 class SimulationControlAdjointSteady : public SimulationControlTransient
 {
 public:
-  SimulationControlAdjointSteady(Parameters::SimulationControl param);
+  SimulationControlAdjointSteady(const Parameters::SimulationControl &param);
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;

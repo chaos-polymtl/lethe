@@ -2680,7 +2680,7 @@ public:
    * @param orientation the orientation of the shape with respect to each main
    * axis
    */
-  RBFShape(const std::string   shape_arguments_str,
+  RBFShape(const std::string  &shape_arguments_str,
            const Point<dim>   &position,
            const Tensor<1, 3> &orientation);
 

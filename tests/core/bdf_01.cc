@@ -20,10 +20,11 @@ test()
   dt[3] = 0.4;
   dt[4] = 0.5;
   deallog << "Time steps ";
-  for (unsigned int i = 0; i < dt.size(); ++i)
+  for (const auto &dt_val : dt)
     {
-      deallog << dt[i] << " ";
+      deallog << dt_val << " ";
     }
+
   deallog << std::endl;
 
   Vector<double> order1_coefficients = calculate_bdf_coefficients(
@@ -40,10 +41,11 @@ test()
   Vector<double> order3_coefficients = calculate_bdf_coefficients(
     Parameters::SimulationControl::TimeSteppingMethod::bdf3, dt);
   deallog << "Order 3 : ";
-  for (unsigned int i = 0; i < order3_coefficients.size(); ++i)
+  for (const auto &coefficient : order3_coefficients)
     {
-      deallog << order3_coefficients[i] << " ";
+      deallog << coefficient << " ";
     }
+
   deallog << std::endl;
 }
 

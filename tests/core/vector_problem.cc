@@ -99,14 +99,12 @@ test()
 
   for (unsigned int d = 0; d < 3; ++d)
     {
-      for (auto j = index_set_velocity[d].begin();
-           j != index_set_velocity[d].end();
-           j++)
+      for (const auto &j : index_set_velocity[d])
         {
-          correction_norm += dummy_solution[*j] * dummy_solution[*j];
+          correction_norm += dummy_solution[j] * dummy_solution[j];
 
           max_correction =
-            std::max(max_correction, std::abs(dummy_solution[*j]));
+            std::max(max_correction, std::abs(dummy_solution[j]));
         }
     }
 
@@ -116,12 +114,11 @@ test()
   correction_norm = 0.0;
   max_correction  = DBL_MIN;
 
-  for (auto j = index_set_pressure[3].begin(); j != index_set_pressure[3].end();
-       j++)
+  for (const auto &j : index_set_pressure[3])
     {
-      correction_norm += dummy_solution[*j] * dummy_solution[*j];
+      correction_norm += dummy_solution[j] * dummy_solution[j];
 
-      max_correction = std::max(max_correction, std::abs(dummy_solution[*j]));
+      max_correction = std::max(max_correction, std::abs(dummy_solution[j]));
     }
 
   deallog << "||p||_L2 : " << std::sqrt(correction_norm) << std::endl;

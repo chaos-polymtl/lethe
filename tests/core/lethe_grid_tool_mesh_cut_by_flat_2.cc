@@ -102,13 +102,12 @@ test()
             });
 
   Vector<double> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < cells_cut.size(); ++i)
+  for (auto &cell : cells_cut)
     {
-      cells_cut[i]->set_subdomain_id(1);
-      subdomain(cells_cut[i]->global_active_cell_index()) = 1;
-      deallog << "The cell with ID : "
-              << cells_cut[i]->global_active_cell_index() << " is cut "
-              << std::endl;
+      cell->set_subdomain_id(1);
+      subdomain(cell->global_active_cell_index()) = 1;
+      deallog << "The cell with ID : " << cell->global_active_cell_index()
+              << " is cut " << std::endl;
     }
 
   // Printing the final position for all the vertices

@@ -20,10 +20,10 @@
 
 
 Vector<double>
-bdf_coefficients(const unsigned int p, const std::vector<double> dt)
+bdf_coefficients(const unsigned int p, const std::vector<double> &time_steps)
 {
   // There should be at least p time steps
-  assert(dt.size() >= p);
+  assert(time_steps.size() >= p);
 
   // Create a time table for the bdf formula
   Vector<double> times(p + 1);
@@ -31,7 +31,7 @@ bdf_coefficients(const unsigned int p, const std::vector<double> dt)
     {
       times[i] = 0.;
       for (unsigned int j = 0; j < i; ++j)
-        times[i] -= dt[j];
+        times[i] -= time_steps[j];
     }
 
   // The alphas are the bdf coefficients
@@ -54,7 +54,7 @@ bdf_coefficients(const unsigned int p, const std::vector<double> dt)
 Vector<double>
 calculate_bdf_coefficients(
   const Parameters::SimulationControl::TimeSteppingMethod method,
-  const std::vector<double>                               time_steps)
+  const std::vector<double>                              &time_steps)
 {
   switch (method)
     {
@@ -74,10 +74,10 @@ calculate_bdf_coefficients(
 }
 
 Vector<double>
-delta(const unsigned int   p,
-      const unsigned int   n,
-      const unsigned int   j,
-      const Vector<double> times)
+delta(const unsigned int    p,
+      const unsigned int    n,
+      const unsigned int    j,
+      const Vector<double> &times)
 {
   if (j == 0)
     {
