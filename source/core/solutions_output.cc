@@ -167,7 +167,7 @@ write_boundaries_vtu(const DataOutFaces<2> &data_out_faces,
                      const double           time,
                      const unsigned int     iter,
                      const MPI_Comm        &mpi_communicator,
-                     const std::string      file_prefix,
+                     const std::string     &file_prefix,
                      const unsigned int     digits);
 
 template void
@@ -176,5 +176,5 @@ write_boundaries_vtu(const DataOutFaces<3> &data_out_faces,
                      const double           time,
                      const unsigned int     iter,
                      const MPI_Comm        &mpi_communicator,
-                     const std::string      file_prefix,
+                     const std::string     &file_prefix,
                      const unsigned int     digits);
