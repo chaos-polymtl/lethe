@@ -2,8 +2,8 @@
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
-ShapeGenerator::initialize_shape(const std::string   type,
-                                 const std::string   shape_arguments_str,
+ShapeGenerator::initialize_shape(const std::string  &type,
+                                 const std::string  &shape_arguments_str,
                                  const Point<dim>   &position,
                                  const Tensor<1, 3> &orientation)
 {
@@ -32,10 +32,10 @@ ShapeGenerator::initialize_shape(const std::string   type,
 template <int dim>
 std::shared_ptr<Shape<dim>>
 ShapeGenerator::initialize_shape_from_vector(
-  const std::string         type,
-  const std::vector<double> shape_arguments,
-  const Point<dim>         &position,
-  const Tensor<1, 3>       &orientation)
+  const std::string         &type,
+  const std::vector<double> &shape_arguments,
+  const Point<dim>          &position,
+  const Tensor<1, 3>        &orientation)
 {
   std::shared_ptr<Shape<dim>> shape;
   if (type == "sphere")
@@ -153,8 +153,8 @@ ShapeGenerator::initialize_shape_from_vector(
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
-ShapeGenerator::initialize_shape_from_file(const std::string   type,
-                                           const std::string   file_name,
+ShapeGenerator::initialize_shape_from_file(const std::string  &type,
+                                           const std::string  &file_name,
                                            const Point<dim>   &position,
                                            const Tensor<1, 3> &orientation)
 {
@@ -212,12 +212,10 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
                   std::vector<std::string> list_of_words_base =
                     Utilities::split_string_list(line, ";");
                   std::vector<std::string> list_of_words_clean;
-                  for (unsigned int j = 0; j < list_of_words_base.size(); ++j)
+                  for (const auto &word : list_of_words_base)
                     {
-                      if (list_of_words_base[j] != "")
-                        {
-                          list_of_words_clean.push_back(list_of_words_base[j]);
-                        }
+                      if (word != "")
+                        list_of_words_clean.emplace_back(word);
                     }
                   if (parsing_shapes)
                     {
@@ -313,34 +311,34 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
 }
 
 template std::shared_ptr<Shape<2>>
-ShapeGenerator::initialize_shape(const std::string   type,
-                                 const std::string   arguments,
+ShapeGenerator::initialize_shape(const std::string  &type,
+                                 const std::string  &arguments,
                                  const Point<2>     &position,
                                  const Tensor<1, 3> &orientation);
 template std::shared_ptr<Shape<3>>
-ShapeGenerator::initialize_shape(const std::string   type,
-                                 const std::string   arguments,
+ShapeGenerator::initialize_shape(const std::string  &type,
+                                 const std::string  &arguments,
                                  const Point<3>     &position,
                                  const Tensor<1, 3> &orientation);
 template std::shared_ptr<Shape<2>>
 ShapeGenerator::initialize_shape_from_vector(
-  const std::string         type,
-  const std::vector<double> shape_arguments,
-  const Point<2>           &position,
-  const Tensor<1, 3>       &orientation);
+  const std::string         &type,
+  const std::vector<double> &shape_arguments,
+  const Point<2>            &position,
+  const Tensor<1, 3>        &orientation);
 template std::shared_ptr<Shape<3>>
 ShapeGenerator::initialize_shape_from_vector(
-  const std::string         type,
-  const std::vector<double> shape_arguments,
-  const Point<3>           &position,
-  const Tensor<1, 3>       &orientation);
+  const std::string         &type,
+  const std::vector<double> &shape_arguments,
+  const Point<3>            &position,
+  const Tensor<1, 3>        &orientation);
 template std::shared_ptr<Shape<2>>
-ShapeGenerator::initialize_shape_from_file(const std::string   type,
-                                           const std::string   file_name,
+ShapeGenerator::initialize_shape_from_file(const std::string  &type,
+                                           const std::string  &file_name,
                                            const Point<2>     &position,
                                            const Tensor<1, 3> &orientation);
 template std::shared_ptr<Shape<3>>
-ShapeGenerator::initialize_shape_from_file(const std::string   type,
-                                           const std::string   file_name,
+ShapeGenerator::initialize_shape_from_file(const std::string  &type,
+                                           const std::string  &file_name,
                                            const Point<3>     &position,
                                            const Tensor<1, 3> &orientation);

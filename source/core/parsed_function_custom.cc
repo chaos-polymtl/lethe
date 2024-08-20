@@ -148,9 +148,10 @@ ParsedFunctionCustom<n_components>::parse_parameters(ParameterHandler &prm)
 
 template <int n_components>
 void
-ParsedFunctionCustom<n_components>::initialize(const std::string vnames,
-                                               const std::string expression,
-                                               const std::string constants_list)
+ParsedFunctionCustom<n_components>::initialize(
+  const std::string &vnames,
+  const std::string &expression,
+  const std::string &constants_list)
 {
   this->vnames         = vnames;
   this->expression     = expression;

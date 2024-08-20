@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-SimulationControl::SimulationControl(const Parameters::SimulationControl param)
+SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   : method(param.method)
   , assembly_method(param.method)
   , current_time(0)
@@ -146,7 +146,7 @@ SimulationControl::is_verbose_iteration()
 }
 
 void
-SimulationControl::save(std::string prefix)
+SimulationControl::save(const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ofstream output(filename.c_str());
@@ -159,7 +159,7 @@ SimulationControl::save(std::string prefix)
 }
 
 void
-SimulationControl::read(std::string prefix)
+SimulationControl::read(const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ifstream input(filename.c_str());
@@ -167,8 +167,8 @@ SimulationControl::read(std::string prefix)
 
   std::string buffer;
   std::getline(input, buffer);
-  for (unsigned int i = 0; i < time_step_vector.size(); ++i)
-    input >> buffer >> time_step_vector[i];
+  for (auto &time_step_value : time_step_vector)
+    input >> buffer >> time_step_value;
   input >> buffer >> CFL;
   input >> buffer >> current_time;
   input >> buffer >> iteration_number;
@@ -178,7 +178,8 @@ SimulationControl::read(std::string prefix)
 }
 
 std::vector<double>
-SimulationControl::get_checkpointed_simulation_control_info(std::string prefix)
+SimulationControl::get_checkpointed_simulation_control_info(
+  const std::string &prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ifstream input(filename.c_str());
@@ -210,7 +211,7 @@ SimulationControl::get_checkpointed_simulation_control_info(std::string prefix)
 }
 
 SimulationControlTransient::SimulationControlTransient(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControl(param)
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
@@ -287,7 +288,7 @@ SimulationControlTransient::calculate_time_step()
 }
 
 SimulationControlTransientDEM::SimulationControlTransientDEM(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
 {}
 
@@ -312,7 +313,8 @@ SimulationControlTransientDEM::print_progression(
 
 
 SimulationControlTransientDynamicOutput::
-  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param)
+  SimulationControlTransientDynamicOutput(
+    const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
   , time_step_forced_output(false)
   // To be fixed for restarts
@@ -367,7 +369,7 @@ SimulationControlTransientDynamicOutput::is_output_iteration()
 
 
 SimulationControlSteady::SimulationControlSteady(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControl(param)
 {}
 
@@ -438,7 +440,7 @@ SimulationControlAdjointSteady::is_at_end()
 }
 
 SimulationControlAdjointSteady::SimulationControlAdjointSteady(
-  Parameters::SimulationControl param)
+  const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
 {}
 

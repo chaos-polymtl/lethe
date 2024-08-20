@@ -363,9 +363,9 @@ calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
  * @param delimiter The delimiter used to read the table.
  */
 void
-fill_table_from_file(TableHandler     &table,
-                     const std::string file_name,
-                     const std::string delimiter = " ");
+fill_table_from_file(TableHandler      &table,
+                     const std::string &file_name,
+                     const std::string &delimiter = " ");
 
 /**
  * @brief function that read a file that was build from a dealii table and fill 2 vectors.
@@ -379,8 +379,8 @@ fill_table_from_file(TableHandler     &table,
  */
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
-                       const std::string                           file_name,
-                       const std::string delimiter = " ");
+                       const std::string                          &file_name,
+                       const std::string &delimiter = " ");
 
 /**
  * @brief Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data.
@@ -393,8 +393,8 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 void
 fill_string_vectors_from_file(
   std::map<std::string, std::vector<std::string>> &map,
-  const std::string                                file_name,
-  const std::string                                delimiter = " ");
+  const std::string                               &file_name,
+  const std::string                               &delimiter = " ");
 
 /**
  * @brief Creates the simulation output folder

@@ -29,14 +29,14 @@ make_table_scalars_vectors(
   if (display_scientific_notation)
     {
       table.set_scientific(independent_column_name, true);
-      for (unsigned int d = 0; d < dependent_column_names.size(); ++d)
-        table.set_scientific(dependent_column_names[d], true);
+      for (const auto &name : dependent_column_names)
+        table.set_scientific(name, true);
     }
   else
     {
       table.set_precision(independent_column_name, display_precision);
-      for (unsigned int d = 0; d < dependent_column_names.size(); ++d)
-        table.set_precision(dependent_column_names[d], display_precision);
+      for (const auto &name : dependent_column_names)
+        table.set_precision(name, display_precision);
     }
 
   return table;
@@ -212,9 +212,9 @@ make_table_tensors_scalars(
 }
 
 void
-fill_table_from_file(TableHandler     &table,
-                     const std::string file_name,
-                     const std::string delimiter)
+fill_table_from_file(TableHandler      &table,
+                     const std::string &file_name,
+                     const std::string &delimiter)
 {
   table.clear();
   std::ifstream myfile(file_name);
@@ -231,11 +231,11 @@ fill_table_from_file(TableHandler     &table,
       std::vector<std::string> list_of_words_base =
         Utilities::split_string_list(line, delimiter);
       std::vector<std::string> list_of_words_clean;
-      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+      for (const auto &word : list_of_words_base)
         {
-          if (list_of_words_base[i] != "")
+          if (word != "")
             {
-              list_of_words_clean.push_back(list_of_words_base[i]);
+              list_of_words_clean.emplace_back(word);
             }
         }
       //  If it's the first line, we only initialize the variable names.
@@ -259,8 +259,8 @@ fill_table_from_file(TableHandler     &table,
 
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
-                       std::string                                 file,
-                       const std::string                           delimiter)
+                       const std::string                          &file,
+                       const std::string                          &delimiter)
 {
   // fill a pair, first being a vector of vector name and the second being the
   // vector of vector associated with the vector name.
@@ -278,11 +278,11 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
       std::vector<std::string> list_of_words_base =
         Utilities::split_string_list(line, delimiter);
       std::vector<std::string> list_of_words_clean;
-      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+      for (const auto &word : list_of_words_base)
         {
-          if (list_of_words_base[i] != "")
+          if (word != "")
             {
-              list_of_words_clean.push_back(list_of_words_base[i]);
+              list_of_words_clean.emplace_back(word);
             }
         }
       // check if the line is contained words or numbers.
@@ -291,7 +291,7 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
           line_of_data = Utilities::string_to_double(list_of_words_clean);
           for (unsigned int i = 0; i < line_of_data.size(); ++i)
             {
-              map[column_names[i]].push_back(line_of_data[i]);
+              map[column_names[i]].emplace_back(line_of_data[i]);
             }
         }
       else
@@ -313,8 +313,8 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 void
 fill_string_vectors_from_file(
   std::map<std::string, std::vector<std::string>> &map,
-  std::string                                      file,
-  const std::string                                delimiter)
+  const std::string                               &file,
+  const std::string                               &delimiter)
 {
   std::ifstream myfile(file);
   AssertThrow(myfile, ExcFileNotOpen(file));
@@ -330,12 +330,10 @@ fill_string_vectors_from_file(
       std::vector<std::string> list_of_words_base =
         Utilities::split_string_list(line, delimiter);
       std::vector<std::string> list_of_words_clean;
-      for (unsigned int i = 0; i < list_of_words_base.size(); ++i)
+      for (const auto &word : list_of_words_base)
         {
-          if (list_of_words_base[i] != "")
-            {
-              list_of_words_clean.push_back(list_of_words_base[i]);
-            }
+          if (word != "")
+            list_of_words_clean.emplace_back(word);
         }
       // Check if it is the first line. If it is we assume it is the
       // column name.
@@ -344,7 +342,7 @@ fill_string_vectors_from_file(
           line_of_data = list_of_words_clean;
           for (unsigned int i = 0; i < line_of_data.size(); ++i)
             {
-              map[column_names[i]].push_back(line_of_data[i]);
+              map[column_names[i]].emplace_back(line_of_data[i]);
             }
         }
       else

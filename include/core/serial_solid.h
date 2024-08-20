@@ -201,7 +201,8 @@ public:
    * @param simulation_control The simulation control object
    */
   void
-  write_output_results(std::shared_ptr<SimulationControl> simulation_control);
+  write_output_results(
+    const std::shared_ptr<SimulationControl> &simulation_control);
 
   /**
    * @brief read solid base triangulation checkpoint and replaces the
@@ -211,7 +212,7 @@ public:
    *
    */
   void
-  read_checkpoint(std::string prefix_name);
+  read_checkpoint(const std::string &prefix_name);
 
   /**
    * @brief write solid base triangulation checkpoint
@@ -219,7 +220,7 @@ public:
    * @param prefix_name The prefix of the checkpoint of the simulation
    */
   void
-  write_checkpoint(std::string prefix_name);
+  write_checkpoint(const std::string &prefix_name);
 
 
 private:

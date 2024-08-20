@@ -101,14 +101,14 @@ public:
    * @brief Loads a solid triangulation from a restart file
    */
   void
-  load_triangulation(const std::string filename_tria);
+  load_triangulation(const std::string &filename_tria);
 
   /**
    * @brief Loads a particle handler in the fluid triangulation domain that holds the particles of the solid
    * according to a specific quadrature, and sets up dofs
    */
   void
-  load_particles(const std::string filename_part);
+  load_particles(const std::string &filename_part);
 
   /**
    * @return the reference to the std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
@@ -220,13 +220,13 @@ public:
    * @brief read solid base triangulation checkpoint
    */
   void
-  read_checkpoint(std::string prefix_name);
+  read_checkpoint(const std::string &prefix_name);
 
   /**
    * @brief write solid base triangulation checkpoint
    */
   void
-  write_checkpoint(std::string prefix_name);
+  write_checkpoint(const std::string &prefix_name);
 
 
 private:
