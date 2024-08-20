@@ -54,10 +54,47 @@ class PreconditionBase
 {
 public:
   /**
+   * @brief Constructor.
+   */
+  PreconditionBase()
+    : comm(MPI_COMM_WORLD)
+    , pcout(std::cout, Utilities::MPI::this_mpi_process(comm) == 0)
+    , timer(pcout, TimerOutput::never, TimerOutput::wall_times)
+  {}
+
+  /**
    * @brief Apply preconditioner.
    */
   virtual void
   vmult(VectorType &dst, const VectorType &src) const = 0;
+
+  /**
+   * @brief Print timers.
+   */
+  void
+  timer_print() const
+  {
+    timer.print_wall_time_statistics(comm);
+  }
+
+  /**
+   * @brief Reset timers.
+   */
+  void
+  timer_reset() const
+  {
+    timer.reset();
+  }
+
+protected:
+  /// Communicator used for timer output.
+  const MPI_Comm comm;
+
+  /// Stream used for timer output.
+  ConditionalOStream pcout;
+
+  /// Timer.
+  mutable TimerOutput timer;
 };
 
 /**
@@ -152,6 +189,8 @@ public:
     const AffineConstraints<Number> &constraints,
     const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
   {
+    this->timer.enter_subsection("asm::inidices");
+
     std::vector<std::vector<types::global_dof_index>> patches;
 
     const auto add_indices = [&](const auto &local_dof_indices) {
@@ -195,12 +234,29 @@ public:
         dst_internal.reinit(partition);
       }
 
+    // convert indices to local ones
+    this->patches.resize(patches.size());
+    for (unsigned int c = 0; c < patches.size(); ++c)
+      {
+        this->patches[c].resize(0);
+        this->patches[c].reserve(patches[c].size());
+
+        for (const auto &i : patches[c])
+          this->patches[c].emplace_back(partition->global_to_local(i));
+      }
+
+    this->timer.leave_subsection("asm::inidices");
+    this->timer.enter_subsection("asm::restrict");
+
     std::vector<FullMatrix<Number>> blocks;
 
     SparseMatrixTools::restrict_to_full_matrices(global_sparse_matrix,
                                                  global_sparsity_pattern,
                                                  patches,
                                                  blocks);
+
+    this->timer.leave_subsection("asm::restrict");
+    this->timer.enter_subsection("asm::invert");
 
     this->blocks.resize(blocks.size());
 
@@ -212,8 +268,11 @@ public:
         this->blocks[b].compute_lu_factorization();
       }
 
+    this->timer.leave_subsection("asm::invert");
+
     if (weighting_type != WeightingType::none)
       {
+        this->timer.enter_subsection("asm::weight");
         Vector<double> vector_weights;
         weights.reinit(partition);
 
@@ -234,17 +293,8 @@ public:
           i = (weighting_type == WeightingType::symm) ? std::sqrt(1.0 / i) :
                                                         (1.0 / i);
         weights.update_ghost_values();
-      }
 
-    // convert indices to local ones
-    this->patches.resize(patches.size());
-    for (unsigned int c = 0; c < patches.size(); ++c)
-      {
-        this->patches[c].resize(0);
-        this->patches[c].reserve(patches[c].size());
-
-        for (const auto &i : patches[c])
-          this->patches[c].emplace_back(partition->global_to_local(i));
+        this->timer.leave_subsection("asm::weight");
       }
   }
 
@@ -254,6 +304,8 @@ public:
   void
   vmult(VectorType &dst, const VectorType &src) const override
   {
+    this->timer.enter_subsection("asm::vmult");
+
     const auto &src_ptr = (src_internal.size() != 0) ? src_internal : src;
     auto       &dst_ptr = (dst_internal.size() != 0) ? dst_internal : dst;
 
@@ -302,6 +354,8 @@ public:
 
     if (dst_internal.size() != 0)
       dst.copy_locally_owned_data_from(dst_internal);
+
+    this->timer.leave_subsection("asm::vmult");
   }
 
 private:
@@ -1770,6 +1824,14 @@ MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
 }
 
 template <int dim>
+const MGLevelObject<std::shared_ptr<
+  PreconditionBase<typename MFNavierStokesPreconditionGMG<dim>::VectorType>>> &
+MFNavierStokesPreconditionGMG<dim>::get_mg_smoother_preconditioners() const
+{
+  return this->mg_smoother_preconditioners;
+}
+
+template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::setup_AMG()
 {
@@ -2567,6 +2629,21 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
 
           // Reset timer if output is set to every iteration
           mg_operators[level]->timer.reset();
+        }
+
+      auto mg_smoother_preconditioners =
+        this->gmg_preconditioner->get_mg_smoother_preconditioners();
+      for (unsigned int level = mg_operators.min_level();
+           level <= mg_operators.max_level();
+           level++)
+        {
+          announce_string(this->pcout,
+                          "Preconditioner level " + std::to_string(level) +
+                            " times");
+          mg_smoother_preconditioners[level]->timer_print();
+
+          // Reset timer if output is set to every iteration
+          mg_smoother_preconditioners[level]->timer_reset();
         }
 
       // Reset timers if output is set to every iteration
