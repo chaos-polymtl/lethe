@@ -40,6 +40,7 @@
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
@@ -178,11 +179,19 @@ public:
     for (const auto &indices : this->patches)
       ghost_dofs.add_indices(indices.begin(), indices.end());
 
-    const auto partition = std::make_shared<Utilities::MPI::Partitioner>(
-      dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
+    std::shared_ptr<const Utilities::MPI::Partitioner> partition =
+      std::make_shared<Utilities::MPI::Partitioner>(
+        dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
 
-    src.reinit(partition);
-    dst.reinit(partition);
+    if (dealii::internal::is_partitioner_contained(partition, partitioner))
+      {
+        partition = partitioner;
+      }
+    else
+      {
+        src_internal.reinit(partition);
+        dst_internal.reinit(partition);
+      }
 
     std::vector<FullMatrix<Number>> blocks;
 
@@ -204,7 +213,7 @@ public:
     if (weighting_type != WeightingType::none)
       {
         Vector<double> vector_weights;
-        weights.reinit(src);
+        weights.reinit(partition);
 
         for (unsigned int c = 0; c < patches.size(); ++c)
           {
@@ -230,11 +239,15 @@ public:
    * @brief Apply preconditioner.
    */
   void
-  vmult(VectorType &dst_, const VectorType &src_) const override
+  vmult(VectorType &dst, const VectorType &src) const override
   {
-    dst = 0.0;
-    src.copy_locally_owned_data_from(src_);
-    src.update_ghost_values();
+    const auto &src_ptr = (src_internal.size() != 0) ? src_internal : src;
+    auto       &dst_ptr = (dst_internal.size() != 0) ? dst_internal : dst;
+
+    dst_ptr = 0.0;
+    if (src_internal.size() != 0)
+      src_internal.copy_locally_owned_data_from(src);
+    src_ptr.update_ghost_values();
 
     Vector<double> vector_src, vector_dst, vector_weights;
 
@@ -248,7 +261,7 @@ public:
           vector_weights.reinit(dofs_per_cell);
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          vector_src[i] = src[patches[c][i]];
+          vector_src[i] = src_ptr[patches[c][i]];
 
         if (weighting_type != WeightingType::none)
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -268,12 +281,14 @@ public:
             vector_dst[i] *= vector_weights[i];
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          dst[patches[c][i]] += vector_dst[i];
+          dst_ptr[patches[c][i]] += vector_dst[i];
       }
 
-    src.zero_out_ghost_values();
-    dst.compress(VectorOperation::add);
-    dst_.copy_locally_owned_data_from(dst);
+    src_ptr.zero_out_ghost_values();
+    dst_ptr.compress(VectorOperation::add);
+
+    if (dst_internal.size() != 0)
+      dst.copy_locally_owned_data_from(dst_internal);
   }
 
 private:
@@ -290,10 +305,10 @@ private:
   const WeightingType weighting_type;
 
   /// Internal destination vector with correct ghosting.
-  mutable VectorType dst;
+  mutable VectorType dst_internal;
 
   /// Internal source vector with correct ghosting.
-  mutable VectorType src;
+  mutable VectorType src_internal;
 };
 
 /**
