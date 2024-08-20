@@ -29,11 +29,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dealii_version: ["master", "v9.6.0"]
+        dealii_version: ["master-focal", "v9.6.0-jammy"]
     
     # Run steps in container of dealii's master branch
     container:
-      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+      image: dealii/dealii:${{ matrix.dealii_version }}
       options: --user root
 
     steps:
