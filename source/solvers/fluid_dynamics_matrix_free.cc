@@ -152,6 +152,8 @@ public:
     const AffineConstraints<Number> &constraints,
     const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
   {
+    std::vector<std::vector<types::global_dof_index>> patches;
+
     const auto add_indices = [&](const auto &local_dof_indices) {
       std::vector<types::global_dof_index> local_dof_indices_temp;
 
@@ -176,7 +178,7 @@ public:
       }
 
     IndexSet ghost_dofs(dof_handler.locally_owned_dofs().size());
-    for (const auto &indices : this->patches)
+    for (const auto &indices : patches)
       ghost_dofs.add_indices(indices.begin(), indices.end());
 
     std::shared_ptr<const Utilities::MPI::Partitioner> partition =
@@ -233,6 +235,16 @@ public:
                                                         (1.0 / i);
         weights.update_ghost_values();
       }
+
+    // convert indices to local ones
+    this->patches.resize(patches.size());
+    for (unsigned int c = 0; c < patches.size(); ++c)
+      {
+        this->patches[c].reserve(patches[c].size());
+
+        for (const auto &i : patches[c])
+          this->patches[c].emplace_back(partition->global_to_local(i));
+      }
   }
 
   /**
@@ -261,11 +273,11 @@ public:
           vector_weights.reinit(dofs_per_cell);
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          vector_src[i] = src_ptr[patches[c][i]];
+          vector_src[i] = src_ptr.local_element(patches[c][i]);
 
         if (weighting_type != WeightingType::none)
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
-            vector_weights[i] = weights[patches[c][i]];
+            vector_weights[i] = weights.local_element(patches[c][i]);
 
         if (weighting_type == WeightingType::symm ||
             weighting_type == WeightingType::right)
@@ -281,7 +293,7 @@ public:
             vector_dst[i] *= vector_weights[i];
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          dst_ptr[patches[c][i]] += vector_dst[i];
+          dst_ptr.local_element(patches[c][i]) += vector_dst[i];
       }
 
     src_ptr.zero_out_ghost_values();
@@ -293,7 +305,7 @@ public:
 
 private:
   /// DoF indices of patches.
-  std::vector<std::vector<types::global_dof_index>> patches;
+  std::vector<std::vector<unsigned int>> patches;
 
   /// Inverse of patch matrices.
   std::vector<LAPACKFullMatrix<Number>> blocks;
