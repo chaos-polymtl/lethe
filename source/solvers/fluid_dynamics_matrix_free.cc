@@ -121,16 +121,19 @@ public:
             typename GlobalSparseMatrixType,
             typename GlobalSparsityPattern,
             typename Number>
-  PreconditionASM(const DoFHandler<dim>           &dof_handler,
-                  const GlobalSparseMatrixType    &global_sparse_matrix,
-                  const GlobalSparsityPattern     &global_sparsity_pattern,
-                  const AffineConstraints<Number> &constraints)
+  PreconditionASM(
+    const DoFHandler<dim>           &dof_handler,
+    const GlobalSparseMatrixType    &global_sparse_matrix,
+    const GlobalSparsityPattern     &global_sparsity_pattern,
+    const AffineConstraints<Number> &constraints,
+    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
     : weighting_type(WeightingType::left)
   {
     this->initialize(dof_handler,
                      global_sparse_matrix,
                      global_sparsity_pattern,
-                     constraints);
+                     constraints,
+                     partitioner);
   }
 
   /**
@@ -141,10 +144,12 @@ public:
             typename GlobalSparsityPattern,
             typename Number>
   void
-  initialize(const DoFHandler<dim>           &dof_handler,
-             const GlobalSparseMatrixType    &global_sparse_matrix,
-             const GlobalSparsityPattern     &global_sparsity_pattern,
-             const AffineConstraints<Number> &constraints)
+  initialize(
+    const DoFHandler<dim>           &dof_handler,
+    const GlobalSparseMatrixType    &global_sparse_matrix,
+    const GlobalSparsityPattern     &global_sparsity_pattern,
+    const AffineConstraints<Number> &constraints,
+    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
   {
     const auto add_indices = [&](const auto &local_dof_indices) {
       std::vector<types::global_dof_index> local_dof_indices_temp;
@@ -195,22 +200,10 @@ public:
         this->blocks[b] = blocks[b];
         this->blocks[b].compute_lu_factorization();
       }
-  }
 
-  /**
-   * @brief Apply preconditioner.
-   */
-  void
-  vmult(VectorType &dst_, const VectorType &src_) const override
-  {
-    dst = 0.0;
-    src.copy_locally_owned_data_from(src_);
-    src.update_ghost_values();
-
-    Vector<double> vector_src, vector_dst, vector_weights;
-
-    if ((weights.size() == 0) && (weighting_type != WeightingType::none))
+    if (weighting_type != WeightingType::none)
       {
+        Vector<double> vector_weights;
         weights.reinit(src);
 
         for (unsigned int c = 0; c < patches.size(); ++c)
@@ -231,6 +224,19 @@ public:
                                                         (1.0 / i);
         weights.update_ghost_values();
       }
+  }
+
+  /**
+   * @brief Apply preconditioner.
+   */
+  void
+  vmult(VectorType &dst_, const VectorType &src_) const override
+  {
+    dst = 0.0;
+    src.copy_locally_owned_data_from(src_);
+    src.update_ghost_values();
+
+    Vector<double> vector_src, vector_dst, vector_weights;
 
     for (unsigned int c = 0; c < patches.size(); ++c)
       {
@@ -1302,7 +1308,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
               this->mg_operators[level]->get_sparsity_pattern(),
               this->mg_operators[level]
                 ->get_system_matrix_free()
-                .get_affine_constraints());
+                .get_affine_constraints(),
+              this->mg_operators[level]->get_vector_partitioner());
         }
 
       smoother_data[level].n_iterations =
