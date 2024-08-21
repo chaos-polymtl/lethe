@@ -42,6 +42,9 @@ main(int argc, char *argv[])
                                   MPI_COMM_WORLD) == 0) &&
                                  print_parameters);
 
+      ConditionalOStream pcout(
+        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
+
       if (dim == 2)
         {
           ParameterHandler        prm;
@@ -56,11 +59,10 @@ main(int argc, char *argv[])
                                  ParameterHandler::OutputStyle::PRM |
                                    ParameterHandler::OutputStyle::Short |
                                    ParameterHandler::KeepDeclarationOrder
-                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
-                                    |
-                                   ParameterHandler::KeepOnlyChanged
-                                   #endif
-                                   );
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+                                   | ParameterHandler::KeepOnlyChanged
+#endif
+            );
           pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
@@ -81,11 +83,10 @@ main(int argc, char *argv[])
                                  ParameterHandler::OutputStyle::PRM |
                                    ParameterHandler::OutputStyle::Short |
                                    ParameterHandler::KeepDeclarationOrder
-                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
-                                    |
-                                   ParameterHandler::KeepOnlyChanged
-                                   #endif
-                                   );
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+                                   | ParameterHandler::KeepOnlyChanged
+#endif
+            );
           pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
