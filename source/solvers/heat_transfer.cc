@@ -1452,7 +1452,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
@@ -1636,7 +1636,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
@@ -1808,7 +1808,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       update_values);
 
   // Initialize VOF information
-  DoFHandler<dim>                   *dof_handler_vof = NULL;
+  DoFHandler<dim>                   *dof_handler_vof = nullptr;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
   std::vector<double>                filtered_phase_values(n_q_points_face);
 
@@ -1998,11 +1998,11 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                             fe_face_values_ht.JxW(q);
 
                         } // end loop on quadrature points
-                    }     // end condition face at heat transfer boundary
-                }         // end loop on faces
-            }             // End face is a boundary face
-        }                 // end condition cell at boundary
-    }                     // end loop on cells
+                    } // end condition face at heat transfer boundary
+                } // end loop on faces
+            } // End face is a boundary face
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
@@ -2108,7 +2108,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
