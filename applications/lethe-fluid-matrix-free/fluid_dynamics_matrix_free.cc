@@ -32,6 +32,9 @@ main(int argc, char *argv[])
       const Parameters::SizeOfSubsections size_of_subsections =
         Parameters::get_size_of_subsections(argv[1]);
 
+      ConditionalOStream pcout(
+        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
+
       if (dim == 2)
         {
           ParameterHandler        prm;
@@ -40,6 +43,14 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
+
+          if (pcout.is_active())
+            prm.print_parameters(pcout.get_stream(),
+                                 ParameterHandler::OutputStyle::PRM |
+                                   ParameterHandler::OutputStyle::Short |
+                                   ParameterHandler::KeepDeclarationOrder |
+                                   ParameterHandler::KeepChanged);
+          pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
           problem.solve();
@@ -53,6 +64,14 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
+
+          if (pcout.is_active())
+            prm.print_parameters(pcout.get_stream(),
+                                 ParameterHandler::OutputStyle::PRM |
+                                   ParameterHandler::OutputStyle::Short |
+                                   ParameterHandler::KeepDeclarationOrder |
+                                   ParameterHandler::KeepChanged);
+          pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
           problem.solve();
