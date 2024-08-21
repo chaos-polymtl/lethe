@@ -34,11 +34,11 @@ Tracer<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
   // Core assembler
-  this->assemblers.push_back(
+  this->assemblers.emplace_back(
     std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
 }
 
@@ -683,10 +683,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
@@ -817,10 +817,10 @@ Tracer<dim>::write_checkpoint()
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
     dof_handler);
 
-  sol_set_transfer.push_back(&present_solution);
+  sol_set_transfer.emplace_back(&present_solution);
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      sol_set_transfer.push_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solutions[i]);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
