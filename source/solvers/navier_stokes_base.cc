@@ -722,7 +722,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 
           auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(basetria, 0);
+            create_description_from_triangulation(basetria, nullptr);
 
           triangulation->create_triangulation(construction_data);
         }
@@ -772,7 +772,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
           auto construction_data = TriangulationDescription::Utilities::
             create_description_from_triangulation(
               temporary_tri_triangulation,
-              0,
+              nullptr,
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
           box_to_refine.create_triangulation(construction_data);
