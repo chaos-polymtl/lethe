@@ -51,12 +51,12 @@ VolumeOfFluid<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
     }
 
   // Core assembler
-  this->assemblers.push_back(std::make_shared<VOFAssemblerCore<dim>>(
+  this->assemblers.emplace_back(std::make_shared<VOFAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.fem_parameters,
     this->simulation_parameters.multiphysics.vof_parameters));
@@ -860,7 +860,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::vector<std::string> momentum_names(
                 {"momentum-x_" + fluid_id, "momentum-y_" + fluid_id});
               if constexpr (dim == 3)
-                momentum_names.push_back("momentum-z_" + fluid_id);
+                momentum_names.emplace_back("momentum-z_" + fluid_id);
 
               if constexpr (dim == 2)
                 {
@@ -896,17 +896,17 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               if (this->simulation_parameters.post_processing.verbosity ==
                   Parameters::Verbosity::verbose)
                 {
-                  dependent_column_names.push_back(volume_column_name);
-                  dependent_column_names.push_back(mass_column_name);
-                  volumes_masses_momentum_and_sharpening_threshold.push_back(
+                  dependent_column_names.emplace_back(volume_column_name);
+                  dependent_column_names.emplace_back(mass_column_name);
+                  volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->volume_monitored);
-                  volumes_masses_momentum_and_sharpening_threshold.push_back(
+                  volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                     this->mass_monitored);
                   for (unsigned int d = 0; d < dim; ++d)
                     {
-                      dependent_column_names.push_back(momentum_names[d]);
+                      dependent_column_names.emplace_back(momentum_names[d]);
                       volumes_masses_momentum_and_sharpening_threshold
-                        .push_back(momentum[d]);
+                        .emplace_back(momentum[d]);
                     }
                 }
             }
@@ -936,15 +936,15 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           if (this->simulation_parameters.post_processing.verbosity ==
               Parameters::Verbosity::verbose)
             {
-              volumes_masses_momentum_and_sharpening_threshold.push_back(
+              volumes_masses_momentum_and_sharpening_threshold.emplace_back(
                 this->sharpening_threshold);
-              dependent_column_names.push_back("sharpening_threshold");
+              dependent_column_names.emplace_back("sharpening_threshold");
 
               // Dependent variable columns (volumes, masses and sharpening
               // threshold)
               std::vector<std::vector<double>>
                 volumes_masses_and_sharpening_thresholds;
-              volumes_masses_and_sharpening_thresholds.push_back(
+              volumes_masses_and_sharpening_thresholds.emplace_back(
                 volumes_masses_momentum_and_sharpening_threshold);
 
               // Time column
@@ -1027,14 +1027,14 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::string independent_column_names = "time";
 
               std::vector<std::string> dependent_column_names;
-              dependent_column_names.push_back("x_vof");
-              dependent_column_names.push_back("y_vof");
+              dependent_column_names.emplace_back("x_vof");
+              dependent_column_names.emplace_back("y_vof");
               if (dim == 3)
-                dependent_column_names.push_back("z_vof");
-              dependent_column_names.push_back("vx_vof");
-              dependent_column_names.push_back("vy_vof");
+                dependent_column_names.emplace_back("z_vof");
+              dependent_column_names.emplace_back("vx_vof");
+              dependent_column_names.emplace_back("vy_vof");
               if (dim == 3)
-                dependent_column_names.push_back("vz_vof");
+                dependent_column_names.emplace_back("vz_vof");
 
               std::vector<Tensor<1, dim>> position_vector{
                 position_and_velocity.first};
@@ -2037,10 +2037,10 @@ VolumeOfFluid<dim>::write_checkpoint()
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
     dof_handler);
 
-  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.emplace_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
+      sol_set_transfer.emplace_back(&this->previous_solutions[i]);
     }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 
