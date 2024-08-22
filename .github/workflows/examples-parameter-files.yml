@@ -58,7 +58,7 @@ jobs:
           mkdir build-parameter-files
           cd build-parameter-files
           cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -G Ninja
-          make install -j${{ env.COMPILE_JOBS }}
+          ninja install -j${{ env.COMPILE_JOBS }}
           cd ../inst/bin
           install_dir=$(pwd)
           cd ../../

@@ -60,4 +60,4 @@ jobs:
           mkdir build-warnings
           cd build-warnings
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -DLETHE_USE_LDV=ON
-          make -j${{ env.COMPILE_JOBS }}
+          ninja -j${{ env.COMPILE_JOBS }}

@@ -60,7 +60,7 @@ jobs:
           mkdir build-release
           cd build-release
           cmake ../ -DCMAKE_BUILD_TYPE=Release -G Ninja
-          make -j${{ env.COMPILE_JOBS }}
+          ninja -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
       # Only run tests on deal.ii master version

@@ -60,4 +60,4 @@ jobs:
           mkdir build-warnings
           cd build-warnings
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_COMPILE_WARNING_AS_ERROR=ON -DBUILD_PROTOTYPES=ON -G Ninja
-          make -j${{ env.COMPILE_JOBS }}
+          ninja -j${{ env.COMPILE_JOBS }}
