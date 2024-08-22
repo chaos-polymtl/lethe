@@ -943,9 +943,9 @@ CahnHilliard<dim>::write_checkpoint()
     dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.emplace_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
@@ -1492,14 +1492,10 @@ CahnHilliard<dim>::output_newton_update_norms(
   double local_max = std::numeric_limits<double>::lowest();
 
 
-  for (auto j = index_set_phase_order[0].begin();
-       j != index_set_phase_order[0].end();
-       j++)
+  for (const auto &j : index_set_phase_order[0])
     {
-      double dof_newton_update = newton_update[*j];
-
+      double dof_newton_update = newton_update[j];
       local_sum += dof_newton_update * dof_newton_update;
-
       local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 
@@ -1512,14 +1508,10 @@ CahnHilliard<dim>::output_newton_update_norms(
   local_sum = 0.0;
   local_max = std::numeric_limits<double>::lowest();
 
-  for (auto j = index_set_chemical_potential[1].begin();
-       j != index_set_chemical_potential[1].end();
-       j++)
+  for (const auto &j : index_set_chemical_potential[0])
     {
-      double dof_newton_update = newton_update[*j];
-
+      double dof_newton_update = newton_update[j];
       local_sum += dof_newton_update * dof_newton_update;
-
       local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 

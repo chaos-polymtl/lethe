@@ -1085,9 +1085,9 @@ HeatTransfer<dim>::write_checkpoint()
     dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.emplace_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
@@ -1998,11 +1998,11 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                             fe_face_values_ht.JxW(q);
 
                         } // end loop on quadrature points
-                    } // end condition face at heat transfer boundary
-                } // end loop on faces
-            } // End face is a boundary face
-        } // end condition cell at boundary
-    } // end loop on cells
+                    }     // end condition face at heat transfer boundary
+                }         // end loop on faces
+            }             // End face is a boundary face
+        }                 // end condition cell at boundary
+    }                     // end loop on cells
 
 
   // Sum across all cores

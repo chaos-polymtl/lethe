@@ -683,10 +683,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                } // end face is a boundary face
-            } // end loop on faces
-        } // end condition cell at boundary
-    } // end loop on cells
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores
@@ -702,7 +702,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 template <int dim>
 void
 Tracer<dim>::write_tracer_flow_rates(
-  const std::vector<double> tracer_flow_rate_vector)
+  const std::vector<double> &tracer_flow_rate_vector)
 {
   // Fill table
   this->tracer_flow_rate_table.add_value(
@@ -818,9 +818,9 @@ Tracer<dim>::write_checkpoint()
     dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.emplace_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 

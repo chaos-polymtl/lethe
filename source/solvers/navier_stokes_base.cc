@@ -2676,14 +2676,10 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
       for (unsigned int d = 0; d < dim; ++d)
         {
-          for (auto j = index_set_velocity[d].begin();
-               j != index_set_velocity[d].end();
-               j++)
+          for (const auto &j : index_set_velocity[d])
             {
-              double dof_newton_update = newton_update[*j];
-
+              double dof_newton_update = newton_update[j];
               local_sum += dof_newton_update * dof_newton_update;
-
               local_max = std::max(local_max, std::abs(dof_newton_update));
             }
         }
@@ -2696,14 +2692,11 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       local_sum = 0.0;
       local_max = std::numeric_limits<double>::lowest();
 
-      for (auto j = index_set_pressure[dim].begin();
-           j != index_set_pressure[dim].end();
-           j++)
+      for (const auto &j : index_set_pressure[0])
+
         {
-          double dof_newton_update = newton_update[*j];
-
+          double dof_newton_update = newton_update[j];
           local_sum += dof_newton_update * dof_newton_update;
-
           local_max = std::max(local_max, std::abs(dof_newton_update));
         }
 
