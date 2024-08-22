@@ -38,13 +38,13 @@ Visualization<dim>::build_patches(
       // Check to see if the property is a vector
       if (components_number == dim)
         {
-          vector_datasets.push_back(std::make_tuple(
+          vector_datasets.emplace_back(std::make_tuple(
             field_position,
             field_position + components_number - 1,
             field_name,
             DataComponentInterpretation::component_is_part_of_vector));
         }
-      dataset_names.push_back(field_name);
+      dataset_names.emplace_back(field_name);
     }
 
   // Building the patch data
