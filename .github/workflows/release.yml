@@ -66,7 +66,7 @@ jobs:
       # Only run tests on deal.ii master version
       # Restart files are not compatible with deal.ii v9.5.0
       - name: Run Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
-        if: ${{ matrix.dealii_version == 'master'}}
+#        if: ${{ matrix.dealii_version == 'master-focal'}}
         run: |
           #Allow OMPI to run as root
           export OMPI_ALLOW_RUN_AS_ROOT=1
@@ -82,7 +82,7 @@ jobs:
       # Only run tests on deal.ii master version
       # Restart files are not compatible with deal.ii v9.5.0
       - name: Run multi-core Lethe tests (Release-deal.ii:${{ matrix.dealii_version }})
-        if: ${{ matrix.dealii_version == 'master'}}
+#        if: ${{ matrix.dealii_version == 'master-focal'}}
         run: |
           #Allow OMPI to run as root
           export OMPI_ALLOW_RUN_AS_ROOT=1
