@@ -42,9 +42,6 @@ main(int argc, char *argv[])
                                   MPI_COMM_WORLD) == 0) &&
                                  print_parameters);
 
-      ConditionalOStream pcout(
-        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
-
       if (dim == 2)
         {
           ParameterHandler        prm;
