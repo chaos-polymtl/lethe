@@ -124,10 +124,10 @@ public:
   }
 
   void
-  save(std::string prefix);
+  save(const std::string &prefix);
 
   void
-  read(std::string prefix);
+  read(const std::string &prefix);
 
 private:
   // The coefficients are stored in the following fashion :
