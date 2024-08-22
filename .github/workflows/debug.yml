@@ -61,7 +61,7 @@ jobs:
         run: |
           mkdir build-debug
           cd build-debug
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
           make -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
