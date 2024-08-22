@@ -368,7 +368,7 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_checkpoint_vectors(
 
 template <int dim, typename VectorType, typename DofsType>
 std::vector<const VectorType *>
-AverageVelocities<dim, VectorType, DofsType>::save(std::string prefix)
+AverageVelocities<dim, VectorType, DofsType>::save(const std::string &prefix)
 {
   sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
   sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
@@ -393,7 +393,7 @@ AverageVelocities<dim, VectorType, DofsType>::save(std::string prefix)
 
 template <int dim, typename VectorType, typename DofsType>
 std::vector<VectorType *>
-AverageVelocities<dim, VectorType, DofsType>::read(std::string prefix)
+AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
 {
   std::vector<VectorType *> sum_vectors;
   sum_vectors.push_back(&sum_velocity_dt);

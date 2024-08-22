@@ -1352,11 +1352,11 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
   if (sharpen_previous_solutions)
     {
-      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      for (auto &previous_solution : previous_solutions)
         {
-          assemble_L2_projection_interface_sharpening(previous_solutions[p],
+          assemble_L2_projection_interface_sharpening(previous_solution,
                                                       sharpening_threshold);
-          solve_interface_sharpening(previous_solutions[p]);
+          solve_interface_sharpening(previous_solution);
         }
     }
 
@@ -1365,8 +1365,8 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-        update_solution_and_constraints(previous_solutions[p]);
+      for (auto &previous_solution : previous_solutions)
+        update_solution_and_constraints(previous_solution);
     }
 }
 

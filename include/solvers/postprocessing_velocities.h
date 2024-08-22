@@ -194,7 +194,7 @@ public:
    * @return Vector with average values.
    */
   std::vector<const VectorType *>
-  save(std::string prefix);
+  save(const std::string &prefix);
 
   /**
    * @brief Read checkpoints to continuing averaging after restart.
@@ -204,7 +204,7 @@ public:
    * @return Vector with average values.
    */
   std::vector<VectorType *>
-  read(std::string prefix);
+  read(const std::string &prefix);
 
 private:
   /**
