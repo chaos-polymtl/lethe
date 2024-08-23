@@ -22,15 +22,25 @@ main(int argc, char *argv[])
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      if (argc != 2)
+      if (argc == 1)
         {
           std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
           std::exit(1);
         }
 
-      const unsigned int                  dim = get_dimension(argv[1]);
+
+      const std::string file_name(argv[argc - 1]);
+      const bool        print_parameters =
+        (argc == 2) ? false : (std::string(argv[1]) == "--print-parameters");
+
+      const unsigned int                  dim = get_dimension(file_name);
       const Parameters::SizeOfSubsections size_of_subsections =
-        Parameters::get_size_of_subsections(argv[1]);
+        Parameters::get_size_of_subsections(file_name);
+
+      ConditionalOStream pcout(std::cout,
+                               (Utilities::MPI::this_mpi_process(
+                                  MPI_COMM_WORLD) == 0) &&
+                                 print_parameters);
 
       if (dim == 2)
         {
@@ -38,8 +48,20 @@ main(int argc, char *argv[])
           SimulationParameters<2> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          if (pcout.is_active())
+            prm.print_parameters(pcout.get_stream(),
+                                 ParameterHandler::OutputStyle::PRM |
+                                   ParameterHandler::OutputStyle::Short |
+                                   ParameterHandler::KeepDeclarationOrder
+                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
+                                    |
+                                   ParameterHandler::KeepOnlyChanged
+                                   #endif
+                                   );
+          pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
           problem.solve();
@@ -51,8 +73,20 @@ main(int argc, char *argv[])
           SimulationParameters<3> NSparam;
           NSparam.declare(prm, size_of_subsections);
           // Parsing of the file
-          prm.parse_input(argv[1]);
+          prm.parse_input(file_name);
           NSparam.parse(prm);
+
+          if (pcout.is_active())
+            prm.print_parameters(pcout.get_stream(),
+                                 ParameterHandler::OutputStyle::PRM |
+                                   ParameterHandler::OutputStyle::Short |
+                                   ParameterHandler::KeepDeclarationOrder
+                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
+                                    |
+                                   ParameterHandler::KeepOnlyChanged
+                                   #endif
+                                   );
+          pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
           problem.solve();
