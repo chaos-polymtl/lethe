@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-23
+
+### Added
+
+- MINOR Added the capacity to print the parameter from the parameter file that were changed compared to the default parameters as well as the lethe and deal.II commit hash. This is achieved by adding the runtime argument --print-parameters to the command line arguments. [#1255](https://github.com/chaos-polymtl/lethe/pull/1255) and [#1257](https://github.com/chaos-polymtl/lethe/pull/1257)
+
 ## [Master] - 2024-08-09
 
 ### Changed
