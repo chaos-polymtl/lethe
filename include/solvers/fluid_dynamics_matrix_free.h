@@ -124,6 +124,15 @@ public:
   const MGLevelObject<std::shared_ptr<OperatorType>> &
   get_mg_operators() const;
 
+
+  /**
+   * @brief Getter function for all level smoother preconditioners.
+   *
+   * @return Multigrid object that contains all level smoother preconditioners.
+   */
+  const MGLevelObject<std::shared_ptr<PreconditionBase<VectorType>>> &
+  get_mg_smoother_preconditioners() const;
+
 private:
   /**
    * @brief Set up AMG object needed for coarse-grid solver or
@@ -172,6 +181,10 @@ private:
     ls_mg_operators;
   MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_interface_in;
+
+  /// Preconditioners associated to smoothers
+  mutable MGLevelObject<std::shared_ptr<PreconditionBase<VectorType>>>
+    mg_smoother_preconditioners;
 
   /// Smoother object
   std::shared_ptr<

@@ -40,6 +40,7 @@
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
+#include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
@@ -53,10 +54,50 @@ class PreconditionBase
 {
 public:
   /**
+   * @brief Constructor.
+   */
+  PreconditionBase()
+    : comm(MPI_COMM_WORLD)
+    , pcout(std::cout, Utilities::MPI::this_mpi_process(comm) == 0)
+    , timer(pcout, TimerOutput::never, TimerOutput::wall_times)
+  {}
+
+  /**
    * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
    */
   virtual void
   vmult(VectorType &dst, const VectorType &src) const = 0;
+
+  /**
+   * @brief Print timers.
+   */
+  void
+  timer_print() const
+  {
+    timer.print_wall_time_statistics(comm);
+  }
+
+  /**
+   * @brief Reset timers.
+   */
+  void
+  timer_reset() const
+  {
+    timer.reset();
+  }
+
+protected:
+  /// Communicator used for timer output.
+  const MPI_Comm comm;
+
+  /// Stream used for timer output.
+  ConditionalOStream pcout;
+
+  /// Timer.
+  mutable TimerOutput timer;
 };
 
 /**
@@ -68,6 +109,8 @@ class MyDiagonalMatrix : public PreconditionBase<VectorType>
 public:
   /**
    * @brief Constructor.
+
+   * @param[in] diagonal Vector containing the diagonal of the matrix.
    */
   MyDiagonalMatrix(const VectorType &diagonal)
     : diagonal_matrix(diagonal)
@@ -75,6 +118,9 @@ public:
 
   /**
    * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
    */
   void
   vmult(VectorType &dst, const VectorType &src) const override
@@ -115,25 +161,6 @@ public:
   {}
 
   /**
-   * @brief Constructor that also performs initialization.
-   */
-  template <int dim,
-            typename GlobalSparseMatrixType,
-            typename GlobalSparsityPattern,
-            typename Number>
-  PreconditionASM(const DoFHandler<dim>           &dof_handler,
-                  const GlobalSparseMatrixType    &global_sparse_matrix,
-                  const GlobalSparsityPattern     &global_sparsity_pattern,
-                  const AffineConstraints<Number> &constraints)
-    : weighting_type(WeightingType::left)
-  {
-    this->initialize(dof_handler,
-                     global_sparse_matrix,
-                     global_sparsity_pattern,
-                     constraints);
-  }
-
-  /**
    * @brief Initialize inverses of blocks.
    */
   template <int dim,
@@ -141,11 +168,17 @@ public:
             typename GlobalSparsityPattern,
             typename Number>
   void
-  initialize(const DoFHandler<dim>           &dof_handler,
-             const GlobalSparseMatrixType    &global_sparse_matrix,
-             const GlobalSparsityPattern     &global_sparsity_pattern,
-             const AffineConstraints<Number> &constraints)
+  initialize(
+    const DoFHandler<dim>           &dof_handler,
+    const GlobalSparseMatrixType    &global_sparse_matrix,
+    const GlobalSparsityPattern     &global_sparsity_pattern,
+    const AffineConstraints<Number> &constraints,
+    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
   {
+    this->timer.enter_subsection("asm::indices");
+
+    std::vector<std::vector<types::global_dof_index>> patches;
+
     const auto add_indices = [&](const auto &local_dof_indices) {
       std::vector<types::global_dof_index> local_dof_indices_temp;
 
@@ -170,14 +203,36 @@ public:
       }
 
     IndexSet ghost_dofs(dof_handler.locally_owned_dofs().size());
-    for (const auto &indices : this->patches)
+    for (const auto &indices : patches)
       ghost_dofs.add_indices(indices.begin(), indices.end());
 
-    const auto partition = std::make_shared<Utilities::MPI::Partitioner>(
-      dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
+    std::shared_ptr<const Utilities::MPI::Partitioner> partition =
+      std::make_shared<Utilities::MPI::Partitioner>(
+        dof_handler.locally_owned_dofs(), ghost_dofs, MPI_COMM_WORLD);
 
-    src.reinit(partition);
-    dst.reinit(partition);
+    if (dealii::internal::is_partitioner_contained(partition, partitioner))
+      {
+        partition = partitioner;
+      }
+    else
+      {
+        src_internal.reinit(partition);
+        dst_internal.reinit(partition);
+      }
+
+    // convert indices to local ones
+    this->patches.resize(patches.size());
+    for (unsigned int c = 0; c < patches.size(); ++c)
+      {
+        this->patches[c].resize(0);
+        this->patches[c].reserve(patches[c].size());
+
+        for (const auto &i : patches[c])
+          this->patches[c].emplace_back(partition->global_to_local(i));
+      }
+
+    this->timer.leave_subsection("asm::indices");
+    this->timer.enter_subsection("asm::restrict");
 
     std::vector<FullMatrix<Number>> blocks;
 
@@ -185,6 +240,9 @@ public:
                                                  global_sparsity_pattern,
                                                  patches,
                                                  blocks);
+
+    this->timer.leave_subsection("asm::restrict");
+    this->timer.enter_subsection("asm::invert");
 
     this->blocks.resize(blocks.size());
 
@@ -195,23 +253,14 @@ public:
         this->blocks[b] = blocks[b];
         this->blocks[b].compute_lu_factorization();
       }
-  }
 
-  /**
-   * @brief Apply preconditioner.
-   */
-  void
-  vmult(VectorType &dst_, const VectorType &src_) const override
-  {
-    dst = 0.0;
-    src.copy_locally_owned_data_from(src_);
-    src.update_ghost_values();
+    this->timer.leave_subsection("asm::invert");
 
-    Vector<double> vector_src, vector_dst, vector_weights;
-
-    if ((weights.size() == 0) && (weighting_type != WeightingType::none))
+    if (weighting_type != WeightingType::none)
       {
-        weights.reinit(src);
+        this->timer.enter_subsection("asm::weight");
+        Vector<double> vector_weights;
+        weights.reinit(partition);
 
         for (unsigned int c = 0; c < patches.size(); ++c)
           {
@@ -230,7 +279,31 @@ public:
           i = (weighting_type == WeightingType::symm) ? std::sqrt(1.0 / i) :
                                                         (1.0 / i);
         weights.update_ghost_values();
+
+        this->timer.leave_subsection("asm::weight");
       }
+  }
+
+  /**
+   * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  void
+  vmult(VectorType &dst, const VectorType &src) const override
+  {
+    this->timer.enter_subsection("asm::vmult");
+
+    const auto &src_ptr = (src_internal.size() != 0) ? src_internal : src;
+    auto       &dst_ptr = (dst_internal.size() != 0) ? dst_internal : dst;
+
+    dst_ptr = 0.0;
+    if (src_internal.size() != 0)
+      src_internal.copy_locally_owned_data_from(src);
+    src_ptr.update_ghost_values();
+
+    Vector<double> vector_src, vector_dst, vector_weights;
 
     for (unsigned int c = 0; c < patches.size(); ++c)
       {
@@ -242,11 +315,11 @@ public:
           vector_weights.reinit(dofs_per_cell);
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          vector_src[i] = src[patches[c][i]];
+          vector_src[i] = src_ptr.local_element(patches[c][i]);
 
         if (weighting_type != WeightingType::none)
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
-            vector_weights[i] = weights[patches[c][i]];
+            vector_weights[i] = weights.local_element(patches[c][i]);
 
         if (weighting_type == WeightingType::symm ||
             weighting_type == WeightingType::right)
@@ -262,17 +335,21 @@ public:
             vector_dst[i] *= vector_weights[i];
 
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          dst[patches[c][i]] += vector_dst[i];
+          dst_ptr.local_element(patches[c][i]) += vector_dst[i];
       }
 
-    src.zero_out_ghost_values();
-    dst.compress(VectorOperation::add);
-    dst_.copy_locally_owned_data_from(dst);
+    src_ptr.zero_out_ghost_values();
+    dst_ptr.compress(VectorOperation::add);
+
+    if (dst_internal.size() != 0)
+      dst.copy_locally_owned_data_from(dst_internal);
+
+    this->timer.leave_subsection("asm::vmult");
   }
 
 private:
   /// DoF indices of patches.
-  std::vector<std::vector<types::global_dof_index>> patches;
+  std::vector<std::vector<unsigned int>> patches;
 
   /// Inverse of patch matrices.
   std::vector<LAPACKFullMatrix<Number>> blocks;
@@ -284,10 +361,10 @@ private:
   const WeightingType weighting_type;
 
   /// Internal destination vector with correct ghosting.
-  mutable VectorType dst;
+  mutable VectorType dst_internal;
 
   /// Internal source vector with correct ghosting.
-  mutable VectorType src;
+  mutable VectorType src_internal;
 };
 
 /**
@@ -1181,6 +1258,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
     }
   else
     AssertThrow(false, ExcNotImplemented());
+
+  mg_smoother_preconditioners.resize(this->minlevel, this->maxlevel);
 }
 
 template <int dim>
@@ -1284,7 +1363,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           VectorType diagonal_vector;
           this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
-          smoother_data[level].preconditioner =
+          mg_smoother_preconditioners[level] =
             std::make_shared<MyDiagonalMatrix<VectorType>>(diagonal_vector);
         }
       else if (this->simulation_parameters.linear_solver
@@ -1293,17 +1372,24 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                Parameters::LinearSolver::MultigridSmootherPreconditionerType::
                  AdditiveSchwarzMethod)
         {
-          smoother_data[level].preconditioner =
-            std::make_shared<PreconditionASM<VectorType>>(
-              this->mg_operators[level]
-                ->get_system_matrix_free()
-                .get_dof_handler(),
-              this->mg_operators[level]->get_system_matrix(),
-              this->mg_operators[level]->get_sparsity_pattern(),
-              this->mg_operators[level]
-                ->get_system_matrix_free()
-                .get_affine_constraints());
+          if (mg_smoother_preconditioners[level] == nullptr)
+            mg_smoother_preconditioners[level] =
+              std::make_shared<PreconditionASM<VectorType>>();
+
+          static_cast<PreconditionASM<VectorType> *>(
+            mg_smoother_preconditioners[level].get())
+            ->initialize(this->mg_operators[level]
+                           ->get_system_matrix_free()
+                           .get_dof_handler(),
+                         this->mg_operators[level]->get_system_matrix(),
+                         this->mg_operators[level]->get_sparsity_pattern(),
+                         this->mg_operators[level]
+                           ->get_system_matrix_free()
+                           .get_affine_constraints(),
+                         this->mg_operators[level]->get_vector_partitioner());
         }
+
+      smoother_data[level].preconditioner = mg_smoother_preconditioners[level];
 
       smoother_data[level].n_iterations =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1724,6 +1810,14 @@ const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<dim, double>>> &
 MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
 {
   return this->mg_operators;
+}
+
+template <int dim>
+const MGLevelObject<std::shared_ptr<
+  PreconditionBase<typename MFNavierStokesPreconditionGMG<dim>::VectorType>>> &
+MFNavierStokesPreconditionGMG<dim>::get_mg_smoother_preconditioners() const
+{
+  return this->mg_smoother_preconditioners;
 }
 
 template <int dim>
@@ -2524,6 +2618,21 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
 
           // Reset timer if output is set to every iteration
           mg_operators[level]->timer.reset();
+        }
+
+      auto mg_smoother_preconditioners =
+        this->gmg_preconditioner->get_mg_smoother_preconditioners();
+      for (unsigned int level = mg_operators.min_level();
+           level <= mg_operators.max_level();
+           level++)
+        {
+          announce_string(this->pcout,
+                          "Preconditioner level " + std::to_string(level) +
+                            " times");
+          mg_smoother_preconditioners[level]->timer_print();
+
+          // Reset timer if output is set to every iteration
+          mg_smoother_preconditioners[level]->timer_reset();
         }
 
       // Reset timers if output is set to every iteration
