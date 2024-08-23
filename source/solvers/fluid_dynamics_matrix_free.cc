@@ -64,6 +64,9 @@ public:
 
   /**
    * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
    */
   virtual void
   vmult(VectorType &dst, const VectorType &src) const = 0;
@@ -106,6 +109,8 @@ class MyDiagonalMatrix : public PreconditionBase<VectorType>
 public:
   /**
    * @brief Constructor.
+
+   * @param[in] diagonal Vector containing the diagonal of the matrix.
    */
   MyDiagonalMatrix(const VectorType &diagonal)
     : diagonal_matrix(diagonal)
@@ -113,6 +118,9 @@ public:
 
   /**
    * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
    */
   void
   vmult(VectorType &dst, const VectorType &src) const override
@@ -153,28 +161,6 @@ public:
   {}
 
   /**
-   * @brief Constructor that also performs initialization.
-   */
-  template <int dim,
-            typename GlobalSparseMatrixType,
-            typename GlobalSparsityPattern,
-            typename Number>
-  PreconditionASM(
-    const DoFHandler<dim>           &dof_handler,
-    const GlobalSparseMatrixType    &global_sparse_matrix,
-    const GlobalSparsityPattern     &global_sparsity_pattern,
-    const AffineConstraints<Number> &constraints,
-    const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
-    : weighting_type(WeightingType::left)
-  {
-    this->initialize(dof_handler,
-                     global_sparse_matrix,
-                     global_sparsity_pattern,
-                     constraints,
-                     partitioner);
-  }
-
-  /**
    * @brief Initialize inverses of blocks.
    */
   template <int dim,
@@ -189,7 +175,7 @@ public:
     const AffineConstraints<Number> &constraints,
     const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
   {
-    this->timer.enter_subsection("asm::inidices");
+    this->timer.enter_subsection("asm::indices");
 
     std::vector<std::vector<types::global_dof_index>> patches;
 
@@ -245,7 +231,7 @@ public:
           this->patches[c].emplace_back(partition->global_to_local(i));
       }
 
-    this->timer.leave_subsection("asm::inidices");
+    this->timer.leave_subsection("asm::indices");
     this->timer.enter_subsection("asm::restrict");
 
     std::vector<FullMatrix<Number>> blocks;
@@ -300,6 +286,9 @@ public:
 
   /**
    * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
    */
   void
   vmult(VectorType &dst, const VectorType &src) const override
