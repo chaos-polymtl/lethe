@@ -56,11 +56,10 @@ main(int argc, char *argv[])
                                  ParameterHandler::OutputStyle::PRM |
                                    ParameterHandler::OutputStyle::Short |
                                    ParameterHandler::KeepDeclarationOrder
-                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
-                                    |
-                                   ParameterHandler::KeepOnlyChanged
-                                   #endif
-                                   );
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+                                   | ParameterHandler::KeepOnlyChanged
+#endif
+            );
           pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<2> problem(NSparam);
@@ -81,11 +80,10 @@ main(int argc, char *argv[])
                                  ParameterHandler::OutputStyle::PRM |
                                    ParameterHandler::OutputStyle::Short |
                                    ParameterHandler::KeepDeclarationOrder
-                                   #if DEAL_II_VERSION_GTE(9, 7, 0)
-                                    |
-                                   ParameterHandler::KeepOnlyChanged
-                                   #endif
-                                   );
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+                                   | ParameterHandler::KeepOnlyChanged
+#endif
+            );
           pcout << std::endl << std::endl;
 
           FluidDynamicsMatrixFree<3> problem(NSparam);
