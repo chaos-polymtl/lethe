@@ -20,6 +20,13 @@ find_package(deal.II 9.5.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
 
+deal_ii_query_git_information(LETHE)
+
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/core/revision.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/include/core/revision.h
+)
+
 project(lethe VERSION 0.1 LANGUAGES CXX)
 
 # Check for deal.II features after the PROJECT call — but still as close
@@ -131,6 +138,8 @@ endif()
 
 
 add_subdirectory(source)
+target_include_directories(lethe-solvers PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+
 add_subdirectory(applications)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
