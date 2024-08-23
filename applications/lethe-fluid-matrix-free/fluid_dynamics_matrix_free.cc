@@ -15,6 +15,21 @@
 
 #include "solvers/fluid_dynamics_matrix_free.h"
 
+#include <core/revision.h>
+
+#include <deal.II/base/revision.h>
+
+std::string
+concatenate_strings(const int argc, char **argv)
+{
+  std::string result = std::string(argv[0]);
+
+  for (int i = 1; i < argc; ++i)
+    result = result + " " + std::string(argv[i]);
+
+  return result;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -41,6 +56,19 @@ main(int argc, char *argv[])
                                (Utilities::MPI::this_mpi_process(
                                   MPI_COMM_WORLD) == 0) &&
                                  print_parameters);
+
+      if (print_parameters)
+        {
+          pcout << "Running: " << concatenate_strings(argc, argv) << std::endl;
+          pcout << "  - deal.II (branch: " << DEAL_II_GIT_BRANCH
+                << "; revision: " << DEAL_II_GIT_REVISION
+                << "; short: " << DEAL_II_GIT_SHORTREV << ")" << std::endl;
+          pcout << "  - Lethe (branch: " << LETHE_GIT_BRANCH
+                << "; revision: " << LETHE_GIT_REVISION
+                << "; short: " << LETHE_GIT_SHORTREV << ")" << std::endl;
+          pcout << std::endl;
+          pcout << std::endl;
+        }
 
       if (dim == 2)
         {
