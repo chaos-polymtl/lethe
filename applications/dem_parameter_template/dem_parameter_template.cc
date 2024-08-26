@@ -14,20 +14,22 @@ main()
         DEMSolverParameters<2> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-2d.prm");
+#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
-
-        std::ofstream output_xml("dem-2d.xml");
-        prm.print_parameters(output_xml, prm.XML);
+#else
+        prm.print_parameters(output_prm, prm.Text);
+#endif
       }
       {
         ParameterHandler       prm;
         DEMSolverParameters<3> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-3d.prm");
+#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
-
-        std::ofstream output_xml("dem-3d.xml");
-        prm.print_parameters(output_xml, prm.XML);
+#else
+        prm.print_parameters(output_prm, prm.Text);
+#endif
       }
     }
   catch (std::exception &exc)
