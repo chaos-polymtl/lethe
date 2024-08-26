@@ -200,7 +200,7 @@ Lethe supports two types of geometric multigrid preconditioners that only differ
 
 * Local smoothing ``lsmg``: uses the refinement hierarchy to create the multigrid levels and to perform smoothing refinement level by refinement level, i.e., cells of less refined parts of the mesh are skipped.
 
-Different parameters for the main components of the two geometric multigrid algorithms can be specified. The parameters can be general or can belong to either the smoother or the coarse-grid solver. Lethe supports different coarse-grid solvers: ``gmres``, ``amg``, ``ilu`` and ``direct``. The ``gmres`` coarse-grid solver supports two preconditioners ``amg`` and ``ilu``. 
+Different parameters for the main components of the two geometric multigrid algorithms can be specified:
 
 .. code-block:: text
 
@@ -212,9 +212,10 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg enable hessians in jacobian = true
 
     # Relaxation smoother parameters
-    set mg smoother iterations     = 10
-    set mg smoother relaxation     = 0.5
-    set mg smoother eig estimation = false #if set to true, previous parameter is not used
+    set mg smoother iterations          = 10
+    set mg smoother relaxation          = 0.5
+    set mg smoother eig estimation      = false #if set to true, previous parameter is not used
+    set mg smoother preconditioner type = inverse diagonal
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 10
@@ -248,11 +249,13 @@ Different parameters for the main components of the two geometric multigrid algo
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1
 
-.. tip::
-  The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
+* The ``mg verbosity`` parameters controls enables to display more information related to the multigrid algorithm. If it is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
 
-.. tip::
-  If ``mg verbosity`` is set to ``verbose``, the information about the levels (cells and degrees of freedom) and the number of iterations of the coarse grid solver are displayed. If this parameter is set to ``extra verbose``, apart from all the previous information, several additional tables with the times related to multigrid are also displayed. 
+* The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
+
+* The multigrid algorithms use a relaxation scheme as smoother. There are two types of preconditioners supported for this scheme: ``inverse diagonal`` and ``additive schwarz method``. The former is cheaper than the latter one. In our experience, the first one should work fine for transient problems, while the second one is more robust in the case of challenging steady-state problems. We recommend to always use eigenvalue estimation to calculate the relaxation parameter by setting ``set mg smoother eig estimation = true``.
+
+* Different coarse grid solvers are supported: ``direct``, ``amg``, ``ilu`` and ``gmres`` preconditioned by either ``amg`` or ``ilu``. For all of them with exception of the direct solver there are several parameters that can be set in the corresponding section.
 
 .. tip::
   If your coarse-grid level is small enough, it might be worth it for some problems to set ``mg amg use default parameters = true`` to use a direct solver. On the other hand, if high order elements are used, it might be useful to set ``set mg coarse grid use fe q iso q1 = true`` to solve the coarse grid problem using `FE_Q_iso_Q1 elements <https://www.dealii.org/developer/doxygen/deal.II/classFE__Q__iso__Q1.html>`_.
