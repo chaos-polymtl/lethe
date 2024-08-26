@@ -44,7 +44,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
   module load trilinos/15.1.1
   module load parmetis/4.0.3
   module load muparser/2.3.4
-  module lost p4est/2.8.6
+  module load p4est/2.8.6
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
 
@@ -165,7 +165,7 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   module load trilinos/15.1.1
   module load parmetis/4.0.3
   module load muparser/2.3.4
-  module lost p4est/2.8.6
+  module load p4est/2.8.6
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
   export OMP_NUM_THREADS=1  # This prevents Trilinos from using multithreading, which could lead to a drop in performance. 
