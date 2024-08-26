@@ -262,16 +262,16 @@ public:
         Vector<double> vector_weights;
         weights.reinit(partition);
 
-        for (unsigned int c = 0; c < patches.size(); ++c)
+        for (const auto &patch : patches)
           {
-            const unsigned int dofs_per_cell = patches[c].size();
+            const unsigned int dofs_per_cell = patch.size();
             vector_weights.reinit(dofs_per_cell);
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
               vector_weights[i] = 1.0;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              weights[patches[c][i]] += vector_weights[i];
+              weights[patch[i]] += vector_weights[i];
           }
 
         weights.compress(VectorOperation::add);
@@ -516,7 +516,7 @@ namespace dealii
         dst = dst_;
       }
     } // namespace MGCoarseGridApplyPreconditioner
-  }   // namespace internal
+  } // namespace internal
 
 
   template <class VectorType, class PreconditionerType>
