@@ -14,7 +14,7 @@ main()
         DEMSolverParameters<2> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-2d.prm");
-        prm.print_parameters(output_prm, prm.Text);
+        prm.print_parameters(output_prm, prm.DefaultStyle);
 
         std::ofstream output_xml("dem-2d.xml");
         prm.print_parameters(output_xml, prm.XML);
@@ -24,7 +24,7 @@ main()
         DEMSolverParameters<3> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-3d.prm");
-        prm.print_parameters(output_prm, prm.Text);
+        prm.print_parameters(output_prm, prm.DefaultStyle);
 
         std::ofstream output_xml("dem-3d.xml");
         prm.print_parameters(output_xml, prm.XML);
