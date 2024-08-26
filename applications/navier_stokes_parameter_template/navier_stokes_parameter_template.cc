@@ -19,11 +19,7 @@ main()
 
         nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-2d.prm");
-        prm.print_parameters(output_prm, prm.Text);
-
-        std::ofstream output_xml("templa"
-                                 "te-2d.xml");
-        prm.print_parameters(output_xml, prm.XML);
+        prm.print_parameters(output_prm, prm.DefaultStyle);
       }
       {
         ParameterHandler        prm;
@@ -31,10 +27,7 @@ main()
 
         nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-3d.prm");
-        prm.print_parameters(output_prm, prm.Text);
-
-        std::ofstream output_xml("template-3d.xml");
-        prm.print_parameters(output_xml, prm.XML);
+        prm.print_parameters(output_prm, prm.DefaultStyle);
       }
     }
   catch (std::exception &exc)
