@@ -74,14 +74,14 @@ public:
    * @param[in] fe Describes the FE system for the vector-valued problem.
    */
   MFNavierStokesPreconditionGMG(
-    const SimulationParameters<dim>         &simulation_parameters,
-    const DoFHandler<dim>                   &dof_handler,
-    const DoFHandler<dim>                   &dof_handler_fe_q_iso_q1,
-    const std::shared_ptr<Mapping<dim>>     &mapping,
-    const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
-    const std::shared_ptr<Function<dim>>     forcing_function,
-    const std::shared_ptr<SimulationControl> simulation_control,
-    const std::shared_ptr<FESystem<dim>>     fe);
+    const SimulationParameters<dim>          &simulation_parameters,
+    const DoFHandler<dim>                    &dof_handler,
+    const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
+    const std::shared_ptr<Mapping<dim>>      &mapping,
+    const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+    const std::shared_ptr<Function<dim>>      forcing_function,
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const std::shared_ptr<FESystem<dim>>      fe);
 
   /**
    * @brief Initialize smoother, coarse grid solver and multigrid object
@@ -95,9 +95,9 @@ public:
    * derivatives of previous solutions.
    */
   void
-  initialize(const std::shared_ptr<SimulationControl> simulation_control,
-             FlowControl<dim>                        &flow_control,
-             const VectorType                        &present_solution,
+  initialize(const std::shared_ptr<SimulationControl> &simulation_control,
+             FlowControl<dim>                         &flow_control,
+             const VectorType                         &present_solution,
              const VectorType &time_derivative_previous_solutions);
 
   /**
