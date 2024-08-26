@@ -34,7 +34,7 @@ On Niagara, Beluga, Narval, Graham or Cedar
 All operations must be performed on login nodes.
 
 
-Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules and set the appropriate environment variables :
+Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules and set the appropriate environment variables:
 
 .. code-block:: text
   :class: copy-button
@@ -61,6 +61,10 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
   :class: copy-button
 
   cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -DCMAKE_SKIP_INSTALL_RPATH=ON -DDEAL_II_COMPONENT_EXAMPLES=OFF -G Ninja
+
+.. tip::
+
+  If you are using Niagara, you can add ``-DCMAKE_CXX_FLAGS="-march=skylake-avx512"`` to enable AVX-512 instructions.
 
 and:
 
@@ -89,7 +93,7 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
   :class: copy-button
 
   cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -G Ninja
-  ninja install -j10
+  ninja -j10 install
 
 
 Installing Numdiff to Enable Tests
