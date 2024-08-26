@@ -1342,8 +1342,8 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-        update_solution_and_constraints(previous_solutions[p]);
+      for (auto &previous_solution : previous_solutions)
+        update_solution_and_constraints(previous_solution);
     }
 
   // Assemble matrix and solve the system for interface sharpening
