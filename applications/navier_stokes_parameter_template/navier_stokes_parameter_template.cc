@@ -22,7 +22,7 @@ main()
 #if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
 #else
-        prm.print_parameters(output_prm, prm.text);
+        prm.print_parameters(output_prm, prm.Text);
 #endif
       }
       {
@@ -34,7 +34,7 @@ main()
 #if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
 #else
-        prm.print_parameters(output_prm, prm.text);
+        prm.print_parameters(output_prm, prm.Text);
 #endif
       }
     }
