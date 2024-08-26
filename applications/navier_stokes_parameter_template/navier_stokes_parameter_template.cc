@@ -19,7 +19,11 @@ main()
 
         nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-2d.prm");
+#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
+#else
+        prm.print_parameters(output_prm, prm.text);
+#endif
       }
       {
         ParameterHandler        prm;
@@ -27,7 +31,11 @@ main()
 
         nsparam.declare(prm, size_of_subsections);
         std::ofstream output_prm("template-3d.prm");
+#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.DefaultStyle);
+#else
+        prm.print_parameters(output_prm, prm.text);
+#endif
       }
     }
   catch (std::exception &exc)
