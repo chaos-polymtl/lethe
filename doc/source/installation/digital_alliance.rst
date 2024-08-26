@@ -33,24 +33,27 @@ On Niagara, Beluga, Narval, Graham or Cedar
 
 All operations must be performed on login nodes.
 
-.. warning::
- If on **Niagara**, this additional module is needed beforehand: ``module load CCEnv``.
 
-Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
+Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules and set the appropriate environment variables:
 
 .. code-block:: text
   :class: copy-button
-
+  
   module load CCEnv #if on Niagara
-  module load StdEnv/2020
-  module load cmake/3.23.1
-  module load gcc/9.3.0
-  module load openmpi/4.0.3
-  module load trilinos/13.4.1
+  module load StdEnv/2023
+  module load trilinos/15.1.1
   module load parmetis/4.0.3
-  module load p4est/2.2
-  module load opencascade/7.5.2
-  module load muparser/2.3.2
+  module load muparser/2.3.4
+  module load p4est/2.8.6
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTMUPARSER/lib/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
+
+  export DEAL_II_DIR=$HOME/dealii/inst/
+  export PATH=$PATH:$HOME/lethe/inst/bin/
 
 Then, we can clone and compile ``dealii``. Although Lethe always supports the master branch of deal.II, we maintain an identical deal.II fork on the lethe repository. This fork is always tested to make sure it works with lethe. To clone the deal.II fork github repository, execute in ``$HOME/dealii`` directory:
 
@@ -64,18 +67,20 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../dealii -DDEAL_II_COMPONENT_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DDEAL_II_WITH_OPENCASCADE=ON -DOPENCASCADE_DIR=$EBROOTOPENCASCADE -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=$EBROOTTRILINOS -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=$EBROOTP4EST -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=$EBROOTPARMETIS -DCMAKE_INSTALL_PREFIX=../inst -DTrilinos_FIND_COMPONENTS="Pike;PikeImplicit;PikeBlackBox;TrilinosCouplings;Panzer;PanzerMiniEM;PanzerAdaptersSTK;PanzerDiscFE;PanzerDofMgr;PanzerCore;Piro;ROL;Stokhos;Tempus;Rythmos;ShyLU;ShyLU_DD;ShyLU_DDCommon;ShyLU_DDFROSch;ShyLU_DDBDDC;Zoltan2;Zoltan2Sphynx;MueLu;Moertel;NOX;Phalanx;Percept;STK;STKExprEval;STKDoc_tests;STKUnit_tests;STKBalance;STKTools;STKTransfer;STKSearchUtil;STKSearch;STKUnit_test_utils;STKNGP_TEST;STKIO;STKMesh;STKTopology;STKSimd;STKUtil;STKMath;Compadre;Intrepid2;Intrepid;Teko;FEI;Stratimikos;Ifpack2;Anasazi;Komplex;SEACAS;SEACASEx2ex1v2;SEACASTxtexo;SEACASNumbers;SEACASNemspread;SEACASNemslice;SEACASMat2exo;SEACASMapvar-kd;SEACASMapvar;SEACASMapvarlib;SEACASExplore;SEACASGrepos;SEACASGenshell;SEACASGen3D;SEACASGjoin;SEACASFastq;SEACASEx1ex2v2;SEACASExo_format;SEACASExotxt;SEACASExomatlab;SEACASExodiff;SEACASExo2mat;SEACASEpu;SEACASEjoin;SEACASConjoin;SEACASBlot;SEACASAprepro;SEACASAlgebra;SEACASPLT;SEACASSVDI;SEACASSuplibCpp;SEACASSuplibC;SEACASSuplib;SEACASSupes;SEACASAprepro_lib;SEACASChaco;SEACASIoss;SEACASNemesis;SEACASExoIIv2for32;SEACASExodus_for;SEACASExodus;Amesos2;ShyLU_Node;ShyLU_NodeTacho;ShyLU_NodeHTS;Belos;ML;Ifpack;Zoltan2Core;Pamgen;Amesos;Galeri;AztecOO;Pliris;Isorropia;Xpetra;Thyra;ThyraTpetraAdapters;ThyraEpetraExtAdapters;ThyraEpetraAdapters;ThyraCore;Domi;TrilinosSS;Tpetra;TpetraCore;TpetraTSQR;TpetraClassic;EpetraExt;Triutils;Shards;Zoltan;Epetra;MiniTensor;Sacado;RTOp;KokkosKernels;Teuchos;TeuchosKokkosComm;TeuchosKokkosCompat;TeuchosRemainder;TeuchosNumerics;TeuchosComm;TeuchosParameterList;TeuchosParser;TeuchosCore;Kokkos;KokkosAlgorithms;KokkosContainers;KokkosCore;Gtest;TrilinosATDMConfigTests;TrilinosFrameworkTests"
+  cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF -G Ninja
 
-This command is absolutely barbaric, but it is required to prevent the usage of the Zadelus library within Trilinos 13.0.1.
+.. tip::
+
+  If you are using Niagara, you can add ``-DCMAKE_CXX_FLAGS="-march=skylake-avx512"`` to enable AVX-512 instructions.
 
 and:
 
 .. code-block:: text
   :class: copy-button
 
-  make -j8 install
+  ninja -j10 install
 
-The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
+The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 10 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. 
 
 Installing Lethe
 ----------------
@@ -94,8 +99,8 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
 .. code-block:: text
   :class: copy-button
 
-  cmake ../lethe  -DDEAL_II_DIR=../../dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -DBUILD_TESTING=OFF
-  make install -j8
+  cmake ../lethe  -DDEAL_II_DIR=$HOME/dealii/inst -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst -G Ninja
+  ninja -j10 install
 
 
 Installing Numdiff to Enable Tests
@@ -163,16 +168,17 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   :class: copy-button
 
   module load CCEnv #if on Niagara
-  module load StdEnv/2020
-  module load cmake/3.23.1
-  module load gcc/9.3.0
-  module load openmpi/4.0.3
-  module load trilinos/13.4.1
+  module load StdEnv/2023
+  module load trilinos/15.1.1
   module load parmetis/4.0.3
-  module load p4est/2.2
-  module load opencascade/7.5.2
-  module load muparser/2.3.2
-
+  module load muparser/2.3.4
+  module load p4est/2.8.6
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTTRILINOS/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTMUPARSER/lib/
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
   export OMP_NUM_THREADS=1  # This prevents Trilinos from using multithreading, which could lead to a drop in performance. 
