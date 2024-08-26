@@ -516,7 +516,7 @@ namespace dealii
         dst = dst_;
       }
     } // namespace MGCoarseGridApplyPreconditioner
-  }   // namespace internal
+  } // namespace internal
 
 
   template <class VectorType, class PreconditionerType>
@@ -1376,7 +1376,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             mg_smoother_preconditioners[level] =
               std::make_shared<PreconditionASM<VectorType>>();
 
-          static_cast<PreconditionASM<VectorType> *>(
+          dynamic_cast<PreconditionASM<VectorType> *>(
             mg_smoother_preconditioners[level].get())
             ->initialize(this->mg_operators[level]
                            ->get_system_matrix_free()
