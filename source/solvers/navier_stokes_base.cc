@@ -2692,8 +2692,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       local_sum = 0.0;
       local_max = std::numeric_limits<double>::lowest();
 
-      for (const auto &j : index_set_pressure[0])
-
+      for (const auto &j : index_set_pressure[dim])
         {
           double dof_newton_update = newton_update[j];
           local_sum += dof_newton_update * dof_newton_update;
