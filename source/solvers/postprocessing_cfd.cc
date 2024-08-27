@@ -260,10 +260,7 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
     {
       if (cell->is_locally_owned())
         {
-          if (dim == 2)
-            h = std::sqrt(4. * cell->measure() / M_PI) / degree;
-          else if (dim == 3)
-            h = pow(6 * cell->measure() / M_PI, 1. / 3.) / degree;
+          h = compute_cell_diameter<dim>(cell->measure(), degree);
           fe_values.reinit(cell);
           fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
