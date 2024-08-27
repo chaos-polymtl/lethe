@@ -1647,9 +1647,19 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
               this->dof_handler, *this->mg_intermediate, *this->mg_transfer_gc);
 
-          // TODO: introduce parameters
+          const int max_iterations = this->simulation_parameters.linear_solver
+                                       .at(PhysicsID::fluid_dynamics)
+                                       .mg_gmres_max_iterations;
+          const double tolerance = this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_gmres_tolerance;
+          const double reduce = this->simulation_parameters.linear_solver
+                                  .at(PhysicsID::fluid_dynamics)
+                                  .mg_gmres_reduce;
+
           this->coarse_grid_solver_control_intermediate =
-            std::make_shared<ReductionControl>(1000, 1e-20, 1e-2, false, false);
+            std::make_shared<ReductionControl>(
+              max_iterations, tolerance, reduce, false, false);
 
           this->coarse_grid_solver_intermediate =
             std::make_shared<SolverGMRES<VectorType>>(
