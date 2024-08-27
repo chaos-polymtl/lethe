@@ -49,6 +49,7 @@ class NavierStokesOperatorBase : public Subscriptor
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator = FEFaceEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
   using value_type       = number;
   using size_type        = VectorizedArray<number>;
@@ -77,19 +78,22 @@ public:
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
+   * @param[in] enable_face_terms Flag to enable face terms in the
+   * calculation of the residual and the jacobian
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                       &mapping,
-    const DoFHandler<dim>                    &dof_handler,
-    const AffineConstraints<number>          &constraints,
-    const Quadrature<dim>                    &quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const double                              kinematic_viscosity,
-    const StabilizationType                   stabilization,
-    const unsigned int                        mg_level,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const bool                               &enable_hessians_jacobian,
-    const bool                               &enable_hessians_residual);
+    const Mapping<dim>                                  &mapping,
+    const DoFHandler<dim>                               &dof_handler,
+    const AffineConstraints<number>                     &constraints,
+    const Quadrature<dim>                               &quadrature,
+    const std::shared_ptr<Function<dim>>                 forcing_function,
+    const double                                         kinematic_viscosity,
+    const StabilizationType                              stabilization,
+    const unsigned int                                   mg_level,
+    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const bool &enable_hessians_jacobian,
+    const bool &enable_hessians_residual);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -111,19 +115,23 @@ public:
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
+   * @param[in] enable_face_terms Flag to enable face terms in the
+   * calculation of the residual and the jacobian
    */
   void
-  reinit(const Mapping<dim>                       &mapping,
-         const DoFHandler<dim>                    &dof_handler,
-         const AffineConstraints<number>          &constraints,
-         const Quadrature<dim>                    &quadrature,
-         const std::shared_ptr<Function<dim>>      forcing_function,
-         const double                              kinematic_viscosity,
-         const StabilizationType                   stabilization,
-         const unsigned int                        mg_level,
-         const std::shared_ptr<SimulationControl> &simulation_control,
-         const bool                               &enable_hessians_jacobian,
-         const bool                               &enable_hessians_residual);
+  reinit(
+    const Mapping<dim>                                  &mapping,
+    const DoFHandler<dim>                               &dof_handler,
+    const AffineConstraints<number>                     &constraints,
+    const Quadrature<dim>                               &quadrature,
+    const std::shared_ptr<Function<dim>>                 forcing_function,
+    const double                                         kinematic_viscosity,
+    const StabilizationType                              stabilization,
+    const unsigned int                                   mg_level,
+    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const bool &enable_hessians_jacobian,
+    const bool &enable_hessians_residual);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -342,6 +350,58 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
+  /**
+   * @brief Loop over all internal face batches within certain range and perform a face
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values. The current implementation does nothing for CG methods.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the cell batch.
+   */
+
+  void
+  do_internal_face_integral_range(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+  /**
+   * @brief Loop over all boundary face batches within certain range and perform a face
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values. This is used to weakly impose dirichlet boundary conditions.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the cell batch.
+   */
+
+  template <bool assemble_residual>
+  void
+  do_weak_dirichlet_boundary_range(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+
+  /**
+   * @brief Carry out the integration of boundary face integrals
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * at quadrature points and perform cell integrations.
+   */
+  template <bool assemble_residual>
+  void
+  do_local_weak_dirichlet_bc(FEFaceIntegrator &integrator) const;
+
 
   /**
    * @brief Interface to function in charge of computing the residual using a cell
@@ -444,6 +504,16 @@ protected:
   std::shared_ptr<SimulationControl> simulation_control;
 
   /**
+   * @brief  Boundary conditions object to impose the correct boundary conditions. This object
+   * is only used to impose boundary conditions that appear in the weak form as
+   * face terms (Weak Dirichlet boundary conditions and, eventually, outlets).
+   * However, the entire boundary_conditions object is stored instead of trying
+   * to isolate which parameters are used since many of them are used in the
+   * initialization of the boundary conditions.
+   */
+  BoundaryConditions::NSBoundaryConditions<dim> boundary_conditions;
+
+  /**
    * @brief Flag to turn hessian terms from jacobian on or off.
    *
    */
@@ -460,6 +530,14 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
+
+  /**
+   * @brief Flag to turn the calculation of face term on or off.
+   * This is used for weakly imposed Dirichlet boundary conditions or outlets
+   * (not implemented yet).
+   *
+   */
+  bool enable_face_terms;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
@@ -492,6 +570,23 @@ protected:
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     time_derivatives_previous_solutions;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the previous newton step at the faces.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    nonlinear_previous_face_values;
+
+  /**
+   * @brief  Table with correct alignment for vectorization to store the gradients
+   * of the previous newton step at the faces.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    nonlinear_previous_face_gradient;
+
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
@@ -580,6 +675,7 @@ class NavierStokesStabilizedOperator
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator = FEFaceEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
   NavierStokesStabilizedOperator();
