@@ -388,7 +388,7 @@ private:
    * @brief Writes the tracer flow rates to an output file
    */
   void
-  write_tracer_flow_rates(const std::vector<double> tracer_flow_rate_vector);
+  write_tracer_flow_rates(const std::vector<double> &tracer_flow_rate_vector);
 
   /**
    * @brief Writes the tracer statistics to an output file

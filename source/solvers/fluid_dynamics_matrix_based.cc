@@ -441,7 +441,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   if (this->check_existance_of_bc(
         BoundaryConditions::BoundaryType::function_weak))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<WeakDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
@@ -449,20 +449,21 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   if (this->check_existance_of_bc(
         BoundaryConditions::BoundaryType::partial_slip))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<PartialSlipDirichletBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::outlet))
     {
-      this->assemblers.push_back(std::make_shared<OutletBoundaryCondition<dim>>(
-        this->simulation_control,
-        this->simulation_parameters.boundary_conditions));
+      this->assemblers.emplace_back(
+        std::make_shared<OutletBoundaryCondition<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.boundary_conditions));
     }
   if (this->check_existance_of_bc(BoundaryConditions::BoundaryType::pressure))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<PressureBoundaryCondition<dim>>(
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
@@ -471,7 +472,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   // Buoyancy force
   if (this->simulation_parameters.multiphysics.buoyancy_force)
     {
-      this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+      this->assemblers.emplace_back(std::make_shared<BuoyancyAssembly<dim>>(
         this->simulation_control,
         this->simulation_parameters.physical_properties_manager
           .get_reference_temperature()));
@@ -480,7 +481,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   // ALE
   if (this->simulation_parameters.ale.enabled())
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<NavierStokesAssemblerALE<dim>>(
           this->simulation_control, this->simulation_parameters.ale));
     }
@@ -490,7 +491,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
               this->simulation_control));
         }
@@ -499,7 +500,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                     Parameters::VelocitySource::DarcySourceType::phase_change,
                   PhaseChangeDarcyModelDoesNotSupportCHN());
 
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
           this->simulation_control, this->simulation_parameters));
     }
@@ -511,13 +512,13 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_parameters.physical_properties_manager
             .density_is_constant())
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<
               GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
@@ -529,14 +530,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           if (this->simulation_parameters.multiphysics.vof_parameters
                 .surface_tension_force.enable_marangoni_effect)
-            this->assemblers.push_back(
+            this->assemblers.emplace_back(
               std::make_shared<GLSNavierStokesVOFAssemblerMarangoni<dim>>(
                 this->simulation_control,
                 this->simulation_parameters.multiphysics.vof_parameters
                   .surface_tension_force));
           else
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
                   this->simulation_control, this->simulation_parameters));
             }
@@ -545,7 +546,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       // Recoil pressure
       if (this->simulation_parameters.evaporation.enable_recoil_pressure)
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<NavierStokesVOFAssemblerEvaporation<dim>>(
               this->simulation_control,
               this->simulation_parameters.evaporation));
@@ -557,7 +558,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyVOFAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_phase_change_parameters_vector()));
@@ -567,14 +568,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else if (!this->simulation_parameters.physical_properties_manager
                   .density_is_constant())
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<
               GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
@@ -582,7 +583,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       else
         {
           // Core assembler
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
@@ -597,14 +598,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           if (!this->simulation_parameters.physical_properties_manager
                  .density_is_constant())
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<
                   GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>>(
                   this->simulation_control));
             }
           else
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
                   this->simulation_control));
             }
@@ -614,7 +615,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
           Parameters::VelocitySource::RotatingFrameType::srf)
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
               this->simulation_parameters.velocity_sources));
         }
@@ -625,7 +626,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyAssembly<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_physical_properties_parameters()
@@ -637,7 +638,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             .is_non_newtonian())
         {
           // Core assembler with Non newtonian viscosity
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesAssemblerNonNewtonianCore<dim>>(
               this->simulation_control));
         }
@@ -652,14 +653,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               if (!this->simulation_parameters.physical_properties_manager
                      .density_is_constant())
                 {
-                  this->assemblers.push_back(
+                  this->assemblers.emplace_back(
                     std::make_shared<
                       GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>>(
                       this->simulation_control));
                 }
               else
                 {
-                  this->assemblers.push_back(
+                  this->assemblers.emplace_back(
                     std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
                       this->simulation_control));
                 }
@@ -670,14 +671,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               if (!this->simulation_parameters.physical_properties_manager
                      .density_is_constant())
                 {
-                  this->assemblers.push_back(
+                  this->assemblers.emplace_back(
                     std::make_shared<
                       GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>>(
                       this->simulation_control));
                 }
               else
                 {
-                  this->assemblers.push_back(
+                  this->assemblers.emplace_back(
                     std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
                       this->simulation_control));
                 }

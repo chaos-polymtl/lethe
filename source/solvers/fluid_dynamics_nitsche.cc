@@ -43,7 +43,7 @@ FluidDynamicsNitsche<dim, spacedim>::FluidDynamicsNitsche(
 
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
-      solids.push_back(std::make_shared<SolidBase<dim, spacedim>>(
+      solids.emplace_back(std::make_shared<SolidBase<dim, spacedim>>(
         this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
         this->mapping));
@@ -533,8 +533,8 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_forces(
   std::vector<Tensor<1, spacedim>> force;
   std::vector<unsigned int>        solid_indices;
 
-  force.push_back(this->calculate_forces_on_solid(i_solid));
-  solid_indices.push_back(i_solid);
+  force.emplace_back(this->calculate_forces_on_solid(i_solid));
+  solid_indices.emplace_back(i_solid);
 
   if (this->simulation_parameters.nitsche->verbosity ==
         Parameters::Verbosity::verbose &&
@@ -542,10 +542,10 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_forces(
     {
       std::string              independent_column_names = "Solid ID";
       std::vector<std::string> dependent_column_names;
-      dependent_column_names.push_back("f_x");
-      dependent_column_names.push_back("f_y");
+      dependent_column_names.emplace_back("f_x");
+      dependent_column_names.emplace_back("f_y");
       if (spacedim == 3)
-        dependent_column_names.push_back("f_z");
+        dependent_column_names.emplace_back("f_z");
 
       TableHandler table = make_table_scalars_tensors(
         solid_indices,
@@ -617,8 +617,8 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_torques(
   std::vector<Tensor<1, 3>> torque;
   std::vector<unsigned int> solid_indices;
 
-  torque.push_back(this->calculate_torque_on_solid(i_solid));
-  solid_indices.push_back(i_solid);
+  torque.emplace_back(this->calculate_torque_on_solid(i_solid));
+  solid_indices.emplace_back(i_solid);
 
   if (this->simulation_parameters.nitsche->verbosity ==
         Parameters::Verbosity::verbose &&
@@ -626,9 +626,9 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_torques(
     {
       std::string              independent_column_names = "Solid ID";
       std::vector<std::string> dependent_column_names;
-      dependent_column_names.push_back("T_x");
-      dependent_column_names.push_back("T_y");
-      dependent_column_names.push_back("T_z");
+      dependent_column_names.emplace_back("T_x");
+      dependent_column_names.emplace_back("T_y");
+      dependent_column_names.emplace_back("T_z");
 
       TableHandler table = make_table_scalars_tensors(
         solid_indices,

@@ -34,11 +34,11 @@ Tracer<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
   // Core assembler
-  this->assemblers.push_back(
+  this->assemblers.emplace_back(
     std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
 }
 
@@ -702,7 +702,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 template <int dim>
 void
 Tracer<dim>::write_tracer_flow_rates(
-  const std::vector<double> tracer_flow_rate_vector)
+  const std::vector<double> &tracer_flow_rate_vector)
 {
   // Fill table
   this->tracer_flow_rate_table.add_value(
@@ -817,10 +817,10 @@ Tracer<dim>::write_checkpoint()
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
     dof_handler);
 
-  sol_set_transfer.push_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  sol_set_transfer.emplace_back(&present_solution);
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.push_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 

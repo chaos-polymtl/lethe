@@ -101,7 +101,7 @@ RestartNavierStokes<dim>::run()
   this->exact_solution   = new ExactSolutionMMS<dim>;
   this->forcing_function = std::make_shared<MMSSineForcingFunction<dim>>();
   Parameters::PhysicalProperties physical_properties;
-  physical_properties.fluids.push_back(Parameters::Material());
+  physical_properties.fluids.emplace_back(Parameters::Material());
   physical_properties.number_of_fluids = 1;
   physical_properties.fluids[0].rheological_model =
     Parameters::Material::RheologicalModel::newtonian;

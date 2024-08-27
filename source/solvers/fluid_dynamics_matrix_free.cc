@@ -262,16 +262,16 @@ public:
         Vector<double> vector_weights;
         weights.reinit(partition);
 
-        for (unsigned int c = 0; c < patches.size(); ++c)
+        for (const auto &patch : patches)
           {
-            const unsigned int dofs_per_cell = patches[c].size();
+            const unsigned int dofs_per_cell = patch.size();
             vector_weights.reinit(dofs_per_cell);
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
               vector_weights[i] = 1.0;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              weights[patches[c][i]] += vector_weights[i];
+              weights[patch[i]] += vector_weights[i];
           }
 
         weights.compress(VectorOperation::add);
@@ -532,14 +532,14 @@ namespace dealii
 
 template <int dim>
 MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
-  const SimulationParameters<dim>         &simulation_parameters,
-  const DoFHandler<dim>                   &dof_handler,
-  const DoFHandler<dim>                   &dof_handler_fe_q_iso_q1,
-  const std::shared_ptr<Mapping<dim>>     &mapping,
-  const std::shared_ptr<Quadrature<dim>>  &cell_quadrature,
-  const std::shared_ptr<Function<dim>>     forcing_function,
-  const std::shared_ptr<SimulationControl> simulation_control,
-  const std::shared_ptr<FESystem<dim>>     fe)
+  const SimulationParameters<dim>          &simulation_parameters,
+  const DoFHandler<dim>                    &dof_handler,
+  const DoFHandler<dim>                    &dof_handler_fe_q_iso_q1,
+  const std::shared_ptr<Mapping<dim>>      &mapping,
+  const std::shared_ptr<Quadrature<dim>>   &cell_quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const std::shared_ptr<FESystem<dim>>      fe)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
@@ -1265,10 +1265,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::initialize(
-  const std::shared_ptr<SimulationControl> simulation_control,
-  FlowControl<dim>                        &flow_control,
-  const VectorType                        &present_solution,
-  const VectorType                        &time_derivative_previous_solutions)
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  FlowControl<dim>                         &flow_control,
+  const VectorType                         &present_solution,
+  const VectorType                         &time_derivative_previous_solutions)
 {
   // Local objects for the different levels
   MGLevelObject<VectorType> mg_solution(this->minlevel, this->maxlevel);
@@ -1376,7 +1376,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
             mg_smoother_preconditioners[level] =
               std::make_shared<PreconditionASM<VectorType>>();
 
-          static_cast<PreconditionASM<VectorType> *>(
+          dynamic_cast<PreconditionASM<VectorType> *>(
             mg_smoother_preconditioners[level].get())
             ->initialize(this->mg_operators[level]
                            ->get_system_matrix_free()

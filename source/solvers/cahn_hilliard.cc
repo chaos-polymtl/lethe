@@ -51,7 +51,7 @@ CahnHilliard<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<CahnHilliardAssemblerBDF<dim>>(
           this->simulation_control));
     }
@@ -63,7 +63,7 @@ CahnHilliard<dim>::setup_assemblers()
   // to the constructor separately.
 
   // Angle of contact boundary condition
-  this->assemblers.push_back(
+  this->assemblers.emplace_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
@@ -75,7 +75,7 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Free angle of contact boundary condition
-  this->assemblers.push_back(
+  this->assemblers.emplace_back(
     std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
       this->simulation_control,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
@@ -87,14 +87,15 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
   // Core assembler
-  this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
-    this->simulation_control,
-    this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
-    (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
-      this->simulation_parameters.multiphysics.cahn_hilliard_parameters
-        .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation)));
+  this->assemblers.emplace_back(
+    std::make_shared<CahnHilliardAssemblerCore<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
+      (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters
+          .epsilon :
+        GridTools::minimal_cell_diameter(*triangulation)));
 }
 
 template <int dim>
@@ -299,12 +300,12 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // phase order (Phi) and the following one is the chemical potential (eta)
 
   std::vector<std::string> solution_names;
-  solution_names.push_back("phase_order");
-  solution_names.push_back("chemical_potential");
+  solution_names.emplace_back("phase_order");
+  solution_names.emplace_back("chemical_potential");
 
   std::vector<std::string> solution_names_filtered;
-  solution_names_filtered.push_back("phase_order_filtered");
-  solution_names_filtered.push_back("chemical_potential_filtered");
+  solution_names_filtered.emplace_back("phase_order_filtered");
+  solution_names_filtered.emplace_back("chemical_potential_filtered");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
@@ -783,14 +784,14 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
               std::string independent_column_names = "time";
 
               std::vector<std::string> dependent_column_names;
-              dependent_column_names.push_back("x_cahn_hilliard");
-              dependent_column_names.push_back("y_cahn_hilliard");
+              dependent_column_names.emplace_back("x_cahn_hilliard");
+              dependent_column_names.emplace_back("y_cahn_hilliard");
               if constexpr (dim == 3)
-                dependent_column_names.push_back("z_cahn_hilliard");
-              dependent_column_names.push_back("vx_cahn_hilliard");
-              dependent_column_names.push_back("vy_cahn_hilliard");
+                dependent_column_names.emplace_back("z_cahn_hilliard");
+              dependent_column_names.emplace_back("vx_cahn_hilliard");
+              dependent_column_names.emplace_back("vy_cahn_hilliard");
               if constexpr (dim == 3)
-                dependent_column_names.push_back("vz_cahn_hilliard");
+                dependent_column_names.emplace_back("vz_cahn_hilliard");
 
               std::vector<Tensor<1, dim>> position_vector{
                 position_and_velocity.first};
@@ -941,10 +942,10 @@ CahnHilliard<dim>::write_checkpoint()
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
     dof_handler);
 
-  sol_set_transfer.push_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  sol_set_transfer.emplace_back(&present_solution);
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.push_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
@@ -1491,14 +1492,10 @@ CahnHilliard<dim>::output_newton_update_norms(
   double local_max = std::numeric_limits<double>::lowest();
 
 
-  for (auto j = index_set_phase_order[0].begin();
-       j != index_set_phase_order[0].end();
-       j++)
+  for (const auto &j : index_set_phase_order[0])
     {
-      double dof_newton_update = newton_update[*j];
-
+      double dof_newton_update = newton_update[j];
       local_sum += dof_newton_update * dof_newton_update;
-
       local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 
@@ -1511,14 +1508,10 @@ CahnHilliard<dim>::output_newton_update_norms(
   local_sum = 0.0;
   local_max = std::numeric_limits<double>::lowest();
 
-  for (auto j = index_set_chemical_potential[1].begin();
-       j != index_set_chemical_potential[1].end();
-       j++)
+  for (const auto &j : index_set_chemical_potential[0])
     {
-      double dof_newton_update = newton_update[*j];
-
+      double dof_newton_update = newton_update[j];
       local_sum += dof_newton_update * dof_newton_update;
-
       local_max = std::max(local_max, std::abs(dof_newton_update));
     }
 
