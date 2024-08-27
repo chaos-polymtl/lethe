@@ -1771,20 +1771,20 @@ MFNavierStokesPreconditionGMG<dim>::vmult(VectorType       &dst,
     AssertThrow(false, ExcNotImplemented());
 
   // Save number of coarse grid iterations needed in one vmult
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_coarse_grid_solver ==
-      Parameters::LinearSolver::CoarseGridSolverType::gmres)
+  if (this->coarse_grid_solver_control)
     this->coarse_grid_iterations.emplace_back(
       this->coarse_grid_solver_control->last_step());
+  if (this->coarse_grid_solver_control_intermediate)
+    this->coarse_grid_iterations.emplace_back(
+      this->coarse_grid_solver_control_intermediate->last_step());
 }
 
 template <int dim>
 void
 MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 {
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_coarse_grid_solver ==
-      Parameters::LinearSolver::CoarseGridSolverType::gmres)
+  if (this->coarse_grid_solver_control ||
+      this->coarse_grid_solver_control_intermediate)
     {
       if (this->coarse_grid_iterations.empty())
         this->pcout << "  -Coarse grid solver took: 0 iterations" << std::endl;
