@@ -282,18 +282,18 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       std::string independent_column_names = "Boundary ID";
 
       std::vector<std::string> dependent_column_names;
-      dependent_column_names.push_back("f_x");
-      dependent_column_names.push_back("f_y");
+      dependent_column_names.emplace_back("f_x");
+      dependent_column_names.emplace_back("f_y");
       if (dim == 3)
-        dependent_column_names.push_back("f_z");
-      dependent_column_names.push_back("f_xv");
-      dependent_column_names.push_back("f_yv");
+        dependent_column_names.emplace_back("f_z");
+      dependent_column_names.emplace_back("f_xv");
+      dependent_column_names.emplace_back("f_yv");
       if (dim == 3)
-        dependent_column_names.push_back("f_zv");
-      dependent_column_names.push_back("f_xp");
-      dependent_column_names.push_back("f_yp");
+        dependent_column_names.emplace_back("f_zv");
+      dependent_column_names.emplace_back("f_xp");
+      dependent_column_names.emplace_back("f_yp");
       if (dim == 3)
-        dependent_column_names.push_back("f_zp");
+        dependent_column_names.emplace_back("f_zp");
 
       TableHandler table = make_table_scalars_tensors(
         simulation_parameters.boundary_conditions.id,
@@ -403,9 +403,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       std::string independent_column_names = "Boundary ID";
 
       std::vector<std::string> dependent_column_names;
-      dependent_column_names.push_back("T_x");
-      dependent_column_names.push_back("T_y");
-      dependent_column_names.push_back("T_z");
+      dependent_column_names.emplace_back("T_x");
+      dependent_column_names.emplace_back("T_y");
+      dependent_column_names.emplace_back("T_z");
 
       TableHandler table = make_table_scalars_tensors(
         simulation_parameters.boundary_conditions.id,
@@ -487,9 +487,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
           if (simulation_parameters.simulation_control.method ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
-              sub_columns.push_back("cells");
-              sub_columns.push_back("error_velocity");
-              sub_columns.push_back("error_pressure");
+              sub_columns.emplace_back("cells");
+              sub_columns.emplace_back("error_velocity");
+              sub_columns.emplace_back("error_pressure");
               error_table.set_precision(
                 "error_pressure", simulation_control->get_log_precision());
               error_table.set_column_order(sub_columns);
@@ -641,7 +641,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
           .temperature_max_values[c_id],
         this->simulation_parameters.constrain_solid_domain
           .filtered_phase_fraction_tolerance[c_id]);
-      this->stasis_constraint_structs.push_back(stasis_constraint_struct);
+      this->stasis_constraint_structs.emplace_back(stasis_constraint_struct);
     }
 
   // For temperature-dependent constraints
@@ -722,7 +722,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 
           auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(basetria, 0);
+            create_description_from_triangulation(basetria, nullptr);
 
           triangulation->create_triangulation(construction_data);
         }
@@ -772,7 +772,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
           auto construction_data = TriangulationDescription::Utilities::
             create_description_from_triangulation(
               temporary_tri_triangulation,
-              0,
+              nullptr,
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
           box_to_refine.create_triangulation(construction_data);
@@ -847,7 +847,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       previous_solutions_transfer.reserve(previous_solutions.size());
       for (unsigned int i = 0; i < previous_solutions.size(); ++i)
         {
-          previous_solutions_transfer.push_back(
+          previous_solutions_transfer.emplace_back(
             parallel::distributed::SolutionTransfer<dim, VectorType>(
               this->dof_handler));
           if constexpr (std::is_same_v<
@@ -1077,7 +1077,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   previous_solutions_transfer.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      previous_solutions_transfer.push_back(
+      previous_solutions_transfer.emplace_back(
         parallel::distributed::SolutionTransfer<dim, VectorType>(
           this->dof_handler));
       if constexpr (std::is_same_v<VectorType,
@@ -2166,11 +2166,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   // Add the interpretation of the solution. The dim first components are the
   // velocity vectors and the following one is the pressure.
   std::vector<std::string> solution_names(dim, "velocity");
-  solution_names.push_back("pressure");
+  solution_names.emplace_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       dim, DataComponentInterpretation::component_is_part_of_vector);
-  data_component_interpretation.push_back(
+  data_component_interpretation.emplace_back(
     DataComponentInterpretation::component_is_scalar);
 
   DataOut<dim> data_out;
@@ -2197,12 +2197,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // components are the average velocity vectors and the following one is
       // the average pressure. (<u>, <v>, <w>, <p>)
       std::vector<std::string> average_solution_names(dim, "average_velocity");
-      average_solution_names.push_back("average_pressure");
+      average_solution_names.emplace_back("average_pressure");
 
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         average_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
-      average_data_component_interpretation.push_back(
+      average_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(
@@ -2216,11 +2216,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // the following ones are others resolved reynolds stresses.
       std::vector<std::string> reynolds_normal_stress_names(
         dim, "reynolds_normal_stress");
-      reynolds_normal_stress_names.push_back("turbulent_kinetic_energy");
+      reynolds_normal_stress_names.emplace_back("turbulent_kinetic_energy");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_normal_stress_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_normal_stress_data_component_interpretation.push_back(
+      reynolds_normal_stress_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
 
 
@@ -2228,19 +2228,19 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         "reynolds_shear_stress_uv"};
       if (dim == 2)
         {
-          reynolds_shear_stress_names.push_back("dummy_rss_2d");
+          reynolds_shear_stress_names.emplace_back("dummy_rss_2d");
         }
       if (dim == 3)
         {
-          reynolds_shear_stress_names.push_back("reynolds_shear_stress_vw");
-          reynolds_shear_stress_names.push_back("reynolds_shear_stress_uw");
+          reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_vw");
+          reynolds_shear_stress_names.emplace_back("reynolds_shear_stress_uw");
         }
-      reynolds_shear_stress_names.push_back("dummy_rss");
+      reynolds_shear_stress_names.emplace_back("dummy_rss");
 
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_shear_stress_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_scalar);
-      reynolds_shear_stress_data_component_interpretation.push_back(
+      reynolds_shear_stress_data_component_interpretation.emplace_back(
         DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(
@@ -2293,11 +2293,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
     {
-      density_postprocessors.push_back(
+      density_postprocessors.emplace_back(
         DensityPostprocessor<dim>(density_models[f_id], f_id));
-      kinematic_viscosity_postprocessors.push_back(
+      kinematic_viscosity_postprocessors.emplace_back(
         KinematicViscosityPostprocessor<dim>(rheological_models[f_id], f_id));
-      dynamic_viscosity_postprocessors.push_back(
+      dynamic_viscosity_postprocessors.emplace_back(
         DynamicViscosityPostprocessor<dim>(
           rheological_models[f_id],
           density_models[f_id]->get_density_ref(),
@@ -2504,10 +2504,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 
   std::vector<const VectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.emplace_back(&this->present_solution);
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      sol_set_transfer.push_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solutions[i]);
     }
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||
@@ -2676,14 +2676,10 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
 
       for (unsigned int d = 0; d < dim; ++d)
         {
-          for (auto j = index_set_velocity[d].begin();
-               j != index_set_velocity[d].end();
-               j++)
+          for (const auto &j : index_set_velocity[d])
             {
-              double dof_newton_update = newton_update[*j];
-
+              double dof_newton_update = newton_update[j];
               local_sum += dof_newton_update * dof_newton_update;
-
               local_max = std::max(local_max, std::abs(dof_newton_update));
             }
         }
@@ -2696,14 +2692,11 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       local_sum = 0.0;
       local_max = std::numeric_limits<double>::lowest();
 
-      for (auto j = index_set_pressure[dim].begin();
-           j != index_set_pressure[dim].end();
-           j++)
+      for (const auto &j : index_set_pressure[0])
+
         {
-          double dof_newton_update = newton_update[*j];
-
+          double dof_newton_update = newton_update[j];
           local_sum += dof_newton_update * dof_newton_update;
-
           local_max = std::max(local_max, std::abs(dof_newton_update));
         }
 

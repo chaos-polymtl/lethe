@@ -136,17 +136,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                  &mapping,
-  const DoFHandler<dim>               &dof_handler,
-  const AffineConstraints<number>     &constraints,
-  const Quadrature<dim>               &quadrature,
-  const std::shared_ptr<Function<dim>> forcing_function,
-  const double                         kinematic_viscosity,
-  const StabilizationType              stabilization,
-  const unsigned int                   mg_level,
-  std::shared_ptr<SimulationControl>   simulation_control,
-  const bool                          &enable_hessians_jacobian,
-  const bool                          &enable_hessians_residual)
+  const Mapping<dim>                       &mapping,
+  const DoFHandler<dim>                    &dof_handler,
+  const AffineConstraints<number>          &constraints,
+  const Quadrature<dim>                    &quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const double                              kinematic_viscosity,
+  const StabilizationType                   stabilization,
+  const unsigned int                        mg_level,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const bool                               &enable_hessians_jacobian,
+  const bool                               &enable_hessians_residual)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -166,17 +166,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                  &mapping,
-  const DoFHandler<dim>               &dof_handler,
-  const AffineConstraints<number>     &constraints,
-  const Quadrature<dim>               &quadrature,
-  const std::shared_ptr<Function<dim>> forcing_function,
-  const double                         kinematic_viscosity,
-  const StabilizationType              stabilization,
-  const unsigned int                   mg_level,
-  std::shared_ptr<SimulationControl>   simulation_control,
-  const bool                          &enable_hessians_jacobian,
-  const bool                          &enable_hessians_residual)
+  const Mapping<dim>                       &mapping,
+  const DoFHandler<dim>                    &dof_handler,
+  const AffineConstraints<number>          &constraints,
+  const Quadrature<dim>                    &quadrature,
+  const std::shared_ptr<Function<dim>>      forcing_function,
+  const double                              kinematic_viscosity,
+  const StabilizationType                   stabilization,
+  const unsigned int                        mg_level,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const bool                               &enable_hessians_jacobian,
+  const bool                               &enable_hessians_residual)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -235,10 +235,10 @@ NavierStokesOperatorBase<dim, number>::reinit(
       const IndexSet &locally_owned =
         this->matrix_free.get_dof_handler().locally_owned_mg_dofs(
           this->matrix_free.get_mg_level());
-      for (unsigned int i = 0; i < interface_indices.size(); ++i)
-        if (locally_owned.is_element(interface_indices[i]))
-          edge_constrained_indices.push_back(
-            locally_owned.index_within_set(interface_indices[i]));
+
+      for (const auto i : interface_indices)
+        if (locally_owned.is_element(i))
+          edge_constrained_indices.push_back(locally_owned.index_within_set(i));
 
       this->has_edge_constrained_indices =
         Utilities::MPI::max(edge_constrained_indices.size(),
@@ -251,8 +251,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
           VectorType temp;
           matrix_free.initialize_dof_vector(temp);
 
-          for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
-            temp.local_element(edge_constrained_indices[i]) = 1.0;
+          for (const auto i : edge_constrained_indices)
+            temp.local_element(i) = 1.0;
 
           temp.update_ghost_values();
 
@@ -385,9 +385,8 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
 
   // copy constrained dofs from src to dst (corresponding to diagonal
   // entries with value 1.0)
-  for (unsigned int i = 0; i < constrained_indices.size(); ++i)
-    dst.local_element(constrained_indices[i]) =
-      src.local_element(constrained_indices[i]);
+  for (const auto &constrained_index : constrained_indices)
+    dst.local_element(constrained_index) = src.local_element(constrained_index);
 
   // restoring edge constrained dofs in src and copy the values to dst
   // (corresponding to diagonal entries with value 1.0)
@@ -421,9 +420,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
     &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
 
   // set constrained dofs as the sum of current dst value and src value
-  for (unsigned int i = 0; i < constrained_indices.size(); ++i)
-    dst.local_element(constrained_indices[i]) =
-      src.local_element(constrained_indices[i]);
+  for (const auto i : constrained_indices)
+    dst.local_element(i) += src.local_element(i);
 }
 
 template <int dim, typename number>
@@ -447,9 +445,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   VectorType src_cpy;
   src_cpy.reinit(src, /*omit_zeroing_entries=*/false);
 
-  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
-    src_cpy.local_element(edge_constrained_indices[i]) =
-      src.local_element(edge_constrained_indices[i]);
+  for (const auto i : edge_constrained_indices)
+    src_cpy.local_element(i) = src.local_element(i);
 
   // do loop with copy of src
   this->matrix_free.cell_loop(&NavierStokesOperatorBase::do_cell_integral_range,
@@ -772,8 +769,8 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
     &NavierStokesOperatorBase::do_cell_integral_local,
     this);
 
-  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
-    diagonal.local_element(edge_constrained_indices[i]) = 0.0;
+  for (const auto &i : constrained_indices)
+    diagonal.local_element(i) = 1.0;
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;

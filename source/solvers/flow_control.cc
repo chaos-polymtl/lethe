@@ -100,7 +100,7 @@ FlowControl<dim>::calculate_beta(const double       &average_velocity_n,
 
 template <int dim>
 void
-FlowControl<dim>::save(std::string prefix)
+FlowControl<dim>::save(const std::string &prefix)
 {
   std::string   filename = prefix + ".flowcontrol";
   std::ofstream output(filename.c_str());
@@ -113,7 +113,7 @@ FlowControl<dim>::save(std::string prefix)
 
 template <int dim>
 void
-FlowControl<dim>::read(std::string prefix)
+FlowControl<dim>::read(const std::string &prefix)
 {
   std::string   filename = prefix + ".flowcontrol";
   std::ifstream input(filename.c_str());

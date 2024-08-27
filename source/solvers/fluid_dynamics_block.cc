@@ -63,7 +63,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
   // Buoyant force
   if (this->simulation_parameters.multiphysics.buoyancy_force)
     {
-      this->assemblers.push_back(std::make_shared<BuoyancyAssembly<dim>>(
+      this->assemblers.emplace_back(std::make_shared<BuoyancyAssembly<dim>>(
         this->simulation_control,
         this->simulation_parameters.physical_properties_manager
           .get_reference_temperature()));
@@ -72,7 +72,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
   // ALE
   if (this->simulation_parameters.ale.enabled())
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<NavierStokesAssemblerALE<dim>>(
           this->simulation_control, this->simulation_parameters.ale));
     }
@@ -84,13 +84,13 @@ FluidDynamicsBlock<dim>::setup_assemblers()
           this->simulation_parameters.physical_properties_manager
             .density_is_constant())
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<
               GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
@@ -102,7 +102,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyVOFAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_phase_change_parameters_vector()));
@@ -111,7 +111,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
       if (!this->simulation_parameters.physical_properties_manager
              .density_is_constant())
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<
               GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
@@ -119,7 +119,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
       else
         {
           // Core assembler
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
@@ -129,7 +129,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
               this->simulation_control));
         }
@@ -138,7 +138,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
           Parameters::VelocitySource::RotatingFrameType::srf)
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
               this->simulation_parameters.velocity_sources));
         }
@@ -149,7 +149,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyAssembly<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_physical_properties_parameters()
@@ -161,7 +161,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
             .is_non_newtonian())
         {
           // Core assembler with non-Newtonian viscosity
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<BlockNavierStokesAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, gamma));
         }
@@ -172,7 +172,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
                  .use_default_stabilization == true) ||
               this->simulation_parameters.stabilization.stabilization ==
                 Parameters::Stabilization::NavierStokesStabilization::grad_div)
-            this->assemblers.push_back(
+            this->assemblers.emplace_back(
               std::make_shared<BlockNavierStokesAssemblerCore<dim>>(
                 this->simulation_control, gamma));
 
@@ -1109,8 +1109,9 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     {
-      if (renewed_matrix || velocity_ilu_preconditioner == 0 ||
-          pressure_ilu_preconditioner == 0 || system_ilu_preconditioner == 0)
+      if (renewed_matrix || velocity_ilu_preconditioner == nullptr ||
+          pressure_ilu_preconditioner == nullptr ||
+          system_ilu_preconditioner == nullptr)
         setup_ILU();
     }
   else if (this->simulation_parameters.linear_solver
@@ -1118,8 +1119,9 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::amg)
     {
-      if (renewed_matrix || velocity_amg_preconditioner == 0 ||
-          pressure_amg_preconditioner == 0 || system_amg_preconditioner == 0)
+      if (renewed_matrix || velocity_amg_preconditioner == nullptr ||
+          pressure_amg_preconditioner == nullptr ||
+          system_amg_preconditioner == nullptr)
         setup_AMG();
     }
 

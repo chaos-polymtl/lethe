@@ -285,7 +285,7 @@ HeatTransfer<dim>::setup_assemblers()
               Parameters::Laser<
                 dim>::LaserType::gaussian_heat_flux_vof_interface)
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<
                   HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>>(
                   this->simulation_control,
@@ -295,7 +295,7 @@ HeatTransfer<dim>::setup_assemblers()
                    Parameters::Laser<
                      dim>::LaserType::uniform_heat_flux_vof_interface)
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<
                   HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>>(
                   this->simulation_control,
@@ -303,7 +303,7 @@ HeatTransfer<dim>::setup_assemblers()
             }
           else // Laser is applied in fluid 1 as a volumetric source
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<
                   HeatTransferAssemblerLaserExponentialDecayVOF<dim>>(
                   this->simulation_control,
@@ -316,7 +316,7 @@ HeatTransfer<dim>::setup_assemblers()
           if (this->simulation_parameters.laser_parameters->radiation
                 .enable_radiation)
             {
-              this->assemblers.push_back(
+              this->assemblers.emplace_back(
                 std::make_shared<
                   HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>>(
                   this->simulation_control,
@@ -325,7 +325,7 @@ HeatTransfer<dim>::setup_assemblers()
         }
       else
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<HeatTransferAssemblerLaserExponentialDecay<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
@@ -337,7 +337,7 @@ HeatTransfer<dim>::setup_assemblers()
     {
       if (this->simulation_parameters.evaporation.enable_evaporation_cooling)
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<HeatTransferAssemblerVOFEvaporation<dim>>(
               this->simulation_control,
               this->simulation_parameters.evaporation));
@@ -348,7 +348,7 @@ HeatTransfer<dim>::setup_assemblers()
   if (this->simulation_parameters.boundary_conditions_ht
         .has_convection_radiation_bc)
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<HeatTransferAssemblerRobinBC<dim>>(
           this->simulation_control,
           simulation_parameters.boundary_conditions_ht));
@@ -360,7 +360,7 @@ HeatTransfer<dim>::setup_assemblers()
       if (this->simulation_parameters.multiphysics.VOF)
         {
           // Call for the specific assembler
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
               this->simulation_control,
               this->simulation_parameters.multiphysics.vof_parameters
@@ -368,7 +368,7 @@ HeatTransfer<dim>::setup_assemblers()
         }
       else
         {
-          this->assemblers.push_back(
+          this->assemblers.emplace_back(
             std::make_shared<HeatTransferAssemblerViscousDissipation<dim>>(
               this->simulation_control));
         }
@@ -377,13 +377,13 @@ HeatTransfer<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
+      this->assemblers.emplace_back(
         std::make_shared<HeatTransferAssemblerBDF<dim>>(
           this->simulation_control));
     }
 
   // Core assembler
-  this->assemblers.push_back(
+  this->assemblers.emplace_back(
     std::make_shared<HeatTransferAssemblerCore<dim>>(this->simulation_control));
 }
 
@@ -747,7 +747,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Heat fluxes in fluids
   for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
     {
-      heat_flux_postprocessors.push_back(
+      heat_flux_postprocessors.emplace_back(
         HeatFluxPostprocessor<dim>(thermal_conductivity_models[f_id],
                                    "f",
                                    f_id,
@@ -761,7 +761,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
     {
       mesh_m_id += 1;
-      heat_flux_postprocessors.push_back(
+      heat_flux_postprocessors.emplace_back(
         HeatFluxPostprocessor<dim>(thermal_conductivity_models[m_id],
                                    "s",
                                    m_id - n_fluids,
@@ -1084,10 +1084,10 @@ HeatTransfer<dim>::write_checkpoint()
     parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>(
     dof_handler);
 
-  sol_set_transfer.push_back(&present_solution);
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  sol_set_transfer.emplace_back(&present_solution);
+  for (const auto &previous_solution : previous_solutions)
     {
-      sol_set_transfer.push_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&previous_solution);
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
@@ -1452,7 +1452,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
@@ -1636,7 +1636,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
@@ -1808,7 +1808,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       update_values);
 
   // Initialize VOF information
-  DoFHandler<dim>                   *dof_handler_vof = NULL;
+  DoFHandler<dim>                   *dof_handler_vof = nullptr;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
   std::vector<double>                filtered_phase_values(n_q_points_face);
 
@@ -2108,7 +2108,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = nullptr;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            filtered_phase_values(n_q_points);
 
