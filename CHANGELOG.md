@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-27
+
+### Changed
+
+- MINOR Refactored cell diameter computation as an inline function in the utilities. [#1265](https://github.com/chaos-polymtl/lethe/pull/1265)
+
 ## [Master] - 2024-08-23
 
 ### Added
