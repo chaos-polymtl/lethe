@@ -606,6 +606,10 @@ compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
     h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;
   else if constexpr (dim == 3)
     h = std::pow(6. * cell_measure / numbers::PI, 1. / 3.) / fe_degree;
+  else
+    throw std::invalid_argument(
+      "'dim' should have a value of either 2 or 3. Only 2D and 3D simulations "
+      "are supported.");
   return h;
 }
 
