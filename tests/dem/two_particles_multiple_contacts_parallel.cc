@@ -166,8 +166,8 @@ test()
   force.resize(particle_handler.get_max_local_particle_index());
   torque.resize(force.size());
   MOI.resize(force.size());
-  for (unsigned i = 0; i < MOI.size(); ++i)
-    MOI[i] = 1;
+  for (const auto &moi_val : MOI)
+    moi_val = 1;
 
   double step_force;
 
