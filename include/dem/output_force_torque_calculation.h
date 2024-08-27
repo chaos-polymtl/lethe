@@ -39,9 +39,9 @@ write_forces_torques_output_locally(
  */
 void
 write_forces_torques_output_results(
-  const std::string                                filename,
+  const std::string                               &filename,
   const unsigned int                               output_frequency,
-  const std::vector<unsigned int>                  boundary_index,
+  const std::vector<unsigned int>                 &boundary_index,
   const double                                     time_step,
   DEM::dem_data_structures<3>::vector_on_boundary &forces_boundary_information,
   DEM::dem_data_structures<3>::vector_on_boundary

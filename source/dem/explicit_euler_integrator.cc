@@ -97,7 +97,7 @@ ExplicitEulerIntegrator<dim>::integrate(
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
   AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
 {
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   bool use_default_function =
     !action_manager->check_sparse_contacts_enabled() ||

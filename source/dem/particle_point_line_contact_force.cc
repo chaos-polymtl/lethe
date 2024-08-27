@@ -6,8 +6,7 @@ using namespace dealii;
 
 // Constructor
 template <int dim>
-ParticlePointLineForce<dim>::ParticlePointLineForce()
-{}
+ParticlePointLineForce<dim>::ParticlePointLineForce() = default;
 
 // In this function, the particle-point and particle-line contact forces are
 // calculated and the particle handler is updated based on this force

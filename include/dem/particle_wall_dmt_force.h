@@ -47,8 +47,8 @@ class ParticleWallDMTForce : public ParticleWallNonLinearForce<dim>
 
 public:
   ParticleWallDMTForce(
-    const DEMSolverParameters<dim>       &dem_parameters,
-    const std::vector<types::boundary_id> boundary_index = {});
+    const DEMSolverParameters<dim>        &dem_parameters,
+    const std::vector<types::boundary_id> &boundary_index = {});
 
   /**
    * @brief Carries out the calculation of the particle-wall contact force using

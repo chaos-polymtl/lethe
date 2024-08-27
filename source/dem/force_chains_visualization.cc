@@ -44,9 +44,9 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 {
   /*Initialize with a dummy normal force between two same points (0,0,0) to be
   sure every core have someting to write. */
-  force_normal.push_back(0);
-  vertices.push_back(Point<3>(0, 0, 0));
-  vertices.push_back(Point<3>(0, 0, 0));
+  force_normal.emplace_back(0);
+  vertices.emplace_back(Point<3>(0, 0, 0));
+  vertices.emplace_back(Point<3>(0, 0, 0));
 }
 
 template <
