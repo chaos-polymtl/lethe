@@ -209,10 +209,8 @@ public:
 
     source_function->value_list(quadrature_points, source);
 
-    if (dim == 2)
-      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_T.degree;
-    else if (dim == 3)
-      this->cell_size = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_T.degree;
+    // Compute cell diameter
+    this->cell_size = compute_cell_diameter<dim>(cell->measure(), fe_T.degree);
 
     // Gather temperature (values, gradient and laplacian)
     this->fe_values_T.get_function_values(current_solution,
