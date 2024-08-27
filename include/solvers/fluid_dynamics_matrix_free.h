@@ -211,7 +211,7 @@ private:
   std::shared_ptr<TrilinosWrappers::SolverDirect> precondition_direct;
 
   /// Solver control for the coarse grid solver
-  std::shared_ptr<ReductionControl> coarse_grid_solver_control;
+  std::shared_ptr<SolverControl> coarse_grid_solver_control;
 
   /// Solver control for the direct solver
   std::shared_ptr<SolverControl> direct_solver_control;
