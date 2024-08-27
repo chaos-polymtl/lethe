@@ -140,7 +140,7 @@ test(double coefficient_of_restitution)
   force.resize(particle_handler.get_max_local_particle_index());
   torque.resize(force.size());
   MOI.resize(force.size());
-  for (const auto &moi_val : MOI)
+  for (auto &moi_val : MOI)
     moi_val = 1;
 
   // Finding boundary cells
