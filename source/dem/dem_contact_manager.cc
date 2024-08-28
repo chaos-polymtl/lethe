@@ -11,7 +11,7 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
     periodic_boundaries_cells_information)
 {
   // Get action manager
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   // Find cell neighbors
   find_cell_neighbors<dim>(triangulation,
@@ -228,7 +228,7 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
 {
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   // Check if sparse contacts are enabled to use proper broad search functions
   // The first broad search is the default one for sparse contacts
@@ -267,7 +267,7 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
   const double                                      simulation_time,
   const AdaptiveSparseContacts<dim>                &sparse_contacts_object)
 {
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   if (action_manager->use_default_broad_search_functions())
     {

@@ -7,8 +7,8 @@ using namespace dealii;
 
 template <int dim>
 ParticleWallDMTForce<dim>::ParticleWallDMTForce(
-  const DEMSolverParameters<dim>       &dem_parameters,
-  const std::vector<types::boundary_id> boundary_index)
+  const DEMSolverParameters<dim>        &dem_parameters,
+  const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallNonLinearForce<dim>(dem_parameters)
   , dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {

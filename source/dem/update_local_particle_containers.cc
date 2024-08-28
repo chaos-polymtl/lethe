@@ -40,7 +40,7 @@ update_contact_container_iterators(
     &particle_container)
 {
   // Get trigger for clearing contact structures
-  auto       action_manager = DEMActionManager::get_action_manager();
+  auto      *action_manager = DEMActionManager::get_action_manager();
   const bool clear_tangential_overlap =
     action_manager->check_clear_tangential_overlap();
 
