@@ -13,6 +13,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set heat transfer                   = false
     set viscous dissipation             = false
     set buoyancy force                  = false
+    set DCDD shock capture              = false
 
     # Tracer
     set tracer                          = false
@@ -39,6 +40,8 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
    * ``viscous dissipation``: controls if the viscous dissipation is taken into account in the heat transfer equation.
 
    * ``buoyancy force``: controls if the buoyancy force is taken into account in the Navier-Stokes equations. The buoyancy force is calculated using the Boussinesq approximation.
+
+   * ``DCDD shock capture``: The discontinuity-capturing directional dissipation method is used the stabilize the heat transfer equation. For more information, see Tezduyar, T. E. (2003). 
 
 .. seealso::
 

@@ -301,6 +301,45 @@ protected:
 };
 
 /**
+ * @brief Class that assembles the discontinuity-capturing directional dissipation stablization for the heat transfer
+ * solver. For more information see Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces and 
+ * stabilization parameters. International Journal for Numerical
+ * Methods in Fluids, 43(5), 555-575. Our implementation is based on
+ * equations (70) and (79), which are adapted for the heat transfer solver.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class HeatTransferAssemblerDCDDstabilization
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerDCDDstabilization(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+  {}
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+};
+
+/**
  * @brief Class that assembles the laser heating as a volumetric source for
  * the heat transfer solver. Exponentially decaying model is used to simulate
  * the laser heat source: "Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X.,
