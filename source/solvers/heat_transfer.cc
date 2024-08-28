@@ -375,11 +375,11 @@ HeatTransfer<dim>::setup_assemblers()
     }
 
   if (this->simulation_parameters.multiphysics.dcdd_shock_capture)
-  {
-    this->assemblers.emplace_back(
-      std::make_shared<HeatTransferAssemblerDCDDstabilization<dim>>(
-        this->simulation_control));
-  }
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<HeatTransferAssemblerDCDDstabilization<dim>>(
+          this->simulation_control));
+    }
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))

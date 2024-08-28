@@ -73,10 +73,12 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // // equations (70) and (79), which are adapted for the heat transfer
       // // solver.
 
-      // // In Tezduyar 2003, this is denoted r in equation (67). The velocity is
+      // // In Tezduyar 2003, this is denoted r in equation (67). The velocity
+      // is
       // // replaced by the temperature.
       // Tensor<1, dim> temperature_gradient_unit_vector =
-      //   dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() + 1e-12);
+      //   dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() +
+      //   1e-12);
 
       // // In Tezduyar 2003, this is denoted s in equation (67)
       // Tensor<1, dim> velocity_unit_vector =
@@ -90,7 +92,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       //      temperature_gradient_unit_vector, velocity_unit_vector)) *
       //    outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // // Calculate the artificial viscosity of the shock capture as in equation
+      // // Calculate the artificial viscosity of the shock capture as in
+      // equation
       // // (79) of Tezduyar 2003
       // const double nu_dcdd = is_steady(method) ?
       //                          0 :
@@ -145,7 +148,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               // // DCDD shock capturing
               // local_matrix(i, j) +=
               //   rho_cp * nu_dcdd *
-              //   (scalar_product(grad_phi_T_i, dir_tensor * grad_phi_T_j)) * JxW;
+              //   (scalar_product(grad_phi_T_i, dir_tensor * grad_phi_T_j)) *
+              //   JxW;
             }
         }
 
@@ -217,7 +221,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
 
       // // In Tezduyar 2003, this is denoted r in equation (67)
       // Tensor<1, dim> temperature_gradient_unit_vector =
-      //   dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() + 1e-12);
+      //   dcdd_temperature_gradient / (dcdd_temperature_gradient.norm() +
+      //   1e-12);
 
       // // In Tezduyar 2003, this is denoted s in equation (67)
       // Tensor<1, dim> velocity_unit_vector =
@@ -231,7 +236,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       //      temperature_gradient_unit_vector, velocity_unit_vector)) *
       //    outer_product(velocity_unit_vector, velocity_unit_vector));
 
-      // // Calculate the artificial viscosity of the shock capture as in equation
+      // // Calculate the artificial viscosity of the shock capture as in
+      // equation
       // // (79) of Tezduyar 2003
       // const double nu_dcdd = is_steady(method) ?
       //                          0 :
@@ -276,8 +282,8 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           // DCDD shock capturing
           // local_rhs(i) -=
           //   rho_cp * nu_dcdd *
-          //   (scalar_product(grad_phi_T_i, dir_tensor * temperature_gradient)) *
-          //   JxW;
+          //   (scalar_product(grad_phi_T_i, dir_tensor * temperature_gradient))
+          //   * JxW;
         }
 
     } // end loop on quadrature points
@@ -760,7 +766,7 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_matrix        = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -850,7 +856,7 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_rhs(
   const std::vector<double> &specific_heat = scratch_data.specific_heat;
 
   // Copy data elements
-  auto &local_rhs           = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   // assembling right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)

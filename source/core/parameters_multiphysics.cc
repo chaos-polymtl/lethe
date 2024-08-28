@@ -65,11 +65,12 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Buoyant force calculation");
-    
-    prm.declare_entry("DCDD shock capture",
-                      "false",
-                      Patterns::Bool(),
-                      "Use discontinuity-capturing directional dissipation for stabilization in heat transfer <true|false>");
+
+    prm.declare_entry(
+      "DCDD shock capture",
+      "false",
+      Patterns::Bool(),
+      "Use discontinuity-capturing directional dissipation for stabilization in heat transfer <true|false>");
   }
   prm.leave_subsection();
 
