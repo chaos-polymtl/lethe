@@ -75,21 +75,14 @@ public:
         fe = std::make_shared<FESystem<dim>>(
           FE_SimplexP<dim>(
             simulation_parameters.fem_parameters.reactive_species_order),
-          1,
-          FE_SimplexP<dim>(
-            simulation_parameters.fem_parameters.reactive_species_order),
-          1);
+          4
+          // TODO Change to flexible number of species
+        );
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
-          std::max(
-            simulation_parameters.fem_parameters.reactive_species_order,
-            simulation_parameters.fem_parameters.reactive_species_order) +
-          1);
+          simulation_parameters.fem_parameters.reactive_species_order + 1);
         face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
-          std::max(
-            simulation_parameters.fem_parameters.reactive_species_order,
-            simulation_parameters.fem_parameters.reactive_species_order) +
-          1);
+          simulation_parameters.fem_parameters.reactive_species_order + 1);
         ;
       }
     else
@@ -98,23 +91,15 @@ public:
         fe = std::make_shared<FESystem<dim>>(
           FE_Q<dim>(
             simulation_parameters.fem_parameters.reactive_species_order),
-          1,
-          FE_Q<dim>(
-            simulation_parameters.fem_parameters.reactive_species_order),
-          1);
-        mapping         = std::make_shared<MappingQ<dim>>(std::max(
-          simulation_parameters.fem_parameters.reactive_species_order,
-          simulation_parameters.fem_parameters.reactive_species_order));
+          4
+          // TODO Change to flexible number of species
+        );
+        mapping = std::make_shared<MappingQ<dim>>(
+          simulation_parameters.fem_parameters.reactive_species_order);
         cell_quadrature = std::make_shared<QGauss<dim>>(
-          std::max(
-            simulation_parameters.fem_parameters.reactive_species_order,
-            simulation_parameters.fem_parameters.reactive_species_order) +
-          1);
+          simulation_parameters.fem_parameters.reactive_species_order + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(
-          std::max(
-            simulation_parameters.fem_parameters.reactive_species_order,
-            simulation_parameters.fem_parameters.reactive_species_order) +
-          1);
+          simulation_parameters.fem_parameters.reactive_species_order + 1);
       }
 
     // Allocate solution transfer
@@ -150,7 +135,7 @@ public:
   /**
    * @brief Calculates the L2 error of the solution
    */
-  std::pair<double, double>
+  std::vector<double>
   calculate_L2_error();
 
   /**
@@ -407,19 +392,6 @@ private:
    */
   void
   write_phase_energy();
-
-  /**
-   * @brief Calculates the barycenter of fluid 1 and its velocity
-   *
-   * @param solution Reactive species solution
-   *
-   * @param current_solution_fd Fluid dynamics solution
-   *
-   */
-  template <typename VectorType>
-  std::pair<Tensor<1, dim>, Tensor<1, dim>>
-  calculate_barycenter(const GlobalVectorType &solution,
-                       const VectorType       &current_solution_fd);
 
   MultiphysicsInterface<dim> *multiphysics;
 

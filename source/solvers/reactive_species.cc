@@ -66,12 +66,7 @@ ReactiveSpecies<dim>::setup_assemblers()
   this->assemblers.push_back(
     std::make_shared<ReactiveSpeciesAssemblerCore<dim>>(
       this->simulation_control,
-      this->simulation_parameters.multiphysics.reactive_species_parameters,
-      (this->simulation_parameters.multiphysics.reactive_species_parameters
-         .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
-        this->simulation_parameters.multiphysics.reactive_species_parameters
-          .epsilon :
-        GridTools::minimal_cell_diameter(*triangulation)));
+      this->simulation_parameters.multiphysics.reactive_species_parameters));
 }
 
 template <int dim>
@@ -91,8 +86,7 @@ ReactiveSpecies<dim>::assemble_system_matrix()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -188,8 +182,7 @@ ReactiveSpecies<dim>::assemble_system_rhs()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe(),
-    *this->face_quadrature);
+    dof_handler_fluid->get_fe());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -276,12 +269,19 @@ ReactiveSpecies<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // phase order (Phi) and the following one is the chemical potential (eta)
 
   std::vector<std::string> solution_names;
-  solution_names.push_back("phase_order");
-  solution_names.push_back("chemical_potential");
+
+  // TODO Change to flexible number of species
+  unsigned int number_of_reactive_species = 4;
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
+    {
+      solution_names.push_back("species_" + std::to_string(i));
+    }
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
-      2, DataComponentInterpretation::component_is_scalar);
+      // TODO Change to flexible number of species
+      4,
+      DataComponentInterpretation::component_is_scalar);
 
   data_out.add_data_vector(dof_handler,
                            present_solution,
@@ -290,7 +290,7 @@ ReactiveSpecies<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 }
 
 template <int dim>
-std::pair<double, double>
+std::vector<double>
 ReactiveSpecies<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
@@ -301,65 +301,71 @@ ReactiveSpecies<dim>::calculate_L2_error()
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-  const FEValuesExtractors::Scalar phase_order(0);
-  const FEValuesExtractors::Scalar chemical_potential(1);
-  const unsigned int               n_q_points = this->cell_quadrature->size();
+  const unsigned int n_q_points = this->cell_quadrature->size();
 
-  std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(2));
+  // TODO Change to flexible number of species
+  unsigned int                            number_of_reactive_species = 4;
+  std::vector<FEValuesExtractors::Scalar> fe_values_extractors;
+  std::vector<std::vector<double>>        local_species_values;
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
+    {
+      fe_values_extractors.emplace_back(i);
+      local_species_values.emplace_back(std::vector<double>(n_q_points));
+    }
 
-  std::vector<double> local_phase_order_values(n_q_points);
-  std::vector<double> local_chemical_potential_values(n_q_points);
+  // TODO Change to flexible number of species
+  std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(4));
 
   auto &exact_solution =
     simulation_parameters.analytical_solution->reactive_species;
   exact_solution.set_time(simulation_control->get_current_time());
 
-  double l2_error_phase_order        = 0.;
-  double l2_error_chemical_potential = 0.;
+  // TODO Change to flexible number of species
+  std::vector<double> l2_error_species(4);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(evaluation_point,
-                                                     local_phase_order_values);
-          fe_values[chemical_potential].get_function_values(
-            evaluation_point, local_chemical_potential_values);
+          // TODO Change to flexible number of species
+          for (unsigned int i = 0; i < number_of_reactive_species; i++)
+            {
+              fe_values[fe_values_extractors[i]].get_function_values(
+                evaluation_point, local_species_values[i]);
+            }
 
           // Get the exact solution at all Gauss points
           exact_solution.vector_value_list(fe_values.get_quadrature_points(),
                                            q_exactSol);
 
-          for (unsigned int q = 0; q < n_q_points; q++)
+          // TODO Change to flexible number of species
+          for (unsigned int i = 0; i < number_of_reactive_species; i++)
             {
-              // Find the values of x and u_h (the finite element solution) at
-              // the quadrature points
-              double phase_order_sim   = local_phase_order_values[q];
-              double phase_order_exact = q_exactSol[q][0];
+              for (unsigned int q = 0; q < n_q_points; q++)
+                {
+                  // Find the values of x and u_h (the finite element solution)
+                  // at the quadrature points
+                  double species_sim   = local_species_values[i][q];
+                  double species_exact = q_exactSol[q][i];
 
-              l2_error_phase_order += (phase_order_sim - phase_order_exact) *
-                                      (phase_order_sim - phase_order_exact) *
-                                      fe_values.JxW(q);
-
-              double chemical_potential_sim =
-                local_chemical_potential_values[q];
-              double chemical_potential_exact = q_exactSol[q][1];
-
-              l2_error_chemical_potential +=
-                (chemical_potential_sim - chemical_potential_exact) *
-                (chemical_potential_sim - chemical_potential_exact) *
-                fe_values.JxW(q);
+                  l2_error_species[i] += (species_sim - species_exact) *
+                                         (species_sim - species_exact) *
+                                         fe_values.JxW(q);
+                }
             }
         }
     }
-  l2_error_phase_order =
-    Utilities::MPI::sum(l2_error_phase_order, mpi_communicator);
-  l2_error_chemical_potential =
-    Utilities::MPI::sum(l2_error_chemical_potential, mpi_communicator);
 
-  return std::make_pair(std::sqrt(l2_error_phase_order),
-                        std::sqrt(l2_error_chemical_potential));
+  // TODO Change to flexible number of species
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
+    {
+      l2_error_species[i] =
+        Utilities::MPI::sum(l2_error_species[i], mpi_communicator);
+      l2_error_species[i] = std::sqrt(l2_error_species[i]);
+    }
+
+  return l2_error_species;
 }
 
 
@@ -625,15 +631,12 @@ template <int dim>
 void
 ReactiveSpecies<dim>::postprocess(bool first_iteration)
 {
-  auto         mpi_communicator = this->triangulation->get_communicator();
-  unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
-
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      double phase_order_error = calculate_L2_error().first;
-      double potential_error   = calculate_L2_error().second;
+      double phase_order_error = calculate_L2_error()[0];
+      double potential_error   = calculate_L2_error()[1];
+      // TODO Change here to use all species
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
@@ -660,16 +663,19 @@ ReactiveSpecies<dim>::postprocess(bool first_iteration)
         }
     }
 
-  if (simulation_parameters.post_processing.calculate_phase_statistics)
+  /* TODO Later
+    if (simulation_parameters.post_processing.calculate_phase_statistics)
     {
       calculate_phase_statistics();
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_phase_statistics();
-    }
+    }*/
 
-  if (this->simulation_parameters.post_processing.calculate_phase_energy)
+  /*
+   * TODO Later
+     if (this->simulation_parameters.post_processing.calculate_phase_energy)
     {
       calculate_phase_energy();
       // Output phase energies to a text file from processor 0
@@ -680,6 +686,7 @@ ReactiveSpecies<dim>::postprocess(bool first_iteration)
           this->write_phase_energy();
         }
     }
+*/
 
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
@@ -687,135 +694,6 @@ ReactiveSpecies<dim>::postprocess(bool first_iteration)
       announce_string(this->pcout, "Reactive Species");
       this->computing_timer.print_summary();
       this->computing_timer.reset();
-    }
-
-  if (this->simulation_parameters.post_processing.calculate_barycenter)
-    {
-      // Calculate volume and mass (this->mass_monitored)
-      std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
-
-      if (multiphysics->fluid_dynamics_is_block())
-        {
-          // Check if the post processed variable needs to be calculated with
-          // the average velocity profile or the fluid solution.
-          if (this->simulation_parameters.initial_condition->type ==
-                Parameters::InitialConditionType::average_velocity_profile &&
-              !this->simulation_parameters.multiphysics.fluid_dynamics &&
-              simulation_control->get_current_time() >
-                this->simulation_parameters.post_processing.initial_time)
-            {
-              position_and_velocity = calculate_barycenter(
-                this->present_solution,
-                *multiphysics->get_block_time_average_solution(
-                  PhysicsID::fluid_dynamics));
-            }
-          else
-            {
-              position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_block_solution(
-                                       PhysicsID::fluid_dynamics));
-            }
-        }
-      else
-        {
-          // Check if the post processed variable needs to be calculated with
-          // the average velocity profile or the fluid solution.
-          if (this->simulation_parameters.initial_condition->type ==
-                Parameters::InitialConditionType::average_velocity_profile &&
-              !this->simulation_parameters.multiphysics.fluid_dynamics &&
-              simulation_control->get_current_time() >
-                this->simulation_parameters.post_processing.initial_time)
-            {
-              position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_time_average_solution(
-                                       PhysicsID::fluid_dynamics));
-            }
-          else
-            {
-              position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_solution(
-                                       PhysicsID::fluid_dynamics));
-            }
-        }
-      if (this_mpi_process == 0)
-        {
-          if (simulation_parameters.post_processing.verbosity ==
-              Parameters::Verbosity::verbose)
-            {
-              std::cout << std::endl;
-              std::string independent_column_names = "time";
-
-              std::vector<std::string> dependent_column_names;
-              dependent_column_names.push_back("x_reactive_species");
-              dependent_column_names.push_back("y_reactive_species");
-              if constexpr (dim == 3)
-                dependent_column_names.push_back("z_reactive_species");
-              dependent_column_names.push_back("vx_reactive_species");
-              dependent_column_names.push_back("vy_reactive_species");
-              if constexpr (dim == 3)
-                dependent_column_names.push_back("vz_reactive_species");
-
-              std::vector<Tensor<1, dim>> position_vector{
-                position_and_velocity.first};
-              std::vector<Tensor<1, dim>> velocity_vector{
-                position_and_velocity.second};
-
-              std::vector<std::vector<Tensor<1, dim>>>
-                position_and_velocity_vectors{position_vector, velocity_vector};
-
-              std::vector<double> time = {
-                this->simulation_control->get_current_time()};
-
-              TableHandler table = make_table_scalars_tensors(
-                time,
-                independent_column_names,
-                position_and_velocity_vectors,
-                dependent_column_names,
-                this->simulation_parameters.simulation_control.log_precision);
-
-              announce_string(this->pcout, "Reactive species Barycenter");
-
-              table.write_text(std::cout);
-            }
-
-          this->barycenter_table.add_value(
-            "time", simulation_control->get_current_time());
-
-          this->barycenter_table.add_value("x_reactive_species",
-                                           position_and_velocity.first[0]);
-          this->barycenter_table.add_value("y_reactive_species",
-                                           position_and_velocity.first[1]);
-          if constexpr (dim == 3)
-            this->barycenter_table.add_value("z_reactive_species",
-                                             position_and_velocity.first[2]);
-
-          this->barycenter_table.add_value("vx_reactive_species",
-                                           position_and_velocity.second[0]);
-          this->barycenter_table.add_value("vy_reactive_species",
-                                           position_and_velocity.second[1]);
-          if constexpr (dim == 3)
-            this->barycenter_table.add_value("vz_reactive_species",
-                                             position_and_velocity.second[2]);
-
-
-          if (this->simulation_control->get_step_number() %
-                this->simulation_parameters.post_processing.output_frequency ==
-              0)
-            {
-              // Save table to .dat
-              std::string filename =
-                this->simulation_parameters.simulation_control.output_folder +
-                this->simulation_parameters.post_processing
-                  .barycenter_output_name +
-                ".dat";
-              std::ofstream output(filename.c_str());
-              this->barycenter_table.write_text(output);
-              output.close();
-            }
-        }
     }
 }
 
@@ -869,19 +747,24 @@ ReactiveSpecies<dim>::compute_kelly(
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
-  const FEValuesExtractors::Scalar phase_order(0);
-  const FEValuesExtractors::Scalar chemical_potential(1);
-
-  if (ivar.first == Variable::concentration_reactive_species)
+  // TODO Change to flexible number of species
+  unsigned int                            number_of_reactive_species = 4;
+  std::vector<FEValuesExtractors::Scalar> fe_values_extractors;
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
     {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(phase_order));
+      fe_values_extractors.emplace_back(i);
+      if (ivar.first == Variable::concentration_reactive_species)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            present_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(fe_values_extractors[i]));
+        }
     }
 }
 
@@ -911,12 +794,15 @@ ReactiveSpecies<dim>::write_checkpoint()
     serialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_RS" + suffix);
+  /*
+   * TODO Later
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     serialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.phase_output_name +
         suffix);
+*/
 }
 
 template <int dim>
@@ -956,12 +842,15 @@ ReactiveSpecies<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_RS" + suffix);
+  /*
+   * TODO Later
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     deserialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.phase_output_name +
         suffix);
+*/
 }
 
 
@@ -969,14 +858,10 @@ template <int dim>
 void
 ReactiveSpecies<dim>::setup_dofs()
 {
-  FEValuesExtractors::Scalar phase_order(0);
-  FEValuesExtractors::Scalar chemical_potential(1);
-
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
   auto mpi_communicator = triangulation->get_communicator();
-
 
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
@@ -1009,12 +894,7 @@ ReactiveSpecies<dim>::setup_dofs()
          this->simulation_parameters.boundary_conditions_reactive_species.size;
          ++i_bc)
       {
-        ComponentMask mask(2, true);
-        mask.set(1, false);
-
-        // Dirichlet condition: imposed phase_order at i_bc
-        // To impose the boundary condition only on the phase order, a component
-        // mask is used at the end of the interpolate_boundary_values function
+        // Dirichlet condition: imposed species value at i_bc
         if (this->simulation_parameters.boundary_conditions_reactive_species
               .type[i_bc] ==
             BoundaryConditions::BoundaryType::reactive_species_dirichlet)
@@ -1027,8 +907,7 @@ ReactiveSpecies<dim>::setup_dofs()
                 &this->simulation_parameters
                    .boundary_conditions_reactive_species.bcFunctions[i_bc]
                    .dirichlet),
-              nonzero_constraints,
-              mask);
+              nonzero_constraints);
           }
       }
   }
@@ -1053,7 +932,7 @@ ReactiveSpecies<dim>::setup_dofs()
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_reactive_species
                 .id[i_bc],
-              Functions::ZeroFunction<dim>(2),
+              Functions::ZeroFunction<dim>(4),
               zero_constraints);
           }
       }
@@ -1077,7 +956,7 @@ ReactiveSpecies<dim>::setup_dofs()
                        dsp,
                        mpi_communicator);
 
-  this->pcout << "   Number of Cahn-Hilliard degrees of freedom: "
+  this->pcout << "   Number of Reactive physics degrees of freedom: "
               << dof_handler.n_dofs() << std::endl;
 
   // Provide the reactive_species dof_handler and present solution pointers to
@@ -1108,12 +987,7 @@ ReactiveSpecies<dim>::update_boundary_conditions()
        this->simulation_parameters.boundary_conditions_reactive_species.size;
        ++i_bc)
     {
-      ComponentMask mask(2, true);
-      mask.set(1, false);
-
-      // Dirichlet condition: imposed phase_order at i_bc
-      // To impose the boundary condition only on the phase order, a component
-      // mask is used at the end of the interpolate_boundary_values function
+      // Dirichlet condition: imposed species value at i_bc
       if (this->simulation_parameters.boundary_conditions_reactive_species
             .type[i_bc] ==
           BoundaryConditions::BoundaryType::reactive_species_dirichlet)
@@ -1129,8 +1003,7 @@ ReactiveSpecies<dim>::update_boundary_conditions()
               &this->simulation_parameters.boundary_conditions_reactive_species
                  .bcFunctions[i_bc]
                  .dirichlet),
-            nonzero_constraints,
-            mask);
+            nonzero_constraints);
         }
     }
 
@@ -1144,24 +1017,20 @@ template <int dim>
 void
 ReactiveSpecies<dim>::set_initial_conditions()
 {
-  const FEValuesExtractors::Scalar phase_order(0);
-  const FEValuesExtractors::Scalar potential(1);
+  // TODO Change to flexible number of species
+  unsigned int                            number_of_reactive_species = 4;
+  std::vector<FEValuesExtractors::Scalar> fe_values_extractors;
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
+    {
+      fe_values_extractors.emplace_back(i);
 
-  VectorTools::interpolate(
-    *mapping,
-    dof_handler,
-    simulation_parameters.initial_condition->reactive_species,
-    newton_update,
-    fe->component_mask(phase_order));
-
-  // Set the initial chemical potential to 0. (May be discussed or modified
-  // later)
-  VectorTools::interpolate(
-    *mapping,
-    dof_handler,
-    simulation_parameters.initial_condition->reactive_species,
-    newton_update,
-    fe->component_mask(potential));
+      VectorTools::interpolate(
+        *mapping,
+        dof_handler,
+        simulation_parameters.initial_condition->reactive_species,
+        newton_update,
+        fe->component_mask(fe_values_extractors[i]));
+    }
 
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
@@ -1250,185 +1119,59 @@ ReactiveSpecies<dim>::solve_linear_system(const bool initial_step,
 }
 
 template <int dim>
-template <typename VectorType>
-std::pair<Tensor<1, dim>, Tensor<1, dim>>
-ReactiveSpecies<dim>::calculate_barycenter(const GlobalVectorType &solution,
-                                           const VectorType       &solution_fd)
-{
-  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
-
-  FEValues<dim> fe_values_reactive_species(*this->mapping,
-                                           *this->fe,
-                                           *this->cell_quadrature,
-                                           update_values | update_gradients |
-                                             update_quadrature_points |
-                                             update_JxW_values);
-
-  const DoFHandler<dim> *dof_handler_fd =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-  FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
-                             *this->cell_quadrature,
-                             update_values);
-
-  const unsigned int          n_q_points = this->cell_quadrature->size();
-  std::vector<double>         phase_reactive_species_values(n_q_points);
-  std::vector<Tensor<1, dim>> phase_reactive_species_gradients(n_q_points);
-  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
-  std::vector<Point<dim>>     quadrature_locations(n_q_points);
-
-  const FEValuesExtractors::Vector velocity(0);
-  const FEValuesExtractors::Scalar phase_order(0);
-
-  Tensor<1, dim> barycenter_location;
-  Tensor<1, dim> barycenter_velocity;
-  double         volume = 0;
-
-
-  std::map<field, std::vector<double>> fields;
-
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_reactive_species.reinit(cell);
-          quadrature_locations =
-            fe_values_reactive_species.get_quadrature_points();
-          fe_values_reactive_species[phase_order].get_function_values(
-            solution, phase_reactive_species_values);
-          fe_values_reactive_species[phase_order].get_function_gradients(
-            solution, phase_reactive_species_gradients);
-
-          // Get fluid dynamics active cell iterator
-          typename DoFHandler<dim>::active_cell_iterator cell_fd(
-            &(*(this->triangulation)),
-            cell->level(),
-            cell->index(),
-            dof_handler_fd);
-
-          fe_values_fd.reinit(cell_fd);
-          fe_values_fd[velocity].get_function_values(solution_fd,
-                                                     velocity_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              const double JxW          = fe_values_reactive_species.JxW(q);
-              const double phase_values = phase_reactive_species_values[q];
-
-
-
-              volume += (1 - phase_values) * 0.5 * JxW;
-              barycenter_location +=
-                (1 - phase_values) * 0.5 * quadrature_locations[q] * JxW;
-              barycenter_velocity +=
-                (1 - phase_values) * 0.5 * velocity_values[q] * JxW;
-            }
-        }
-    }
-
-  volume = Utilities::MPI::sum(volume, mpi_communicator);
-  barycenter_location =
-    Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;
-  barycenter_velocity =
-    Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;
-
-  return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
-                                                   barycenter_velocity);
-}
-
-template <int dim>
 void
 ReactiveSpecies<dim>::output_newton_update_norms(
   const unsigned int display_precision)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-  FEValuesExtractors::Scalar phase_order(0);
-  FEValuesExtractors::Scalar chemical_potential(1);
-
-  ComponentMask phase_order_mask = fe->component_mask(phase_order);
-  ComponentMask chemical_potential_mask =
-    fe->component_mask(chemical_potential);
-
-  const std::vector<IndexSet> index_set_phase_order =
-    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);
-  const std::vector<IndexSet> index_set_chemical_potential =
-    DoFTools::locally_owned_dofs_per_component(dof_handler,
-                                               chemical_potential_mask);
-
-  double local_sum = 0.0;
-  double local_max = std::numeric_limits<double>::lowest();
-
-
-  for (auto j = index_set_phase_order[0].begin();
-       j != index_set_phase_order[0].end();
-       j++)
+  // TODO Change to flexible number of species
+  unsigned int                            number_of_reactive_species = 4;
+  std::vector<FEValuesExtractors::Scalar> fe_values_extractors;
+  std::vector<ComponentMask>              component_mask_species;
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
     {
-      double dof_newton_update = newton_update[*j];
-
-      local_sum += dof_newton_update * dof_newton_update;
-
-      local_max = std::max(local_max, std::abs(dof_newton_update));
+      fe_values_extractors.emplace_back(i);
+      component_mask_species.emplace_back(
+        fe->component_mask(fe_values_extractors[i]));
     }
 
-
-  double global_phase_order_l2_norm =
-    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-  double global_phase_order_linfty_norm =
-    Utilities::MPI::max(local_max, mpi_communicator);
-
-  local_sum = 0.0;
-  local_max = std::numeric_limits<double>::lowest();
-
-  for (auto j = index_set_chemical_potential[1].begin();
-       j != index_set_chemical_potential[1].end();
-       j++)
+  // TODO Change to flexible number of species
+  std::vector<double> local_sum(4);
+  std::vector<double> local_max(4);
+  std::vector<double> global_l2_norm(4);
+  std::vector<double> global_linfty_norm(4);
+  for (unsigned int i = 0; i < number_of_reactive_species; i++)
     {
-      double dof_newton_update = newton_update[*j];
+      local_max[i] = std::numeric_limits<double>::lowest();
+      const std::vector<IndexSet> index_set_species =
+        DoFTools::locally_owned_dofs_per_component(dof_handler,
+                                                   component_mask_species[i]);
 
-      local_sum += dof_newton_update * dof_newton_update;
+      for (auto j = index_set_species[i].begin();
+           j != index_set_species[i].end();
+           j++)
+        {
+          double dof_newton_update = newton_update[*j];
 
-      local_max = std::max(local_max, std::abs(dof_newton_update));
+          local_sum[i] += dof_newton_update * dof_newton_update;
+
+          local_max[i] = std::max(local_max[i], std::abs(dof_newton_update));
+        }
+
+      global_l2_norm[i] =
+        std::sqrt(Utilities::MPI::sum(local_sum[i], mpi_communicator));
+      global_linfty_norm[i] =
+        Utilities::MPI::max(local_max[i], mpi_communicator);
+
+      this->pcout << std::setprecision(display_precision)
+                  << "\n\t||dphi||_L2 = " << std::setw(6) << global_l2_norm[i]
+                  << std::setw(6) << "\t||dphi||_Linfty = "
+                  << std::setprecision(display_precision)
+                  << global_linfty_norm[i] << std::endl;
     }
-
-  double global_chemical_potential_l2_norm =
-    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));
-  double global_chemical_potential_linfty_norm =
-    Utilities::MPI::max(local_max, mpi_communicator);
-
-  this->pcout << std::setprecision(display_precision)
-              << "\n\t||dphi||_L2 = " << std::setw(6)
-              << global_phase_order_l2_norm << std::setw(6)
-              << "\t||dphi||_Linfty = " << std::setprecision(display_precision)
-              << global_phase_order_linfty_norm << std::endl;
-  this->pcout << std::setprecision(display_precision)
-              << "\t||deta||_L2 = " << std::setw(6)
-              << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t||deta||_Linfty = " << std::setprecision(display_precision)
-              << global_chemical_potential_linfty_norm << std::endl;
 }
 
-template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-ReactiveSpecies<2>::calculate_barycenter<GlobalVectorType>(
-  const GlobalVectorType &solution,
-  const GlobalVectorType &current_solution_fd);
-
-template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-ReactiveSpecies<3>::calculate_barycenter<GlobalVectorType>(
-  const GlobalVectorType &solution,
-  const GlobalVectorType &current_solution_fd);
-
-template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-ReactiveSpecies<2>::calculate_barycenter<GlobalBlockVectorType>(
-  const GlobalVectorType      &solution,
-  const GlobalBlockVectorType &current_solution_fd);
-
-
-template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-ReactiveSpecies<3>::calculate_barycenter<GlobalBlockVectorType>(
-  const GlobalVectorType      &solution,
-  const GlobalBlockVectorType &current_solution_fd);
 
 
 template class ReactiveSpecies<2>;

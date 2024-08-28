@@ -75,9 +75,9 @@ public:
     const FESystem<dim>             &fe_reactive_species,
     const Quadrature<dim>           &quadrature,
     const Mapping<dim>              &mapping,
-    const FiniteElement<dim>        &fe_fd,
-    const Quadrature<dim - 1>       &face_quadrature)
+    const FiniteElement<dim>        &fe_fd)
     : properties_manager(properties_manager)
+    , fe_values_extractors(4) // TODO Make flexible with number of species
     , fe_values_reactive_species(mapping,
                                  fe_reactive_species,
                                  quadrature,
@@ -85,12 +85,6 @@ public:
                                    update_JxW_values | update_gradients |
                                    update_hessians)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
-    , fe_face_values_reactive_species(mapping,
-                                      fe_reactive_species,
-                                      face_quadrature,
-                                      update_values | update_quadrature_points |
-                                        update_JxW_values | update_gradients |
-                                        update_normal_vectors)
   {
     allocate();
   }
@@ -110,6 +104,7 @@ public:
    */
   ReactiveSpeciesScratchData(const ReactiveSpeciesScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
+    , fe_values_extractors() // TODO Make flexible with number of species
     , fe_values_reactive_species(sd.fe_values_reactive_species.get_mapping(),
                                  sd.fe_values_reactive_species.get_fe(),
                                  sd.fe_values_reactive_species.get_quadrature(),
@@ -120,13 +115,12 @@ public:
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values)
-    , fe_face_values_reactive_species(
-        sd.fe_face_values_reactive_species.get_mapping(),
-        sd.fe_face_values_reactive_species.get_fe(),
-        sd.fe_face_values_reactive_species.get_quadrature(),
-        update_values | update_quadrature_points | update_JxW_values |
-          update_gradients | update_normal_vectors)
   {
+    // TODO Make flexible with number of species
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        fe_values_extractors.emplace_back(i);
+      }
     allocate();
   }
 
@@ -163,8 +157,11 @@ public:
          const std::vector<VectorType> &previous_solutions,
          Function<dim>                 *source_function)
   {
-    this->phase_order.component        = 0;
-    this->chemical_potential.component = 1;
+    // TODO Flexible number of species
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        this->fe_values_extractors[i].component = 0;
+      }
 
     this->fe_values_reactive_species.reinit(cell);
 
@@ -172,12 +169,13 @@ public:
       this->fe_values_reactive_species.get_quadrature_points();
     auto &fe_reactive_species = this->fe_values_reactive_species.get_fe();
 
-    source_function->value_list(quadrature_points, source_phase_order, 0);
-    source_function->value_list(quadrature_points,
-                                source_chemical_potential,
-                                1);
+    // TODO Flexible number of species
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        source_function->value_list(quadrature_points, source[i], i);
+      }
 
-
+    // TODO Use the new utilities function for that
     if (dim == 2)
       this->cell_size =
         std::sqrt(4. * cell->measure() / M_PI) / fe_reactive_species.degree;
@@ -186,35 +184,29 @@ public:
         pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_reactive_species.degree;
 
     // Gather Phi and eta (values, gradient and laplacian)
-    this->fe_values_reactive_species[phase_order].get_function_values(
-      current_solution, this->phase_order_values);
-    this->fe_values_reactive_species[phase_order].get_function_gradients(
-      current_solution, this->phase_order_gradients);
-    this->fe_values_reactive_species[phase_order].get_function_laplacians(
-      current_solution, this->phase_order_laplacians);
-
-    this->fe_values_reactive_species[chemical_potential].get_function_values(
-      current_solution, this->chemical_potential_values);
-    this->fe_values_reactive_species[chemical_potential].get_function_gradients(
-      current_solution, this->chemical_potential_gradients);
-    this->fe_values_reactive_species[chemical_potential]
-      .get_function_laplacians(current_solution,
-                               this->chemical_potential_laplacians);
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        this->fe_values_reactive_species[fe_values_extractors[i]]
+          .get_function_values(current_solution,
+                               this->reactive_species_values[i]);
+        this->fe_values_reactive_species[fe_values_extractors[i]]
+          .get_function_gradients(current_solution,
+                                  this->reactive_species_gradients[i]);
+        this->fe_values_reactive_species[fe_values_extractors[i]]
+          .get_function_laplacians(current_solution,
+                                   this->reactive_species_laplacians[i]);
+      }
 
 
     // Gather previous phase order values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_reactive_species[phase_order].get_function_values(
-          previous_solutions[p], previous_phase_order_values[p]);
-      }
-
-    // Gather previous chemical potential values
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_reactive_species[chemical_potential]
-          .get_function_values(previous_solutions[p],
-                               previous_chemical_potential_values[p]);
+        for (unsigned int i = 0; i < 4; i++)
+          {
+            this->fe_values_reactive_species[fe_values_extractors[i]]
+              .get_function_values(previous_solutions[p],
+                                   previous_reactive_species_values[i][p]);
+          }
       }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -223,82 +215,19 @@ public:
 
         for (unsigned int k = 0; k < n_dofs; ++k)
           {
-            // Shape functions for the phase order
-            this->phi_phase[q][k] =
-              this->fe_values_reactive_species[phase_order].value(k, q);
-            this->grad_phi_phase[q][k] =
-              this->fe_values_reactive_species[phase_order].gradient(k, q);
-            this->hess_phi_phase[q][k] =
-              this->fe_values_reactive_species[phase_order].hessian(k, q);
-            this->laplacian_phi_phase[q][k] = trace(this->hess_phi_phase[q][k]);
-
-            // Shape functions for the chemical potential
-            this->phi_potential[q][k] =
-              this->fe_values_reactive_species[chemical_potential].value(k, q);
-            this->grad_phi_potential[q][k] =
-              this->fe_values_reactive_species[chemical_potential].gradient(k,
-                                                                            q);
-            this->hess_phi_potential[q][k] =
-              this->fe_values_reactive_species[chemical_potential].hessian(k,
-                                                                           q);
-            this->laplacian_phi_potential[q][k] =
-              trace(this->hess_phi_potential[q][k]);
-          }
-      }
-
-    this->is_boundary_cell =
-      cell->at_boundary(); // The attribute needs to be updated because the
-                           // assembler for the angle of contact boundary
-                           // condition needs to know if the cell is at the
-                           // boundary
-    if (this->is_boundary_cell)
-      {
-        n_faces          = cell->n_faces();
-        is_boundary_face = std::vector<bool>(n_faces, false);
-        n_faces_q_points =
-          fe_face_values_reactive_species.get_quadrature().size();
-        boundary_face_id = std::vector<unsigned int>(n_faces);
-
-        face_JxW = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
-
-        this->grad_phi_face_phase =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<1, dim>>>(
-              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
-
-        this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-
-        for (const auto face : cell->face_indices())
-          {
-            this->is_boundary_face[face] = cell->face(face)->at_boundary();
-            if (this->is_boundary_face[face])
+            for (unsigned int i = 0; i < 4; i++)
               {
-                fe_face_values_reactive_species.reinit(cell, face);
-                boundary_face_id[face] = cell->face(face)->boundary_id();
-
-                this->fe_face_values_reactive_species[phase_order]
-                  .get_function_gradients(current_solution,
-                                          this->face_phase_grad_values[face]);
-
-                for (unsigned int q = 0; q < n_faces_q_points; ++q)
-                  {
-                    face_JxW[face][q] = fe_face_values_reactive_species.JxW(q);
-                    this->face_normal[face][q] =
-                      this->fe_face_values_reactive_species.normal_vector(q);
-                    for (const unsigned int k :
-                         fe_face_values_reactive_species.dof_indices())
-                      {
-                        this->grad_phi_face_phase[face][q][k] =
-                          this->fe_face_values_reactive_species[phase_order]
-                            .gradient(k, q);
-                      }
-                  }
+                // Shape functions for the phase order
+                this->phi[i][q][k] =
+                  this->fe_values_reactive_species[fe_values_extractors[i]]
+                    .value(k, q);
+                this->grad_phi[i][q][k] =
+                  this->fe_values_reactive_species[fe_values_extractors[i]]
+                    .gradient(k, q);
+                this->hess_phi[i][q][k] =
+                  this->fe_values_reactive_species[fe_values_extractors[i]]
+                    .hessian(k, q);
+                this->laplacian_phi[i][q][k] = trace(this->hess_phi[i][q][k]);
               }
           }
       }
@@ -347,20 +276,14 @@ public:
   void
   calculate_physical_properties();
 
-
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
-  dealii::types::material_id           material_id;
-  std::vector<double>                  density;
-  std::vector<double>                  kinematic_viscosity;
-  std::vector<double>                  surface_tension;
-  std::vector<double>                  mobility_reactive_species;
-  std::vector<double>                  mobility_reactive_species_gradient;
+  std::vector<double>                  tracer_diffusivity;
+  std::vector<double>                  tracer_diffusivity_0;
+  std::vector<double>                  tracer_diffusivity_1;
 
-
-  FEValuesExtractors::Scalar phase_order;
-  FEValuesExtractors::Scalar chemical_potential;
+  std::vector<FEValuesExtractors::Scalar> fe_values_extractors;
 
   // FEValues for the Reactive species problem
   FEValues<dim> fe_values_reactive_species;
@@ -372,58 +295,36 @@ public:
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
 
-  // Phase order and chemical potential values
-  std::vector<double>              phase_order_values;
-  std::vector<Tensor<1, dim>>      phase_order_gradients;
-  std::vector<double>              phase_order_laplacians;
-  std::vector<std::vector<double>> previous_phase_order_values;
-  std::vector<double>              chemical_potential_values;
-  std::vector<Tensor<1, dim>>      chemical_potential_gradients;
-  std::vector<double>              chemical_potential_laplacians;
-  std::vector<std::vector<double>> previous_chemical_potential_values;
+  // Reactive species values
+  std::vector<std::vector<double>>         reactive_species_values;
+  std::vector<std::vector<Tensor<1, dim>>> reactive_species_gradients;
+  std::vector<std::vector<double>>         reactive_species_laplacians;
+  std::vector<std::vector<std::vector<double>>>
+    previous_reactive_species_values;
+  // TODO Initialize these vectors
+
+  // Solid signed distance function
+  std::vector<double> sdf_values;
 
   // Source term
-  std::vector<double> source_phase_order;
-  std::vector<double> source_chemical_potential;
+  std::vector<std::vector<double>> source;
+  // TODO Initialize this vectors
 
-  // Shape functions for the phase order and the chemical potential
-  std::vector<std::vector<double>>         phi_phase;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi_phase;
-  std::vector<std::vector<double>>         laplacian_phi_phase;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_phase;
-  std::vector<std::vector<double>>         phi_potential;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi_potential;
-  std::vector<std::vector<double>>         laplacian_phi_potential;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_potential;
+  // Shape functions
+  std::vector<std::vector<std::vector<double>>>         phi;
+  std::vector<std::vector<std::vector<Tensor<2, dim>>>> hess_phi;
+  std::vector<std::vector<std::vector<double>>>         laplacian_phi;
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi;
+  // TODO Initialize these vectors
+
 
   /**
    * Scratch component for the Navier-Stokes component
    */
   FEValuesExtractors::Vector velocities;
-  // This FEValues must be instantiated for the velocity
-  FEValues<dim>                            fe_values_fd;
-  std::vector<Tensor<1, dim>>              velocity_values;
-  std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
-  std::vector<Tensor<2, dim>>              velocity_gradient_values;
-
-  // Scratch for the face boundary condition
-  FEFaceValues<dim>                fe_face_values_reactive_species;
-  std::vector<std::vector<double>> face_JxW;
-
-  unsigned int n_faces;
-  unsigned int n_faces_q_points;
-
-  // Is boundary cell indicator
-  bool                      is_boundary_cell;
-  std::vector<bool>         is_boundary_face;
-  std::vector<unsigned int> boundary_face_id;
-
-  // First vector is face number, second quadrature point, third DOF
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi_face_phase;
-  // First vector is face number, second quadrature point
-  std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;
-  // The normal vector is necessary for the free angle boundary condition
-  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+  // This FEValues must mandatorily be instantiated for the velocity
+  FEValues<dim>               fe_values_fd;
+  std::vector<Tensor<1, dim>> velocity_values;
 };
 
 #endif

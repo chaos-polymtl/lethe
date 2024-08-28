@@ -25,80 +25,186 @@ void
 ReactiveSpeciesAssemblerCore<dim>::assemble_matrix(
   ReactiveSpeciesScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData       &copy_data)
-{
-  // Gather physical properties
-  const double epsilon   = this->epsilon;
-  const double cell_size = scratch_data.cell_size;
-  const double xi =
-    this->reactive_species_parameters.potential_smoothing_coefficient;
+{ /*
+   // Scheme and physical properties
+   std::vector<double> dummy_diffusivity =
+     std::vector<double>(scratch_data.n_q_points, 1);
+   const std::vector<double> &diffusivity_vector = dummy_diffusivity;
+   // TODO Add the parameter and scratch for species diffusivity
+   //  scratch_data.tracer_diffusivity;
+   const auto method = this->simulation_control->get_assembly_method();
 
-  // Loop and quadrature information
-  const auto        &JxW_vec    = scratch_data.JxW;
-  const unsigned int n_q_points = scratch_data.n_q_points;
-  const unsigned int n_dofs     = scratch_data.n_dofs;
+   // Loop and quadrature informations
+   const auto        &JxW_vec    = scratch_data.JxW;
+   const unsigned int n_q_points = scratch_data.n_q_points;
+   const unsigned int n_dofs     = scratch_data.n_dofs;
+   const double       h          = scratch_data.cell_size;
 
-  // Copy data elements
-  auto &local_matrix = copy_data.local_matrix;
-
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      const double lambda =
-        3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-
-      const double mobility = scratch_data.mobility_reactive_species[q];
-      const double mobility_gradient =
-        scratch_data.mobility_reactive_species_gradient[q];
-
-      // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
-
-      // Store JxW in local variable for faster access;
-      const double JxW = JxW_vec[q];
-
-      const double phase_order_value = scratch_data.phase_order_values[q];
-      const Tensor<1, dim> potential_gradient =
-        scratch_data.chemical_potential_gradients[q];
-
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        {
-          const double         phi_phase_i = scratch_data.phi_phase[q][i];
-          const Tensor<1, dim> grad_phi_phase_i =
-            scratch_data.grad_phi_phase[q][i];
-
-          const double phi_potential_i = scratch_data.phi_potential[q][i];
-          const Tensor<1, dim> grad_phi_potential_i =
-            scratch_data.grad_phi_potential[q][i];
+   // Time steps and inverse time steps which is used for stabilization constant
+   std::vector<double> time_steps_vector =
+     this->simulation_control->get_time_steps_vector();
+   const double dt  = time_steps_vector[0];
+   const double sdt = 1. / dt;
 
 
-          for (unsigned int j = 0; j < n_dofs; ++j)
-            {
-              const double         phi_phase_j = scratch_data.phi_phase[q][j];
-              const Tensor<1, dim> grad_phi_phase_j =
-                scratch_data.grad_phi_phase[q][j];
+   // Copy data elements
+   auto &strong_jacobian_vec = copy_data.strong_jacobian;
+   auto &local_matrix        = copy_data.local_matrix;
 
-              const double phi_potential_j = scratch_data.phi_potential[q][j];
-              const Tensor<1, dim> grad_phi_potential_j =
-                scratch_data.grad_phi_potential[q][j];
+   // assembling local matrix and right hand side
+   for (unsigned int q = 0; q < n_q_points; ++q)
+     {
+       // Gather into local variables the relevant fields
+       const double         diffusivity     = diffusivity_vector[q];
+       const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
+       const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
 
-              local_matrix(i, j) +=
-                // Phase order equation
-                (phi_phase_i * (velocity_field * grad_phi_phase_j) +
-                 mobility * grad_phi_phase_i * grad_phi_potential_j +
-                 mobility_gradient * grad_phi_phase_i * potential_gradient *
-                   phi_phase_j
-                 // Chemical potential equation
-                 + phi_potential_i * phi_potential_j -
-                 (lambda / (epsilon * epsilon)) * phi_potential_i *
-                   (3 * phase_order_value * phase_order_value - 1.0) *
-                   phi_phase_j -
-                 lambda * grad_phi_potential_i * grad_phi_phase_j
-                 // Chemical potential smoothing
-                 + xi * cell_size * cell_size * grad_phi_potential_i *
-                     grad_phi_potential_j) *
-                JxW;
-            }
-        }
-    }
+       // Store JxW in local variable for faster access;
+       const double JxW = JxW_vec[q];
+
+       // Shock capturing viscosity term
+       const double order = scratch_data.fe_values_tracer.get_fe().degree;
+
+       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
+                            pow(tracer_gradient.norm() * h, order);
+
+       const double   tolerance = 1e-12;
+       Tensor<1, dim> s         = velocity / (velocity.norm() + tolerance);
+       Tensor<1, dim> r = tracer_gradient / (tracer_gradient.norm() +
+   tolerance);
+
+       const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+       const Tensor<2, dim> rr          = outer_product(r, r);
+       const Tensor<2, dim> dcdd_factor = rr - k_corr;
+
+
+       const double d_vdcdd = order * (0.5 * h * h) *
+                              (velocity.norm() * velocity.norm()) *
+                              pow(tracer_gradient.norm() * h, order - 1);
+
+
+
+       // Calculation of the magnitude of the velocity for the
+       // stabilization parameter
+       const double u_mag = std::max(velocity.norm(), tolerance);
+
+       // Calculation of the GLS stabilization parameter. The
+       // stabilization parameter used is different if the simulation is
+       // steady or unsteady. In the unsteady case it includes the value
+       // of the time-step
+       const double tau =
+         is_steady(method) ?
+           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                          9 * std::pow(4 * diffusivity / (h * h), 2)) :
+           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                          9 * std::pow(4 * diffusivity / (h * h), 2));
+
+       for (unsigned int j = 0; j < n_dofs; ++j)
+         {
+           const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+           const double laplacian_phi_T_j    = scratch_data.laplacian_phi[q][j];
+           strong_jacobian_vec[q][j] +=
+             velocity * grad_phi_T_j - diffusivity * laplacian_phi_T_j;
+         }
+
+       for (unsigned int i = 0; i < n_dofs; ++i)
+         {
+           const auto phi_T_i      = scratch_data.phi[q][i];
+           const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+
+           for (unsigned int j = 0; j < n_dofs; ++j)
+             {
+               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+
+               // Weak form : - D * laplacian T +  u * gradT - f=0
+               local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j
+   + phi_T_i * velocity * grad_phi_T_j) * JxW;
+
+
+
+               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
+                                     (grad_phi_T_i * velocity) * JxW;
+
+               local_matrix(i, j) +=
+                 (vdcdd *
+                    scalar_product(grad_phi_T_i, dcdd_factor * grad_phi_T_j) +
+                  d_vdcdd * grad_phi_T_j.norm() *
+                    scalar_product(grad_phi_T_i,
+                                   dcdd_factor * tracer_gradient)) *
+                 JxW;
+             }
+         }
+     } // end loop on quadrature points
+
+
+
+   // Gather physical properties
+   const double cell_size = scratch_data.cell_size;
+   const double xi =
+     this->reactive_species_parameters.potential_smoothing_coefficient;
+
+   // Loop and quadrature information
+   const auto        &JxW_vec    = scratch_data.JxW;
+   const unsigned int n_q_points = scratch_data.n_q_points;
+   const unsigned int n_dofs     = scratch_data.n_dofs;
+
+   // Copy data elements
+   auto &local_matrix = copy_data.local_matrix;
+
+   for (unsigned int q = 0; q < n_q_points; ++q)
+     {
+       const double lambda = scratch_data.surface_tension[q] / (2 * sqrt(2));
+
+       const double mobility = scratch_data.mobility_reactive_species[q];
+       const double mobility_gradient =
+         scratch_data.mobility_reactive_species_gradient[q];
+
+       // Gather into local variables the relevant fields
+       const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
+
+       // Store JxW in local variable for faster access;
+       const double JxW = JxW_vec[q];
+
+       const double phase_order_value = scratch_data.phase_order_values[q];
+       const Tensor<1, dim> potential_gradient =
+         scratch_data.chemical_potential_gradients[q];
+
+       for (unsigned int i = 0; i < n_dofs; ++i)
+         {
+           const double         phi_phase_i = scratch_data.phi_phase[q][i];
+           const Tensor<1, dim> grad_phi_phase_i =
+             scratch_data.grad_phi_phase[q][i];
+
+           const double phi_potential_i = scratch_data.phi_potential[q][i];
+           const Tensor<1, dim> grad_phi_potential_i =
+             scratch_data.grad_phi_potential[q][i];
+
+
+           for (unsigned int j = 0; j < n_dofs; ++j)
+             {
+               const double         phi_phase_j = scratch_data.phi_phase[q][j];
+               const Tensor<1, dim> grad_phi_phase_j =
+                 scratch_data.grad_phi_phase[q][j];
+
+               const double phi_potential_j = scratch_data.phi_potential[q][j];
+               const Tensor<1, dim> grad_phi_potential_j =
+                 scratch_data.grad_phi_potential[q][j];
+
+               local_matrix(i, j) +=
+                 // Phase order equation
+                 (phi_phase_i * (velocity_field * grad_phi_phase_j) +
+                  mobility * grad_phi_phase_i * grad_phi_potential_j +
+                  mobility_gradient * grad_phi_phase_i * potential_gradient *
+                    phi_phase_j
+                  // Chemical potential equation
+                  - lambda * grad_phi_potential_i * grad_phi_phase_j
+                  // Chemical potential smoothing
+                  + xi * cell_size * cell_size * grad_phi_potential_i *
+                      grad_phi_potential_j) *
+                 JxW;
+             }
+         }
+     }*/
 }
 
 
@@ -108,72 +214,70 @@ void
 ReactiveSpeciesAssemblerCore<dim>::assemble_rhs(
   ReactiveSpeciesScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData       &copy_data)
-{
-  // Gather physical properties
-  const double epsilon   = this->epsilon;
-  const double cell_size = scratch_data.cell_size;
-  const double xi =
-    this->reactive_species_parameters.potential_smoothing_coefficient;
+{ /*
+   // Gather physical properties
+   const double cell_size = scratch_data.cell_size;
+   const double xi =
+     this->reactive_species_parameters.potential_smoothing_coefficient;
 
 
-  // Loop and quadrature information
-  const auto        &JxW_vec    = scratch_data.JxW;
-  const unsigned int n_q_points = scratch_data.n_q_points;
-  const unsigned int n_dofs     = scratch_data.n_dofs;
+   // Loop and quadrature information
+   const auto        &JxW_vec    = scratch_data.JxW;
+   const unsigned int n_q_points = scratch_data.n_q_points;
+   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Copy data elements
-  auto &local_rhs = copy_data.local_rhs;
+   // Copy data elements
+   auto &local_rhs = copy_data.local_rhs;
 
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      const double lambda =
-        3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-      const double mobility = scratch_data.mobility_reactive_species[q];
-
-
-      // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
-
-      // Store JxW in local variable for faster access;
-      const double JxW               = JxW_vec[q];
-      const double phase_order_value = scratch_data.phase_order_values[q];
-      const Tensor<1, dim> phase_order_gradient =
-        scratch_data.phase_order_gradients[q];
-      const double potential_value = scratch_data.chemical_potential_values[q];
-      const Tensor<1, dim> potential_gradient =
-        scratch_data.chemical_potential_gradients[q];
-      const double source_phase_order = scratch_data.source_phase_order[q];
-      const double source_chemical_potential =
-        scratch_data.source_chemical_potential[q];
+   for (unsigned int q = 0; q < n_q_points; ++q)
+     {
+       const double lambda   = scratch_data.surface_tension[q] / (2 * sqrt(2));
+       const double mobility = scratch_data.mobility_reactive_species[q];
 
 
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        {
-          const double         phi_phase_i = scratch_data.phi_phase[q][i];
-          const Tensor<1, dim> grad_phi_phase_i =
-            scratch_data.grad_phi_phase[q][i];
-          const double phi_potential_i = scratch_data.phi_potential[q][i];
-          const Tensor<1, dim> grad_phi_potential_i =
-            scratch_data.grad_phi_potential[q][i];
+       // Gather into local variables the relevant fields
+       const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
 
-          local_rhs(i) +=
-            // Phase order equation
-            (-phi_phase_i * (velocity_field * phase_order_gradient) -
-             mobility * grad_phi_phase_i * potential_gradient
-             // Chemical potential equation
-             - phi_potential_i * potential_value +
-             (lambda / (epsilon * epsilon)) * phi_potential_i *
-               (phase_order_value * phase_order_value - 1) * phase_order_value +
-             lambda * grad_phi_potential_i * phase_order_gradient
-             // Chemical potential smoothing
-             - xi * cell_size * cell_size * grad_phi_potential_i *
-                 potential_gradient
-             // Source term
-             + source_phase_order * phi_phase_i +
-             source_chemical_potential * phi_potential_i) *
-            JxW;
-        }
-    }
+       // Store JxW in local variable for faster access;
+       const double JxW               = JxW_vec[q];
+       const double phase_order_value = scratch_data.phase_order_values[q];
+       const Tensor<1, dim> phase_order_gradient =
+         scratch_data.phase_order_gradients[q];
+       const double potential_value = scratch_data.chemical_potential_values[q];
+       const Tensor<1, dim> potential_gradient =
+         scratch_data.chemical_potential_gradients[q];
+       const double source_phase_order = scratch_data.source_phase_order[q];
+       const double source_chemical_potential =
+         scratch_data.source_chemical_potential[q];
+
+
+       for (unsigned int i = 0; i < n_dofs; ++i)
+         {
+           const double         phi_phase_i = scratch_data.phi_phase[q][i];
+           const Tensor<1, dim> grad_phi_phase_i =
+             scratch_data.grad_phi_phase[q][i];
+           const double phi_potential_i = scratch_data.phi_potential[q][i];
+           const Tensor<1, dim> grad_phi_potential_i =
+             scratch_data.grad_phi_potential[q][i];
+
+           local_rhs(i) +=
+             // Phase order equation
+             (-phi_phase_i * (velocity_field * phase_order_gradient) -
+              mobility * grad_phi_phase_i * potential_gradient
+              // Chemical potential equation
+              - phi_potential_i * potential_value +
+              phi_potential_i * (phase_order_value * phase_order_value - 1) *
+                phase_order_value +
+              lambda * grad_phi_potential_i * phase_order_gradient
+              // Chemical potential smoothing
+              - xi * cell_size * cell_size * grad_phi_potential_i *
+                  potential_gradient
+              // Source term
+              + source_phase_order * phi_phase_i +
+              source_chemical_potential * phi_potential_i) *
+             JxW;
+         }
+     }*/
 }
 
 template class ReactiveSpeciesAssemblerCore<2>;
@@ -184,41 +288,41 @@ void
 ReactiveSpeciesAssemblerBDF<dim>::assemble_matrix(
   ReactiveSpeciesScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData       &copy_data)
-{
-  // Loop and quadrature information
-  const auto        &JxW        = scratch_data.JxW;
-  const unsigned int n_q_points = scratch_data.n_q_points;
-  const unsigned int n_dofs     = scratch_data.n_dofs;
+{ /*
+   // Loop and quadrature information
+   const auto        &JxW        = scratch_data.JxW;
+   const unsigned int n_q_points = scratch_data.n_q_points;
+   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Copy data elements
-  auto &local_matrix = copy_data.local_matrix;
+   // Copy data elements
+   auto &local_matrix = copy_data.local_matrix;
 
-  // Time stepping information
-  const auto method = this->simulation_control->get_assembly_method();
-  // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =
-    this->simulation_control->get_bdf_coefficients();
-  std::vector<double> phase_order(1 + number_of_previous_solutions(method));
+   // Time stepping information
+   const auto method = this->simulation_control->get_assembly_method();
+   // Vector for the BDF coefficients
+   const Vector<double> &bdf_coefs =
+     this->simulation_control->get_bdf_coefficients();
+   std::vector<double> phase_order(1 + number_of_previous_solutions(method));
 
-  // Loop over the quadrature points
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      phase_order[0] = scratch_data.phase_order_values[q];
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
+   // Loop over the quadrature points
+   for (unsigned int q = 0; q < n_q_points; ++q)
+     {
+       phase_order[0] = scratch_data.phase_order_values[q];
+       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
 
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        {
-          const double phi_phase_i = scratch_data.phi_phase[q][i];
-          for (unsigned int j = 0; j < n_dofs; ++j)
-            {
-              const double phi_phase_j = scratch_data.phi_phase[q][j];
+       for (unsigned int i = 0; i < n_dofs; ++i)
+         {
+           const double phi_phase_i = scratch_data.phi_phase[q][i];
+           for (unsigned int j = 0; j < n_dofs; ++j)
+             {
+               const double phi_phase_j = scratch_data.phi_phase[q][j];
 
-              local_matrix(i, j) +=
-                phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];
-            }
-        }
-    }
+               local_matrix(i, j) +=
+                 phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];
+             }
+         }
+     }*/
 }
 
 template <int dim>
@@ -226,41 +330,43 @@ void
 ReactiveSpeciesAssemblerBDF<dim>::assemble_rhs(
   ReactiveSpeciesScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData       &copy_data)
-{
-  // Loop and quadrature information
-  const auto        &JxW        = scratch_data.JxW;
-  const unsigned int n_q_points = scratch_data.n_q_points;
-  const unsigned int n_dofs     = scratch_data.n_dofs;
+{ /*
+   // Loop and quadrature information
+   const auto        &JxW        = scratch_data.JxW;
+   const unsigned int n_q_points = scratch_data.n_q_points;
+   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-  // Copy data elements
-  auto &local_rhs = copy_data.local_rhs;
+   // Copy data elements
+   auto &local_rhs = copy_data.local_rhs;
 
-  // Time stepping information
-  const auto method = this->simulation_control->get_assembly_method();
-  // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =
-    this->simulation_control->get_bdf_coefficients();
-  std::vector<double> phase_order(1 + number_of_previous_solutions(method));
+   // Time stepping information
+   const auto method = this->simulation_control->get_assembly_method();
+   // Vector for the BDF coefficients
+   const Vector<double> &bdf_coefs =
+     this->simulation_control->get_bdf_coefficients();
+   std::vector<double> phase_order(1 + number_of_previous_solutions(method));
 
-  // Loop over the quadrature points
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      phase_order[0] = scratch_data.phase_order_values[q];
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
+   // Loop over the quadrature points
+   for (unsigned int q = 0; q < n_q_points; ++q)
+     {
+       phase_order[0] = scratch_data.phase_order_values[q];
+       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
 
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        {
-          const double phi_phase_i = scratch_data.phi_phase[q][i];
-          double       local_rhs_i = 0;
-          for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
-               ++p)
-            {
-              local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);
-            }
-          local_rhs(i) += local_rhs_i * JxW[q];
-        }
-    }
+       for (unsigned int i = 0; i < n_dofs; ++i)
+         {
+           const double phi_phase_i = scratch_data.phi_phase[q][i];
+           double       local_rhs_i = 0;
+           for (unsigned int p = 0; p < number_of_previous_solutions(method) +
+   1;
+                ++p)
+             {
+               local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);
+             }
+           local_rhs(i) += local_rhs_i * JxW[q];
+         }
+     }
+     */
 }
 
 template class ReactiveSpeciesAssemblerBDF<2>;

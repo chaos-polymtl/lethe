@@ -72,10 +72,10 @@ protected:
 
 
 /**
- * @brief Class that assembles the core of the Reactive species equation :
- * \f$ \frac{d \phi}{dt} +  (u \cdot \nabla) \phi - \nabla \cdot (M(\phi)\nabla
- * \eta) = 0 \\ \eta -  \frac{\lambda}{\epsilon^2}(\phi^3 - \phi) + \lambda
- * \nabla^2 \phi + \xi \nabla^2 \eta  = 0 \f$
+ * @brief Class that assembles the core of the Tracer equation.
+ * This class assembles the weak form of (n times):
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$ with an SUPG
+ * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -89,11 +89,9 @@ class ReactiveSpeciesAssemblerCore : public ReactiveSpeciesAssemblerBase<dim>
 public:
   ReactiveSpeciesAssemblerCore(
     const std::shared_ptr<SimulationControl> simulation_control,
-    const Parameters::ReactiveSpecies        reactive_species_parameters,
-    const double                             epsilon)
+    const Parameters::ReactiveSpecies        reactive_species_parameters)
     : ReactiveSpeciesAssemblerBase<dim>(simulation_control)
     , reactive_species_parameters(reactive_species_parameters)
-    , epsilon(epsilon)
   {}
 
   /**
@@ -116,16 +114,13 @@ public:
                StabilizedMethodsCopyData       &copy_data) override;
 
   const Parameters::ReactiveSpecies reactive_species_parameters;
-  // Epsilon is a coefficient which depends on the mesh size. The thickness of
-  // the interface between the two phases is proportionnal to espilon
-  const double epsilon;
 };
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the Reactive species equations. For example, if a BDF1 scheme
- * is chosen, the following is assembled \f$\frac{\mathbf{T}^{t+\Delta
- * t}-\mathbf{T}^{t}}{\Delta t}\f$
+ * integration for the Tracer equations. For example, if a BDF1 scheme is
+ * chosen, the following is assembled (n times)
+ * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
