@@ -258,6 +258,126 @@ ReactiveSpeciesAssemblerBDF<dim>::assemble_matrix(
   ReactiveSpeciesScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData       &copy_data)
 {
+  // Loop and quadrature informations
+  const auto        &JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+  auto &local_matrix    = copy_data.local_matrix;
+
+  // Time stepping information
+  const auto method = this->simulation_control->get_assembly_method();
+  // Vector for the BDF coefficients
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
+
+  unsigned int number_of_species = 4; // TODO Change to be more flexible
+  for (unsigned int species = 0; species < number_of_species; ++species)
+    {
+      std::vector<double> reactive_species(
+        1 + number_of_previous_solutions(method));
+
+      // Loop over the quadrature points
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          reactive_species[0] =
+            scratch_data.reactive_species_values[species][q];
+          for (unsigned int p = 0; p < number_of_previous_solutions(method);
+               ++p)
+            reactive_species[p + 1] =
+              scratch_data.previous_reactive_species_values[species][p][q];
+
+          for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
+               ++p)
+            {
+              strong_residual[q] += bdf_coefs[p] * reactive_species[p];
+            }
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              strong_jacobian[q][j] +=
+                bdf_coefs[0] * scratch_data.phi[species][q][j];
+            }
+
+
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            {
+              const double phi_u_i = scratch_data.phi[species][q][i];
+              for (unsigned int j = 0; j < n_dofs; ++j)
+                {
+                  const double phi_u_j = scratch_data.phi[species][q][j];
+
+                  local_matrix(i, j) +=
+                    phi_u_j * phi_u_i * bdf_coefs[0] * JxW[q];
+                }
+            }
+        }
+    } // end loop on species
+}
+
+template <int dim>
+void
+ReactiveSpeciesAssemblerBDF<dim>::assemble_rhs(
+  ReactiveSpeciesScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData       &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW        = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+
+  // Time stepping information
+  const auto method = this->simulation_control->get_assembly_method();
+  // Vector for the BDF coefficients
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
+
+  unsigned int number_of_species = 4; // TODO Change to be more flexible
+  for (unsigned int species = 0; species < number_of_species; ++species)
+    {
+      std::vector<double> reactive_species(
+        1 + number_of_previous_solutions(method));
+
+      // Loop over the quadrature points
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          reactive_species[0] =
+            scratch_data.reactive_species_values[species][q];
+          for (unsigned int p = 0; p < number_of_previous_solutions(method);
+               ++p)
+            reactive_species[p + 1] =
+              scratch_data.previous_reactive_species_values[species][p][q];
+
+          for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
+               ++p)
+            {
+              strong_residual[q] += (bdf_coefs[p] * reactive_species[p]);
+            }
+
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            {
+              const double phi_u_i     = scratch_data.phi[species][q][i];
+              double       local_rhs_i = 0;
+              for (unsigned int p = 0;
+                   p < number_of_previous_solutions(method) + 1;
+                   ++p)
+                {
+                  local_rhs_i -= bdf_coefs[p] * (reactive_species[p] * phi_u_i);
+                }
+              local_rhs(i) += local_rhs_i * JxW[q];
+            }
+        }
+    } // end loop on species
+
+
+
   /*
  // Loop and quadrature information
  const auto        &JxW        = scratch_data.JxW;
@@ -265,7 +385,7 @@ ReactiveSpeciesAssemblerBDF<dim>::assemble_matrix(
  const unsigned int n_dofs     = scratch_data.n_dofs;
 
  // Copy data elements
- auto &local_matrix = copy_data.local_matrix;
+ auto &local_rhs = copy_data.local_rhs;
 
  // Time stepping information
  const auto method = this->simulation_control->get_assembly_method();
@@ -284,59 +404,17 @@ ReactiveSpeciesAssemblerBDF<dim>::assemble_matrix(
      for (unsigned int i = 0; i < n_dofs; ++i)
        {
          const double phi_phase_i = scratch_data.phi_phase[q][i];
-         for (unsigned int j = 0; j < n_dofs; ++j)
+         double       local_rhs_i = 0;
+         for (unsigned int p = 0; p < number_of_previous_solutions(method) +
+ 1;
+              ++p)
            {
-             const double phi_phase_j = scratch_data.phi_phase[q][j];
-
-             local_matrix(i, j) +=
-               phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];
+             local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);
            }
+         local_rhs(i) += local_rhs_i * JxW[q];
        }
-   }*/
-}
-
-template <int dim>
-void
-ReactiveSpeciesAssemblerBDF<dim>::assemble_rhs(
-  ReactiveSpeciesScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData       &copy_data)
-{ /*
-   // Loop and quadrature information
-   const auto        &JxW        = scratch_data.JxW;
-   const unsigned int n_q_points = scratch_data.n_q_points;
-   const unsigned int n_dofs     = scratch_data.n_dofs;
-
-   // Copy data elements
-   auto &local_rhs = copy_data.local_rhs;
-
-   // Time stepping information
-   const auto method = this->simulation_control->get_assembly_method();
-   // Vector for the BDF coefficients
-   const Vector<double> &bdf_coefs =
-     this->simulation_control->get_bdf_coefficients();
-   std::vector<double> phase_order(1 + number_of_previous_solutions(method));
-
-   // Loop over the quadrature points
-   for (unsigned int q = 0; q < n_q_points; ++q)
-     {
-       phase_order[0] = scratch_data.phase_order_values[q];
-       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
-
-       for (unsigned int i = 0; i < n_dofs; ++i)
-         {
-           const double phi_phase_i = scratch_data.phi_phase[q][i];
-           double       local_rhs_i = 0;
-           for (unsigned int p = 0; p < number_of_previous_solutions(method) +
-   1;
-                ++p)
-             {
-               local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);
-             }
-           local_rhs(i) += local_rhs_i * JxW[q];
-         }
-     }
-     */
+   }
+   */
 }
 
 template class ReactiveSpeciesAssemblerBDF<2>;
