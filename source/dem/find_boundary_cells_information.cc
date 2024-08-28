@@ -19,8 +19,7 @@ using namespace dealii;
 
 // The constructor of this class is empty
 template <int dim>
-BoundaryCellsInformation<dim>::BoundaryCellsInformation()
-{}
+BoundaryCellsInformation<dim>::BoundaryCellsInformation() = default;
 
 template <int dim>
 void

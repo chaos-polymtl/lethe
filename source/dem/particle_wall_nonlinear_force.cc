@@ -7,8 +7,8 @@ using namespace dealii;
 
 template <int dim>
 ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
-  const DEMSolverParameters<dim>       &dem_parameters,
-  const std::vector<types::boundary_id> boundary_index)
+  const DEMSolverParameters<dim>        &dem_parameters,
+  const std::vector<types::boundary_id> &boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
   const double wall_youngs_modulus =

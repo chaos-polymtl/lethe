@@ -14,7 +14,7 @@ find_particle_contact_detection_step(
   const bool                       parallel_update)
 {
   // Get the action manager
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
   // If something else has already triggered contact search,
   // no need to do it again
   if (action_manager->check_contact_search())
@@ -82,7 +82,7 @@ find_floating_mesh_mapping_step(
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
 {
   // Get the action manager
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   // If there is no solid object, no need to do anything
   if (!action_manager->check_solid_objects_enabled())

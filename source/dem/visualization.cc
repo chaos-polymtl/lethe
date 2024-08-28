@@ -5,8 +5,7 @@
 using namespace dealii;
 
 template <int dim>
-Visualization<dim>::Visualization()
-{}
+Visualization<dim>::Visualization() = default;
 
 template <int dim>
 void
@@ -210,8 +209,7 @@ Visualization<dim>::get_nonscalar_data_ranges() const
 }
 
 template <int dim>
-Visualization<dim>::~Visualization()
-{}
+Visualization<dim>::~Visualization() = default;
 
 template class Visualization<2>;
 template class Visualization<3>;

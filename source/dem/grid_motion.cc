@@ -12,7 +12,7 @@ GridMotion<dim, spacedim>::GridMotion(
   const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
   const double                                        dem_time_step)
 {
-  auto action_manager = DEMActionManager::get_action_manager();
+  auto *action_manager = DEMActionManager::get_action_manager();
 
   switch (grid_motion_parameters.motion_type)
     {
