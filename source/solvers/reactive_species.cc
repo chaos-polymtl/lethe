@@ -279,10 +279,6 @@ ReactiveSpecies<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   solution_names.push_back("phase_order");
   solution_names.push_back("chemical_potential");
 
-  std::vector<std::string> solution_names_filtered;
-  solution_names_filtered.push_back("phase_order_filtered");
-  solution_names_filtered.push_back("chemical_potential_filtered");
-
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       2, DataComponentInterpretation::component_is_scalar);
@@ -290,12 +286,6 @@ ReactiveSpecies<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_out.add_data_vector(dof_handler,
                            present_solution,
                            solution_names,
-                           data_component_interpretation);
-
-  // Filter phase fraction
-  data_out.add_data_vector(dof_handler,
-                           filtered_solution,
-                           solution_names_filtered,
                            data_component_interpretation);
 }
 
@@ -628,8 +618,7 @@ template <int dim>
 void
 ReactiveSpecies<dim>::modify_solution()
 {
-  // Apply filter to phase order parameter
-  apply_phase_filter();
+  // TODO Delete if unused
 }
 
 template <int dim>
@@ -996,10 +985,6 @@ ReactiveSpecies<dim>::setup_dofs()
                           locally_relevant_dofs,
                           mpi_communicator);
 
-  filtered_solution.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           mpi_communicator);
-
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
     {
@@ -1101,8 +1086,6 @@ ReactiveSpecies<dim>::setup_dofs()
                                 &this->dof_handler);
   multiphysics->set_solution(PhysicsID::reactive_species,
                              &this->present_solution);
-  multiphysics->set_filtered_solution(PhysicsID::reactive_species,
-                                      &this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::reactive_species,
                                        &this->previous_solutions);
 }
@@ -1182,7 +1165,6 @@ ReactiveSpecies<dim>::set_initial_conditions()
 
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
-  apply_phase_filter();
   percolate_time_vectors();
 }
 
@@ -1281,10 +1263,6 @@ ReactiveSpecies<dim>::calculate_barycenter(const GlobalVectorType &solution,
                                            update_values | update_gradients |
                                              update_quadrature_points |
                                              update_JxW_values);
-  std::shared_ptr<ReactiveSpeciesFilterBase> filter =
-    ReactiveSpeciesFilterBase::model_cast(
-      this->simulation_parameters.multiphysics.reactive_species_parameters);
-
 
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -1357,83 +1335,6 @@ ReactiveSpecies<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
   return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
                                                    barycenter_velocity);
-}
-
-template <int dim>
-void
-ReactiveSpecies<dim>::apply_phase_filter()
-{
-  auto mpi_communicator = this->triangulation->get_communicator();
-
-  FEValues<dim> fe_values(*mapping,
-                          *fe,
-                          *cell_quadrature,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Scalar phase_order(0);
-
-  GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
-                                           mpi_communicator);
-  filtered_solution_owned = this->present_solution;
-
-  filtered_solution.reinit(this->present_solution);
-
-  // std::unordered_map<unsigned int, bool> filtered_cell_list;
-  std::unordered_set<unsigned int> filtered_cell_list;
-
-  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  // Create filter object
-  filter = ReactiveSpeciesFilterBase::model_cast(
-    this->simulation_parameters.multiphysics.reactive_species_parameters);
-
-  // Apply filter to solution
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          cell->get_dof_indices(local_dof_indices);
-
-          for (unsigned int p = 0; p < local_dof_indices.size(); ++p)
-            {
-              if (this->locally_owned_dofs.is_element(local_dof_indices[p]))
-                {
-                  //  Allows to obtain the component corresponding to the degree
-                  //  of freedom
-                  auto component_index = fe->system_to_component_index(p).first;
-
-                  // Filter only the phase field
-                  if (component_index == 0)
-                    {
-                      auto iterator =
-                        filtered_cell_list.find(local_dof_indices[p]);
-                      if (iterator == filtered_cell_list.end())
-                        {
-                          filtered_cell_list.insert(local_dof_indices[p]);
-                          filtered_solution_owned[local_dof_indices[p]] =
-                            filter->filter_phase(
-                              filtered_solution_owned[local_dof_indices[p]]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  filtered_solution = filtered_solution_owned;
-
-  if (this->simulation_parameters.multiphysics.reactive_species_parameters
-        .reactive_species_phase_filter.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      this->pcout << "Filtered phase values: " << std::endl;
-      for (const double filtered_phase : filtered_solution)
-        {
-          this->pcout << filtered_phase << std::endl;
-        }
-    }
 }
 
 template <int dim>

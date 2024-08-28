@@ -28,7 +28,6 @@
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/reactive_species_assemblers.h>
-#include <solvers/reactive_species_filter.h>
 #include <solvers/reactive_species_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -422,13 +421,6 @@ private:
   calculate_barycenter(const GlobalVectorType &solution,
                        const VectorType       &current_solution_fd);
 
-  /**
-   * @brief Applies filter on phase fraction values.
-   */
-  void
-  apply_phase_filter();
-
-
   MultiphysicsInterface<dim> *multiphysics;
 
   TimerOutput computing_timer;
@@ -463,7 +455,6 @@ private:
   AffineConstraints<double>      nonzero_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               filtered_solution;
 
 
   // Previous solutions vectors
@@ -487,9 +478,6 @@ private:
 
   // Phase energy table
   TableHandler phase_energy_table;
-
-  // Phase fraction filter
-  std::shared_ptr<ReactiveSpeciesFilterBase> filter;
 };
 
 

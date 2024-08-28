@@ -1027,8 +1027,8 @@ namespace BoundaryConditions
    * @brief This class manages the boundary conditions for the Reactive species solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
-   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
-   * double passed to the deal.ii ConstantFunction
+   *  - if bc type is "dirichlet" (Dirichlet condition), the Function declared
+   * in the "dirichlet" subsection sets the value
    */
 
   template <int dim>
