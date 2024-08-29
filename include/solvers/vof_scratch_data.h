@@ -161,11 +161,9 @@ public:
     this->quadrature_points = fe_values_vof.get_quadrature_points();
     auto &fe_vof            = fe_values_vof.get_fe();
 
-    if (dim == 2)
-      this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_vof.degree;
-    else if (dim == 3)
-      this->cell_size =
-        pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_vof.degree;
+    // Compute cell diameter
+    this->cell_size =
+      compute_cell_diameter<dim>(cell->measure(), fe_vof.degree);
 
     fe_values_vof.get_function_values(current_solution,
                                       this->present_phase_values);
