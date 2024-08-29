@@ -36,7 +36,7 @@ ParticleVisualization<dim>::build_visualization_files()
   grid_out_faces.attach_dof_handler(empty_dof_handler);
   grid_out_faces.build_patches();
   std::string s        = visualization_filename;
-  std::string filename = s.substr(0, s.find(".")) + "_grid_";
+  std::string filename = s.substr(0, s.find('.')) + "_grid_";
   write_boundaries_vtu<dim>(
     grid_out_faces, "./", 0, 0, MPI_COMM_WORLD, filename, 0);
 

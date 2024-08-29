@@ -2671,7 +2671,7 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
       // Check to see if the property is a vector
       if (components_number == 3)
         {
-          vector_datasets.push_back(std::make_tuple(
+          vector_datasets.emplace_back(std::make_tuple(
             field_position,
             field_position + components_number - 1,
             field_name,
@@ -3784,12 +3784,9 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                     active_neighbors_set[m];
                                   neighbor_cell->get_dof_indices(
                                     local_dof_indices_3);
-                                  for (unsigned int o = 0;
-                                       o < local_dof_indices_3.size();
-                                       ++o)
+                                  for (const auto o : local_dof_indices_3)
                                     {
-                                      if (global_index_overwrite ==
-                                          local_dof_indices_3[o])
+                                      if (global_index_overwrite == o)
                                         {
                                           // neighbor_cell contain the same dof
                                           // check if this cell_cut is cut if
