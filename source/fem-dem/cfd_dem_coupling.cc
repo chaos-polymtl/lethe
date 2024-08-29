@@ -20,8 +20,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
 {}
 
 template <int dim>
-CFDDEMSolver<dim>::~CFDDEMSolver()
-{}
+CFDDEMSolver<dim>::~CFDDEMSolver() = default;
 
 template <int dim>
 void

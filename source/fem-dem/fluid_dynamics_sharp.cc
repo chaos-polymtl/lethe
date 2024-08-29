@@ -32,8 +32,7 @@ FluidDynamicsSharp<dim>::FluidDynamicsSharp(
 {}
 
 template <int dim>
-FluidDynamicsSharp<dim>::~FluidDynamicsSharp()
-{}
+FluidDynamicsSharp<dim>::~FluidDynamicsSharp() = default;
 
 
 template <int dim>

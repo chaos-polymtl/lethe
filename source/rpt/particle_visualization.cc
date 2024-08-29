@@ -91,7 +91,7 @@ ParticleVisualization<dim>::output_particles(unsigned int it)
                                 data_component_interpretation);
 
   std::string s        = visualization_filename;
-  std::string filename = s.substr(0, s.find(".")) + "_";
+  std::string filename = s.substr(0, s.find('.')) + "_";
   particle_output.write_vtu_with_pvtu_record("./",
                                              filename,
                                              it,

@@ -1021,7 +1021,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
   // Output in file and in terminal
   if (parameters.verbosity == Parameters::Verbosity::verbose)
     {
-      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+      if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
         {
           myfile << "position_x position_y position_z " << std::endl;
           for (const Point<dim> &position : found_positions)
@@ -1046,7 +1046,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
     }
   else // Output only in file
     {
-      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+      if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
         {
           myfile << "position_x position_y position_z " << std::endl;
           for (const Point<dim> &position : found_positions)
