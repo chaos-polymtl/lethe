@@ -99,7 +99,7 @@ RPT<dim>::export_data()
     filename += ".csv";
 
   myfile.open(filename);
-  if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
     {
       myfile
         << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"

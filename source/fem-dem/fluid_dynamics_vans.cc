@@ -28,10 +28,9 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type;
 
   unsigned int n_pbc = 0;
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions_types.size(); ++i_bc)
+  for (auto &bc : boundary_conditions_types)
     {
-      if (boundary_conditions_types[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
+      if (bc == BoundaryConditions::BoundaryType::periodic)
         {
           if (n_pbc++ > 1)
             {
@@ -235,8 +234,8 @@ void
 FluidDynamicsVANS<dim>::initialize_void_fraction()
 {
   calculate_void_fraction(this->simulation_control->get_current_time(), false);
-  for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
-    previous_void_fraction[i] = nodal_void_fraction_relevant;
+  for (auto &previous_solution : this->previous_void_fraction)
+    previous_solution = nodal_void_fraction_relevant;
 }
 
 template <int dim>

@@ -156,8 +156,8 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
 
   // Get locally owned and relevant dofs
-  const IndexSet locally_owned_dofs = background_dh.locally_owned_dofs();
-  IndexSet       locally_relevant_dofs =
+  const IndexSet &locally_owned_dofs = background_dh.locally_owned_dofs();
+  IndexSet        locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(background_dh);
 
   // Reinit all value of mobility at nodes as inactive
