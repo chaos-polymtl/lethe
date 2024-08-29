@@ -220,12 +220,10 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                           particles_cutting_this_cell.push_back(p);
                           if (particles_cutting_this_cell.size() > 1)
                             {
-                              for (unsigned int j = 0;
-                                   j < local_dof_indices.size();
-                                   ++j)
+                              for (const auto &dof_index : local_dof_indices)
                                 {
-                                  dof_with_more_then_one_particle
-                                    [local_dof_indices[j]] = true;
+                                  dof_with_more_then_one_particle[dof_index] =
+                                    true;
                                 }
                             }
                         }
@@ -250,10 +248,8 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
               // cut, and consider them as cut cells.
               if (cell_is_cut)
                 {
-                  size_t id;
-                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                  for (const auto &id : local_dof_indices)
                     {
-                      id                            = local_dof_indices[j];
                       local_dof_overconstrained(id) = 1;
                     }
                 }
@@ -267,12 +263,8 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                   if (face->at_boundary())
                     {
                       face->get_dof_indices(local_face_dof_indices);
-                      size_t id;
-                      for (unsigned int v = 0;
-                           v < local_face_dof_indices.size();
-                           ++v)
+                      for (const auto &id : local_face_dof_indices)
                         {
-                          id = local_face_dof_indices[v];
                           local_dof_overconstrained(id) = 1;
                         }
                     }
@@ -344,11 +336,10 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                             }
                         }
 
-                      for (unsigned int j = 0; j < local_dof_indices.size();
-                           ++j)
+                      for (const auto &local_dof_index : local_dof_indices)
                         {
-                          dof_with_more_then_one_particle
-                            [local_dof_indices[j]] = true;
+                          dof_with_more_then_one_particle[local_dof_index] =
+                            true;
                         }
 
                       overconstrained_fluid_cell_map[cell] = {
@@ -1102,12 +1093,8 @@ FluidDynamicsSharp<dim>::force_on_ib()
           if (cell_is_cut)
             {
               // loop over all particles that cut this precise cell
-              for (unsigned int iterator_over_cutting_particle = 0;
-                   iterator_over_cutting_particle < p_count.size();
-                   ++iterator_over_cutting_particle)
+              for (auto p : p_count)
                 {
-                  unsigned int p = p_count[iterator_over_cutting_particle];
-
                   // Loop over all cut cell faces'.
                   for (const auto face : cell->face_indices())
                     {
@@ -1116,16 +1103,13 @@ FluidDynamicsSharp<dim>::force_on_ib()
 
                       // Check if the face is cut
                       unsigned int nb_dof_inside = 0;
-                      for (unsigned int j = 0;
-                           j < local_face_dof_indices.size();
-                           ++j)
+                      for (const auto &dof_index : local_face_dof_indices)
                         {
                           // Count the number of DOFs that are inside
                           // of the particles. If all the DOfs are on one side
                           // the cell is not cut by the boundary.
                           if (particles[p].get_levelset(
-                                support_points[local_face_dof_indices[j]],
-                                cell) <= 0)
+                                support_points[dof_index], cell) <= 0)
                             ++nb_dof_inside;
                         }
 
@@ -2677,15 +2661,13 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
   // Defining property field position
   int field_position = 0;
   // Iterating over properties
-  for (auto properties_iterator = properties_to_write.begin();
-       properties_iterator != properties_to_write.end();
-       ++properties_iterator, ++field_position)
+  for (const auto &properties_iterator : properties_to_write)
     {
       // Get the property field name
-      const std::string field_name = properties_iterator->first;
+      const std::string field_name = properties_iterator.first;
 
       // Number of components of the corresponding property
-      const unsigned components_number = properties_iterator->second;
+      const unsigned components_number = properties_iterator.second;
 
       // Check to see if the property is a vector
       if (components_number == 3)
@@ -2697,12 +2679,14 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
             DataComponentInterpretation::component_is_part_of_vector));
         }
       dataset_names.push_back(field_name);
+      ++field_position;
     }
 
   // Building the patch data
   patches.resize(particles.size());
 
   // Looping over particle to get the properties from the particle_handler
+
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       // Particle location
@@ -2749,8 +2733,7 @@ FluidDynamicsSharp<dim>::Visualization_IB::get_nonscalar_data_ranges() const
 }
 
 template <int dim>
-FluidDynamicsSharp<dim>::Visualization_IB::~Visualization_IB()
-{}
+FluidDynamicsSharp<dim>::Visualization_IB::~Visualization_IB() = default;
 
 template <int dim>
 void
