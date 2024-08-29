@@ -189,13 +189,9 @@ public:
                                 source_chemical_potential,
                                 1);
 
-
-    if (dim == 2)
-      this->cell_size =
-        std::sqrt(4. * cell->measure() / M_PI) / fe_cahn_hilliard.degree;
-    else if (dim == 3)
-      this->cell_size =
-        pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_cahn_hilliard.degree;
+    // Compute cell diameter
+    this->cell_size =
+      compute_cell_diameter<dim>(cell->measure(), fe_cahn_hilliard.degree);
 
     // Gather Phi and eta (values, gradient and laplacian)
     this->fe_values_cahn_hilliard[phase_order].get_function_values(

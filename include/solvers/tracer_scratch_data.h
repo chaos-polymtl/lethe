@@ -170,12 +170,9 @@ public:
         levelset_function->value_list(quadrature_points, sdf_values);
       }
 
-    if (dim == 2)
-      this->cell_size =
-        std::sqrt(4. * cell->measure() / M_PI) / fe_tracer.degree;
-    else if (dim == 3)
-      this->cell_size =
-        pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_tracer.degree;
+    // Compute cell diameter
+    this->cell_size =
+      compute_cell_diameter<dim>(cell->measure(), fe_tracer.degree);
 
     // Gather tracer (values, gradient and laplacian)
     this->fe_values_tracer.get_function_values(current_solution,

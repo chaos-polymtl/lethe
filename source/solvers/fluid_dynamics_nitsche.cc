@@ -109,15 +109,9 @@ FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
           local_matrix = 0;
           local_rhs    = 0;
 
-
-          const auto &cell   = particle->get_surrounding_cell();
-          double      h_cell = 0;
-          if (dim == 2)
-            h_cell = std::sqrt(4. * cell->measure() / M_PI) /
-                     this->velocity_fem_degree;
-          else if (dim == 3)
-            h_cell = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                     this->velocity_fem_degree;
+          const auto  &cell   = particle->get_surrounding_cell();
+          double       h_cell = compute_cell_diameter<dim>(cell->measure(),
+                                                     this->velocity_fem_degree);
           const double penalty_parameter =
             1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
           const auto &dh_cell =
@@ -362,13 +356,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
 #else
       const auto &cell = particle->get_surrounding_cell();
 #endif
-      double h_cell = 0;
-      if (dim == 2)
-        h_cell =
-          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
-      else if (dim == 3)
-        h_cell =
-          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      double h_cell =
+        compute_cell_diameter<dim>(cell->measure(), this->velocity_fem_degree);
       const double penalty_parameter =
         1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
       const auto &dh_cell =
@@ -451,13 +440,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
 #else
       const auto &cell = particle->get_surrounding_cell();
 #endif
-      double h_cell = 0;
-      if (dim == 2)
-        h_cell =
-          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
-      else if (dim == 3)
-        h_cell =
-          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      double h_cell =
+        compute_cell_diameter<dim>(cell->measure(), this->velocity_fem_degree);
       const double penalty_parameter =
         1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
       const auto &dh_cell =

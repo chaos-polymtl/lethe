@@ -585,4 +585,34 @@ value_string_to_tensor(const std::string &value_string_0,
   return output_tensor;
 }
 
+/**
+ * @brief Computes equivalent cell diameter by comparing the area to a disk (2D)
+ * or the volume to a sphere (3D).
+ *
+ * @tparam dim Number of spatial dimensions (2D or 3D).
+ *
+ * @param[in] cell_measure Area (2D) or volume (3D) of the cell.
+ *
+ * @param[in] fe_degree Polynomial degree of the shape function.
+ *
+ * @return Cell diameter value.
+ */
+template <int dim>
+inline double
+compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
+{
+  double h;
+  if constexpr (dim == 2)
+    h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;
+  else if constexpr (dim == 3)
+    h = std::cbrt(6. * cell_measure / numbers::PI) / fe_degree;
+  else
+    Assert(
+      false,
+      ExcMessage(std::string(
+        "'dim' should have a value of either 2 or 3. Only 2D and 3D simulations "
+        "are supported.")));
+  return h;
+}
+
 #endif
