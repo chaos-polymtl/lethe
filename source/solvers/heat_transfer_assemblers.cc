@@ -103,7 +103,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
               // Addition to the cell matrix for SUPG stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_T_i * velocity) * JxW;
-
             }
         }
 
@@ -193,7 +192,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
           // Apply SUPG
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
-
         }
 
     } // end loop on quadrature points
@@ -727,8 +725,8 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_matrix(
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
-                                 dcdd_temperature_gradient.norm() /
-                                 scratch_data.global_delta_T_ref;
+                             dcdd_temperature_gradient.norm() /
+                             scratch_data.global_delta_T_ref;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -817,8 +815,8 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_rhs(
       // Calculate the artificial viscosity of the shock capture as in equation
       // (79) of Tezduyar 2003
       const double nu_dcdd = 0.5 * h * h * u_mag *
-                                 dcdd_temperature_gradient.norm() /
-                                 scratch_data.global_delta_T_ref;
+                             dcdd_temperature_gradient.norm() /
+                             scratch_data.global_delta_T_ref;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
