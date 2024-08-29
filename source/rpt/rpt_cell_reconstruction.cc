@@ -419,7 +419,7 @@ RPTCellReconstruction<dim>::export_positions()
   myfile.open(filename);
 
   // Headers with space or comma
-  if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
     {
       myfile
         << "reconstructed_positions_id volumes particle_positions_x particle_positions_y particle_positions_z cell_level";
