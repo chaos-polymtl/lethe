@@ -133,6 +133,12 @@ public:
   compute_element_size();
 
   /**
+   * @brief Precompute forcing term.
+   */
+  void
+  compute_forcing_term();
+
+  /**
    * @brief Get the total number of DoFs.
    *
    * @return Total number of degrees of freedom.
@@ -448,6 +454,12 @@ protected:
    *
    */
   bool enable_hessians_residual;
+
+  /**
+   * @brief Table with precomputed forcing term values.
+   *
+   */
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
