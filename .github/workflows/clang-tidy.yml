@@ -20,12 +20,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  COMPILE_JOBS: 16
+  COMPILE_JOBS: 4
   
 jobs:
   tidy:
     name: tidy
-    runs-on: self-hosted
+    runs-on: [ubuntu-22.04]
 
     strategy:
       fail-fast: false
