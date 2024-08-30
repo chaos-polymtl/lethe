@@ -41,21 +41,21 @@ jobs:
       - name: Setup
         run: |
           # Since dealii image doesn't include Node.js, we'll install it
-          #sudo apt-get install -y software-properties-common
-          #sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
-          #sudo apt-get update
-          #sudo apt-get install -y --no-install-recommends nodejs \
-            #clang-12 \
-            #clang-tidy-12 \
-            #numdiff \
-            #libboost-all-dev \
-            #libcgal-dev \
-            #libp4est-dev \
-            #trilinos-all-dev \
-            #petsc-dev \
-            #libmetis-dev \
-            #libhdf5-mpi-dev \
-            #deal.ii
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository ppa:ginggs/deal.ii-9.5.1-backports
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs \
+            clang-12 \
+            clang-tidy-12 \
+            numdiff \
+            libboost-all-dev \
+            libcgal-dev \
+            libp4est-dev \
+            trilinos-all-dev \
+            petsc-dev \
+            libmetis-dev \
+            libhdf5-mpi-dev \
+            deal.ii
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
