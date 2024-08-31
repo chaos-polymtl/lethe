@@ -15,7 +15,7 @@ main()
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-2d.prm");
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-        prm.print_parameters(output_prm, prm.DefaultStyle);
+        prm.print_parameters(output_prm, prm.PRM);
 #else
         prm.print_parameters(output_prm, prm.Text);
 #endif
@@ -26,7 +26,7 @@ main()
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-3d.prm");
 #if DEAL_II_VERSION_GTE(9, 7, 0)
-        prm.print_parameters(output_prm, prm.DefaultStyle);
+        prm.print_parameters(output_prm, prm.PRM);
 #else
         prm.print_parameters(output_prm, prm.Text);
 #endif
