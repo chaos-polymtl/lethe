@@ -13,14 +13,17 @@ namespace Parameters
     const double theta = temperature;
     const double T     = time;
 
-    density_scaling               = 1. * L * L * L / M;
-    specific_gas_constant_scaling = 1. / L / L * T * T * theta;
-    viscosity_scaling             = 1. / L / L * T;
-    specific_heat_scaling         = 1. / L / L * T * T * theta;
-    thermal_conductivity_scaling  = 1. / M / L * T * T * T * theta;
-    enthalpy_scaling              = 1. / M / L / L * T * T;
-    diffusivity_scaling           = 1. / L / L * T;
-    thermal_expansion_scaling     = T;
+    density_scaling                = 1. * L * L * L / M;
+    specific_gas_constant_scaling  = 1. / L / L * T * T * theta;
+    viscosity_scaling              = 1. / L / L * T;
+    specific_heat_scaling          = 1. / L / L * T * T * theta;
+    thermal_conductivity_scaling   = 1. / M / L * T * T * T * theta;
+    enthalpy_scaling               = 1. / M / L / L * T * T;
+    diffusivity_scaling            = 1. / L / L * T;
+    thermal_expansion_scaling      = T;
+    surface_tension_scaling        = 1. * T * T / M;
+    cahn_hilliard_mobility_scaling = 1. * M / L / L / L / T;
+    cahn_hilliard_epsilon_scaling  = 1. / L;
   }
 
   void
