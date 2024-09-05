@@ -368,31 +368,6 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
-  /**
-   * @brief Calculate phase statistics for monitoring purposes
-   */
-  void
-  calculate_phase_statistics();
-
-  /**
-   * @brief Writes the phase statistics to an output file
-   */
-  void
-  write_phase_statistics();
-
-  /**
-   *
-   * @brief Calculate the phase energies :  bulk energy, interface energy and total energy.
-   */
-  void
-  calculate_phase_energy();
-
-  /*
-   * @brief Write the energy to an output file
-   */
-  void
-  write_phase_energy();
-
   MultiphysicsInterface<dim> *multiphysics;
 
   TimerOutput computing_timer;
