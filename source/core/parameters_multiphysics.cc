@@ -570,60 +570,18 @@ void
 Parameters::ReactiveSpecies::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("reactive species");
-  {
-    prm.declare_entry(
-      "potential smoothing coefficient",
-      "1",
-      Patterns::Double(),
-      "Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.");
 
-    prm.enter_subsection("epsilon");
-    {
-      prm.declare_entry(
-        "method",
-        "automatic",
-        Patterns::Selection("automatic|manual"),
-        "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
+  // TODO Fill with required variables as implementation progresses
 
-      prm.declare_entry(
-        "value",
-        "1.0",
-        Patterns::Double(),
-        "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
-    }
-    prm.leave_subsection();
-  }
   prm.leave_subsection();
 }
 
 void
 Parameters::ReactiveSpecies::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("cahn hilliard");
-  {
-    ReactiveSpecies::potential_smoothing_coefficient =
-      prm.get_double("potential smoothing coefficient");
+  prm.enter_subsection("reactive species");
 
-    prm.enter_subsection("epsilon");
-    {
-      const std::string op_epsilon = prm.get("method");
-      if (op_epsilon == "automatic")
-        {
-          ReactiveSpecies::epsilon_set_method =
-            Parameters::EpsilonSetMethod::automatic;
-        }
-      else if (op_epsilon == "manual")
-        {
-          ReactiveSpecies::epsilon_set_method =
-            Parameters::EpsilonSetMethod::manual;
-        }
-      else
-        throw(std::runtime_error("Invalid epsilon setting strategy. "
-                                 "Options are 'automatic' or 'manual'."));
+  // TODO Fill with required variables as implementation progresses
 
-      epsilon = prm.get_double("value");
-    }
-    prm.leave_subsection();
-  }
   prm.leave_subsection();
 }
