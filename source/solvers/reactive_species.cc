@@ -368,212 +368,6 @@ ReactiveSpecies<dim>::calculate_L2_error()
   return l2_error_species;
 }
 
-
-template <int dim>
-void
-ReactiveSpecies<dim>::calculate_phase_statistics()
-{
-  auto mpi_communicator = triangulation->get_communicator();
-
-  FEValues<dim> fe_values(*mapping,
-                          *fe,
-                          *cell_quadrature,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Scalar phase_order(0);
-
-  const unsigned int          n_q_points = cell_quadrature->size();
-  std::vector<double>         local_phase_order_values(n_q_points);
-  std::vector<Tensor<1, dim>> local_phase_order_gradients(n_q_points);
-
-  double integral(0.);
-  double max_phase_value(std::numeric_limits<double>::min());
-  double min_phase_value(std::numeric_limits<double>::max());
-  double volume_0(0.);
-  double volume_1(0.);
-
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(present_solution,
-                                                     local_phase_order_values);
-          fe_values[phase_order].get_function_gradients(
-            present_solution, local_phase_order_gradients);
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              integral += local_phase_order_values[q] * fe_values.JxW(q);
-              max_phase_value =
-                std::max(local_phase_order_values[q], max_phase_value);
-              min_phase_value =
-                std::min(local_phase_order_values[q], min_phase_value);
-              volume_0 +=
-                (1 + local_phase_order_values[q]) * 0.5 * fe_values.JxW(q);
-              volume_1 +=
-                (1 - local_phase_order_values[q]) * 0.5 * fe_values.JxW(q);
-            }
-        }
-    }
-
-  min_phase_value = Utilities::MPI::min(min_phase_value, mpi_communicator);
-  max_phase_value = Utilities::MPI::max(max_phase_value, mpi_communicator);
-
-  integral = Utilities::MPI::sum(integral, mpi_communicator);
-  volume_0 = Utilities::MPI::sum(volume_0, mpi_communicator);
-  volume_1 = Utilities::MPI::sum(volume_1, mpi_communicator);
-
-  double global_volume = GridTools::volume(*triangulation, *mapping);
-  double phase_average = integral / global_volume;
-
-
-  // Console output
-  if (simulation_parameters.post_processing.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      announce_string(this->pcout, "Phase statistics");
-      this->pcout << "Min: " << min_phase_value << std::endl;
-      this->pcout << "Max: " << max_phase_value << std::endl;
-      this->pcout << "Average: " << phase_average << std::endl;
-      this->pcout << "Integral: " << integral << std::endl;
-      this->pcout << "Volume phase 0: " << volume_0 << std::endl;
-      this->pcout << "Volume phase 1: " << volume_1 << std::endl;
-    }
-
-  statistics_table.add_value("time", simulation_control->get_current_time());
-  statistics_table.set_scientific("time", true);
-  statistics_table.add_value("min", min_phase_value);
-  statistics_table.set_scientific("min", true);
-  statistics_table.add_value("max", max_phase_value);
-  statistics_table.set_scientific("max", true);
-  statistics_table.add_value("average", phase_average);
-  statistics_table.set_scientific("average", true);
-  statistics_table.add_value("integral", integral);
-  statistics_table.set_scientific("integral", true);
-  statistics_table.add_value("volume_0", volume_0);
-  statistics_table.set_scientific("volume_0", true);
-  statistics_table.add_value("volume_1", volume_1);
-  statistics_table.set_scientific("volume_1", true);
-}
-
-template <int dim>
-void
-ReactiveSpecies<dim>::write_phase_statistics()
-{
-  auto mpi_communicator = triangulation->get_communicator();
-
-  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-    {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.phase_output_name + ".dat";
-      std::ofstream output(filename.c_str());
-
-      statistics_table.write_text(output);
-    }
-}
-
-template <int dim>
-void
-ReactiveSpecies<dim>::calculate_phase_energy()
-{
-  auto mpi_communicator = triangulation->get_communicator();
-
-  FEValues<dim> fe_values(*mapping,
-                          *fe,
-                          *cell_quadrature,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Scalar phase_order(0);
-
-  const unsigned int          n_q_points = cell_quadrature->size();
-  std::vector<double>         local_phase_order_values(n_q_points);
-  std::vector<Tensor<1, dim>> local_phase_order_gradients(n_q_points);
-
-  double bulk_energy(0.);
-  double interface_energy(0.);
-  double total_energy(0.);
-
-  double epsilon = GridTools::minimal_cell_diameter(*triangulation);
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(present_solution,
-                                                     local_phase_order_values);
-          fe_values[phase_order].get_function_gradients(
-            present_solution, local_phase_order_gradients);
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              bulk_energy += (1 - local_phase_order_values[q] *
-                                    local_phase_order_values[q]) *
-                             (1 - local_phase_order_values[q] *
-                                    local_phase_order_values[q]) *
-                             fe_values.JxW(q);
-              interface_energy += epsilon * epsilon * 0.5 *
-                                  (local_phase_order_gradients[q] *
-                                   local_phase_order_gradients[q]) *
-                                  fe_values.JxW(q);
-            }
-        }
-    }
-
-  bulk_energy      = Utilities::MPI::sum(bulk_energy, mpi_communicator);
-  interface_energy = Utilities::MPI::sum(interface_energy, mpi_communicator);
-  total_energy     = bulk_energy + interface_energy;
-
-  phase_energy_table.add_value("time", simulation_control->get_current_time());
-  phase_energy_table.set_scientific("time", true);
-  phase_energy_table.add_value("bulk_energy", bulk_energy);
-  phase_energy_table.set_scientific("bulk_energy", true);
-  phase_energy_table.add_value("interface_energy", interface_energy);
-  phase_energy_table.set_scientific("interface_energy", true);
-  phase_energy_table.add_value("total_energy", total_energy);
-  phase_energy_table.set_scientific("total_energy", true);
-
-  // Console output
-  if (simulation_parameters.post_processing.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      announce_string(this->pcout, "Phase energy");
-      this->pcout << "Bulk energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << bulk_energy << std::endl;
-      this->pcout << "Interface energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << interface_energy << std::endl;
-      this->pcout << "Total energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << total_energy << std::endl;
-    }
-}
-
-template <int dim>
-void
-ReactiveSpecies<dim>::write_phase_energy()
-{
-  auto mpi_communicator = triangulation->get_communicator();
-
-  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-    {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.phase_energy_output_name + ".dat";
-      std::ofstream output(filename.c_str());
-      phase_energy_table.set_precision("time", 12);
-      phase_energy_table.set_precision("bulk_energy", 12);
-      phase_energy_table.set_precision("interface_energy", 12);
-      phase_energy_table.set_precision("total_energy", 12);
-
-      phase_energy_table.write_text(output);
-    }
-}
-
 template <int dim>
 void
 ReactiveSpecies<dim>::finish_simulation()
@@ -594,12 +388,16 @@ ReactiveSpecies<dim>::finish_simulation()
           error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
-      error_table.set_scientific("error_phase_order", true);
-      error_table.set_precision("error_phase_order",
-                                simulation_control->get_log_precision());
-      error_table.set_scientific("error_chemical_potential", true);
-      error_table.set_precision("error_chemical_potential",
-                                simulation_control->get_log_precision());
+
+      // TODO Change to flexible number of species
+      unsigned int number_of_reactive_species = 4;
+      for (unsigned int i = 0; i < number_of_reactive_species; i++)
+        {
+          error_table.set_scientific("error_species_" + std::to_string(i),
+                                     true);
+          error_table.set_precision("error_species_" + std::to_string(i),
+                                    simulation_control->get_log_precision());
+        }
       error_table.write_text(std::cout);
     }
 }
@@ -629,17 +427,20 @@ ReactiveSpecies<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      double phase_order_error = calculate_L2_error()[0];
-      double potential_error   = calculate_L2_error()[1];
-      // TODO Change here to use all species
+      std::vector<double> reactive_species_error = calculate_L2_error();
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
-      error_table.add_value("error_phase_order", phase_order_error);
-      error_table.add_value("error_chemical_potential", potential_error);
 
-      error_table.set_scientific("error_phase_order", true);
-      error_table.set_scientific("error_chemical_potential", true);
+      // TODO Change to flexible number of species
+      unsigned int number_of_reactive_species = 4;
+      for (unsigned int i = 0; i < number_of_reactive_species; i++)
+        {
+          error_table.add_value("error_species_" + std::to_string(i),
+                                reactive_species_error[i]);
+          error_table.set_scientific("error_species_" + std::to_string(i),
+                                     true);
+        }
 
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
@@ -651,37 +452,13 @@ ReactiveSpecies<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error phase order: " << phase_order_error
-                      << std::endl;
-          this->pcout << "L2 error chemical potential: " << potential_error
-                      << std::endl;
+          for (unsigned int i = 0; i < number_of_reactive_species; i++)
+            {
+              this->pcout << "L2 error reactive species : "
+                          << reactive_species_error[i] << std::endl;
+            }
         }
     }
-
-  /* TODO Later
-    if (simulation_parameters.post_processing.calculate_phase_statistics)
-    {
-      calculate_phase_statistics();
-      if (simulation_control->get_step_number() %
-            this->simulation_parameters.post_processing.output_frequency ==
-          0)
-        this->write_phase_statistics();
-    }*/
-
-  /*
-   * TODO Later
-     if (this->simulation_parameters.post_processing.calculate_phase_energy)
-    {
-      calculate_phase_energy();
-      // Output phase energies to a text file from processor 0
-      if (simulation_control->get_step_number() %
-            this->simulation_parameters.post_processing.output_frequency ==
-          0)
-        {
-          this->write_phase_energy();
-        }
-    }
-*/
 
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
@@ -790,14 +567,6 @@ ReactiveSpecies<dim>::write_checkpoint()
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_RS" + suffix);
-  /*
-   * TODO Later
-  if (this->simulation_parameters.post_processing.calculate_phase_statistics)
-    serialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
-*/
 }
 
 template <int dim>
@@ -838,14 +607,6 @@ ReactiveSpecies<dim>::read_checkpoint()
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_RS" + suffix);
-  /*
-   * TODO Later
-  if (this->simulation_parameters.post_processing.calculate_phase_statistics)
-    deserialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
-*/
 }
 
 
