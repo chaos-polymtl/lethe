@@ -514,9 +514,11 @@ namespace Parameters
   }
 
   void
-  SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
+  SurfaceTensionParameters::parse_parameters(ParameterHandler &prm,
+                                             const Parameters::Dimensionality dimensions)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
+    surface_tension_coefficient *= dimensions.surface_tension_scaling;
     T_0                         = prm.get_double("reference state temperature");
     surface_tension_gradient =
       prm.get_double("temperature-driven surface tension gradient");
@@ -539,10 +541,13 @@ namespace Parameters
   }
 
   void
-  MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm)
+  MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm,
+                                                   const Parameters::Dimensionality dimensions)
   {
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
+    mobility_cahn_hilliard_constant *=
+              dimensions.cahn_hilliard_mobility_scaling;
   }
 
   template <int dim>
@@ -962,7 +967,7 @@ namespace Parameters
            ++i_material_interaction)
         {
           material_interactions[i_material_interaction].parse_parameters(
-            prm, i_material_interaction);
+            prm, i_material_interaction,dimensions);
           if (material_interactions[i_material_interaction]
                 .material_interaction_type ==
               MaterialInteractions::MaterialInteractionsType::fluid_fluid)
@@ -1304,7 +1309,8 @@ namespace Parameters
   }
 
   void
-  MaterialInteractions::parse_parameters(ParameterHandler &prm, unsigned int id)
+  MaterialInteractions::parse_parameters(ParameterHandler &prm, unsigned int id,
+                                         const Parameters::Dimensionality dimensions)
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -1339,17 +1345,17 @@ namespace Parameters
             if (op == "constant")
               {
                 surface_tension_model = SurfaceTensionModel::constant;
-                surface_tension_parameters.parse_parameters(prm);
+                surface_tension_parameters.parse_parameters(prm,dimensions);
               }
             else if (op == "linear")
               {
                 surface_tension_model = SurfaceTensionModel::linear;
-                surface_tension_parameters.parse_parameters(prm);
+                surface_tension_parameters.parse_parameters(prm,dimensions);
               }
             else if (op == "phase change")
               {
                 surface_tension_model = SurfaceTensionModel::phase_change;
-                surface_tension_parameters.parse_parameters(prm);
+                surface_tension_parameters.parse_parameters(prm,dimensions);
               }
             else
               throw(std::runtime_error(
@@ -1361,13 +1367,13 @@ namespace Parameters
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::constant;
-                mobility_cahn_hilliard_parameters.parse_parameters(prm);
+                mobility_cahn_hilliard_parameters.parse_parameters(prm,dimensions);
               }
             else if (op == "quartic")
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::quartic;
-                mobility_cahn_hilliard_parameters.parse_parameters(prm);
+                mobility_cahn_hilliard_parameters.parse_parameters(prm,dimensions);
               }
             else
               throw(std::runtime_error(
@@ -1390,17 +1396,17 @@ namespace Parameters
           if (op == "constant")
             {
               surface_tension_model = SurfaceTensionModel::constant;
-              surface_tension_parameters.parse_parameters(prm);
+              surface_tension_parameters.parse_parameters(prm,dimensions);
             }
           else if (op == "linear")
             {
               surface_tension_model = SurfaceTensionModel::linear;
-              surface_tension_parameters.parse_parameters(prm);
+              surface_tension_parameters.parse_parameters(prm,dimensions);
             }
           else if (op == "phase change")
             {
               surface_tension_model = SurfaceTensionModel::phase_change;
-              surface_tension_parameters.parse_parameters(prm);
+              surface_tension_parameters.parse_parameters(prm,dimensions);
             }
           else
             throw(std::runtime_error(
