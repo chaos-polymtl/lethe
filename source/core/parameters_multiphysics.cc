@@ -73,7 +73,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::Multiphysics::parse_parameters(ParameterHandler &prm,
+Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
                                            const Dimensionality dimensions)
 {
   prm.enter_subsection("multiphysics");
@@ -526,7 +526,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm,
+Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
                                            const Dimensionality dimensions)
 {
   prm.enter_subsection("cahn hilliard");
