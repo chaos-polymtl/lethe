@@ -175,15 +175,10 @@ public:
         source_function->value_list(quadrature_points, source[i], i);
       }
 
-    // TODO Use the new utilities function for that
-    if (dim == 2)
-      this->cell_size =
-        std::sqrt(4. * cell->measure() / M_PI) / fe_reactive_species.degree;
-    else if (dim == 3)
-      this->cell_size =
-        pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_reactive_species.degree;
+    this->cell_size =
+      compute_cell_diameter<dim>(cell->measure(), fe_reactive_species.degree);
 
-    // Gather Phi and eta (values, gradient and laplacian)
+    // Gather values, gradient and laplacian
     for (unsigned int i = 0; i < 4; i++)
       {
         this->fe_values_reactive_species[fe_values_extractors[i]]
