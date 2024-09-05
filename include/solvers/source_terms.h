@@ -45,22 +45,9 @@ namespace SourceTerms
   class SourceTerm
   {
   public:
-    SourceTerm()
-    {
-      navier_stokes_source =
-        std::make_shared<Functions::ParsedFunction<dim>>(dim + 1);
-      heat_transfer_source =
-        std::make_shared<Functions::ParsedFunction<dim>>(1);
-      tracer_source = std::make_shared<Functions::ParsedFunction<dim>>(1);
-      cahn_hilliard_source =
-        std::make_shared<Functions::ParsedFunction<dim>>(2);
-      reactive_species_source =
-        std::make_shared<Functions::ParsedFunction<dim>>(
-          4); // TODO Change to a flexible number of species
-    }
-
     virtual void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int number_of_reactive_species = 0);
     virtual void
     parse_parameters(ParameterHandler &prm);
 
@@ -80,12 +67,15 @@ namespace SourceTerms
     std::shared_ptr<Functions::ParsedFunction<dim>> cahn_hilliard_source;
 
     // Reactive species source
+    unsigned int                                    number_of_reactive_species;
     std::shared_ptr<Functions::ParsedFunction<dim>> reactive_species_source;
   };
 
   template <int dim>
   void
-  SourceTerm<dim>::declare_parameters(ParameterHandler &prm)
+  SourceTerm<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int number_of_reactive_species)
   {
     prm.enter_subsection("source term");
 
@@ -110,8 +100,11 @@ namespace SourceTerms
     prm.leave_subsection();
 
     prm.enter_subsection("reactive species");
+    this->number_of_reactive_species = number_of_reactive_species;
+
     reactive_species_source->declare_parameters(
-      prm, 4); // TODO Change to a flexible number of species
+      prm, this->number_of_reactive_species); // TODO Change to a flexible
+                                              // number of species
     prm.leave_subsection();
 
     prm.leave_subsection();

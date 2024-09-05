@@ -82,10 +82,11 @@ namespace AnalyticalSolutions
      * within a parameter file
      *
      * @param prm ParameterHandler used to declare the parameters.
-     *
+     *@param reactive_species_count number of reactive species ParameterHandler used to declare the parameters.
      */
     virtual void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int reactive_species_count = 0);
 
     /**
      * @brief Parses the parameters required by the analytical solution

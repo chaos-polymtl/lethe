@@ -1035,6 +1035,7 @@ namespace BoundaryConditions
   class ReactiveSpeciesBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
+    unsigned int                           number_of_reactive_species;
     std::vector<double>                    concentration_dirichlet_value;
     ReactiveSpeciesBoundaryFunctions<dim> *bcFunctions;
 
@@ -1042,7 +1043,8 @@ namespace BoundaryConditions
     declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
     void
     declare_parameters(ParameterHandler  &prm,
-                       const unsigned int number_of_boundary_conditions);
+                       const unsigned int number_of_boundary_conditions,
+                       const unsigned int number_of_reactive_species);
     void
     parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
     void
@@ -1092,7 +1094,8 @@ namespace BoundaryConditions
   void
   ReactiveSpeciesBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
-    const unsigned int number_of_boundary_conditions)
+    const unsigned int number_of_boundary_conditions,
+    const unsigned int number_of_reactive_species)
   {
     prm.enter_subsection("boundary conditions reactive species");
     {
@@ -1105,6 +1108,9 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
+
+      this->number_of_reactive_species = number_of_reactive_species;
+      // TODO Initialize the boundary conditions properly
 
       this->id.resize(number_of_boundary_conditions);
       this->type.resize(number_of_boundary_conditions);
