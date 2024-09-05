@@ -222,15 +222,7 @@ namespace Parameters
 
   struct ReactiveSpecies
   {
-    // Smoothing parameter \f$\xi\f$ in the Reactive species equations
-    // (potential equation)
-    double potential_smoothing_coefficient; // TODO From CH
-
-    // Epsilon set strategy (automatic|manual)
-    Parameters::EpsilonSetMethod epsilon_set_method; // TODO From CH
-
-    // Epsilon value in the Reactive species equations
-    double epsilon; // TODO From CH
+    // TODO Fill with required variables as implementation progresses
 
     void
     declare_parameters(ParameterHandler &prm);

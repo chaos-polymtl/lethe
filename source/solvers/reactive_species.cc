@@ -497,12 +497,7 @@ ReactiveSpecies<dim>::calculate_phase_energy()
   double interface_energy(0.);
   double total_energy(0.);
 
-  double epsilon =
-    (this->simulation_parameters.multiphysics.reactive_species_parameters
-       .epsilon_set_method == Parameters::EpsilonSetMethod::manual) ?
-      this->simulation_parameters.multiphysics.reactive_species_parameters
-        .epsilon :
-      GridTools::minimal_cell_diameter(*triangulation);
+  double epsilon = GridTools::minimal_cell_diameter(*triangulation);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
