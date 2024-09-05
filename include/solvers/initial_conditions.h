@@ -119,14 +119,17 @@ namespace Parameters
     std::string average_velocity_file_name;
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler  &prm,
+                       const unsigned int reactive_species_count = 0);
     void
     parse_parameters(ParameterHandler &prm);
   };
 
   template <int dim>
   void
-  InitialConditions<dim>::declare_parameters(ParameterHandler &prm)
+  InitialConditions<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int reactive_species_count)
   {
     prm.enter_subsection("initial conditions");
     {

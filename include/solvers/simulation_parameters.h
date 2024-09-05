@@ -103,10 +103,13 @@ public:
     boundary_conditions_cahn_hilliard.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_reactive_species.declare_parameters(
-      prm, size_of_subsections.boundary_conditions);
+      prm,
+      size_of_subsections.boundary_conditions,
+      size_of_subsections.reactive_species_count);
 
     initial_condition = new Parameters::InitialConditions<dim>;
-    initial_condition->declare_parameters(prm);
+    initial_condition->declare_parameters(
+      prm, size_of_subsections.reactive_species_count);
 
     Parameters::FEM::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);

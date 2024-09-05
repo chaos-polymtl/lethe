@@ -20,7 +20,9 @@ namespace AnalyticalSolutions
 {
   template <int dim>
   void
-  AnalyticalSolution<dim>::declare_parameters(ParameterHandler &prm)
+  AnalyticalSolution<dim>::declare_parameters(
+    ParameterHandler  &prm,
+    const unsigned int reactive_species_count)
   {
     prm.enter_subsection("analytical solution");
     prm.declare_entry(
