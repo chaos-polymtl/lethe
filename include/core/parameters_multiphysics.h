@@ -222,7 +222,7 @@ namespace Parameters
 
   struct ReactiveSpecies
   {
-    // TODO Fill with required variables as implementation progresses
+    unsigned int reactive_species_count;
 
     void
     declare_parameters(ParameterHandler &prm);

@@ -571,7 +571,11 @@ Parameters::ReactiveSpecies::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("reactive species");
 
-  // TODO Fill with required variables as implementation progresses
+  prm.declare_entry(
+    "reactive species count",
+    "0",
+    Patterns::Integer(),
+    "Number of species to be used for reactive species simulations");
 
   prm.leave_subsection();
 }
@@ -581,7 +585,7 @@ Parameters::ReactiveSpecies::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("reactive species");
 
-  // TODO Fill with required variables as implementation progresses
+  reactive_species_count = prm.get_integer("reactive species count");
 
   prm.leave_subsection();
 }

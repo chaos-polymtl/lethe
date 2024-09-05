@@ -45,6 +45,7 @@ namespace Parameters
   struct SizeOfSubsections
   {
     int boundary_conditions;
+    int reactive_species_count;
   };
 
 

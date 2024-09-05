@@ -690,6 +690,14 @@ get_dimension(const std::string &file_name)
     }
 }
 
+unsigned int
+get_reactive_species_count(const std::string &file_name)
+{
+  unsigned int reactive_species_count =
+    get_max_value_of_parameter(file_name, "reactive species count");
+  return reactive_species_count;
+}
+
 
 int
 get_max_number_of_boundary_conditions(const std::string &file_name)
