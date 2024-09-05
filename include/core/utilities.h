@@ -483,6 +483,14 @@ unsigned int
 get_dimension(const std::string &file_name);
 
 /**
+ * @brief Extract the number of reactive species used in the simulation
+ *
+ * @param file_name The file name from which the number of reactive species is read
+ */
+unsigned int
+get_reactive_species_count(const std::string &file_name);
+
+/**
  * @brief Extract the maximum number of boundary conditions from the file.
  * The number of boundary conditions is linked to the string "number" so
  * this feature will need to be monitored extensively in the future.

@@ -65,6 +65,7 @@ namespace Parameters
     SizeOfSubsections sizes;
     sizes.boundary_conditions =
       get_max_number_of_boundary_conditions(file_name);
+    sizes.reactive_species_count = get_reactive_species_count(file_name);
     return sizes;
   }
 
