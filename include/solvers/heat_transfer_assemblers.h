@@ -301,10 +301,10 @@ protected:
 };
 
 /**
- * @brief Class that assembles the discontinuity-capturing directional dissipation stablization for the heat transfer
+ * @brief Class that assembles the discontinuity-capturing directional dissipation stabilization term for the heat transfer
  * solver. For more information see Tezduyar, T. E. (2003). Computation of
  * moving boundaries and interfaces and stabilization parameters. International
- * Journal for Numerical Methods in Fluids, 43(5), 555-575. Our implementation
+ * Journal for Numerical Methods in Fluids, 43(5), 555-575. The implementation
  * is based on equations (70) and (79), which are adapted for the heat transfer
  * solver.
  *

@@ -647,6 +647,8 @@ namespace Parameters
   {
     bool use_default_stabilization;
 
+    bool heat_transfer_stabilization;
+
     // pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;

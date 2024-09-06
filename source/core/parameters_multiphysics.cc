@@ -65,12 +65,6 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Buoyant force calculation");
-
-    prm.declare_entry(
-      "DCDD shock capture",
-      "false",
-      Patterns::Bool(),
-      "Use discontinuity-capturing directional dissipation for stabilization in heat transfer <true|false>");
   }
   prm.leave_subsection();
 
@@ -92,7 +86,6 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     // subparameter for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
     buoyancy_force      = prm.get_bool("buoyancy force");
-    dcdd_shock_capture  = prm.get_bool("DCDD shock capture");
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);

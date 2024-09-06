@@ -374,7 +374,7 @@ HeatTransfer<dim>::setup_assemblers()
         }
     }
 
-  if (this->simulation_parameters.multiphysics.dcdd_shock_capture)
+  if (this->simulation_parameters.stabilization.heat_transfer_stabilization)
     {
       this->assemblers.emplace_back(
         std::make_shared<HeatTransferAssemblerDCDDstabilization<dim>>(
