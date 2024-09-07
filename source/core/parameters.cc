@@ -2305,6 +2305,11 @@ namespace Parameters
         "0",
         Patterns::Double(),
         "Angle of rotation of the mesh at initialization around the axis in radian");
+
+      prm.declare_entry("scale",
+                        "1",
+                        Patterns::Double(),
+                        "Scaling factor used for the mesh.");
     }
     prm.leave_subsection();
   }
@@ -2357,6 +2362,9 @@ namespace Parameters
       rotation_axis =
         value_string_to_tensor<3>(prm.get("initial rotation axis"));
       rotation_angle = prm.get_double("initial rotation angle");
+
+      // Scaling factor
+      scale = prm.get_double("scale");
     }
     prm.leave_subsection();
   }
