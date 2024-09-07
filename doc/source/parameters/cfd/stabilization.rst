@@ -8,12 +8,14 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
 .. code-block:: text
 
   subsection stabilization
-    set use default stabilization = true
+    set use default stabilization   = true
 
-    set stabilization             = pspg_supg     # <pspg_supg|gls|grad_div>.
+    set stabilization               = pspg_supg     # <pspg_supg|gls|grad_div>.
+
+    set heat transfer stabilization = false
 
     # Pressure scaling factor
-    set pressure scaling factor   = 1
+    set pressure scaling factor     = 1
   end
   
 
@@ -26,6 +28,8 @@ There are three choices of stabilization strategy:
 * ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations which adds two Least-Squares terms (for more details see :doc:`../../../../theory/multiphysics/fluid_dynamics/stabilization`). This stabilization should only be used with the monolithic solver for the Navier-Stokes equations (``lethe-fluid`` or ``lethe-fluid-matrix-free``).
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
+
+* ``heat transfer stabilization``: Applies the discontinuity-capturing directional dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see Tezduyar, T. E. (2003).
 
 The ``pressure scaling factor`` parameter is used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
 

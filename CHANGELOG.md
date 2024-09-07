@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-08-29
+
+### Changed
+
+- MINOR Rendered discontinuity-capturing directional dissipation optional for the heat transfer. [#1268](https://github.com/chaos-polymtl/lethe/pull/1268)
+
 ## [Master] - 2024-08-27
 
 ### Changed
