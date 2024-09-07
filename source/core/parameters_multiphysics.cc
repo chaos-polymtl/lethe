@@ -64,7 +64,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("buoyancy force",
                       "false",
                       Patterns::Bool(),
-                      "Buoyant force calculation");
+                      "Buoyant force calculation <true|false>");
   }
   prm.leave_subsection();
 
