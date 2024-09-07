@@ -51,6 +51,7 @@ attach_grid_to_triangulation(
               dealii::Triangulation<dim, spacedim>::none);
 
           triangulation.create_triangulation(construction_data);
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
       else
         {
@@ -58,6 +59,7 @@ attach_grid_to_triangulation(
           grid_in.attach_triangulation(triangulation);
           std::ifstream input_file(mesh_parameters.file_name);
           grid_in.read_msh(input_file);
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
     }
   // Dealii grids
@@ -70,6 +72,8 @@ attach_grid_to_triangulation(
             temporary_quad_triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
+
+          GridTools::scale(mesh_parameters.scale, temporary_quad_triangulation);
 
           // initial refinement
           const unsigned int initial_refinement =
@@ -106,6 +110,8 @@ attach_grid_to_triangulation(
             triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
     }
   // Customizable cylinder mesh
@@ -158,6 +164,8 @@ attach_grid_to_triangulation(
                                                  subdivisions,
                                                  radius,
                                                  half_height);
+
+              GridTools::scale(mesh_parameters.scale, triangulation);
             }
           else
             {
@@ -250,112 +258,10 @@ attach_grid_to_triangulation(
               // Add a cylindrical manifold on the final unrefined mesh
               const CylindricalManifold<3, spacedim> m1(0);
               triangulation.set_manifold(0, m1);
+
+              GridTools::scale(mesh_parameters.scale, triangulation);
             }
         }
-    }
-
-  // Colorized cylinder shell
-  else if (mesh_parameters.type ==
-           Parameters::Mesh::Type::colorized_cylinder_shell)
-    {
-      if (mesh_parameters.simplex)
-        {
-          throw std::runtime_error(
-            "Unsupported mesh type - colorized cylinder shell with simplex is not supported.");
-        }
-      else if (dim != 3)
-        {
-          throw std::runtime_error(
-            "Unsupported mesh type - colorized cylinder shell is only supported in 3d.");
-        }
-
-      // First generate the regular deal.II cylinder_shell using the
-      // mesh_parameters arguments
-      GridGenerator::generate_from_name_and_arguments(
-        triangulation, "cylinder_shell", mesh_parameters.grid_arguments);
-
-      // Now that we have our grid, colorize the boundary conditions.
-      // Inner cylinder has boundary id 0
-      // Outer cylinder has boundary id 1
-      // Bottom (Z-) part of the cylinder has boundary id 2
-      // Top (Z+) part of the cylinder has boundary id 3
-
-      // Split the argument to extract the radius
-      std::vector<std::string> split_arguments =
-        Utilities::split_string_list(mesh_parameters.grid_arguments, ":");
-
-      const double length = Utilities::string_to_double(split_arguments[0]);
-
-      // Tolerance along z
-      const double eps_z = 1e-6 * length;
-
-      // Gather the inner radius from the faces instead of the argument, this is
-      // more robust for some aspect ratios. First initialize the outer to 0 and
-      // the inner to a large value
-      double inner_radius = DBL_MAX;
-      double outer_radius = 0.;
-
-      // Loop over the cells once to acquire the min and max radius at the face
-      // centers Otherwise, for some cell ratio, the center of the faces can be
-      // at a radius which is significantly different from the one prescribed.
-      for (const auto &cell : triangulation.active_cell_iterators())
-        for (const unsigned int f : GeometryInfo<3>::face_indices())
-          {
-            if (!cell->face(f)->at_boundary())
-              continue;
-
-            const auto   face_center = cell->face(f)->center();
-            const double z           = face_center[2];
-
-            if ((std::fabs(z) > eps_z) &&
-                (std::fabs(z - length) > eps_z)) // Not a zmin or zmax boundary
-              {
-                const double radius =
-                  std::sqrt(face_center[0] * face_center[0] +
-                            face_center[1] * face_center[1]);
-                inner_radius = std::min(inner_radius, radius);
-                outer_radius = std::max(outer_radius, radius);
-              }
-          }
-
-      // Use the gathered radius to define the medium radial distance.
-      double mid_radial_distance = 0.5 * (outer_radius - inner_radius);
-
-      for (const auto &cell : triangulation.active_cell_iterators())
-        for (const unsigned int f : GeometryInfo<3>::face_indices())
-          {
-            if (!cell->face(f)->at_boundary())
-              continue;
-
-            const auto face_center = cell->face(f)->center();
-
-            const double radius = std::sqrt(face_center[0] * face_center[0] +
-                                            face_center[1] * face_center[1]);
-
-            const double z = face_center[2];
-
-            if (std::fabs(z) < eps_z) // z = 0 set boundary 2
-              {
-                cell->face(f)->set_boundary_id(2);
-              }
-            else if (std::fabs(z - length) < eps_z) // z = length set boundary 3
-              {
-                cell->face(f)->set_boundary_id(3);
-              }
-            else if (std::fabs(radius - inner_radius) >
-                     mid_radial_distance) // r =  outer_radius set boundary 1
-              {
-                cell->face(f)->set_boundary_id(1);
-              }
-            else if (std::fabs(radius - inner_radius) <
-                     mid_radial_distance) // r =  inner_radius set boundary 0
-              {
-                cell->face(f)->set_boundary_id(0);
-              }
-            else
-              throw std::runtime_error(
-                "There was an error while setting up this mesh");
-          }
     }
 
   // Periodic Hills grid
@@ -371,6 +277,8 @@ attach_grid_to_triangulation(
         {
           PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
     }
   else
