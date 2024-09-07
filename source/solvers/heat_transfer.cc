@@ -374,6 +374,13 @@ HeatTransfer<dim>::setup_assemblers()
         }
     }
 
+  if (this->simulation_parameters.stabilization.heat_transfer_stabilization)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<HeatTransferAssemblerDCDDstabilization<dim>>(
+          this->simulation_control));
+    }
+
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {

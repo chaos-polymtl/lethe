@@ -7,9 +7,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity : 3.99229e-09
-L2 error temperature : 3.66401e-17
+L2 error velocity : 3.90823e-09
+L2 error temperature : 3.53821e-17
 cells error_velocity error_pressure 
- 1024 3.992290e-09 - 5.353477e-08 - 
+ 1024 3.908229e-09 - 5.203464e-08 - 
 cells error_temperature 
- 1024 3.664015e-17    - 
+ 1024 3.538213e-17    - 

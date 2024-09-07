@@ -27,5 +27,5 @@ Total pressure drop: -0.000383511 Pa
 **********************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000178358
 **********************************************************************************
-Pressure drop: 7.23862e-06 Pa
-Total pressure drop: 7.23862e-06 Pa
+Pressure drop: 7.24257e-06 Pa
+Total pressure drop: 7.24257e-06 Pa

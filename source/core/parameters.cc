@@ -699,6 +699,12 @@ namespace Parameters
         "Choices are <pspg_supg|gls|grad_div>.");
 
       prm.declare_entry(
+        "heat transfer stabilization",
+        "false",
+        Patterns::Bool(),
+        "Apply discontinuity-capturing directional dissipation stabilization term on heat transfer <true|false>");
+
+      prm.declare_entry(
         "pressure scaling factor",
         "1",
         Patterns::Double(),
@@ -725,6 +731,8 @@ namespace Parameters
         stabilization = NavierStokesStabilization::grad_div;
       else
         throw(std::runtime_error("Invalid stabilization strategy"));
+
+      heat_transfer_stabilization = prm.get_bool("heat transfer stabilization");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
