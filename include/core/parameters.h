@@ -1339,6 +1339,9 @@ namespace Parameters
     Tensor<1, 3> rotation_axis;
     double       rotation_angle;
 
+    /// Rescale the grid by the scale factor
+    double scale;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
