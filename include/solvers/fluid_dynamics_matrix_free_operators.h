@@ -390,11 +390,11 @@ protected:
 
 
   /**
-   * @brief Carry out the integration of boundary face integrals
+   * @brief Carry out the integration of boundary face integrals.
    *
    * @tparam assemble_residual Flag to assemble the residual or the jacobian.
    *
-   * @param[in] integrator FEEvaluation object that allows to evaluate functions
+   * @param[in] integrator FEFaceEvaluation object that allows to evaluate functions
    * at quadrature points and perform face integrations.
    */
   template <bool assemble_residual>
@@ -532,7 +532,7 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
 
   /**
-   * @brief Flag to turn the calculation of face term on or off.
+   * @brief Flag to turn the calculation of face terms on or off.
    * This is used for weakly imposed Dirichlet boundary conditions (implemented)
    * or outlets (not implemented yet).
    *

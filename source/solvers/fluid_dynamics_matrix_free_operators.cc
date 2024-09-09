@@ -182,7 +182,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const bool                                          &enable_hessians_residual)
 {
   this->enable_face_terms = false;
-  // Looop over all boundary conditions to establish if one of them has face
+  // Loop over all boundary conditions to establish if one of them has face
   // terms
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
@@ -194,7 +194,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
         Assert(
           false,
           ExcMessage(
-            "Outlets boundary conditions are currently not supposed by the matrix free operators."));
+            "Outlet boundary conditions are currently not supported by the matrix free operators."));
     }
 
   this->boundary_conditions = boundary_conditions;
@@ -211,8 +211,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // If face terms are enabled, add the corresponding flag
   if (enable_face_terms)
     {
-      // Normal vectors and quadrature points are required to adequately
-      // weakly impose dirichlet boundary condition using Nitsche's method.
+      // Normal vectors and quadrature points are required to weakly
+      // impose Dirichlet boundary conditions using Nitsche's method.
       additional_data.mapping_update_flags_boundary_faces =
         update_values | update_gradients | update_quadrature_points |
         update_JxW_values | update_normal_vectors;
@@ -973,7 +973,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::evaluate_residual");
 
-
   if (enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
@@ -1104,11 +1103,10 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
   const auto boundary_index =
     boundary_id - this->boundary_conditions.id.begin();
 
-
-
   // If the boundary condition is not in our list of boundary
-  // condition or the boundary condition that is set in the list is
-  // not a weak function, there is nothing to do and we return
+  // conditions or the boundary condition that is set in the list is
+  // not a weak function, there is nothing to do, so we set the 
+  // values to zero and return
   if (boundary_id == this->boundary_conditions.id.end() ||
       this->boundary_conditions.type[boundary_index] !=
         BoundaryConditions::BoundaryType::function_weak)
@@ -1148,13 +1146,11 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
         { // Assemble (v,beta (u-u_target)) for the main penalization
           value_result[d] += penalty_parameter * value[d];
 
-
           // Assemble ν(v,∇δu·n)
           for (unsigned int i = 0; i < dim; ++i)
             value_result[d] -=
               kinematic_viscosity * gradient[d][i] * normal_vector[i];
-          //
-          // // // Assemble ν(∇v·n,(u-u_target))
+          // Assemble ν(∇v·n,(u-u_target))
           for (unsigned int i = 0; i < dim; ++i)
             gradient_result[d][i] -=
               kinematic_viscosity * value[d] * normal_vector[i];
