@@ -14,6 +14,7 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
@@ -65,6 +66,7 @@ public:
   TracerScratchData(const PhysicalPropertiesManager &properties_manager,
                     const FiniteElement<dim>        &fe_tracer,
                     const Quadrature<dim>           &quadrature,
+                    const Quadrature<dim - 1>       &face_quadrature,
                     const Mapping<dim>              &mapping,
                     const FiniteElement<dim>        &fe_fd)
     : properties_manager(properties_manager)
@@ -73,6 +75,12 @@ public:
                        quadrature,
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_interface_values_tracer(mapping,
+                                 fe_tracer,
+                                 face_quadrature,
+                                 update_values | update_gradients |
+                                   update_quadrature_points |
+                                   update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
   {
     allocate();
@@ -98,6 +106,12 @@ public:
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_interface_values_tracer(sd.fe_interface_values_tracer.get_mapping(),
+                                 sd.fe_interface_values_tracer.get_fe(),
+                                 sd.fe_interface_values_tracer.get_quadrature(),
+                                 update_values | update_gradients |
+                                   update_quadrature_points |
+                                   update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
@@ -275,10 +289,12 @@ public:
   std::vector<double>                  tracer_diffusivity_1;
 
   // FEValues for the Tracer problem
-  FEValues<dim> fe_values_tracer;
-  unsigned int  n_dofs;
-  unsigned int  n_q_points;
-  double        cell_size;
+  FEValues<dim>          fe_values_tracer;
+  FEInterfaceValues<dim> fe_interface_values_tracer;
+
+  unsigned int n_dofs;
+  unsigned int n_q_points;
+  double       cell_size;
 
   // Quadrature
   std::vector<double>     JxW;

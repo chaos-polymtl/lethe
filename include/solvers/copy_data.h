@@ -102,11 +102,20 @@ public:
       }
   }
 
+
+  struct CopyDataFace
+  {
+    FullMatrix<double>                   cell_matrix;
+    std::vector<types::global_dof_index> joint_dof_indices;
+  };
+
   FullMatrix<double>                   local_matrix;
   Vector<double>                       local_rhs;
   std::vector<types::global_dof_index> local_dof_indices;
   Vector<double>                       strong_residual;
   std::vector<Vector<double>>          strong_jacobian;
+  std::vector<CopyDataFace>            face_data;
+
 
   // Boolean used to indicate if the cell being assembled is local or not
   // This information is used to indicate to the copy_local_to_global function

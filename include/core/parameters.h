@@ -1052,6 +1052,9 @@ namespace Parameters
     // Interpolation order tracer
     unsigned int tracer_order;
 
+    // Switch tracer to DG formulation instead of CG
+    bool tracer_uses_dg;
+
     // Interpolation order vof model
     unsigned int VOF_order;
 
