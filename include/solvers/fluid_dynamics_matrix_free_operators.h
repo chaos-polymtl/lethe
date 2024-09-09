@@ -75,7 +75,7 @@ public:
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all boundary
-   conditions. Required to weakly impose boundary conditions.
+   * conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
@@ -113,7 +113,7 @@ public:
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
-   boundary conditions. Required to weakly impose boundary conditions.
+   * boundary conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
