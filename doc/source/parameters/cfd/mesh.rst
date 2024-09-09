@@ -7,14 +7,14 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
   subsection mesh
     # Type of mesh. Choices are <gmsh|dealii|cylinder|colorized_cylinder_shell|periodic_hills>
-    set type               = dealii
+    set type = dealii
 
     # GMSH file name
-    set file name          = none
+    set file name = none
 
     # Grid arguments for dealii, cylinder, colorized_cylinder_shell and periodic_hills
-    set grid type          = hyper_cube
-    set grid arguments     = -1 : 1 : false
+    set grid type      = hyper_cube
+    set grid arguments = -1 : 1 : false
 
     # Initial refinement of the mesh
     set initial refinement = 0
@@ -25,11 +25,32 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Lists of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
     set boundaries refined = 0, 1
 
+    # Enable initial refinement until target size is reached
+    set enable target size = false
+    set target size        = 1
+
     # Indicates that the mesh is a simplex mesh
-    set simplex            = false
+    set simplex = false
+
+    # DEM-specific mesh parameters
+
+    # Enables checking the input grid for diamond-shaped cells
+    set check diamond cells = false
+
+    # Enables adding the boundary neighbor cells of boundary cells to the particle-wall contact search list
+    set expand particle-wall contact search = false
+
+    # Mesh modification parameters
+
+    # Translation to apply to the mesh
+    set initial translation = 0, 0, 0
+
+    # Rotation to apply to the mesh
+    set initial rotation axis  = 1, 0, 0
+    set initial rotation angle = 0
 
     # Mesh scaling factor
-    set scale              = 1
+    set scale = 1
   end
 
 * The following choices for the mesh type are available:
@@ -52,6 +73,17 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
 * The `initial boundary refinement` determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the ``boundaries refined`` parameter.
 
+* The `enable target size` and `target size` respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.
+
+* The `check diamond cells` and `expand particle-wall contact search` are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.
+
 * `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
 
+* The `initial translation` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh in inconvenient or impossible.
+
+* The `initial rotation axis` and `initial rotation angle` parameters provide another way to move the mesh prior to simulating the problem.
+
 * The `scale` parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.
+
+.. warning::
+        When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.
