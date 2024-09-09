@@ -441,6 +441,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -453,6 +454,10 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#else
+  this->matrix_free.cell_loop(
+    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#endif
 
   // copy constrained dofs from src to dst (corresponding to diagonal
   // entries with value 1.0)
@@ -487,6 +492,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType       &dst,
   VectorType const &src) const
 {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -499,6 +506,10 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#else
+  this->matrix_free.cell_loop(
+    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#endif
 
   // set constrained dofs as the sum of current dst value and src value
   for (const auto i : constrained_indices)
@@ -531,6 +542,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   for (const auto i : edge_constrained_indices)
     src_cpy.local_element(i) = src.local_element(i);
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   // do loop with copy of src
   if (this->enable_face_terms)
     this->matrix_free.loop(
@@ -548,6 +560,13 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
       dst,
       src_cpy,
       false);
+#else
+  this->matrix_free.cell_loop(&NavierStokesOperatorBase::do_cell_integral_range,
+                              this,
+                              dst,
+                              src_cpy,
+                              false);
+#endif
 
   this->timer.leave_subsection("operator::vmult_interface_up");
 }
@@ -973,6 +992,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::evaluate_residual");
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
@@ -985,6 +1005,10 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
+#else
+  this->matrix_free.cell_loop(
+    &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
+#endif
 
   this->timer.leave_subsection("operator::evaluate_residual");
 }
@@ -1068,6 +1092,8 @@ NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
   const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+
   FEFaceIntegrator phi(matrix_free, true, 0);
 
   for (auto cell = range.first; cell < range.second; ++cell)
@@ -1083,16 +1109,23 @@ NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
 
       phi.distribute_local_to_global(dst);
     }
+#endif
 }
 
 
-// Add variant for face terms residual
+// Assembles weak dirichlet boundary condition using Nitche's SI method.
+// This is achieved by adding the following to the residual:
+// (v,beta (u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
+//
+// The function calculates both the jacobian matrix and the residual value.
 template <int dim, typename number>
 template <bool assemble_residual>
 void
 NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
   FEFaceIntegrator &integrator) const
 {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+
   if (!enable_face_terms)
     return;
 
@@ -1105,7 +1138,7 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function, there is nothing to do, so we set the 
+  // not a weak function, there is nothing to do, so we set the
   // values to zero and return
   if (boundary_id == this->boundary_conditions.id.end() ||
       this->boundary_conditions.type[boundary_index] !=
@@ -1137,10 +1170,9 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
       const auto gradient = integrator.get_gradient(q);
 
       // If we are assembling the residual, substract the target velocity from
-      // the velocity value This streamlines the code.
+      // the velocity value.
       if constexpr (assemble_residual)
         value -= this->face_target_velocity[face_index][q];
-
 
       for (unsigned int d = 0; d < dim; ++d)
         { // Assemble (v,beta (u-u_target)) for the main penalization
@@ -1161,6 +1193,8 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
     }
   integrator.integrate(EvaluationFlags::EvaluationFlags::values |
                        EvaluationFlags::EvaluationFlags::gradients);
+
+#endif
 }
 
 

@@ -394,8 +394,8 @@ protected:
    *
    * @tparam assemble_residual Flag to assemble the residual or the jacobian.
    *
-   * @param[in] integrator FEFaceEvaluation object that allows to evaluate functions
-   * at quadrature points and perform face integrations.
+   * @param[in] integrator FEFaceEvaluation object that allows to evaluate
+   * functions at quadrature points and perform face integrations.
    */
   template <bool assemble_residual>
   void
