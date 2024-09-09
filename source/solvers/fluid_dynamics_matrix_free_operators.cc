@@ -783,6 +783,7 @@ NavierStokesOperatorBase<dim, number>::
                                             face_integrator.n_q_points);
       nonlinear_previous_face_gradient.reinit(n_boundary_faces,
                                               face_integrator.n_q_points);
+      effective_beta_face.reinit(n_boundary_faces);
     }
 
   // Define 1/dt if the simulation is transient
@@ -858,6 +859,21 @@ NavierStokesOperatorBase<dim, number>::
           face_integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
                                    EvaluationFlags::EvaluationFlags::gradients);
 
+          // Identify the boundary id that corresponds to the face
+          const auto boundary_id =
+            std::find(this->boundary_conditions.id.begin(),
+                      this->boundary_conditions.id.end(),
+                      face_integrator.boundary_id());
+
+
+
+          // If the face is not a boundary condition and, we will not
+          // store values that will be derived from the boundary condition
+          // object
+          if (boundary_id == this->boundary_conditions.id.end())
+            continue;
+
+
           for (const auto q : face_integrator.quadrature_point_indices())
             {
               nonlinear_previous_face_values(face - n_inner_faces, q) =
@@ -865,6 +881,25 @@ NavierStokesOperatorBase<dim, number>::
               nonlinear_previous_face_gradient(face - n_inner_faces, q) =
                 face_integrator.get_gradient(q);
             }
+
+          // Calculate the index from the boundary condition vector
+          const auto boundary_index =
+            boundary_id - this->boundary_conditions.id.begin();
+
+          // Calculate the element size
+          VectorizedArray<number> cell_size = 1.0;
+
+          const auto [cell_it, _] = matrix_free.get_face_iterator(face, 0);
+          if constexpr (dim == 2)
+            cell_size = std::sqrt(4. * cell_it->measure() / M_PI) / fe_degree;
+          else if constexpr (dim == 3)
+            cell_size =
+              std::pow(6 * cell_it->measure() / M_PI, 1. / 3.) / fe_degree;
+
+          const double beta = this->boundary_conditions.beta[boundary_index];
+
+          effective_beta_face(face - n_inner_faces) =
+            beta / std::pow(cell_size, static_cast<number>(fe_degree + 1));
         }
     }
 
@@ -1064,30 +1099,12 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
       return;
     }
 
-  const auto face = integrator.get_current_cell_index();
 
-  const double beta = this->boundary_conditions.beta[boundary_index];
 
-  const unsigned fe_degree =
-    matrix_free.get_dof_handler().get_fe().tensor_degree();
+  const auto         face       = integrator.get_current_cell_index();
+  const unsigned int face_index = face - matrix_free.n_inner_face_batches();
 
-  VectorizedArray<number> cell_size = 1.0;
-
-  for (unsigned int v = 0;
-       v < matrix_free.n_active_entries_per_face_batch(face);
-       ++v)
-    {
-      const auto [cell_it, _] = matrix_free.get_face_iterator(face, v);
-
-      if (dim == 2)
-        cell_size[v] = std::sqrt(4. * cell_it->measure() / M_PI) / fe_degree;
-      else if (dim == 3)
-        cell_size[v] =
-          std::pow(6 * cell_it->measure() / M_PI, 1. / 3.) / fe_degree;
-    }
-
-  VectorizedArray<number> penalty_parameter =
-    beta / std::pow(cell_size, static_cast<number>(fe_degree + 1));
+  const auto penalty_parameter = this->effective_beta_face[face_index];
 
   integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
                       EvaluationFlags::EvaluationFlags::gradients);

@@ -602,6 +602,14 @@ protected:
    */
   Table<2, VectorizedArray<number>> stabilization_parameter_lsic;
 
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the face penalization term effective_beta_face
+   *
+   */
+  Table<1, VectorizedArray<number>> effective_beta_face;
+
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
    *
