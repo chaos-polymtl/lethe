@@ -1479,6 +1479,11 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
+
+      prm.declare_entry("tracer uses dg",
+                        "false",
+                        Patterns::Bool(),
+                        "Switch tracer to discontinuous galerkin formulation");
     }
     prm.leave_subsection();
   }
@@ -1493,6 +1498,7 @@ namespace Parameters
       void_fraction_order       = prm.get_integer("void fraction order");
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
+      tracer_uses_dg            = prm.get_bool("tracer uses dg");
       VOF_order                 = prm.get_integer("VOF order");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =

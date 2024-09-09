@@ -26,6 +26,8 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/meshworker/mesh_loop.h>
+
 #include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
@@ -58,27 +60,37 @@ Tracer<dim>::assemble_system_matrix()
   simulation_parameters.source_term.tracer_source->set_time(
     simulation_control->get_current_time());
 
-  const DoFHandler<dim> *dof_handler_fluid =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    assemble_system_matrix_dg();
 
-  auto scratch_data = TracerScratchData<dim>(
-    this->simulation_parameters.physical_properties_manager,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->mapping,
-    dof_handler_fluid->get_fe());
+  else
+    {
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
-                  *this,
-                  &Tracer::assemble_local_system_matrix,
-                  &Tracer::copy_local_matrix_to_global_matrix,
-                  scratch_data,
-                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
-                                            this->cell_quadrature->size()));
+      auto scratch_data = TracerScratchData<dim>(
+        this->simulation_parameters.physical_properties_manager,
+        *this->fe,
+        *this->cell_quadrature,
+        *this->face_quadrature,
+        *this->mapping,
+        dof_handler_fluid->get_fe());
+
+      WorkStream::run(this->dof_handler.begin_active(),
+                      this->dof_handler.end(),
+                      *this,
+                      &Tracer::assemble_local_system_matrix,
+                      &Tracer::copy_local_matrix_to_global_matrix,
+                      scratch_data,
+                      StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                                this->cell_quadrature->size()));
+    }
+
 
   system_matrix.compress(VectorOperation::add);
 }
+
+
 
 template <int dim>
 void
@@ -183,6 +195,101 @@ Tracer<dim>::copy_local_matrix_to_global_matrix(
 }
 
 
+
+/// Assemble the system matrix when the system is DG
+// This uses the MeshWorker paradigm instead of the WorkStream paradigm
+// This is because the DG system matrix is assembled in a different way
+template <int dim>
+void
+Tracer<dim>::assemble_system_matrix_dg()
+{
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->face_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
+
+  StabilizedMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                      this->cell_quadrature->size());
+
+  const auto cell_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedMethodsCopyData                            &copy_data) {
+      this->assemble_local_system_matrix(cell, scratch_data, copy_data);
+    };
+
+  const auto boundary_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedMethodsCopyData                            &copy_data) {};
+
+  const auto face_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &f,
+        const unsigned int                                   &sf,
+        const typename DoFHandler<dim>::active_cell_iterator &ncell,
+        const unsigned int                                   &nf,
+        const unsigned int                                   &nsf,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedMethodsCopyData                            &copy_data) {
+      FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
+      fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+      const auto &q_points = fe_iv.get_quadrature_points();
+      copy_data.face_data.emplace_back();
+
+      auto &copy_data_face = copy_data.face_data.back();
+
+      const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
+      copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+      copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+
+      const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+      const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+      Tensor<1, dim>                     beta;
+      beta[0] = 1;
+      for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
+        {
+          const double beta_dot_n = beta * normals[qpoint];
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            for (unsigned int j = 0; j < n_dofs; ++j)
+              copy_data_face.cell_matrix(i, j) +=
+                fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
+                *
+                fe_iv.shape_value((beta_dot_n > 0), j, qpoint) // phi_j^{upwind}
+                * beta_dot_n                                   // (\beta .n)
+                * JxW[qpoint];                                 // dx
+        }
+    };
+
+
+  const auto copier = [&](const StabilizedMethodsCopyData &c) {
+    this->copy_local_matrix_to_global_matrix(c);
+  };
+
+
+
+  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
+                        this->dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once,
+                        boundary_worker,
+                        face_worker);
+}
+
+
+
 template <int dim>
 void
 Tracer<dim>::assemble_system_rhs()
@@ -204,6 +311,7 @@ Tracer<dim>::assemble_system_rhs()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
+    *this->face_quadrature,
     *this->mapping,
     dof_handler_fluid->get_fe());
 
@@ -973,10 +1081,24 @@ Tracer<dim>::setup_dofs()
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
-                                  dsp,
-                                  nonzero_constraints,
-                                  /*keep_constrained_dofs = */ true);
+
+
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    {
+      DoFTools::make_flux_sparsity_pattern(this->dof_handler,
+                                           dsp,
+                                           nonzero_constraints,
+                                           /*keep_constrained_dofs = */ true);
+    }
+  else
+    {
+      DoFTools::make_sparsity_pattern(this->dof_handler,
+                                      dsp,
+                                      nonzero_constraints,
+                                      /*keep_constrained_dofs = */ true);
+    }
+
+
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,

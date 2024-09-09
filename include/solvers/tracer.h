@@ -70,8 +70,12 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.tracer_order);
+        if (simulation_parameters.fem_parameters.tracer_uses_dg)
+          fe = std::make_shared<FE_DGQ<dim>>(
+            simulation_parameters.fem_parameters.tracer_order);
+        else
+          fe = std::make_shared<FE_Q<dim>>(
+            simulation_parameters.fem_parameters.tracer_order);
         mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
@@ -279,6 +283,12 @@ private:
    */
   void
   assemble_system_matrix() override;
+
+  /**
+   *  @brief Assembles the matrix associated with the solver
+   */
+  void
+  assemble_system_matrix_dg();
 
   /**
    * @brief Assemble the rhs associated with the solver
