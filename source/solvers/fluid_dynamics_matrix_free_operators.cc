@@ -740,7 +740,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   void(*) column;
   Assert(false,
          ExcNotImplemented(
-           The matrix free solver is not supported in deal.II 9.5 and below));
+           "The matrix free solver is not supported in deal.II 9.5 and below"));
 #endif
 
   // make sure that diagonal entries related to constrained dofs
