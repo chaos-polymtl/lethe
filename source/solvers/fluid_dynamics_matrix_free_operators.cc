@@ -683,6 +683,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   unsigned int face   = numbers::invalid_unsigned_int;
   unsigned int column = numbers::invalid_unsigned_int;
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   std::function<void(FEFaceIntegrator &)> boundary_function;
 
   if (enable_face_terms)
@@ -733,6 +734,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       },
       {},
       boundary_function);
+#endif
 
   // make sure that diagonal entries related to constrained dofs
   // have a value of 1.0 (note this is consistent to vmult() and
@@ -1020,6 +1022,7 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 {
   this->timer.enter_subsection("operator::compute_inverse_diagonal");
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   std::function<void(FEFaceIntegrator &)> boundary_function;
 
   if ((enable_face_terms))
@@ -1035,6 +1038,7 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       [&](auto &integrator) { this->do_cell_integral_local(integrator); },
       {},
       boundary_function);
+#endif
 
   for (const auto &i : constrained_indices)
     diagonal.local_element(i) = 1.0;
