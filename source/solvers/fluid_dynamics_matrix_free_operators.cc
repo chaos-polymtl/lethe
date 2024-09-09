@@ -735,9 +735,9 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       {},
       boundary_function);
 #else
-  void(*) cell;
-  void(*) face;
-  void(*) column;
+  (void)cell;
+  (void)face;
+  (void)column;
   Assert(false,
          ExcNotImplemented(
            "The matrix free solver is not supported in deal.II 9.5 and below"));
