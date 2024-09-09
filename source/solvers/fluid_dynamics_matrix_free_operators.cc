@@ -211,8 +211,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // If face terms are enabled, add the corresponding flag
   if (enable_face_terms)
     {
-      // Both the shape function and the gradient of the shape function are
-      // required for Nitsche IB
+      // Normal vectors and quadrature points are required to adequately
+      // weakly impose dirichlet boundary condition using Nitsche's method.
       additional_data.mapping_update_flags_boundary_faces =
         update_values | update_gradients | update_quadrature_points |
         update_JxW_values | update_normal_vectors;
