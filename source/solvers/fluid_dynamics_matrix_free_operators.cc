@@ -181,14 +181,14 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const bool                                          &enable_hessians_jacobian,
   const bool                                          &enable_hessians_residual)
 {
-  enable_face_terms = false;
+  this->enable_face_terms = false;
   // Looop over all boundary conditions to establish if one of them has face
   // terms
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       if (boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::function_weak)
-        enable_face_terms = true;
+        this->enable_face_terms = true;
       if (boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::outlet)
         Assert(
@@ -243,9 +243,6 @@ NavierStokesOperatorBase<dim, number>::reinit(
   this->enable_hessians_jacobian = enable_hessians_jacobian;
 
   this->enable_hessians_residual = enable_hessians_residual;
-
-  this->enable_face_terms = enable_face_terms;
-
 
   this->compute_element_size();
 
@@ -778,10 +775,15 @@ NavierStokesOperatorBase<dim, number>::
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
 
-  nonlinear_previous_face_values.reinit(n_boundary_faces,
-                                        face_integrator.n_q_points);
-  nonlinear_previous_face_gradient.reinit(n_boundary_faces,
-                                          face_integrator.n_q_points);
+  // Set appropriate size for face terms tables if there are face boundary
+  // conditions that require assembly.
+  if (this->enable_face_terms)
+    {
+      nonlinear_previous_face_values.reinit(n_boundary_faces,
+                                            face_integrator.n_q_points);
+      nonlinear_previous_face_gradient.reinit(n_boundary_faces,
+                                              face_integrator.n_q_points);
+    }
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -1062,16 +1064,9 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
       return;
     }
 
-
-
   const auto face = integrator.get_current_cell_index();
 
-  //  std::cout << "Integrating over face " << face << " assemble residual "
-  //            << assemble_residual << " number of quadrature points "
-  //            << integrator.n_q_points << std::endl;
-
   const double beta = this->boundary_conditions.beta[boundary_index];
-
 
   const unsigned fe_degree =
     matrix_free.get_dof_handler().get_fe().tensor_degree();
@@ -1133,10 +1128,6 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
           Point<dim, VectorizedArray<number>> point_batch =
             integrator.quadrature_point(q);
 
-          // std::cout << " The points are " << point_batch << std::endl;
-
-          // std::cout << " Value is : " << value << std::endl;
-
           Tensor<1, dim, VectorizedArray<number>> velocity_value;
 
           velocity_value[0] = evaluate_function<dim, number>(
@@ -1150,13 +1141,6 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
               boundary_conditions.bcFunctions[boundary_index].w, point_batch);
 
 
-          // std::cout << "Imposing a velocity value of " << velocity_value
-          //           << " at location " << point_batch << std::endl;
-          //
-          // std::cout << "value_result is before: " << value_result <<
-          // std::endl;
-
-
           // Assemble (v,-beta (u_imposed)) for the main penalization
           // This has to be assembled seperately because all three components
           // of the velocity are stored in different functions
@@ -1168,9 +1152,6 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
                 gradient_result[d][i] +=
                   kinematic_viscosity * velocity_value[d] * normal_vector[i];
             }
-
-          // std::cout << "value_result is after: " << value_result <<
-          // std::endl;
         }
 
       integrator.submit_value(value_result, q);

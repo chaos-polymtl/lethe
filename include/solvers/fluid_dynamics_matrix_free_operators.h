@@ -74,12 +74,13 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] boundary_conditions Contains information regarding all boundary
+   conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
-   * @param[in] enable_face_terms Flag to enable face terms in the
-   * calculation of the residual and the jacobian
+
    */
   NavierStokesOperatorBase(
     const Mapping<dim>                                  &mapping,
@@ -111,12 +112,12 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] boundary_conditions Contains information regarding all
+   boundary conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
-   * @param[in] enable_face_terms Flag to enable face terms in the
-   * calculation of the residual and the jacobian
    */
   void
   reinit(
@@ -358,9 +359,8 @@ protected:
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
    * @param[in] src Input vector with all values in all cells.
-   * @param[in] range Range of the cell batch.
+   * @param[in] range Range of the face batch.
    */
-
   void
   do_internal_face_integral_range(
     const MatrixFree<dim, number>               &matrix_free,
@@ -378,9 +378,8 @@ protected:
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
    * @param[in] src Input vector with all values in all cells.
-   * @param[in] range Range of the cell batch.
+   * @param[in] range Range of the face batch.
    */
-
   template <bool assemble_residual>
   void
   do_weak_dirichlet_boundary_range(
@@ -396,7 +395,7 @@ protected:
    * @tparam assemble_residual Flag to assemble the residual or the jacobian.
    *
    * @param[in] integrator FEEvaluation object that allows to evaluate functions
-   * at quadrature points and perform cell integrations.
+   * at quadrature points and perform face integrations.
    */
   template <bool assemble_residual>
   void
@@ -510,6 +509,7 @@ protected:
    * However, the entire boundary_conditions object is stored instead of trying
    * to isolate which parameters are used since many of them are used in the
    * initialization of the boundary conditions.
+   *
    */
   BoundaryConditions::NSBoundaryConditions<dim> boundary_conditions;
 
@@ -533,8 +533,8 @@ protected:
 
   /**
    * @brief Flag to turn the calculation of face term on or off.
-   * This is used for weakly imposed Dirichlet boundary conditions or outlets
-   * (not implemented yet).
+   * This is used for weakly imposed Dirichlet boundary conditions (implemented)
+   * or outlets (not implemented yet).
    *
    */
   bool enable_face_terms;
