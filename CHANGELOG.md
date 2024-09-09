@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-09
+
+### Added
+
+- MINOR Added missing documentation entries regarding mesh parameters for the DEM solver and geometrical manipulations at initialization. [#1277](https://github.com/chaos-polymtl/lethe/pull/1277)
+
 ## [Master] - 2024-08-29
 
 ### Changed
