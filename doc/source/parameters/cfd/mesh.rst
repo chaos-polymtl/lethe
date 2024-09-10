@@ -79,7 +79,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
 * `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
 
-* The `initial translation` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh in inconvenient or impossible.
+* The `initial translation` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.
 
 * The `initial rotation axis` and `initial rotation angle` parameters provide another way to move the mesh prior to simulating the problem.
 
