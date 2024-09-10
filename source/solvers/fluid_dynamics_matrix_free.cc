@@ -719,7 +719,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::outlet)
             {
-              /*do nothing*/
+              Assert(
+                false,
+                ExcMessage(
+                  "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
             }
           else
             {
@@ -828,6 +831,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             this->simulation_parameters.stabilization.stabilization,
             level,
             simulation_control,
+            this->simulation_parameters.boundary_conditions,
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
@@ -1145,7 +1149,10 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                          .type[i_bc] ==
                        BoundaryConditions::BoundaryType::outlet)
                 {
-                  /*do nothing*/
+                  Assert(
+                    false,
+                    ExcMessage(
+                      "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
                 }
               else
                 {
@@ -1232,6 +1239,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             this->simulation_parameters.stabilization.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
+            this->simulation_parameters.boundary_conditions,
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
@@ -2131,6 +2139,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->simulation_parameters.stabilization.stabilization,
     mg_level,
     this->simulation_control,
+    this->simulation_parameters.boundary_conditions,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .enable_hessians_jacobian,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -2860,7 +2869,10 @@ FluidDynamicsMatrixFree<dim>::define_zero_constraints()
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::outlet)
         {
-          /*do nothing*/
+          Assert(
+            false,
+            ExcMessage(
+              "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
         }
       else
         {

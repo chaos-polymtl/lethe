@@ -49,6 +49,7 @@ class NavierStokesOperatorBase : public Subscriptor
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator = FEFaceEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
   using value_type       = number;
   using size_type        = VectorizedArray<number>;
@@ -73,23 +74,27 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] boundary_conditions Contains information regarding all boundary
+   * conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
+
    */
   NavierStokesOperatorBase(
-    const Mapping<dim>                       &mapping,
-    const DoFHandler<dim>                    &dof_handler,
-    const AffineConstraints<number>          &constraints,
-    const Quadrature<dim>                    &quadrature,
-    const std::shared_ptr<Function<dim>>      forcing_function,
-    const double                              kinematic_viscosity,
-    const StabilizationType                   stabilization,
-    const unsigned int                        mg_level,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const bool                               &enable_hessians_jacobian,
-    const bool                               &enable_hessians_residual);
+    const Mapping<dim>                                  &mapping,
+    const DoFHandler<dim>                               &dof_handler,
+    const AffineConstraints<number>                     &constraints,
+    const Quadrature<dim>                               &quadrature,
+    const std::shared_ptr<Function<dim>>                 forcing_function,
+    const double                                         kinematic_viscosity,
+    const StabilizationType                              stabilization,
+    const unsigned int                                   mg_level,
+    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const bool &enable_hessians_jacobian,
+    const bool &enable_hessians_residual);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -107,23 +112,27 @@ public:
    * @param[in] stabilization Stabilization type specified in parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
+   * @param[in] boundary_conditions Contains information regarding all
+   * boundary conditions. Required to weakly impose boundary conditions.
    * @param[in] enable_hessians_jacobian Flag to turn hessian terms from
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
    */
   void
-  reinit(const Mapping<dim>                       &mapping,
-         const DoFHandler<dim>                    &dof_handler,
-         const AffineConstraints<number>          &constraints,
-         const Quadrature<dim>                    &quadrature,
-         const std::shared_ptr<Function<dim>>      forcing_function,
-         const double                              kinematic_viscosity,
-         const StabilizationType                   stabilization,
-         const unsigned int                        mg_level,
-         const std::shared_ptr<SimulationControl> &simulation_control,
-         const bool                               &enable_hessians_jacobian,
-         const bool                               &enable_hessians_residual);
+  reinit(
+    const Mapping<dim>                                  &mapping,
+    const DoFHandler<dim>                               &dof_handler,
+    const AffineConstraints<number>                     &constraints,
+    const Quadrature<dim>                               &quadrature,
+    const std::shared_ptr<Function<dim>>                 forcing_function,
+    const double                                         kinematic_viscosity,
+    const StabilizationType                              stabilization,
+    const unsigned int                                   mg_level,
+    const std::shared_ptr<SimulationControl>            &simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+    const bool &enable_hessians_jacobian,
+    const bool &enable_hessians_residual);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -342,6 +351,57 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
+  /**
+   * @brief Loop over all internal face batches within certain range and perform a face
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values. This is only required for compilation and not needed for our CG
+   * implementation.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the face batch.
+   */
+  void
+  do_internal_face_integral_range(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+  /**
+   * @brief Loop over all boundary face batches within certain range and perform a face
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values. This is used to weakly impose dirichlet boundary conditions.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the face batch.
+   */
+  template <bool assemble_residual>
+  void
+  do_weak_dirichlet_boundary_range(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+
+  /**
+   * @brief Carry out the integration of boundary face integrals.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] integrator FEFaceEvaluation object that allows to evaluate
+   * functions at quadrature points and perform face integrations.
+   */
+  template <bool assemble_residual>
+  void
+  do_local_weak_dirichlet_bc(FEFaceIntegrator &integrator) const;
+
 
   /**
    * @brief Interface to function in charge of computing the residual using a cell
@@ -444,6 +504,17 @@ protected:
   std::shared_ptr<SimulationControl> simulation_control;
 
   /**
+   * @brief  Boundary conditions object to impose the correct boundary conditions. This object
+   * is only used to impose boundary conditions that appear in the weak form as
+   * face terms (Weak Dirichlet boundary conditions and, eventually, outlets).
+   * However, the entire boundary_conditions object is stored instead of trying
+   * to isolate which parameters are used since many of them are used in the
+   * initialization of the boundary conditions.
+   *
+   */
+  BoundaryConditions::NSBoundaryConditions<dim> boundary_conditions;
+
+  /**
    * @brief Flag to turn hessian terms from jacobian on or off.
    *
    */
@@ -460,6 +531,14 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> forcing_terms;
+
+  /**
+   * @brief Flag to turn the calculation of face terms on or off.
+   * This is used for weakly imposed Dirichlet boundary conditions (implemented)
+   * or outlets (not implemented yet).
+   *
+   */
+  bool enable_face_terms;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
@@ -495,6 +574,30 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the previous newton step at the faces.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    nonlinear_previous_face_values;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the target velocity of a weakly imposed Dirichlet boundary condition.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>> face_target_velocity;
+
+  /**
+   * @brief  Table with correct alignment for vectorization to store the gradients
+   * of the previous newton step at the faces.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    nonlinear_previous_face_gradient;
+
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the stabilization parameter tau.
    *
    */
@@ -506,6 +609,14 @@ protected:
    *
    */
   Table<2, VectorizedArray<number>> stabilization_parameter_lsic;
+
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the face penalization term effective_beta_face
+   *
+   */
+  Table<1, VectorizedArray<number>> effective_beta_face;
 
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
@@ -580,6 +691,7 @@ class NavierStokesStabilizedOperator
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using FEFaceIntegrator = FEFaceEvaluation<dim, -1, 0, dim + 1, number>;
   using VectorType       = LinearAlgebra::distributed::Vector<number>;
 
   NavierStokesStabilizedOperator();
