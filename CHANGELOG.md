@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-10
+
+### Fixed
+
+- MINOR A bug in the tracer physics where non-zero constraints were not reinitialized with the locally relevant DOFs made it that processes ran out of memory in large scale simulations. This is fixed. [#1278](https://github.com/chaos-polymtl/lethe/pull/1278)
+
 ## [Master] - 2024-09-09
 
 ### Added
