@@ -136,17 +136,18 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 
 template <int dim, typename number>
 NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
-  const Mapping<dim>                       &mapping,
-  const DoFHandler<dim>                    &dof_handler,
-  const AffineConstraints<number>          &constraints,
-  const Quadrature<dim>                    &quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const double                              kinematic_viscosity,
-  const StabilizationType                   stabilization,
-  const unsigned int                        mg_level,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const bool                               &enable_hessians_jacobian,
-  const bool                               &enable_hessians_residual)
+  const Mapping<dim>                                  &mapping,
+  const DoFHandler<dim>                               &dof_handler,
+  const AffineConstraints<number>                     &constraints,
+  const Quadrature<dim>                               &quadrature,
+  const std::shared_ptr<Function<dim>>                 forcing_function,
+  const double                                         kinematic_viscosity,
+  const StabilizationType                              stabilization,
+  const unsigned int                                   mg_level,
+  const std::shared_ptr<SimulationControl>            &simulation_control,
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const bool                                          &enable_hessians_jacobian,
+  const bool                                          &enable_hessians_residual)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -159,6 +160,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                stabilization,
                mg_level,
                simulation_control,
+               boundary_conditions,
                enable_hessians_jacobian,
                enable_hessians_residual);
 }
@@ -166,18 +168,37 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::reinit(
-  const Mapping<dim>                       &mapping,
-  const DoFHandler<dim>                    &dof_handler,
-  const AffineConstraints<number>          &constraints,
-  const Quadrature<dim>                    &quadrature,
-  const std::shared_ptr<Function<dim>>      forcing_function,
-  const double                              kinematic_viscosity,
-  const StabilizationType                   stabilization,
-  const unsigned int                        mg_level,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const bool                               &enable_hessians_jacobian,
-  const bool                               &enable_hessians_residual)
+  const Mapping<dim>                                  &mapping,
+  const DoFHandler<dim>                               &dof_handler,
+  const AffineConstraints<number>                     &constraints,
+  const Quadrature<dim>                               &quadrature,
+  const std::shared_ptr<Function<dim>>                 forcing_function,
+  const double                                         kinematic_viscosity,
+  const StabilizationType                              stabilization,
+  const unsigned int                                   mg_level,
+  const std::shared_ptr<SimulationControl>            &simulation_control,
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const bool                                          &enable_hessians_jacobian,
+  const bool                                          &enable_hessians_residual)
 {
+  this->enable_face_terms = false;
+  // Loop over all boundary conditions to establish if one of them has face
+  // terms
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+    {
+      if (boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::function_weak)
+        this->enable_face_terms = true;
+      if (boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::outlet)
+        Assert(
+          false,
+          ExcMessage(
+            "Outlet boundary conditions are currently not supported by the matrix free operators."));
+    }
+
+  this->boundary_conditions = boundary_conditions;
+
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
 
@@ -186,6 +207,16 @@ NavierStokesOperatorBase<dim, number>::reinit(
     (update_values | update_gradients | update_JxW_values |
      update_quadrature_points | update_hessians);
   additional_data.mg_level = mg_level;
+
+  // If face terms are enabled, add the corresponding flag
+  if (enable_face_terms)
+    {
+      // Normal vectors and quadrature points are required to weakly
+      // impose Dirichlet boundary conditions using Nitsche's method.
+      additional_data.mapping_update_flags_boundary_faces =
+        update_values | update_gradients | update_quadrature_points |
+        update_JxW_values | update_normal_vectors;
+    }
 
   matrix_free.reinit(
     mapping, dof_handler, this->constraints, quadrature, additional_data);
@@ -410,8 +441,23 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  if (this->enable_face_terms)
+    this->matrix_free.loop(
+      &NavierStokesOperatorBase::do_cell_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      this,
+      dst,
+      src,
+      true);
+  else
+    this->matrix_free.cell_loop(
+      &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#else
   this->matrix_free.cell_loop(
     &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#endif
 
   // copy constrained dofs from src to dst (corresponding to diagonal
   // entries with value 1.0)
@@ -446,13 +492,31 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType       &dst,
   VectorType const &src) const
 {
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+
+  if (this->enable_face_terms)
+    this->matrix_free.loop(
+      &NavierStokesOperatorBase::do_cell_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      this,
+      dst,
+      src,
+      true);
+  else
+    this->matrix_free.cell_loop(
+      &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#else
   this->matrix_free.cell_loop(
     &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
+#endif
 
   // set constrained dofs as the sum of current dst value and src value
   for (const auto i : constrained_indices)
     dst.local_element(i) += src.local_element(i);
 }
+
+
 
 template <int dim, typename number>
 void
@@ -478,12 +542,31 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   for (const auto i : edge_constrained_indices)
     src_cpy.local_element(i) = src.local_element(i);
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
   // do loop with copy of src
+  if (this->enable_face_terms)
+    this->matrix_free.loop(
+      &NavierStokesOperatorBase::do_cell_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      this,
+      dst,
+      src_cpy,
+      true);
+  else
+    this->matrix_free.cell_loop(
+      &NavierStokesOperatorBase::do_cell_integral_range,
+      this,
+      dst,
+      src_cpy,
+      false);
+#else
   this->matrix_free.cell_loop(&NavierStokesOperatorBase::do_cell_integral_range,
                               this,
                               dst,
                               src_cpy,
                               false);
+#endif
 
   this->timer.leave_subsection("operator::vmult_interface_up");
 }
@@ -597,11 +680,42 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
     matrix_free.get_shape_info().lexicographic_numbering;
 
   unsigned int cell   = numbers::invalid_unsigned_int;
+  unsigned int face   = numbers::invalid_unsigned_int;
   unsigned int column = numbers::invalid_unsigned_int;
+
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  std::function<void(FEFaceIntegrator &)> boundary_function;
+
+  if (enable_face_terms)
+    {
+      boundary_function = [&](auto &integrator) {
+        if (face != integrator.get_current_cell_index())
+          {
+            face   = integrator.get_current_cell_index();
+            column = 0;
+          }
+
+        this->do_local_weak_dirichlet_bc<false>(integrator);
+
+        // remove spurious entries for FE_Q_iso_Q1
+        for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
+          {
+            if (!bool_dof_mask[lexicographic_numbering[i]]
+                              [lexicographic_numbering[column]])
+              integrator.begin_dof_values()[i] = 0.0;
+          }
+
+
+        column++;
+      };
+    }
 
   MatrixFreeTools::
     compute_matrix<dim, -1, 0, dim + 1, number, VectorizedArray<number>>(
-      matrix_free, constraints, system_matrix, [&](auto &integrator) {
+      matrix_free,
+      constraints,
+      system_matrix,
+      [&](auto &integrator) {
         if (cell != integrator.get_current_cell_index())
           {
             cell   = integrator.get_current_cell_index();
@@ -617,7 +731,17 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
             integrator.begin_dof_values()[i] = 0.0;
 
         column++;
-      });
+      },
+      {},
+      boundary_function);
+#else
+  (void)cell;
+  (void)face;
+  (void)column;
+  Assert(false,
+         ExcNotImplemented(
+           "The matrix free solver is not supported in deal.II 9.5 and below"));
+#endif
 
   // make sure that diagonal entries related to constrained dofs
   // have a value of 1.0 (note this is consistent to vmult() and
@@ -664,8 +788,13 @@ NavierStokesOperatorBase<dim, number>::
 {
   this->timer.enter_subsection("operator::evaluate_non_linear_term");
 
-  const unsigned int n_cells = matrix_free.n_cell_batches();
-  FECellIntegrator   integrator(matrix_free);
+  const unsigned int n_cells          = matrix_free.n_cell_batches();
+  const unsigned int n_inner_faces    = matrix_free.n_inner_face_batches();
+  const unsigned int n_boundary_faces = matrix_free.n_boundary_face_batches();
+
+  FECellIntegrator integrator(matrix_free);
+  FEFaceIntegrator face_integrator(matrix_free, true, 0);
+
 
   // Set appropriate size for tables
   nonlinear_previous_values.reinit(n_cells, integrator.n_q_points);
@@ -673,6 +802,18 @@ NavierStokesOperatorBase<dim, number>::
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
+
+  // Set appropriate size for face terms tables if there are face boundary
+  // conditions that require assembly.
+  if (this->enable_face_terms)
+    {
+      nonlinear_previous_face_values.reinit(n_boundary_faces,
+                                            face_integrator.n_q_points);
+      nonlinear_previous_face_gradient.reinit(n_boundary_faces,
+                                              face_integrator.n_q_points);
+      effective_beta_face.reinit(n_boundary_faces);
+      face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
+    }
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -730,6 +871,87 @@ NavierStokesOperatorBase<dim, number>::
         }
     }
 
+
+  // Boundary faces are padded after the internal faces
+  // Consequently, we need to offset the indices to avoid storing too much
+  // information regarding the boundary faces (e.g. too large vectors)
+  if (enable_face_terms)
+    {
+      // Evaluate face terms
+      for (unsigned int face = n_inner_faces;
+           face < n_inner_faces + n_boundary_faces;
+           ++face)
+        {
+          face_integrator.reinit(face);
+
+          face_integrator.read_dof_values_plain(newton_step);
+          face_integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
+                                   EvaluationFlags::EvaluationFlags::gradients);
+
+          // Identify the boundary id that corresponds to the face
+          const auto boundary_id =
+            std::find(this->boundary_conditions.id.begin(),
+                      this->boundary_conditions.id.end(),
+                      face_integrator.boundary_id());
+
+
+          // If the face is not a boundary condition and, we will not
+          // store values that will be derived from the boundary condition
+          // object
+          if (boundary_id == this->boundary_conditions.id.end())
+            continue;
+
+          // Calculate the index from the boundary condition vector
+          const auto boundary_index =
+            boundary_id - this->boundary_conditions.id.begin();
+
+          for (const auto q : face_integrator.quadrature_point_indices())
+            {
+              nonlinear_previous_face_values(face - n_inner_faces, q) =
+                face_integrator.get_value(q);
+              nonlinear_previous_face_gradient(face - n_inner_faces, q) =
+                face_integrator.get_gradient(q);
+
+              // Calculate the target velocity for the boundary condition
+              Point<dim, VectorizedArray<number>> point_batch =
+                face_integrator.quadrature_point(q);
+
+              Tensor<1, dim + 1, VectorizedArray<number>> target_velocity_value;
+
+              target_velocity_value[0] = evaluate_function<dim, number>(
+                boundary_conditions.bcFunctions[boundary_index].u, point_batch);
+
+              target_velocity_value[1] = evaluate_function<dim, number>(
+                boundary_conditions.bcFunctions[boundary_index].v, point_batch);
+
+              if constexpr (dim == 3)
+                target_velocity_value[2] = evaluate_function<dim, number>(
+                  boundary_conditions.bcFunctions[boundary_index].w,
+                  point_batch);
+
+              target_velocity_value[dim] = 0.;
+
+              face_target_velocity(face - n_inner_faces, q) =
+                target_velocity_value;
+            }
+
+          // Calculate the element size
+          VectorizedArray<number> cell_size = 1.0;
+
+          const auto [cell_it, _] = matrix_free.get_face_iterator(face, 0);
+          if constexpr (dim == 2)
+            cell_size = std::sqrt(4. * cell_it->measure() / M_PI) / fe_degree;
+          else if constexpr (dim == 3)
+            cell_size =
+              std::pow(6 * cell_it->measure() / M_PI, 1. / 3.) / fe_degree;
+
+          const double beta = this->boundary_conditions.beta[boundary_index];
+
+          effective_beta_face(face - n_inner_faces) =
+            beta / std::pow(cell_size, static_cast<number>(fe_degree + 1));
+        }
+    }
+
   this->timer.leave_subsection("operator::evaluate_non_linear_term");
 }
 
@@ -779,8 +1001,23 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::evaluate_residual");
 
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  if (enable_face_terms)
+    this->matrix_free.loop(
+      &NavierStokesOperatorBase::local_evaluate_residual,
+      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<true>,
+      this,
+      dst,
+      src,
+      true);
+  else
+    this->matrix_free.cell_loop(
+      &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
+#else
   this->matrix_free.cell_loop(
     &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
+#endif
 
   this->timer.leave_subsection("operator::evaluate_residual");
 }
@@ -792,12 +1029,23 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 {
   this->timer.enter_subsection("operator::compute_inverse_diagonal");
 
-  this->matrix_free.initialize_dof_vector(diagonal);
-  MatrixFreeTools::compute_diagonal(
-    matrix_free,
-    diagonal,
-    &NavierStokesOperatorBase::do_cell_integral_local,
-    this);
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  std::function<void(FEFaceIntegrator &)> boundary_function;
+
+  if ((enable_face_terms))
+    boundary_function = [&](auto &integrator) {
+      this->do_local_weak_dirichlet_bc<false>(integrator);
+    };
+
+  matrix_free.initialize_dof_vector(diagonal);
+  MatrixFreeTools::
+    compute_diagonal<dim, -1, 0, dim + 1, number, VectorizedArray<number>>(
+      matrix_free,
+      diagonal,
+      [&](auto &integrator) { this->do_cell_integral_local(integrator); },
+      {},
+      boundary_function);
+#endif
 
   for (const auto &i : constrained_indices)
     diagonal.local_element(i) = 1.0;
@@ -831,6 +1079,136 @@ NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
 }
 
 template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
+  const std::pair<unsigned int, unsigned int> &range) const
+{
+  (void)matrix_free;
+  (void)dst;
+  (void)src;
+  (void)range;
+
+  // nothing to do
+}
+
+template <int dim, typename number>
+template <bool assemble_residual>
+void
+NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
+  const MatrixFree<dim, number>               &matrix_free,
+  VectorType                                  &dst,
+  const VectorType                            &src,
+  const std::pair<unsigned int, unsigned int> &range) const
+{
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+
+  FEFaceIntegrator phi(matrix_free, true, 0);
+
+  for (auto cell = range.first; cell < range.second; ++cell)
+    {
+      phi.reinit(cell);
+
+      if (assemble_residual)
+        phi.read_dof_values_plain(src);
+      else
+        phi.read_dof_values(src);
+
+      do_local_weak_dirichlet_bc<assemble_residual>(phi);
+
+      phi.distribute_local_to_global(dst);
+    }
+#endif
+}
+
+
+// Assembles weak Dirichlet boundary conditions using Nitsche's symmetric
+// penalty method. This is achieved by adding the following to the residual:
+// (v,beta·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
+//
+// The function calculates both the jacobian matrix and the residual value.
+template <int dim, typename number>
+template <bool assemble_residual>
+void
+NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
+  FEFaceIntegrator &integrator) const
+{
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  if (!enable_face_terms)
+    return;
+
+  const auto boundary_id = std::find(this->boundary_conditions.id.begin(),
+                                     this->boundary_conditions.id.end(),
+                                     integrator.boundary_id());
+
+  const auto boundary_index =
+    boundary_id - this->boundary_conditions.id.begin();
+
+  // If the boundary condition is not in our list of boundary
+  // conditions or the boundary condition that is set in the list is
+  // not a weak function, there is nothing to do, so we set the
+  // values to zero and return
+  if (boundary_id == this->boundary_conditions.id.end() ||
+      this->boundary_conditions.type[boundary_index] !=
+        BoundaryConditions::BoundaryType::function_weak)
+    {
+      const VectorizedArray<number> zero = 0.0;
+
+      for (unsigned int i = 0; i < integrator.dofs_per_cell; ++i)
+        integrator.begin_dof_values()[i] = zero;
+      return;
+    }
+
+  const auto         face       = integrator.get_current_cell_index();
+  const unsigned int face_index = face - matrix_free.n_inner_face_batches();
+
+  const auto penalty_parameter = this->effective_beta_face[face_index];
+
+  integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
+                      EvaluationFlags::EvaluationFlags::gradients);
+
+  for (const auto q : integrator.quadrature_point_indices())
+    {
+      typename FEFaceIntegrator::value_type    value_result    = {};
+      typename FEFaceIntegrator::gradient_type gradient_result = {};
+
+      const auto normal_vector = integrator.get_normal_vector(q);
+
+      auto       value    = integrator.get_value(q);
+      const auto gradient = integrator.get_gradient(q);
+
+      // If we are assembling the residual, substract the target velocity from
+      // the velocity value.
+      if constexpr (assemble_residual)
+        value -= this->face_target_velocity[face_index][q];
+
+      for (unsigned int d = 0; d < dim; ++d)
+        { // Assemble (v,beta (u-u_target)) for the main penalization
+          value_result[d] += penalty_parameter * value[d];
+
+          // Assemble ν(v,∇δu·n)
+          for (unsigned int i = 0; i < dim; ++i)
+            value_result[d] -=
+              kinematic_viscosity * gradient[d][i] * normal_vector[i];
+          // Assemble ν(∇v·n,(u-u_target))
+          for (unsigned int i = 0; i < dim; ++i)
+            gradient_result[d][i] -=
+              kinematic_viscosity * value[d] * normal_vector[i];
+        }
+
+      integrator.submit_value(value_result, q);
+      integrator.submit_gradient(gradient_result, q);
+    }
+  integrator.integrate(EvaluationFlags::EvaluationFlags::values |
+                       EvaluationFlags::EvaluationFlags::gradients);
+
+#endif
+}
+
+
+template <int dim, typename number>
 IndexSet
 NavierStokesOperatorBase<dim, number>::get_refinement_edges(
   const MatrixFree<dim, number> &matrix_free)
@@ -860,9 +1238,9 @@ NavierStokesStabilizedOperator<dim, number>::NavierStokesStabilizedOperator() =
 
 /**
  * The expressions calculated in this cell integral are:
- * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak
- * form Jacobian),
- * plus three additional terms in the case of SUPG-PSPG stabilization:
+ * (q,∇δu) + (v,∂t δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu)
+ * (Weak form Jacobian), plus three additional terms in the case of SUPG-PSPG
+ * stabilization:
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
  * \+ (∂t δu +(u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Jacobian Part 1)
  * \+ (∂t u +(u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Jacobian Part 2),
@@ -900,7 +1278,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       if (this->forcing_function)
         source_value = this->forcing_terms(cell, q);
 
-      // Add to source term the dynamic flow control force (zero if not enabled)
+      // Add to source term the dynamic flow control force (zero if not
+      // enabled)
       source_value += this->beta_force;
 
       // Gather the original value/gradient
