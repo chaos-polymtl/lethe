@@ -250,6 +250,7 @@ public:
     for (const auto face : cell->face_indices())
       {
         fe_face_values_tracer.reinit(cell, face);
+        const auto cell_neighbor = cell->neighbor(face);
         this->fe_face_values_tracer.get_function_values(
           current_solution, this->tracer_face_value[face]);
 
@@ -309,6 +310,17 @@ public:
           drift_velocity_tensor[d] = drift_velocity_vector[d];
 
         velocity_values[q] += drift_velocity_tensor;
+      }
+
+
+    // To fix for ALE
+    this->velocity_face_value = std::vector<std::vector<Tensor<1, dim>>>(
+      n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+    for (const auto face : cell->face_indices())
+      {
+        fe_face_values_fd.reinit(cell, face);
+        this->fe_face_values_fd[velocities].get_function_values(
+          current_solution, this->velocity_face_value[face]);
       }
 
     if (!ale.enabled())

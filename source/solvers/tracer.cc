@@ -492,19 +492,19 @@ Tracer<dim>::assemble_system_rhs_dg()
 
       std::vector<double> average_value(q_points.size());
       fe_iv.get_average_of_function_values(evaluation_point, average_value);
-      Tensor<1, dim> beta;
-      //  beta[0] = 1;
-      //  for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
-      //    {
-      //      const double beta_dot_n = beta * normals[qpoint];
-      //      for (unsigned int i = 0; i < n_dofs; ++i)
-      //        for (unsigned int j = 0; j < n_dofs; ++j)
-      //          copy_data_face.cell_matrix(i, j) -=
-      //            fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
-      //            * average_value[qpoint]               //
-      //            * beta_dot_n                          // (\beta .n)
-      //            * JxW[qpoint];                        // dx
-      //    }
+      Tensor<1, dim> beta =
+        scratch_data.for (unsigned int qpoint = 0; qpoint < q_points.size();
+                          ++qpoint)
+      {
+        const double beta_dot_n = beta * normals[qpoint];
+        for (unsigned int i = 0; i < n_dofs; ++i)
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            copy_data_face.cell_matrix(i, j) -=
+              fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
+              * average_value[qpoint]               //
+              * beta_dot_n                          // (\beta .n)
+              * JxW[qpoint];                        // dx
+      }
     };
 
 
@@ -908,10 +908,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
