@@ -290,29 +290,29 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
     } // end loop on quadrature points
 
   // Loop over the faces to assemble the flux term
-  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
-    {
-      for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
-        {
-          const double flux = scratch_data.velocity_face_value[f][q] *
-                              scratch_data.face_normal[f][q];
-          // If the flux is negative the the velocity is outbound since
-          // deal.II normales point outwards In that case assemble the flux
-          // if (flux > 0)
-          {
-            for (unsigned int i = 0; i < n_dofs; ++i)
-              {
-                const auto phi_T_i = scratch_data.phi_face[f][q][i];
-                for (unsigned int j = 0; j < n_dofs; ++j)
-                  {
-                    const auto phi_T_j = scratch_data.phi_face[f][q][j];
-                    local_matrix(i, j) +=
-                      flux * phi_T_i * phi_T_j * scratch_data.face_JxW[f][q];
-                  }
-              }
-          }
-        }
-    }
+  // for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+  //  {
+  //    for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+  //      {
+  //        const double flux = scratch_data.velocity_face_value[f][q] *
+  //                            scratch_data.face_normal[f][q];
+  //        // If the flux is negative the the velocity is outbound since
+  //        // deal.II normales point outwards In that case assemble the flux
+  //        // if (flux > 0)
+  //        {
+  //          for (unsigned int i = 0; i < n_dofs; ++i)
+  //            {
+  //              const auto phi_T_i = scratch_data.phi_face[f][q][i];
+  //              for (unsigned int j = 0; j < n_dofs; ++j)
+  //                {
+  //                  const auto phi_T_j = scratch_data.phi_face[f][q][j];
+  //                  local_matrix(i, j) +=
+  //                    flux * phi_T_i * phi_T_j * scratch_data.face_JxW[f][q];
+  //                }
+  //            }
+  //        }
+  //      }
+  //  }
 }
 
 
@@ -359,26 +359,26 @@ TracerAssemblerDGCore<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
     } // end loop on quadrature points
 
   // Loop over the faces to assemble the flux term
-  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
-    {
-      for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
-        {
-          const double flux = scratch_data.velocity_face_value[f][q] *
-                              scratch_data.face_normal[f][q];
-          // If the flux is negative the the velocity is outbound since
-          // deal.II normales point outwards In that case assemble the flux
-          // if (flux > 0)
-          {
-            for (unsigned int i = 0; i < n_dofs; ++i)
-              {
-                const auto phi_T_i      = scratch_data.phi_face[f][q][i];
-                const auto tracer_value = scratch_data.tracer_face_value[f][q];
-                local_rhs(i) -=
-                  flux * phi_T_i * tracer_value * scratch_data.face_JxW[f][q];
-              }
-          }
-        }
-    }
+  // for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+  //  {
+  //    for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+  //      {
+  //        const double flux = scratch_data.velocity_face_value[f][q] *
+  //                            scratch_data.face_normal[f][q];
+  //        // If the flux is negative the the velocity is outbound since
+  //        // deal.II normales point outwards In that case assemble the flux
+  //        // if (flux > 0)
+  //        {
+  //          for (unsigned int i = 0; i < n_dofs; ++i)
+  //            {
+  //              const auto phi_T_i      = scratch_data.phi_face[f][q][i];
+  //              const auto tracer_value =
+  //              scratch_data.tracer_face_value[f][q]; local_rhs(i) -=
+  //                flux * phi_T_i * tracer_value * scratch_data.face_JxW[f][q];
+  //            }
+  //        }
+  //      }
+  //  }
 }
 template class TracerAssemblerDGCore<2>;
 template class TracerAssemblerDGCore<3>;
