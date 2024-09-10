@@ -1124,9 +1124,9 @@ NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
 }
 
 
-// Assembles weak dirichlet boundary condition using Nitche's SI method.
-// This is achieved by adding the following to the residual:
-// (v,beta (u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
+// Assembles weak Dirichlet boundary conditions using Nitsche's symmetric
+// penalty method. This is achieved by adding the following to the residual:
+// (v,beta·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
 //
 // The function calculates both the jacobian matrix and the residual value.
 template <int dim, typename number>
@@ -1136,7 +1136,6 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
   FEFaceIntegrator &integrator) const
 {
 #if DEAL_II_VERSION_GTE(9, 6, 0)
-
   if (!enable_face_terms)
     return;
 

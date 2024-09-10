@@ -354,7 +354,8 @@ protected:
   /**
    * @brief Loop over all internal face batches within certain range and perform a face
    * integral with access to global vectors, i.e., gathering and scattering
-   * values. The current implementation does nothing for CG methods.
+   * values. This is only required for compilation and not needed for our CG
+   * implementation.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
