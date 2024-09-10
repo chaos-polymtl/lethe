@@ -75,6 +75,12 @@ public:
                        quadrature,
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_face_values_tracer(mapping,
+                            fe_tracer,
+                            face_quadrature,
+                            update_values | update_gradients |
+                              update_quadrature_points | update_JxW_values |
+                              update_normal_vectors)
     , fe_interface_values_tracer(mapping,
                                  fe_tracer,
                                  face_quadrature,
@@ -82,6 +88,7 @@ public:
                                    update_quadrature_points |
                                    update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
+    , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
     allocate();
   }
@@ -106,6 +113,12 @@ public:
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_face_values_tracer(sd.fe_face_values_tracer.get_mapping(),
+                            sd.fe_face_values_tracer.get_fe(),
+                            sd.fe_face_values_tracer.get_quadrature(),
+                            update_values | update_gradients |
+                              update_quadrature_points | update_JxW_values |
+                              update_normal_vectors)
     , fe_interface_values_tracer(sd.fe_interface_values_tracer.get_mapping(),
                                  sd.fe_interface_values_tracer.get_fe(),
                                  sd.fe_interface_values_tracer.get_quadrature(),
@@ -116,6 +129,10 @@ public:
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values)
+    , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
+                        sd.fe_face_values_fd.get_fe(),
+                        sd.fe_face_values_fd.get_quadrature(),
+                        update_values)
   {
     allocate();
   }
@@ -208,6 +225,47 @@ public:
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
+
+    // Reinitialize face values for all faces
+    n_faces          = cell->n_faces();
+    n_faces_q_points = fe_face_values_tracer.get_quadrature().size();
+
+    face_JxW =
+      std::vector<std::vector<double>>(n_faces,
+                                       std::vector<double>(n_faces_q_points));
+
+
+    this->phi_face = std::vector<std::vector<std::vector<double>>>(
+      n_faces,
+      std::vector<std::vector<double>>(n_faces_q_points,
+                                       std::vector<double>(n_dofs)));
+
+    this->tracer_face_value =
+      std::vector<std::vector<double>>(n_faces,
+                                       std::vector<double>(n_faces_q_points));
+
+    this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
+      n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+    for (const auto face : cell->face_indices())
+      {
+        fe_face_values_tracer.reinit(cell, face);
+        this->fe_face_values_tracer.get_function_values(
+          current_solution, this->tracer_face_value[face]);
+
+        for (unsigned int q = 0; q < n_faces_q_points; ++q)
+          {
+            this->face_normal[face][q] =
+              this->fe_face_values_tracer.normal_vector(q);
+
+            face_JxW[face][q] = fe_face_values_tracer.JxW(q);
+            for (const unsigned int k : fe_face_values_tracer.dof_indices())
+              {
+                this->phi_face[face][q][k] =
+                  this->fe_face_values_tracer.shape_value(k, q);
+              }
+          }
+      }
   }
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
@@ -290,6 +348,7 @@ public:
 
   // FEValues for the Tracer problem
   FEValues<dim>          fe_values_tracer;
+  FEFaceValues<dim>      fe_face_values_tracer;
   FEInterfaceValues<dim> fe_interface_values_tracer;
 
   unsigned int n_dofs;
@@ -319,6 +378,19 @@ public:
   std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
 
+  // Scratch for the face boundary condition
+  std::vector<std::vector<double>> face_JxW;
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>> phi_face;
+
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<double>>         tracer_face_value;
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
 
   /**
    * Scratch component for the Navier-Stokes component
@@ -326,7 +398,10 @@ public:
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
   FEValues<dim>               fe_values_fd;
+  FEFaceValues<dim>           fe_face_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<Tensor<1, dim>>> velocity_face_value;
 };
 
 #endif
