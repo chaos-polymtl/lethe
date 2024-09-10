@@ -23,6 +23,8 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
@@ -591,7 +593,7 @@ value_string_to_tensor(const std::string &value_string_0,
  *
  * @tparam dim Number of spatial dimensions (2D or 3D).
  *
- * @param[in] cell_measure Area (2D) or volume (3D) of the cell.
+ * @param[in] cell_volume Area (2D) or volume (3D) of the cell.
  *
  * @param[in] fe_degree Polynomial degree of the shape function.
  *
@@ -599,13 +601,13 @@ value_string_to_tensor(const std::string &value_string_0,
  */
 template <int dim>
 inline double
-compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
+compute_cell_diameter(const double cell_volume, const unsigned int fe_degree)
 {
   double h;
   if constexpr (dim == 2)
-    h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;
+    h = std::sqrt(4. * cell_volume / numbers::PI) / fe_degree;
   else if constexpr (dim == 3)
-    h = std::cbrt(6. * cell_measure / numbers::PI) / fe_degree;
+    h = std::cbrt(6. * cell_volume / numbers::PI) / fe_degree;
   else
     Assert(
       false,
@@ -613,6 +615,28 @@ compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
         "'dim' should have a value of either 2 or 3. Only 2D and 3D simulations "
         "are supported.")));
   return h;
+}
+
+/**
+ * @brief Computes the volume of the cell by integrating after applying
+ * quadrature using a summation of JxW values over a cell.
+ *
+ * @tparam dim Number of spatial dimensions (2D or 3D).
+ *
+ * @param[in] fe_values FEValues object of the physics.
+ *
+ * @param[in] n_q_points Number of quadrature points.
+ *
+ * @return Volume (3D) or area (2D) of the cell.
+ */
+template <int dim>
+inline double
+compute_volume_with_JxW(const FEValues<dim> &fe_values, unsigned int n_q_points)
+{
+  double cell_volume = 0;
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    cell_volume += fe_values.JxW(q);
+  return cell_volume;
 }
 
 #endif

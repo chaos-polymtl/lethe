@@ -105,7 +105,6 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-
   scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
 
   const DoFHandler<dim> *dof_handler_fd =
@@ -1436,8 +1435,9 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
         {
           fe_values_phase_fraction.reinit(cell);
 
-          cell_volume = cell->measure();
-
+          // Compute cell diameter
+          cell_volume =
+            compute_volume_with_JxW<dim>(fe_values_phase_fraction, n_q_points);
           h = compute_cell_diameter<dim>(cell_volume, fe->degree);
 
           local_matrix_phase_fraction = 0;
@@ -1622,9 +1622,11 @@ VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
           auto &fe_filtered_phase_fraction =
             fe_values_projected_phase_fraction_gradient.get_fe();
 
-          h = compute_cell_diameter<dim>(
-            projected_phase_fraction_gradient_cell->measure(),
-            fe_filtered_phase_fraction.degree);
+          // Compute cell diameter
+          double cell_volume = compute_volume_with_JxW<dim>(
+            fe_values_projected_phase_fraction_gradient, n_q_points);
+          h = compute_cell_diameter<dim>(cell_volume,
+                                         fe_filtered_phase_fraction.degree);
 
           local_matrix_projected_phase_fraction_gradient = 0;
           local_rhs_projected_phase_fraction_gradient    = 0;
@@ -1821,8 +1823,10 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
 
           auto &fe_curvature = fe_values_curvature.get_fe();
 
-          h = compute_cell_diameter<dim>(curvature_cell->measure(),
-                                         fe_curvature.degree);
+          // Compute cell diameter
+          double cell_volume =
+            compute_volume_with_JxW<dim>(fe_values_curvature, n_q_points);
+          h = compute_cell_diameter<dim>(cell_volume, fe_curvature.degree);
 
           // Get pfg values, curvature values and gradients
           fe_values_projected_phase_fraction_gradient[pfg].get_function_values(

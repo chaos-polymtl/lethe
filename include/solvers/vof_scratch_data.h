@@ -142,12 +142,13 @@ public:
    *
    * @tparam VectorType The Vector type used for the solvers
    *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the fe which is used to fill the FeValues
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
    *
-   * @param current_solution The present value of the solution for the VOF
+   * @param[in] current_solution The present value of the solution for the VOF.
    *
-   * @param previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
    */
 
@@ -162,8 +163,9 @@ public:
     auto &fe_vof            = fe_values_vof.get_fe();
 
     // Compute cell diameter
-    this->cell_size =
-      compute_cell_diameter<dim>(cell->measure(), fe_vof.degree);
+    double cell_volume =
+      compute_volume_with_JxW<dim>(this->fe_values_vof, this->n_q_points);
+    this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_vof.degree);
 
     fe_values_vof.get_function_values(current_solution,
                                       this->present_phase_values);

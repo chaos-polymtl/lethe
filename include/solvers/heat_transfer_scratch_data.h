@@ -177,21 +177,24 @@ public:
   void
   allocate();
 
-  /** @brief Reinitialize the content of the scratch
+  /** @brief Reinitializes the content of the scratch.
    *
-   * Using the FeValues and the content of the solutions, previous solutions ,
-   * fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions, previous solutions,
+   * fills all of the class member of the scratch.
    *
-   * @tparam VectorType The Vector type used for the solvers
+   * @tparam VectorType The Vector type used for the solvers.
    *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the fe which is used to fill the FeValues
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
    *
-   * @param current_solution The present value of the solution for the Heat Transfer
+   * @param[in] current_solution The present value of the solution for the Heat
+   * Transfer.
    *
-   * @param previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
-   * @param source_function The function describing the Heat Transfer source term
+   * @param[in] source_function The function describing the Heat Transfer source
+   * term.
    */
 
   template <typename VectorType>
@@ -210,7 +213,9 @@ public:
     source_function->value_list(quadrature_points, source);
 
     // Compute cell diameter
-    this->cell_size = compute_cell_diameter<dim>(cell->measure(), fe_T.degree);
+    double cell_volume =
+      compute_volume_with_JxW<dim>(this->fe_values_T, this->n_q_points);
+    this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_T.degree);
 
     // Gather temperature (values, gradient and laplacian)
     this->fe_values_T.get_function_values(current_solution,

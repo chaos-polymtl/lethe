@@ -3986,6 +3986,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
 
   if (copy_data.cell_is_cut)
     return;
+
   scratch_data.reinit(
     cell,
     this->evaluation_point,
@@ -4080,6 +4081,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
 
   if (copy_data.cell_is_cut)
     return;
+
   scratch_data.reinit(
     cell,
     this->evaluation_point,
