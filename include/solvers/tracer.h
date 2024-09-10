@@ -285,7 +285,7 @@ private:
   assemble_system_matrix() override;
 
   /**
-   *  @brief Assembles the matrix associated with the solver
+   *  @brief Assembles the matrix associated with the solver when DG elements are used.
    */
   void
   assemble_system_matrix_dg();
@@ -295,6 +295,12 @@ private:
    */
   void
   assemble_system_rhs() override;
+
+  /**
+   *  @brief Assembles the rhs associated with the solver when DG elements are used.
+   */
+  void
+  assemble_system_rhs_dg();
 
 
   /**

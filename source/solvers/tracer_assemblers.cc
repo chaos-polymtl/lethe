@@ -243,6 +243,107 @@ template class TracerAssemblerCore<3>;
 
 template <int dim>
 void
+TracerAssemblerDGCore<dim>::assemble_matrix(
+  TracerScratchData<dim>    &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double         diffusivity = diffusivity_vector[q];
+      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+              const auto           phi_T_j      = scratch_data.phi[q][j];
+
+
+              // Weak form : - D * laplacian T +  u * gradT - f=0
+              // Note that the advection term has been weakened for it to appear
+              // explicitly in the weak form as a boundary term.
+              local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
+                                     grad_phi_T_i * velocity * phi_T_j) *
+                                    JxW;
+            }
+        }
+    } // end loop on quadrature points
+
+  // Loop over the faces to assemble the flux term
+  // for (const auto face : scratch_data.->face_indices())
+  //  {
+  //  }
+}
+
+
+template <int dim>
+void
+TracerAssemblerDGCore<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
+                                         StabilizedMethodsCopyData &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double         diffusivity     = diffusivity_vector[q];
+      const double         tracer_value    = scratch_data.tracer_values[q];
+      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
+      const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i      = scratch_data.phi[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+
+          // rhs for : - D * laplacian T +  u * grad T - f=0
+          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
+                           grad_phi_T_i * velocity * tracer_value -
+                           scratch_data.source[q] * phi_T_i) *
+                          JxW;
+        }
+    } // end loop on quadrature points
+}
+template class TracerAssemblerDGCore<2>;
+template class TracerAssemblerDGCore<3>;
+
+
+template <int dim>
+void
 TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                          StabilizedMethodsCopyData &copy_data)
 {
