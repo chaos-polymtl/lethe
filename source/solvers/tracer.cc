@@ -68,31 +68,31 @@ Tracer<dim>::assemble_system_matrix()
   simulation_parameters.source_term.tracer_source->set_time(
     simulation_control->get_current_time());
 
-  // if (simulation_parameters.fem_parameters.tracer_uses_dg)
-  //   assemble_system_matrix_dg();
-  //
-  // else
-  //   {
-  const DoFHandler<dim> *dof_handler_fluid =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    assemble_system_matrix_dg();
 
-  auto scratch_data = TracerScratchData<dim>(
-    this->simulation_parameters.physical_properties_manager,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->face_quadrature,
-    *this->mapping,
-    dof_handler_fluid->get_fe());
+  else
+    {
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
-                  *this,
-                  &Tracer::assemble_local_system_matrix,
-                  &Tracer::copy_local_matrix_to_global_matrix,
-                  scratch_data,
-                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
-                                            this->cell_quadrature->size()));
-  //}
+      auto scratch_data = TracerScratchData<dim>(
+        this->simulation_parameters.physical_properties_manager,
+        *this->fe,
+        *this->cell_quadrature,
+        *this->face_quadrature,
+        *this->mapping,
+        dof_handler_fluid->get_fe());
+
+      WorkStream::run(this->dof_handler.begin_active(),
+                      this->dof_handler.end(),
+                      *this,
+                      &Tracer::assemble_local_system_matrix,
+                      &Tracer::copy_local_matrix_to_global_matrix,
+                      scratch_data,
+                      StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                                this->cell_quadrature->size()));
+    }
 
 
   system_matrix.compress(VectorOperation::add);
@@ -236,7 +236,35 @@ Tracer<dim>::assemble_system_matrix_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {};
+        StabilizedMethodsCopyData                            &copy_data) {
+      scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
+      const FEFaceValuesBase<dim> &fe_face =
+        scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+
+      const auto &q_points = fe_face.get_quadrature_points();
+
+      const unsigned int n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+      const std::vector<double>         &JxW     = fe_face.get_JxW_values();
+      const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+      Tensor<1, dim>                     beta;
+      beta[0] = 1;
+
+      for (unsigned int point = 0; point < q_points.size(); ++point)
+        {
+          const double beta_dot_n = beta * normals[point];
+
+          if (beta_dot_n > 0)
+            {
+              for (unsigned int i = 0; i < n_facet_dofs; ++i)
+                for (unsigned int j = 0; j < n_facet_dofs; ++j)
+                  copy_data.local_matrix(i, j) +=
+                    fe_face.shape_value(i, point)   // \phi_i
+                    * fe_face.shape_value(j, point) // \phi_j
+                    * beta_dot_n                    // \beta . n
+                    * JxW[point];                   // dx
+            }
+        }
+    };
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -269,16 +297,26 @@ Tracer<dim>::assemble_system_matrix_dg()
             for (unsigned int j = 0; j < n_dofs; ++j)
               copy_data_face.cell_matrix(i, j) +=
                 fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
-                *
-                fe_iv.shape_value((beta_dot_n > 0), j, qpoint) // phi_j^{upwind}
-                * beta_dot_n                                   // (\beta .n)
-                * JxW[qpoint];                                 // dx
+                * fe_iv.shape_value((beta_dot_n > 0),
+                                    j,
+                                    qpoint) // phi_j^{upwind}
+                * beta_dot_n                // (\beta .n)
+                * JxW[qpoint];              // dx
         }
     };
 
 
   const auto copier = [&](const StabilizedMethodsCopyData &c) {
     this->copy_local_matrix_to_global_matrix(c);
+
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+
+    for (const auto &cdf : c.face_data)
+      {
+        constraints_used.distribute_local_to_global(cdf.cell_matrix,
+                                                    cdf.joint_dof_indices,
+                                                    system_matrix);
+      }
   };
 
 
@@ -313,33 +351,33 @@ Tracer<dim>::assemble_system_rhs()
     simulation_control->get_current_time());
 
 
-  // if (simulation_parameters.fem_parameters.tracer_uses_dg)
-  //   assemble_system_rhs_dg();
-  //
-  // else
-  //   {
-  const DoFHandler<dim> *dof_handler_fluid =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    assemble_system_rhs_dg();
 
-  auto scratch_data = TracerScratchData<dim>(
-    this->simulation_parameters.physical_properties_manager,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->face_quadrature,
-    *this->mapping,
-    dof_handler_fluid->get_fe());
+  else
+    {
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
-                  *this,
-                  &Tracer::assemble_local_system_rhs,
-                  &Tracer::copy_local_rhs_to_global_rhs,
-                  scratch_data,
-                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
-                                            this->cell_quadrature->size()));
+      auto scratch_data = TracerScratchData<dim>(
+        this->simulation_parameters.physical_properties_manager,
+        *this->fe,
+        *this->cell_quadrature,
+        *this->face_quadrature,
+        *this->mapping,
+        dof_handler_fluid->get_fe());
 
-  this->system_rhs.compress(VectorOperation::add);
-  //   }
+      WorkStream::run(this->dof_handler.begin_active(),
+                      this->dof_handler.end(),
+                      *this,
+                      &Tracer::assemble_local_system_rhs,
+                      &Tracer::copy_local_rhs_to_global_rhs,
+                      scratch_data,
+                      StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                                this->cell_quadrature->size()));
+
+      this->system_rhs.compress(VectorOperation::add);
+    }
 }
 
 template <int dim>
@@ -465,7 +503,50 @@ Tracer<dim>::assemble_system_rhs_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {};
+        StabilizedMethodsCopyData                            &copy_data)
+
+  {
+    scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
+    const FEFaceValuesBase<dim> &fe_face =
+      scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+
+    const auto &q_points = fe_face.get_quadrature_points();
+
+    const unsigned int n_facet_dofs        = fe_face.get_fe().n_dofs_per_cell();
+    const std::vector<double>         &JxW = fe_face.get_JxW_values();
+    const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+    std::vector<double> g(q_points.size(), 1.);
+    Tensor<1, dim>      beta;
+    beta[0] = 1;
+
+
+    std::vector<double> values_here(q_points.size());
+    fe_face.get_function_values(evaluation_point, values_here);
+
+
+    for (unsigned int point = 0; point < q_points.size(); ++point)
+      {
+        const double beta_dot_n = beta * normals[point];
+
+        if (beta_dot_n < 0)
+          {
+            for (unsigned int i = 0; i < n_facet_dofs; ++i)
+              copy_data.local_rhs(i) += -fe_face.shape_value(i, point) // \phi_i
+                                        * g[point]                     // g
+                                        * beta_dot_n  // \beta . n
+                                        * JxW[point]; // dx
+          }
+        if (beta_dot_n > 0)
+          {
+            for (unsigned int i = 0; i < n_facet_dofs; ++i)
+              copy_data.local_rhs(i) -= fe_face.shape_value(i, point) // \phi_i
+                                        * values_here[point] *
+                                        beta_dot_n    // \beta . n
+                                        * JxW[point]; // dx
+          }
+      }
+  };
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -478,6 +559,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         StabilizedMethodsCopyData                            &copy_data) {
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+
       const auto &q_points = fe_iv.get_quadrature_points();
       copy_data.face_data.emplace_back();
 
@@ -485,31 +567,55 @@ Tracer<dim>::assemble_system_rhs_dg()
 
       const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
       copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-      copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+      copy_data_face.cell_rhs.reinit(n_dofs);
 
       const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
       const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
-      std::vector<double> average_value(q_points.size());
-      fe_iv.get_average_of_function_values(evaluation_point, average_value);
-      Tensor<1, dim> beta =
-        scratch_data.for (unsigned int qpoint = 0; qpoint < q_points.size();
-                          ++qpoint)
-      {
-        const double beta_dot_n = beta * normals[qpoint];
-        for (unsigned int i = 0; i < n_dofs; ++i)
-          for (unsigned int j = 0; j < n_dofs; ++j)
-            copy_data_face.cell_matrix(i, j) -=
-              fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
-              * average_value[qpoint]               //
-              * beta_dot_n                          // (\beta .n)
-              * JxW[qpoint];                        // dx
-      }
+      std::vector<double> values_here(q_points.size());
+      std::vector<double> values_there(q_points.size());
+      fe_iv.get_fe_face_values(0).get_function_values(evaluation_point,
+                                                      values_here);
+      fe_iv.get_fe_face_values(1).get_function_values(evaluation_point,
+                                                      values_there);
+
+      Tensor<1, dim> beta;
+      beta[0] = 1;
+      for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
+        {
+          const double beta_dot_n = beta * normals[qpoint];
+          for (unsigned int i = 0; i < n_dofs; ++i)
+            {
+              if (beta_dot_n > 0)
+                {
+                  copy_data_face.cell_rhs(i) -=
+                    fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
+                    * values_here[qpoint]                 // \phi^{upwind}
+                    * beta_dot_n                          // (\beta .n)
+                    * JxW[qpoint];                        // dx
+                }
+              else
+                {
+                  copy_data_face.cell_rhs(i) -=
+                    fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
+                    * values_there[qpoint]                // \phi^{upwind}
+                    * beta_dot_n                          // (\beta .n)
+                    * JxW[qpoint];                        // dx
+                }
+            }
+        }
     };
 
 
   const auto copier = [&](const StabilizedMethodsCopyData &c) {
     this->copy_local_rhs_to_global_rhs(c);
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+    for (const auto &cdf : c.face_data)
+      {
+        constraints_used.distribute_local_to_global(cdf.cell_rhs,
+                                                    cdf.joint_dof_indices,
+                                                    system_rhs);
+      }
   };
 
 
