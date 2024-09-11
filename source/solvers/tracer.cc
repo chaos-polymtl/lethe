@@ -934,7 +934,7 @@ Tracer<dim>::setup_dofs()
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
               *this->simulation_parameters.boundary_conditions_tracer
-                 .tracer[i_bc],
+                 .dirichlet[i_bc],
               nonzero_constraints);
           }
       }
@@ -1013,13 +1013,14 @@ Tracer<dim>::update_boundary_conditions()
       if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
           BoundaryConditions::BoundaryType::tracer_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_tracer.tracer[i_bc]
+          this->simulation_parameters.boundary_conditions_tracer
+            .dirichlet[i_bc]
             ->set_time(time);
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
             this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
             *this->simulation_parameters.boundary_conditions_tracer
-               .tracer[i_bc],
+               .dirichlet[i_bc],
             nonzero_constraints);
         }
     }

@@ -692,7 +692,7 @@ namespace BoundaryConditions
   class TracerBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> tracer;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> dirichlet;
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> flux;
 
     bool has_flux_bc = false;
@@ -734,8 +734,8 @@ namespace BoundaryConditions
 
     // Expression for the Dirichlet boundary condition
     prm.enter_subsection("dirichlet");
-    tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    tracer[i_bc]->declare_parameters(prm);
+    dirichlet[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    dirichlet[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
 
     // Expression for the flux boundary condition
@@ -772,7 +772,7 @@ namespace BoundaryConditions
 
       this->id.resize(number_of_boundary_conditions);
       this->type.resize(number_of_boundary_conditions);
-      tracer.resize(number_of_boundary_conditions);
+      dirichlet.resize(number_of_boundary_conditions);
       flux.resize(number_of_boundary_conditions);
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
@@ -805,7 +805,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::tracer_dirichlet;
         prm.enter_subsection("dirichlet");
-        tracer[i_bc]->parse_parameters(prm);
+        dirichlet[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
     else if (op == "flux")
@@ -813,7 +813,7 @@ namespace BoundaryConditions
         this->type[i_bc]  = BoundaryType::tracer_flux;
         this->has_flux_bc = true;
         prm.enter_subsection("flux");
-        tracer[i_bc]->parse_parameters(prm);
+        flux[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
 
