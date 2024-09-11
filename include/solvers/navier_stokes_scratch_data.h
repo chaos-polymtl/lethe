@@ -213,18 +213,18 @@ public:
   /** @brief Reinitializes the content of the scratch.
    *
    * Using the FeValues and the content of the solutions and previous solutions,
-   * fills all of the class member of the scratch
+   * fills all of the class member of the scratch.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    * This cell must be compatible with the FE which is used to fill the
    * FeValues.
    *
-   * @param[in] current_solution The present value of the solution for [u,p]
+   * @param[in] current_solution The present value of the solution for [u,p].
    *
-   * @param[in] previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
    * @param[in] forcing_function The function describing the momentum/mass
-   * source term
+   * source term.
    *
    * @param[in] beta_force The additional force for flow control.
    * TODO : Deprecate this argument and pass it to the constructor of the
