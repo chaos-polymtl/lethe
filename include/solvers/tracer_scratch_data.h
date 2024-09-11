@@ -80,13 +80,19 @@ public:
                     const FiniteElement<dim>        &fe_tracer,
                     const Quadrature<dim>           &quadrature,
                     const Mapping<dim>              &mapping,
-                    const FiniteElement<dim>        &fe_fd)
+                    const FiniteElement<dim>        &fe_fd,
+                    const Quadrature<dim - 1>       &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_face_values_tracer(mapping,
+                            fe_tracer,
+                            face_quadrature,
+                            update_values | update_quadrature_points |
+                              update_JxW_values)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
   {
     allocate();
@@ -112,6 +118,11 @@ public:
                        sd.fe_values_tracer.get_quadrature(),
                        update_values | update_quadrature_points |
                          update_JxW_values | update_gradients | update_hessians)
+    , fe_face_values_tracer(sd.fe_face_values_tracer.get_mapping(),
+                            sd.fe_face_values_tracer.get_fe(),
+                            sd.fe_face_values_tracer.get_quadrature(),
+                            update_values | update_quadrature_points |
+                              update_JxW_values)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
@@ -204,6 +215,55 @@ public:
             this->grad_phi[q][k] = this->fe_values_tracer.shape_grad(k, q);
             this->hess_phi[q][k] = this->fe_values_tracer.shape_hessian(k, q);
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
+          }
+      }
+
+
+    // Arrays related to faces must be re-initialized for each cell, since they
+    // might depend on reference cell
+    // Only carry out this initialization if the cell is a boundary cell,
+    // otherwise these are wasted calculations
+    this->is_boundary_cell = cell->at_boundary();
+    if (cell->at_boundary())
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_tracer.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+
+        this->phi_face_tracer = std::vector<std::vector<std::vector<double>>>(
+          n_faces,
+          std::vector<std::vector<double>>(n_faces_q_points,
+                                           std::vector<double>(n_dofs)));
+
+        this->tracer_face_value = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (this->is_boundary_face[face])
+              {
+                fe_face_values_tracer.reinit(cell, face);
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                this->fe_face_values_tracer.get_function_values(
+                  current_solution, this->tracer_face_value[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    face_JxW[face][q] = fe_face_values_tracer.JxW(q);
+                    for (const unsigned int k :
+                         fe_face_values_tracer.dof_indices())
+                      {
+                        this->phi_face_tracer[face][q][k] =
+                          this->fe_face_values_tracer.shape_value(k, q);
+                      }
+                  }
+              }
           }
       }
   }
@@ -310,12 +370,28 @@ public:
   // Source term
   std::vector<double> source;
 
+  // Scratch for the face boundary condition
+  FEFaceValues<dim>                fe_face_values_tracer;
+  std::vector<std::vector<double>> face_JxW;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
+  // Is boundary cell indicator
+  bool                      is_boundary_cell;
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
   // Shape functions
   std::vector<std::vector<double>>         phi;
   std::vector<std::vector<Tensor<2, dim>>> hess_phi;
   std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
 
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<double>>> phi_face_tracer;
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<double>> tracer_face_value;
 
   /**
    * Scratch component for the Navier-Stokes component

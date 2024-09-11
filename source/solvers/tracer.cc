@@ -31,6 +31,15 @@ Tracer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
+  // Flux boundary condition
+  if (this->simulation_parameters.boundary_conditions_tracer.has_flux_bc)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<TracerAssemblerFluxBC<dim>>(
+          this->simulation_control,
+          simulation_parameters.boundary_conditions_tracer));
+    }
+
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
@@ -63,7 +72,8 @@ Tracer<dim>::assemble_system_matrix()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid->get_fe(),
+    *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -202,7 +212,8 @@ Tracer<dim>::assemble_system_rhs()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid->get_fe(),
+    *this->face_quadrature);
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
@@ -1022,6 +1033,13 @@ Tracer<dim>::update_boundary_conditions()
             *this->simulation_parameters.boundary_conditions_tracer
                .dirichlet[i_bc],
             nonzero_constraints);
+        }
+      // Neumann condition : imposed flux at i_bc
+      else if (this->simulation_parameters.boundary_conditions_tracer
+                 .type[i_bc] == BoundaryConditions::BoundaryType::tracer_flux)
+        {
+          this->simulation_parameters.boundary_conditions_tracer.flux[i_bc]
+            ->set_time(time);
         }
     }
   nonzero_constraints.close();

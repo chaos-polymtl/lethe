@@ -319,3 +319,57 @@ TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
 
 template class TracerAssemblerBDF<2>;
 template class TracerAssemblerBDF<3>;
+
+template <int dim>
+void
+TracerAssemblerFluxBC<dim>::assemble_matrix(
+  TracerScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData & /*copy_data*/)
+{}
+
+template <int dim>
+void
+TracerAssemblerFluxBC<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
+                                         StabilizedMethodsCopyData &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Flux boundary condition, loop on faces
+  // similar to deal.ii step-7
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_tracer.size;
+       ++i_bc)
+    {
+      if (this->boundary_conditions_tracer.type[i_bc] ==
+          BoundaryConditions::BoundaryType::tracer_flux)
+        {
+          Function<dim> &flux_function =
+            *(this->boundary_conditions_tracer.flux[i_bc]);
+          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            {
+              if (scratch_data.boundary_face_id[f] ==
+                  this->boundary_conditions_tracer.id[i_bc])
+                {
+                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
+                       ++q)
+                    {
+                      const double JxW = scratch_data.face_JxW[f][q];
+                      const double flux =
+                        flux_function.value(scratch_data.quadrature_points[q]);
+                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                        {
+                          const double phi_face_tracer_i =
+                            scratch_data.phi_face_tracer[f][q][i];
+                          local_rhs(i) -= phi_face_tracer_i * flux * JxW;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class TracerAssemblerFluxBC<2>;
+template class TracerAssemblerFluxBC<3>;

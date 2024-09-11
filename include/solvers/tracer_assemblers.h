@@ -16,9 +16,11 @@
 #ifndef lethe_tracer_assemblers_h
 #define lethe_tracer_assemblers_h
 
+#include <core/parameters.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/tracer_scratch_data.h>
 
 /**
@@ -33,6 +35,10 @@ template <int dim>
 class TracerAssemblerBase
 {
 public:
+  TracerAssemblerBase(std::shared_ptr<SimulationControl> p_simulation_control)
+    : simulation_control(p_simulation_control)
+  {}
+
   /**
    * @brief assemble_matrix Interface for the call to matrix assembly
    * @param scratch_data Scratch data containing the Tracer information.
@@ -57,6 +63,9 @@ public:
   virtual void
   assemble_rhs(TracerScratchData<dim>    &scratch_data,
                StabilizedMethodsCopyData &copy_data) = 0;
+
+protected:
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -77,7 +86,8 @@ class TracerAssemblerCore : public TracerAssemblerBase<dim>
 {
 public:
   TracerAssemblerCore(std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+    : TracerAssemblerBase<dim>(simulation_control)
+    , simulation_control(simulation_control)
   {}
 
   /**
@@ -117,7 +127,8 @@ class TracerAssemblerBDF : public TracerAssemblerBase<dim>
 {
 public:
   TracerAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+    : TracerAssemblerBase<dim>(simulation_control)
+    , simulation_control(simulation_control)
   {}
 
   /**
@@ -142,5 +153,51 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
+
+/**
+ * @brief Class that assembles the flux boundary condition for the tracer solver.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation
+ * @param p_boundary_conditions_tracer TracerBoundaryConditions object that hold
+ * boundary condition information for the Tracer solver
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerAssemblerFluxBC : public TracerAssemblerBase<dim>
+{
+public:
+  TracerAssemblerFluxBC(std::shared_ptr<SimulationControl> simulation_control,
+                        const BoundaryConditions::TracerBoundaryConditions<dim>
+                          &p_boundary_conditions_tracer)
+    : TracerAssemblerBase<dim>(simulation_control)
+    , boundary_conditions_tracer(p_boundary_conditions_tracer)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(TracerScratchData<dim>    &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(TracerScratchData<dim>    &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+
+  const BoundaryConditions::TracerBoundaryConditions<dim>
+    &boundary_conditions_tracer;
+};
 
 #endif
