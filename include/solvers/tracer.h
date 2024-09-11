@@ -102,6 +102,29 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
+    /// Verify that we have specified as many tracer boundary conditions as
+    /// there are in the triangulation
+    // const std::vector<types::boundary_id> boundary_ids_in_triangulation =
+    // p_triangulation->get_boundary_ids();
+
+    /// Verify that the tracer boundary conditions are specified for all
+    /// boundary ids
+    // for (unsigned int i_bc = 0;
+    //      i_bc < simulation_parameters.boundary_conditions_tracer.size;
+    //      ++i_bc)
+    //   {
+    //     Assert(std::find(boundary_ids_in_triangulation.begin(),
+    //                      boundary_ids_in_triangulation.end(),
+    //                      simulation_parameters.boundary_conditions_tracer
+    //                        .id[i_bc]) != boundary_ids_in_triangulation.end(),
+    //            ExcMessage(
+    //              "The tracer boundary condition with id " +
+    //              std::to_string(
+    //                simulation_parameters.boundary_conditions_tracer.id[i_bc])
+    //                +
+    //              " is not present in the triangulation."));
+    //   }
   }
 
   /**
@@ -398,6 +421,34 @@ private:
    */
   void
   write_tracer_statistics();
+
+
+  /**
+   * @brief Get the lethe boundary indicator for a given triangulation boundary while carrying the appropriate checks
+   */
+  unsigned int
+  get_lethe_boundary_index(const types::boundary_id &triangulation_boundary_id)
+  {
+    // Identify which boundary condition corresponds to the boundary id. If
+    // this boundary condition is not identified, then exit the simulation
+    // instead of assuming an outlet.
+    const auto lethe_boundary_id = std::find(
+      this->simulation_parameters.boundary_conditions_tracer.id.begin(),
+      this->simulation_parameters.boundary_conditions_tracer.id.end(),
+      triangulation_boundary_id);
+
+    AssertThrow(
+      lethe_boundary_id !=
+        this->simulation_parameters.boundary_conditions_tracer.id.end(),
+      ExcMessage("The boundary condition with id " +
+                 std::to_string(triangulation_boundary_id) +
+                 " is not present in the tracer boundary conditions."));
+
+    return (lethe_boundary_id -
+            this->simulation_parameters.boundary_conditions_tracer.id.begin());
+  }
+
+
 
   MultiphysicsInterface<dim> *multiphysics;
 
