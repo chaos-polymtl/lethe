@@ -246,21 +246,37 @@ Tracer<dim>::assemble_system_matrix_dg()
       const unsigned int n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
       const std::vector<double>         &JxW     = fe_face.get_JxW_values();
       const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
-      Tensor<1, dim>                     beta;
-      beta[0] = 1;
+
+      // Gather velocity information at the face to properly advect
+      // First gather the dof handler for the fluid dynamics
+      FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Identify the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      fe_face_values_fd.reinit(velocity_cell, face_no);
+
+      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      fe_face_values_fd[scratch_data.velocities].get_function_values(
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        face_velocity_values);
+
 
       for (unsigned int point = 0; point < q_points.size(); ++point)
         {
-          const double beta_dot_n = beta * normals[point];
+          const double velocity_dot_n =
+            face_velocity_values[point] * normals[point];
 
-          if (beta_dot_n > 0)
+          if (velocity_dot_n > 0)
             {
               for (unsigned int i = 0; i < n_facet_dofs; ++i)
                 for (unsigned int j = 0; j < n_facet_dofs; ++j)
                   copy_data.local_matrix(i, j) +=
                     fe_face.shape_value(i, point)   // \phi_i
                     * fe_face.shape_value(j, point) // \phi_j
-                    * beta_dot_n                    // \beta . n
+                    * velocity_dot_n                // \beta . n
                     * JxW[point];                   // dx
             }
         }
@@ -288,19 +304,35 @@ Tracer<dim>::assemble_system_matrix_dg()
 
       const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
       const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
-      Tensor<1, dim>                     beta;
-      beta[0] = 1;
+
+      // Gather velocity information at the face to properly advect
+      // First gather the dof handler for the fluid dynamics
+      FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Identify the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      fe_face_values_fd.reinit(velocity_cell, f);
+
+      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      fe_face_values_fd[scratch_data.velocities].get_function_values(
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        face_velocity_values);
+
       for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
         {
-          const double beta_dot_n = beta * normals[qpoint];
+          const double velocity_dot_n =
+            face_velocity_values[qpoint] * normals[qpoint];
           for (unsigned int i = 0; i < n_dofs; ++i)
             for (unsigned int j = 0; j < n_dofs; ++j)
               copy_data_face.cell_matrix(i, j) +=
                 fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
-                * fe_iv.shape_value((beta_dot_n > 0),
+                * fe_iv.shape_value((velocity_dot_n > 0),
                                     j,
                                     qpoint) // phi_j^{upwind}
-                * beta_dot_n                // (\beta .n)
+                * velocity_dot_n            // (\beta .n)
                 * JxW[qpoint];              // dx
         }
     };
@@ -517,33 +549,49 @@ Tracer<dim>::assemble_system_rhs_dg()
     const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
 
     std::vector<double> g(q_points.size(), 1.);
-    Tensor<1, dim>      beta;
-    beta[0] = 1;
-
 
     std::vector<double> values_here(q_points.size());
     fe_face.get_function_values(evaluation_point, values_here);
 
 
+    // Gather velocity information at the face to properly advect
+    // First gather the dof handler for the fluid dynamics
+
+    FEFaceValues<dim> &fe_face_values_fd = scratch_data.fe_face_values_fd;
+
+    const DoFHandler<dim> *dof_handler_fluid =
+      multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+    // Identify the cell that corresponds to the fluid dynamics
+    typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+      &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+    fe_face_values_fd.reinit(velocity_cell, face_no);
+
+    std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+    fe_face_values_fd[scratch_data.velocities].get_function_values(
+      *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+      face_velocity_values);
+
     for (unsigned int point = 0; point < q_points.size(); ++point)
       {
-        const double beta_dot_n = beta * normals[point];
+        const double velocity_dot_n =
+          face_velocity_values[point] * normals[point];
 
-        if (beta_dot_n < 0)
+        if (velocity_dot_n < 0)
           {
             for (unsigned int i = 0; i < n_facet_dofs; ++i)
               copy_data.local_rhs(i) += -fe_face.shape_value(i, point) // \phi_i
                                         * g[point]                     // g
-                                        * beta_dot_n  // \beta . n
-                                        * JxW[point]; // dx
+                                        * velocity_dot_n // \beta . n
+                                        * JxW[point];    // dx
           }
-        if (beta_dot_n > 0)
+        if (velocity_dot_n > 0)
           {
             for (unsigned int i = 0; i < n_facet_dofs; ++i)
               copy_data.local_rhs(i) -= fe_face.shape_value(i, point) // \phi_i
                                         * values_here[point] *
-                                        beta_dot_n    // \beta . n
-                                        * JxW[point]; // dx
+                                        velocity_dot_n // \beta . n
+                                        * JxW[point];  // dx
           }
       }
   };
@@ -560,9 +608,11 @@ Tracer<dim>::assemble_system_rhs_dg()
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
 
-      const auto &q_points = fe_iv.get_quadrature_points();
-      copy_data.face_data.emplace_back();
 
+      const auto &q_points = fe_iv.get_quadrature_points();
+
+      // Allocate memory for the faces calculation
+      copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
 
       const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
@@ -579,19 +629,36 @@ Tracer<dim>::assemble_system_rhs_dg()
       fe_iv.get_fe_face_values(1).get_function_values(evaluation_point,
                                                       values_there);
 
-      Tensor<1, dim> beta;
-      beta[0] = 1;
+
+
+      // Gather velocity information at the face to properly advect
+      // First gather the dof handler for the fluid dynamics
+      FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Identify the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      fe_face_values_fd.reinit(velocity_cell, f);
+
+      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      fe_face_values_fd[scratch_data.velocities].get_function_values(
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        face_velocity_values);
+
       for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
         {
-          const double beta_dot_n = beta * normals[qpoint];
+          const double velocity_dot_n =
+            face_velocity_values[qpoint] * normals[qpoint];
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
-              if (beta_dot_n > 0)
+              if (velocity_dot_n > 0)
                 {
                   copy_data_face.cell_rhs(i) -=
                     fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
                     * values_here[qpoint]                 // \phi^{upwind}
-                    * beta_dot_n                          // (\beta .n)
+                    * velocity_dot_n                      // (\beta .n)
                     * JxW[qpoint];                        // dx
                 }
               else
@@ -599,7 +666,7 @@ Tracer<dim>::assemble_system_rhs_dg()
                   copy_data_face.cell_rhs(i) -=
                     fe_iv.jump_in_shape_values(i, qpoint) // [\phi_i]
                     * values_there[qpoint]                // \phi^{upwind}
-                    * beta_dot_n                          // (\beta .n)
+                    * velocity_dot_n                      // (\beta .n)
                     * JxW[qpoint];                        // dx
                 }
             }
