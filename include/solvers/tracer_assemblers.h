@@ -72,7 +72,7 @@ protected:
 /**
  * @brief Class that assembles the core of the Tracer equation.
  * This class assembles the weak form of:
- * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$ with an SUPG
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 T =0 \f$ with an SUPG
  * stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
