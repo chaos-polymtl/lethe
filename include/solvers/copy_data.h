@@ -31,7 +31,7 @@ public:
   CopyData(const unsigned int n_dofs)
     : local_matrix(n_dofs, n_dofs)
     , local_rhs(n_dofs)
-    , local_dof_indices(n_dofs) {};
+    , local_dof_indices(n_dofs){};
 
   /**
    * @brief Resets the cell_matrix and the cell_rhs to zero
@@ -82,7 +82,7 @@ public:
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)
     , strong_residual(n_q_points)
-    , strong_jacobian(n_q_points, Vector<double>(n_dofs)) {};
+    , strong_jacobian(n_q_points, Vector<double>(n_dofs)){};
 
 
   /**
@@ -156,7 +156,7 @@ public:
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)
     , strong_residual(n_q_points)
-    , strong_jacobian(n_q_points, std::vector<Tensor<1, dim>>(n_dofs)) {};
+    , strong_jacobian(n_q_points, std::vector<Tensor<1, dim>>(n_dofs)){};
 
   /**
    * @brief Resets the cell_matrix, cell_rhs, strong_residual
