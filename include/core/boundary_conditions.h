@@ -52,6 +52,7 @@ namespace BoundaryConditions
     convection_radiation,
     // for tracer
     tracer_dirichlet,
+    tracer_flux,
     // for vof
     vof_dirichlet,
     // for cahn hilliard
@@ -605,7 +606,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::noflux;
       }
-    if (op == "temperature")
+    else if (op == "temperature")
       {
         this->type[i_bc] = BoundaryType::temperature;
       }
@@ -692,7 +693,9 @@ namespace BoundaryConditions
   {
   public:
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> tracer;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> flux;
 
+    bool has_flux_bc = false;
 
     void
     declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
@@ -720,18 +723,25 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "dirichlet",
-                      Patterns::Selection("dirichlet"),
+                      Patterns::Selection("dirichlet|flux"),
                       "Type of boundary condition for tracer"
-                      "Choices are <function>.");
+                      "Choices are <dirichlet|flux>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
+    // Expression for the Dirichlet boundary condition
     prm.enter_subsection("dirichlet");
     tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     tracer[i_bc]->declare_parameters(prm);
+    prm.leave_subsection();
+
+    // Expression for the flux boundary condition
+    prm.enter_subsection("flux");
+    flux[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    flux[i_bc]->declare_parameters(prm);
     prm.leave_subsection();
   }
 
@@ -763,6 +773,7 @@ namespace BoundaryConditions
       this->id.resize(number_of_boundary_conditions);
       this->type.resize(number_of_boundary_conditions);
       tracer.resize(number_of_boundary_conditions);
+      flux.resize(number_of_boundary_conditions);
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
@@ -794,6 +805,14 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::tracer_dirichlet;
         prm.enter_subsection("dirichlet");
+        tracer[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
+      }
+    else if (op == "flux")
+      {
+        this->type[i_bc]  = BoundaryType::tracer_flux;
+        this->has_flux_bc = true;
+        prm.enter_subsection("flux");
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
