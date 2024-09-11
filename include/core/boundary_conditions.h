@@ -32,8 +32,8 @@ namespace BoundaryConditions
     partial_slip,
     periodic,
     pressure,
-    outlet,
-    // for heat transfer
+    outlet, // outlet is also used for tracers and eventually for other physics
+            //  for heat transfer
     noflux,
     temperature,
     convection_radiation,
@@ -45,7 +45,7 @@ namespace BoundaryConditions
     cahn_hilliard_noflux,
     cahn_hilliard_dirichlet_phase_order,
     cahn_hilliard_angle_of_contact,
-    cahn_hilliard_free_angle,
+    cahn_hilliard_free_angle
   };
 
   /**
@@ -707,9 +707,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "dirichlet",
-                      Patterns::Selection("dirichlet"),
+                      Patterns::Selection("dirichlet|outlet"),
                       "Type of boundary condition for tracer"
-                      "Choices are <function>.");
+                      "Choices are <dirichlet|outlet>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -784,6 +784,17 @@ namespace BoundaryConditions
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
+
+    else if (op == "outlet")
+      {
+        this->type[i_bc] = BoundaryType::outlet;
+      }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage("Unknown boundary condition type for tracers"));
+      }
+
 
     this->id[i_bc] = prm.get_integer("id");
   }

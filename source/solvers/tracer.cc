@@ -538,61 +538,88 @@ Tracer<dim>::assemble_system_rhs_dg()
         StabilizedMethodsCopyData                            &copy_data)
 
   {
+    // Identify which boundary condition corresponds to the boundary id. If
+    // this boundary condition is not identified, then exit the simulation
+    // instead of assuming an outlet.
+    const auto &triangulation_boundary_id = cell->face(face_no)->boundary_id();
+    const unsigned int boundary_index =
+      get_lethe_boundary_index(triangulation_boundary_id);
     scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
+
     const FEFaceValuesBase<dim> &fe_face =
       scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
 
     const auto &q_points = fe_face.get_quadrature_points();
 
+
     const unsigned int n_facet_dofs        = fe_face.get_fe().n_dofs_per_cell();
     const std::vector<double>         &JxW = fe_face.get_JxW_values();
     const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
 
-    std::vector<double> g(q_points.size(), 1.);
-
     std::vector<double> values_here(q_points.size());
     fe_face.get_function_values(evaluation_point, values_here);
 
-
     // Gather velocity information at the face to properly advect
     // First gather the dof handler for the fluid dynamics
-
-    FEFaceValues<dim> &fe_face_values_fd = scratch_data.fe_face_values_fd;
-
+    FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
     const DoFHandler<dim> *dof_handler_fluid =
       multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
     // Identify the cell that corresponds to the fluid dynamics
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
       &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
-
     fe_face_values_fd.reinit(velocity_cell, face_no);
-
     std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
     fe_face_values_fd[scratch_data.velocities].get_function_values(
       *multiphysics->get_solution(PhysicsID::fluid_dynamics),
       face_velocity_values);
 
-    for (unsigned int point = 0; point < q_points.size(); ++point)
-      {
-        const double velocity_dot_n =
-          face_velocity_values[point] * normals[point];
+    // If the boundary condition is an outlet, assumes that advection comes out
+    // since there is no inflow
 
-        if (velocity_dot_n < 0)
+    if (simulation_parameters.boundary_conditions_tracer.type[boundary_index] ==
+        BoundaryConditions::BoundaryType::outlet)
+      {
+        for (unsigned int point = 0; point < q_points.size(); ++point)
           {
-            for (unsigned int i = 0; i < n_facet_dofs; ++i)
-              copy_data.local_rhs(i) += -fe_face.shape_value(i, point) // \phi_i
-                                        * g[point]                     // g
-                                        * velocity_dot_n // \beta . n
-                                        * JxW[point];    // dx
-          }
-        if (velocity_dot_n > 0)
-          {
+            const double velocity_dot_n =
+              face_velocity_values[point] * normals[point];
+
             for (unsigned int i = 0; i < n_facet_dofs; ++i)
               copy_data.local_rhs(i) -= fe_face.shape_value(i, point) // \phi_i
                                         * values_here[point] *
                                         velocity_dot_n // \beta . n
                                         * JxW[point];  // dx
           }
+      }
+    // Else the boundary condition is a dirichlet. Evaluate the function and
+    // process it accordingly
+    else if (simulation_parameters.boundary_conditions_tracer
+               .type[boundary_index] ==
+             BoundaryConditions::BoundaryType::tracer_dirichlet)
+      {
+        std::vector<double> function_value(q_points.size());
+        simulation_parameters.boundary_conditions_tracer.tracer[boundary_index]
+          ->value_list(q_points, function_value);
+
+
+        for (unsigned int point = 0; point < q_points.size(); ++point)
+          {
+            const double velocity_dot_n =
+              face_velocity_values[point] * normals[point];
+
+            for (unsigned int i = 0; i < n_facet_dofs; ++i)
+              copy_data.local_rhs(i) += -fe_face.shape_value(i, point) // \phi_i
+                                        * function_value[point]        // g
+                                        * velocity_dot_n // \beta . n
+                                        * JxW[point];    // dx
+          }
+      }
+    // process it accordingly
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage(
+                      "No valid boundary conditions types were identified"));
       }
   };
 
@@ -628,7 +655,6 @@ Tracer<dim>::assemble_system_rhs_dg()
                                                       values_here);
       fe_iv.get_fe_face_values(1).get_function_values(evaluation_point,
                                                       values_there);
-
 
 
       // Gather velocity information at the face to properly advect
