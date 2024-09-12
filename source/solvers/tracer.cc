@@ -631,14 +631,8 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
             {
               if (cell->face(face)->at_boundary())
                 {
-                  const auto boundary_id =
-                    std::find(begin(boundary_conditions_ids),
-                              end(boundary_conditions_ids),
-                              cell->face(face)->boundary_id());
-
-
-                  unsigned int vector_index =
-                    boundary_id - boundary_conditions_ids.begin();
+                  const unsigned int boundary_id =
+                    cell->face(face)->boundary_id();
 
                   // Gather tracer information
                   fe_face_values_tracer.reinit(cell, face);
@@ -686,7 +680,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       Tensor<1, dim> normal_vector_tracer =
                         -fe_face_values_tracer.normal_vector(q);
 
-                      tracer_flow_rate_vector[vector_index] +=
+                      tracer_flow_rate_vector[boundary_id] +=
                         (-tracer_diffusivity[q] * tracer_gradient[q] *
                            normal_vector_tracer +
                          tracer_values[q] * velocity_values[q] *
