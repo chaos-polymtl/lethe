@@ -240,6 +240,15 @@ Tracer<dim>::assemble_system_matrix_dg()
       double beta = 1;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
 
+      // Identify which boundary condition corresponds to the boundary id. If
+      // this boundary condition is not identified, then exit the simulation
+      // instead of assuming an outlet.
+      const auto &triangulation_boundary_id =
+        cell->face(face_no)->boundary_id();
+      const unsigned int boundary_index =
+        get_lethe_boundary_index(triangulation_boundary_id);
+      scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
+
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
       const FEFaceValuesBase<dim> &fe_face =
@@ -285,27 +294,33 @@ Tracer<dim>::assemble_system_matrix_dg()
 
 
           for (unsigned int i = 0; i < n_facet_dofs; ++i)
-            for (unsigned int j = 0; j < n_facet_dofs; ++j)
-              {
-                if (velocity_dot_n > 0)
-                  {
-                    copy_data.local_matrix(i, j) +=
-                      fe_face.shape_value(i, point) *
-                      fe_face.shape_value(j, point) * velocity_dot_n *
-                      JxW[point];
-                  }
+            {
+              for (unsigned int j = 0; j < n_facet_dofs; ++j)
+                {
+                  if (velocity_dot_n > 0)
+                    {
+                      copy_data.local_matrix(i, j) +=
+                        fe_face.shape_value(i, point) *
+                        fe_face.shape_value(j, point) * velocity_dot_n *
+                        JxW[point];
+                    }
 
-
-                copy_data.local_matrix(i, j) +=
-                  tracer_diffusivity[point] *
-                    (-fe_face.shape_value(i, point) *
-                       fe_face.shape_grad(j, point) * normals[point] -
-                     fe_face.shape_value(j, point) *
-                       fe_face.shape_grad(i, point) * normals[point]) *
-                    JxW[point] +
-                  beta * fe_face.shape_value(i, point) *
-                    fe_face.shape_value(j, point) * JxW[point];
-              }
+                  if (simulation_parameters.boundary_conditions_tracer
+                        .type[boundary_index] ==
+                      BoundaryConditions::BoundaryType::tracer_dirichlet)
+                    {
+                      copy_data.local_matrix(i, j) +=
+                        tracer_diffusivity[point] *
+                          (-fe_face.shape_value(i, point) *
+                             fe_face.shape_grad(j, point) * normals[point] -
+                           fe_face.shape_value(j, point) *
+                             fe_face.shape_grad(i, point) * normals[point]) *
+                          JxW[point] +
+                        beta * fe_face.shape_value(i, point) *
+                          fe_face.shape_value(j, point) * JxW[point];
+                    }
+                }
+            }
         }
     };
 
