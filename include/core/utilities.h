@@ -632,7 +632,7 @@ inline double
 compute_volume_with_JxW(const std::vector<double> &JxW_values)
 {
   double cell_volume = 0;
-  for (const double &JxW: JxW_values)
+  for (const double &JxW : JxW_values)
     cell_volume += JxW;
   return cell_volume;
 }
