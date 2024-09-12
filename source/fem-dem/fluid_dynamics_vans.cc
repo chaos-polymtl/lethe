@@ -491,7 +491,8 @@ FluidDynamicsVANS<dim>::particle_centered_method()
                   particle_properties[DEM::PropertiesIndex::dp]) /
                 (2.0 * dim);
             }
-          double cell_volume = cell->measure();
+          double cell_volume =
+            compute_volume_with_JxW(fe_values_void_fraction.get_JxW_values());
 
           // Calculate cell void fraction
           double cell_void_fraction =
@@ -1272,7 +1273,8 @@ FluidDynamicsVANS<dim>::satellite_point_method()
                 }
             }
 
-          double cell_volume = cell->measure();
+          double cell_volume =
+            compute_volume_with_JxW(fe_values_void_fraction.get_JxW_values());
 
           // Calculate cell void fraction
           double cell_void_fraction =

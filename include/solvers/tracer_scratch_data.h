@@ -173,9 +173,10 @@ public:
       }
 
     // Compute cell diameter
-    double cell_volume =
+    double cell_measure =
       compute_volume_with_JxW(this->fe_values_tracer.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_tracer.degree);
+    this->cell_size =
+      compute_cell_diameter<dim>(cell_measure, fe_tracer.degree);
 
     // Gather tracer (values, gradient and laplacian)
     this->fe_values_tracer.get_function_values(current_solution,

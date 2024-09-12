@@ -1423,7 +1423,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   system_matrix_phase_fraction = 0;
 
   double h;
-  double cell_volume;
+  double cell_measure;
 
   const double phase_fraction_diffusion_factor =
     this->simulation_parameters.initial_condition
@@ -1436,9 +1436,9 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
           fe_values_phase_fraction.reinit(cell);
 
           // Compute cell diameter
-          cell_volume =
+          cell_measure =
             compute_volume_with_JxW(fe_values_phase_fraction.get_JxW_values());
-          h = compute_cell_diameter<dim>(cell_volume, fe->degree);
+          h = compute_cell_diameter<dim>(cell_measure, fe->degree);
 
           local_matrix_phase_fraction = 0;
           local_rhs_phase_fraction    = 0;
@@ -1453,7 +1453,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
                 phase_values[q] * fe_values_phase_fraction.JxW(q);
             }
 
-          color_function /= cell_volume;
+          color_function /= cell_measure;
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -1623,9 +1623,9 @@ VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
             fe_values_projected_phase_fraction_gradient.get_fe();
 
           // Compute cell diameter
-          double cell_volume = compute_volume_with_JxW(
+          double cell_measure = compute_volume_with_JxW(
             fe_values_projected_phase_fraction_gradient.get_JxW_values());
-          h = compute_cell_diameter<dim>(cell_volume,
+          h = compute_cell_diameter<dim>(cell_measure,
                                          fe_filtered_phase_fraction.degree);
 
           local_matrix_projected_phase_fraction_gradient = 0;
@@ -1824,9 +1824,9 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
           auto &fe_curvature = fe_values_curvature.get_fe();
 
           // Compute cell diameter
-          double cell_volume =
+          double cell_measure =
             compute_volume_with_JxW(fe_values_curvature.get_JxW_values());
-          h = compute_cell_diameter<dim>(cell_volume, fe_curvature.degree);
+          h = compute_cell_diameter<dim>(cell_measure, fe_curvature.degree);
 
           // Get pfg values, curvature values and gradients
           fe_values_projected_phase_fraction_gradient[pfg].get_function_values(

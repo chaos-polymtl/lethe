@@ -213,9 +213,9 @@ public:
     source_function->value_list(quadrature_points, source);
 
     // Compute cell diameter
-    double cell_volume =
+    double cell_measure =
       compute_volume_with_JxW(this->fe_values_T.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_T.degree);
+    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe_T.degree);
 
     // Gather temperature (values, gradient and laplacian)
     this->fe_values_T.get_function_values(current_solution,

@@ -593,7 +593,7 @@ value_string_to_tensor(const std::string &value_string_0,
  *
  * @tparam dim Number of spatial dimensions (2D or 3D).
  *
- * @param[in] cell_volume Area (2D) or volume (3D) of the cell.
+ * @param[in] cell_measure Area (2D) or volume (3D) of the cell.
  *
  * @param[in] fe_degree Polynomial degree of the shape function.
  *
@@ -601,13 +601,13 @@ value_string_to_tensor(const std::string &value_string_0,
  */
 template <int dim>
 inline double
-compute_cell_diameter(const double cell_volume, const unsigned int fe_degree)
+compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
 {
   double h;
   if constexpr (dim == 2)
-    h = std::sqrt(4. * cell_volume / numbers::PI) / fe_degree;
+    h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;
   else if constexpr (dim == 3)
-    h = std::cbrt(6. * cell_volume / numbers::PI) / fe_degree;
+    h = std::cbrt(6. * cell_measure / numbers::PI) / fe_degree;
   else
     Assert(
       false,
@@ -618,7 +618,7 @@ compute_cell_diameter(const double cell_volume, const unsigned int fe_degree)
 }
 
 /**
- * @brief Computes the volume (3D) or area (2D) of the cell by integrating 1
+ * @brief Computes the area (2D) or volume (3D) of the cell by integrating 1
  * over the cell, by summing JxW values (quadrature weights) returned by the
  * FEValues object.
  *
@@ -626,15 +626,15 @@ compute_cell_diameter(const double cell_volume, const unsigned int fe_degree)
  *
  * @param[in] JxW_values Vector of mapped quadrature weights.
  *
- * @return Volume (3D) or area (2D) of the cell.
+ * @return Area (2D) volume (3D) of the cell.
  */
 inline double
 compute_volume_with_JxW(const std::vector<double> &JxW_values)
 {
-  double cell_volume = 0;
+  double cell_measure = 0;
   for (const double &JxW : JxW_values)
-    cell_volume += JxW;
-  return cell_volume;
+    cell_measure += JxW;
+  return cell_measure;
 }
 
 #endif

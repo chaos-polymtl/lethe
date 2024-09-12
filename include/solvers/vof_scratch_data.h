@@ -163,9 +163,9 @@ public:
     auto &fe_vof            = fe_values_vof.get_fe();
 
     // Compute cell diameter
-    double cell_volume =
+    double cell_measure =
       compute_volume_with_JxW(this->fe_values_vof.get_JxW_values());
-    this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_vof.degree);
+    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe_vof.degree);
 
     fe_values_vof.get_function_values(current_solution,
                                       this->present_phase_values);

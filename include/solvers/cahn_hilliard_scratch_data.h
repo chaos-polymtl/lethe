@@ -191,10 +191,10 @@ public:
                                 1);
 
     // Compute cell diameter
-    double cell_volume =
+    double cell_measure =
       compute_volume_with_JxW(this->fe_values_cahn_hilliard.get_JxW_values());
     this->cell_size =
-      compute_cell_diameter<dim>(cell_volume, fe_cahn_hilliard.degree);
+      compute_cell_diameter<dim>(cell_measure, fe_cahn_hilliard.degree);
 
     // Gather Phi and eta (values, gradient and laplacian)
     this->fe_values_cahn_hilliard[phase_order].get_function_values(
