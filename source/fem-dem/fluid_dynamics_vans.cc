@@ -491,8 +491,8 @@ FluidDynamicsVANS<dim>::particle_centered_method()
                   particle_properties[DEM::PropertiesIndex::dp]) /
                 (2.0 * dim);
             }
-          double cell_volume =
-            compute_volume_with_JxW(fe_values_void_fraction.get_JxW_values());
+          double cell_volume = compute_cell_measure_with_JxW(
+            fe_values_void_fraction.get_JxW_values());
 
           // Calculate cell void fraction
           double cell_void_fraction =
@@ -1032,11 +1032,13 @@ FluidDynamicsVANS<dim>::quadrature_centered_sphere_method(
 
               // We use the volume of the cell as it is equal to the volume
               // of the sphere
+              double cell_volume = compute_cell_measure_with_JxW(
+                fe_values_void_fraction.get_JxW_values());
               quadrature_void_fraction =
-                ((fe_values_void_fraction.JxW(q) * cell->measure() /
+                ((fe_values_void_fraction.JxW(q) * cell_volume /
                   sum_quadrature_weights) -
                  particles_volume_in_sphere) /
-                (fe_values_void_fraction.JxW(q) * cell->measure() /
+                (fe_values_void_fraction.JxW(q) * cell_volume /
                  sum_quadrature_weights);
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -1273,8 +1275,8 @@ FluidDynamicsVANS<dim>::satellite_point_method()
                 }
             }
 
-          double cell_volume =
-            compute_volume_with_JxW(fe_values_void_fraction.get_JxW_values());
+          double cell_volume = compute_cell_measure_with_JxW(
+            fe_values_void_fraction.get_JxW_values());
 
           // Calculate cell void fraction
           double cell_void_fraction =

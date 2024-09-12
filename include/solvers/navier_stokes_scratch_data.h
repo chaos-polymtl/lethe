@@ -274,7 +274,7 @@ public:
 
     // Compute cell diameter
     double cell_measure =
-      compute_volume_with_JxW(this->fe_values.get_JxW_values());
+      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
 
     // Gather velocity (values, gradient and laplacian)
@@ -686,7 +686,8 @@ public:
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
     average_particle_velocity = 0;
-    cell_volume = compute_volume_with_JxW(this->fe_values.get_JxW_values());
+    cell_volume =
+      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
 
     // Loop over particles in cell
     double total_particle_volume = 0;

@@ -264,7 +264,7 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
 
           // Compute cell diameter
           double cell_measure =
-            compute_volume_with_JxW(fe_values.get_JxW_values());
+            compute_cell_measure_with_JxW(fe_values.get_JxW_values());
           h = compute_cell_diameter<dim>(cell_measure, degree);
 
           fe_values[velocities].get_function_values(evaluation_point,

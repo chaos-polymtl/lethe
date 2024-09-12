@@ -629,7 +629,7 @@ compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
  * @return Area (2D) volume (3D) of the cell.
  */
 inline double
-compute_volume_with_JxW(const std::vector<double> &JxW_values)
+compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
 {
   double cell_measure = 0;
   for (const double &JxW : JxW_values)
