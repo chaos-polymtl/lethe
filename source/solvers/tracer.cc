@@ -237,7 +237,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedMethodsCopyData                            &copy_data) {
-      double beta = 1;
+      double beta = 10;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
 
       // Identify which boundary condition corresponds to the boundary id. If
@@ -333,7 +333,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedMethodsCopyData                            &copy_data) {
-      double beta = 0;
+      double beta = 10;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
@@ -605,7 +605,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedMethodsCopyData                            &copy_data) {
-      double beta = 1;
+      double beta = 10;
 
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
 
@@ -733,7 +733,8 @@ Tracer<dim>::assemble_system_rhs_dg()
         TracerScratchData<dim>                               &scratch_data,
         StabilizedMethodsCopyData                            &copy_data) {
       // TODO refactor and put inside a parameter formally
-      const double            beta  = 0.;
+      double beta = 10;
+      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
 
