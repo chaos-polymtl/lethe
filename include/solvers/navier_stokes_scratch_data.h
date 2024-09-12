@@ -274,7 +274,7 @@ public:
 
     // Compute cell diameter
     double cell_volume =
-      compute_volume_with_JxW<dim>(this->fe_values, this->n_q_points);
+      compute_volume_with_JxW(this->fe_values.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_volume, fe.degree);
 
     // Gather velocity (values, gradient and laplacian)

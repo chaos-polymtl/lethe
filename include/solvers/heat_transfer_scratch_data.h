@@ -214,7 +214,7 @@ public:
 
     // Compute cell diameter
     double cell_volume =
-      compute_volume_with_JxW<dim>(this->fe_values_T, this->n_q_points);
+      compute_volume_with_JxW(this->fe_values_T.get_JxW_values());
     this->cell_size = compute_cell_diameter<dim>(cell_volume, fe_T.degree);
 
     // Gather temperature (values, gradient and laplacian)

@@ -192,8 +192,7 @@ public:
 
     // Compute cell diameter
     double cell_volume =
-      compute_volume_with_JxW<dim>(this->fe_values_cahn_hilliard,
-                                   this->n_q_points);
+      compute_volume_with_JxW(this->fe_values_cahn_hilliard.get_JxW_values());
     this->cell_size =
       compute_cell_diameter<dim>(cell_volume, fe_cahn_hilliard.degree);
 
