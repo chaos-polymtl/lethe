@@ -905,6 +905,14 @@ NavierStokesOperatorBase<dim, number>::
           const auto boundary_index =
             boundary_id - this->boundary_conditions.id.begin();
 
+
+          // Calculate the target velocity for the boundary condition if the
+          // boundary condition is a weak dirichlet boundary condition
+          // Otherwise there is no need to do this calculation
+          if (this->boundary_conditions.type[boundary_index] !=
+              BoundaryConditions::BoundaryType::function_weak)
+            continue;
+
           for (const auto q : face_integrator.quadrature_point_indices())
             {
               nonlinear_previous_face_values(face - n_inner_faces, q) =
@@ -912,7 +920,6 @@ NavierStokesOperatorBase<dim, number>::
               nonlinear_previous_face_gradient(face - n_inner_faces, q) =
                 face_integrator.get_gradient(q);
 
-              // Calculate the target velocity for the boundary condition
               Point<dim, VectorizedArray<number>> point_batch =
                 face_integrator.quadrature_point(q);
 
