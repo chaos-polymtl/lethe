@@ -735,6 +735,12 @@ namespace Parameters
         "Navier-Stokes equations. When the velocity and pressure scales are very "
         "different, using this parameter allows to reduce the condition number"
         " and reach a solution.");
+
+      prm.declare_entry(
+        "tracer sipg",
+        "10",
+        Patterns::Double(),
+        "Value of the SIPG stabilization parameter for the tracer equation when a discontinuous Galerkin formulation is used.");
     }
     prm.leave_subsection();
   }
@@ -761,6 +767,8 @@ namespace Parameters
       vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
+
+      tracer_sipg = prm.get_double("tracer sipg");
     }
     prm.leave_subsection();
   }

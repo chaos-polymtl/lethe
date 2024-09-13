@@ -255,6 +255,49 @@ public:
                StabilizedDGMethodsCopyData &copy_data);
 };
 
+/**
+ * @brief Assembles Nitche's method for boundary faces.
+ *  This assembler is only required when solving the Tracer equation using a
+ * discontinuous Galerkin discretization since then the boundary conditions have
+ * to be weakly imposed.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
+{
+public:
+  TracerAssemblerBoundaryNitsche()
+  {}
+
+  /**
+   * @brief assemble_matrix Interface for the call to matrix assembly
+   * @param scratch_data Scratch data containing the Tracer information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   * @param copy_data Destination where the local_rhs and loc
+   */
+
+  virtual void
+  assemble_matrix(TracerScratchData<dim>      &scratch_data,
+                  StabilizedDGMethodsCopyData &copy_data);
+
+
+  /**
+   * @brief assemble_matrix Interface for the call to rhs
+   * @param scratch_data Scratch data containing the Tracer information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   * @param copy_data Destination where the local_rhs and loc
+   */
+
+  virtual void
+  assemble_rhs(TracerScratchData<dim>      &scratch_data,
+               StabilizedDGMethodsCopyData &copy_data);
+};
+
 
 
 #endif

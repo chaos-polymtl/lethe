@@ -689,6 +689,8 @@ namespace Parameters
     /// fraction should be assembled (@p true) or not (@p false).
     bool vof_dcdd_stabilization;
 
+    double tracer_sipg;
+
     // pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
