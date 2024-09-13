@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-12
+
+### Fixed
+
+- MINOR The previous implementation to calculate cell diameter used the `measure` function which assumed a linear mapping. A function that calculates the volume by summing JxW values returned by the FEValues object now replaces the `measure` function. [#1279](https://github.com/chaos-polymtl/lethe/pull/1279)
+
 ## [Master] - 2024-09-10
 
 ### Fixed

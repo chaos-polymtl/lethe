@@ -346,11 +346,7 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
           const double h_k =
             matrix_free.get_cell_iterator(cell, lane)->measure();
 
-          if (dim == 2)
-            element_size[cell][lane] = std::sqrt(4. * h_k / M_PI) / fe_degree;
-          else if (dim == 3)
-            element_size[cell][lane] =
-              std::pow(6 * h_k / M_PI, 1. / 3.) / fe_degree;
+          element_size[cell][lane] = compute_cell_diameter<dim>(h_k, fe_degree);
         }
     }
 }
@@ -946,11 +942,8 @@ NavierStokesOperatorBase<dim, number>::
           VectorizedArray<number> cell_size = 1.0;
 
           const auto [cell_it, _] = matrix_free.get_face_iterator(face, 0);
-          if constexpr (dim == 2)
-            cell_size = std::sqrt(4. * cell_it->measure() / M_PI) / fe_degree;
-          else if constexpr (dim == 3)
-            cell_size =
-              std::pow(6 * cell_it->measure() / M_PI, 1. / 3.) / fe_degree;
+
+          cell_size = compute_cell_diameter<dim>(cell_it->measure(), fe_degree);
 
           const double beta = this->boundary_conditions.beta[boundary_index];
 

@@ -152,20 +152,21 @@ public:
   void
   allocate();
 
-  /** @brief Reinitialize the content of the scratch
+  /** @brief Reinitializes the content of the scratch.
    *
-   * Using the FeValues and the content of the solutions and previous solutions
-   * , fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions and previous solutions,
+   * fills all of the class member of the scratch.
    *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the fe which is used to fill the FeValues
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the fe which is used to fill the
+   * FeValues.
    *
-   * @param current_solution The present value of the solution for [Phi,eta]
+   * @param[in] current_solution The present value of the solution for [Phi,eta]
    *
-   * @param previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
-   * @param source_function The function describing the source term in Cahn-Hilliard
-   * equations
+   * @param[in] source_function The function describing the source term in
+   * Cahn-Hilliard equations.
    *
    */
 
@@ -190,8 +191,10 @@ public:
                                 1);
 
     // Compute cell diameter
+    double cell_measure = compute_cell_measure_with_JxW(
+      this->fe_values_cahn_hilliard.get_JxW_values());
     this->cell_size =
-      compute_cell_diameter<dim>(cell->measure(), fe_cahn_hilliard.degree);
+      compute_cell_diameter<dim>(cell_measure, fe_cahn_hilliard.degree);
 
     // Gather Phi and eta (values, gradient and laplacian)
     this->fe_values_cahn_hilliard[phase_order].get_function_values(

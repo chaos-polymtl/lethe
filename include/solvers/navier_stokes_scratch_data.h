@@ -210,23 +210,25 @@ public:
   void
   allocate();
 
-  /** @brief Reinitialize the content of the scratch
+  /** @brief Reinitializes the content of the scratch.
    *
    * Using the FeValues and the content of the solutions and previous solutions,
-   * fills all of the class member of the scratch
+   * fills all of the class member of the scratch.
    *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the fe which is used to fill the FeValues
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param[in] current_solution The present value of the solution for [u,p].
    *
-   * @param previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
+   * @param[in] forcing_function The function describing the momentum/mass
+   * source term.
    *
-   * @param forcing_function The function describing the momentum/mass source term
-   *
-   * @param beta_force The additional force for flow control. TODO : Deprecate this argument and pass it
-   * to the constructor of the assembler
+   * @param[in] beta_force The additional force for flow control.
+   * TODO : Deprecate this argument and pass it to the constructor of the
+   * assembler
    *
    */
 
@@ -271,7 +273,9 @@ public:
       }
 
     // Compute cell diameter
-    this->cell_size = compute_cell_diameter<dim>(cell->measure(), fe.degree);
+    double cell_measure =
+      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+    this->cell_size = compute_cell_diameter<dim>(cell_measure, fe.degree);
 
     // Gather velocity (values, gradient and laplacian)
     this->fe_values[velocities].get_function_values(current_solution,
@@ -682,7 +686,8 @@ public:
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
     average_particle_velocity = 0;
-    cell_volume               = this->fe_values.get_cell()->measure();
+    cell_volume =
+      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
 
     // Loop over particles in cell
     double total_particle_volume = 0;

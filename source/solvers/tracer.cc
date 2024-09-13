@@ -88,7 +88,6 @@ Tracer<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-
   scratch_data.reinit(
     cell,
     this->evaluation_point,

@@ -615,4 +615,24 @@ compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)
   return h;
 }
 
+/**
+ * @brief Computes the area (2D) or volume (3D) of the cell by integrating 1
+ * over the cell, by summing JxW values (quadrature weights) returned by the
+ * FEValues object.
+ *
+ * @tparam dim Number of spatial dimensions (2D or 3D).
+ *
+ * @param[in] JxW_values Vector of mapped quadrature weights.
+ *
+ * @return Area (2D) volume (3D) of the cell.
+ */
+inline double
+compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
+{
+  double cell_measure = 0;
+  for (const double &JxW : JxW_values)
+    cell_measure += JxW;
+  return cell_measure;
+}
+
 #endif
