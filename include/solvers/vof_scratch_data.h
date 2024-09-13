@@ -278,9 +278,9 @@ public:
         std::vector<double> time_vector =
           this->simulation_control->get_simulation_times();
         bdf_extrapolate(time_vector,
-                        previous_velocity_values,
+                        this->previous_velocity_values,
                         number_of_previous_solutions(method),
-                        velocity_values);
+                        this->velocity_values);
       }
   }
 
