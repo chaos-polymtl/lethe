@@ -568,3 +568,21 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
 
 template class TracerAssemblerSIPG<2>;
 template class TracerAssemblerSIPG<3>;
+
+
+template <int dim>
+void
+TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
+  TracerScratchData<dim>      &scratch_data,
+  StabilizedDGMethodsCopyData &copy_data)
+{}
+
+template <int dim>
+void
+TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
+  TracerScratchData<dim>      &scratch_data,
+  StabilizedDGMethodsCopyData &copy_data)
+{}
+
+template class TracerAssemblerBoundaryNitsche<2>;
+template class TracerAssemblerBoundaryNitsche<3>;
