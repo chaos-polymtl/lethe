@@ -219,13 +219,16 @@ Tracer<dim>::assemble_system_matrix_dg()
     *this->mapping,
     dof_handler_fluid->get_fe());
 
-  StabilizedMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
-                                      this->cell_quadrature->size());
+  StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                        this->cell_quadrature->size());
 
+  // We first wrap the assembly of the matrix within a cell_worker lambda
+  // function This is only done for compatibility reasons with the MeshWorker
+  // paradigm and does not have any functional purpose.
   const auto cell_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       this->assemble_local_system_matrix(cell, scratch_data, copy_data);
     };
 
@@ -233,7 +236,7 @@ Tracer<dim>::assemble_system_matrix_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       double beta = 10;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
 
@@ -329,7 +332,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &nf,
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       double beta = 10;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
@@ -404,7 +407,7 @@ Tracer<dim>::assemble_system_matrix_dg()
     };
 
 
-  const auto copier = [&](const StabilizedMethodsCopyData &c) {
+  const auto copier = [&](const StabilizedDGMethodsCopyData &c) {
     this->copy_local_matrix_to_global_matrix(c);
 
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
@@ -587,13 +590,13 @@ Tracer<dim>::assemble_system_rhs_dg()
     *this->mapping,
     dof_handler_fluid->get_fe());
 
-  StabilizedMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
-                                      this->cell_quadrature->size());
+  StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                        this->cell_quadrature->size());
 
   const auto cell_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       this->assemble_local_system_rhs(cell, scratch_data, copy_data);
     };
 
@@ -601,7 +604,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       double beta = 10;
 
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
@@ -728,7 +731,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &nf,
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
-        StabilizedMethodsCopyData                            &copy_data) {
+        StabilizedDGMethodsCopyData                          &copy_data) {
       // TODO refactor and put inside a parameter formally
       double beta = 10;
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
@@ -832,7 +835,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     };
 
 
-  const auto copier = [&](const StabilizedMethodsCopyData &c) {
+  const auto copier = [&](const StabilizedDGMethodsCopyData &c) {
     this->copy_local_rhs_to_global_rhs(c);
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
     for (const auto &cdf : c.face_data)
