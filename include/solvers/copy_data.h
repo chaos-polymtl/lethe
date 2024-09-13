@@ -31,7 +31,7 @@ public:
   CopyData(const unsigned int n_dofs)
     : local_matrix(n_dofs, n_dofs)
     , local_rhs(n_dofs)
-    , local_dof_indices(n_dofs){};
+    , local_dof_indices(n_dofs) {};
 
   /**
    * @brief Resets the cell_matrix and the cell_rhs to zero
@@ -82,7 +82,7 @@ public:
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)
     , strong_residual(n_q_points)
-    , strong_jacobian(n_q_points, Vector<double>(n_dofs)){};
+    , strong_jacobian(n_q_points, Vector<double>(n_dofs)) {};
 
 
   /**
@@ -102,7 +102,46 @@ public:
       }
   }
 
+  FullMatrix<double>                   local_matrix;
+  Vector<double>                       local_rhs;
+  std::vector<types::global_dof_index> local_dof_indices;
+  Vector<double>                       strong_residual;
+  std::vector<Vector<double>>          strong_jacobian;
 
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not.
+  bool cell_is_local;
+};
+
+
+
+/**
+ * @brief Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of stabilized
+ * scalar equations. Like the StabilizedCopyData class, this class is used to
+ *initialize, zero (reset) and store the cell_matrix and the cell_rhs while
+ *having support for stabilized terms. However, it also has additional structure
+ *to support the storage of information at internal faces. This is required for
+ *the DG methods.
+ **/
+class StabilizedDGMethodsCopyData : public StabilizedMethodsCopyData
+{
+public:
+  /**
+   * @brief Constructor. Allocates the memory for the cell_matrix, cell_rhs
+   * and dof-indices using the number of dofs and the strong_residual using the
+   * number of quadrature points and, the strong_jacobian using both
+   *
+   * @param n_dofs Number of degrees of freedom per cell in the problem
+   *
+   * @param n_q_points Number of quadrature points
+   */
+  StabilizedDGMethodsCopyData(const unsigned int n_dofs,
+                              const unsigned int n_q_points)
+    : StabilizedMethodsCopyData(n_dofs, n_q_points) {};
+
+
+  // Additional small struct
   struct CopyDataFace
   {
     FullMatrix<double> cell_matrix;
@@ -111,18 +150,7 @@ public:
     std::vector<types::global_dof_index> joint_dof_indices;
   };
 
-  FullMatrix<double>                   local_matrix;
-  Vector<double>                       local_rhs;
-  std::vector<types::global_dof_index> local_dof_indices;
-  Vector<double>                       strong_residual;
-  std::vector<Vector<double>>          strong_jacobian;
-  std::vector<CopyDataFace>            face_data;
-
-
-  // Boolean used to indicate if the cell being assembled is local or not
-  // This information is used to indicate to the copy_local_to_global function
-  // if it should indeed copy or not.
-  bool cell_is_local;
+  std::vector<CopyDataFace> face_data;
 };
 
 /**
@@ -156,7 +184,7 @@ public:
     , local_rhs(n_dofs)
     , local_dof_indices(n_dofs)
     , strong_residual(n_q_points)
-    , strong_jacobian(n_q_points, std::vector<Tensor<1, dim>>(n_dofs)){};
+    , strong_jacobian(n_q_points, std::vector<Tensor<1, dim>>(n_dofs)) {};
 
   /**
    * @brief Resets the cell_matrix, cell_rhs, strong_residual
