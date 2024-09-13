@@ -1,0 +1,172 @@
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                       = bdf2
+  set time end                     = 3.6
+  set time step                    = 0.2
+  set adapt                        = true
+  set max cfl                      = 0.75
+  set output name                  = vof-velocity-extrapolation
+  set output frequency             = 0
+  set adaptative time step scaling = 1.2
+end
+
+#---------------------------------------------------
+# Initial Condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection VOF
+    set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 0.001
+    set kinematic viscosity = 0.001
+  end
+  subsection fluid 1
+    set density             = 1
+    set kinematic viscosity = 0.005
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5, 3 : -1, -1 : 1, 0.1 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase
+  set fraction type            = fraction
+  set max refinement level     = 6
+  set min refinement level     = 3
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 3
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection phase filtration
+    set type = tanh
+    set beta = 20
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                    = verbose
+  set calculate average velocities = true
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = 0 ; -1 ; 0
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
+  subsection VOF
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = quiet
+    set max krylov vectors = 100
+    set max iters          = 100
+    set relative residual  = 1e-5
+    set minimum residual   = 1e-9
+    set preconditioner     = amg
+  end
+  subsection VOF
+    set verbosity          = quiet
+    set max krylov vectors = 100
+    set max iters          = 100
+    set relative residual  = 1e-5
+    set minimum residual   = 1e-9
+    set preconditioner     = amg
+  end
+end

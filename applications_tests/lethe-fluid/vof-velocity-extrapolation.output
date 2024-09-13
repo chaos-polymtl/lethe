@@ -1,0 +1,387 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       960
+   Number of degrees of freedom: 3075
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 1025
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+0.0000e+00      2.1265e-01              2.1265e-04         0.0000e+00         0.0000e+00      1.9874e+00              1.9874e+00         0.0000e+00         0.0000e+00           5.0000e-01 
+   Number of active cells:       1323
+   Number of degrees of freedom: 4299
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 1433
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+0.0000e+00      1.9794e-01              1.9794e-04         0.0000e+00         0.0000e+00      2.0021e+00              2.0021e+00         0.0000e+00         0.0000e+00           5.0000e-01 
+   Number of active cells:       2055
+   Number of degrees of freedom: 6753
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 2251
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+0.0000e+00      1.9983e-01              1.9983e-04         0.0000e+00         0.0000e+00      2.0002e+00              2.0002e+00         0.0000e+00         0.0000e+00           5.0000e-01 
+   Number of active cells:       3540
+   Number of degrees of freedom: 11709
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 3903
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+0.0000e+00      1.9990e-01              1.9990e-04         0.0000e+00         0.0000e+00      2.0001e+00              2.0001e+00         0.0000e+00         0.0000e+00           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.08     Time step: 0.08     CFL: 0       
+*******************************************************************************
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+8.0000e-02      1.9990e-01              1.9990e-04         8.5913e-11         2.7038e-08      2.0001e+00              2.0001e+00        -6.9607e-08        -3.1862e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.224    Time step: 0.144    CFL: 0.116391
+*******************************************************************************
+   Number of active cells:       2952
+   Number of degrees of freedom: 9942
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 3314
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.2400e-01      1.9995e-01              1.9995e-04         9.4122e-12         7.1104e-08      2.0000e+00              2.0000e+00         1.0087e-07        -7.5020e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.464    Time step: 0.24     CFL: 0.36762 
+*******************************************************************************
+   Number of active cells:       3825
+   Number of degrees of freedom: 12600
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 4200
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+4.6400e-01      2.0001e-01              2.0001e-04        -1.6539e-11         8.7146e-08      2.0000e+00              2.0000e+00         1.6882e-07        -9.2152e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.591961 Time step: 0.127961 CFL: 1.40668 
+*******************************************************************************
+   Number of active cells:       4383
+   Number of degrees of freedom: 14298
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 4766
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+5.9196e-01      2.0003e-01              2.0003e-04         1.4714e-10         7.5834e-08      2.0000e+00              2.0000e+00         1.8253e-07        -8.1875e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 5        Time: 0.710382 Time step: 0.118421 CFL: 0.810421
+*******************************************************************************
+   Number of active cells:       4713
+   Number of degrees of freedom: 15330
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5110
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+7.1038e-01      2.0005e-01              2.0005e-04         2.1469e-10         5.5896e-08      2.0000e+00              2.0000e+00         1.9729e-07        -5.9709e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 6        Time: 0.802307 Time step: 0.091925 CFL: 0.966175
+*******************************************************************************
+   Number of active cells:       4791
+   Number of degrees of freedom: 15570
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5190
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+8.0231e-01      2.0006e-01              2.0006e-04         1.1334e-10         3.0564e-08      1.9999e+00              1.9999e+00         1.6626e-07        -3.3801e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.912617 Time step: 0.11031  CFL: 0.563587
+*******************************************************************************
+   Number of active cells:       4803
+   Number of degrees of freedom: 15603
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5201
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+9.1262e-01      2.0007e-01              2.0007e-04         5.0944e-09        -9.6232e-10      1.9999e+00              1.9999e+00         1.4516e-07        -1.3698e-06           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 8        Time: 1.04206  Time step: 0.129444 CFL: 0.639139
+*******************************************************************************
+   Number of active cells:       4848
+   Number of degrees of freedom: 15678
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5226
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.0421e+00      2.0008e-01              2.0008e-04         5.0609e-09        -3.4988e-08      1.9999e+00              1.9999e+00         7.6268e-08         3.1970e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 9        Time: 1.18269  Time step: 0.14063  CFL: 0.690341
+*******************************************************************************
+   Number of active cells:       5097
+   Number of degrees of freedom: 16461
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5487
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.1827e+00      2.0010e-01              2.0010e-04         4.9199e-09        -5.8541e-08      1.9999e+00              1.9999e+00         1.0829e-07         5.6551e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 10       Time: 1.34202  Time step: 0.159324 CFL: 0.661998
+*******************************************************************************
+   Number of active cells:       5283
+   Number of degrees of freedom: 17028
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5676
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.3420e+00      2.0012e-01              2.0012e-04         4.7270e-09        -6.7500e-08      1.9999e+00              1.9999e+00         1.2600e-07         6.5816e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 11       Time: 1.53313  Time step: 0.191117 CFL: 0.625237
+*******************************************************************************
+   Number of active cells:       5331
+   Number of degrees of freedom: 17169
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5723
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.5331e+00      2.0014e-01              2.0014e-04         4.3782e-09        -5.5487e-08      1.9999e+00              1.9999e+00         1.4369e-07         5.3794e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 12       Time: 1.76247  Time step: 0.22934  CFL: 0.433042
+*******************************************************************************
+   Number of active cells:       5355
+   Number of degrees of freedom: 17238
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5746
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+1.7625e+00      2.0016e-01              2.0016e-04         3.9601e-09        -8.4693e-09      1.9998e+00              1.9998e+00         1.8923e-07         6.2176e-06           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 13       Time: 2.03768  Time step: 0.275208 CFL: 0.462054
+*******************************************************************************
+   Number of active cells:       5355
+   Number of degrees of freedom: 17226
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5742
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.0377e+00      2.0019e-01              2.0019e-04         3.1288e-09         4.7713e-08      1.9998e+00              1.9998e+00         1.8741e-07        -4.9972e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 14       Time: 2.19665  Time step: 0.158965 CFL: 1.29844 
+*******************************************************************************
+   Number of active cells:       5358
+   Number of degrees of freedom: 17268
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5756
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.1966e+00      2.0020e-01              2.0020e-04         3.1847e-09         6.3994e-08      1.9998e+00              1.9998e+00         1.8002e-07        -6.6220e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 15       Time: 2.32254  Time step: 0.125897 CFL: 0.946993
+*******************************************************************************
+   Number of active cells:       5379
+   Number of degrees of freedom: 17322
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5774
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.3225e+00      2.0021e-01              2.0021e-04         3.0360e-09         6.6223e-08      1.9998e+00              1.9998e+00         1.8445e-07        -6.8493e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 16       Time: 2.42856  Time step: 0.106016 CFL: 0.890648
+*******************************************************************************
+   Number of active cells:       5460
+   Number of degrees of freedom: 17565
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5855
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.4286e+00      2.0023e-01              2.0023e-04         3.2360e-09         6.0578e-08      1.9998e+00              1.9998e+00         2.0863e-07        -6.3084e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 17       Time: 2.53052  Time step: 0.101959 CFL: 0.779841
+*******************************************************************************
+   Number of active cells:       5529
+   Number of degrees of freedom: 17757
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5919
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.5305e+00      2.0024e-01              2.0024e-04         2.9368e-09         4.7598e-08      1.9998e+00              1.9998e+00         2.3097e-07        -4.9779e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 18       Time: 2.63191  Time step: 0.101391 CFL: 0.754198
+*******************************************************************************
+   Number of active cells:       5493
+   Number of degrees of freedom: 17658
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5886
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.6319e+00      2.0025e-01              2.0025e-04         2.6029e-09         2.8067e-08      1.9997e+00              1.9997e+00         2.3961e-07        -2.9829e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 19       Time: 2.73604  Time step: 0.104134 CFL: 0.730245
+*******************************************************************************
+   Number of active cells:       5481
+   Number of degrees of freedom: 17601
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5867
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.7360e+00      2.0026e-01              2.0026e-04         2.6224e-09         7.0881e-09      1.9997e+00              1.9997e+00         2.4995e-07        -9.1374e-06           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 20       Time: 2.84488  Time step: 0.108841 CFL: 0.717568
+*******************************************************************************
+   Number of active cells:       5505
+   Number of degrees of freedom: 17661
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5887
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.8449e+00      2.0028e-01              2.0028e-04         2.5658e-09        -1.3442e-08      1.9997e+00              1.9997e+00         2.5179e-07         1.1597e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 21       Time: 2.95899  Time step: 0.114102 CFL: 0.715417
+*******************************************************************************
+   Number of active cells:       5505
+   Number of degrees of freedom: 17679
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5893
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+2.9590e+00      2.0029e-01              2.0029e-04         2.5110e-09        -3.2278e-08      1.9997e+00              1.9997e+00         2.3664e-07         3.0399e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 22       Time: 3.08251  Time step: 0.123524 CFL: 0.692793
+*******************************************************************************
+   Number of active cells:       5574
+   Number of degrees of freedom: 17886
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 5962
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+3.0825e+00      2.0031e-01              2.0031e-04         2.3423e-09        -4.4107e-08      1.9997e+00              1.9997e+00         2.3965e-07         4.2501e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 23       Time: 3.22631  Time step: 0.143797 CFL: 0.644263
+*******************************************************************************
+   Number of active cells:       5619
+   Number of degrees of freedom: 18000
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 6000
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+3.2263e+00      2.0032e-01              2.0032e-04         2.2542e-09        -4.6228e-08      1.9997e+00              1.9997e+00         2.3655e-07         4.4454e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 24       Time: 3.39886  Time step: 0.172557 CFL: 0.556027
+*******************************************************************************
+   Number of active cells:       5730
+   Number of degrees of freedom: 18354
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 6118
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+3.3989e+00      2.0033e-01              2.0033e-04         2.1450e-09        -3.3694e-08      1.9997e+00              1.9997e+00         2.3173e-07         3.2149e-05           5.0000e-01 
+
+*******************************************************************************
+Transient iteration: 25       Time: 3.6      Time step: 0.201136 CFL: 0.315783
+*******************************************************************************
+   Number of active cells:       5682
+   Number of degrees of freedom: 18222
+   Volume of triangulation:      2.2
+   Number of VOF degrees of freedom: 6074
+
+----------------------
+VOF Mass Conservation
+----------------------
+   time    surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
+3.6000e+00      2.0035e-01              2.0035e-04         2.1670e-09        -5.5574e-09      1.9996e+00              1.9996e+00         2.2293e-07         3.7573e-06           5.0000e-01 
