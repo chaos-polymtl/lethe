@@ -340,6 +340,12 @@ Tracer<dim>::assemble_system_matrix_dg()
         StabilizedDGMethodsCopyData                          &copy_data) {
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+      const unsigned int n_dofs = fe_iv.n_current_interface_dofs();
+
+      copy_data.face_data.emplace_back();
+      auto &copy_data_face = copy_data.face_data.back();
+      copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+      copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -691,46 +697,30 @@ Tracer<dim>::assemble_system_rhs_dg()
       beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+      const unsigned int n_dofs   = fe_iv.n_current_interface_dofs();
+      const auto        &q_points = fe_iv.get_quadrature_points();
 
 
-
-      const auto &q_points = fe_iv.get_quadrature_points();
-
-      // Allocate memory for the faces calculation
       copy_data.face_data.emplace_back();
-      auto &copy_data_face = copy_data.face_data.back();
-
-      const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
+      auto &copy_data_face             = copy_data.face_data.back();
       copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
       copy_data_face.cell_rhs.reinit(n_dofs);
 
-      const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
-      const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
-
-      std::vector<double> values_here(q_points.size());
-      std::vector<double> values_there(q_points.size());
+      scratch_data.values_here.resize(q_points.size());
+      scratch_data.values_there.resize(q_points.size());
+      scratch_data.tracer_value_jump.resize(q_points.size());
+      scratch_data.tracer_average_gradient.resize(q_points.size());
       fe_iv.get_fe_face_values(0).get_function_values(evaluation_point,
-                                                      values_here);
-      fe_iv.get_fe_face_values(1).get_function_values(evaluation_point,
-                                                      values_there);
-
-      std::vector<Tensor<1, dim>> tracer_average_gradient(q_points.size());
-      std::vector<double>         tracer_value_jump(q_points.size());
-
-      // Calculate diffusivity at the faces
-      auto &properties_manager =
-        this->simulation_parameters.physical_properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      std::map<field, std::vector<double>> fields;
-      std::vector<double>                  tracer_diffusivity(q_points.size());
-      diffusivity_model->vector_value(fields, tracer_diffusivity);
+                                                      scratch_data.values_here);
+      fe_iv.get_fe_face_values(1).get_function_values(
+        evaluation_point, scratch_data.values_there);
 
 
-      fe_iv.get_jump_in_function_values(evaluation_point, tracer_value_jump);
+      fe_iv.get_jump_in_function_values(evaluation_point,
+                                        scratch_data.tracer_value_jump);
 
-      fe_iv.get_average_of_function_gradients(evaluation_point,
-                                              tracer_average_gradient);
+      fe_iv.get_average_of_function_gradients(
+        evaluation_point, scratch_data.tracer_average_gradient);
 
 
 
@@ -744,48 +734,14 @@ Tracer<dim>::assemble_system_rhs_dg()
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
       fe_face_values_fd.reinit(velocity_cell, f);
-
-      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      scratch_data.face_velocity_values.resize(q_points.size());
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        face_velocity_values);
+        scratch_data.face_velocity_values);
 
-      for (unsigned int q = 0; q < q_points.size(); ++q)
-        {
-          const double velocity_dot_n = face_velocity_values[q] * normals[q];
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            {
-              // Assemble advection terms with upwinding
-              if (velocity_dot_n > 0)
-                {
-                  copy_data_face.cell_rhs(i) -=
-                    fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                    * values_here[q]                 // \phi^{upwind}
-                    * velocity_dot_n                 // (\beta .n)
-                    * JxW[q];                        // dx
-                }
-              else
-                {
-                  copy_data_face.cell_rhs(i) -=
-                    fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                    * values_there[q]                // \phi^{upwind}
-                    * velocity_dot_n                 // (\beta .n)
-                    * JxW[q];                        // dx
-                }
 
-              // Assemble the diffusion term using nitsche symmetric interior
-              // penalty method. See Larson Chap. 14. P.362
-
-              copy_data_face.cell_rhs(i) -=
-                (-tracer_diffusivity[q] * tracer_average_gradient[q] *
-                   normals[q] * fe_iv.jump_in_shape_values(i, q) -
-                 tracer_diffusivity[q] * tracer_value_jump[q] * normals[q] *
-                   fe_iv.average_of_shape_gradients(i, q) +
-                 beta * tracer_value_jump[q] *
-                   fe_iv.jump_in_shape_values(i, q)) *
-                JxW[q];
-            }
-        }
+      TracerAssemblerSIPG<dim> assembler;
+      assembler.assemble_rhs(scratch_data, copy_data);
     };
 
 
@@ -1196,10 +1152,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                } // end face is a boundary face
-            } // end loop on faces
-        } // end condition cell at boundary
-    } // end loop on cells
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores

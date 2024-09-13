@@ -505,7 +505,66 @@ template <int dim>
 void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
-{}
+{
+  double                  beta     = 10. / scratch_data.cell_size;
+  FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
+  const auto             &q_points = fe_iv.get_quadrature_points();
+  const unsigned int      n_dofs   = fe_iv.n_current_interface_dofs();
+
+  auto &copy_data_face             = copy_data.face_data.back();
+  copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+  copy_data_face.cell_rhs.reinit(n_dofs);
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  // Calculate diffusivity at the faces
+  auto      &properties_manager = scratch_data.properties_manager;
+  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity(q_points.size());
+  diffusivity_model->vector_value(fields, tracer_diffusivity);
+
+
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          // Assemble advection terms with upwinding
+          if (velocity_dot_n > 0)
+            {
+              copy_data_face.cell_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_here[q]    // \phi^{upwind}
+                * velocity_dot_n                 // (\beta .n)
+                * JxW[q];                        // dx
+            }
+          else
+            {
+              copy_data_face.cell_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_there[q]   // \phi^{upwind}
+                * velocity_dot_n                 // (\beta .n)
+                * JxW[q];                        // dx
+            }
+
+          // Assemble the diffusion term using nitsche symmetric interior
+          // penalty method. See Larson Chap. 14. P.362
+
+          copy_data_face.cell_rhs(i) -=
+            (-tracer_diffusivity[q] * scratch_data.tracer_average_gradient[q] *
+               normals[q] * fe_iv.jump_in_shape_values(i, q) -
+             tracer_diffusivity[q] * scratch_data.tracer_value_jump[q] *
+               normals[q] * fe_iv.average_of_shape_gradients(i, q) +
+             beta * scratch_data.tracer_value_jump[q] *
+               fe_iv.jump_in_shape_values(i, q)) *
+            JxW[q];
+        }
+    }
+}
 
 template class TracerAssemblerSIPG<2>;
 template class TracerAssemblerSIPG<3>;
