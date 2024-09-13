@@ -449,7 +449,57 @@ void
 TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
-{}
+{
+  double                  beta     = 10. / scratch_data.cell_size;
+  FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
+  const auto             &q_points = fe_iv.get_quadrature_points();
+  copy_data.face_data.emplace_back();
+
+  auto &copy_data_face = copy_data.face_data.back();
+
+  const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
+  copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+  copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  // Calculate diffusivity at the faces
+  auto      &properties_manager = scratch_data.properties_manager;
+  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity(q_points.size());
+  diffusivity_model->vector_value(fields, tracer_diffusivity);
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        for (unsigned int j = 0; j < n_dofs; ++j)
+          {
+            copy_data_face.cell_matrix(i, j) +=
+              fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+              * fe_iv.shape_value((velocity_dot_n > 0),
+                                  j,
+                                  q) // phi_j^{upwind}
+              * velocity_dot_n       // (\beta .n)
+              * JxW[q];              // dx
+
+            // Assemble the diffusion term using nitsche
+            // symmetric interior penalty method. See Larson Chap. 14. P.362
+
+            copy_data_face.cell_matrix(i, j) +=
+              (-tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(j, q) *
+                 normals[q] * fe_iv.jump_in_shape_values(i, q) -
+               tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(i, q) *
+                 normals[q] * fe_iv.jump_in_shape_values(j, q) +
+               beta * fe_iv.jump_in_shape_values(j, q) *
+                 fe_iv.jump_in_shape_values(i, q)) *
+              JxW[q];
+          }
+    }
+}
 
 template <int dim>
 void

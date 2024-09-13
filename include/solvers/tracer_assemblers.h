@@ -226,6 +226,9 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
 {
 public:
+  TracerAssemblerSIPG()
+  {}
+
   /**
    * @brief assemble_matrix Interface for the call to matrix assembly
    * @param scratch_data Scratch data containing the Tracer information.

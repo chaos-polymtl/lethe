@@ -338,31 +338,8 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      double beta = 10;
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
-      const auto &q_points = fe_iv.get_quadrature_points();
-      copy_data.face_data.emplace_back();
-
-      auto &copy_data_face = copy_data.face_data.back();
-
-      const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
-      copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-      copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
-
-      const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
-      const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
-
-
-      // Calculate diffusivity at the faces
-      auto &properties_manager =
-        this->simulation_parameters.physical_properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      std::map<field, std::vector<double>> fields;
-      std::vector<double>                  tracer_diffusivity(q_points.size());
-      diffusivity_model->vector_value(fields, tracer_diffusivity);
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -374,41 +351,14 @@ Tracer<dim>::assemble_system_matrix_dg()
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
       fe_face_values_fd.reinit(velocity_cell, f);
-
-      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      const auto &q_points = fe_iv.get_quadrature_points();
+      scratch_data.face_velocity_values.resize(q_points.size());
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        face_velocity_values);
+        scratch_data.face_velocity_values);
 
-      for (unsigned int q = 0; q < q_points.size(); ++q)
-        {
-          const double velocity_dot_n = face_velocity_values[q] * normals[q];
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            for (unsigned int j = 0; j < n_dofs; ++j)
-              {
-                copy_data_face.cell_matrix(i, j) +=
-                  fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                  * fe_iv.shape_value((velocity_dot_n > 0),
-                                      j,
-                                      q) // phi_j^{upwind}
-                  * velocity_dot_n       // (\beta .n)
-                  * JxW[q];              // dx
-
-                // Assemble the diffusion term using nitsche
-                // symmetric interior penalty method. See Larson Chap. 14. P.362
-
-                copy_data_face.cell_matrix(i, j) +=
-                  (-tracer_diffusivity[q] *
-                     fe_iv.average_of_shape_gradients(j, q) * normals[q] *
-                     fe_iv.jump_in_shape_values(i, q) -
-                   tracer_diffusivity[q] *
-                     fe_iv.average_of_shape_gradients(i, q) * normals[q] *
-                     fe_iv.jump_in_shape_values(j, q) +
-                   beta * fe_iv.jump_in_shape_values(j, q) *
-                     fe_iv.jump_in_shape_values(i, q)) *
-                  JxW[q];
-              }
-        }
+      TracerAssemblerSIPG<dim> assembler;
+      assembler.assemble_matrix(scratch_data, copy_data);
     };
 
 
@@ -1246,10 +1196,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores

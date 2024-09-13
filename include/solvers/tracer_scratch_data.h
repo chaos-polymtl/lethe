@@ -333,6 +333,7 @@ public:
   FEValues<dim>               fe_values_fd;
   FEFaceValues<dim>           fe_face_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<Tensor<1, dim>> face_velocity_values;
 };
 
 #endif
