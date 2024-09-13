@@ -240,9 +240,6 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      double beta = 10;
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
-
       // Identify which boundary condition corresponds to the boundary id. If
       // this boundary condition is not identified, then exit the simulation
       // instead of assuming an outlet.
@@ -251,6 +248,11 @@ Tracer<dim>::assemble_system_matrix_dg()
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
+
+      double beta =
+        simulation_parameters.boundary_conditions_tracer.beta[boundary_index];
+      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
+
 
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
@@ -608,12 +610,6 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      double beta = 10;
-
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
-
-
-
       // Identify which boundary condition corresponds to the boundary id. If
       // this boundary condition is not identified, then exit the simulation
       // instead of assuming an outlet.
@@ -621,6 +617,11 @@ Tracer<dim>::assemble_system_rhs_dg()
         cell->face(face_no)->boundary_id();
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
+
+      double beta =
+        simulation_parameters.boundary_conditions_tracer.beta[boundary_index];
+      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
+
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
       const FEFaceValuesBase<dim> &fe_face =
@@ -1245,10 +1246,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                } // end face is a boundary face
-            } // end loop on faces
-        } // end condition cell at boundary
-    } // end loop on cells
+                }     // end face is a boundary face
+            }         // end loop on faces
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores
