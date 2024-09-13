@@ -1361,7 +1361,7 @@ private:
    *
    * @return minimum overlap for the force calculation.
    */
-  double
+  inline double
   get_force_calculation_threshold_distance()
   {
     if constexpr (contact_model == Parameters::Lagrangian::
@@ -1635,7 +1635,14 @@ private:
             if constexpr (contact_type ==
                           ContactType::ghost_local_periodic_particle_particle)
               {
-                // Update all the information
+                // In ghost_local periodic contacts, particle one and two are
+                // swapped when calling the update_contact_information and the
+                // calculate_contact. This is because the first particle
+                // received by these functions
+                // should always be a local particle. In this case, since this
+                // is a ghost_local container, particle_two is the local
+                // particle and particle_one is a ghost particle.
+                //  Update all the information
                 this->update_contact_information(contact_info,
                                                  tangential_relative_velocity,
                                                  normal_relative_velocity_value,
