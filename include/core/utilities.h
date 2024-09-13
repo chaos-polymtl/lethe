@@ -23,8 +23,6 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/grid/grid_tools.h>
-
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
