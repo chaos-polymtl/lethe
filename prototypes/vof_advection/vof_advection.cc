@@ -82,6 +82,36 @@ inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,c
   return D;
 }
 
+template <int dim>
+inline void compute_residual(const Tensor<1, dim> &x_J_to_x_n_real, const Tensor<1, dim> &distance_gradient, const Tensor<2,dim> &transformation_jac, Tensor<1, dim-1> &residual_ref)
+{
+  Tensor<1, dim> residual_real = distance_gradient + 1.0/x_J_to_x_n_real.norm()*x_J_to_x_n_real;
+  
+  residual_ref = transformation_jac*residual_real;
+}
+
+template <int dim>
+inline void compute_numerical_jacobian_stencil(const Point<dim-1> x_ref, const double perturbation)
+{
+  std::vector<Point<dim-1>> stencil(2*dim - 2);
+  
+  for (unsigned int i = 0; i < dim - 1; ++i)
+  {
+    for (unsigned int j = 0; j < dim - 1; ++i)
+    {
+      stencil[2*i] = x_ref + perturbation
+      stencil[2*i+1]
+    }
+    
+  }
+}
+
+template <int dim>
+inline void compute_numerical_jacobian(const Tensor<1, dim> &x_J_to_x_n_real, const Tensor<1, dim> &distance_gradient, LAPACKFullMatrix<double> &jacobian_tensor)
+{
+  
+}
+
 template <typename T>
 int
 sgn(T val)
@@ -313,13 +343,13 @@ private:
   VectorType signed_distance;
   VectorType distance;
   
-  
-  
   std::map<types::global_cell_index,std::vector<Point<dim>>> intersection_point;
   
   std::map<types::global_cell_index,Point<dim>> intersection_cell;
   
   std::set<types::global_cell_index> intersection_halo_cell;
+  std::set<types::global_dof_index> dofs_location_status;
+  
     
   VectorType system_rhs;
   
@@ -599,39 +629,49 @@ void
 AdvectionProblem<dim>::compute_sign_distance()
 {   
   
+  pcout << "In redistancation" << std::endl;
+  
   unsigned int n;
   
   if constexpr (dim == 3)
     n = 4;
   if constexpr (dim == 2)
     n = 2;
-    
+  
+  // Store (or precompute) vertex to cells connectivity
   const auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
   
+  // Local distance vetors initialization
   VectorType distance_owned(this->locally_owned_dofs,
                                            mpi_communicator);
   VectorType signed_distance_owned(this->locally_owned_dofs,
-                                           mpi_communicator);                                         
-  std::unordered_set<types::global_dof_index> dofs_location_status;
+                                           mpi_communicator);           
+                                       
+  // Should be initialized to the max distance that we want to redistantiate
+  distance_owned = 10.0;
+                              
+  // 
+  std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
-  distance_owned = DBL_MAX;
-  
+  // Dummy quadrature to have the intersection points 
   const QGaussLobatto<1> quadrature_1D(n);
   
+  // Update flag for the non-matching fe values
   NonMatching::RegionUpdateFlags region_update_flags;
   region_update_flags.surface = update_quadrature_points |
                                 update_normal_vectors;
-                                
+  
+  // non-matching fe values
   NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
                                                     quadrature_1D,
                                                     region_update_flags,
                                                     mesh_classifier,
                                                     dof_handler,
                                                     level_set);
+  // Interface rescontruction visualization
   Visualization<dim> intersection_data_out;  
   
   intersection_data_out.build_patches(dof_handler, non_matching_fe_values);
-  
   
   intersection_data_out.write_vtu_with_pvtu_record("output/",
                                       "interface",
@@ -639,15 +679,18 @@ AdvectionProblem<dim>::compute_sign_distance()
                                       MPI_COMM_WORLD,
                                       3);
   
+  // DoF coordinates
   std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping,
                                        dof_handler);
   
+  
+  pcout << "In intersection" << std::endl;
+  
+  // Loop to identify intersected cells and compute the intersection points (interface reconstruction)
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
-  
     if (cell->is_locally_owned())
     {
-  
       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
@@ -656,9 +699,11 @@ AdvectionProblem<dim>::compute_sign_distance()
       
       non_matching_fe_values.reinit(cell);
     
+      // Surface (interface reconstruction in the intersected cell) fe values (non-empty if the cell is indeed intersected)
       const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
         &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
-    
+      
+      // If the cell is intersected, reconstruct the interface in it 
       if (surface_fe_values)
       {
         const unsigned int cell_index = cell->global_active_cell_index();
@@ -666,7 +711,8 @@ AdvectionProblem<dim>::compute_sign_distance()
         std::vector<Point<dim>> cells_intersection_point;
                   
         cells_intersection_point.reserve(n);
-        // rescontruct interface
+        
+        // Rescontruct interface using Gauss Lobatto quadrature first points (because Gauss Lobatto includes extremities as the first points -> first 2 in 2D to define the intersection line, first 3 in 3D to define the intersection plane)
         for (const unsigned int q :
              surface_fe_values->quadrature_point_indices())
           {
@@ -675,13 +721,14 @@ AdvectionProblem<dim>::compute_sign_distance()
             cells_intersection_point.push_back(point);
             // intersection_point_set.insert(point);
           }
+          
+        // Store the interface reconstruction 
         intersection_point[cell_index] = cells_intersection_point;
       }
     }
   }
-  // signed_distance = distance_owned;
   
-  // compute second neighbors
+  //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
     if (cell->is_locally_owned())
@@ -692,22 +739,28 @@ AdvectionProblem<dim>::compute_sign_distance()
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
+      // If the cell is not stored in the intersection_point map, it means it is not intersected. So no distance computation for now.
       if (intersection_point.find(cell_index) == intersection_point.end())
       {
         continue;
       }
       
+      // Pre-store intersection points
       std::vector<Point<dim>> cells_intersection_point =  intersection_point.at(cell_index);
-
+      
+      // This will not work in 3D
       const Point<dim> point_0 = cells_intersection_point[0];
       const Point<dim> point_1 = cells_intersection_point[1];
       
       const unsigned int vertices_per_cell =
             GeometryInfo<dim>::vertices_per_cell;
+      
+      // Loop on the vertices of the cell
       for (unsigned int i = 0; i < vertices_per_cell; i++)
       {
         unsigned int vextex_index = cell->vertex_index(i);
-      
+        
+        // Loop vertice's neighbor cells
         for (const auto &neighbor_cell_acc : vetex_2_cells[vextex_index])
         {
           const auto neighbor_cell = neighbor_cell_acc->as_dof_handler_iterator(dof_handler);
@@ -722,9 +775,11 @@ AdvectionProblem<dim>::compute_sign_distance()
           
           intersection_halo_cell.insert(neighbor_cell_index);
       
-          // compute sign distance of intersected cell's dof 
+          // Compute distance of the cell's dof 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
           {
+            dofs_in_interface_halo.insert(dof_indices[i]);
+            
             const Point<dim> y = dof_support_points.at(dof_indices[i]);
           
             double D = compute_point_2_interface_min_distance(point_0, point_1, y);
@@ -739,7 +794,8 @@ AdvectionProblem<dim>::compute_sign_distance()
       
     }
   }
-    
+  
+  // Compute signed distance
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
     if (cell->is_locally_owned())
@@ -761,12 +817,75 @@ AdvectionProblem<dim>::compute_sign_distance()
     }
   }
       
-  
+  // Exchange
   signed_distance = signed_distance_owned;
   distance = distance_owned;
   
+  pcout << "In redistancation from the rest of the mesh" << std::endl;
+  const unsigned int opposite_faces_per_dofs = 2;
+  std::vector<std::vector<unsigned int>> opposite_faces_indices(4, std::vector<unsigned int>(opposite_faces_per_dofs));
+  opposite_faces_indices[0] = {3,1};
+  opposite_faces_indices[1] = {0,3};
+  opposite_faces_indices[2] = {1,2};
+  opposite_faces_indices[3] = {2,0};
   
   
+  // Compute the rest of the mesh
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      
+      cell->get_dof_indices(dof_indices);
+      
+      std::vector<double> cell_dof_values(dofs_per_cell);
+      cell->get_dof_values(distance, cell_dof_values.begin(), cell_dof_values.end());
+      
+      
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        if (dofs_in_interface_halo.find(dof_indices[i]) == dofs_in_interface_halo.end())
+          continue;
+        
+        // Get opposite faces 
+        const std::vector<unsigned int> dof_opposite_faces = opposite_faces_indices[i];
+        
+        const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
+        
+        // Loop on opposite faces
+        for (unsigned int j = 0; j < opposite_faces_per_dofs; ++j)
+        {
+          const auto opposite_face = cell->face(dof_opposite_faces[j]);
+          
+          const Point<dim> x_n_real = opposite_face->barycenter();
+          Point<dim-1> x_n_ref(0.5);
+          
+          FEFaceValues<dim> fe_face_values(fe, Quadrature<dim-1>(x_n_ref), update_gradients | update_jacobians | update_jacobian_grads);
+          
+          fe_face_values.reinit(cell, opposite_face);
+          
+          std::vector<Tensor<1, dim>> distance_gradient(1);
+          fe_face_values.get_function_gradients(distance,distance_gradient);
+          
+          Tensor<1, dim> x_J_to_x_n_real = x_J_real - x_n_real;
+          Tensor<2, dim> transformation_jac = fe_face_values.jacobian(0);
+          
+          Tensor<3, dim> transformation_jac_grad = fe_face_values.jacobian_grad(0);
+          
+          Tensor<2, dim>  relous = transformation_jac_grad*x_J_to_x_n_real;
+          
+
+          
+          
+        }
+      }
+    }
+  }
   
   
   // const Tensor<1,dim> d = point_1 - point_0;
@@ -844,7 +963,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(8);
+  triangulation.refine_global(4);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
@@ -905,7 +1024,6 @@ int main(int argc, char *argv[])
 Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
 try
   {
-    
     AdvectionProblem<2> advection_problem_2d;
     advection_problem_2d.run();
   }
