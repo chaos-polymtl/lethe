@@ -245,7 +245,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      // Check if the post processed variable needs to be calculated with the
+      // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
             Parameters::InitialConditionType::average_velocity_profile &&
@@ -273,7 +273,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
     }
   else
     {
-      // Check if the post processed variable needs to be calculated with the
+      // Check if the post-processed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
             Parameters::InitialConditionType::average_velocity_profile &&
@@ -320,8 +320,6 @@ VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
                                               copy_data.local_dof_indices,
                                               this->system_rhs);
 }
-
-
 
 template <int dim>
 void

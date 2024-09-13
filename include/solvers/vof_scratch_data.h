@@ -244,28 +244,28 @@ public:
           previous_solutions[p], this->previous_velocity_values[p]);
       }
 
-    if (!ale.enabled())
-      return;
-
-    // ALE enabled, so extract the ALE velocity and subtract it from the
-    // velocity obtained from the fluid dynamics
-    Tensor<1, dim>                                  velocity_ale;
-    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
-      ale.velocity;
-    Vector<double> velocity_ale_vector(dim);
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
+    if (ale.enabled())
       {
-        velocity_ale_function->vector_value(quadrature_points[q],
-                                            velocity_ale_vector);
-        for (unsigned int d = 0; d < dim; ++d)
-          velocity_ale[d] = velocity_ale_vector[d];
+        // ALE enabled, so extract the ALE velocity and subtract it from the
+        // velocity obtained from the fluid dynamics
+        Tensor<1, dim>                                  velocity_ale;
+        std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+          ale.velocity;
+        Vector<double> velocity_ale_vector(dim);
 
-        velocity_values[q] -= velocity_ale;
-
-        for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        for (unsigned int q = 0; q < n_q_points; ++q)
           {
-            this->previous_velocity_values[p][q] -= velocity_ale;
+            velocity_ale_function->vector_value(quadrature_points[q],
+                                                velocity_ale_vector);
+            for (unsigned int d = 0; d < dim; ++d)
+              velocity_ale[d] = velocity_ale_vector[d];
+
+            velocity_values[q] -= velocity_ale;
+
+            for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+              {
+                this->previous_velocity_values[p][q] -= velocity_ale;
+              }
           }
       }
 
