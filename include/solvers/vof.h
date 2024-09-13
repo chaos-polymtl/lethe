@@ -688,7 +688,6 @@ private:
   void
   apply_phase_filter();
 
-
   GlobalVectorType nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *multiphysics;

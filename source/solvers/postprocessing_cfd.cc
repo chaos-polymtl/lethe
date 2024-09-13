@@ -260,8 +260,13 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
     {
       if (cell->is_locally_owned())
         {
-          h = compute_cell_diameter<dim>(cell->measure(), degree);
           fe_values.reinit(cell);
+
+          // Compute cell diameter
+          double cell_measure =
+            compute_cell_measure_with_JxW(fe_values.get_JxW_values());
+          h = compute_cell_diameter<dim>(cell_measure, degree);
+
           fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
           for (unsigned int q = 0; q < n_q_points; ++q)

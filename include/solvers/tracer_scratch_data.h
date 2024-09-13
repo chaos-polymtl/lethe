@@ -129,21 +129,23 @@ public:
   void
   allocate();
 
-  /** @brief Reinitialize the content of the scratch
+  /** @brief Reinitializes the content of the scratch.
    *
    * Using the FeValues and the content of the solutions and previous solutions,
-   * fills all of the class member of the scratch
+   * fills all of the class member of the scratch.
    *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the fe which is used to fill the FeValues
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the fe which is used to fill the
+   * FeValues.
    *
-   * @param current_solution The present value of the solution for [u,p]
+   * @param[in] current_solution The present value of the solution.
    *
-   * @param previous_solutions The solutions at the previous time steps
+   * @param[in] previous_solutions The solutions at the previous time steps.
    *
-   * @param source_function The function describing the tracer source term
+   * @param[in] source_function The function describing the tracer source term.
    *
-   * @param levelset_function The function describing the particles (if there are any)
+   * @param[in] levelset_function The function describing the particles (if
+   * there are any).
    */
   template <typename VectorType>
   void
@@ -171,8 +173,10 @@ public:
       }
 
     // Compute cell diameter
+    double cell_measure =
+      compute_cell_measure_with_JxW(this->fe_values_tracer.get_JxW_values());
     this->cell_size =
-      compute_cell_diameter<dim>(cell->measure(), fe_tracer.degree);
+      compute_cell_diameter<dim>(cell_measure, fe_tracer.degree);
 
     // Gather tracer (values, gradient and laplacian)
     this->fe_values_tracer.get_function_values(current_solution,
