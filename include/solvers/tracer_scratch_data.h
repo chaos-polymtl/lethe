@@ -259,16 +259,6 @@ public:
       }
 
 
-    // To fix for ALE
-    this->velocity_face_value = std::vector<std::vector<Tensor<1, dim>>>(
-      n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
-    for (const auto face : cell->face_indices())
-      {
-        fe_face_values_fd.reinit(cell, face);
-        this->fe_face_values_fd[velocities].get_function_values(
-          current_solution, this->velocity_face_value[face]);
-      }
-
     if (!ale.enabled())
       return;
 
@@ -335,20 +325,6 @@ public:
   std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
 
-  // Scratch for the face boundary condition
-  std::vector<std::vector<double>> face_JxW;
-  // First vector is face number, second quadrature point, third DOF
-  std::vector<std::vector<std::vector<double>>> phi_face;
-
-  // First vector is face number, second quadrature point
-  std::vector<std::vector<double>>         tracer_face_value;
-  std::vector<std::vector<Tensor<1, dim>>> face_normal;
-
-
-  unsigned int n_faces;
-  unsigned int n_faces_q_points;
-
-
   /**
    * Scratch component for the Navier-Stokes component
    */
@@ -357,8 +333,6 @@ public:
   FEValues<dim>               fe_values_fd;
   FEFaceValues<dim>           fe_face_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
-  // First vector is face number, second quadrature point
-  std::vector<std::vector<Tensor<1, dim>>> velocity_face_value;
 };
 
 #endif
