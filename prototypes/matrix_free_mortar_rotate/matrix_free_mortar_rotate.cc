@@ -328,30 +328,29 @@ main(int argc, char *argv[])
   for (const auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
-        {
-          if (face->boundary_id() == 0)
-            {
-              const auto &indices = all_points_0[point_to_rad(face->center())];
+        if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
+          {
+            // get indices
+            const auto &indices = (face->boundary_id() == 0) ?
+                                    all_points_0[point_to_rad(face->center())] :
+                                    all_points_1[point_to_rad(face->center())];
 
-              for (const auto i : indices)
-                {
-                  is_local.add_index(i);
-                  is_ghost.add_index(i + all_points.size());
-                  is_points.add_index(i);
-                }
-            }
-          else if (face->boundary_id() == 2)
-            {
-              const auto &indices = all_points_1[point_to_rad(face->center())];
-
-              for (const auto i : indices)
-                {
-                  is_local.add_index(i + all_points.size());
-                  is_ghost.add_index(i);
-                  is_points.add_index(i);
-                }
-            }
-        }
+            for (const auto i : indices)
+              {
+                if (face->boundary_id() == 0)
+                  {
+                    is_local.add_index(i);
+                    is_ghost.add_index(i + all_points.size());
+                    is_points.add_index(i);
+                  }
+                else if (face->boundary_id() == 2)
+                  {
+                    is_local.add_index(i + all_points.size());
+                    is_ghost.add_index(i);
+                    is_points.add_index(i);
+                  }
+              }
+          }
 
   is_ghost.subtract_set(is_local);
 
