@@ -320,12 +320,20 @@ main(int argc, char *argv[])
           }
       }
 
-  const auto get_indices = [&](const auto &rad, const auto &bid) {
-    return (bid == 0) ? all_points_0[rad] : all_points_1[rad];
+  const auto get_indices = [&](const auto &rad) {
+    const double tolerance = 1e-8;
+    const double delta =
+      2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
+    const double segment = (rad - delta / 2) / delta;
+
+    if (std::abs(segment - std::round(segment)) < tolerance)
+      return all_points_1[rad];
+    else
+      return all_points_0[rad];
   };
 
-  const auto get_points = [&](const auto &rad, const auto &bid) {
-    const auto              indices = get_indices(rad, bid);
+  const auto get_points = [&](const auto &rad) {
+    const auto              indices = get_indices(rad);
     std::vector<Point<dim>> points(indices.size());
     for (unsigned int i = 0; i < indices.size(); ++i)
       points[i] = all_points[indices[i]];
@@ -343,8 +351,7 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices =
-              get_indices(point_to_rad(face->center()), face->boundary_id());
+            const auto indices = get_indices(point_to_rad(face->center()));
 
             for (const auto i : indices)
               {
@@ -381,12 +388,10 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices =
-              get_indices(point_to_rad(face->center()), face->boundary_id());
+            const auto indices = get_indices(point_to_rad(face->center()));
 
             // get points
-            const auto points =
-              get_points(point_to_rad(face->center()), face->boundary_id());
+            const auto points = get_points(point_to_rad(face->center()));
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
