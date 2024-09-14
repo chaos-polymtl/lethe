@@ -259,6 +259,7 @@ main(int argc, char *argv[])
   const unsigned int n_global_refinements = 2;
   const unsigned int n_quadrature_points  = 3;
   const double       radius               = 1.0;
+  const double       rotate               = 3.0;
 
   parallel::distributed::Triangulation<dim> tria(comm);
   Triangulation<dim>                        tria_0, tria_1;
@@ -266,7 +267,7 @@ main(int argc, char *argv[])
 
   // create meshes
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
-  GridTools::rotate(3, tria_0);
+  GridTools::rotate(rotate, tria_0);
 
   GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
   for (const auto &face : tria_1.active_face_iterators())
@@ -287,7 +288,7 @@ main(int argc, char *argv[])
 
   // create surface meshes
   GridGenerator::hyper_sphere(tria_0_surface, {}, radius);
-  GridTools::rotate(3, tria_0_surface);
+  GridTools::rotate(rotate, tria_0_surface);
   tria_0_surface.refine_global(n_global_refinements + 1);
 
   GridGenerator::hyper_sphere(tria_1_surface, {}, radius);
@@ -362,7 +363,7 @@ main(int argc, char *argv[])
   // output result
   std::vector<Point<dim>>          relevant_points(is_points.n_elements());
   std::vector<std::vector<double>> properties(is_points.n_elements(),
-                                              std::vector<double>(2));
+                                              std::vector<double>(2, -1));
 
   for (const auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
