@@ -320,27 +320,45 @@ main(int argc, char *argv[])
           }
       }
 
-  const auto get_indices = [&](const auto &rad) {
+  const auto get_config =
+    [&](const auto &rad) -> std::pair<unsigned int, unsigned int> {
     const double tolerance = 1e-8;
     const double delta =
       2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
     const double rotate_pi = 2 * numbers::PI * rotate / 360.0;
 
+    const double segment     = (rad - delta / 2) / delta;
+    const double segment_rot = (rad - delta / 2 - rotate_pi) / delta;
+
     if (std::abs(rotate_pi / delta - std::round(rotate_pi / delta)) < tolerance)
       {
         // case 1: mesh is aligned
-        return all_points_1[rad];
+        return {0, std::round(segment)};
       }
     else
       {
         // case 2: mesh is not aligned
-
-        const double segment = (rad - delta / 2) / delta;
-
         if (std::abs(segment - std::round(segment)) < tolerance)
-          return all_points_1[rad];
+          return {2, std::round(segment)};
         else
-          return all_points_0[rad];
+          return {1, std::round(segment_rot)};
+      }
+  };
+
+  const auto get_indices = [&](const auto &rad) {
+    const auto [type, id] = get_config(rad);
+
+    if (type == 0) // aligned
+      {
+        return all_points_0[rad];
+      }
+    else if (type == 1) // inside
+      {
+        return all_points_0[rad];
+      }
+    else // outside
+      {
+        return all_points_1[rad];
       }
   };
 
