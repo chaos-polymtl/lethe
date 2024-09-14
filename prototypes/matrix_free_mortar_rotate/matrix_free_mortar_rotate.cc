@@ -324,35 +324,33 @@ main(int argc, char *argv[])
   IndexSet is_ghost(all_points.size() * 2);
   IndexSet is_points(all_points.size());
 
-  for (const auto &cell_0 : tria.active_cell_iterators())
-    if (cell_0->is_locally_owned())
-      for (const auto &face_0 : cell_0->face_iterators())
-        if (face_0->boundary_id() == 0)
-          {
-            const auto &indices = all_points_0[point_to_rad(face_0->center())];
+  for (const auto &cell : tria.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto &face : cell->face_iterators())
+        {
+          if (face->boundary_id() == 0)
+            {
+              const auto &indices = all_points_0[point_to_rad(face->center())];
 
-            for (const auto i : indices)
-              {
-                is_local.add_index(i + 0);
-                is_ghost.add_index(i + all_points.size());
-                is_points.add_index(i + 0);
-              }
-          }
+              for (const auto i : indices)
+                {
+                  is_local.add_index(i);
+                  is_ghost.add_index(i + all_points.size());
+                  is_points.add_index(i);
+                }
+            }
+          else if (face->boundary_id() == 2)
+            {
+              const auto &indices = all_points_1[point_to_rad(face->center())];
 
-  for (const auto &cell_1 : tria.active_cell_iterators())
-    if (cell_1->is_locally_owned())
-      for (const auto &face_1 : cell_1->face_iterators())
-        if (face_1->boundary_id() == 2)
-          {
-            const auto &indices = all_points_1[point_to_rad(face_1->center())];
-
-            for (const auto i : indices)
-              {
-                is_local.add_index(i + all_points.size());
-                is_ghost.add_index(i + 0);
-                is_points.add_index(i + 0);
-              }
-          }
+              for (const auto i : indices)
+                {
+                  is_local.add_index(i + all_points.size());
+                  is_ghost.add_index(i);
+                  is_points.add_index(i);
+                }
+            }
+        }
 
   is_ghost.subtract_set(is_local);
 
