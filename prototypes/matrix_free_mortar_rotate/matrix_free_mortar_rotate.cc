@@ -153,6 +153,29 @@ compute_quadrature(double             rad_00,
   return {phi.get_quadrature_points(), phi.get_JxW_values()};
 }
 
+
+template <int dim>
+double
+point_to_rad(const Point<dim> &point)
+{
+  const double temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
+
+  if (point[1] >= 0.0)
+    {
+      if (point[0] >= 0.0)
+        return temp;
+      else
+        return numbers::PI - temp;
+    }
+  else
+    {
+      if (point[0] >= 0.0)
+        return 2 * numbers::PI - temp;
+      else
+        return numbers::PI + temp;
+    }
+};
+
 template <int structdim, int dim, int spacedim>
 std::vector<Point<spacedim>>
 compute_quadrature(
@@ -168,25 +191,6 @@ compute_quadrature(
   // helper function to 1) guarantee that all segments have the same orientation
   // and 2) periodicities are handled correctly -> split up into two segment
   const auto create_sections = [](const auto &cell) {
-    const auto point_to_rad = [](const auto point) {
-      const auto temp = std::atan(std::abs(point[1]) / std::abs(point[0]));
-
-      if (point[1] >= 0.0)
-        {
-          if (point[0] >= 0.0)
-            return temp;
-          else
-            return numbers::PI - temp;
-        }
-      else
-        {
-          if (point[0] >= 0.0)
-            return 2 * numbers::PI - temp;
-          else
-            return numbers::PI + temp;
-        }
-    };
-
     const auto cross_product = [](const auto &p0, const auto &p1) {
       Tensor<1, 3, double> t0;
       Tensor<1, 3, double> t1;
@@ -283,12 +287,10 @@ main(int argc, char *argv[])
 
   const FloatingPointComparator<double> comparator(1e-6);
 
-  std::
-    map<Point<dim>, std::vector<unsigned int>, FloatingPointComparator<double>>
-      all_points_0(comparator);
-  std::
-    map<Point<dim>, std::vector<unsigned int>, FloatingPointComparator<double>>
-      all_points_1(comparator);
+  std::map<double, std::vector<unsigned int>, FloatingPointComparator<double>>
+    all_points_0(comparator);
+  std::map<double, std::vector<unsigned int>, FloatingPointComparator<double>>
+    all_points_1(comparator);
 
   for (const auto &face_0 : tria_0_surface.active_cell_iterators())
     for (const auto &face_1 : tria_1_surface.active_cell_iterators())
@@ -298,8 +300,10 @@ main(int argc, char *argv[])
 
         for (const auto &p : points)
           {
-            all_points_0[face_0->center()].emplace_back(all_points.size());
-            all_points_1[face_1->center()].emplace_back(all_points.size());
+            all_points_0[point_to_rad(face_0->center())].emplace_back(
+              all_points.size());
+            all_points_1[point_to_rad(face_1->center())].emplace_back(
+              all_points.size());
             all_points.emplace_back(p);
           }
       }
@@ -313,7 +317,7 @@ main(int argc, char *argv[])
       for (const auto &face_0 : cell_0->face_iterators())
         if (face_0->boundary_id() == 0)
           {
-            const auto &indices = all_points_0[face_0->center()];
+            const auto &indices = all_points_0[point_to_rad(face_0->center())];
 
             for (const auto i : indices)
               {
@@ -327,7 +331,7 @@ main(int argc, char *argv[])
       for (const auto &face_1 : cell_1->face_iterators())
         if (face_1->boundary_id() == 1)
           {
-            const auto &indices = all_points_1[face_1->center()];
+            const auto &indices = all_points_1[point_to_rad(face_1->center())];
 
             for (const auto i : indices)
               {
