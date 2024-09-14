@@ -320,13 +320,12 @@ main(int argc, char *argv[])
           }
       }
 
-  const auto get_indices = [&](const auto &center, const auto &bid) {
-    return (bid == 0) ? all_points_0[point_to_rad(center)] :
-                        all_points_1[point_to_rad(center)];
+  const auto get_indices = [&](const auto &rad, const auto &bid) {
+    return (bid == 0) ? all_points_0[rad] : all_points_1[rad];
   };
 
-  const auto get_points = [&](const auto &center, const auto &bid) {
-    const auto              indices = get_indices(center, bid);
+  const auto get_points = [&](const auto &rad, const auto &bid) {
+    const auto              indices = get_indices(rad, bid);
     std::vector<Point<dim>> points(indices.size());
     for (unsigned int i = 0; i < indices.size(); ++i)
       points[i] = all_points[indices[i]];
@@ -345,7 +344,7 @@ main(int argc, char *argv[])
           {
             // get indices
             const auto indices =
-              get_indices(face->center(), face->boundary_id());
+              get_indices(point_to_rad(face->center()), face->boundary_id());
 
             for (const auto i : indices)
               {
@@ -383,10 +382,11 @@ main(int argc, char *argv[])
           {
             // get indices
             const auto indices =
-              get_indices(face->center(), face->boundary_id());
+              get_indices(point_to_rad(face->center()), face->boundary_id());
 
             // get points
-            const auto points = get_points(face->center(), face->boundary_id());
+            const auto points =
+              get_points(point_to_rad(face->center()), face->boundary_id());
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
