@@ -174,7 +174,19 @@ point_to_rad(const Point<dim> &point)
       else
         return numbers::PI + temp;
     }
-};
+}
+
+template <int dim>
+Point<dim>
+rad_to_point(const double radius, const double rad)
+{
+  Point<dim> point;
+
+  point[0] = radius * std::cos(rad);
+  point[1] = radius * std::sin(rad);
+
+  return point;
+}
 
 template <int structdim, int dim, int spacedim>
 std::vector<Point<spacedim>>
@@ -259,7 +271,9 @@ main(int argc, char *argv[])
   const unsigned int n_global_refinements = 2;
   const unsigned int n_quadrature_points  = 3;
   const double       radius               = 1.0;
-  const double       rotate               = 3.0;
+  const double       rotate               = 0.0;
+
+  QGauss<1> quadrature(n_quadrature_points);
 
   parallel::distributed::Triangulation<dim> tria(comm);
   Triangulation<dim>                        tria_0, tria_1;
@@ -350,7 +364,12 @@ main(int argc, char *argv[])
 
     if (type == 0) // aligned
       {
-        return all_points_0[rad];
+        std::vector<unsigned int> indices;
+
+        for (unsigned int q = 0; q < n_quadrature_points; ++q)
+          indices.emplace_back(id * n_quadrature_points + q);
+
+        return indices;
       }
     else if (type == 1) // inside
       {
@@ -363,6 +382,22 @@ main(int argc, char *argv[])
   };
 
   const auto get_points = [&](const auto &rad) {
+    const auto [type, id] = get_config(rad);
+
+    const double delta =
+      2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
+
+    if (type == 0) // aligned
+      {
+        std::vector<Point<dim>> points;
+
+        for (unsigned int q = 0; q < n_quadrature_points; ++q)
+          points.emplace_back(
+            rad_to_point<dim>(radius, (id + quadrature.point(q)[0]) * delta));
+
+        return points;
+      }
+
     const auto              indices = get_indices(rad);
     std::vector<Point<dim>> points(indices.size());
     for (unsigned int i = 0; i < indices.size(); ++i)
@@ -370,10 +405,14 @@ main(int argc, char *argv[])
     return points;
   };
 
+  // TODO
+  const unsigned int n_points =
+    4 * Utilities::pow(2, n_global_refinements + 1) * n_quadrature_points;
+
   // convert local/ghost points to indices
-  IndexSet is_local(all_points.size() * 2);
-  IndexSet is_ghost(all_points.size() * 2);
-  IndexSet is_points(all_points.size());
+  IndexSet is_local(n_points * 2);
+  IndexSet is_ghost(n_points * 2);
+  IndexSet is_points(n_points);
 
   for (const auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -388,12 +427,12 @@ main(int argc, char *argv[])
                 if (face->boundary_id() == 0)
                   {
                     is_local.add_index(i);
-                    is_ghost.add_index(i + all_points.size());
+                    is_ghost.add_index(i + n_points);
                     is_points.add_index(i);
                   }
                 else if (face->boundary_id() == 2)
                   {
-                    is_local.add_index(i + all_points.size());
+                    is_local.add_index(i + n_points);
                     is_ghost.add_index(i);
                     is_points.add_index(i);
                   }
@@ -426,16 +465,16 @@ main(int argc, char *argv[])
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
                 const auto index =
-                  is_points.index_within_set(indices[i]) % all_points.size();
+                  is_points.index_within_set(indices[i]) % n_points;
 
                 relevant_points[index] = points[i];
 
                 if (face->boundary_id() == 0)
                   properties[index][0] =
-                    is_local.is_element(indices[i] + all_points.size()) ?
+                    is_local.is_element(indices[i] + n_points) ?
                       Utilities::MPI::this_mpi_process(comm) :
-                      ghost_owners[is_ghost.index_within_set(
-                        indices[i] + all_points.size())];
+                      ghost_owners[is_ghost.index_within_set(indices[i] +
+                                                             n_points)];
                 else if (face->boundary_id() == 2)
                   properties[index][1] =
                     is_local.is_element(indices[i]) ?
