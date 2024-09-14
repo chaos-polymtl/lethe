@@ -320,6 +320,19 @@ main(int argc, char *argv[])
           }
       }
 
+  const auto get_indices = [&](const auto &center, const auto &bid) {
+    return (bid == 0) ? all_points_0[point_to_rad(center)] :
+                        all_points_1[point_to_rad(center)];
+  };
+
+  const auto get_points = [&](const auto &center, const auto &bid) {
+    const auto              indices = get_indices(center, bid);
+    std::vector<Point<dim>> points(indices.size());
+    for (unsigned int i = 0; i < indices.size(); ++i)
+      points[i] = all_points[indices[i]];
+    return points;
+  };
+
   // convert local/ghost points to indices
   IndexSet is_local(all_points.size() * 2);
   IndexSet is_ghost(all_points.size() * 2);
@@ -331,9 +344,8 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto &indices = (face->boundary_id() == 0) ?
-                                    all_points_0[point_to_rad(face->center())] :
-                                    all_points_1[point_to_rad(face->center())];
+            const auto indices =
+              get_indices(face->center(), face->boundary_id());
 
             for (const auto i : indices)
               {
@@ -370,14 +382,11 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto &indices = (face->boundary_id() == 0) ?
-                                    all_points_0[point_to_rad(face->center())] :
-                                    all_points_1[point_to_rad(face->center())];
+            const auto indices =
+              get_indices(face->center(), face->boundary_id());
 
             // get points
-            std::vector<Point<dim>> points(indices.size());
-            for (unsigned int i = 0; i < indices.size(); ++i)
-              points[i] = all_points[indices[i]];
+            const auto points = get_points(face->center(), face->boundary_id());
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
