@@ -260,19 +260,30 @@ main(int argc, char *argv[])
   const unsigned int n_quadrature_points  = 3;
   const double       radius               = 1.0;
 
-  parallel::distributed::Triangulation<dim> tria_0(comm);
-  parallel::distributed::Triangulation<dim> tria_1(comm);
+  parallel::distributed::Triangulation<dim> tria(comm);
+  Triangulation<dim>                        tria_0, tria_1;
   Triangulation<dim - 1, dim>               tria_0_surface, tria_1_surface;
 
   // create meshes
   GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
   GridTools::rotate(3, tria_0);
-  tria_0.refine_global(n_global_refinements);
-  output_mesh<dim, dim>(tria_0, 3, "inner.0.vtu");
 
   GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
-  tria_1.refine_global(n_global_refinements);
-  output_mesh<dim, dim>(tria_1, 3, "outer.0.vtu");
+  for (const auto &face : tria_1.active_face_iterators())
+    if (face->at_boundary())
+      {
+        face->set_boundary_id(face->boundary_id() + 1);
+        face->set_manifold_id(face->manifold_id() + 2);
+      }
+
+  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+
+  tria.set_manifold(0, tria_0.get_manifold(0));
+  tria.set_manifold(1, tria_0.get_manifold(1));
+  tria.set_manifold(2, tria_1.get_manifold(0));
+
+  tria.refine_global(n_global_refinements);
+  output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
 
   // create surface meshes
   GridGenerator::hyper_sphere(tria_0_surface, {}, radius);
@@ -313,7 +324,7 @@ main(int argc, char *argv[])
   IndexSet is_ghost(all_points.size() * 2);
   IndexSet is_points(all_points.size());
 
-  for (const auto &cell_0 : tria_0.active_cell_iterators())
+  for (const auto &cell_0 : tria.active_cell_iterators())
     if (cell_0->is_locally_owned())
       for (const auto &face_0 : cell_0->face_iterators())
         if (face_0->boundary_id() == 0)
@@ -328,10 +339,10 @@ main(int argc, char *argv[])
               }
           }
 
-  for (const auto &cell_1 : tria_1.active_cell_iterators())
+  for (const auto &cell_1 : tria.active_cell_iterators())
     if (cell_1->is_locally_owned())
       for (const auto &face_1 : cell_1->face_iterators())
-        if (face_1->boundary_id() == 1)
+        if (face_1->boundary_id() == 2)
           {
             const auto &indices = all_points_1[point_to_rad(face_1->center())];
 
@@ -355,7 +366,7 @@ main(int argc, char *argv[])
   std::vector<std::vector<double>> properties(is_points.n_elements(),
                                               std::vector<double>(2));
 
-  for (const auto &cell_0 : tria_0.active_cell_iterators())
+  for (const auto &cell_0 : tria.active_cell_iterators())
     if (cell_0->is_locally_owned())
       for (const auto &face_0 : cell_0->face_iterators())
         if (face_0->boundary_id() == 0)
@@ -382,10 +393,10 @@ main(int argc, char *argv[])
               }
           }
 
-  for (const auto &cell_1 : tria_1.active_cell_iterators())
+  for (const auto &cell_1 : tria.active_cell_iterators())
     if (cell_1->is_locally_owned())
       for (const auto &face_1 : cell_1->face_iterators())
-        if (face_1->boundary_id() == 1)
+        if (face_1->boundary_id() == 2)
           {
             // get indices
             const auto &indices = all_points_1[point_to_rad(face_1->center())];
