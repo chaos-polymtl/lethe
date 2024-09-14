@@ -324,12 +324,24 @@ main(int argc, char *argv[])
     const double tolerance = 1e-8;
     const double delta =
       2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
-    const double segment = (rad - delta / 2) / delta;
+    const double rotate_pi = 2 * numbers::PI * rotate / 360.0;
 
-    if (std::abs(segment - std::round(segment)) < tolerance)
-      return all_points_1[rad];
+    if (std::abs(rotate_pi / delta - std::round(rotate_pi / delta)) < tolerance)
+      {
+        // case 1: mesh is aligned
+        return all_points_1[rad];
+      }
     else
-      return all_points_0[rad];
+      {
+        // case 2: mesh is not aligned
+
+        const double segment = (rad - delta / 2) / delta;
+
+        if (std::abs(segment - std::round(segment)) < tolerance)
+          return all_points_1[rad];
+        else
+          return all_points_0[rad];
+      }
   };
 
   const auto get_points = [&](const auto &rad) {
