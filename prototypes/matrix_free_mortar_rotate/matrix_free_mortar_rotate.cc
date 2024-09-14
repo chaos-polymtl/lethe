@@ -311,6 +311,7 @@ main(int argc, char *argv[])
   // convert local/ghost points to indices
   IndexSet is_local(all_points.size() * 2);
   IndexSet is_ghost(all_points.size() * 2);
+  IndexSet is_points(all_points.size());
 
   for (const auto &cell_0 : tria_0.active_cell_iterators())
     if (cell_0->is_locally_owned())
@@ -323,6 +324,7 @@ main(int argc, char *argv[])
               {
                 is_local.add_index(i + 0);
                 is_ghost.add_index(i + all_points.size());
+                is_points.add_index(i + 0);
               }
           }
 
@@ -337,6 +339,7 @@ main(int argc, char *argv[])
               {
                 is_local.add_index(i + all_points.size());
                 is_ghost.add_index(i + 0);
+                is_points.add_index(i + 0);
               }
           }
 
@@ -348,31 +351,63 @@ main(int argc, char *argv[])
 
 
   // output result
-  std::vector<Point<dim>>          relevant_points;
-  std::vector<std::vector<double>> properties;
+  std::vector<Point<dim>>          relevant_points(is_points.n_elements());
+  std::vector<std::vector<double>> properties(is_points.n_elements(),
+                                              std::vector<double>(2));
 
-  for (unsigned int i = 0; i < all_points.size(); ++i)
-    {
-      if (is_local.is_element(i) || is_ghost.is_element(i))
-        {
-          std::vector<double> property;
+  for (const auto &cell_0 : tria_0.active_cell_iterators())
+    if (cell_0->is_locally_owned())
+      for (const auto &face_0 : cell_0->face_iterators())
+        if (face_0->boundary_id() == 0)
+          {
+            // get indices
+            const auto &indices = all_points_0[point_to_rad(face_0->center())];
 
-          relevant_points.emplace_back(all_points[i]);
+            // get points
+            std::vector<Point<dim>> points(indices.size());
+            for (unsigned int i = 0; i < indices.size(); ++i)
+              points[i] = all_points[indices[i]];
 
-          if (is_local.is_element(i))
-            property.emplace_back(Utilities::MPI::this_mpi_process(comm));
-          else if (is_ghost.is_element(i))
-            property.emplace_back(ghost_owners[is_ghost.index_within_set(i)]);
+            for (unsigned int i = 0; i < indices.size(); ++i)
+              {
+                const auto index =
+                  is_points.index_within_set(indices[i]) % all_points.size();
 
-          if (is_local.is_element(i + all_points.size()))
-            property.emplace_back(Utilities::MPI::this_mpi_process(comm));
-          else if (is_ghost.is_element(i + all_points.size()))
-            property.emplace_back(
-              ghost_owners[is_ghost.index_within_set(i + all_points.size())]);
+                relevant_points[index] = points[i];
+                properties[index][0] =
+                  is_local.is_element(indices[i] + all_points.size()) ?
+                    Utilities::MPI::this_mpi_process(comm) :
+                    ghost_owners[is_ghost.index_within_set(indices[i] +
+                                                           all_points.size())];
+              }
+          }
 
-          properties.emplace_back(property);
-        }
-    }
+  for (const auto &cell_1 : tria_1.active_cell_iterators())
+    if (cell_1->is_locally_owned())
+      for (const auto &face_1 : cell_1->face_iterators())
+        if (face_1->boundary_id() == 1)
+          {
+            // get indices
+            const auto &indices = all_points_1[point_to_rad(face_1->center())];
+
+            // get points
+            std::vector<Point<dim>> points(indices.size());
+            for (unsigned int i = 0; i < indices.size(); ++i)
+              points[i] = all_points[indices[i]];
+
+            for (unsigned int i = 0; i < indices.size(); ++i)
+              {
+                const auto index =
+                  is_points.index_within_set(indices[i]) % all_points.size();
+
+                relevant_points[index] = points[i];
+                properties[index][1] =
+                  is_local.is_element(indices[i]) ?
+                    Utilities::MPI::this_mpi_process(comm) :
+                    ghost_owners[is_ghost.index_within_set(indices[i])];
+              }
+          }
+
 
   output_mesh<dim, dim>(
     relevant_points,
