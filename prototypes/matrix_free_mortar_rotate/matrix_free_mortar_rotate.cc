@@ -99,61 +99,6 @@ output_mesh(const std::vector<Point<spacedim>>     &points,
   data_out_particles.write_vtu(file_particles);
 }
 
-
-
-template <int dim, int spacedim>
-std::tuple<std::vector<Point<spacedim>>, std::vector<double>>
-compute_quadrature(double             rad_00,
-                   double             rad_01,
-                   double             rad_10,
-                   double             rad_11,
-                   const double       radius,
-                   const unsigned int n_quadrature_points,
-                   const unsigned int mapping_degree = 10)
-{
-  if (rad_00 > rad_10) // normalize
-    {
-      std::swap(rad_00, rad_10);
-      std::swap(rad_01, rad_11);
-    }
-
-  if (rad_01 <= rad_10)
-    return {}; // no cut
-
-  const double left_rad  = std::max(rad_00, rad_10);
-  const double right_rad = std::min(rad_01, rad_11);
-
-  std::vector<Point<spacedim>> points;
-  points.emplace_back(std::cos(left_rad) * radius, std::sin(left_rad) * radius);
-  points.emplace_back(std::cos(right_rad) * radius,
-                      std::sin(right_rad) * radius);
-
-  std::vector<CellData<dim>> cells;
-  CellData<dim>              cell(2);
-  cell.vertices[0] = 0;
-  cell.vertices[1] = 1;
-  cells.emplace_back(cell);
-
-  Triangulation<dim, spacedim> tria;
-  tria.create_triangulation(points, cells, {});
-
-  tria.set_manifold(0, SphericalManifold<dim, spacedim>());
-  tria.set_all_manifold_ids(0);
-
-  MappingQ<dim, spacedim>   mapping(mapping_degree);
-  QGauss<dim>               quadrature(n_quadrature_points);
-  FE_Nothing<dim, spacedim> fe;
-
-  FEValues<dim, spacedim> phi(mapping,
-                              fe,
-                              quadrature,
-                              update_quadrature_points | update_JxW_values);
-  phi.reinit(tria.begin());
-
-  return {phi.get_quadrature_points(), phi.get_JxW_values()};
-}
-
-
 template <int dim>
 double
 point_to_rad(const Point<dim> &point)
@@ -186,78 +131,6 @@ rad_to_point(const double radius, const double rad)
   point[1] = radius * std::sin(rad);
 
   return point;
-}
-
-template <int structdim, int dim, int spacedim>
-std::vector<Point<spacedim>>
-compute_quadrature(
-  const TriaIterator<TriaAccessor<structdim, dim, spacedim>> &cell_0,
-  const TriaIterator<TriaAccessor<structdim, dim, spacedim>> &cell_1,
-  const double                                                radius,
-  const unsigned int n_quadrature_points,
-  const unsigned int mapping_degree = 10)
-{
-  AssertDimension(structdim, 1);
-  AssertDimension(spacedim, 2);
-
-  // helper function to 1) guarantee that all segments have the same orientation
-  // and 2) periodicities are handled correctly -> split up into two segment
-  const auto create_sections = [](const auto &cell) {
-    const auto cross_product = [](const auto &p0, const auto &p1) {
-      Tensor<1, 3, double> t0;
-      Tensor<1, 3, double> t1;
-
-      for (unsigned int i = 0; i < 2; ++i)
-        {
-          t0[i] = p0[i];
-          t1[i] = p1[i];
-        }
-
-      return cross_product_3d(t0, t1)[2];
-    };
-
-    double rad_0 = point_to_rad(cell->vertex(0));
-    double rad_1 = point_to_rad(cell->vertex(1));
-
-    if (cross_product(cell->vertex(0), cell->vertex(1)) < 0.0)
-      std::swap(rad_0, rad_1);
-
-    std::vector<std::pair<double, double>> sections;
-
-    if (rad_0 < rad_1) // normal
-      {
-        sections.emplace_back(rad_0, rad_1);
-      }
-    else // periodic
-      {
-        sections.emplace_back(rad_0, 2 * numbers::PI);
-        sections.emplace_back(0, rad_1);
-      }
-
-    return sections;
-  };
-
-  const auto subsections_0 = create_sections(cell_0);
-  const auto subsections_1 = create_sections(cell_1);
-
-  std::vector<Point<spacedim>> all_points;
-
-  for (const auto &subsection_0 : subsections_0)
-    for (const auto &subsection_1 : subsections_1)
-      {
-        const auto [points, JxWs] =
-          compute_quadrature<structdim, spacedim>(subsection_0.first,
-                                                  subsection_0.second,
-                                                  subsection_1.first,
-                                                  subsection_1.second,
-                                                  radius,
-                                                  n_quadrature_points,
-                                                  mapping_degree);
-
-        all_points.insert(all_points.end(), points.begin(), points.end());
-      }
-
-  return all_points;
 }
 
 int
@@ -299,40 +172,6 @@ main(int argc, char *argv[])
 
   tria.refine_global(n_global_refinements);
   output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
-
-  // create surface meshes
-  GridGenerator::hyper_sphere(tria_0_surface, {}, radius);
-  GridTools::rotate(rotate, tria_0_surface);
-  tria_0_surface.refine_global(n_global_refinements + 1);
-
-  GridGenerator::hyper_sphere(tria_1_surface, {}, radius);
-  tria_1_surface.refine_global(n_global_refinements + 1);
-
-  // collect all surface points -> oracle
-  std::vector<Point<dim>> all_points;
-
-  const FloatingPointComparator<double> comparator(1e-6);
-
-  std::map<double, std::vector<unsigned int>, FloatingPointComparator<double>>
-    all_points_0(comparator);
-  std::map<double, std::vector<unsigned int>, FloatingPointComparator<double>>
-    all_points_1(comparator);
-
-  for (const auto &face_0 : tria_0_surface.active_cell_iterators())
-    for (const auto &face_1 : tria_1_surface.active_cell_iterators())
-      {
-        const auto points = compute_quadrature<dim - 1, dim - 1, dim>(
-          face_0, face_1, radius, n_quadrature_points);
-
-        for (const auto &p : points)
-          {
-            all_points_0[point_to_rad(face_0->center())].emplace_back(
-              all_points.size());
-            all_points_1[point_to_rad(face_1->center())].emplace_back(
-              all_points.size());
-            all_points.emplace_back(p);
-          }
-      }
 
   const auto get_config =
     [&](const auto &rad) -> std::pair<unsigned int, unsigned int> {
