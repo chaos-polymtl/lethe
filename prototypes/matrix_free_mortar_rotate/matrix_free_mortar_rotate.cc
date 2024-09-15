@@ -133,48 +133,24 @@ rad_to_point(const double radius, const double rad)
   return point;
 }
 
-int
-main(int argc, char *argv[])
+template <int dim>
+class MortarManager
 {
-  Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
+public:
+  MortarManager(const unsigned int n_global_refinements,
+                const unsigned int n_quadrature_points,
+                const double       radius,
+                const double       rotate)
+    : n_global_refinements(n_global_refinements)
+    , n_quadrature_points(n_quadrature_points)
+    , radius(radius)
+    , rotate(rotate)
+    , quadrature(n_quadrature_points)
+  {}
 
-  const MPI_Comm comm = MPI_COMM_WORLD;
-
-  const unsigned int dim                  = 2;
-  const unsigned int n_global_refinements = 2;
-  const unsigned int n_quadrature_points  = 3;
-  const double       radius               = 1.0;
-  const double       rotate               = 3.0;
-
-  QGauss<1> quadrature(n_quadrature_points);
-
-  parallel::distributed::Triangulation<dim> tria(comm);
-  Triangulation<dim>                        tria_0, tria_1;
-  Triangulation<dim - 1, dim>               tria_0_surface, tria_1_surface;
-
-  // create meshes
-  GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
-  GridTools::rotate(rotate, tria_0);
-
-  GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
-  for (const auto &face : tria_1.active_face_iterators())
-    if (face->at_boundary())
-      {
-        face->set_boundary_id(face->boundary_id() + 1);
-        face->set_manifold_id(face->manifold_id() + 2);
-      }
-
-  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
-
-  tria.set_manifold(0, tria_0.get_manifold(0));
-  tria.set_manifold(1, tria_0.get_manifold(1));
-  tria.set_manifold(2, tria_1.get_manifold(0));
-
-  tria.refine_global(n_global_refinements);
-  output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
-
-  const auto get_config =
-    [&](const auto &rad) -> std::pair<unsigned int, unsigned int> {
+  std::pair<unsigned int, unsigned int>
+  get_config(const double &rad) const
+  {
     const double tolerance = 1e-8;
     const double delta =
       2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
@@ -196,9 +172,11 @@ main(int argc, char *argv[])
         else
           return {1, std::round(segment_rot)};
       }
-  };
+  }
 
-  const auto get_n_points = [&]() -> unsigned int {
+  unsigned int
+  get_n_points() const
+  {
     const auto [type, id] = get_config(0.0 /*not relevant*/);
 
     if (type == 0) // aligned
@@ -211,11 +189,11 @@ main(int argc, char *argv[])
         return 8 * Utilities::pow(2, n_global_refinements + 1) *
                n_quadrature_points;
       }
-  };
+  }
 
-  const unsigned int n_points = get_n_points();
-
-  const auto get_indices = [&](const auto &rad) {
+  std::vector<unsigned int>
+  get_indices(const double &rad) const
+  {
     const auto [type, id] = get_config(rad);
 
     if (type == 0) // aligned
@@ -226,7 +204,7 @@ main(int argc, char *argv[])
           {
             const unsigned int index = id * n_quadrature_points + q;
 
-            AssertIndexRange(index, n_points);
+            AssertIndexRange(index, get_n_points());
 
             indices.emplace_back(index);
           }
@@ -241,9 +219,9 @@ main(int argc, char *argv[])
           {
             const unsigned int index =
               (id * n_quadrature_points * 2 + n_quadrature_points + q) %
-              n_points;
+              get_n_points();
 
-            AssertIndexRange(index, n_points);
+            AssertIndexRange(index, get_n_points());
 
             indices.emplace_back(index);
           }
@@ -258,16 +236,18 @@ main(int argc, char *argv[])
           {
             const unsigned int index = id * n_quadrature_points * 2 + q;
 
-            AssertIndexRange(index, n_points);
+            AssertIndexRange(index, get_n_points());
 
             indices.emplace_back(index);
           }
 
         return indices;
       }
-  };
+  }
 
-  const auto get_points = [&](const auto &rad) {
+  std::vector<Point<dim>>
+  get_points(const double &rad) const
+  {
     const auto [type, id] = get_config(rad);
 
     const double delta =
@@ -317,7 +297,59 @@ main(int argc, char *argv[])
 
         return points;
       }
-  };
+  }
+
+private:
+  const unsigned int n_global_refinements;
+  const unsigned int n_quadrature_points;
+  const double       radius;
+  const double       rotate;
+  QGauss<1>          quadrature;
+};
+
+int
+main(int argc, char *argv[])
+{
+  Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
+
+  const MPI_Comm comm = MPI_COMM_WORLD;
+
+  const unsigned int dim                  = 2;
+  const unsigned int n_global_refinements = 2;
+  const unsigned int n_quadrature_points  = 3;
+  const double       radius               = 1.0;
+  const double       rotate               = 3.0;
+
+  // create meshes
+  parallel::distributed::Triangulation<dim> tria(comm);
+  Triangulation<dim>                        tria_0, tria_1;
+
+  GridGenerator::hyper_ball_balanced(tria_0, {}, radius);
+  GridTools::rotate(rotate, tria_0);
+
+  GridGenerator::hyper_cube_with_cylindrical_hole(tria_1, radius, 2.0, true);
+  for (const auto &face : tria_1.active_face_iterators())
+    if (face->at_boundary())
+      {
+        face->set_boundary_id(face->boundary_id() + 1);
+        face->set_manifold_id(face->manifold_id() + 2);
+      }
+
+  GridGenerator::merge_triangulations(tria_0, tria_1, tria, 0, true, true);
+
+  tria.set_manifold(0, tria_0.get_manifold(0));
+  tria.set_manifold(1, tria_0.get_manifold(1));
+  tria.set_manifold(2, tria_1.get_manifold(0));
+
+  tria.refine_global(n_global_refinements);
+  output_mesh<dim, dim>(tria, 3, "outer.0.vtu");
+
+  const MortarManager<dim> mm(n_global_refinements,
+                              n_quadrature_points,
+                              radius,
+                              rotate);
+
+  const unsigned int n_points = mm.get_n_points();
 
   // convert local/ghost points to indices
   IndexSet is_local(n_points * 2);
@@ -330,7 +362,7 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = get_indices(point_to_rad(face->center()));
+            const auto indices = mm.get_indices(point_to_rad(face->center()));
 
             for (const auto i : indices)
               {
@@ -367,10 +399,10 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto indices = get_indices(point_to_rad(face->center()));
+            const auto indices = mm.get_indices(point_to_rad(face->center()));
 
             // get points
-            const auto points = get_points(point_to_rad(face->center()));
+            const auto points = mm.get_points(point_to_rad(face->center()));
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {
@@ -392,7 +424,6 @@ main(int argc, char *argv[])
                       ghost_owners[is_ghost.index_within_set(indices[i])];
               }
           }
-
 
   output_mesh<dim, dim>(
     relevant_points,
