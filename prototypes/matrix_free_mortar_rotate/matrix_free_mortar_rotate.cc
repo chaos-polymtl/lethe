@@ -271,7 +271,7 @@ main(int argc, char *argv[])
   const unsigned int n_global_refinements = 2;
   const unsigned int n_quadrature_points  = 3;
   const double       radius               = 1.0;
-  const double       rotate               = 0.0;
+  const double       rotate               = 3.0;
 
   QGauss<1> quadrature(n_quadrature_points);
 
@@ -405,9 +405,22 @@ main(int argc, char *argv[])
     return points;
   };
 
+  const auto get_n_points = [&]() -> unsigned int {
+    const auto [type, id] = get_config(0.0 /*not relevant*/);
+
+    if (type == 0) // aligned
+      {
+        return 4 * Utilities::pow(2, n_global_refinements + 1) *
+               n_quadrature_points;
+      }
+    else // inside/outside
+      {
+        return all_points.size();
+      }
+  };
+
   // TODO
-  const unsigned int n_points =
-    4 * Utilities::pow(2, n_global_refinements + 1) * n_quadrature_points;
+  const unsigned int n_points = get_n_points();
 
   // convert local/ghost points to indices
   IndexSet is_local(n_points * 2);
