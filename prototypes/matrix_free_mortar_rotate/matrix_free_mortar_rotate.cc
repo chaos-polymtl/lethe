@@ -359,6 +359,23 @@ main(int argc, char *argv[])
       }
   };
 
+  const auto get_n_points = [&]() -> unsigned int {
+    const auto [type, id] = get_config(0.0 /*not relevant*/);
+
+    if (type == 0) // aligned
+      {
+        return 4 * Utilities::pow(2, n_global_refinements + 1) *
+               n_quadrature_points;
+      }
+    else // inside/outside
+      {
+        return 8 * Utilities::pow(2, n_global_refinements + 1) *
+               n_quadrature_points;
+      }
+  };
+
+  const unsigned int n_points = get_n_points();
+
   const auto get_indices = [&](const auto &rad) {
     const auto [type, id] = get_config(rad);
 
@@ -367,17 +384,47 @@ main(int argc, char *argv[])
         std::vector<unsigned int> indices;
 
         for (unsigned int q = 0; q < n_quadrature_points; ++q)
-          indices.emplace_back(id * n_quadrature_points + q);
+          {
+            const unsigned int index = id * n_quadrature_points + q;
+
+            AssertIndexRange(index, n_points);
+
+            indices.emplace_back(index);
+          }
 
         return indices;
       }
     else if (type == 1) // inside
       {
-        return all_points_0[rad];
+        std::vector<unsigned int> indices;
+
+        for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
+          {
+            const unsigned int index =
+              (id * n_quadrature_points * 2 + n_quadrature_points + q) %
+              n_points;
+
+            AssertIndexRange(index, n_points);
+
+            indices.emplace_back(index);
+          }
+
+        return indices;
       }
     else // outside
       {
-        return all_points_1[rad];
+        std::vector<unsigned int> indices;
+
+        for (unsigned int q = 0; q < n_quadrature_points * 2; ++q)
+          {
+            const unsigned int index = id * n_quadrature_points * 2 + q;
+
+            AssertIndexRange(index, n_points);
+
+            indices.emplace_back(index);
+          }
+
+        return indices;
       }
   };
 
@@ -386,6 +433,7 @@ main(int argc, char *argv[])
 
     const double delta =
       2 * numbers::PI / (4 * Utilities::pow(2, n_global_refinements + 1));
+    const double rotate_pi = 2 * numbers::PI * rotate / 360.0;
 
     if (type == 0) // aligned
       {
@@ -397,30 +445,40 @@ main(int argc, char *argv[])
 
         return points;
       }
-
-    const auto              indices = get_indices(rad);
-    std::vector<Point<dim>> points(indices.size());
-    for (unsigned int i = 0; i < indices.size(); ++i)
-      points[i] = all_points[indices[i]];
-    return points;
-  };
-
-  const auto get_n_points = [&]() -> unsigned int {
-    const auto [type, id] = get_config(0.0 /*not relevant*/);
-
-    if (type == 0) // aligned
+    else
       {
-        return 4 * Utilities::pow(2, n_global_refinements + 1) *
-               n_quadrature_points;
-      }
-    else // inside/outside
-      {
-        return all_points.size();
+        double rad_0, rad_1, rad_2;
+
+        double rot_min = rotate_pi - std::floor(rotate_pi / delta) * delta;
+
+        if (type == 2)
+          {
+            rad_0 = id * delta;
+            rad_1 = id * delta + rot_min;
+            rad_2 = (id + 1) * delta;
+          }
+        else
+          {
+            rad_0 = id * delta + rot_min;
+            rad_1 = (id + 1) * delta;
+            rad_2 = (id + 1) * delta + rot_min;
+          }
+
+        std::vector<Point<dim>> points;
+
+        for (unsigned int q = 0; q < n_quadrature_points; ++q)
+          points.emplace_back(rad_to_point<dim>(radius,
+                                                rad_0 + quadrature.point(q)[0] *
+                                                          (rad_1 - rad_0)));
+
+        for (unsigned int q = 0; q < n_quadrature_points; ++q)
+          points.emplace_back(rad_to_point<dim>(radius,
+                                                rad_1 + quadrature.point(q)[0] *
+                                                          (rad_2 - rad_1)));
+
+        return points;
       }
   };
-
-  // TODO
-  const unsigned int n_points = get_n_points();
 
   // convert local/ghost points to indices
   IndexSet is_local(n_points * 2);
