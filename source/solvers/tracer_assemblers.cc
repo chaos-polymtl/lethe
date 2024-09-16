@@ -340,36 +340,49 @@ TracerAssemblerInletDirichlet<dim>::assemble_rhs(
 
   // Flux boundary condition, loop on faces
   // similar to deal.ii step-7
+  std::cout << "Starting assembly" << std::endl;
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_tracer.size;
        ++i_bc)
     {
       if (this->boundary_conditions_tracer.type[i_bc] ==
-          BoundaryConditions::BoundaryType::tracer_flux)
+          BoundaryConditions::BoundaryType::tracer_inlet_dirichlet)
         {
-          Function<dim> &flux_function =
-            *(this->boundary_conditions_tracer.flux[i_bc]);
+          Function<dim> &dirichlet_function =
+            *(this->boundary_conditions_tracer.dirichlet[i_bc]);
           for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
             {
+              if (!scratch_data.is_boundary_face[f])
+                continue;
               if (scratch_data.boundary_face_id[f] ==
                   this->boundary_conditions_tracer.id[i_bc])
                 {
+                  const auto velocity_values =
+                    scratch_data.face_velocity_values[f];
+                  const auto tracer_values = scratch_data.tracer_face_value[f];
+                  const auto normals       = scratch_data.face_normal[f];
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
                       const double JxW = scratch_data.face_JxW[f][q];
-                      const double flux =
-                        flux_function.value(scratch_data.quadrature_points[q]);
-                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                      const double dirichlet_value = dirichlet_function.value(
+                        scratch_data.face_quadrature_points[f][q]);
+                      for (unsigned int i = 0; i < scratch_data.face_n_dofs;
+                           ++i)
                         {
                           const double phi_face_tracer_i =
                             scratch_data.phi_face_tracer[f][q][i];
-                          local_rhs(i) -= phi_face_tracer_i * flux * JxW;
+                          local_rhs(i) -= phi_face_tracer_i *
+                                          (velocity_values[q] * normals[q]) *
+                                          (dirichlet_value - tracer_values[q]) *
+                                          JxW;
                         }
                     }
                 }
             }
         }
     }
+
+  std::cout << "Finished assembly" << std::endl;
 }
 
 template class TracerAssemblerInletDirichlet<2>;

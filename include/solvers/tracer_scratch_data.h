@@ -94,6 +94,7 @@ public:
                             update_values | update_quadrature_points |
                               update_JxW_values)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
+    , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
     allocate();
   }
@@ -127,6 +128,10 @@ public:
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values)
+    , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
+                        sd.fe_face_values_fd.get_fe(),
+                        sd.fe_face_values_fd.get_quadrature(),
+                        update_values)
   {
     allocate();
   }
@@ -224,7 +229,7 @@ public:
     // Only carry out this initialization if the cell is a boundary cell,
     // otherwise these are wasted calculations
     this->is_boundary_cell = cell->at_boundary();
-    if (cell->at_boundary())
+    if (this->is_boundary_cell)
       {
         n_faces          = cell->n_faces();
         is_boundary_face = std::vector<bool>(n_faces, false);
@@ -234,11 +239,10 @@ public:
         face_JxW = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
 
-
         this->phi_face_tracer = std::vector<std::vector<std::vector<double>>>(
           n_faces,
           std::vector<std::vector<double>>(n_faces_q_points,
-                                           std::vector<double>(n_dofs)));
+                                           std::vector<double>(face_n_dofs)));
 
         this->tracer_face_value = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
@@ -330,6 +334,51 @@ public:
 
         velocity_values[q] -= velocity_ale;
       }
+
+    is_boundary_cell = cell->at_boundary();
+    if (is_boundary_cell)
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_fd.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        // Velocity and pressure values
+        // First vector is face number, second quadrature point
+        this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
+          n_faces, std::vector<Point<dim>>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (is_boundary_face[face])
+              {
+                fe_face_values_fd.reinit(cell, face);
+
+                // Gather velocity (values)
+                this->fe_face_values_fd[velocities].get_function_values(
+                  current_solution, this->face_velocity_values[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    this->face_JxW[face][q] = this->fe_face_values_fd.JxW(q);
+                    this->face_normal[face][q] =
+                      this->fe_face_values_fd.normal_vector(q);
+                    this->face_quadrature_points[face][q] =
+                      this->fe_face_values_fd.quadrature_point(q);
+                  }
+              }
+          }
+      }
   }
 
   /** @brief Calculates the physical properties. This function calculates the physical properties
@@ -371,11 +420,13 @@ public:
   std::vector<double> source;
 
   // Scratch for the face boundary condition
-  FEFaceValues<dim>                fe_face_values_tracer;
-  std::vector<std::vector<double>> face_JxW;
+  FEFaceValues<dim>                    fe_face_values_tracer;
+  std::vector<std::vector<double>>     face_JxW;
+  std::vector<std::vector<Point<dim>>> face_quadrature_points;
 
   unsigned int n_faces;
   unsigned int n_faces_q_points;
+  unsigned int face_n_dofs;
 
   // Is boundary cell indicator
   bool                      is_boundary_cell;
@@ -398,8 +449,12 @@ public:
    */
   FEValuesExtractors::Vector velocities;
   // This FEValues must mandatorily be instantiated for the velocity
-  FEValues<dim>               fe_values_fd;
-  std::vector<Tensor<1, dim>> velocity_values;
+  FEValues<dim>                            fe_values_fd;
+  FEFaceValues<dim>                        fe_face_values_fd;
+  std::vector<Tensor<1, dim>>              velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>>
+    face_normal; // TODO Initialize properly
 };
 
 #endif

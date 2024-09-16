@@ -7,8 +7,9 @@ void
 TracerScratchData<dim>::allocate()
 {
   // Initialize size of arrays
-  this->n_q_points = fe_values_tracer.get_quadrature().size();
-  this->n_dofs     = fe_values_tracer.get_fe().n_dofs_per_cell();
+  this->n_q_points  = fe_values_tracer.get_quadrature().size();
+  this->n_dofs      = fe_values_tracer.get_fe().n_dofs_per_cell();
+  this->face_n_dofs = fe_face_values_fd.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
   this->JxW = std::vector<double>(n_q_points);
