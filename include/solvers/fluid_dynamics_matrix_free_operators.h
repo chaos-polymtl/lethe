@@ -574,26 +574,10 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
-   * of the previous newton step at the faces.
-   *
-   */
-  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
-    nonlinear_previous_face_values;
-
-  /**
-   * @brief Table with correct alignment for vectorization to store the values
    * of the target velocity of a weakly imposed Dirichlet boundary condition.
    *
    */
-  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>> face_target_velocity;
-
-  /**
-   * @brief  Table with correct alignment for vectorization to store the gradients
-   * of the previous newton step at the faces.
-   *
-   */
-  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
-    nonlinear_previous_face_gradient;
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> face_target_velocity;
 
 
   /**
