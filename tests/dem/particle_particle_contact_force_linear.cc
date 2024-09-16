@@ -164,7 +164,7 @@ test()
   linear_force_object.calculate_particle_particle_contact_force(
     contact_manager.get_local_adjacent_particles(),
     contact_manager.get_ghost_adjacent_particles(),
-    contact_manager.get_local_periodic_adjacent_particles(),
+    contact_manager.get_local_local_periodic_adjacent_particles(),
     contact_manager.get_ghost_periodic_adjacent_particles(),
     contact_manager.get_ghost_local_periodic_adjacent_particles(),
     dt,

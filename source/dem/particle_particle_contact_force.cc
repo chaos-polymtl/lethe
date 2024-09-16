@@ -26,7 +26,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-      &local_periodic_adjacent_particles,
+      &local_local_periodic_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_periodic_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
@@ -53,7 +53,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
   // Calculating the contact forces the local-local periodic adjacent particles.
   for (auto &&periodic_adjacent_particles_list :
-       local_periodic_adjacent_particles | boost::adaptors::map_values)
+       local_local_periodic_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(

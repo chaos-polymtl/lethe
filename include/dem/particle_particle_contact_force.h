@@ -56,7 +56,7 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_periodic_adjacent_particles Container of the contact pair
+   * @param local_local_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local periodic
    * particle-particle contact forces.
    * @param ghost_periodic_adjacent_particles Container of the contact pair
@@ -76,7 +76,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_periodic_adjacent_particles,
+      &local_local_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -130,7 +130,7 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_periodic_adjacent_particles Container of the contact pair
+   * @param local_local_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local periodic
    * particle-particle contact forces.
    * @param ghost_periodic_adjacent_particles Container of the contact pair
@@ -150,7 +150,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_periodic_adjacent_particles,
+      &local_local_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs

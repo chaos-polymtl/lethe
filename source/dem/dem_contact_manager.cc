@@ -62,14 +62,14 @@ DEMContactManager<dim>::update_contacts()
         ->check_periodic_boundaries_enabled())
     {
       // Update periodic particle-particle contacts in
-      // local_periodic_adjacent_particles of fine search step with
+      // local_local_periodic_adjacent_particles of fine search step with
       // local_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
         typename dem_data_structures<dim>::adjacent_particle_pairs,
         typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::local_periodic_particle_particle>(
-        local_periodic_adjacent_particles,
+        local_local_periodic_adjacent_particles,
         local_contact_pair_periodic_candidates);
 
       // Update periodic particle-particle contacts in
@@ -162,7 +162,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
         dim,
         typename dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
-        local_periodic_adjacent_particles, particle_container);
+        local_local_periodic_adjacent_particles, particle_container);
 
       // Update contact containers for local-ghost periodic particle-particle
       // pairs in contact
@@ -402,7 +402,7 @@ DEMContactManager<dim>::execute_particle_particle_fine_search(
     {
       // Fine search for local-local periodic particle-particle
       particle_particle_fine_search<dim>(particle_container,
-                                         local_periodic_adjacent_particles,
+                                         local_local_periodic_adjacent_particles,
                                          local_contact_pair_periodic_candidates,
                                          neighborhood_threshold,
                                          periodic_offset);
