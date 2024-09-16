@@ -340,7 +340,6 @@ TracerAssemblerInletDirichlet<dim>::assemble_rhs(
 
   // Flux boundary condition, loop on faces
   // similar to deal.ii step-7
-  std::cout << "Starting assembly" << std::endl;
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_tracer.size;
        ++i_bc)
     {
@@ -381,8 +380,6 @@ TracerAssemblerInletDirichlet<dim>::assemble_rhs(
             }
         }
     }
-
-  std::cout << "Finished assembly" << std::endl;
 }
 
 template class TracerAssemblerInletDirichlet<2>;

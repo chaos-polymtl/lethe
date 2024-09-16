@@ -92,9 +92,13 @@ public:
                             fe_tracer,
                             face_quadrature,
                             update_values | update_quadrature_points |
-                              update_JxW_values)
+                              update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
-    , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
+    , fe_face_values_fd(mapping,
+                        fe_fd,
+                        face_quadrature,
+                        update_values | update_quadrature_points |
+                          update_JxW_values | update_normal_vectors)
   {
     allocate();
   }
@@ -123,7 +127,7 @@ public:
                             sd.fe_face_values_tracer.get_fe(),
                             sd.fe_face_values_tracer.get_quadrature(),
                             update_values | update_quadrature_points |
-                              update_JxW_values)
+                              update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
@@ -131,7 +135,8 @@ public:
     , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
                         sd.fe_face_values_fd.get_fe(),
                         sd.fe_face_values_fd.get_quadrature(),
-                        update_values)
+                        update_values | update_quadrature_points |
+                          update_JxW_values | update_normal_vectors)
   {
     allocate();
   }
@@ -256,10 +261,9 @@ public:
                 boundary_face_id[face] = cell->face(face)->boundary_id();
                 this->fe_face_values_tracer.get_function_values(
                   current_solution, this->tracer_face_value[face]);
-
+                face_JxW[face] = fe_face_values_tracer.get_JxW_values();
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
-                    face_JxW[face][q] = fe_face_values_tracer.JxW(q);
                     for (const unsigned int k :
                          fe_face_values_tracer.dof_indices())
                       {
@@ -315,24 +319,23 @@ public:
         velocity_values[q] += drift_velocity_tensor;
       }
 
-    if (!ale.enabled())
-      return;
-
-    // ALE enabled, so extract the ALE velocity and subtract it from the
-    // velocity obtained from the fluid dynamics
-    Tensor<1, dim>                                  velocity_ale;
-    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
-      ale.velocity;
-    Vector<double> velocity_ale_vector(dim);
-
-    for (unsigned int q = 0; q < n_q_points; ++q)
+    if (ale.enabled())
       {
-        velocity_ale_function->vector_value(quadrature_points[q],
-                                            velocity_ale_vector);
-        for (unsigned int d = 0; d < dim; ++d)
-          velocity_ale[d] = velocity_ale_vector[d];
+        // ALE enabled, so extract the ALE velocity and subtract it from the
+        // velocity obtained from the fluid dynamics
+        Tensor<1, dim>                                  velocity_ale;
+        std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+          ale.velocity;
+        Vector<double> velocity_ale_vector(dim);
+        for (unsigned int q = 0; q < n_q_points; ++q)
+          {
+            velocity_ale_function->vector_value(quadrature_points[q],
+                                                velocity_ale_vector);
+            for (unsigned int d = 0; d < dim; ++d)
+              velocity_ale[d] = velocity_ale_vector[d];
 
-        velocity_values[q] -= velocity_ale;
+            velocity_values[q] -= velocity_ale;
+          }
       }
 
     is_boundary_cell = cell->at_boundary();
@@ -343,19 +346,21 @@ public:
         n_faces_q_points = fe_face_values_fd.get_quadrature().size();
         boundary_face_id = std::vector<unsigned int>(n_faces);
 
-        face_JxW = std::vector<std::vector<double>>(
+        this->face_JxW = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
 
         // Velocity and pressure values
         // First vector is face number, second quadrature point
         this->face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+          n_faces,
+          std::vector<Tensor<1, dim>>(n_faces_q_points, Tensor<1, dim>()));
 
         this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+          n_faces,
+          std::vector<Tensor<1, dim>>(n_faces_q_points, Tensor<1, dim>()));
 
         this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
-          n_faces, std::vector<Point<dim>>(n_faces_q_points));
+          n_faces, std::vector<Point<dim>>(n_faces_q_points, Point<dim>()));
 
         for (const auto face : cell->face_indices())
           {
@@ -363,19 +368,14 @@ public:
             if (is_boundary_face[face])
               {
                 fe_face_values_fd.reinit(cell, face);
-
                 // Gather velocity (values)
                 this->fe_face_values_fd[velocities].get_function_values(
                   current_solution, this->face_velocity_values[face]);
-
-                for (unsigned int q = 0; q < n_faces_q_points; ++q)
-                  {
-                    this->face_JxW[face][q] = this->fe_face_values_fd.JxW(q);
-                    this->face_normal[face][q] =
-                      this->fe_face_values_fd.normal_vector(q);
-                    this->face_quadrature_points[face][q] =
-                      this->fe_face_values_fd.quadrature_point(q);
-                  }
+                this->face_JxW[face] = this->fe_face_values_fd.get_JxW_values();
+                this->face_normal[face] =
+                  this->fe_face_values_fd.get_normal_vectors();
+                this->face_quadrature_points[face] =
+                  this->fe_face_values_fd.get_quadrature_points();
               }
           }
       }
