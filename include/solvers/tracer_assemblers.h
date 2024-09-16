@@ -155,7 +155,7 @@ public:
 
 
 /**
- * @brief Class that assembles the flux boundary condition for the tracer solver.
+ * @brief Class that assembles the inlet dirichlet boundary condition for the tracer solver.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -167,12 +167,13 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerFluxBC : public TracerAssemblerBase<dim>
+class TracerAssemblerInletDirichlet : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerFluxBC(std::shared_ptr<SimulationControl> simulation_control,
-                        const BoundaryConditions::TracerBoundaryConditions<dim>
-                          &p_boundary_conditions_tracer)
+  TracerAssemblerInletDirichlet(
+    std::shared_ptr<SimulationControl> simulation_control,
+    const BoundaryConditions::TracerBoundaryConditions<dim>
+      &p_boundary_conditions_tracer)
     : TracerAssemblerBase<dim>(simulation_control)
     , boundary_conditions_tracer(p_boundary_conditions_tracer)
   {}

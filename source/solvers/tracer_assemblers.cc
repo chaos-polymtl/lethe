@@ -322,15 +322,16 @@ template class TracerAssemblerBDF<3>;
 
 template <int dim>
 void
-TracerAssemblerFluxBC<dim>::assemble_matrix(
+TracerAssemblerInletDirichlet<dim>::assemble_matrix(
   TracerScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-TracerAssemblerFluxBC<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
-                                         StabilizedMethodsCopyData &copy_data)
+TracerAssemblerInletDirichlet<dim>::assemble_rhs(
+  TracerScratchData<dim>    &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -371,5 +372,5 @@ TracerAssemblerFluxBC<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
     }
 }
 
-template class TracerAssemblerFluxBC<2>;
-template class TracerAssemblerFluxBC<3>;
+template class TracerAssemblerInletDirichlet<2>;
+template class TracerAssemblerInletDirichlet<3>;

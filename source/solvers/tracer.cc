@@ -32,10 +32,11 @@ Tracer<dim>::setup_assemblers()
   this->assemblers.clear();
 
   // Flux boundary condition
-  if (this->simulation_parameters.boundary_conditions_tracer.has_flux_bc)
+  if (this->simulation_parameters.boundary_conditions_tracer
+        .has_inlet_dirichlet_bc)
     {
       this->assemblers.emplace_back(
-        std::make_shared<TracerAssemblerFluxBC<dim>>(
+        std::make_shared<TracerAssemblerInletDirichlet<dim>>(
           this->simulation_control,
           simulation_parameters.boundary_conditions_tracer));
     }
@@ -1016,7 +1017,9 @@ Tracer<dim>::update_boundary_conditions()
     {
       // Dirichlet condition : imposed temperature at i_bc
       if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
-          BoundaryConditions::BoundaryType::tracer_dirichlet)
+            BoundaryConditions::BoundaryType::tracer_dirichlet ||
+          this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
+            BoundaryConditions::BoundaryType::tracer_inlet_dirichlet)
         {
           this->simulation_parameters.boundary_conditions_tracer
             .dirichlet[i_bc]
@@ -1027,13 +1030,6 @@ Tracer<dim>::update_boundary_conditions()
             *this->simulation_parameters.boundary_conditions_tracer
                .dirichlet[i_bc],
             nonzero_constraints);
-        }
-      // Neumann condition : imposed flux at i_bc
-      else if (this->simulation_parameters.boundary_conditions_tracer
-                 .type[i_bc] == BoundaryConditions::BoundaryType::tracer_flux)
-        {
-          this->simulation_parameters.boundary_conditions_tracer.flux[i_bc]
-            ->set_time(time);
         }
     }
   nonzero_constraints.close();
