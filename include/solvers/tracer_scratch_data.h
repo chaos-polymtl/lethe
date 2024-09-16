@@ -255,10 +255,10 @@ public:
         for (const auto face : cell->face_indices())
           {
             this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            boundary_face_id[face]       = cell->face(face)->boundary_id();
             if (this->is_boundary_face[face])
               {
                 fe_face_values_tracer.reinit(cell, face);
-                boundary_face_id[face] = cell->face(face)->boundary_id();
                 this->fe_face_values_tracer.get_function_values(
                   current_solution, this->tracer_face_value[face]);
                 face_JxW[face] = fe_face_values_tracer.get_JxW_values();
@@ -365,6 +365,7 @@ public:
         for (const auto face : cell->face_indices())
           {
             is_boundary_face[face] = cell->face(face)->at_boundary();
+            boundary_face_id[face] = cell->face(face)->boundary_id();
             if (is_boundary_face[face])
               {
                 fe_face_values_fd.reinit(cell, face);
