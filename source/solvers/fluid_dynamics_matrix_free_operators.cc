@@ -803,10 +803,6 @@ NavierStokesOperatorBase<dim, number>::
   // conditions that require assembly.
   if (this->enable_face_terms)
     {
-      nonlinear_previous_face_values.reinit(n_boundary_faces,
-                                            face_integrator.n_q_points);
-      nonlinear_previous_face_gradient.reinit(n_boundary_faces,
-                                              face_integrator.n_q_points);
       effective_beta_face.reinit(n_boundary_faces);
       face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
     }
@@ -880,10 +876,6 @@ NavierStokesOperatorBase<dim, number>::
         {
           face_integrator.reinit(face);
 
-          face_integrator.read_dof_values_plain(newton_step);
-          face_integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
-                                   EvaluationFlags::EvaluationFlags::gradients);
-
           // Identify the boundary id that corresponds to the face
           const auto boundary_id =
             std::find(this->boundary_conditions.id.begin(),
@@ -911,15 +903,10 @@ NavierStokesOperatorBase<dim, number>::
 
           for (const auto q : face_integrator.quadrature_point_indices())
             {
-              nonlinear_previous_face_values(face - n_inner_faces, q) =
-                face_integrator.get_value(q);
-              nonlinear_previous_face_gradient(face - n_inner_faces, q) =
-                face_integrator.get_gradient(q);
-
               Point<dim, VectorizedArray<number>> point_batch =
                 face_integrator.quadrature_point(q);
 
-              Tensor<1, dim + 1, VectorizedArray<number>> target_velocity_value;
+              Tensor<1, dim, VectorizedArray<number>> target_velocity_value;
 
               target_velocity_value[0] = evaluate_function<dim, number>(
                 boundary_conditions.bcFunctions[boundary_index].u, point_batch);
@@ -931,8 +918,6 @@ NavierStokesOperatorBase<dim, number>::
                 target_velocity_value[2] = evaluate_function<dim, number>(
                   boundary_conditions.bcFunctions[boundary_index].w,
                   point_batch);
-
-              target_velocity_value[dim] = 0.;
 
               face_target_velocity(face - n_inner_faces, q) =
                 target_velocity_value;
@@ -1182,7 +1167,8 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
       // If we are assembling the residual, substract the target velocity from
       // the velocity value.
       if constexpr (assemble_residual)
-        value -= this->face_target_velocity[face_index][q];
+        for (unsigned int d = 0; d < dim; ++d)
+          value[d] -= this->face_target_velocity[face_index][q][d];
 
       for (unsigned int d = 0; d < dim; ++d)
         { // Assemble (v,beta (u-u_target)) for the main penalization
