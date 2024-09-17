@@ -420,6 +420,39 @@ protected:
       }
   }
 
+  /**
+   * @brief Calculate the minimum overlap at which particle-particle forces are
+   * computed.
+   *
+   * @return minimum overlap for the force calculation.
+   */
+  inline double
+  get_force_calculation_threshold_distance()
+  {
+    if constexpr (contact_model == Parameters::Lagrangian::
+                                     ParticleParticleContactForceModel::DMT)
+      {
+        // We are looking for the maximum hamaker constant and minimum surface
+        // energy to compute the biggest distance at which force will be
+        // computed. In other words, we are maximising the delta_0.
+        // This way, force_calculation_threshold_distance can be set
+        // to const variable, which should make the code faster.
+        const double max_effective_hamaker_constant =
+          *(std::max_element(this->effective_hamaker_constant.begin(),
+                             this->effective_hamaker_constant.end()));
+        const double min_effective_surface_energy =
+          *(std::min_element(this->effective_surface_energy.begin(),
+                             this->effective_surface_energy.end()));
+
+        // Return the critical delta_0. We put a minus sign in front of since a
+        // positive overlap means that particles are in contact.
+        return -std::sqrt(
+          max_effective_hamaker_constant /
+          (12. * M_PI * min_effective_surface_energy * dmt_cut_off_threshold));
+      }
+    return 0.;
+  }
+
 private:
   /**
    * @brief Apply the calculated force and torque on the local-local
@@ -1353,39 +1386,6 @@ private:
         contact_info.tangential_overlap.clear();
       }
     normal_force += cohesive_term * normal_unit_vector;
-  }
-
-  /**
-   * @brief Calculate the minimum overlap at which particle-particle forces are
-   * computed.
-   *
-   * @return minimum overlap for the force calculation.
-   */
-  inline double
-  get_force_calculation_threshold_distance()
-  {
-    if constexpr (contact_model == Parameters::Lagrangian::
-                                     ParticleParticleContactForceModel::DMT)
-      {
-        // We are looking for the maximum hamaker constant and minimum surface
-        // energy to compute the biggest distance at which force will be
-        // computed. In other words, we are maximising the delta_0.
-        // This way, force_calculation_threshold_distance can be set
-        // to const variable, which should make the code faster.
-        const double max_effective_hamaker_constant =
-          *(std::max_element(this->effective_hamaker_constant.begin(),
-                             this->effective_hamaker_constant.end()));
-        const double min_effective_surface_energy =
-          *(std::min_element(this->effective_surface_energy.begin(),
-                             this->effective_surface_energy.end()));
-
-        // Return the critical delta_0. We put a minus sign in front of since a
-        // positive overlap means that particles are in contact.
-        return -std::sqrt(
-          max_effective_hamaker_constant /
-          (12. * M_PI * min_effective_surface_energy * dmt_cut_off_threshold));
-      }
-    return 0.;
   }
 
   /**

@@ -173,6 +173,9 @@ private:
     if (adjacent_particles_list.empty())
       return;
 
+    const double force_calculation_threshold_distance =
+      this->get_force_calculation_threshold_distance();
+
     // Define local variables which will be used within the contact calculation
     Tensor<1, 3> normal_unit_vector;
     Tensor<1, 3> normal_force;
@@ -208,7 +211,7 @@ private:
                  particle_two_properties[PropertiesIndex::dp]) -
           particle_one_location.distance(particle_two_location);
 
-        if (normal_overlap > 0.0)
+        if (normal_overlap > force_calculation_threshold_distance)
           {
             update_contact_information(tangential_relative_velocity,
                                        normal_relative_velocity_value,
