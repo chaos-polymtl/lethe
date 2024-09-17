@@ -298,6 +298,12 @@ protected:
   virtual void
   update_multiphysics_time_average_solution() = 0;
 
+  /**
+   * @brief  Required only for the matrix-free solver to update solutions within iterate function.
+   */
+  virtual void
+  update_solutions_for_multiphysics() = 0;
+
   virtual void
   set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,

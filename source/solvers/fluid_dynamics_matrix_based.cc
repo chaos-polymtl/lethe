@@ -1434,6 +1434,11 @@ FluidDynamicsMatrixBased<dim>::solve_linear_system(
 
 template <int dim>
 void
+FluidDynamicsMatrixBased<dim>::update_solutions_for_multiphysics()
+{}
+
+template <int dim>
+void
 FluidDynamicsMatrixBased<dim>::setup_preconditioner()
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

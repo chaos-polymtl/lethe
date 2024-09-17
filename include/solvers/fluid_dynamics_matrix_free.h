@@ -366,6 +366,15 @@ protected:
   virtual void
   update_multiphysics_time_average_solution() override;
 
+
+  /**
+   * @brief  Provide present and previous flow solutions to the multiphysics
+   * interface. These solutions can be accessed through the multiphysics
+   * interface by the different physics.
+   */
+  virtual void
+  update_solutions_for_multiphysics() override;
+
   /**
    * @brief Calculate and store time derivatives of previous solutions according to
    * time-stepping scheme to use them in the operator.
@@ -453,14 +462,6 @@ private:
    */
   void
   print_mg_setup_times();
-
-  /**
-   * @brief  Provide present and previous flow solutions to the multiphysics
-   * interface. These solutions can be accessed through the multiphysics
-   * interface by the different physics.
-   */
-  void
-  update_solutions_for_multiphysics();
 
 protected:
   /**

@@ -38,8 +38,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-
 // Constructor for class FluidDynamicsBlock
 template <int dim>
 FluidDynamicsBlock<dim>::FluidDynamicsBlock(
@@ -195,6 +193,12 @@ FluidDynamicsBlock<dim>::update_multiphysics_time_average_solution()
         &this->average_velocities->get_average_velocities());
     }
 }
+
+
+template <int dim>
+void
+FluidDynamicsBlock<dim>::update_solutions_for_multiphysics()
+{}
 
 template <int dim>
 void
