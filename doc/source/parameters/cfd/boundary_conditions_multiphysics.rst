@@ -102,8 +102,9 @@ For tracer boundary conditions, the defaults parameters are:
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition being imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
-
+* ``type``: This is the type of boundary condition being imposed.
+    * ``dirichlet``, to impose a given tracer value at the boundary,
+    * ``inlet dirichlet``, to impose the Dirichlet boundary condition weakly using a Neumann approach.
 
 VOF
 ^^^
