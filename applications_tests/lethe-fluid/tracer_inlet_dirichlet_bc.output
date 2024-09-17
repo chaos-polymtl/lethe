@@ -1,0 +1,69 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 81
+Tracer statistics : 
+	     Min : 0
+	     Max : 2.22507e-308
+	 Average : 0
+	 Std-Dev : 0
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0
+	 boundary 2: 0
+	 boundary 3: 0
+
+*******************************************************************************
+Transient iteration: 1        Time: 1        Time step: 1        CFL: 7.08982 
+*******************************************************************************
+Tracer statistics : 
+	     Min : 0.335713
+	     Max : 0.957311
+	 Average : 0.581852
+	 Std-Dev : 0.173382
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 1
+	 boundary 1: -0.339851
+	 boundary 2: 2.45607e-10
+	 boundary 3: -1.74439e-09
+
+*******************************************************************************
+Transient iteration: 2        Time: 2        Time step: 1        CFL: 7.08982 
+*******************************************************************************
+Tracer statistics : 
+	     Min : 0.734644
+	     Max : 1.01987
+	 Average : 0.899638
+	 Std-Dev : 0.0931507
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 1
+	 boundary 1: -0.726666
+	 boundary 2: -5.02769e-11
+	 boundary 3: -1.97229e-10
+
+*******************************************************************************
+Transient iteration: 3        Time: 3        Time step: 1        CFL: 7.08982 
+*******************************************************************************
+Tracer statistics : 
+	     Min : 0.920078
+	     Max : 0.99835
+	 Average : 0.973411
+	 Std-Dev : 0.0237864
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 1
+	 boundary 1: -0.915888
+	 boundary 2: -6.59657e-11
+	 boundary 3: -6.04881e-11
