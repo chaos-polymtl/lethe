@@ -292,9 +292,9 @@ public:
    * @brief Return the local-ghost periodic particle contact container.
    */
   inline typename dem_data_structures<dim>::adjacent_particle_pairs &
-  get_ghost_periodic_adjacent_particles()
+  get_local_ghost_periodic_adjacent_particles()
   {
-    return ghost_periodic_adjacent_particles;
+    return local_ghost_periodic_adjacent_particles;
   }
 
   /**
@@ -391,7 +391,7 @@ private:
   typename dem_data_structures<dim>::adjacent_particle_pairs
     local_local_periodic_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_periodic_adjacent_particles;
+    local_ghost_periodic_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_local_periodic_adjacent_particles;
 

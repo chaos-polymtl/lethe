@@ -54,7 +54,7 @@ public:
    * all touching particles. Store normal forces and particles position in
    * vectors.
    *
-   * @param contact_manager The container manager object that contains
+   * @param contact_manager The contact manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
    */

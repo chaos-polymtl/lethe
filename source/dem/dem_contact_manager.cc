@@ -73,14 +73,14 @@ DEMContactManager<dim>::update_contacts()
         local_contact_pair_periodic_candidates);
 
       // Update periodic particle-particle contacts in
-      // ghost_periodic_adjacent_particles of fine search step with
+      // local_ghost_periodic_adjacent_particles of fine search step with
       // ghost_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
         typename dem_data_structures<dim>::adjacent_particle_pairs,
         typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::ghost_periodic_particle_particle>(
-        ghost_periodic_adjacent_particles,
+        local_ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates);
 
       // Update periodic particle-particle contacts in
@@ -170,7 +170,7 @@ DEMContactManager<dim>::update_local_particles_in_cells(
         dim,
         typename dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
-        ghost_periodic_adjacent_particles, particle_container);
+        local_ghost_periodic_adjacent_particles, particle_container);
 
       // Update contact containers for ghost-local periodic particle-particle
       // pairs in contact
@@ -401,18 +401,20 @@ DEMContactManager<dim>::execute_particle_particle_fine_search(
         ->check_periodic_boundaries_enabled())
     {
       // Fine search for local-local periodic particle-particle
-      particle_particle_fine_search<dim>(particle_container,
-                                         local_local_periodic_adjacent_particles,
-                                         local_contact_pair_periodic_candidates,
-                                         neighborhood_threshold,
-                                         periodic_offset);
+      particle_particle_fine_search<dim>(
+        particle_container,
+        local_local_periodic_adjacent_particles,
+        local_contact_pair_periodic_candidates,
+        neighborhood_threshold,
+        periodic_offset);
 
       // Fine search for local-ghost periodic particle-particle
-      particle_particle_fine_search<dim>(particle_container,
-                                         ghost_periodic_adjacent_particles,
-                                         ghost_contact_pair_periodic_candidates,
-                                         neighborhood_threshold,
-                                         periodic_offset);
+      particle_particle_fine_search<dim>(
+        particle_container,
+        local_ghost_periodic_adjacent_particles,
+        ghost_contact_pair_periodic_candidates,
+        neighborhood_threshold,
+        periodic_offset);
 
       // Fine search for ghost-local periodic particle-particle
       particle_particle_fine_search<dim>(

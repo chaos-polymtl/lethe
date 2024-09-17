@@ -59,7 +59,7 @@ public:
    * @param local_local_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param ghost_periodic_adjacent_particles Container of the contact pair
+   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
    * @param ghost_local_periodic_adjacent_particles Container of the contact pair
@@ -78,7 +78,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_periodic_adjacent_particles,
+      &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                               &ghost_local_periodic_adjacent_particles,
     const double               dt,
@@ -133,7 +133,7 @@ public:
    * @param local_local_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param ghost_periodic_adjacent_particles Container of the contact pair
+   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
    * @param ghost_local_periodic_adjacent_particles Container of the contact pair
@@ -152,7 +152,7 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_periodic_adjacent_particles,
+      &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
                               &ghost_local_periodic_adjacent_particles,
     const double               dt,
