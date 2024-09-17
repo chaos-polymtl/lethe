@@ -454,8 +454,7 @@ public:
   FEFaceValues<dim>                        fe_face_values_fd;
   std::vector<Tensor<1, dim>>              velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> face_velocity_values;
-  std::vector<std::vector<Tensor<1, dim>>>
-    face_normal; // TODO Initialize properly
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
 };
 
 #endif
