@@ -450,9 +450,9 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  double                  sipg_penalization = scratch_data.beta;
-  FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
-  const auto             &q_points = fe_iv.get_quadrature_points();
+  const double                  sipg_penalization = scratch_data.beta;
+  const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
+  const auto                   &q_points = fe_iv.get_quadrature_points();
   copy_data.face_data.emplace_back();
 
   auto &copy_data_face = copy_data.face_data.back();
@@ -506,10 +506,10 @@ void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
 {
-  double                  sipg_penalization = scratch_data.beta;
-  FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
-  const auto             &q_points = fe_iv.get_quadrature_points();
-  const unsigned int      n_dofs   = fe_iv.n_current_interface_dofs();
+  const double                  sipg_penalization = scratch_data.beta;
+  const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
+  const auto                   &q_points = fe_iv.get_quadrature_points();
+  const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
 
   auto &copy_data_face             = copy_data.face_data.back();
   copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
@@ -573,8 +573,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double beta                  = scratch_data.beta;
-  const bool   is_dirichlet_boundary = scratch_data.is_dirichlet_boundary;
+  const double                 beta           = scratch_data.beta;
+  const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
     scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
   const auto &q_points = fe_face.get_quadrature_points();
@@ -602,7 +602,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
                 copy_data.local_matrix(i, j) += fe_face.shape_value(i, point) *
                                                 fe_face.shape_value(j, point) *
                                                 velocity_dot_n * JxW[point];
-              if (is_dirichlet_boundary)
+              if (boundary_conditions_tracer.type[boundary_index] ==
+                  BoundaryConditions::BoundaryType::tracer_dirichlet)
                 copy_data.local_matrix(i, j) +=
                   tracer_diffusivity[point] *
                     (-fe_face.shape_value(i, point) *
@@ -622,7 +623,85 @@ void
 TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
-{}
+{
+  const double                 beta           = scratch_data.beta;
+  const unsigned int           boundary_index = scratch_data.boundary_index;
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+  const auto &q_points = fe_face.get_quadrature_points();
+
+  const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+  const std::vector<double> &JxW          = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  // Calculate diffusivity at the faces
+  auto      &properties_manager = scratch_data.properties_manager;
+  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity(q_points.size());
+  diffusivity_model->vector_value(fields, tracer_diffusivity);
+
+  // If the boundary condition is an outlet, assumes that advection comes
+  // out since there is no inflow
+
+  if (boundary_conditions_tracer.type[boundary_index] ==
+      BoundaryConditions::BoundaryType::outlet)
+    {
+      for (unsigned int point = 0; point < q_points.size(); ++point)
+        {
+          const double velocity_dot_n =
+            scratch_data.face_velocity_values[point] * normals[point];
+
+          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+            copy_data.local_rhs(i) -= fe_face.shape_value(i, point) // \phi_i
+                                      * scratch_data.values_here[point] *
+                                      velocity_dot_n // \beta . n
+                                      * JxW[point];  // dx
+        }
+    }
+  // Else the boundary condition is a dirichlet. Evaluate the function and
+  // process it accordingly
+  else if (boundary_conditions_tracer.type[boundary_index] ==
+           BoundaryConditions::BoundaryType::tracer_dirichlet)
+    {
+      std::vector<double> function_value(q_points.size());
+      boundary_conditions_tracer.tracer[boundary_index]->set_time(
+        simulation_control->get_current_time());
+      boundary_conditions_tracer.tracer[boundary_index]->value_list(
+        q_points, function_value);
+
+      for (unsigned int point = 0; point < q_points.size(); ++point)
+        {
+          const double velocity_dot_n =
+            scratch_data.face_velocity_values[point] * normals[point];
+
+          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+            {
+              copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
+                                        function_value[point] * velocity_dot_n *
+                                        JxW[point];
+
+              copy_data.local_rhs(i) -=
+                tracer_diffusivity[point] *
+                  (-fe_face.shape_value(i, point) *
+                     scratch_data.gradients_here[point] * normals[point] -
+                   (scratch_data.values_here[point] - function_value[point]) *
+                     fe_face.shape_grad(i, point) * normals[point]) *
+                  JxW[point] +
+                beta * fe_face.shape_value(i, point) *
+                  (scratch_data.values_here[point] - function_value[point]) *
+                  JxW[point];
+            }
+        }
+    }
+  // process it accordingly
+  else
+    {
+      AssertThrow(false,
+                  ExcMessage(
+                    "No valid boundary conditions types were identified"));
+    }
+}
 
 template class TracerAssemblerBoundaryNitsche<2>;
 template class TracerAssemblerBoundaryNitsche<3>;

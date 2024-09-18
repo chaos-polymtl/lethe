@@ -274,13 +274,9 @@ Tracer<dim>::assemble_system_matrix_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-      scratch_data.is_dirichlet_boundary = false;
-      if (simulation_parameters.boundary_conditions_tracer
-            .type[boundary_index] ==
-          BoundaryConditions::BoundaryType::tracer_dirichlet)
-        scratch_data.is_dirichlet_boundary = true;
-
-      TracerAssemblerBoundaryNitsche<dim> assembler(simulation_control);
+      scratch_data.boundary_index = boundary_index;
+      TracerAssemblerBoundaryNitsche<dim> assembler(
+        simulation_control, simulation_parameters.boundary_conditions_tracer);
       assembler.assemble_matrix(scratch_data, copy_data);
     };
 
@@ -534,33 +530,15 @@ Tracer<dim>::assemble_system_rhs_dg()
         compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
-
       const FEFaceValuesBase<dim> &fe_face =
         scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
 
       const auto &q_points = fe_face.get_quadrature_points();
-
-
-      const unsigned int n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
-      const std::vector<double>         &JxW     = fe_face.get_JxW_values();
-      const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
-
-      std::vector<double>         values_here(q_points.size());
-      std::vector<Tensor<1, dim>> gradients_here(q_points.size());
-
-      fe_face.get_function_values(evaluation_point, values_here);
-      fe_face.get_function_gradients(evaluation_point, gradients_here);
-
-
-
-      // Calculate diffusivity at the faces
-      auto &properties_manager =
-        this->simulation_parameters.physical_properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      std::map<field, std::vector<double>> fields;
-      std::vector<double>                  tracer_diffusivity(q_points.size());
-      diffusivity_model->vector_value(fields, tracer_diffusivity);
+      scratch_data.values_here.resize(q_points.size());
+      scratch_data.gradients_here.resize(q_points.size());
+      fe_face.get_function_values(evaluation_point, scratch_data.values_here);
+      fe_face.get_function_gradients(evaluation_point,
+                                     scratch_data.gradients_here);
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -570,72 +548,19 @@ Tracer<dim>::assemble_system_rhs_dg()
       // Identify the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
       fe_face_values_fd.reinit(velocity_cell, face_no);
-      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+
+      scratch_data.face_velocity_values.resize(q_points.size());
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        face_velocity_values);
+        scratch_data.face_velocity_values);
 
-      // If the boundary condition is an outlet, assumes that advection comes
-      // out since there is no inflow
+      scratch_data.boundary_index = boundary_index;
 
-      if (simulation_parameters.boundary_conditions_tracer
-            .type[boundary_index] == BoundaryConditions::BoundaryType::outlet)
-        {
-          for (unsigned int point = 0; point < q_points.size(); ++point)
-            {
-              const double velocity_dot_n =
-                face_velocity_values[point] * normals[point];
-
-              for (unsigned int i = 0; i < n_facet_dofs; ++i)
-                copy_data.local_rhs(i) -=
-                  fe_face.shape_value(i, point)         // \phi_i
-                  * values_here[point] * velocity_dot_n // \beta . n
-                  * JxW[point];                         // dx
-            }
-        }
-      // Else the boundary condition is a dirichlet. Evaluate the function and
-      // process it accordingly
-      else if (simulation_parameters.boundary_conditions_tracer
-                 .type[boundary_index] ==
-               BoundaryConditions::BoundaryType::tracer_dirichlet)
-        {
-          std::vector<double> function_value(q_points.size());
-          simulation_parameters.boundary_conditions_tracer
-            .tracer[boundary_index]
-            ->value_list(q_points, function_value);
-
-
-          for (unsigned int point = 0; point < q_points.size(); ++point)
-            {
-              const double velocity_dot_n =
-                face_velocity_values[point] * normals[point];
-
-              for (unsigned int i = 0; i < n_facet_dofs; ++i)
-                {
-                  copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
-                                            function_value[point] *
-                                            velocity_dot_n * JxW[point];
-
-                  copy_data.local_rhs(i) -=
-                    tracer_diffusivity[point] *
-                      (-fe_face.shape_value(i, point) * gradients_here[point] *
-                         normals[point] -
-                       (values_here[point] - function_value[point]) *
-                         fe_face.shape_grad(i, point) * normals[point]) *
-                      JxW[point] +
-                    scratch_data.beta * fe_face.shape_value(i, point) *
-                      (values_here[point] - function_value[point]) * JxW[point];
-                }
-            }
-        }
-      // process it accordingly
-      else
-        {
-          AssertThrow(false,
-                      ExcMessage(
-                        "No valid boundary conditions types were identified"));
-        }
+      TracerAssemblerBoundaryNitsche<dim> assembler(
+        simulation_control, simulation_parameters.boundary_conditions_tracer);
+      assembler.assemble_rhs(scratch_data, copy_data);
     };
 
   const auto face_worker =
@@ -706,8 +631,6 @@ Tracer<dim>::assemble_system_rhs_dg()
                                                     system_rhs);
       }
   };
-
-
 
   MeshWorker::mesh_loop(this->dof_handler.begin_active(),
                         this->dof_handler.end(),
