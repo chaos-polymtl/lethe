@@ -214,7 +214,7 @@ public:
           }
       }
 
-    is_dirichlet_boundary = false;
+    boundary_index = 0;
   }
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
@@ -319,13 +319,14 @@ public:
   std::vector<double>         values_here;
   std::vector<double>         values_there;
   std::vector<double>         tracer_value_jump;
+  std::vector<Tensor<1, dim>> gradients_here;
   std::vector<Tensor<1, dim>> tracer_average_gradient;
 
   // SIPG penalization factor beta
   double beta;
 
-  // Bool that defines if the selected face is a dirichlet boundary
-  bool is_dirichlet_boundary;
+  // Bool that defines if the selected face is a dirichlet/outlet boundary
+  unsigned int boundary_index;
 
   // Solid signed distance function
   std::vector<double> sdf_values;
