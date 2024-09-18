@@ -429,10 +429,17 @@ namespace dealii
     /**
      * Reference to the preconditioner.
      */
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+    ObserverPointer<
+      const PreconditionerType,
+      MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
+      preconditioner;
+#else
     SmartPointer<
       const PreconditionerType,
       MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
       preconditioner;
+#endif
   };
 
 
