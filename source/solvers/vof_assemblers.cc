@@ -258,7 +258,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
           const auto phi_phase_i      = scratch_data.phi[q][i];
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
-
           // rhs for: u * grad(phase) + phase * grad(u) - diffusivity *
           // laplacian(phase) = 0
           local_rhs(i) -= (phi_phase_i * velocity * phase_gradient +
@@ -368,11 +367,8 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
     {
       phase_value[0] = scratch_data.present_phase_values[q];
 
-
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_value[p + 1] = scratch_data.previous_phase_values[p][q];
-
-
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)

@@ -119,7 +119,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
