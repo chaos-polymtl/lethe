@@ -346,7 +346,8 @@ Tracer<dim>::assemble_system_matrix_dg()
                         copy_data,
                         MeshWorker::assemble_own_cells |
                           MeshWorker::assemble_boundary_faces |
-                          MeshWorker::assemble_own_interior_faces_once,
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
                         boundary_worker,
                         face_worker);
 }
@@ -644,7 +645,8 @@ Tracer<dim>::assemble_system_rhs_dg()
                         copy_data,
                         MeshWorker::assemble_own_cells |
                           MeshWorker::assemble_boundary_faces |
-                          MeshWorker::assemble_own_interior_faces_once,
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
                         boundary_worker,
                         face_worker);
 }
