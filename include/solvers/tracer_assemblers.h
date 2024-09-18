@@ -19,6 +19,7 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/tracer_scratch_data.h>
 
 /**
@@ -283,8 +284,11 @@ class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
 {
 public:
   TracerAssemblerBoundaryNitsche(
-    std::shared_ptr<SimulationControl> simulation_control)
+    std::shared_ptr<SimulationControl> simulation_control,
+    const BoundaryConditions::TracerBoundaryConditions<dim>
+      &p_boundary_conditions_tracer)
     : simulation_control(simulation_control)
+    , boundary_conditions_tracer(p_boundary_conditions_tracer)
   {}
 
   /**
@@ -310,7 +314,8 @@ public:
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
                StabilizedDGMethodsCopyData &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  std::shared_ptr<SimulationControl>                simulation_control;
+  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
 };
 
 
