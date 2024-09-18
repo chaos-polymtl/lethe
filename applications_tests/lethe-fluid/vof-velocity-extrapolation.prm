@@ -12,7 +12,7 @@ subsection simulation control
   set time end                     = 1.6
   set time step                    = 0.1
   set adapt                        = true
-  set max cfl                      = 0.5
+  set max cfl                      = 0.4
   set output name                  = vof-velocity-extrapolation
   set output frequency             = 0
   set adaptative time step scaling = 1.1
@@ -52,6 +52,20 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 5, 3 : -1, -1 : 1, 0.1 : true
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection box refinement
+  subsection mesh
+    set type               = dealii
+    set grid type          = hyper_rectangle
+    set grid arguments     = -1, -0.02 : 1, 0.02 : true
+    set initial refinement = 0
+  end
   set initial refinement = 4
 end
 
