@@ -238,7 +238,8 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
 {
 public:
-  TracerAssemblerSIPG()
+  TracerAssemblerSIPG(std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -248,10 +249,9 @@ public:
    * before calling for matrix assembly.
    * @param copy_data Destination where the local_rhs and loc
    */
-
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
-                  StabilizedDGMethodsCopyData &copy_data);
+                  StabilizedDGMethodsCopyData &copy_data) override;
 
 
   /**
@@ -261,10 +261,11 @@ public:
    * before calling for matrix assembly.
    * @param copy_data Destination where the local_rhs and loc
    */
-
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
-               StabilizedDGMethodsCopyData &copy_data);
+               StabilizedDGMethodsCopyData &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -281,7 +282,9 @@ template <int dim>
 class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
 {
 public:
-  TracerAssemblerBoundaryNitsche()
+  TracerAssemblerBoundaryNitsche(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -291,10 +294,9 @@ public:
    * before calling for matrix assembly.
    * @param copy_data Destination where the local_rhs and loc
    */
-
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
-                  StabilizedDGMethodsCopyData &copy_data);
+                  StabilizedDGMethodsCopyData &copy_data) override;
 
 
   /**
@@ -304,10 +306,11 @@ public:
    * before calling for matrix assembly.
    * @param copy_data Destination where the local_rhs and loc
    */
-
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
-               StabilizedDGMethodsCopyData &copy_data);
+               StabilizedDGMethodsCopyData &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
