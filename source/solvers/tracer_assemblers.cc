@@ -453,8 +453,8 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   const double                  sipg_penalization = scratch_data.beta;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points = fe_iv.get_quadrature_points();
-  copy_data.face_data.emplace_back();
 
+  copy_data.face_data.emplace_back();
   auto &copy_data_face = copy_data.face_data.back();
 
   const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
@@ -481,7 +481,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
           {
             copy_data_face.cell_matrix(i, j) +=
               fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-              * fe_iv.shape_value((velocity_dot_n > 0),
+              * fe_iv.shape_value((velocity_dot_n > 0.),
                                   j,
                                   q) // phi_j^{upwind}
               * velocity_dot_n       // (\beta .n)

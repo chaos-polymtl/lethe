@@ -293,6 +293,10 @@ Tracer<dim>::assemble_system_matrix_dg()
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
       const unsigned int n_dofs = fe_iv.n_current_interface_dofs();
 
+      scratch_data.beta =
+        simulation_parameters.stabilization.tracer_sipg /
+        compute_cell_diameter<dim>(cell->measure(), fe->degree);
+
       copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
       copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
