@@ -465,6 +465,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
   // Calculate diffusivity at the faces
+  // TODO Add support for SDF
   auto      &properties_manager = scratch_data.properties_manager;
   const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
   std::map<field, std::vector<double>> fields;
@@ -571,7 +572,50 @@ void
 TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
-{}
+{
+  const double beta                  = scratch_data.beta;
+  const bool   is_dirichlet_boundary = scratch_data.is_dirichlet_boundary;
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+  const auto &q_points = fe_face.get_quadrature_points();
+
+  const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+  const std::vector<double> &JxW          = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  // Calculate diffusivity at the faces
+  auto      &properties_manager = scratch_data.properties_manager;
+  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
+  std::map<field, std::vector<double>> fields;
+  std::vector<double>                  tracer_diffusivity(q_points.size());
+  diffusivity_model->vector_value(fields, tracer_diffusivity);
+
+  for (unsigned int point = 0; point < q_points.size(); ++point)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[point] * normals[point];
+      for (unsigned int i = 0; i < n_facet_dofs; ++i)
+        {
+          for (unsigned int j = 0; j < n_facet_dofs; ++j)
+            {
+              if (velocity_dot_n > 0)
+                copy_data.local_matrix(i, j) += fe_face.shape_value(i, point) *
+                                                fe_face.shape_value(j, point) *
+                                                velocity_dot_n * JxW[point];
+              if (is_dirichlet_boundary)
+                copy_data.local_matrix(i, j) +=
+                  tracer_diffusivity[point] *
+                    (-fe_face.shape_value(i, point) *
+                       fe_face.shape_grad(j, point) * normals[point] -
+                     fe_face.shape_value(j, point) *
+                       fe_face.shape_grad(i, point) * normals[point]) *
+                    JxW[point] +
+                  beta * fe_face.shape_value(i, point) *
+                    fe_face.shape_value(j, point) * JxW[point];
+            }
+        }
+    }
+}
 
 template <int dim>
 void
