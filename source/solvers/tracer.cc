@@ -257,22 +257,6 @@ Tracer<dim>::assemble_system_matrix_dg()
       const FEFaceValuesBase<dim> &fe_face =
         scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
 
-      const auto &q_points = fe_face.get_quadrature_points();
-
-      const unsigned int n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
-      const std::vector<double>         &JxW     = fe_face.get_JxW_values();
-      const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
-
-      // Calculate diffusivity at the faces
-      auto &properties_manager =
-        this->simulation_parameters.physical_properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      std::map<field, std::vector<double>> fields;
-      std::vector<double>                  tracer_diffusivity(q_points.size());
-      diffusivity_model->vector_value(fields, tracer_diffusivity);
-
-
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
       FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
@@ -284,46 +268,20 @@ Tracer<dim>::assemble_system_matrix_dg()
 
       fe_face_values_fd.reinit(velocity_cell, face_no);
 
-      std::vector<Tensor<1, dim>> face_velocity_values(q_points.size());
+      const auto &q_points = fe_face.get_quadrature_points();
+      scratch_data.face_velocity_values.resize(q_points.size());
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        face_velocity_values);
+        scratch_data.face_velocity_values);
 
+      scratch_data.is_dirichlet_boundary = false;
+      if (simulation_parameters.boundary_conditions_tracer
+            .type[boundary_index] ==
+          BoundaryConditions::BoundaryType::tracer_dirichlet)
+        scratch_data.is_dirichlet_boundary = true;
 
-      for (unsigned int point = 0; point < q_points.size(); ++point)
-        {
-          const double velocity_dot_n =
-            face_velocity_values[point] * normals[point];
-
-          for (unsigned int i = 0; i < n_facet_dofs; ++i)
-            {
-              for (unsigned int j = 0; j < n_facet_dofs; ++j)
-                {
-                  if (velocity_dot_n > 0)
-                    {
-                      copy_data.local_matrix(i, j) +=
-                        fe_face.shape_value(i, point) *
-                        fe_face.shape_value(j, point) * velocity_dot_n *
-                        JxW[point];
-                    }
-
-                  if (simulation_parameters.boundary_conditions_tracer
-                        .type[boundary_index] ==
-                      BoundaryConditions::BoundaryType::tracer_dirichlet)
-                    {
-                      copy_data.local_matrix(i, j) +=
-                        tracer_diffusivity[point] *
-                          (-fe_face.shape_value(i, point) *
-                             fe_face.shape_grad(j, point) * normals[point] -
-                           fe_face.shape_value(j, point) *
-                             fe_face.shape_grad(i, point) * normals[point]) *
-                          JxW[point] +
-                        scratch_data.beta * fe_face.shape_value(i, point) *
-                          fe_face.shape_value(j, point) * JxW[point];
-                    }
-                }
-            }
-        }
+      TracerAssemblerBoundaryNitsche<dim> assembler(simulation_control);
+      assembler.assemble_matrix(scratch_data, copy_data);
     };
 
   const auto face_worker =

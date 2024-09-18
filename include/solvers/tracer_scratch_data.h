@@ -213,6 +213,8 @@ public:
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
       }
+
+    is_dirichlet_boundary = false;
   }
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
@@ -321,6 +323,9 @@ public:
 
   // SIPG penalization factor beta
   double beta;
+
+  // Bool that defines if the selected face is a dirichlet boundary
+  bool is_dirichlet_boundary;
 
   // Solid signed distance function
   std::vector<double> sdf_values;
