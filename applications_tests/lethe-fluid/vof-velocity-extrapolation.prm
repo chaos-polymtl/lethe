@@ -56,7 +56,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh
+# Box Refinement
 #---------------------------------------------------
 
 subsection box refinement
