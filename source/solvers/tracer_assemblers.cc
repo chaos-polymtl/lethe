@@ -355,18 +355,19 @@ TracerAssemblerInletDirichlet<dim>::assemble_rhs(
               if (scratch_data.boundary_face_id[f] ==
                   this->boundary_conditions_tracer.id[i_bc])
                 {
-                  const auto velocity_values =
+                  const std::vector<Tensor<1, dim>> velocity_values =
                     scratch_data.face_velocity_values[f];
-                  const auto tracer_values = scratch_data.tracer_face_value[f];
-                  const auto normals       = scratch_data.face_normal[f];
+                  const std::vector<double> tracer_values =
+                    scratch_data.tracer_face_value[f];
+                  const std::vector<Tensor<1, dim>> normals =
+                    scratch_data.face_normal[f];
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
                     {
                       const double JxW = scratch_data.face_JxW[f][q];
                       const double dirichlet_value = dirichlet_function.value(
                         scratch_data.face_quadrature_points[f][q]);
-                      for (unsigned int i = 0; i < scratch_data.face_n_dofs;
-                           ++i)
+                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                         {
                           const double phi_face_tracer_i =
                             scratch_data.phi_face_tracer[f][q][i];

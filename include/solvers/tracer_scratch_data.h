@@ -247,10 +247,10 @@ public:
         this->phi_face_tracer = std::vector<std::vector<std::vector<double>>>(
           n_faces,
           std::vector<std::vector<double>>(n_faces_q_points,
-                                           std::vector<double>(face_n_dofs)));
+                                           std::vector<double>(n_dofs, 0.)));
 
         this->tracer_face_value = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
+          n_faces, std::vector<double>(n_faces_q_points, 0.));
 
         for (const auto face : cell->face_indices())
           {
@@ -427,7 +427,6 @@ public:
 
   unsigned int n_faces;
   unsigned int n_faces_q_points;
-  unsigned int face_n_dofs;
 
   // Is boundary cell indicator
   bool                      is_boundary_cell;
