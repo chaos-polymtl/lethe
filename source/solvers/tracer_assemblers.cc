@@ -450,7 +450,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  double                  beta     = 10. / scratch_data.cell_size;
+  double                  sipg_penalization = scratch_data.beta;
   FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
   const auto             &q_points = fe_iv.get_quadrature_points();
   copy_data.face_data.emplace_back();
@@ -486,15 +486,14 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
               * velocity_dot_n       // (\beta .n)
               * JxW[q];              // dx
 
-            // Assemble the diffusion term using nitsche
+            // Assemble the diffusion term using Nitsche
             // symmetric interior penalty method. See Larson Chap. 14. P.362
-
             copy_data_face.cell_matrix(i, j) +=
               (-tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(j, q) *
                  normals[q] * fe_iv.jump_in_shape_values(i, q) -
                tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(i, q) *
                  normals[q] * fe_iv.jump_in_shape_values(j, q) +
-               beta * fe_iv.jump_in_shape_values(j, q) *
+               sipg_penalization * fe_iv.jump_in_shape_values(j, q) *
                  fe_iv.jump_in_shape_values(i, q)) *
               JxW[q];
           }
@@ -506,7 +505,7 @@ void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
 {
-  double                  beta     = 10. / scratch_data.cell_size;
+  double                  sipg_penalization = scratch_data.beta;
   FEInterfaceValues<dim> &fe_iv    = scratch_data.fe_interface_values_tracer;
   const auto             &q_points = fe_iv.get_quadrature_points();
   const unsigned int      n_dofs   = fe_iv.n_current_interface_dofs();
@@ -524,8 +523,6 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  tracer_diffusivity(q_points.size());
   diffusivity_model->vector_value(fields, tracer_diffusivity);
-
-
 
   for (unsigned int q = 0; q < q_points.size(); ++q)
     {
@@ -551,15 +548,14 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                 * JxW[q];                        // dx
             }
 
-          // Assemble the diffusion term using nitsche symmetric interior
+          // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
-
           copy_data_face.cell_rhs(i) -=
             (-tracer_diffusivity[q] * scratch_data.tracer_average_gradient[q] *
                normals[q] * fe_iv.jump_in_shape_values(i, q) -
              tracer_diffusivity[q] * scratch_data.tracer_value_jump[q] *
                normals[q] * fe_iv.average_of_shape_gradients(i, q) +
-             beta * scratch_data.tracer_value_jump[q] *
+             sipg_penalization * scratch_data.tracer_value_jump[q] *
                fe_iv.jump_in_shape_values(i, q)) *
             JxW[q];
         }

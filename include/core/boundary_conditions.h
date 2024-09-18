@@ -256,7 +256,7 @@ namespace BoundaryConditions
     // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "beta",
-      "0",
+      "1",
       Patterns::Double(),
       "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
 
@@ -718,7 +718,7 @@ namespace BoundaryConditions
 
     prm.declare_entry(
       "beta",
-      Utilities::int_to_string(i_bc, 2),
+      "1",
       Patterns::Double(),
       "SIPG (Nitsche) penalization for dirichlet boundary conditions when DG is enabled.");
 
@@ -791,10 +791,10 @@ namespace BoundaryConditions
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
-
     else if (op == "outlet")
       {
         this->type[i_bc] = BoundaryType::outlet;
+        this->beta[i_bc] = prm.get_double("beta");
       }
     else
       {
