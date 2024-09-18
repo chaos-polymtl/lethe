@@ -249,11 +249,9 @@ Tracer<dim>::assemble_system_matrix_dg()
         get_lethe_boundary_index(triangulation_boundary_id);
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
-      double beta =
-        simulation_parameters.boundary_conditions_tracer.beta[boundary_index];
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
-
-
+      scratch_data.beta =
+        simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
+        compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
       const FEFaceValuesBase<dim> &fe_face =
@@ -297,7 +295,6 @@ Tracer<dim>::assemble_system_matrix_dg()
           const double velocity_dot_n =
             face_velocity_values[point] * normals[point];
 
-
           for (unsigned int i = 0; i < n_facet_dofs; ++i)
             {
               for (unsigned int j = 0; j < n_facet_dofs; ++j)
@@ -321,7 +318,7 @@ Tracer<dim>::assemble_system_matrix_dg()
                            fe_face.shape_value(j, point) *
                              fe_face.shape_grad(i, point) * normals[point]) *
                           JxW[point] +
-                        beta * fe_face.shape_value(i, point) *
+                        scratch_data.beta * fe_face.shape_value(i, point) *
                           fe_face.shape_value(j, point) * JxW[point];
                     }
                 }
@@ -363,7 +360,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-      TracerAssemblerSIPG<dim> assembler;
+      TracerAssemblerSIPG<dim> assembler(simulation_control);
       assembler.assemble_matrix(scratch_data, copy_data);
     };
 
@@ -574,9 +571,9 @@ Tracer<dim>::assemble_system_rhs_dg()
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
 
-      double beta =
-        simulation_parameters.boundary_conditions_tracer.beta[boundary_index];
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
+      scratch_data.beta =
+        simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
+        compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
@@ -669,7 +666,7 @@ Tracer<dim>::assemble_system_rhs_dg()
                        (values_here[point] - function_value[point]) *
                          fe_face.shape_grad(i, point) * normals[point]) *
                       JxW[point] +
-                    beta * fe_face.shape_value(i, point) *
+                    scratch_data.beta * fe_face.shape_value(i, point) *
                       (values_here[point] - function_value[point]) * JxW[point];
                 }
             }
@@ -692,14 +689,13 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      // TODO refactor and put inside a parameter formally
-      double beta = 10;
-      beta *= 1 / compute_cell_diameter<dim>(cell->measure(), 1);
+      scratch_data.beta =
+        simulation_parameters.stabilization.tracer_sipg /
+        compute_cell_diameter<dim>(cell->measure(), fe->degree);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
       const unsigned int n_dofs   = fe_iv.n_current_interface_dofs();
       const auto        &q_points = fe_iv.get_quadrature_points();
-
 
       copy_data.face_data.emplace_back();
       auto &copy_data_face             = copy_data.face_data.back();
@@ -722,8 +718,6 @@ Tracer<dim>::assemble_system_rhs_dg()
       fe_iv.get_average_of_function_gradients(
         evaluation_point, scratch_data.tracer_average_gradient);
 
-
-
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
       FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
@@ -739,8 +733,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-
-      TracerAssemblerSIPG<dim> assembler;
+      TracerAssemblerSIPG<dim> assembler(simulation_control);
       assembler.assemble_rhs(scratch_data, copy_data);
     };
 

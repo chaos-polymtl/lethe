@@ -319,6 +319,9 @@ public:
   std::vector<double>         tracer_value_jump;
   std::vector<Tensor<1, dim>> tracer_average_gradient;
 
+  // SIPG penalization factor beta
+  double beta;
+
   // Solid signed distance function
   std::vector<double> sdf_values;
 
@@ -330,7 +333,6 @@ public:
   std::vector<std::vector<Tensor<2, dim>>> hess_phi;
   std::vector<std::vector<double>>         laplacian_phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
-
 
 
   /**
