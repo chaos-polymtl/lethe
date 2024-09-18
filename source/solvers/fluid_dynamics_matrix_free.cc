@@ -429,7 +429,7 @@ namespace dealii
     /**
      * Reference to the preconditioner.
      */
-    SmartPointer<
+    ObserverPointer<
       const PreconditionerType,
       MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
       preconditioner;
