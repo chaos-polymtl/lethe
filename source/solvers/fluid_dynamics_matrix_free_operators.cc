@@ -182,19 +182,16 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const bool                                          &enable_hessians_residual)
 {
   this->enable_face_terms = false;
+
   // Loop over all boundary conditions to establish if one of them has face
   // terms
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       if (boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::function_weak)
+            BoundaryConditions::BoundaryType::function_weak ||
+          boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::outlet)
         this->enable_face_terms = true;
-      if (boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::outlet)
-        Assert(
-          false,
-          ExcMessage(
-            "Outlet boundary conditions are currently not supported by the matrix free operators."));
     }
 
   this->boundary_conditions = boundary_conditions;
@@ -213,6 +210,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
     {
       // Normal vectors and quadrature points are required to weakly
       // impose Dirichlet boundary conditions using Nitsche's method.
+      // Values for outlet boundary condition.
       additional_data.mapping_update_flags_boundary_faces =
         update_values | update_gradients | update_quadrature_points |
         update_JxW_values | update_normal_vectors;
@@ -442,7 +440,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      &NavierStokesOperatorBase::do_face_integral_range<false>,
       this,
       dst,
       src,
@@ -494,7 +492,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      &NavierStokesOperatorBase::do_face_integral_range<false>,
       this,
       dst,
       src,
@@ -544,7 +542,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<false>,
+      &NavierStokesOperatorBase::do_face_integral_range<false>,
       this,
       dst,
       src_cpy,
@@ -691,7 +689,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
             column = 0;
           }
 
-        this->do_local_weak_dirichlet_bc<false>(integrator);
+        this->do_face_integral_local<false>(integrator);
 
         // remove spurious entries for FE_Q_iso_Q1
         for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
@@ -792,20 +790,14 @@ NavierStokesOperatorBase<dim, number>::
   FEFaceIntegrator face_integrator(matrix_free, true, 0);
 
 
+  // 1. Precompute values on cells:
+
   // Set appropriate size for tables
   nonlinear_previous_values.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_gradient.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
-
-  // Set appropriate size for face terms tables if there are face boundary
-  // conditions that require assembly.
-  if (this->enable_face_terms)
-    {
-      effective_beta_face.reinit(n_boundary_faces);
-      face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
-    }
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -863,25 +855,33 @@ NavierStokesOperatorBase<dim, number>::
         }
     }
 
+  // 2. Precompute values on faces if required
 
-  // Boundary faces are padded after the internal faces
-  // Consequently, we need to offset the indices to avoid storing too much
-  // information regarding the boundary faces (e.g. too large vectors)
   if (enable_face_terms)
     {
-      // Evaluate face terms
+      effective_beta_face.reinit(n_boundary_faces);
+      face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
+      face_nonlinear_previous_values.reinit(n_boundary_faces,
+                                            face_integrator.n_q_points);
+
+      // Boundary faces are padded after the internal faces
+      // Consequently, we need to offset the indices to avoid storing too much
+      // information regarding the boundary faces (e.g. too large vectors)
       for (unsigned int face = n_inner_faces;
            face < n_inner_faces + n_boundary_faces;
            ++face)
         {
           face_integrator.reinit(face);
 
+          // We need to read the values for the outlet boundary condition
+          face_integrator.read_dof_values_plain(newton_step);
+          face_integrator.evaluate(EvaluationFlags::values);
+
           // Identify the boundary id that corresponds to the face
           const auto boundary_id =
             std::find(this->boundary_conditions.id.begin(),
                       this->boundary_conditions.id.end(),
                       face_integrator.boundary_id());
-
 
           // If the face is not a boundary condition and, we will not
           // store values that will be derived from the boundary condition
@@ -893,37 +893,51 @@ NavierStokesOperatorBase<dim, number>::
           const auto boundary_index =
             boundary_id - this->boundary_conditions.id.begin();
 
-
-          // Calculate the target velocity for the boundary condition if the
-          // boundary condition is a weak dirichlet boundary condition
-          // Otherwise there is no need to do this calculation
+          // Check if the boundary condition is a weak Dirichlet boundary
+          // condition or an outlet boundary condition, otherwise, no terms
+          // need to be precomputed for faces
           if (this->boundary_conditions.type[boundary_index] !=
-              BoundaryConditions::BoundaryType::function_weak)
+                BoundaryConditions::BoundaryType::function_weak &&
+              this->boundary_conditions.type[boundary_index] !=
+                BoundaryConditions::BoundaryType::outlet)
             continue;
 
           for (const auto q : face_integrator.quadrature_point_indices())
             {
-              Point<dim, VectorizedArray<number>> point_batch =
-                face_integrator.quadrature_point(q);
+              if (this->boundary_conditions.type[boundary_index] ==
+                  BoundaryConditions::BoundaryType::function_weak)
+                {
+                  Point<dim, VectorizedArray<number>> point_batch =
+                    face_integrator.quadrature_point(q);
 
-              Tensor<1, dim, VectorizedArray<number>> target_velocity_value;
+                  Tensor<1, dim, VectorizedArray<number>> target_velocity_value;
 
-              target_velocity_value[0] = evaluate_function<dim, number>(
-                boundary_conditions.bcFunctions[boundary_index].u, point_batch);
+                  target_velocity_value[0] = evaluate_function<dim, number>(
+                    boundary_conditions.bcFunctions[boundary_index].u,
+                    point_batch);
 
-              target_velocity_value[1] = evaluate_function<dim, number>(
-                boundary_conditions.bcFunctions[boundary_index].v, point_batch);
+                  target_velocity_value[1] = evaluate_function<dim, number>(
+                    boundary_conditions.bcFunctions[boundary_index].v,
+                    point_batch);
 
-              if constexpr (dim == 3)
-                target_velocity_value[2] = evaluate_function<dim, number>(
-                  boundary_conditions.bcFunctions[boundary_index].w,
-                  point_batch);
+                  if constexpr (dim == 3)
+                    target_velocity_value[2] = evaluate_function<dim, number>(
+                      boundary_conditions.bcFunctions[boundary_index].w,
+                      point_batch);
 
-              face_target_velocity(face - n_inner_faces, q) =
-                target_velocity_value;
+                  face_target_velocity(face - n_inner_faces, q) =
+                    target_velocity_value;
+                }
+              else if (this->boundary_conditions.type[boundary_index] ==
+                       BoundaryConditions::BoundaryType::outlet)
+                {
+                  face_nonlinear_previous_values[face][q] =
+                    face_integrator.get_value(q);
+                }
             }
 
-          // Calculate the element size
+          // Calculate the element size and use it to calculate the penalty
+          // parameter with the beta factor given in the parameter file
           VectorizedArray<number> cell_size = 1.0;
 
           const auto [cell_it, _] = matrix_free.get_face_iterator(face, 0);
@@ -991,7 +1005,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_weak_dirichlet_boundary_range<true>,
+      &NavierStokesOperatorBase::do_face_integral_range<true>,
       this,
       dst,
       src,
@@ -1019,7 +1033,7 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
   if ((enable_face_terms))
     boundary_function = [&](auto &integrator) {
-      this->do_local_weak_dirichlet_bc<false>(integrator);
+      this->do_face_integral_local<false>(integrator);
     };
 
   matrix_free.initialize_dof_vector(diagonal);
@@ -1082,7 +1096,7 @@ NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
+NavierStokesOperatorBase<dim, number>::do_face_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1101,7 +1115,7 @@ NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
       else
         phi.read_dof_values(src);
 
-      do_local_weak_dirichlet_bc<assemble_residual>(phi);
+      do_face_integral_local<assemble_residual>(phi);
 
       phi.distribute_local_to_global(dst);
     }
@@ -1109,15 +1123,17 @@ NavierStokesOperatorBase<dim, number>::do_weak_dirichlet_boundary_range(
 }
 
 
-// Assembles weak Dirichlet boundary conditions using Nitsche's symmetric
-// penalty method. This is achieved by adding the following to the residual:
-// (v,beta·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
-//
-// The function calculates both the jacobian matrix and the residual value.
+// Assembles face terms of boundary conditions for both the Jacobian matrix
+// and the residual. There are two types implemented:
+// 1. Weak Dirichlet boundary conditions using Nitsche's symmetric
+// penalty method. It adds the following term:
+// (v,β·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
+// 2. Outlet boundary conditions using the directional do-nothing method.
+// It adds the following term: -(v,β(u·n)_·u) where (u·n)_=min(0,u·n)
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
+NavierStokesOperatorBase<dim, number>::do_face_integral_local(
   FEFaceIntegrator &integrator) const
 {
 #if DEAL_II_VERSION_GTE(9, 6, 0)
@@ -1133,11 +1149,13 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function, there is nothing to do, so we set the
+  // not a weak function or outlet BC, there is nothing to do, so we set the
   // values to zero and return
   if (boundary_id == this->boundary_conditions.id.end() ||
-      this->boundary_conditions.type[boundary_index] !=
-        BoundaryConditions::BoundaryType::function_weak)
+      (this->boundary_conditions.type[boundary_index] !=
+         BoundaryConditions::BoundaryType::function_weak &&
+       this->boundary_conditions.type[boundary_index] !=
+         BoundaryConditions::BoundaryType::outlet))
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1164,24 +1182,56 @@ NavierStokesOperatorBase<dim, number>::do_local_weak_dirichlet_bc(
       auto       value    = integrator.get_value(q);
       const auto gradient = integrator.get_gradient(q);
 
-      // If we are assembling the residual, substract the target velocity from
-      // the velocity value.
-      if constexpr (assemble_residual)
-        for (unsigned int d = 0; d < dim; ++d)
-          value[d] -= this->face_target_velocity[face_index][q][d];
+      if (this->boundary_conditions.type[boundary_index] ==
+          BoundaryConditions::BoundaryType::function_weak)
+        {
+          // If we are assembling the residual, substract the target velocity
+          // from the velocity value.
+          if constexpr (assemble_residual)
+            for (unsigned int d = 0; d < dim; ++d)
+              value[d] -= this->face_target_velocity[face_index][q][d];
 
-      for (unsigned int d = 0; d < dim; ++d)
-        { // Assemble (v,beta (u-u_target)) for the main penalization
-          value_result[d] += penalty_parameter * value[d];
+          for (unsigned int d = 0; d < dim; ++d)
+            { // Assemble (v,beta (u-u_target)) for the main penalization
+              value_result[d] += penalty_parameter * value[d];
 
-          // Assemble ν(v,∇δu·n)
-          for (unsigned int i = 0; i < dim; ++i)
-            value_result[d] -=
-              kinematic_viscosity * gradient[d][i] * normal_vector[i];
-          // Assemble ν(∇v·n,(u-u_target))
-          for (unsigned int i = 0; i < dim; ++i)
-            gradient_result[d][i] -=
-              kinematic_viscosity * value[d] * normal_vector[i];
+              // Assemble ν(v,∇δu·n)
+              for (unsigned int i = 0; i < dim; ++i)
+                value_result[d] -=
+                  kinematic_viscosity * gradient[d][i] * normal_vector[i];
+              // Assemble ν(∇v·n,(u-u_target))
+              for (unsigned int i = 0; i < dim; ++i)
+                gradient_result[d][i] -=
+                  kinematic_viscosity * value[d] * normal_vector[i];
+            }
+        }
+      else if (this->boundary_conditions.type[boundary_index] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          Tensor<1, dim, VectorizedArray<number>> velocity;
+          if (assemble_residual)
+            {
+              for (unsigned int d = 0; d < dim; ++d)
+                velocity[d] = value[d];
+            }
+          else
+            {
+              // Only use the previous velocity values for the Jacobian
+              for (unsigned int d = 0; d < dim; ++d)
+                velocity[d] = face_nonlinear_previous_values[face][q][d];
+            }
+
+          // (u·n)_=min(0,u·n)
+          VectorizedArray<number> normal_outflux = velocity * normal_vector;
+
+          normal_outflux =
+            std::min(VectorizedArray<number>(0.0), normal_outflux);
+
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              // -(v,β(u·n)_·u)
+              value_result[d] -= penalty_parameter * normal_outflux * value[d];
+            }
         }
 
       integrator.submit_value(value_result, q);

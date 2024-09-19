@@ -726,10 +726,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
           else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                    BoundaryConditions::BoundaryType::outlet)
             {
-              Assert(
-                false,
-                ExcMessage(
-                  "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
+              /*The directional do-nothing boundary condition is implemented in
+               * the operators*/
             }
           else
             {
@@ -1156,10 +1154,8 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                          .type[i_bc] ==
                        BoundaryConditions::BoundaryType::outlet)
                 {
-                  Assert(
-                    false,
-                    ExcMessage(
-                      "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
+                  /*The directional do-nothing boundary condition is implemented
+                   * in the operators*/
                 }
               else
                 {
@@ -2876,10 +2872,8 @@ FluidDynamicsMatrixFree<dim>::define_zero_constraints()
       else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                BoundaryConditions::BoundaryType::outlet)
         {
-          Assert(
-            false,
-            ExcMessage(
-              "Outlet boundary conditions are currently not supported by the lethe-fluid-matrix-free executable"));
+          /*The directional do-nothing boundary condition is implemented
+           * in the operators*/
         }
       else
         {

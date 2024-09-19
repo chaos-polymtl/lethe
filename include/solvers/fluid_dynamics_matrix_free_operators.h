@@ -352,6 +352,39 @@ protected:
     const std::pair<unsigned int, unsigned int> &range) const;
 
   /**
+   * @brief Carry out the integration of boundary face integrals.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] integrator FEFaceEvaluation object that allows to evaluate
+   * functions at quadrature points and perform face integrations.
+   */
+  template <bool assemble_residual>
+  void
+  do_face_integral_local(FEFaceIntegrator &integrator) const;
+
+  /**
+   * @brief Loop over all boundary face batches within certain range and perform a face
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values. This is used to weakly impose dirichlet boundary conditions or
+   * outlet boundary conditions.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   *
+   * @param[in] matrix_free Object that contains all data.
+   * @param[in,out] dst Global vector where the final result is added.
+   * @param[in] src Input vector with all values in all cells.
+   * @param[in] range Range of the face batch.
+   */
+  template <bool assemble_residual>
+  void
+  do_face_integral_range(
+    const MatrixFree<dim, number>               &matrix_free,
+    VectorType                                  &dst,
+    const VectorType                            &src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+  /**
    * @brief Loop over all internal face batches within certain range and perform a face
    * integral with access to global vectors, i.e., gathering and scattering
    * values. This is only required for compilation and not needed for our CG
@@ -368,40 +401,6 @@ protected:
     VectorType                                  &dst,
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
-
-  /**
-   * @brief Loop over all boundary face batches within certain range and perform a face
-   * integral with access to global vectors, i.e., gathering and scattering
-   * values. This is used to weakly impose dirichlet boundary conditions.
-   *
-   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
-   *
-   * @param[in] matrix_free Object that contains all data.
-   * @param[in,out] dst Global vector where the final result is added.
-   * @param[in] src Input vector with all values in all cells.
-   * @param[in] range Range of the face batch.
-   */
-  template <bool assemble_residual>
-  void
-  do_weak_dirichlet_boundary_range(
-    const MatrixFree<dim, number>               &matrix_free,
-    VectorType                                  &dst,
-    const VectorType                            &src,
-    const std::pair<unsigned int, unsigned int> &range) const;
-
-
-  /**
-   * @brief Carry out the integration of boundary face integrals.
-   *
-   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
-   *
-   * @param[in] integrator FEFaceEvaluation object that allows to evaluate
-   * functions at quadrature points and perform face integrations.
-   */
-  template <bool assemble_residual>
-  void
-  do_local_weak_dirichlet_bc(FEFaceIntegrator &integrator) const;
-
 
   /**
    * @brief Interface to function in charge of computing the residual using a cell
@@ -534,8 +533,7 @@ protected:
 
   /**
    * @brief Flag to turn the calculation of face terms on or off.
-   * This is used for weakly imposed Dirichlet boundary conditions (implemented)
-   * or outlets (not implemented yet).
+   * This is used for weakly imposed Dirichlet boundary conditions or outlets.
    *
    */
   bool enable_face_terms;
@@ -571,6 +569,14 @@ protected:
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     time_derivatives_previous_solutions;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the velocity at faces.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    face_nonlinear_previous_values;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
