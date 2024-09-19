@@ -1371,7 +1371,6 @@ namespace Parameters
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::constant;
-
               }
             else if (op == "quartic")
               {
@@ -1382,8 +1381,7 @@ namespace Parameters
               throw(std::runtime_error(
                 "Invalid mobility model. The choices are <constant|quartic>."));
 
-            mobility_cahn_hilliard_parameters.parse_parameters(prm,
-                                                                 dimensions);
+            mobility_cahn_hilliard_parameters.parse_parameters(prm, dimensions);
           }
           prm.leave_subsection();
         }
