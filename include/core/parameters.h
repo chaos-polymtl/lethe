@@ -350,9 +350,22 @@ namespace Parameters
     // Liquidus temperature - Units in K
     double T_liquidus;
 
+      /**
+       * @brief Declare the parameters.
+       *
+       * @param[in,out] prm The ParameterHandler.
+       */
     void
     declare_parameters(ParameterHandler &prm);
     void
+    /**
+ * @brief Parse the parameters.
+ *
+ * @param[in,out] prm The ParameterHandler.
+ *
+ * @param[in] dimensions The Dimensionality object controling the
+ * fundamental dimensions (length, time, mass, temperature) of the problem.
+ */
     parse_parameters(ParameterHandler                &prm,
                      const Parameters::Dimensionality dimensions);
   };
@@ -366,8 +379,22 @@ namespace Parameters
     // Mobility constant (M) in m^2/s
     double mobility_cahn_hilliard_constant;
 
+      /**
+   * @brief Declare the parameters.
+   *
+   * @param[in,out] prm The ParameterHandler.
+   */
     void
     declare_parameters(ParameterHandler &prm);
+
+      /**
+* @brief Parse the parameters.
+*
+* @param[in,out] prm The ParameterHandler.
+*
+* @param[in] dimensions The Dimensionality object controling the
+* fundamental dimensions (length, time, mass, temperature) of the problem.
+*/
     void
     parse_parameters(ParameterHandler                &prm,
                      const Parameters::Dimensionality dimensions);
@@ -500,9 +527,26 @@ namespace Parameters
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_solid_interaction_with_material_interaction_id;
 
+/**
+     * @brief Declare the parameters.
+     *
+     * @param[in,out] prm The ParameterHandler.
+     *
+     * @param[in] id The material id.
+     */
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
 
+      /**
+   * @brief Parse the parameters.
+   *
+   * @param[in,out] prm The ParameterHandler.
+   *
+   * @param[in] id The material id.
+   *
+   * @param[in] dimensions The Dimensionality object controling the
+   * fundamental dimensions (length, time, mass, temperature) of the problem.
+   */
     void
     parse_parameters(ParameterHandler                &prm,
                      const unsigned int               id,

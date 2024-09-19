@@ -521,6 +521,7 @@ namespace Parameters
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
     surface_tension_coefficient *= dimensions.surface_tension_scaling;
     T_0 = prm.get_double("reference state temperature");
+    T_0 *= 1. / dimensions.temperature;
     surface_tension_gradient =
       prm.get_double("temperature-driven surface tension gradient");
     surface_tension_gradient *= dimensions.surface_tension_gradient_scaling;
@@ -1351,41 +1352,38 @@ namespace Parameters
             if (op == "constant")
               {
                 surface_tension_model = SurfaceTensionModel::constant;
-                surface_tension_parameters.parse_parameters(prm, dimensions);
               }
             else if (op == "linear")
               {
                 surface_tension_model = SurfaceTensionModel::linear;
-                surface_tension_parameters.parse_parameters(prm, dimensions);
               }
             else if (op == "phase change")
               {
                 surface_tension_model = SurfaceTensionModel::phase_change;
-                surface_tension_parameters.parse_parameters(prm, dimensions);
               }
             else
               throw(std::runtime_error(
                 "Invalid surface tension model. The choices are <constant|linear|phase change>."));
-
+            surface_tension_parameters.parse_parameters(prm, dimensions);
             // Cahn-Hilliard mobility
             op = prm.get("cahn hilliard mobility model");
             if (op == "constant")
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::constant;
-                mobility_cahn_hilliard_parameters.parse_parameters(prm,
-                                                                   dimensions);
+
               }
             else if (op == "quartic")
               {
                 mobility_cahn_hilliard_model =
                   MobilityCahnHilliardModel::quartic;
-                mobility_cahn_hilliard_parameters.parse_parameters(prm,
-                                                                   dimensions);
               }
             else
               throw(std::runtime_error(
                 "Invalid mobility model. The choices are <constant|quartic>."));
+
+            mobility_cahn_hilliard_parameters.parse_parameters(prm,
+                                                                 dimensions);
           }
           prm.leave_subsection();
         }
