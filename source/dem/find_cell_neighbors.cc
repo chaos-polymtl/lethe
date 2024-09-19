@@ -159,19 +159,19 @@ find_cell_periodic_neighbors(
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
               if (periodic_neighbor->is_locally_owned())
-                { 
-                  // Check if the neighbor cell has been processed as a 
+                {
+                  // Check if the neighbor cell has been processed as a
                   // main cell
                   auto search_iterator =
                     total_cell_list.find(periodic_neighbor);
 
-                  // Check if the neighbor cell is in already in the 
+                  // Check if the neighbor cell is in already in the
                   // local_periodic_neighbor_vector
-                  // Note from Gabo: I don't understand how this could happened 
+                  // Note from Gabo: I don't understand how this could happened
                   // since we are looping over cell on boundary 1.
-                  // I think the only case would be if periodic_neighbor_list has 
-                  // duplicate cell. If this is the case, it is weird that 
-                  // get_periodic_neighbor_list returns a list with duplicates. 
+                  // I think the only case would be if periodic_neighbor_list
+                  // has duplicate cell. If this is the case, it is weird that
+                  // get_periodic_neighbor_list returns a list with duplicates.
                   auto local_search_iterator =
                     std::find(local_periodic_neighbor_vector.begin(),
                               local_periodic_neighbor_vector.end(),

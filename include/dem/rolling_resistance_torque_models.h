@@ -24,7 +24,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 /**
- * @brief No rolling resistance torque model. No calculation is being done with 
+ * @brief No rolling resistance torque model. No calculation is being done with
  * this model.
  */
 inline Tensor<1, 3>
@@ -46,17 +46,17 @@ no_rolling_resistance_torque(
 /**
  * @brief Calculation of the constant rolling resistance torque model using the
  * information obtained from the fine search and physical properties.
- * 
+ *
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
- * @param[in] effective_rolling_friction_coefficient Effective_rolling friction 
+ * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
  * @param[in] normal_force_norm Norm of the nomal force.
- * 
+ *
  */
 inline Tensor<1, 3>
 constant_rolling_resistance_torque(
@@ -91,7 +91,7 @@ constant_rolling_resistance_torque(
 /**
  * @brief Calculation of the viscous rolling resistance torque model using the
  * information obtained from the fine search and physical properties.
- * 
+ *
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * |V_omega| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
@@ -99,7 +99,7 @@ constant_rolling_resistance_torque(
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
- * @param[in] effective_rolling_friction_coefficient Effective_rolling friction 
+ * @param[in] effective_rolling_friction_coefficient Effective_rolling friction
  * coefficient
  * @param[in] normal_force_norm Norm of the nomal force.
  * @param[in] normal_contact_vector Normal unit vector.
