@@ -142,6 +142,8 @@ find_cell_periodic_neighbors(
         {
           // The first element of each vector is the cell itself.
           local_periodic_neighbor_vector.push_back(cell);
+
+          // Store every main cell
           total_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
@@ -157,9 +159,19 @@ find_cell_periodic_neighbors(
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
               if (periodic_neighbor->is_locally_owned())
-                {
+                { 
+                  // Check if the neighbor cell has been processed as a 
+                  // main cell
                   auto search_iterator =
                     total_cell_list.find(periodic_neighbor);
+
+                  // Check if the neighbor cell is in already in the 
+                  // local_periodic_neighbor_vector
+                  // Note from Gabo: I don't understand how this could happened 
+                  // since we are looping over cell on boundary 1.
+                  // I think the only case would be if periodic_neighbor_list has 
+                  // duplicate cell. If this is the case, it is weird that 
+                  // get_periodic_neighbor_list returns a list with duplicates. 
                   auto local_search_iterator =
                     std::find(local_periodic_neighbor_vector.begin(),
                               local_periodic_neighbor_vector.end(),
@@ -167,8 +179,7 @@ find_cell_periodic_neighbors(
 
                   // If the cell neighbor is a local cell and not present
                   // in the total_cell_list vector, it will be added as the
-                  // neighbor of the main cell and also to the
-                  // total_cell_list to avoid repetition for next cells.
+                  // neighbor of the main cell.
                   if (search_iterator == total_cell_list.end() &&
                       local_search_iterator ==
                         local_periodic_neighbor_vector.end())
@@ -179,7 +190,7 @@ find_cell_periodic_neighbors(
                 }
               else if (periodic_neighbor->is_ghost())
                 {
-                  // If the neighbor cell is a ghost, it should be added in
+                  // If the cell neighbor is a ghost, it should be added in
                   // the ghost_periodic_neighbor_vector container
                   auto ghost_search_iterator =
                     std::find(ghost_periodic_neighbor_vector.begin(),
@@ -317,13 +328,13 @@ get_periodic_neighbor_list(
                                                  &v_to_c,
   typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
 {
-  // Loop over vertices of the cell
+  // Loop over all vertices of the cell (periodic and non periodic)
   for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
     {
       // Get global id of vertex
       unsigned int vertex_id = cell->vertex_index(vertex);
 
-      // Check if vertex is at periodic boundary, should be a key if so
+      // Check if vertex is at periodic boundary, there should be a key if so
       if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
           vertex_to_coinciding_vertex_group.end())
         {

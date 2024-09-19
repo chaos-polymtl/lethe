@@ -50,13 +50,16 @@ class ParticlesForceChainsBase
 {
 public:
   /**
-   * @brief Use a ParticleParticleContactForce object to calculate normal forces between
-   * all touching particles. Store normal forces and particles position in
+   * @brief Use a ParticleParticleContactForce object to calculate normal forces
+   * between particles. Store normal forces and particles position in
    * vectors.
    *
-   * @param contact_manager The contact manager object that contains
-   * containers to modify of contact pair periodic candidates with other
-   * containers with periodic neighbors lists
+   * @param[in] local_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local particle-particle
+   * contact forces.
+   * @param[in] ghost_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost particle-particle
+   * contact forces.
    */
   virtual void
   calculate_force_chains(
@@ -65,15 +68,17 @@ public:
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles) = 0;
   /**
-   * @brief Output the force chains in VTU and PVTU files for each iteration and a PVD file.
+   * @brief Output the force chains in VTU and PVTU files for each iteration and
+   * a PVD file.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
-   * @param mpi_communicator The mpi communicator
-   * @param folder a string that contains the path where the results are to be saved
-   * @param group_files the number of vtu files that will be generated.
-   * @param iter the iteration number associated with the file
-   * @param time the time associated with the file
+   * @param[in] dem_parameters DEM parameters declared in the .prm file
+   * @param[in] pvd_handler a PVDHandler to store the information about the file
+   * name and time associated with it
+   * @param[in] mpi_communicator The mpi communicator
+   * @param[in] folder a string that contains the path where the results are to
+   * be saved
+   * @param[in] iter the iteration number associated with the file
+   * @param[in] time the time associated with the file
    */
   virtual void
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
@@ -118,11 +123,12 @@ public:
    * ParticleParticleContactForce class' methods. Stock normal forces and
    * particles position in vectors.
    *
-   * @param local_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local particle-particle contact forces.
-   * @param ghost_adjacent_particles Container of the contact pair candidates
-   * information for calculation of the local-ghost particle-particle contact
-   * forces.
+   * @param[in] local_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local particle-particle
+   * contact forces.
+   * @param[in] ghost_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost particle-particle
+   * contact forces.
    */
   void
   calculate_force_chains(
@@ -135,15 +141,14 @@ public:
    * @brief Output the force chains in VTU and PVTU files for each iteration and
    * a PVD file.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file.
-   * @param pvd_handler a PVDHandler to store the information about the file
+   * @param[in] dem_parameters DEM parameters declared in the .prm file.
+   * @param[in] pvd_handler a PVDHandler to store the information about the file
    * name and time associated with it.
-   * @param mpi_communicator The mpi communicator.
-   * @param folder a string that contains the path where the results are to be
-   * saved.
-   * @param group_files the number of vtu files that will be generated.
-   * @param iter the iteration number associated with the file.
-   * @param time the time associated with the file.
+   * @param[in] mpi_communicator The mpi communicator.
+   * @param[in] folder a string that contains the path where the results are to
+   * be saved.
+   * @param[in] iter the iteration number associated with the file.
+   * @param[in] time the time associated with the file.
    */
   void
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
@@ -161,7 +166,7 @@ private:
    * particle-particle contact forces class, without the other contact types and
    * the update of the particles forces, torques and tangential overlap.
    *
-   * @param adjacent_particles_list Container of the adjacent particles of a
+   * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles.
    */
   inline void
@@ -245,15 +250,13 @@ private:
    * @brief Update the contact pair information for all contact force
    * calculations.
    *
-   * @param[out] contact_info Contact information of a particle pair in
-   * neighborhood.
    * @param[out] tangential_relative_velocity Tangential relative velocity.
+   * @param[out] normal_relative_velocity_value Normal relative velocity.
    * @param[out] normal_unit_vector Normal vector of the contact.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    * @param[in] particle_one_location Location of particle one in contact.
    * @param[in] particle_two_location Location of particle two in contact.
-   * @param[in] dt DEM time step.
    */
   inline void
   update_contact_information(
@@ -266,7 +269,7 @@ private:
     const Point<3>                &particle_two_location)
   {
     // Calculation of the contact vector from particle one to particle two
-    auto contact_vector = particle_two_location - particle_one_location;
+    Tensor<1, 3> contact_vector = particle_two_location - particle_one_location;
 
     // Calculation of the normal unit contact vector
     normal_unit_vector = contact_vector / contact_vector.norm();
@@ -322,9 +325,9 @@ private:
    * @brief Create a triangulation with a unique cell (represented by a line)
    * for each normal force between two particles.
    *
-   * @param tria Empty triangulation used to create a triangulation with all
-   * the vertices needed.
-   * @param vertices Vector of points used to create a triangulation
+   * @param[out] tria Empty triangulation used to create a triangulation with
+   * all the vertices needed.
+   * @param[in] vertices Vector of points used to create a triangulation
    */
   void
   multi_general_cell(Triangulation<1, 3>         &tria,

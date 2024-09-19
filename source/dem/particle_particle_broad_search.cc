@@ -334,7 +334,7 @@ find_particle_particle_periodic_contact_pairs(
        cells_local_periodic_neighbor_list.end();
        ++cell_periodic_neighbor_list_iterator)
     {
-      // The main cell on periodic boundary 0
+      // The main cell is on periodic boundary 0
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
 
@@ -349,13 +349,14 @@ find_particle_particle_periodic_contact_pairs(
       if (particles_exist_in_main_cell)
         {
           // Going through periodic neighbor cells on the periodic boundary 1
-          // of the main cell
+          // of the main cell. We start at the second iterator since the first one
+          // is the main cell.
           ++cell_periodic_neighbor_iterator;
           for (; cell_periodic_neighbor_iterator !=
                  cell_periodic_neighbor_list_iterator->end();
                ++cell_periodic_neighbor_iterator)
             {
-              // Defining iterator on local particles in the periodic neighbor
+              // Defining iterator on particles in the local periodic neighbor
               // cell
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_periodic_neighbor_cell =
@@ -363,7 +364,7 @@ find_particle_particle_periodic_contact_pairs(
                     *cell_periodic_neighbor_iterator);
 
               // Capturing particle pairs, the first particle in the main
-              // cell and the second particle in the neighbor cells
+              // cell and the second particle in the local periodic neighbor cell
               for (auto particle_in_main_cell = particles_in_main_cell.begin();
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
