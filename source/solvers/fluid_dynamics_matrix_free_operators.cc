@@ -440,7 +440,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_face_integral_range<false>,
+      &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
       src,
@@ -492,7 +492,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_face_integral_range<false>,
+      &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
       src,
@@ -542,7 +542,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_face_integral_range<false>,
+      &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
       src_cpy,
@@ -689,7 +689,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
             column = 0;
           }
 
-        this->do_face_integral_local<false>(integrator);
+        this->do_boundary_face_integral_local<false>(integrator);
 
         // remove spurious entries for FE_Q_iso_Q1
         for (unsigned int i = 0; i < lexicographic_numbering.size(); ++i)
@@ -1005,7 +1005,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
       &NavierStokesOperatorBase::do_internal_face_integral_range,
-      &NavierStokesOperatorBase::do_face_integral_range<true>,
+      &NavierStokesOperatorBase::do_boundary_face_integral_range<true>,
       this,
       dst,
       src,
@@ -1033,7 +1033,7 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
   if ((enable_face_terms))
     boundary_function = [&](auto &integrator) {
-      this->do_face_integral_local<false>(integrator);
+      this->do_boundary_face_integral_local<false>(integrator);
     };
 
   matrix_free.initialize_dof_vector(diagonal);
@@ -1096,7 +1096,7 @@ NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::do_face_integral_range(
+NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1115,7 +1115,7 @@ NavierStokesOperatorBase<dim, number>::do_face_integral_range(
       else
         phi.read_dof_values(src);
 
-      do_face_integral_local<assemble_residual>(phi);
+      do_boundary_face_integral_local<assemble_residual>(phi);
 
       phi.distribute_local_to_global(dst);
     }
@@ -1133,7 +1133,7 @@ NavierStokesOperatorBase<dim, number>::do_face_integral_range(
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::do_face_integral_local(
+NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   FEFaceIntegrator &integrator) const
 {
 #if DEAL_II_VERSION_GTE(9, 6, 0)

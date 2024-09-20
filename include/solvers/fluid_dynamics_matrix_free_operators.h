@@ -354,22 +354,22 @@ protected:
   /**
    * @brief Carry out the integration of boundary face integrals.
    *
-   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   * @tparam assemble_residual Flag to assemble the residual or the Jacobian.
    *
    * @param[in] integrator FEFaceEvaluation object that allows to evaluate
    * functions at quadrature points and perform face integrations.
    */
   template <bool assemble_residual>
   void
-  do_face_integral_local(FEFaceIntegrator &integrator) const;
+  do_boundary_face_integral_local(FEFaceIntegrator &integrator) const;
 
   /**
    * @brief Loop over all boundary face batches within certain range and perform a face
    * integral with access to global vectors, i.e., gathering and scattering
-   * values. This is used to weakly impose dirichlet boundary conditions or
+   * values. This is used to weakly impose Dirichlet boundary conditions or
    * outlet boundary conditions.
    *
-   * @tparam assemble_residual Flag to assemble the residual or the jacobian.
+   * @tparam assemble_residual Flag to assemble the residual or the Jacobian.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
@@ -378,7 +378,7 @@ protected:
    */
   template <bool assemble_residual>
   void
-  do_face_integral_range(
+  do_boundary_face_integral_range(
     const MatrixFree<dim, number>               &matrix_free,
     VectorType                                  &dst,
     const VectorType                            &src,
