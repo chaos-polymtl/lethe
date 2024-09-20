@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-20
+
+### Added
+
+- MINOR Added dimensionality for the mobility and interface thickness in the CHNS solver, and surface tension related parameters in the VOF solver. [#1274](https://github.com/chaos-polymtl/lethe/pull/1274)
+
 ## [Master] - 2024-09-12
 
 ### Fixed
