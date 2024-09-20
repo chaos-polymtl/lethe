@@ -162,7 +162,7 @@ public:
     mesh_box_refinement->parse_parameters(prm);
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm, dimensionality);
-    multiphysics.parse_parameters(prm);
+    multiphysics.parse_parameters(prm, dimensionality);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
     laser_parameters->parse_parameters(prm);
@@ -182,7 +182,6 @@ public:
     simulation_control.parse_parameters(prm);
     velocity_sources.parse_parameters(prm);
     particlesParameters->parse_parameters(prm);
-    multiphysics.parse_parameters(prm);
     constrain_solid_domain.parse_parameters(prm);
     stabilization.parse_parameters(prm);
     ale.parse_parameters(prm);
