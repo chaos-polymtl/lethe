@@ -735,9 +735,10 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer sipg",
-        "10",
+        "1",
         Patterns::Double(),
-        "Value of the SIPG stabilization parameter for the tracer equation when a discontinuous Galerkin formulation is used.");
+        "Value of the SIPG stabilization parameter for the tracer equation when "
+        "a Discontinuous Galerkin (DG) formulation is used.");
     }
     prm.leave_subsection();
   }
@@ -1485,10 +1486,11 @@ namespace Parameters
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
 
-      prm.declare_entry("tracer uses dg",
-                        "false",
-                        Patterns::Bool(),
-                        "Switch tracer to discontinuous galerkin formulation");
+      prm.declare_entry(
+        "tracer uses dg",
+        "false",
+        Patterns::Bool(),
+        "Switch tracer to Discontinuous Galerkin (DG) formulation");
     }
     prm.leave_subsection();
   }

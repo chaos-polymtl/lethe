@@ -39,7 +39,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
 
   virtual void
@@ -52,7 +53,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
 
   virtual void
@@ -106,11 +108,11 @@ public:
 
 
 /**
- * @brief Class that assembles the core of the Tracer equation for DG elements.
+ * @brief Class that assembles the core (cells) of the Tracer equation for DG elements.
  * This class assembles the weak form of:
  * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$
- * @tparam dim An integer that denotes the number of spatial dimensions
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions
  * @ingroup assemblers
  */
 
@@ -188,7 +190,8 @@ public:
 
 
 /**
- * @brief A pure virtual class that serves as an interface for boundary and internal faces that occurs when using a discontinuous Galerkin discretization.
+ * @brief A pure virtual class that serves as an interface for boundary and
+ * internal faces that occur when using a discontinuous Galerkin discretization.
  * The main difference between the TracerFaceAssembler and the TracerAssembler
  * is that the TracerFaceAssembler assembles the matrix and rhs for internal
  * faces and thus requires the StabilizedDGMethodsCopyData class.
@@ -206,7 +209,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
 
   virtual void
@@ -219,7 +223,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
 
   virtual void
@@ -229,7 +234,10 @@ public:
 
 
 /**
- * @brief Assembles the symmetric interior penalty (SIPG) method (or Nitche's method) for internal faces. This assembler is only required when solving the Tracer equation using a discontinuous Galerkin discretization.
+ * @brief Assembles the symmetric interior penalty (SIPG) method (or
+ * Nitsche's method) for internal faces. This assembler is only required
+ * when solving the Tracer equation using a discontinuous Galerkin
+ * discretization.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -248,7 +256,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
@@ -260,7 +269,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
@@ -270,8 +280,8 @@ public:
 };
 
 /**
- * @brief Assembles Nitche's method for boundary faces.
- *  This assembler is only required when solving the Tracer equation using a
+ * @brief Assembles Nitsche's method for boundary faces.
+ * This assembler is only required when solving the Tracer equation using a
  * discontinuous Galerkin discretization since then the boundary conditions have
  * to be weakly imposed.
  *
@@ -296,7 +306,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
@@ -308,7 +319,8 @@ public:
    * @param scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix should
+   * be copied
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
