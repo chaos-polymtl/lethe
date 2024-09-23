@@ -665,8 +665,6 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
            BoundaryConditions::BoundaryType::tracer_dirichlet)
     {
       std::vector<double> function_value(q_points.size());
-      boundary_conditions_tracer.tracer[boundary_index]->set_time(
-        simulation_control->get_current_time());
       boundary_conditions_tracer.tracer[boundary_index]->value_list(
         q_points, function_value);
 
