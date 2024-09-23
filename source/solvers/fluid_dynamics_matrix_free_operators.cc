@@ -1198,7 +1198,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
               value[d] -= this->face_target_velocity[face_index][q][d];
 
           for (unsigned int d = 0; d < dim; ++d)
-            { // Assemble (v,beta (u-u_target)) for the main penalization
+            {
+              // Assemble (v,beta (u-u_target)) for the main penalization
               value_result[d] += penalty_parameter * value[d];
 
               // Assemble ν(v,∇δu·n)
@@ -1230,7 +1231,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           auto value = integrator.get_value(q);
 
           Tensor<1, dim, VectorizedArray<number>> velocity;
-          if (assemble_residual)
+          if constexpr (assemble_residual)
             {
               for (unsigned int d = 0; d < dim; ++d)
                 velocity[d] = value[d];
