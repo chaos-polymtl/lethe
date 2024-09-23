@@ -249,7 +249,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         get_lethe_boundary_index(triangulation_boundary_id);
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
-      scratch_data.beta =
+      scratch_data.penalization =
         simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
         compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
@@ -293,13 +293,13 @@ Tracer<dim>::assemble_system_matrix_dg()
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
       const unsigned int n_dofs = fe_iv.n_current_interface_dofs();
 
-      scratch_data.beta =
+      scratch_data.penalization =
         simulation_parameters.stabilization.tracer_sipg /
         compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
       copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
-      copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+      copy_data_face.face_matrix.reinit(n_dofs, n_dofs);
       copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
 
       // Gather velocity information at the face to properly advect
@@ -330,7 +330,7 @@ Tracer<dim>::assemble_system_matrix_dg()
 
     for (const auto &cdf : c.face_data)
       {
-        constraints_used.distribute_local_to_global(cdf.cell_matrix,
+        constraints_used.distribute_local_to_global(cdf.face_matrix,
                                                     cdf.joint_dof_indices,
                                                     system_matrix);
       }
@@ -530,7 +530,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
 
-      scratch_data.beta =
+      scratch_data.penalization =
         simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
         compute_cell_diameter<dim>(cell->measure(), fe->degree);
 
@@ -577,7 +577,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      scratch_data.beta =
+      scratch_data.penalization =
         simulation_parameters.stabilization.tracer_sipg /
         compute_cell_diameter<dim>(cell->measure(), fe->degree);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
@@ -588,7 +588,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       copy_data.face_data.emplace_back();
       auto &copy_data_face             = copy_data.face_data.back();
       copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-      copy_data_face.cell_rhs.reinit(n_dofs);
+      copy_data_face.face_rhs.reinit(n_dofs);
 
       scratch_data.values_here.resize(q_points.size());
       scratch_data.values_there.resize(q_points.size());
@@ -631,7 +631,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
     for (const auto &cdf : c.face_data)
       {
-        constraints_used.distribute_local_to_global(cdf.cell_rhs,
+        constraints_used.distribute_local_to_global(cdf.face_rhs,
                                                     cdf.joint_dof_indices,
                                                     system_rhs);
       }

@@ -450,7 +450,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  sipg_penalization = scratch_data.beta;
+  const double                  sipg_penalization = scratch_data.penalization;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points = fe_iv.get_quadrature_points();
 
@@ -459,7 +459,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
 
   const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
   copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-  copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+  copy_data_face.face_matrix.reinit(n_dofs, n_dofs);
 
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
@@ -479,7 +479,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
       for (unsigned int i = 0; i < n_dofs; ++i)
         for (unsigned int j = 0; j < n_dofs; ++j)
           {
-            copy_data_face.cell_matrix(i, j) +=
+            copy_data_face.face_matrix(i, j) +=
               fe_iv.jump_in_shape_values(i, q) // [\phi_i]
               * fe_iv.shape_value((velocity_dot_n > 0.),
                                   j,
@@ -489,7 +489,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
 
             // Assemble the diffusion term using Nitsche
             // symmetric interior penalty method. See Larson Chap. 14. P.362
-            copy_data_face.cell_matrix(i, j) +=
+            copy_data_face.face_matrix(i, j) +=
               (-tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(j, q) *
                  normals[q] * fe_iv.jump_in_shape_values(i, q) -
                tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(i, q) *
@@ -506,14 +506,14 @@ void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  sipg_penalization = scratch_data.beta;
+  const double                  sipg_penalization = scratch_data.penalization;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points = fe_iv.get_quadrature_points();
   const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
 
   auto &copy_data_face             = copy_data.face_data.back();
   copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-  copy_data_face.cell_rhs.reinit(n_dofs);
+  copy_data_face.face_rhs.reinit(n_dofs);
 
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
@@ -534,7 +534,7 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
           // Assemble advection terms with upwinding
           if (velocity_dot_n > 0)
             {
-              copy_data_face.cell_rhs(i) -=
+              copy_data_face.face_rhs(i) -=
                 fe_iv.jump_in_shape_values(i, q) // [\phi_i]
                 * scratch_data.values_here[q]    // \phi^{upwind}
                 * velocity_dot_n                 // (\beta .n)
@@ -542,7 +542,7 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
             }
           else
             {
-              copy_data_face.cell_rhs(i) -=
+              copy_data_face.face_rhs(i) -=
                 fe_iv.jump_in_shape_values(i, q) // [\phi_i]
                 * scratch_data.values_there[q]   // \phi^{upwind}
                 * velocity_dot_n                 // (\beta .n)
@@ -551,7 +551,7 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
 
           // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
-          copy_data_face.cell_rhs(i) -=
+          copy_data_face.face_rhs(i) -=
             (-tracer_diffusivity[q] * scratch_data.tracer_average_gradient[q] *
                normals[q] * fe_iv.jump_in_shape_values(i, q) -
              tracer_diffusivity[q] * scratch_data.tracer_value_jump[q] *
@@ -573,7 +573,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                 beta           = scratch_data.beta;
+  const double                 beta           = scratch_data.penalization;
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
     scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
@@ -624,7 +624,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                 beta           = scratch_data.beta;
+  const double                 beta           = scratch_data.penalization;
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
     scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
