@@ -183,17 +183,6 @@ NavierStokesOperatorBase<dim, number>::reinit(
 {
   this->enable_face_terms = false;
 
-  // Loop over all boundary conditions to establish if one of them has face
-  // terms
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
-    {
-      if (boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::function_weak ||
-          boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::outlet)
-        this->enable_face_terms = true;
-    }
-
   this->boundary_conditions = boundary_conditions;
 
   this->system_matrix.clear();
@@ -205,15 +194,27 @@ NavierStokesOperatorBase<dim, number>::reinit(
      update_quadrature_points | update_hessians);
   additional_data.mg_level = mg_level;
 
-  // If face terms are enabled, add the corresponding flag
-  if (enable_face_terms)
+  // Loop over all boundary conditions to establish if one of them has face
+  // terms, if yes, enable them and add appropriate flags in the matrix-free
+  // additional data
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
-      // Normal vectors and quadrature points are required to weakly
-      // impose Dirichlet boundary conditions using Nitsche's method.
-      // Values for outlet boundary condition.
-      additional_data.mapping_update_flags_boundary_faces =
-        update_values | update_gradients | update_quadrature_points |
-        update_JxW_values | update_normal_vectors;
+      if (boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::function_weak)
+        {
+          this->enable_face_terms = true;
+          additional_data.mapping_update_flags_boundary_faces =
+            update_values | update_gradients | update_quadrature_points |
+            update_JxW_values | update_normal_vectors;
+        }
+      else if (boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          this->enable_face_terms = true;
+          additional_data.mapping_update_flags_boundary_faces =
+            update_values | update_quadrature_points | update_JxW_values |
+            update_normal_vectors;
+        }
     }
 
   matrix_free.reinit(
@@ -873,10 +874,6 @@ NavierStokesOperatorBase<dim, number>::
         {
           face_integrator.reinit(face);
 
-          // We need to read the values for the outlet boundary condition
-          face_integrator.read_dof_values_plain(newton_step);
-          face_integrator.evaluate(EvaluationFlags::values);
-
           // Identify the boundary id that corresponds to the face
           const auto boundary_id =
             std::find(this->boundary_conditions.id.begin(),
@@ -901,6 +898,14 @@ NavierStokesOperatorBase<dim, number>::
               this->boundary_conditions.type[boundary_index] !=
                 BoundaryConditions::BoundaryType::outlet)
             continue;
+
+          // We need to read the values for the outlet boundary condition
+          if (this->boundary_conditions.type[boundary_index] !=
+              BoundaryConditions::BoundaryType::outlet)
+            {
+              face_integrator.read_dof_values_plain(newton_step);
+              face_integrator.evaluate(EvaluationFlags::values);
+            }
 
           for (const auto q : face_integrator.quadrature_point_indices())
             {
@@ -1169,22 +1174,23 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   const auto penalty_parameter = this->effective_beta_face[face_index];
 
-  integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
-                      EvaluationFlags::EvaluationFlags::gradients);
-
-  for (const auto q : integrator.quadrature_point_indices())
+  if (this->boundary_conditions.type[boundary_index] ==
+      BoundaryConditions::BoundaryType::function_weak)
     {
-      typename FEFaceIntegrator::value_type    value_result    = {};
-      typename FEFaceIntegrator::gradient_type gradient_result = {};
+      integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
+                          EvaluationFlags::EvaluationFlags::gradients);
 
-      const auto normal_vector = integrator.get_normal_vector(q);
-
-      auto       value    = integrator.get_value(q);
-      const auto gradient = integrator.get_gradient(q);
-
-      if (this->boundary_conditions.type[boundary_index] ==
-          BoundaryConditions::BoundaryType::function_weak)
+      for (const auto q : integrator.quadrature_point_indices())
         {
+          typename FEFaceIntegrator::value_type    value_result    = {};
+          typename FEFaceIntegrator::gradient_type gradient_result = {};
+
+          const auto normal_vector = integrator.get_normal_vector(q);
+
+          auto       value    = integrator.get_value(q);
+          const auto gradient = integrator.get_gradient(q);
+
+
           // If we are assembling the residual, substract the target velocity
           // from the velocity value.
           if constexpr (assemble_residual)
@@ -1204,10 +1210,25 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
                 gradient_result[d][i] -=
                   kinematic_viscosity * value[d] * normal_vector[i];
             }
+          integrator.submit_value(value_result, q);
+          integrator.submit_gradient(gradient_result, q);
         }
-      else if (this->boundary_conditions.type[boundary_index] ==
-               BoundaryConditions::BoundaryType::outlet)
+
+      integrator.integrate(EvaluationFlags::EvaluationFlags::values |
+                           EvaluationFlags::EvaluationFlags::gradients);
+    }
+
+  else if (this->boundary_conditions.type[boundary_index] ==
+           BoundaryConditions::BoundaryType::outlet)
+    {
+      for (const auto q : integrator.quadrature_point_indices())
         {
+          typename FEFaceIntegrator::value_type value_result = {};
+
+          const auto normal_vector = integrator.get_normal_vector(q);
+
+          auto value = integrator.get_value(q);
+
           Tensor<1, dim, VectorizedArray<number>> velocity;
           if (assemble_residual)
             {
@@ -1227,18 +1248,16 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           normal_outflux =
             std::min(VectorizedArray<number>(0.0), normal_outflux);
 
+          // -(v,β(u·n)_·u)
           for (unsigned int d = 0; d < dim; ++d)
-            {
-              // -(v,β(u·n)_·u)
-              value_result[d] -= penalty_parameter * normal_outflux * value[d];
-            }
+            value_result[d] -= penalty_parameter * normal_outflux * value[d];
+
+
+          integrator.submit_value(value_result, q);
         }
 
-      integrator.submit_value(value_result, q);
-      integrator.submit_gradient(gradient_result, q);
+      integrator.integrate(EvaluationFlags::EvaluationFlags::values);
     }
-  integrator.integrate(EvaluationFlags::EvaluationFlags::values |
-                       EvaluationFlags::EvaluationFlags::gradients);
 
 #endif
 }
