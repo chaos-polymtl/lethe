@@ -226,7 +226,7 @@ Tracer<dim>::assemble_system_matrix_dg()
                                         this->cell_quadrature->size());
 
   // We first wrap the assembly of the matrix within a cell_worker lambda
-  // function This is only done for compatibility reasons with the MeshWorker
+  // function. This is only done for compatibility reasons with the MeshWorker
   // paradigm and does not have any functional purpose.
   const auto cell_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -335,8 +335,6 @@ Tracer<dim>::assemble_system_matrix_dg()
                                                     system_matrix);
       }
   };
-
-
 
   MeshWorker::mesh_loop(this->dof_handler.begin_active(),
                         this->dof_handler.end(),
