@@ -503,6 +503,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<TracerAssemblerBase<dim>>> assemblers;
+  // Face assemblers, used only for DG methods
+  std::shared_ptr<TracerAssemblerSIPG<dim>>            inner_face_assembler;
+  std::shared_ptr<TracerAssemblerBoundaryNitsche<dim>> boundary_face_assembler;
 
   // Tracer post-processing tables
   TableHandler statistics_table;

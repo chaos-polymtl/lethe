@@ -47,6 +47,11 @@ Tracer<dim>::setup_assemblers()
     {
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerDGCore<dim>>(this->simulation_control));
+      this->inner_face_assembler =
+        std::make_shared<TracerAssemblerSIPG<dim>>(simulation_control);
+      this->boundary_face_assembler =
+        std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
+          simulation_control, simulation_parameters.boundary_conditions_tracer);
     }
   else
     {
@@ -275,9 +280,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         scratch_data.face_velocity_values);
 
       scratch_data.boundary_index = boundary_index;
-      TracerAssemblerBoundaryNitsche<dim> assembler(
-        simulation_control, simulation_parameters.boundary_conditions_tracer);
-      assembler.assemble_matrix(scratch_data, copy_data);
+      this->boundary_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
 
   const auto face_worker =
@@ -318,8 +321,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-      TracerAssemblerSIPG<dim> assembler(simulation_control);
-      assembler.assemble_matrix(scratch_data, copy_data);
+      this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
 
 
@@ -561,9 +563,7 @@ Tracer<dim>::assemble_system_rhs_dg()
 
       scratch_data.boundary_index = boundary_index;
 
-      TracerAssemblerBoundaryNitsche<dim> assembler(
-        simulation_control, simulation_parameters.boundary_conditions_tracer);
-      assembler.assemble_rhs(scratch_data, copy_data);
+      this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
 
   const auto face_worker =
@@ -619,8 +619,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-      TracerAssemblerSIPG<dim> assembler(simulation_control);
-      assembler.assemble_rhs(scratch_data, copy_data);
+      this->inner_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
 
 
