@@ -111,7 +111,7 @@ inline void get_face_transformation_jacobians(const DerivativeForm<1, dim, dim> 
 template <int dim>
 inline void compute_residual(const Tensor<1,dim> &x_n_to_x_J_real, const Tensor<1, dim> &distance_gradient, const DerivativeForm<1, dim-1, dim> transformation_jac, Tensor<1, dim-1> &residual_ref)
 {
-  Tensor<1, dim> residual_real = distance_gradient + 1.0/x_n_to_x_J_real.norm()*x_n_to_x_J_real;
+  Tensor<1, dim> residual_real = distance_gradient - (1.0/x_n_to_x_J_real.norm())*x_n_to_x_J_real;
   
   DerivativeForm<1, dim, dim-1> transformation_jac_transpose = transformation_jac.transpose();
   
@@ -148,19 +148,25 @@ inline void compute_numerical_jacobians(const std::vector<Point<dim>> &stencil_r
   
     Tensor<1, dim-1> residual_ref_m1;
     compute_residual(x_n_to_x_J_real_m1, distance_gradients[2*i+1], transformation_jacobians[2*i+1], residual_ref_m1);
+    
   
     const Tensor<1,dim> x_n_to_x_J_real_p1 = x_J_real - stencil_real[2*i+2]; 
   
     Tensor<1, dim-1> residual_ref_p1;
     compute_residual(x_n_to_x_J_real_p1, distance_gradients[2*i+2], transformation_jacobians[2*i+2], residual_ref_p1);
+    
   
     for (unsigned int j = 0; j < dim-1; ++j)
     {  
-      jacobian_matrix.set(j,i,(residual_ref_m1[j]-residual_ref_p1[j])/(2*perturbation));
+      jacobian_matrix.set(j,i,(residual_ref_p1[j]-residual_ref_m1[j])/(2.0*perturbation));
     }
   }
-  
-  
+}
+
+template <int dim>
+inline double compute_distance(const Tensor<1,dim> &x_n_to_x_J_real, const double distance)
+{
+  return distance + x_n_to_x_J_real.norm();
 }
 
 template <typename T>
@@ -699,7 +705,7 @@ AdvectionProblem<dim>::compute_sign_distance()
                                            mpi_communicator);           
                                        
   // Should be initialized to the max distance that we want to redistantiate
-  distance_owned = 10.0;
+  distance_owned = 2;
                               
   // 
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
@@ -872,30 +878,30 @@ AdvectionProblem<dim>::compute_sign_distance()
   signed_distance = signed_distance_owned;
   distance = distance_owned;
   
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      const unsigned int cell_index = cell->global_active_cell_index();
-      
-      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-      
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      
-      cell->get_dof_indices(dof_indices);
-
-      
-      
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      {
-        const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
-        
-        distance_owned[dof_indices[i]] = 2.0*x_J_real[0];
-      }
-    }
-  }
-  
-  distance = distance_owned;
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  // {
+  //   if (cell->is_locally_owned())
+  //   {
+  //     const unsigned int cell_index = cell->global_active_cell_index();
+  // 
+  //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  // 
+  //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  // 
+  //     cell->get_dof_indices(dof_indices);
+  // 
+  // 
+  // 
+  //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  //     {
+  //       const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
+  // 
+  //       distance_owned[dof_indices[i]] = 0.5;
+  //     }
+  //   }
+  // }
+  // 
+  // distance = distance_owned;
   
   
   pcout << "In redistancation from the rest of the mesh" << std::endl;
@@ -908,100 +914,389 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   
   // Compute the rest of the mesh
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  bool change = true;
+  while (change)
   {
-    if (cell->is_locally_owned())
+    change = false;
+    for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      const unsigned int cell_index = cell->global_active_cell_index();
-      
-      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-      
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      
-      cell->get_dof_indices(dof_indices);
-      
-      std::vector<double> cell_dof_values(dofs_per_cell);
-      cell->get_dof_values(distance, cell_dof_values.begin(), cell_dof_values.end());
-      
-      
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      if (cell->is_locally_owned())
       {
-        if (dofs_in_interface_halo.find(dof_indices[i]) == dofs_in_interface_halo.end())
-          continue;
+        const unsigned int cell_index = cell->global_active_cell_index();
         
-        // Get opposite faces 
-        const std::vector<unsigned int> dof_opposite_faces = opposite_faces_indices[i];
+        const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
         
-        const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
+        std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
         
-        // Loop on opposite faces
-        for (unsigned int j = 0; j < opposite_faces_per_dofs; ++j)
+        cell->get_dof_indices(dof_indices);
+        
+        std::vector<double> cell_dof_values(dofs_per_cell);
+        cell->get_dof_values(distance, cell_dof_values.begin(), cell_dof_values.end());
+        
+        
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
-          const auto opposite_face = cell->face(dof_opposite_faces[j]);
           
-          std::cout << "face = " << dof_opposite_faces[j] << std::endl;
+  
+          if (dofs_in_interface_halo.find(dof_indices[i]) != dofs_in_interface_halo.end())
+          {
+            continue;
+          }
           
-          const Point<dim> x_n_real = opposite_face->barycenter();
-          Point<dim-1> x_n_ref(0.5);
+
+          // std::cout << dof_indices[i] << std::endl;
+          // Get opposite faces 
+          const std::vector<unsigned int> dof_opposite_faces = opposite_faces_indices[i];
           
-          const double perturbation = 0.05;
+          const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
           
-          std::vector<Point<dim-1>> stencil_ref(2*dim - 1);
+          if (i == 1 && dof_indices[i] == 11)
+          {
+            std::cout << "x_J_real = " << x_J_real << std::endl;
+          }
           
-          compute_numerical_jacobian_stencil<dim>(x_n_ref, perturbation, stencil_ref);
           
-          FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(stencil_ref), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
+          // Loop on opposite faces
+          for (unsigned int j = 0; j < opposite_faces_per_dofs; ++j)
+          {
+            const auto opposite_face = cell->face(dof_opposite_faces[j]);
+            
+            
+            if (i == 1 && dof_indices[i] == 11)
+            {
+              std::cout << "opposite_face = " << dof_opposite_faces[j] << std::endl;
+            }
+            
+            Point<dim-1> x_n_ref(0.5);
+            Point<dim> x_n_real;
+            
+            Tensor<1,dim-1> correction;
+            for (unsigned int k = 0; k < dim-1; ++k)
+            {
+              correction[k] = 1;
+            }
+            
+            // bool outside_check = false;
+            // bool outside_check_tmp = false;
+            
+            int outside_check = 0;
+            
+            while (correction.norm() > 1e-11 && outside_check<3)
+            {
+              // outside_check = (outside_check_tmp != outside_check);
+              
+              const double perturbation = 0.1;
+              
+              std::vector<Point<dim-1>> stencil_ref(2*dim - 1);
+              
+              compute_numerical_jacobian_stencil<dim>(x_n_ref, perturbation, stencil_ref);
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "stencil_ref[0] = " << stencil_ref[0] << std::endl;
+                std::cout << "stencil_ref[1] = " << stencil_ref[1] << std::endl;
+                std::cout << "stencil_ref[2] = " << stencil_ref[2] << std::endl;
+              }
+              
+              FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(stencil_ref), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
+              
+              fe_face_values.reinit(cell, opposite_face);
+              
+              std::vector<Point<dim>> stencil_real = fe_face_values. get_quadrature_points();
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "stencil_real[0] = " << stencil_real[0] << std::endl;
+                std::cout << "stencil_real[1] = " << stencil_real[1] << std::endl;
+                std::cout << "stencil_real[2] = " << stencil_real[2] << std::endl;
+              }
+              
+              std::vector<Tensor<1, dim>> distance_gradients(2*dim - 1);
+              fe_face_values.get_function_gradients(distance,distance_gradients);
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "distance_gradients[0] = " << distance_gradients[0] << std::endl;
+                std::cout << "distance_gradients[1] = " << distance_gradients[1] << std::endl;
+                std::cout << "distance_gradients[2] = " << distance_gradients[2] << std::endl;
+              }
+              
+              const std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians = fe_face_values.get_jacobians();
+              
+              
+              
+              const std::vector<Tensor<1, dim>> normal_vectors = fe_face_values.get_normal_vectors();
+              
+              // std::vector<Tensor<1, dim>> face_transformation_jacobians_transposed(2*dim-1);
+              std::vector<DerivativeForm<1, dim-1, dim>> face_transformation_jacobians(2*dim-1);
+              
+                        
+              for (unsigned int k = 0; k < 2*dim-1; ++k)
+              {
+                const DerivativeForm<1, dim, dim> cell_transformation_jacobian = cell_transformation_jacobians[k]; 
+                
+                // face_transformation_jacobians[k] = cell_transformation_jacobian - outer_product(cell_transformation_jacobian*normal_vectors[k],normal_vectors[k]);
+                
+                get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "face_transformation_jacobians[0] = " << face_transformation_jacobians[0] << std::endl;
+                std::cout << "face_transformation_jacobians[1] = " << face_transformation_jacobians[1] << std::endl;
+                std::cout << "face_transformation_jacobians[2] = " << face_transformation_jacobians[2] << std::endl;
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                const Tensor<1,dim> x_n_to_x_J_real_m1 = x_J_real - stencil_real[1];
+              
+                Tensor<1, dim-1> residual_ref_m1;
+                compute_residual(x_n_to_x_J_real_m1, distance_gradients[1], face_transformation_jacobians[1], residual_ref_m1);
+                
+                std::cout << "x_n_to_x_J_real_m1 = " << x_n_to_x_J_real_m1 << std::endl;
+                
+                std::cout << "x_n_to_x_J_real_m1.norm() = " << x_n_to_x_J_real_m1.norm() << std::endl;
+                
+                
+                std::cout << "residual_ref_m1 = " << residual_ref_m1 << std::endl;
+                
+                const Tensor<1,dim> x_n_to_x_J_real_p1 = x_J_real - stencil_real[2]; 
+              
+                Tensor<1, dim-1> residual_ref_p1;
+                compute_residual(x_n_to_x_J_real_p1, distance_gradients[2], face_transformation_jacobians[2], residual_ref_p1);
+                
+                std::cout << "x_n_to_x_J_real_p1 = " << x_n_to_x_J_real_p1 << std::endl;
+                
+                std::cout << "x_n_to_x_J_real_p1.norm() = " << x_n_to_x_J_real_p1.norm() << std::endl;
+                
+                std::cout << "residual_ref_p1 = " << residual_ref_p1 << std::endl;
+                
+                Point<dim> tmp(0.0,-0.75);
+                const Tensor<1,dim> x_n_to_x_J_real_tmp = x_J_real - tmp; 
+                
+                Tensor<1, dim-1> residual_ref_tmp;
+                compute_residual(x_n_to_x_J_real_tmp, distance_gradients[2], face_transformation_jacobians[2], residual_ref_tmp);
+
+                std::cout << "x_n_to_x_J_real_tmp = " << x_n_to_x_J_real_tmp << std::endl;
+                
+                std::cout << "x_n_to_x_J_real_tmp.norm() = " << x_n_to_x_J_real_tmp.norm() << std::endl;
+                
+                std::cout << "residual_ref_tmp = " << residual_ref_tmp << std::endl;
+              }
+              
+              // DerivativeForm<1, dim-1, dim> jacobian_tensor;
+              LAPACKFullMatrix<double> jacobian_matrix(dim-1,dim-1);
+              compute_numerical_jacobians(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
+              
+              const Tensor<1,dim> x_n_to_x_J_real = x_J_real - stencil_real[0];
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "x_n_to_x_J_real = " << x_n_to_x_J_real << std::endl;
+              }
+              
+              Tensor<1, dim-1> residual_n;
+              
+              compute_residual(x_n_to_x_J_real, distance_gradients[0], face_transformation_jacobians[0], residual_n);
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "residual_n = " << residual_n << std::endl;
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "jacobian_matrix = " ;
+                jacobian_matrix.print_formatted(std::cout);
+              }
+              
+              Vector<double> residual_n_vec(dim-1);
+              
+              residual_n.unroll(residual_n_vec);
+              
+              
+              
+              // jacobian_matrix.print_formatted(std::cout);
+              jacobian_matrix.set_property(LAPACKSupport::general);
+              jacobian_matrix.compute_lu_factorization();
+              
+              residual_n_vec *= -1.0;
+              jacobian_matrix.solve(residual_n_vec);
+              
+              for (unsigned int k = 0; k < dim-1; ++k)
+              {
+                correction[k] = residual_n_vec[k];
+              }
+              
+              
+              Point<dim-1> x_n_p1_ref = stencil_ref[0] + correction;
+              
+              Tensor<1,dim> correction_real;
+              DerivativeForm<1,dim-1,dim> face_transformation_jacobian_inv = face_transformation_jacobians[0].covariant_form();
+              
+              for (unsigned int k = 0; k < dim; ++k)
+              {
+                for (unsigned int l = 0; l < dim-1; ++l)
+                {
+                  correction_real[k] = correction[l]*face_transformation_jacobians[0][k][l];
+                }
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "face_transformation_jacobian_inv = " << face_transformation_jacobian_inv << std::endl;
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "correction = " << correction << std::endl;
+              }
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "correction_real = " << correction_real << std::endl;
+              }
+              
+              
+              Point<dim> x_n_p1_real = stencil_real[0] + correction_real;
+              
+              bool check = true;
+              // outside_check_tmp = false;
+              
+              double relaxation = 1.0;
+              while (check)
+              {
+                x_n_p1_ref = stencil_ref[0] + relaxation*correction;
+                
+                for (unsigned int k = 0; k < dim-1; ++k)
+                {
+                  if (x_n_p1_ref[k]<1.0 && x_n_p1_ref[k]>0.0)
+                  {
+                    check = false;
+                  }
+                }
+                if (check)
+                  outside_check +=1;
+                  // outside_check_tmp = true;
+                  
+                relaxation *= 0.999;
+              }
+              x_n_p1_ref = stencil_ref[0] + relaxation*correction;
+              
+              for (unsigned int k = 0; k < dim; ++k)
+              {
+                for (unsigned int l = 0; l < dim-1; ++l)
+                {
+                  correction_real[k] = relaxation*correction[l]*face_transformation_jacobians[0][k][l];
+                }
+              }
+              
+              x_n_p1_real = stencil_real[0] + correction_real;
+              
+              x_n_ref = x_n_p1_ref;
+              x_n_real = x_n_p1_real;
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "relaxation = " << relaxation << std::endl;
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "x_n_ref = " << x_n_ref << std::endl;
+              }
+              
+              if (i == 1 && dof_indices[i] == 11)
+              {
+                std::cout << "x_n_real = " << x_n_real << std::endl;
+              }
+              
+              // if (check)
+              // {
+                
+                
+                // Tensor<1,dim> x_n_p1_to_x_J_real = x_J_real - x_n_p1_real;
+                // Tensor<1, dim-1> residual_n_p1;
+                // 
+                // // this works only for Q1 in 2D and linear mapping
+                // compute_residual(x_n_p1_to_x_J_real, distance_gradients[0],face_transformation_jacobians[0],residual_n_p1);
+                // 
+                // // outside the face, adaptively relax the scheme
+                // while (residual_n_p1.norm() > residual_n.norm())
+                // {
+                //   relaxation *= 0.5;
+                //   std::cout << "relaxation " << relaxation << std::endl;
+                // 
+                //   x_n_p1_real = stencil_real[0] + relaxation*correction_real;
+                // 
+                //   std::cout << "x_n_p1_real " << x_n_p1_real << std::endl;
+                // 
+                //   x_n_p1_to_x_J_real = x_J_real - x_n_p1_real;
+                // 
+                //   // this works only for Q1 in 2D and linear mapping
+                //   compute_residual(x_n_p1_to_x_J_real, distance_gradients[0],face_transformation_jacobians[0],residual_n_p1);
+                // 
+                // }
+              // }
+              // x_n_p1_ref = stencil_ref[0] + relaxation*correction;
+              // x_n_p1_real = stencil_real[0] + relaxation*correction_real;
+          }
+          
+          const Tensor<1,dim> x_n_to_x_J_real = x_J_real - x_n_real;
+          
+          FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(x_n_ref), update_values);
           
           fe_face_values.reinit(cell, opposite_face);
           
-          std::vector<Point<dim>> stencil_real = fe_face_values. get_quadrature_points();
+          std::vector<double> distance_value_at_x_n(1);
+          fe_face_values.get_function_values(distance, distance_value_at_x_n);
           
-          std::vector<Tensor<1, dim>> distance_gradients(2*dim - 1);
-          fe_face_values.get_function_gradients(distance,distance_gradients);
+
+          double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n[0]);
           
-          const std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians = fe_face_values.get_jacobians();
-          
-          const std::vector<Tensor<1, dim>> normal_vectors = fe_face_values.get_normal_vectors();
-          
-          // std::vector<Tensor<1, dim>> face_transformation_jacobians_transposed(2*dim-1);
-          std::vector<DerivativeForm<1, dim-1, dim>> face_transformation_jacobians(2*dim-1);
-          
-                    
-          for (unsigned int k = 0; k < 2*dim-1; ++k)
+          if (i == 1 && dof_indices[i] == 11)
           {
-            const DerivativeForm<1, dim, dim> cell_transformation_jacobian = cell_transformation_jacobians[k]; 
+            std::cout << "approx_distance = " << approx_distance << std::endl;
+            std::cout << "cell_dof_values[i] = " << cell_dof_values[i] << std::endl;
             
-            // face_transformation_jacobians[k] = cell_transformation_jacobian - outer_product(cell_transformation_jacobian*normal_vectors[k],normal_vectors[k]);
-            
-            get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
           }
           
-          // DerivativeForm<1, dim-1, dim> jacobian_tensor;
-          LAPACKFullMatrix<double> jacobian_matrix(dim-1,dim-1);
-          compute_numerical_jacobians(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
-          
-          const Tensor<1,dim> x_n_to_x_J_real = x_J_real - stencil_real[0];
-          
-          Tensor<1, dim-1> residual;
-          
-          compute_residual(x_n_to_x_J_real, distance_gradients[0], face_transformation_jacobians[0], residual);
-          
-          Vector<double> residual_vec(dim-1);
-          Vector<double> correction_vec(dim-1);
-          
-          residual.unroll(residual_vec);
-          
-          // jacobian_matrix.print_formatted(std::cout);
-          jacobian_matrix.set_property(LAPACKSupport::general);
-          jacobian_matrix.compute_lu_factorization();
-          
-          jacobian_matrix.solve(residual_vec);
-          correction_vec = residual_vec;
+          if (cell_dof_values[i] > (approx_distance + 1e-8))
+          {
+            change = true;
+            distance_owned[dof_indices[i]] = approx_distance;
+          }
+        }
         }
       }
     }
+    
+    // Compute signed distance
+    for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+      {
+        const unsigned int cell_index = cell->global_active_cell_index();
+        
+        const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+        
+        std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+        
+        cell->get_dof_indices(dof_indices);
+        
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+        {
+          const double level_set_value = level_set[dof_indices[i]];
+        
+          signed_distance_owned[dof_indices[i]] = distance_owned[dof_indices[i]]*sgn(level_set_value);
+        }
+      }
+    }
+    
+    // Exchange
+    signed_distance = signed_distance_owned;
+    distance = distance_owned;
   }
-  
   
   // const Tensor<1,dim> d = point_1 - point_0;
   // 
@@ -1078,7 +1373,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(4);
+  triangulation.refine_global(3);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
