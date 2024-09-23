@@ -322,8 +322,8 @@ public:
   std::vector<Tensor<1, dim>> gradients_here;
   std::vector<Tensor<1, dim>> tracer_average_gradient;
 
-  // SIPG penalization factor beta
-  double beta;
+  // SIPG (interior faces) or Nitsche (boundary) penalization factor
+  double penalization;
 
   // Bool that defines if the selected face is a dirichlet/outlet boundary
   unsigned int boundary_index;
