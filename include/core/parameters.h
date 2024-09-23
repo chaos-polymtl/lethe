@@ -681,6 +681,7 @@ namespace Parameters
    */
   struct Stabilization
   {
+    // Defines if default stabilization parameters should be used
     bool use_default_stabilization;
 
     bool heat_transfer_dcdd_stabilization;
@@ -689,9 +690,11 @@ namespace Parameters
     /// fraction should be assembled (@p true) or not (@p false).
     bool vof_dcdd_stabilization;
 
+    // Value of the symmetric interior penalty for the tracer physics when using
+    // discontinuous Galerkin
     double tracer_sipg;
 
-    // pressure scaling factor used to facilitate the linear solving when
+    // Pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
 

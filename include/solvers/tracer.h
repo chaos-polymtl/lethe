@@ -66,6 +66,11 @@ public:
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
+        if (simulation_parameters.fem_parameters.tracer_uses_dg)
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Discontinous Galerkin elements cannot be simplex in the tracer physics."));
       }
     else
       {

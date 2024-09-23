@@ -24,6 +24,8 @@ namespace BoundaryConditions
   {
     // common
     none,
+    outlet, // outlet is also used fluid, tracer and eventually other physics
+
     // for fluid
     noslip,
     slip,
@@ -32,8 +34,7 @@ namespace BoundaryConditions
     partial_slip,
     periodic,
     pressure,
-    outlet, // outlet is also used for tracers and eventually for other physics
-            //  for heat transfer
+    //  for heat transfer
     noflux,
     temperature,
     convection_radiation,
@@ -258,14 +259,14 @@ namespace BoundaryConditions
       "beta",
       "1",
       Patterns::Double(),
-      "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
+      "Penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
 
     // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "boundary layer thickness",
       "0",
       Patterns::Double(),
-      "thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
+      "Thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
