@@ -8,14 +8,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf2
-  set time end                     = 1.6
-  set time step                    = 0.1
-  set adapt                        = true
-  set max cfl                      = 0.4
-  set output name                  = vof-velocity-extrapolation
-  set output frequency             = 0
-  set adaptative time step scaling = 1.1
+  set method           = bdf2
+  set time end         = 1.6
+  set time step        = 0.1
+  set adapt            = true
+  set max cfl          = 0.4
+  set output name      = vof-velocity-extrapolation
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -113,6 +112,7 @@ end
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
   set verbosity                    = verbose
   set calculate average velocities = true
@@ -151,19 +151,15 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity          = quiet
-    set max krylov vectors = 100
-    set max iters          = 100
-    set relative residual  = 1e-5
-    set minimum residual   = 1e-9
-    set preconditioner     = amg
+    set verbosity         = quiet
+    set relative residual = 1e-5
+    set minimum residual  = 1e-9
+    set preconditioner    = amg
   end
   subsection VOF
-    set verbosity          = quiet
-    set max krylov vectors = 100
-    set max iters          = 100
-    set relative residual  = 1e-5
-    set minimum residual   = 1e-9
-    set preconditioner     = amg
+    set verbosity         = quiet
+    set relative residual = 1e-5
+    set minimum residual  = 1e-9
+    set preconditioner    = amg
   end
 end

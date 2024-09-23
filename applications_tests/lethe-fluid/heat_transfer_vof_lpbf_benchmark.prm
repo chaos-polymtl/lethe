@@ -31,12 +31,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type = gmsh
-
-  # GMSH file name
-  set file name = ../../lpbf_benchmark_mesh.msh
-
-  # Initial refinement of the mesh
+  set type               = gmsh
+  set file name          = ../../lpbf_benchmark_mesh.msh
   set initial refinement = 3
 end
 
@@ -117,16 +113,8 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0
-  end
   subsection VOF
     set Function expression = if (y<0.43 , 1, 0)
-    subsection projection step
-      set enable           = false
-      set diffusion factor = 1
-    end
   end
   subsection temperature
     set Function expression = 298
@@ -171,8 +159,6 @@ subsection physical properties
   subsection material interaction 0
     set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id                              = 0
-      set second fluid id                             = 1
       set surface tension model                       = phase change
       set surface tension coefficient                 = 1.52
       set reference state temperature                 = 1928
@@ -188,16 +174,13 @@ end
 #---------------------------------------------------
 
 subsection laser parameters
-  set enable               = true
-  set type                 = gaussian_heat_flux_vof_interface
-  set concentration factor = 2
-  set power                = 156e6 # M*L^2*T^-3
-  set absorptivity         = 0.35
-  set penetration depth    = 0.0
-  set beam radius          = 0.07 # L
-  set start time           = 0
-  set end time             = 0.002
-  set beam orientation     = y-
+  set enable            = true
+  set power             = 156e6 # M*L^2*T^-3
+  set absorptivity      = 0.35
+  set penetration depth = 0.0
+  set beam radius       = 0.07 # L
+  set end time          = 0.002
+  set beam orientation  = y-
   subsection path
     set Function expression = 0.3; 0.43
   end
@@ -209,28 +192,20 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type      = tanh
-    set verbosity = quiet
-    set beta      = 20
+    set type = tanh
   end
   subsection interface sharpening
     set enable                  = true
-    set threshold               = 0.5
     set interface sharpness     = 1.5
-    set frequency               = 10
     set type                    = adaptive
     set threshold max deviation = 0.4
     set max iterations          = 50
-    set monitored fluid         = fluid 1
     set tolerance               = 1e-7
-    set verbosity               = quiet
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = true
+    set enable                  = true
+    set output auxiliary fields = true
+    set enable marangoni effect = true
   end
 end
 
@@ -245,9 +220,6 @@ subsection evaporation
   set evaporation latent heat     = 8.9e12
   set molar mass                  = 4.58e-2
   set boiling temperature         = 3550
-
-  set evaporation coefficient     = 0.82
-  set recoil pressure coefficient = 0.56
   set ambient pressure            = 101325e-3
   set liquid density              = 4420.0e-9
   set universal gas constant      = 8.314e6
@@ -291,38 +263,27 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity               = quiet
+    set minimum residual        = 1e-5
+    set ilu preconditioner fill = 1
   end
   subsection heat transfer
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-2
-    set minimum residual                      = 1e-1
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity               = quiet
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-1
+    set ilu preconditioner fill = 1
   end
   subsection VOF
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity               = quiet
+    set minimum residual        = 1e-5
+    set ilu preconditioner fill = 1
   end
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
 subsection restart
-  set filename = restart
-  set restart  = true
+  set restart = true
 end

@@ -124,7 +124,7 @@ number_of_previous_solutions(
 }
 
 /**
- * @brief Extrapolates vector of solution to time_vector[0] using previous
+ * @brief Extrapolate vector of solution to time_vector[0] using previous
  * solution times and previous solutions.
  *
  * @tparam DataType Type of the variable being extrapolated (e.g. double,

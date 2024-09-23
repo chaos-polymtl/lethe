@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR In the [PR #994](https://github.com/chaos-polymtl/lethe/pull/994), BDF extrapolation of the velocity in the VOF auxiliary physic was moved to the scratch data. However, the implementation was bypassed by an if condition. This bug is fixed with this PR, and an application test was added to ensure that the feature remains intact with future implementations. [#1286](https://github.com/chaos-polymtl/lethe/pull/1286)
+- MINOR In the [PR #994](https://github.com/chaos-polymtl/lethe/pull/994), BDF extrapolation of the velocity in the VOF auxiliary physics was moved to the scratch data. However, the implementation was bypassed by an if condition. This bug is fixed with this PR, and an application test was added to ensure that the feature remains intact with future implementations. [#1286](https://github.com/chaos-polymtl/lethe/pull/1286)
 
 ## [Master] - 2024-09-20
 
