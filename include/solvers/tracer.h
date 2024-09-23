@@ -70,7 +70,7 @@ public:
           AssertThrow(
             false,
             ExcMessage(
-              "Discontinous Galerkin elements cannot be simplex in the tracer physics."));
+              "Discontinuous Galerkin elements cannot be simplex in the tracer physics."));
       }
     else
       {
