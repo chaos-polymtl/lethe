@@ -19,6 +19,7 @@ This subsection specifies the characteristics of the finite element method used 
 
     # interpolation order tracer
     set tracer order       = 1
+    set tracer uses dg     = false
 
     # interpolation order vof
     set VOF order          = 1
@@ -36,6 +37,8 @@ This subsection specifies the characteristics of the finite element method used 
 * ``temperature order`` specifies the interpolation order for temperature for the heat transfer physics.
 
 * ``tracer order`` specifies the interpolation order for the tracer physics.
+
+* ``tracer uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the tracer physics. This formulation allows discontinuities between elements and at boundaries, and only penalizes them; this prevents oscillations and enforces local conservation of mass, at the cost of more numerous degrees of freedom.
 
 * ``VOF order`` specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.
 
