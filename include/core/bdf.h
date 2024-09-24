@@ -125,7 +125,7 @@ number_of_previous_solutions(
 
 /**
  * @brief Extrapolate vector of solution to time_vector[0] using previous
- * solution times and previous solution.
+ * solution times and previous solutions.
  *
  * @tparam DataType Type of the variable being extrapolated (e.g. double,
  * Tensor<1,dim>)
@@ -133,14 +133,14 @@ number_of_previous_solutions(
  * @param[in] time_vector Vector of times. The solution will be extrapolated to
  * time 0. It should be of size @p number_of_previous_solutions+1.
  *
- * @param[in] solution_vector Vector of solutions. The solution will be
+ * @param[in] solution_vector Vector of solution. The solution will be
  * extrapolated to index 0. It should be at least of size @p
  * number_of_previous_solutions.
  *
  * @param[in] number_of_previous_solutions Number of previous solutions used
  * to extrapolate.
  *
- * @param[out]  extrapolated_solution Vector of extrapolated solutions.
+ * @param[out] extrapolated_solution Vector of extrapolated solution.
  */
 
 template <typename DataType>
@@ -159,7 +159,7 @@ bdf_extrapolate(const std::vector<double>                &time_vector,
       return;
     }
 
-  // Otherwise we extrapolate with a Lagrange polynomial
+  // Otherwise, we extrapolate with a Lagrange polynomial
   for (unsigned int q = 0; q < extrapolated_solution.size(); ++q)
     {
       // Set extrapolated solution to zero
@@ -169,14 +169,14 @@ bdf_extrapolate(const std::vector<double>                &time_vector,
       for (unsigned int p = 0; p < number_of_previous_solutions; ++p)
         {
           // Factor is the weight of the previous solution fixed by the Lagrange
-          // Polynomial
+          // polynomial
           double factor = 1;
           for (unsigned int k = 0; k < number_of_previous_solutions; ++k)
             {
               if (p != k)
                 {
                   // The time vector also contains the time of the solution to
-                  // be extrapoled to, hence the +1
+                  // be extrapolated to, hence the +1
                   factor *= (time_vector[0] - time_vector[k + 1]) /
                             (time_vector[p + 1] - time_vector[k + 1]);
                 }
