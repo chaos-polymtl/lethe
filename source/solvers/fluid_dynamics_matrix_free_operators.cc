@@ -900,11 +900,12 @@ NavierStokesOperatorBase<dim, number>::
             continue;
 
           // We need to read the values for the outlet boundary condition
-          if (this->boundary_conditions.type[boundary_index] !=
+          if (this->boundary_conditions.type[boundary_index] ==
               BoundaryConditions::BoundaryType::outlet)
             {
               face_integrator.read_dof_values_plain(newton_step);
-              face_integrator.evaluate(EvaluationFlags::values);
+              face_integrator.evaluate(
+                EvaluationFlags::EvaluationFlags::values);
             }
 
           for (const auto q : face_integrator.quadrature_point_indices())
@@ -936,7 +937,7 @@ NavierStokesOperatorBase<dim, number>::
               else if (this->boundary_conditions.type[boundary_index] ==
                        BoundaryConditions::BoundaryType::outlet)
                 {
-                  face_nonlinear_previous_values[face][q] =
+                  face_nonlinear_previous_values[face - n_inner_faces][q] =
                     face_integrator.get_value(q);
                 }
             }
@@ -1222,6 +1223,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   else if (this->boundary_conditions.type[boundary_index] ==
            BoundaryConditions::BoundaryType::outlet)
     {
+      integrator.evaluate(EvaluationFlags::values);
+
       for (const auto q : integrator.quadrature_point_indices())
         {
           typename FEFaceIntegrator::value_type value_result = {};
