@@ -14,12 +14,12 @@ This subsection defines the boundary conditions associated with fluid dynamics p
 
 .. math::
 
-   \nu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathcal{I} \cdot \mathbf{n} - \beta (\mathbf{u}\cdot n)_{-} \mathbf{u} = 0
+  - \nu \nabla \mathbf{u} \cdot \mathbf{n} + p \mathcal{I} \cdot \mathbf{n} = - \beta (\mathbf{u}\cdot n)_{-} \mathbf{u}
 
 or in Einstein notation:
 
 .. math::
-       \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
+    - \nu \partial_i u_j n_j  + p n_i = - \beta ( u_k n_k)_{-} u_i
 
 where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0,\mathbf{u}\cdot n)`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
 
