@@ -279,6 +279,22 @@ Tracer<dim>::assemble_system_matrix_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
+      auto      &properties_manager = scratch_data.properties_manager;
+      const auto diffusivity_model =
+        properties_manager.get_tracer_diffusivity();
+      scratch_data.tracer_diffusivity.resize(q_points.size());
+      if (properties_manager.field_is_required(field::levelset))
+        {
+          scratch_data.sdf_values.resize(q_points.size());
+          this->multiphysics->get_immersed_solid_signed_distance_function()
+            ->value_list(q_points, scratch_data.sdf_values);
+          set_field_vector(field::levelset,
+                           scratch_data.sdf_values,
+                           scratch_data.fields);
+        }
+      diffusivity_model->vector_value(scratch_data.fields,
+                                      scratch_data.tracer_diffusivity);
+
       scratch_data.boundary_index = boundary_index;
       this->boundary_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
@@ -320,6 +336,22 @@ Tracer<dim>::assemble_system_matrix_dg()
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
+
+      auto      &properties_manager = scratch_data.properties_manager;
+      const auto diffusivity_model =
+        properties_manager.get_tracer_diffusivity();
+      scratch_data.tracer_diffusivity.resize(q_points.size());
+      if (properties_manager.field_is_required(field::levelset))
+        {
+          scratch_data.sdf_values.resize(q_points.size());
+          this->multiphysics->get_immersed_solid_signed_distance_function()
+            ->value_list(q_points, scratch_data.sdf_values);
+          set_field_vector(field::levelset,
+                           scratch_data.sdf_values,
+                           scratch_data.fields);
+        }
+      diffusivity_model->vector_value(scratch_data.fields,
+                                      scratch_data.tracer_diffusivity);
 
       this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
@@ -561,8 +593,23 @@ Tracer<dim>::assemble_system_rhs_dg()
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
 
-      scratch_data.boundary_index = boundary_index;
+      auto      &properties_manager = scratch_data.properties_manager;
+      const auto diffusivity_model =
+        properties_manager.get_tracer_diffusivity();
+      scratch_data.tracer_diffusivity.resize(q_points.size());
+      if (properties_manager.field_is_required(field::levelset))
+        {
+          scratch_data.sdf_values.resize(q_points.size());
+          this->multiphysics->get_immersed_solid_signed_distance_function()
+            ->value_list(q_points, scratch_data.sdf_values);
+          set_field_vector(field::levelset,
+                           scratch_data.sdf_values,
+                           scratch_data.fields);
+        }
+      diffusivity_model->vector_value(scratch_data.fields,
+                                      scratch_data.tracer_diffusivity);
 
+      scratch_data.boundary_index = boundary_index;
       this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
 
@@ -618,6 +665,22 @@ Tracer<dim>::assemble_system_rhs_dg()
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),
         scratch_data.face_velocity_values);
+
+      auto      &properties_manager = scratch_data.properties_manager;
+      const auto diffusivity_model =
+        properties_manager.get_tracer_diffusivity();
+      scratch_data.tracer_diffusivity.resize(q_points.size());
+      if (properties_manager.field_is_required(field::levelset))
+        {
+          scratch_data.sdf_values.resize(q_points.size());
+          this->multiphysics->get_immersed_solid_signed_distance_function()
+            ->value_list(q_points, scratch_data.sdf_values);
+          set_field_vector(field::levelset,
+                           scratch_data.sdf_values,
+                           scratch_data.fields);
+        }
+      diffusivity_model->vector_value(scratch_data.fields,
+                                      scratch_data.tracer_diffusivity);
 
       this->inner_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
