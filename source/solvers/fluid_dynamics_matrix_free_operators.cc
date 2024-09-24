@@ -1256,7 +1256,6 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           for (unsigned int d = 0; d < dim; ++d)
             value_result[d] -= penalty_parameter * normal_outflux * value[d];
 
-
           integrator.submit_value(value_result, q);
         }
 
