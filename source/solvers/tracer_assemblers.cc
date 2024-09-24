@@ -278,7 +278,6 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
               const auto           phi_T_j      = scratch_data.phi[q][j];
 
-
               // Weak form : - D * laplacian T +  u * gradT - f=0
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
@@ -333,6 +332,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
         }
     } // end loop on quadrature points
 }
+
 template class TracerAssemblerDGCore<2>;
 template class TracerAssemblerDGCore<3>;
 
@@ -452,14 +452,10 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
 {
   const double                  sipg_penalization = scratch_data.penalization;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
-  const auto                   &q_points = fe_iv.get_quadrature_points();
+  const auto                   &q_points       = fe_iv.get_quadrature_points();
+  auto                         &copy_data_face = copy_data.face_data.back();
+  const unsigned int            n_dofs = fe_iv.n_current_interface_dofs();
 
-  copy_data.face_data.emplace_back();
-  auto &copy_data_face = copy_data.face_data.back();
-
-  const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
-  copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-  copy_data_face.face_matrix.reinit(n_dofs, n_dofs);
 
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
@@ -505,9 +501,7 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
   const auto                   &q_points = fe_iv.get_quadrature_points();
   const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
 
-  auto &copy_data_face             = copy_data.face_data.back();
-  copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
-  copy_data_face.face_rhs.reinit(n_dofs);
+  auto &copy_data_face = copy_data.face_data.back();
 
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
@@ -667,7 +661,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
             }
         }
     }
-  // process it accordingly
+  // If it is an unknown boundary condition, throw an exception. This case
+  // should never occur.
   else
     {
       AssertThrow(false,
