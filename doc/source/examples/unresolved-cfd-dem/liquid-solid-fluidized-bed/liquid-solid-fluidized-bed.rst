@@ -469,7 +469,7 @@ The resulting behavior of the pressure along the bed height and the void fractio
 
 .. raw:: html
 
-    <p align="center"><iframe width="720" height="428" src="https://www.youtube.com/watch?v=x1Ul2ZBq5cE" title="Pressure drop along the bed height and void fraction evolution in a liquid-solid fluidized bed" frameborder="0" allowfullscreen></iframe>
+    <p align="center"><iframe width="720" height="428" src="https://www.youtube.com/embed/x1Ul2ZBq5cE" title="Pressure drop along the bed height and void fraction evolution in a liquid-solid fluidized bed" frameborder="0" allowfullscreen></iframe>
 
 
 Particles Dynamics
