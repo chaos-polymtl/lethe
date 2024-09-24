@@ -464,14 +464,6 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
-  // Calculate diffusivity at the faces
-  // TODO Add support for SDF
-  auto      &properties_manager = scratch_data.properties_manager;
-  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
-  std::map<field, std::vector<double>> fields;
-  std::vector<double>                  tracer_diffusivity(q_points.size());
-  diffusivity_model->vector_value(fields, tracer_diffusivity);
-
   for (unsigned int q = 0; q < q_points.size(); ++q)
     {
       const double velocity_dot_n =
@@ -490,10 +482,12 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
             // Assemble the diffusion term using Nitsche
             // symmetric interior penalty method. See Larson Chap. 14. P.362
             copy_data_face.face_matrix(i, j) +=
-              (-tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(j, q) *
-                 normals[q] * fe_iv.jump_in_shape_values(i, q) -
-               tracer_diffusivity[q] * fe_iv.average_of_shape_gradients(i, q) *
-                 normals[q] * fe_iv.jump_in_shape_values(j, q) +
+              (-scratch_data.tracer_diffusivity[q] *
+                 fe_iv.average_of_shape_gradients(j, q) * normals[q] *
+                 fe_iv.jump_in_shape_values(i, q) -
+               scratch_data.tracer_diffusivity[q] *
+                 fe_iv.average_of_shape_gradients(i, q) * normals[q] *
+                 fe_iv.jump_in_shape_values(j, q) +
                sipg_penalization * fe_iv.jump_in_shape_values(j, q) *
                  fe_iv.jump_in_shape_values(i, q)) *
               JxW[q];
@@ -517,13 +511,6 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
 
   const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
-
-  // Calculate diffusivity at the faces
-  auto      &properties_manager = scratch_data.properties_manager;
-  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
-  std::map<field, std::vector<double>> fields;
-  std::vector<double>                  tracer_diffusivity(q_points.size());
-  diffusivity_model->vector_value(fields, tracer_diffusivity);
 
   for (unsigned int q = 0; q < q_points.size(); ++q)
     {
@@ -552,10 +539,12 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
           // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
           copy_data_face.face_rhs(i) -=
-            (-tracer_diffusivity[q] * scratch_data.tracer_average_gradient[q] *
-               normals[q] * fe_iv.jump_in_shape_values(i, q) -
-             tracer_diffusivity[q] * scratch_data.tracer_value_jump[q] *
-               normals[q] * fe_iv.average_of_shape_gradients(i, q) +
+            (-scratch_data.tracer_diffusivity[q] *
+               scratch_data.tracer_average_gradient[q] * normals[q] *
+               fe_iv.jump_in_shape_values(i, q) -
+             scratch_data.tracer_diffusivity[q] *
+               scratch_data.tracer_value_jump[q] * normals[q] *
+               fe_iv.average_of_shape_gradients(i, q) +
              sipg_penalization * scratch_data.tracer_value_jump[q] *
                fe_iv.jump_in_shape_values(i, q)) *
             JxW[q];
@@ -583,13 +572,6 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   const std::vector<double> &JxW          = fe_face.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
 
-  // Calculate diffusivity at the faces
-  auto      &properties_manager = scratch_data.properties_manager;
-  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
-  std::map<field, std::vector<double>> fields;
-  std::vector<double>                  tracer_diffusivity(q_points.size());
-  diffusivity_model->vector_value(fields, tracer_diffusivity);
-
   for (unsigned int point = 0; point < q_points.size(); ++point)
     {
       const double velocity_dot_n =
@@ -605,7 +587,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
               if (boundary_conditions_tracer.type[boundary_index] ==
                   BoundaryConditions::BoundaryType::tracer_dirichlet)
                 copy_data.local_matrix(i, j) +=
-                  tracer_diffusivity[point] *
+                  scratch_data.tracer_diffusivity[point] *
                     (-fe_face.shape_value(i, point) *
                        fe_face.shape_grad(j, point) * normals[point] -
                      fe_face.shape_value(j, point) *
@@ -633,13 +615,6 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
   const std::vector<double> &JxW          = fe_face.get_JxW_values();
   const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
-
-  // Calculate diffusivity at the faces
-  auto      &properties_manager = scratch_data.properties_manager;
-  const auto diffusivity_model  = properties_manager.get_tracer_diffusivity();
-  std::map<field, std::vector<double>> fields;
-  std::vector<double>                  tracer_diffusivity(q_points.size());
-  diffusivity_model->vector_value(fields, tracer_diffusivity);
 
   // If the boundary condition is an outlet, assumes that advection comes
   // out since there is no inflow
@@ -680,7 +655,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
                                         JxW[point];
 
               copy_data.local_rhs(i) -=
-                tracer_diffusivity[point] *
+                scratch_data.tracer_diffusivity[point] *
                   (-fe_face.shape_value(i, point) *
                      scratch_data.gradients_here[point] * normals[point] -
                    (scratch_data.values_here[point] - function_value[point]) *
