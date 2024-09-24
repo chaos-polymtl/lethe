@@ -1,43 +1,19 @@
-# Listing of Parameters
-#----------------------
-
 set dimension = 2
-
-#---------------------------------------------------
-# Simulation Control
-#---------------------------------------------------
 
 subsection simulation control
   set method            = bdf1
-  set number mesh adapt = 0
   set time end          = 0.2
   set time step         = 0.02
   set output name       = stab_tracer
   set output frequency  = 0
 end
 
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
 subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
-  set tracer uses dg  = true
+  set tracer uses dg = true
 end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none # <none|iteration|end>
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -45,13 +21,9 @@ subsection initial conditions
     set Function expression = 1; 0; 0
   end
   subsection tracer
-    set Function expression = tanh(25-50*x) #if (x<=0.5,1,0)
+    set Function expression = tanh(25-50*x)
   end
 end
-
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -60,10 +32,6 @@ subsection physical properties
   end
 end
 
-#---------------------------------------------------
-# Mesh
-#---------------------------------------------------
-
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
@@ -71,25 +39,9 @@ subsection mesh
   set initial refinement = 5
 end
 
-#---------------------------------------------------
-# Multiphysics
-#---------------------------------------------------
-
 subsection multiphysics
   set tracer = true
 end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
-end
-
-#---------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -101,10 +53,6 @@ subsection analytical solution
     set Function expression = tanh(25-50*x+50*t)
   end
 end
-
-#---------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
 
 subsection boundary conditions
   set number = 3
@@ -125,13 +73,12 @@ subsection boundary conditions
   end
 end
 
-
 subsection boundary conditions tracer
   set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet
-    set beta =10
+    set beta = 10
     subsection dirichlet
       set Function expression = 1
     end
@@ -150,11 +97,6 @@ subsection boundary conditions tracer
   end
 end
 
-
-#---------------------------------------------------
-# Non-Linear Solver Control
-#---------------------------------------------------
-
 subsection non-linear solver
   subsection tracer
     set verbosity      = quiet
@@ -167,10 +109,6 @@ subsection non-linear solver
     set max iterations = 1
   end
 end
-
-#---------------------------------------------------
-# Linear Solver Control
-#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
