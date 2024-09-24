@@ -1,11 +1,4 @@
-# Listing of Parameters
-#----------------------
-
 set dimension = 2
-
-#---------------------------------------------------
-# Simulation Control
-#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
@@ -13,28 +6,12 @@ subsection simulation control
   set output frequency  = 0
 end
 
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
 subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
-  set tracer uses dg  = true
+  set tracer uses dg = true
 end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none # <none|iteration|end>
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -43,20 +20,12 @@ subsection initial conditions
   end
 end
 
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
-
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set tracer diffusivity = 0.01
   end
 end
-
-#---------------------------------------------------
-# Mesh
-#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -65,25 +34,13 @@ subsection mesh
   set initial refinement = 3
 end
 
-#---------------------------------------------------
-# Multiphysics
-#---------------------------------------------------
-
 subsection multiphysics
   set tracer = true
 end
 
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
 subsection mesh adaptation
   set type = uniform
 end
-
-#---------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -96,10 +53,6 @@ subsection analytical solution
     set Function expression = (exp(Pe*x)-1)/(exp(Pe)-1)
   end
 end
-
-#---------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
 
 subsection boundary conditions
   set number = 3
@@ -138,7 +91,7 @@ subsection boundary conditions tracer
       set Function expression = 1
     end
   end
-    subsection bc 2
+  subsection bc 2
     set id   = 2
     set type = outlet
   end
@@ -147,10 +100,6 @@ subsection boundary conditions tracer
     set type = outlet
   end
 end
-
-#---------------------------------------------------
-# Non-Linear Solver Control
-#---------------------------------------------------
 
 subsection non-linear solver
   subsection tracer
@@ -164,10 +113,6 @@ subsection non-linear solver
     set max iterations = 1
   end
 end
-
-#---------------------------------------------------
-# Linear Solver Control
-#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
