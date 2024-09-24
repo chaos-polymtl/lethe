@@ -85,25 +85,30 @@ inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,c
 }
 
 template <int dim>
+inline void get_dof_opposite_faces(const unsigned int local_face_id, std::vector<unsigned int> &local_opposite_faces)
+{
+  unsigned int local_face_id_2d = local_face_id%4;
+  
+  local_opposite_faces[0] = (local_face_id_2d + 1)%2;
+  local_opposite_faces[1] = 3-local_face_id_2d/2;
+  
+  if constexpr (dim==3)
+    local_opposite_faces[2] = 5 - local_face_id/4;
+}
+
+template <int dim>
 inline void get_face_transformation_jacobians(const DerivativeForm<1, dim, dim> &cell_transformation_jac, const unsigned int local_face_id, DerivativeForm<1, dim-1, dim> &face_transformation_jac)
 {
-  switch (local_face_id) {
-    case 0:
-      face_transformation_jac[0][0] = cell_transformation_jac[0][1];
-      face_transformation_jac[1][0] = cell_transformation_jac[1][1];
-      break;
-    case 1:
-      face_transformation_jac[0][0] = cell_transformation_jac[0][1];
-      face_transformation_jac[1][0] = cell_transformation_jac[1][1];
-      break;
-    case 2:
-      face_transformation_jac[0][0] = cell_transformation_jac[0][0];
-      face_transformation_jac[1][0] = cell_transformation_jac[1][0];
-      break;
-    case 3:
-      face_transformation_jac[0][0] = cell_transformation_jac[0][0];
-      face_transformation_jac[1][0] = cell_transformation_jac[1][0];
-      break;
+  for (unsigned int i = 0; i < dim; ++i)
+  {
+    unsigned int k = 0;
+    for (unsigned int j = 0; j < dim; ++j)
+    {
+      if (local_face_id/2 == j)
+        continue;
+      face_transformation_jac[i][k] = cell_transformation_jac[i][j];
+      k += 1;
+    }
   }
 }
 
