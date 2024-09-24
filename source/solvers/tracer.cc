@@ -379,7 +379,7 @@ Tracer<dim>::assemble_system_matrix_dg()
                         MeshWorker::assemble_own_cells |
                           MeshWorker::assemble_boundary_faces |
                           MeshWorker::assemble_own_interior_faces_once |
-                          MeshWorker::assemble_ghost_faces_both,
+                          MeshWorker::assemble_ghost_faces_once,
                         boundary_worker,
                         face_worker);
 }
