@@ -33,7 +33,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
 
-  // assembling local matrix and right hand side
+  // Assemble local matrix and right-hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
@@ -85,8 +85,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
-      // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step. Hypothesis : advection dominated problem
+      // steady or unsteady. In the unsteady case, it includes the value
+      // of the time-step. Hypothesis: advection dominated problem
       // (Pe>3) [Bochev et al., Stability of the SUPG finite element
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
@@ -182,7 +182,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // assembling local matrix and right hand side
+  // Assemble local matrix and right-hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
@@ -214,7 +214,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       const double vdcdd =
         (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
-      // We  remove the diffusion aligned with the velocity
+      // We remove the diffusion aligned with the velocity
       // as is done in the original article. In Tezduyar 2003, this is denoted
       // s.
       Tensor<1, dim> velocity_unit_vector =
@@ -232,8 +232,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
-      // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step. Hypothesis : advection dominated problem
+      // steady or unsteady. In the unsteady case, it includes the value
+      // of the time-step. Hypothesis: advection dominated problem
       // (Pe>3) [Bochev et al., Stability of the SUPG finite element
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
@@ -257,7 +257,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
         {
           const auto phi_phase_i      = scratch_data.phi[q][i];
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
-
 
           // rhs for: u * grad(phase) + phase * grad(u) - diffusivity *
           // laplacian(phase) = 0
@@ -368,11 +367,8 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
     {
       phase_value[0] = scratch_data.present_phase_values[q];
 
-
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_value[p + 1] = scratch_data.previous_phase_values[p][q];
-
-
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
