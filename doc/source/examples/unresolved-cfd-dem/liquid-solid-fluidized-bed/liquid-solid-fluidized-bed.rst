@@ -467,10 +467,9 @@ With the pressure slope, it is also possible to determine the bed void fraction 
 
 The resulting behavior of the pressure along the bed height and the void fraction with time is shown in the following animation.
 
-.. image:: images/pressure_time.gif
-    :alt: Pressure drop as a function of time
-    :align: center
-    :name: press_t
+.. raw:: html
+
+    <p align="center"><iframe width="720" height="428" src="https://www.youtube.com/watch?v=x1Ul2ZBq5cE" title="Pressure drop along the bed height and void fraction evolution in a liquid-solid fluidized bed" frameborder="0" allowfullscreen></iframe>
 
 
 Particles Dynamics
