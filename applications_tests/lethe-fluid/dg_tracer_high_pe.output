@@ -8,7 +8,7 @@ Running on 1 MPI rank(s)...
 Steady iteration:        1/3
 *****************************
 L2 error velocity : 5.55112e-17
-L2 error tracer : 0.0493129
+L2 error tracer : 0.000884134
 
 *****************************
 Steady iteration:        2/3
@@ -18,7 +18,7 @@ Steady iteration:        2/3
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 1024
 L2 error velocity : 5.55112e-17
-L2 error tracer : 0.100166
+L2 error tracer : 0.000122792
 
 *****************************
 Steady iteration:        3/3
@@ -28,12 +28,12 @@ Steady iteration:        3/3
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 4096
 L2 error velocity : 5.55112e-17
-L2 error tracer : 0.10701
+L2 error tracer : 2.51259e-05
 cells  error_velocity    error_pressure  
    64 5.551115e-17    - 0.000000e+00   - 
   256 5.551115e-17 0.00 0.000000e+00 nan 
  1024 5.551115e-17 0.00 0.000000e+00 nan 
-cells    error_tracer    
-   64 4.931288e-02     - 
-  256 1.001660e-01 -1.02 
- 1024 1.070104e-01 -0.10 
+cells   error_tracer    
+   64 8.841339e-04    - 
+  256 1.227916e-04 2.85 
+ 1024 2.512594e-05 2.29 
