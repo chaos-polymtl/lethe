@@ -47,8 +47,8 @@ Tracer<dim>::setup_assemblers()
     {
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerDGCore<dim>>(this->simulation_control));
-      this->inner_face_assembler =
-        std::make_shared<TracerAssemblerSIPG<dim>>(simulation_control);
+      this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>(
+        simulation_control, simulation_parameters.stabilization.tracer_sipg);
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
           simulation_control, simulation_parameters.boundary_conditions_tracer);
@@ -252,10 +252,12 @@ Tracer<dim>::assemble_system_matrix_dg()
         cell->face(face_no)->boundary_id();
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
+
+
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
       const double extent1 = cell->measure() / cell->face(face_no)->measure();
-      scratch_data.penalization =
+      scratch_data.penalty_factor =
         get_penalty_factor(fe->degree, extent1, extent1);
 
 
@@ -283,7 +285,7 @@ Tracer<dim>::assemble_system_matrix_dg()
       auto      &properties_manager = scratch_data.properties_manager;
       const auto diffusivity_model =
         properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity.resize(q_points.size());
+      scratch_data.tracer_diffusivity_face.resize(q_points.size());
       if (properties_manager.field_is_required(field::levelset))
         {
           scratch_data.sdf_values.resize(q_points.size());
@@ -294,7 +296,7 @@ Tracer<dim>::assemble_system_matrix_dg()
                            scratch_data.fields);
         }
       diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity);
+                                      scratch_data.tracer_diffusivity_face);
 
       scratch_data.boundary_index = boundary_index;
       this->boundary_face_assembler->assemble_matrix(scratch_data, copy_data);
@@ -316,7 +318,7 @@ Tracer<dim>::assemble_system_matrix_dg()
       const double extent1 = cell->measure() / cell->face(f)->measure();
       const double extent2 = ncell->measure() / ncell->face(nf)->measure();
 
-      scratch_data.penalization =
+      scratch_data.penalty_factor =
         get_penalty_factor(fe->degree, extent1, extent2);
 
       copy_data.face_data.emplace_back();
@@ -343,7 +345,7 @@ Tracer<dim>::assemble_system_matrix_dg()
       auto      &properties_manager = scratch_data.properties_manager;
       const auto diffusivity_model =
         properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity.resize(q_points.size());
+      scratch_data.tracer_diffusivity_face.resize(q_points.size());
       if (properties_manager.field_is_required(field::levelset))
         {
           scratch_data.sdf_values.resize(q_points.size());
@@ -354,7 +356,7 @@ Tracer<dim>::assemble_system_matrix_dg()
                            scratch_data.fields);
         }
       diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity);
+                                      scratch_data.tracer_diffusivity_face);
 
       this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
@@ -566,7 +568,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         get_lethe_boundary_index(triangulation_boundary_id);
 
       const double extent1 = cell->measure() / cell->face(face_no)->measure();
-      scratch_data.penalization =
+      scratch_data.penalty_factor =
         get_penalty_factor(fe->degree, extent1, extent1);
 
 
@@ -600,7 +602,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       auto      &properties_manager = scratch_data.properties_manager;
       const auto diffusivity_model =
         properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity.resize(q_points.size());
+      scratch_data.tracer_diffusivity_face.resize(q_points.size());
       if (properties_manager.field_is_required(field::levelset))
         {
           scratch_data.sdf_values.resize(q_points.size());
@@ -611,7 +613,7 @@ Tracer<dim>::assemble_system_rhs_dg()
                            scratch_data.fields);
         }
       diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity);
+                                      scratch_data.tracer_diffusivity_face);
 
       scratch_data.boundary_index = boundary_index;
       this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
@@ -628,8 +630,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         StabilizedDGMethodsCopyData                          &copy_data) {
       const double extent1 = cell->measure() / cell->face(f)->measure();
       const double extent2 = ncell->measure() / ncell->face(nf)->measure();
-      scratch_data.penalization =
-
+      scratch_data.penalty_factor =
         get_penalty_factor(fe->degree, extent1, extent2);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
@@ -675,7 +676,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       auto      &properties_manager = scratch_data.properties_manager;
       const auto diffusivity_model =
         properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity.resize(q_points.size());
+      scratch_data.tracer_diffusivity_face.resize(q_points.size());
       if (properties_manager.field_is_required(field::levelset))
         {
           scratch_data.sdf_values.resize(q_points.size());
@@ -686,7 +687,7 @@ Tracer<dim>::assemble_system_rhs_dg()
                            scratch_data.fields);
         }
       diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity);
+                                      scratch_data.tracer_diffusivity_face);
 
       this->inner_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
@@ -1098,10 +1099,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
