@@ -235,10 +235,8 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
 {
 public:
-  TracerAssemblerSIPG(std::shared_ptr<SimulationControl> simulation_control,
-                      const double                       sipg_penalty_constant)
+  TracerAssemblerSIPG(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
-    , sipg_penalty_constant(sipg_penalty_constant)
   {}
 
   /**
@@ -267,7 +265,6 @@ public:
                StabilizedDGMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-  const double                       sipg_penalty_constant;
 };
 
 /**

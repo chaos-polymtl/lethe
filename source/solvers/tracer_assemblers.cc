@@ -450,8 +450,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  penalty_factor   = scratch_data.penalty_factor;
-  const double                  penalty_constant = this->sipg_penalty_constant;
+  const double                  penalty_factor = scratch_data.penalty_factor;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points       = fe_iv.get_quadrature_points();
   auto                         &copy_data_face = copy_data.face_data.back();
@@ -484,8 +483,8 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
                     fe_iv.jump_in_shape_values(i, q) -
                   fe_iv.average_of_shape_gradients(i, q) * normals[q] *
                     fe_iv.jump_in_shape_values(j, q)) +
-               (scratch_data.tracer_diffusivity_face[q] + penalty_constant) *
-                 penalty_factor * fe_iv.jump_in_shape_values(j, q) *
+               (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
+                 fe_iv.jump_in_shape_values(j, q) *
                  fe_iv.jump_in_shape_values(i, q)) *
               JxW[q];
           }
@@ -497,8 +496,7 @@ void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  penalty_factor   = scratch_data.penalty_factor;
-  const double                  penalty_constant = this->sipg_penalty_constant;
+  const double                  penalty_factor = scratch_data.penalty_factor;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points = fe_iv.get_quadrature_points();
   const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
@@ -540,8 +538,8 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                   fe_iv.jump_in_shape_values(i, q) -
                 scratch_data.tracer_value_jump[q] * normals[q] *
                   fe_iv.average_of_shape_gradients(i, q)) +
-             (scratch_data.tracer_diffusivity_face[q] + penalty_constant) *
-               penalty_factor * scratch_data.tracer_value_jump[q] *
+             (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
+               scratch_data.tracer_value_jump[q] *
                fe_iv.jump_in_shape_values(i, q)) *
             JxW[q];
         }
