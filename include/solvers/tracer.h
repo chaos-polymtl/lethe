@@ -442,7 +442,7 @@ private:
                      const double       cell_extent_here,
                      const double       cell_extent_there)
   {
-    return fe_degree * (fe_degree + 1.) * 0.5 *
+    return (fe_degree + 1) * (fe_degree + 1.) * 0.5 *
            (1. / cell_extent_here + 1. / cell_extent_there);
   }
 
