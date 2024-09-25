@@ -735,7 +735,7 @@ namespace Parameters
 
       prm.declare_entry(
         "tracer sipg",
-        "1",
+        "0",
         Patterns::Double(),
         "Value of the SIPG stabilization parameter for the tracer equation when "
         "a Discontinuous Galerkin (DG) formulation is used.");
