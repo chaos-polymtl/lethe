@@ -126,19 +126,32 @@ inline void compute_residual(const Tensor<1,dim> &x_n_to_x_J_real, const Tensor<
 }
 
 template <int dim>
-inline std::vector<Point<dim-1>> compute_numerical_jacobian_stencil(const Point<dim-1> x_ref, const double perturbation, std::vector<Point<dim-1>> &stencil)
+inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(Point<dim-1> x_ref, unsigned int local_face_id, const double perturbation)
 {
+  
+  std::vector<Point<dim>> stencil( 2*dim - 1);
+  
+  // stencil[0] = x_ref;
   
   for (unsigned int i = 0; i < 2*dim - 1; ++i)
   {
-     stencil[i] = x_ref;
+    unsigned int k = 0;
+    for (unsigned int j = 0; j < dim; ++j)
+    {
+      if (local_face_id/2 == j)
+        {
+          stencil[i][j] = double(id%2);
+          continue;
+        }
+      stencil[i][j] = x_ref[k];
+      k += 1;
+    }
   }
   
   for (unsigned int i = 1; i < dim; ++i)
   {
     stencil[2*i-1][i-1] -= perturbation;
     stencil[2*i][i-1] += perturbation;
-    
   }
   
   return stencil;
@@ -917,6 +930,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   bool change = true;
   while (change)
   {
+    FEPointEvaluation<1, dim-1, dim> fe_point_evaluation(mapping, fe, update_values | update_gradients | update_jacobians);
+    
     change = false;
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -936,15 +951,11 @@ AdvectionProblem<dim>::compute_sign_distance()
         
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
-          
-  
           if (dofs_in_interface_halo.find(dof_indices[i]) != dofs_in_interface_halo.end())
           {
             continue;
           }
-          
 
-          // std::cout << dof_indices[i] << std::endl;
           // Get opposite faces 
           std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
           
@@ -972,9 +983,10 @@ AdvectionProblem<dim>::compute_sign_distance()
             {
               const double perturbation = 0.1;
               
-              std::vector<Point<dim-1>> stencil_ref(2*dim - 1);
+              auto stencil_ref = compute_numerical_jacobian_stencil<dim>(x_n_ref, perturbation);
               
-              compute_numerical_jacobian_stencil<dim>(x_n_ref, perturbation, stencil_ref);
+              ArrayView<const Point<dim-1>> stencil_ref_array_view = make_array_view(stencil_ref);
+              fe_point_evaluation.reinit(cell, stencil_ref_array_view);
               
               FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(stencil_ref), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
               
