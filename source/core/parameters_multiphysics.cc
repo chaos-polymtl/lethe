@@ -524,7 +524,7 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
         "verbosity",
         "quiet",
         Patterns::Selection("quiet|verbose"),
-        "Display the value of epsilon for each time iteration is set to verbose");
+        "Display the value of epsilon for each time iteration if set to verbose");
     }
     prm.leave_subsection();
   }

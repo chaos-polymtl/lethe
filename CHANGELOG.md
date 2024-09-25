@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Added verbosity for the interface thickness in the CHNS solver. An application test was added to verify the feature resists to future changes made in the code. The documentation was updated to display the new feature in the Cahn-Hilliard section of the documentation. [#1274](https://github.com/chaos-polymtl/lethe/pull/1274)
+- MINOR Added verbosity for the interface thickness in the CHNS solver. An application test was added to verify the feature resists to future changes made in the code. The documentation was updated to display the new feature in the Cahn-Hilliard section of the documentation. [#1291](https://github.com/chaos-polymtl/lethe/pull/1291)
 
 ## [Master] - 2024-09-24
 

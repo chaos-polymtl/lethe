@@ -63,9 +63,15 @@ namespace Parameters
     manual
   };
 
+    /**
+   * @brief Verbosity options for the epsilon parameter.
+*/
   enum class EpsilonVerbosity
   {
+      /// Epsilon related information will not be displayed on terminal
     quiet,
+      /// Epsilon value will be displayed on terminal for every steady and
+      /// transient iteration.
     verbose
   };
 

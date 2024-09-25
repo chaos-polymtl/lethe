@@ -38,7 +38,7 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
     set potential smoothing coefficient = 1
 
     subsection epsilon
-      set verbosity = verbose
+      set verbosity = quiet
       set method    = automatic
       set value     = 1
     end
