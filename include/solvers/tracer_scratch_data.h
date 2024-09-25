@@ -185,6 +185,8 @@ public:
                                                   this->tracer_gradients);
     this->fe_values_tracer.get_function_laplacians(current_solution,
                                                    this->tracer_laplacians);
+    this->fe_values_tracer.get_function_gradients(
+      previous_solutions[0], this->previous_tracer_gradients);
 
     // Gather previous tracer values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
@@ -286,8 +288,6 @@ public:
   std::vector<double>                  tracer_diffusivity_0;
   std::vector<double>                  tracer_diffusivity_1;
 
-
-
   // FEValues for the Tracer problem
   FEValues<dim> fe_values_tracer;
   unsigned int  n_dofs;
@@ -303,6 +303,7 @@ public:
   std::vector<Tensor<1, dim>>      tracer_gradients;
   std::vector<double>              tracer_laplacians;
   std::vector<std::vector<double>> previous_tracer_values;
+  std::vector<Tensor<1, dim>>      previous_tracer_gradients;
 
   // Solid signed distance function
   std::vector<double> sdf_values;

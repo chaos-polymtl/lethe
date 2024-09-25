@@ -21,8 +21,10 @@ TracerScratchData<dim>::allocate()
   // Velocity
   this->velocity_values = std::vector<Tensor<1, dim>>(n_q_points);
   // Tracer
-  this->tracer_values        = std::vector<double>(n_q_points);
-  this->tracer_gradients     = std::vector<Tensor<1, dim>>(n_q_points);
+  this->tracer_values    = std::vector<double>(n_q_points);
+  this->tracer_gradients = std::vector<Tensor<1, dim>>(n_q_points);
+  this->previous_tracer_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
   this->tracer_laplacians    = std::vector<double>(n_q_points);
   this->tracer_diffusivity   = std::vector<double>(n_q_points);
   this->tracer_diffusivity_0 = std::vector<double>(n_q_points);

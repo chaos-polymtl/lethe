@@ -173,7 +173,6 @@ public:
                                          this->phase_gradients);
     fe_values_vof.get_function_laplacians(current_solution,
                                           this->phase_laplacians);
-
     fe_values_vof.get_function_gradients(previous_solutions[0],
                                          this->previous_phase_gradients);
 
