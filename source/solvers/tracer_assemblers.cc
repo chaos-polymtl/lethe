@@ -478,11 +478,10 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
             // Assemble the diffusion term using Nitsche
             // symmetric interior penalty method. See Larson Chap. 14. P.362
             copy_data_face.face_matrix(i, j) +=
-              (-scratch_data.tracer_diffusivity[q] *
-                 fe_iv.average_of_shape_gradients(j, q) * normals[q] *
+              scratch_data.tracer_diffusivity[q] *
+              (-fe_iv.average_of_shape_gradients(j, q) * normals[q] *
                  fe_iv.jump_in_shape_values(i, q) -
-               scratch_data.tracer_diffusivity[q] *
-                 fe_iv.average_of_shape_gradients(i, q) * normals[q] *
+               fe_iv.average_of_shape_gradients(i, q) * normals[q] *
                  fe_iv.jump_in_shape_values(j, q) +
                sipg_penalization * fe_iv.jump_in_shape_values(j, q) *
                  fe_iv.jump_in_shape_values(i, q)) *
@@ -533,11 +532,10 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
           // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
           copy_data_face.face_rhs(i) -=
-            (-scratch_data.tracer_diffusivity[q] *
-               scratch_data.tracer_average_gradient[q] * normals[q] *
+            scratch_data.tracer_diffusivity[q] *
+            (-scratch_data.tracer_average_gradient[q] * normals[q] *
                fe_iv.jump_in_shape_values(i, q) -
-             scratch_data.tracer_diffusivity[q] *
-               scratch_data.tracer_value_jump[q] * normals[q] *
+             scratch_data.tracer_value_jump[q] * normals[q] *
                fe_iv.average_of_shape_gradients(i, q) +
              sipg_penalization * scratch_data.tracer_value_jump[q] *
                fe_iv.jump_in_shape_values(i, q)) *
@@ -587,7 +585,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
                      fe_face.shape_value(j, point) *
                        fe_face.shape_grad(i, point) * normals[point]) *
                     JxW[point] +
-                  beta * fe_face.shape_value(i, point) *
+                  tracer_diffusivity[point] * beta *
+                    fe_face.shape_value(i, point) *
                     fe_face.shape_value(j, point) * JxW[point];
             }
         }
@@ -655,7 +654,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
                    (scratch_data.values_here[point] - function_value[point]) *
                      fe_face.shape_grad(i, point) * normals[point]) *
                   JxW[point] +
-                beta * fe_face.shape_value(i, point) *
+                tracer_diffusivity[point] * beta *
+                  fe_face.shape_value(i, point) *
                   (scratch_data.values_here[point] - function_value[point]) *
                   JxW[point];
             }

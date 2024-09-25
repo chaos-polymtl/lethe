@@ -254,9 +254,10 @@ Tracer<dim>::assemble_system_matrix_dg()
         get_lethe_boundary_index(triangulation_boundary_id);
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
 
+      const double extent1 = cell->measure() / cell->face(face_no)->measure();
       scratch_data.penalization =
-        simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
-        compute_cell_diameter<dim>(cell->measure(), fe->degree);
+        get_penalty_factor(fe->degree, extent1, extent1);
+
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
       const FEFaceValuesBase<dim> &fe_face =
@@ -312,9 +313,11 @@ Tracer<dim>::assemble_system_matrix_dg()
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
       const unsigned int n_dofs = fe_iv.n_current_interface_dofs();
 
+      const double extent1 = cell->measure() / cell->face(f)->measure();
+      const double extent2 = ncell->measure() / ncell->face(nf)->measure();
+
       scratch_data.penalization =
-        simulation_parameters.stabilization.tracer_sipg /
-        compute_cell_diameter<dim>(cell->measure(), fe->degree);
+        get_penalty_factor(fe->degree, extent1, extent2);
 
       copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
@@ -562,9 +565,10 @@ Tracer<dim>::assemble_system_rhs_dg()
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
 
+      const double extent1 = cell->measure() / cell->face(face_no)->measure();
       scratch_data.penalization =
-        simulation_parameters.boundary_conditions_tracer.beta[boundary_index] /
-        compute_cell_diameter<dim>(cell->measure(), fe->degree);
+        get_penalty_factor(fe->degree, extent1, extent1);
+
 
       scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
       const FEFaceValuesBase<dim> &fe_face =
@@ -622,9 +626,11 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
+      const double extent1 = cell->measure() / cell->face(f)->measure();
+      const double extent2 = ncell->measure() / ncell->face(nf)->measure();
       scratch_data.penalization =
-        simulation_parameters.stabilization.tracer_sipg /
-        compute_cell_diameter<dim>(cell->measure(), fe->degree);
+
+        get_penalty_factor(fe->degree, extent1, extent2);
       FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
       fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
       const unsigned int n_dofs   = fe_iv.n_current_interface_dofs();
