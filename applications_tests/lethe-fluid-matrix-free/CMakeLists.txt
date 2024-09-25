@@ -3,6 +3,7 @@ set(TEST_TARGET lethe-fluid-matrix-free)
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 
 file(COPY cylinder_structured.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_kelly_estimator.${_build_type}")
+file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cylinder_outlet_bc.${_build_type}")
 
 file(COPY tgv_restart_bdf1/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/tgv_restart_bdf1.${_build_type}")
 file(COPY tgv_restart_bdf1/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/tgv_restart_bdf1.${_build_type}")

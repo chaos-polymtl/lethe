@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-24
+
+### Added
+
+- MINOR The outlet boundary condition was implemented in the matrix-free operators. A test in 2D with a cylinder close to the outlet was added to test this boundary condition for both the matrix-based and the matrix-free application. [#1287](https://github.com/chaos-polymtl/lethe/pull/1287)
 
 ## [Master] - 2024-09-23
 
