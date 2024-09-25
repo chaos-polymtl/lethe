@@ -439,7 +439,7 @@ The void fraction and velocity profile of the fluid are also shown.
 
 .. raw:: html
 
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
 Total Pressure Drop and Bed Expansion
@@ -467,10 +467,9 @@ With the pressure slope, it is also possible to determine the bed void fraction 
 
 The resulting behavior of the pressure along the bed height and the void fraction with time is shown in the following animation.
 
-.. image:: images/pressure_time.gif
-    :alt: Pressure drop as a function of time
-    :align: center
-    :name: press_t
+.. raw:: html
+
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/x1Ul2ZBq5cE" title="Pressure drop along the bed height and void fraction evolution in a liquid-solid fluidized bed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 Particles Dynamics
@@ -482,11 +481,11 @@ The following animation is in real time. It is possible to notice that, for a si
 
 .. raw:: html
 
-    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
 
------------\
+-----------
 References
 -----------
 

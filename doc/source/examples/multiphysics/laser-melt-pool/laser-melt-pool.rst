@@ -296,10 +296,9 @@ Results
 
 The following animation shows the temperature distribution in the simulations domain, as well the melted zone (using white contour lines at the liquidus and solidus temperatures).
 
-.. image:: images/laser-melt-pool.gif
-    :alt: temperature
-    :align: center
-    :width: 600
+.. raw:: html
+
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/r6BC86l0p1I" title="Laser Ti-6Al-4V melt pool" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 -----------

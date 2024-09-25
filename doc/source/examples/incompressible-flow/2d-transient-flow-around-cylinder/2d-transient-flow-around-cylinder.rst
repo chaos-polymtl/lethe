@@ -292,15 +292,13 @@ The obtained values of the drag and lift coefficients as well as the Strouhal nu
 
 Using Paraview the following velocity and pressure fields can be visualized in time:
 
-.. image:: images/cylinderVelocity.gif
-    :alt: Velocity profile
-    :align: center
-    :name: velocity
+.. raw:: html
 
-.. image:: images/cylinderPressure.gif
-    :alt: Pressure profile
-    :align: center
-    :name: pressure
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/NnYsd_yqp7I" title="Velocity magnitude field evolution - Transient flow around a cylinder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+.. raw:: html
+
+    <p align="center"><iframe width="720" height="405" src="https://www.youtube.com/embed/NbN2kBdakH4" title="Pressure field evolution - Transient flow around a cylinder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 ----------------------------
