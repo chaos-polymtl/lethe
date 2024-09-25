@@ -27,7 +27,6 @@ end
 
 subsection cahn hilliard
   set potential smoothing coefficient = 0.0
-
   subsection epsilon
     set method    = automatic
     set verbosity = verbose
@@ -50,22 +49,8 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids = 2
-  subsection fluid 1
-    set density             = 1
-    set kinematic viscosity = 1
-  end
-  subsection fluid 0
-    set density             = 1
-    set kinematic viscosity = 1
-  end
-  set number of material interactions = 1 #by default it is set to 0
-  subsection material interaction 0
-    set type = fluid-fluid
-    subsection fluid-fluid interaction
-      set surface tension coefficient = 0
-    end
-  end
+  set number of fluids                = 2
+  set number of material interactions = 1
 end
 
 #---------------------------------------------------
