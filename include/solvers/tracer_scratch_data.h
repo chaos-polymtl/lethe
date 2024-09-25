@@ -293,6 +293,7 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  tracer_diffusivity;
+  std::vector<double>                  tracer_diffusivity_face;
   std::vector<double>                  tracer_diffusivity_0;
   std::vector<double>                  tracer_diffusivity_1;
 
@@ -323,7 +324,12 @@ public:
   std::vector<Tensor<1, dim>> tracer_average_gradient;
 
   // SIPG (interior faces) or Nitsche (boundary) penalization factor
-  double penalization;
+  // The penalization constant is an additional parameter that is parsed to add
+  // additional penalty on top of the diffusion.
+  double penalization_constant;
+  // The penalty factor is calculated using a measure of the element size. It is
+  // multiplied by the penalization and the diffusion.
+  double penalty_factor;
 
   // Bool that defines if the selected face is a dirichlet/outlet boundary
   unsigned int boundary_index;

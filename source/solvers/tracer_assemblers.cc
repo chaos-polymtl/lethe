@@ -450,7 +450,8 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  sipg_penalization = scratch_data.penalization;
+  const double                  penalty_factor   = scratch_data.penalty_factor;
+  const double                  penalty_constant = this->sipg_penalty_constant;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points       = fe_iv.get_quadrature_points();
   auto                         &copy_data_face = copy_data.face_data.back();
@@ -478,12 +479,13 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
             // Assemble the diffusion term using Nitsche
             // symmetric interior penalty method. See Larson Chap. 14. P.362
             copy_data_face.face_matrix(i, j) +=
-              scratch_data.tracer_diffusivity[q] *
-              (-fe_iv.average_of_shape_gradients(j, q) * normals[q] *
-                 fe_iv.jump_in_shape_values(i, q) -
-               fe_iv.average_of_shape_gradients(i, q) * normals[q] *
-                 fe_iv.jump_in_shape_values(j, q) +
-               sipg_penalization * fe_iv.jump_in_shape_values(j, q) *
+              (scratch_data.tracer_diffusivity_face[q] *
+                 (-fe_iv.average_of_shape_gradients(j, q) * normals[q] *
+                    fe_iv.jump_in_shape_values(i, q) -
+                  fe_iv.average_of_shape_gradients(i, q) * normals[q] *
+                    fe_iv.jump_in_shape_values(j, q)) +
+               (scratch_data.tracer_diffusivity_face[q] + penalty_constant) *
+                 penalty_factor * fe_iv.jump_in_shape_values(j, q) *
                  fe_iv.jump_in_shape_values(i, q)) *
               JxW[q];
           }
@@ -495,7 +497,8 @@ void
 TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
                                        StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                  sipg_penalization = scratch_data.penalization;
+  const double                  penalty_factor   = scratch_data.penalty_factor;
+  const double                  penalty_constant = this->sipg_penalty_constant;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
   const auto                   &q_points = fe_iv.get_quadrature_points();
   const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
@@ -532,12 +535,13 @@ TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
           // Assemble the diffusion term using Nitsche symmetric interior
           // penalty method. See Larson Chap. 14. P.362
           copy_data_face.face_rhs(i) -=
-            scratch_data.tracer_diffusivity[q] *
-            (-scratch_data.tracer_average_gradient[q] * normals[q] *
-               fe_iv.jump_in_shape_values(i, q) -
-             scratch_data.tracer_value_jump[q] * normals[q] *
-               fe_iv.average_of_shape_gradients(i, q) +
-             sipg_penalization * scratch_data.tracer_value_jump[q] *
+            (scratch_data.tracer_diffusivity_face[q] *
+               (-scratch_data.tracer_average_gradient[q] * normals[q] *
+                  fe_iv.jump_in_shape_values(i, q) -
+                scratch_data.tracer_value_jump[q] * normals[q] *
+                  fe_iv.average_of_shape_gradients(i, q)) +
+             (scratch_data.tracer_diffusivity_face[q] + penalty_constant) *
+               penalty_factor * scratch_data.tracer_value_jump[q] *
                fe_iv.jump_in_shape_values(i, q)) *
             JxW[q];
         }
@@ -554,11 +558,12 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                 beta           = scratch_data.penalization;
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
     scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
   const auto &q_points = fe_face.get_quadrature_points();
+
+  const double beta = scratch_data.penalty_factor;
 
   const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
   const std::vector<double> &JxW          = fe_face.get_JxW_values();
@@ -572,21 +577,35 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
         {
           for (unsigned int j = 0; j < n_facet_dofs; ++j)
             {
-              if (velocity_dot_n > 0)
-                copy_data.local_matrix(i, j) += fe_face.shape_value(i, point) *
-                                                fe_face.shape_value(j, point) *
-                                                velocity_dot_n * JxW[point];
+              if (boundary_conditions_tracer.type[boundary_index] ==
+                  BoundaryConditions::BoundaryType::outlet)
+                {
+                  if (velocity_dot_n > 0)
+                    copy_data.local_matrix(i, j) +=
+                      fe_face.shape_value(i, point) *
+                      fe_face.shape_value(j, point) * velocity_dot_n *
+                      JxW[point];
+                }
               if (boundary_conditions_tracer.type[boundary_index] ==
                   BoundaryConditions::BoundaryType::tracer_dirichlet)
-                copy_data.local_matrix(i, j) +=
-                  scratch_data.tracer_diffusivity[point] *
-                  (-fe_face.shape_value(i, point) *
-                     fe_face.shape_grad(j, point) * normals[point] -
-                   fe_face.shape_value(j, point) *
-                     fe_face.shape_grad(i, point) * normals[point] +
-                   beta * fe_face.shape_value(i, point) *
-                     fe_face.shape_value(j, point)) *
-                  JxW[point];
+                {
+                  if (velocity_dot_n > 0)
+                    copy_data.local_matrix(i, j) +=
+                      fe_face.shape_value(i, point) *
+                      fe_face.shape_value(j, point) * velocity_dot_n *
+                      JxW[point];
+
+                  copy_data.local_matrix(i, j) +=
+                    scratch_data.tracer_diffusivity_face[point] *
+                      (-fe_face.shape_value(i, point) *
+                         fe_face.shape_grad(j, point) * normals[point] -
+                       fe_face.shape_value(j, point) *
+                         fe_face.shape_grad(i, point) * normals[point]) *
+                      JxW[point] +
+                    scratch_data.tracer_diffusivity_face[point] * beta *
+                      fe_face.shape_value(i, point) *
+                      fe_face.shape_value(j, point) * JxW[point];
+                }
             }
         }
     }
@@ -598,11 +617,12 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
   TracerScratchData<dim>      &scratch_data,
   StabilizedDGMethodsCopyData &copy_data)
 {
-  const double                 beta           = scratch_data.penalization;
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
     scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
   const auto &q_points = fe_face.get_quadrature_points();
+
+  const double beta = scratch_data.penalty_factor;
 
   const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
   const std::vector<double> &JxW          = fe_face.get_JxW_values();
@@ -642,20 +662,27 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
 
           for (unsigned int i = 0; i < n_facet_dofs; ++i)
             {
-              copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
-                                        function_value[point] * velocity_dot_n *
-                                        JxW[point];
+              if (velocity_dot_n < 0)
+                copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
+                                          function_value[point] *
+                                          velocity_dot_n * JxW[point];
+
+              if (velocity_dot_n > 0)
+                copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
+                                          scratch_data.values_here[point] *
+                                          velocity_dot_n * JxW[point];
 
               copy_data.local_rhs(i) -=
-                scratch_data.tracer_diffusivity[point] *
-                (-fe_face.shape_value(i, point) *
-                   scratch_data.gradients_here[point] * normals[point] -
-                 (scratch_data.values_here[point] - function_value[point]) *
-                   fe_face.shape_grad(i, point) * normals[point] +
-                 beta * fe_face.shape_value(i, point) *
-                   scratch_data.values_here[point] -
-                 function_value[point]) *
-                JxW[point];
+                scratch_data.tracer_diffusivity_face[point] *
+                  (-fe_face.shape_value(i, point) *
+                     scratch_data.gradients_here[point] * normals[point] -
+                   (scratch_data.values_here[point] - function_value[point]) *
+                     fe_face.shape_grad(i, point) * normals[point]) *
+                  JxW[point] +
+                scratch_data.tracer_diffusivity_face[point] * beta *
+                  fe_face.shape_value(i, point) *
+                  (scratch_data.values_here[point] - function_value[point]) *
+                  JxW[point];
             }
         }
     }
