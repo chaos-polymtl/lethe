@@ -697,6 +697,10 @@ namespace Parameters
 
     bool heat_transfer_stabilization;
 
+    /// Boolean indicating if the DCDD stabilization term for the VOF phase
+    /// fraction should be assembled (@p true) or not (@p false).
+    bool vof_dcdd_stabilization;
+
     // pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;

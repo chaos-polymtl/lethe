@@ -712,7 +712,15 @@ namespace Parameters
         "heat transfer stabilization",
         "false",
         Patterns::Bool(),
-        "Apply discontinuity-capturing directional dissipation stabilization term on heat transfer <true|false>");
+        "Apply discontinuity-capturing directional dissipation stabilization "
+        "term on heat transfer <true|false>");
+
+      prm.declare_entry(
+        "vof dcdd stabilization",
+        "false",
+        Patterns::Bool(),
+        "Apply discontinuity-capturing directional dissipation (dcdd) "
+        "stabilization term on the VOF phase fraction <true|false>");
 
       prm.declare_entry(
         "pressure scaling factor",
@@ -742,7 +750,9 @@ namespace Parameters
       else
         throw(std::runtime_error("Invalid stabilization strategy"));
 
+      // DCDD stabilization activation parameters
       heat_transfer_stabilization = prm.get_bool("heat transfer stabilization");
+      vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
