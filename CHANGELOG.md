@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-25
+
+### Changed
+
+- MINOR Remove the GIFs from the repository to reduce its size. [#1289](https://github.com/chaos-polymtl/lethe/pull/1289)
+
 ## [Master] - 2024-09-24
 
 ### Added
