@@ -50,7 +50,7 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
  
   * ``verbosity``: enables the display of the interface thickness values in the terminal. This does not affect the printing of output  fils. Choices are ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
-  * ``method``: sets the method for the computation of epsilon. The first choice is ``automatic``: the interface thickness is determined automatically using the minimum cell diameter obtained by the deal.ii ``minimum_cell_diameter`` `method <https://www.dealii.org/current/doxygen/deal.II/namespaceGridTools.html#a47c293eff2ec7ce4b90ba08b35d1f2e2>`_. The other choice is ``manual``: allows the user to define the interface thickness by hand by setting the desired value in ``value``.
+  * ``method``: sets the method for the computation of epsilon. The first choice is ``automatic``: the interface thickness is determined automatically using the minimum cell diameter obtained by the deal.ii ``minimum_cell_diameter`` `method <https://www.dealii.org/current/doxygen/deal.II/namespaceGridTools.html#a47c293eff2ec7ce4b90ba08b35d1f2e2>`_. The other choice is ``manual``: allows the user to define the interface thickness by hand by setting the desired value with ``value``.
   
 .. attention::
      The ``mobility model`` and ``mobility constant`` must be set in the :doc:`physical_properties` section.
