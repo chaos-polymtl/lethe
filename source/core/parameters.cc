@@ -717,7 +717,7 @@ namespace Parameters
 
       prm.declare_entry(
         "vof dcdd stabilization",
-        "false",
+        "true", // TODO AMISHGA change back
         Patterns::Bool(),
         "Apply discontinuity-capturing directional dissipation (dcdd) "
         "stabilization term on the VOF phase fraction <true|false>");
@@ -752,7 +752,7 @@ namespace Parameters
 
       // DCDD stabilization activation parameters
       heat_transfer_stabilization = prm.get_bool("heat transfer stabilization");
-      vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
+      vof_dcdd_stabilization      = prm.get_bool("vof dcdd stabilization");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }

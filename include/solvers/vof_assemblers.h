@@ -40,7 +40,7 @@ public:
    * @param scratch_data Scratch data containing the VOF information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_matrix is copied to.
    */
 
   virtual void
@@ -53,7 +53,7 @@ public:
    * @param scratch_data Scratch data containing the VOF information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs is copied to.
    */
 
   virtual void
@@ -146,6 +146,62 @@ public:
    * @brief assemble_rhs Assembles the rhs
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(VOFScratchData<dim>       &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+};
+
+
+/**
+ * @brief Assemble the discontinuity-capturing directional dissipation
+ * stabilization term for the VOF phase fraction.
+ *
+ * @note For more information see Tezduyar, T. E. (2003). Computation of
+ * moving boundaries and interfaces and stabilization parameters. International
+ * Journal for Numerical Methods in Fluids, 43(5), 555-575. The implementation
+ * is based on equations (70) and (79), which are adapted for the heat transfer
+ * solver.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class VOFAssemblerDCDDStabilization : public VOFAssemblerBase<dim>
+{
+public:
+  /**
+   * @brief Default constructor of the assembler.
+   *
+   * @param simulation_control SimulationControl object that holds information
+   * related to the control of the steady-state or transient simulation. This is
+   * used to extrapolate velocity solutions in time for transient simulations.
+   */
+  VOFAssemblerDCDDStabilization(
+    std::shared_ptr<SimulationControl> simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief Assemble the matrix
+   *
+   * @param[in] scratch_data (see base class).
+   *
+   * @param[out] copy_data (see base class).
+   */
+  virtual void
+  assemble_matrix(VOFScratchData<dim>       &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+
+  /**
+   * @brief Assemble the right-hand side (rhs).
+   *
+   * @param[in] scratch_data (see base class)
+   *
+   * @param[out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(VOFScratchData<dim>       &scratch_data,

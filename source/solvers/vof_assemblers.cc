@@ -47,41 +47,12 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       const Tensor<1, dim> previous_phase_gradient =
         scratch_data.previous_phase_gradients[q];
 
-      const double phase_gradient_norm = previous_phase_gradient.norm();
-
-      // Calculation of the magnitude of the velocity for the
-      // stabilization parameter and the compression term for the phase
-      // indicator
-      const double u_mag = std::max(velocity.norm(), 1e-12);
-
-      // Implementation of a Discontinuity-Capturing Directional Dissipation
-      // (DCDD) shock capturing scheme. For more information see Tezduyar, T. E.
-      // (2003). Computation of moving boundaries and interfaces and
-      // stabilization parameters. International Journal for Numerical Methods
-      // in Fluids, 43(5), 555-575. Our implementation is based on equations
-      // (70) and (79), which are adapted for the VOF solver.
+      // Define tolerance to avoid division by zero
       const double tolerance = 1e-12;
 
-
-      // In Tezduyar 2003, this is denoted r
-      Tensor<1, dim> gradient_unit_vector =
-        previous_phase_gradient / (phase_gradient_norm + tolerance);
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd =
-        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
-
-      // We remove the diffusion aligned with the velocity
-      // as is done in the original article.  In Tezduyar 2003, this is denoted
-      // s.
-      Tensor<1, dim> velocity_unit_vector =
-        velocity / (velocity.norm() + 1e-12);
-      const Tensor<2, dim> k_corr =
-        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
-        outer_product(velocity_unit_vector, velocity_unit_vector);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
+      // Compute the velocity magnitude for the stabilization parameter and the
+      // compression term for the phase indicator
+      const double u_mag = std::max(velocity.norm(), tolerance);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -105,16 +76,13 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
           const auto grad_phi_phase_j      = scratch_data.grad_phi[q][j];
           const auto laplacian_phi_phase_j = scratch_data.laplacian_phi[q][j];
 
-          // Strong Jacobian associated with the GLS
-          // stabilization
+          // Strong Jacobian associated with the GLS stabilization
           strong_jacobian_vec[q][j] +=
             velocity * grad_phi_phase_j - diffusivity * laplacian_phi_phase_j;
 
           if (compressible)
             strong_jacobian_vec[q][j] += phi_phase_j * velocity_divergence;
         }
-
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -143,12 +111,6 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
               // Addition to the cell matrix for GLS stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
                                     (grad_phi_phase_i * velocity) * JxW;
-
-              // DCDD shock capturing
-              local_matrix(i, j) +=
-                (vdcdd * scalar_product(grad_phi_phase_i,
-                                        dcdd_factor * grad_phi_phase_j)) *
-                JxW;
             }
         }
     } // end loop on quadrature points
@@ -195,39 +157,12 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
-      const double JxW                 = JxW_vec[q];
-      const double phase_gradient_norm = previous_phase_gradient.norm();
+      const double JxW = JxW_vec[q];
 
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
-      // and stabilization parameters. International Journal for Numerical
-      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
-      // equations (70) and (79), which are adapted for the VOF solver.
+      // Define tolerance to avoid division by zero
       const double tolerance = 1e-12;
 
-      // In Tezduyar 2003, this is denoted r
-      Tensor<1, dim> gradient_unit_vector =
-        previous_phase_gradient / (phase_gradient_norm + tolerance);
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd =
-        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
-
-      // We remove the diffusion aligned with the velocity
-      // as is done in the original article. In Tezduyar 2003, this is denoted
-      // s.
-      Tensor<1, dim> velocity_unit_vector =
-        velocity / (velocity.norm() + 1e-12);
-      const Tensor<2, dim> k_corr =
-        Utilities::fixed_power<2>(gradient_unit_vector * velocity_unit_vector) *
-        outer_product(velocity_unit_vector, velocity_unit_vector);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor - k_corr;
-
-      // Calculation of the magnitude of the velocity for the
-      // stabilization parameter
+      // Compute the velocity magnitude for the stabilization parameter
       const double u_mag = std::max(velocity.norm(), tolerance);
 
       // Calculation of the GLS stabilization parameter. The
@@ -267,15 +202,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
           if (compressible)
             local_rhs(i) -= phi_phase_i * phase * velocity_divergence * JxW;
 
-
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_phase_i * velocity)) *
-            JxW;
-
-          // DCDD shock capturing
-          local_rhs(i) -=
-            vdcdd *
-            scalar_product(grad_phi_phase_i, dcdd_factor * phase_gradient) *
             JxW;
         }
     }
@@ -392,3 +320,143 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
 
 template class VOFAssemblerBDF<2>;
 template class VOFAssemblerBDF<3>;
+
+template <int dim>
+void
+VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
+  VOFScratchData<dim>       &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // Assemble local matrix
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields for faster access
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const double         JxW      = JxW_vec[q];
+
+      // We use the previous phase gradient for the shock capture (explicit)
+      const Tensor<1, dim> previous_phase_gradient =
+        scratch_data.previous_phase_gradients[q];
+
+      // Define a tolerance to avoid division by zero
+      const double tolerance = 1e-12;
+
+      // Compute the velocity magnitude and phase gradient norm for the
+      // stabilization term
+      const double velocity_norm       = velocity.norm();
+      const double phase_gradient_norm = previous_phase_gradient.norm();
+
+      // In Tezduyar 2003, this is denoted r in equation (67).
+      Tensor<1, dim> gradient_unit_vector =
+        previous_phase_gradient / (phase_gradient_norm + tolerance);
+
+      // We remove the diffusion aligned with the velocity as is done in the
+      // original article. In Tezduyar 2003, this is denoted s in equation (67).
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity_norm + tolerance);
+
+      // Directionality tensor describing [rr - (r⋅s)^2*ss]
+      const Tensor<2, dim> dir_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector) -
+        (Utilities::fixed_power<2>(gradient_unit_vector *
+                                   velocity_unit_vector) *
+         outer_product(velocity_unit_vector, velocity_unit_vector));
+
+      // Compute the artificial viscosity of the shock capture
+      const double nu_dcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+
+      // Assemble DCDD shock capturing contributions
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto grad_phi_phase_j = scratch_data.grad_phi[q][j];
+              local_matrix(i, j) +=
+                (nu_dcdd * scalar_product(grad_phi_phase_i,
+                                          dir_tensor * grad_phi_phase_j)) *
+                JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
+  VOFScratchData<dim>       &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Assemble local matrix
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields for faster access
+      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
+      const Tensor<1, dim> velocity       = scratch_data.velocity_values[q];
+      const double         JxW            = JxW_vec[q];
+
+      // We use the previous phase gradient for the shock capture (explicit)
+      const Tensor<1, dim> previous_phase_gradient =
+        scratch_data.previous_phase_gradients[q];
+
+      // Define a tolerance to avoid division by zero
+      const double tolerance = 1e-12;
+
+      // Compute the velocity magnitude and phase gradient norm for the
+      // stabilization term
+      const double velocity_norm       = velocity.norm();
+      const double phase_gradient_norm = previous_phase_gradient.norm();
+
+      // In Tezduyar 2003, this is denoted r in equation (67).
+      Tensor<1, dim> gradient_unit_vector =
+        previous_phase_gradient / (phase_gradient_norm + tolerance);
+
+      // We remove the diffusion aligned with the velocity as is done in the
+      // original article. In Tezduyar 2003, this is denoted s in equation (67).
+      Tensor<1, dim> velocity_unit_vector =
+        velocity / (velocity_norm + tolerance);
+
+      // Directionality tensor describing [rr - (r⋅s)^2*ss]
+      const Tensor<2, dim> dir_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector) -
+        (Utilities::fixed_power<2>(gradient_unit_vector *
+                                   velocity_unit_vector) *
+         outer_product(velocity_unit_vector, velocity_unit_vector));
+
+      // Compute the artificial viscosity of the shock capture
+      const double nu_dcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+
+      // Assemble DCDD shock capturing contributions
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
+          local_rhs(i) -=
+            nu_dcdd *
+            scalar_product(grad_phi_phase_i, dir_tensor * phase_gradient) * JxW;
+        }
+    }
+}
+
+template class VOFAssemblerDCDDStabilization<2>;
+template class VOFAssemblerDCDDStabilization<3>;
