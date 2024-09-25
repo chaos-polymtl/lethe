@@ -93,3 +93,6 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 
 .. caution::
 	While using the ``lethe-fluid-sharp`` solver, it is wise to assign a weak type of boundary (``outlet``, ``partial slip``, or ``function weak``) to at least one boundary. The presence of particle(s) has a non-null contribution to the divergence of the problem, making it much harder for the linear solver to converge unless it is given some flexibility through of boundaries.
+
+.. caution::
+  The ``lethe-fluid-matrix-free`` application does not support the ``pressure`` and ``partial slip`` boundary conditions. 
