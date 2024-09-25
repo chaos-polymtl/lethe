@@ -1,0 +1,17 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4
+   Number of degrees of freedom: 27
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 18
+--------------
+Epsilon value
+--------------
+Epsilon value: 1.41421
+
+*****************************
+Steady iteration:        1/1
+*****************************
+--------------
+Epsilon value
+--------------
+Epsilon value: 1.41421
