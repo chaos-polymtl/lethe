@@ -324,11 +324,8 @@ public:
   std::vector<Tensor<1, dim>> tracer_average_gradient;
 
   // SIPG (interior faces) or Nitsche (boundary) penalization factor
-  // The penalization constant is an additional parameter that is parsed to add
-  // additional penalty on top of the diffusion.
-  double penalization_constant;
   // The penalty factor is calculated using a measure of the element size. It is
-  // multiplied by the penalization and the diffusion.
+  // multiplied by the diffusion coefficient to apply the SIPG method
   double penalty_factor;
 
   // Bool that defines if the selected face is a dirichlet/outlet boundary

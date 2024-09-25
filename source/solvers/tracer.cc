@@ -47,8 +47,8 @@ Tracer<dim>::setup_assemblers()
     {
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerDGCore<dim>>(this->simulation_control));
-      this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>(
-        simulation_control, simulation_parameters.stabilization.tracer_sipg);
+      this->inner_face_assembler =
+        std::make_shared<TracerAssemblerSIPG<dim>>(simulation_control);
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
           simulation_control, simulation_parameters.boundary_conditions_tracer);
