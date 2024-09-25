@@ -21,10 +21,10 @@ Tracer
 -------
 Newton iteration: 0  - Residual:  2.152
   -Tolerance of iterative solver is : 2.152e-13
-  -Iterative solver took : 5 steps to reach a residual norm of 1.625e-15
-	alpha =      1 res = 2.103e-15	||dx||_L2 =  2.382	||dx||_Linfty = 1.185
+  -Iterative solver took : 5 steps to reach a residual norm of 9.534e-16
+	alpha =      1 res = 1.075e-15	||dx||_L2 =   2.37	||dx||_Linfty = 1.038
 L2 error velocity : 0
-L2 error tracer : 0.00557821
+L2 error tracer : 0.0234908
 
 *****************************
 Steady iteration:        2/4
@@ -45,12 +45,12 @@ Newton iteration: 0  - Residual:  0
 -------
 Tracer
 -------
-Newton iteration: 0  - Residual:  1.193
-  -Tolerance of iterative solver is : 1.193e-13
-  -Iterative solver took : 15 steps to reach a residual norm of 6.594e-15
-	alpha =      1 res = 7.569e-15	||dx||_L2 = 0.9338	||dx||_Linfty = 0.1901
+Newton iteration: 0  - Residual:  1.168
+  -Tolerance of iterative solver is : 1.168e-13
+  -Iterative solver took : 12 steps to reach a residual norm of 1.699e-14
+	alpha =      1 res = 1.707e-14	||dx||_L2 =  1.248	||dx||_Linfty = 0.2784
 L2 error velocity : 0
-L2 error tracer : 0.000580698
+L2 error tracer : 0.00120058
 
 *****************************
 Steady iteration:        3/4
@@ -71,12 +71,12 @@ Newton iteration: 0  - Residual:  0
 -------
 Tracer
 -------
-Newton iteration: 0  - Residual:  0.504
-  -Tolerance of iterative solver is : 5.04e-14
-  -Iterative solver took : 30 steps to reach a residual norm of 1.403e-14
-	alpha =      1 res = 1.471e-14	||dx||_L2 = 0.5188	||dx||_Linfty = 0.09607
+Newton iteration: 0  - Residual:  0.6399
+  -Tolerance of iterative solver is : 6.399e-14
+  -Iterative solver took : 18 steps to reach a residual norm of 5.316e-14
+	alpha =      1 res = 5.323e-14	||dx||_L2 =  0.668	||dx||_Linfty = 0.08578
 L2 error velocity : 0
-L2 error tracer : 4.0131e-05
+L2 error tracer : 4.81375e-05
 
 *****************************
 Steady iteration:        4/4
@@ -97,19 +97,19 @@ Newton iteration: 0  - Residual:  0
 -------
 Tracer
 -------
-Newton iteration: 0  - Residual:  0.2278
-  -Tolerance of iterative solver is : 2.278e-14
-  -Iterative solver took : 50 steps to reach a residual norm of 1.367e-14
-	alpha =      1 res = 1.665e-14	||dx||_L2 = 0.2654	||dx||_Linfty = 0.02761
+Newton iteration: 0  - Residual:  0.253
+  -Tolerance of iterative solver is : 2.53e-14
+  -Iterative solver took : 29 steps to reach a residual norm of 1.171e-14
+	alpha =      1 res = 1.189e-14	||dx||_L2 = 0.2846	||dx||_Linfty = 0.027
 L2 error velocity : 0
-L2 error tracer : 2.56353e-06
-cells  error_velocity   error_pressure
-    4 0.000000e+00   - 0.000000e+00   -
-   16 0.000000e+00 nan 0.000000e+00 nan
-   64 0.000000e+00 nan 0.000000e+00 nan
-  256 0.000000e+00 nan 0.000000e+00 nan
-cells   error_tracer
-    4 5.578210e-03    -
-   16 5.806981e-04 3.26
-   64 4.013104e-05 3.85
-  256 2.563532e-06 3.97
+L2 error tracer : 2.62369e-06
+cells  error_velocity   error_pressure  
+    4 0.000000e+00   - 0.000000e+00   - 
+   16 0.000000e+00 nan 0.000000e+00 nan 
+   64 0.000000e+00 nan 0.000000e+00 nan 
+  256 0.000000e+00 nan 0.000000e+00 nan 
+cells   error_tracer    
+    4 2.349078e-02    - 
+   16 1.200577e-03 4.29 
+   64 4.813746e-05 4.64 
+  256 2.623694e-06 4.20 
