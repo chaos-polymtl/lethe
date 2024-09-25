@@ -194,7 +194,6 @@ FluidDynamicsBlock<dim>::update_multiphysics_time_average_solution()
     }
 }
 
-
 template <int dim>
 void
 FluidDynamicsBlock<dim>::update_solutions_for_multiphysics()
