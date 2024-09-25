@@ -63,6 +63,12 @@ namespace Parameters
     manual
   };
 
+  enum class EpsilonVerbosity
+  {
+    quiet,
+    verbose
+  };
+
 
   /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
@@ -207,6 +213,9 @@ namespace Parameters
 
     // Epsilon set strategy (automatic|manual)
     Parameters::EpsilonSetMethod epsilon_set_method;
+
+    // Epsilon verbosity
+    Parameters::EpsilonVerbosity epsilon_verbosity;
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
