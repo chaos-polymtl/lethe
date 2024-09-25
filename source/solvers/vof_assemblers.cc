@@ -43,10 +43,6 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      // We use the previous phase gradient for the shock capture
-      const Tensor<1, dim> previous_phase_gradient =
-        scratch_data.previous_phase_gradients[q];
-
       // Define tolerance to avoid division by zero
       const double tolerance = 1e-12;
 
@@ -149,9 +145,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
     {
       // Gather into local variables the relevant fields
       const double         phase = scratch_data.present_phase_values[q];
-      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
-      const Tensor<1, dim> previous_phase_gradient =
-        scratch_data.previous_phase_gradients[q];
+      const Tensor<1, dim> phase_gradient   = scratch_data.phase_gradients[q];
       const double         phase_laplacians = scratch_data.phase_laplacians[q];
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
