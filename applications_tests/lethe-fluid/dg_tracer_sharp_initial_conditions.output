@@ -21,10 +21,10 @@ Tracer flow rate at the boundaries:
 Steady iteration:        1/2
 *****************************
 Tracer statistics : 
-	     Min : -0.0737256
-	     Max : 1.07372
+	     Min : -9.38909e-10
+	     Max : 1
 	 Average : 0.5
-	 Std-Dev : 0.496304
+	 Std-Dev : 0.5
 ------------------
 Tracer flow rates
 ------------------
@@ -42,10 +42,10 @@ Steady iteration:        2/2
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 9216
 Tracer statistics : 
-	     Min : -0.0737176
-	     Max : 1.07372
+	     Min : -1.15898e-09
+	     Max : 1
 	 Average : 0.5
-	 Std-Dev : 0.498155
+	 Std-Dev : 0.5
 ------------------
 Tracer flow rates
 ------------------
