@@ -717,7 +717,7 @@ namespace Parameters
 
       prm.declare_entry(
         "vof dcdd stabilization",
-        "true", // TODO AMISHGA change back
+        "false",
         Patterns::Bool(),
         "Apply discontinuity-capturing directional dissipation (dcdd) "
         "stabilization term on the VOF phase fraction <true|false>");
