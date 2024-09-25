@@ -85,7 +85,7 @@ inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,c
 }
 
 template <int dim>
-inline void get_dof_opposite_faces(const unsigned int local_face_id, std::vector<unsigned int> &local_opposite_faces)
+inline void get_dof_opposite_faces(unsigned int local_face_id, std::vector<unsigned int> &local_opposite_faces)
 {
   unsigned int local_face_id_2d = local_face_id%4;
   
@@ -910,13 +910,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   
   pcout << "In redistancation from the rest of the mesh" << std::endl;
-  const unsigned int opposite_faces_per_dofs = 2;
-  std::vector<std::vector<unsigned int>> opposite_faces_indices(4, std::vector<unsigned int>(opposite_faces_per_dofs));
-  opposite_faces_indices[0] = {3,1};
-  opposite_faces_indices[1] = {0,3};
-  opposite_faces_indices[2] = {1,2};
-  opposite_faces_indices[3] = {2,0};
-  
+  const unsigned int n_opposite_faces_per_dofs = dim;
+
   
   // Compute the rest of the mesh
   bool change = true;
@@ -951,12 +946,14 @@ AdvectionProblem<dim>::compute_sign_distance()
 
           // std::cout << dof_indices[i] << std::endl;
           // Get opposite faces 
-          const std::vector<unsigned int> dof_opposite_faces = opposite_faces_indices[i];
+          std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
+          
+          get_dof_opposite_faces<dim>(i, dof_opposite_faces);
           
           const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
           
           // Loop on opposite faces
-          for (unsigned int j = 0; j < opposite_faces_per_dofs; ++j)
+          for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
           {
             const auto opposite_face = cell->face(dof_opposite_faces[j]);
             
@@ -969,15 +966,10 @@ AdvectionProblem<dim>::compute_sign_distance()
               correction[k] = 1;
             }
             
-            // bool outside_check = false;
-            // bool outside_check_tmp = false;
-            
             int outside_check = 0;
             
             while (correction.norm() > 1e-11 && outside_check<3)
             {
-              // outside_check = (outside_check_tmp != outside_check);
-              
               const double perturbation = 0.1;
               
               std::vector<Point<dim-1>> stencil_ref(2*dim - 1);
