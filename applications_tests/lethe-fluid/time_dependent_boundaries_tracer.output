@@ -13,16 +13,16 @@ Tracer statistics :
 Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 2.79578 
 *******************************************************************************
 Tracer statistics : 
-	     Min : 0.436485
-	     Max : 0.499339
-	 Average : 0.470525
-	 Std-Dev : 0.0191026
+	     Min : 0.436653
+	     Max : 0.499349
+	 Average : 0.470664
+	 Std-Dev : 0.019052
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594  
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594
 *******************************************************************************
-Tracer statistics : 
-	     Min : 0.0441899
-	     Max : 0.956945
-	 Average : 0.516389
-	 Std-Dev : 0.25533
+Tracer statistics :
+	     Min : 0.0444703
+	     Max : 0.956999
+	 Average : 0.516871
+	 Std-Dev : 0.255247

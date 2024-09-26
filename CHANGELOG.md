@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR The tracer gradient used for DCDD stabilization calculations is now from the previous solution, which reduces the number of non-linear iterations. [#1293](https://github.com/chaos-polymtl/lethe/pull/1293)
+
+## [Master] - 2024-09-25
+
+### Changed
+
 - MINOR Remove the GIFs from the repository to reduce its size. [#1289](https://github.com/chaos-polymtl/lethe/pull/1289)
 
 ## [Master] - 2024-09-24
