@@ -108,7 +108,6 @@ private:
   virtual void
   update_multiphysics_time_average_solution() override;
 
-
   /**
    * @brief Assemble the local matrix for a given cell.
    *

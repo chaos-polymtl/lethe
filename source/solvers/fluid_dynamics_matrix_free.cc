@@ -2073,12 +2073,6 @@ FluidDynamicsMatrixFree<dim>::solve()
               this->flow_control.get_beta());
         }
 
-      // Provide the fluid dynamics dof_handler, present solution and previous
-      // solution to the multiphysics interface only if other physics
-      // apart from fluid dynamics are enabled
-      if (this->multiphysics->get_active_physics().size() > 1)
-        update_solutions_for_multiphysics();
-
       this->iterate();
       this->postprocess(false);
       this->finish_time_step();
@@ -2687,8 +2681,6 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   // Provide the fluid dynamics dof_handler to the multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       &this->dof_handler);
-
-
 
   // Convert the present solution to multiphysics vector type and provide it to
   // the multiphysics interface

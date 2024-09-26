@@ -38,8 +38,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
-
 // Constructor for class FluidDynamicsBlock
 template <int dim>
 FluidDynamicsBlock<dim>::FluidDynamicsBlock(

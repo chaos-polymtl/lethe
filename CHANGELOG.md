@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-09-25
 
+## Changed
+
+- MINOR The solutions for the mulitphysics are updated right after the non linear solve of the fluid dynamics matrix free solver. This ensures that the physics solved after the fluid dynamics have the most recent solution. [#1294](https://github.com/chaos-polymtl/lethe/pull/1294)
+
 ### Changed
 
 - MINOR Remove the GIFs from the repository to reduce its size. [#1289](https://github.com/chaos-polymtl/lethe/pull/1289)
