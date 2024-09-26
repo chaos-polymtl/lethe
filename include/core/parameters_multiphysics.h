@@ -63,6 +63,18 @@ namespace Parameters
     manual
   };
 
+  /**
+   * @brief Verbosity options for the epsilon parameter.
+   */
+  enum class EpsilonVerbosity
+  {
+    /// Epsilon related information will not be displayed on terminal
+    quiet,
+    /// Epsilon value will be displayed on terminal for every steady and
+    /// transient iteration.
+    verbose
+  };
+
 
   /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
@@ -207,6 +219,9 @@ namespace Parameters
 
     // Epsilon set strategy (automatic|manual)
     Parameters::EpsilonSetMethod epsilon_set_method;
+
+    // Epsilon verbosity
+    Parameters::EpsilonVerbosity epsilon_verbosity;
 
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;

@@ -38,14 +38,19 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
     set potential smoothing coefficient = 1
 
     subsection epsilon
-      set method = automatic
-      set value  = 1
+      set verbosity = quiet
+      set method    = automatic
+      set value     = 1
     end
   end
   
 * ``potential smoothing coefficient``: defines the :math:`\xi` parameter in the equations above. Its value should be increased if the potential presents excessive oscillations (in advective problems for instance).
 
-* ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell (:math:`h`). The choices are ``automatic`` (default) or ``manual``.
+* ``epsilon``: defines the :math:`\epsilon` parameter. The reader is refered to the :doc:`../../../theory/multiphase/cfd/cahn-hilliard` section for additional details about this parameter.
+ 
+  * ``verbosity``: enables the display of the interface thickness values in the terminal. This does not affect the printing of output  fils. Choices are ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
+  * ``method``: sets the method for the computation of epsilon. The first choice is ``automatic``: the interface thickness is determined automatically using the minimum cell diameter obtained by the deal.ii ``minimum_cell_diameter`` `method <https://www.dealii.org/current/doxygen/deal.II/namespaceGridTools.html#a47c293eff2ec7ce4b90ba08b35d1f2e2>`_. The other choice is ``manual``: allows the user to define the interface thickness by hand by setting the desired value with ``value``. 
+  
 .. attention::
      The ``mobility model`` and ``mobility constant`` must be set in the :doc:`physical_properties` section.

@@ -695,6 +695,14 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
         }
     }
 
+  if (simulation_parameters.multiphysics.cahn_hilliard_parameters
+        .epsilon_verbosity == Parameters::EpsilonVerbosity::verbose)
+    {
+      double epsilon = GridTools::minimal_cell_diameter(*triangulation);
+      announce_string(this->pcout, "Epsilon value");
+      this->pcout << "Epsilon value: " << epsilon << std::endl;
+    }
+
   if (simulation_parameters.post_processing.calculate_phase_statistics)
     {
       calculate_phase_statistics();

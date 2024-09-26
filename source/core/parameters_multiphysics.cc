@@ -519,6 +519,12 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
         "1.0",
         Patterns::Double(),
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
+
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "Display the value of epsilon for each time iteration if set to verbose");
     }
     prm.leave_subsection();
   }
@@ -552,6 +558,21 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
       else
         throw(std::runtime_error("Invalid epsilon setting strategy. "
                                  "Options are 'automatic' or 'manual'."));
+
+      const std::string op_epsilon_verbosity = prm.get("verbosity");
+      if (op_epsilon_verbosity == "quiet")
+        {
+          CahnHilliard::epsilon_verbosity = Parameters::EpsilonVerbosity::quiet;
+        }
+      else if (op_epsilon_verbosity == "verbose")
+        {
+          CahnHilliard::epsilon_verbosity =
+            Parameters::EpsilonVerbosity::verbose;
+        }
+      else
+        AssertThrow(false,
+                    ExcMessage("Invalid epsilon verbosity. "
+                               "Options are 'quiet' or 'verbose'."));
 
       epsilon = prm.get_double("value");
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
