@@ -43,11 +43,13 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      // We use the previous concentration for the shock capture
-      const Tensor<1, dim> previous_tracer_gradient =
-        scratch_data.previous_tracer_gradients[q];
-
-      const double tracer_gradient_norm = previous_tracer_gradient.norm();
+      // We use the previous concentration for the shock capture if the
+      // simulation is transient
+      const Tensor<1, dim> tracer_gradient_for_dcdd =
+        is_steady(method) ? tracer_gradient :
+                            scratch_data.previous_tracer_gradients[q];
+      const double tracer_gradient_for_dcdd_norm =
+        tracer_gradient_for_dcdd.norm();
 
       // Shock capturing viscosity term
       const double order = scratch_data.fe_values_tracer.get_fe().degree;
@@ -58,7 +60,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       const double   tolerance = 1e-12;
       Tensor<1, dim> s         = velocity / (velocity.norm() + tolerance);
       Tensor<1, dim> r =
-        previous_tracer_gradient / (tracer_gradient_norm + tolerance);
+        tracer_gradient_for_dcdd / (tracer_gradient_for_dcdd_norm + tolerance);
 
       const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
       const Tensor<2, dim> rr          = outer_product(r, r);
@@ -67,7 +69,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
       const double d_vdcdd = order * (0.5 * h * h) *
                              (velocity.norm() * velocity.norm()) *
-                             pow(tracer_gradient_norm * h, order - 1);
+                             pow(tracer_gradient_for_dcdd_norm * h, order - 1);
 
 
 
@@ -164,20 +166,26 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
-      const double JxW                  = JxW_vec[q];
-      const double tracer_gradient_norm = previous_tracer_gradient.norm();
+      const double JxW = JxW_vec[q];
+
+      // We use the previous concentration for the shock capture if the
+      // simulation is transient
+      const Tensor<1, dim> tracer_gradient_for_dcdd =
+        is_steady(method) ? tracer_gradient : previous_tracer_gradient;
+      const double tracer_gradient_for_dcdd_norm =
+        tracer_gradient_for_dcdd.norm();
 
       // Shock capturing viscosity term
       const double order = scratch_data.fe_values_tracer.get_fe().degree;
 
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(tracer_gradient_norm * h, order);
+                           pow(tracer_gradient_for_dcdd_norm * h, order);
 
       const double   tolerance = 1e-12;
       Tensor<1, dim> s         = velocity / (velocity.norm() + tolerance);
       Tensor<1, dim> r =
-        previous_tracer_gradient / (tracer_gradient_norm + tolerance);
+        tracer_gradient_for_dcdd / (tracer_gradient_for_dcdd_norm + tolerance);
 
       const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
       const Tensor<2, dim> rr          = outer_product(r, r);
