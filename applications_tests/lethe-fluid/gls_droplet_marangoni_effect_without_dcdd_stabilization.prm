@@ -35,7 +35,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = true
+  set vof dcdd stabilization = false
 end
 
 #---------------------------------------------------

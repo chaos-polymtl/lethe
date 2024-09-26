@@ -156,14 +156,13 @@ public:
 
 
 /**
- * @brief Assemble the discontinuity-capturing directional dissipation
+ * @brief Assemble the Discontinuity-Capturing Directional Dissipation (DCDD)
  * stabilization term for the VOF phase fraction.
  *
  * @note For more information see Tezduyar, T. E. (2003). Computation of
  * moving boundaries and interfaces and stabilization parameters. International
  * Journal for Numerical Methods in Fluids, 43(5), 555-575. The implementation
- * is based on equations (70) and (79), which are adapted for the heat transfer
- * solver.
+ * is based on equations (70) and (79), which are adapted for the VOF solver.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  *
@@ -176,9 +175,10 @@ public:
   /**
    * @brief Default constructor of the assembler.
    *
-   * @param simulation_control SimulationControl object that holds information
-   * related to the control of the steady-state or transient simulation. This is
-   * used to extrapolate velocity solutions in time for transient simulations.
+   * @param[in] simulation_control SimulationControl object that holds
+   * information related to the control of the steady-state or transient
+   * simulation. This is used to extrapolate velocity solutions in time for
+   * transient simulations.
    */
   VOFAssemblerDCDDStabilization(
     std::shared_ptr<SimulationControl> simulation_control)
