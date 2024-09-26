@@ -196,11 +196,6 @@ FluidDynamicsBlock<dim>::update_multiphysics_time_average_solution()
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::update_solutions_for_multiphysics()
-{}
-
-template <int dim>
-void
 FluidDynamicsBlock<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");

@@ -109,12 +109,6 @@ protected:
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief  Required only for compilation.
-   */
-  virtual void
-  update_solutions_for_multiphysics() override;
-
-  /**
    * @brief  Set-up the appropriate preconditioner
    */
   void

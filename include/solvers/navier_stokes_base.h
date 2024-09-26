@@ -302,7 +302,8 @@ protected:
    * @brief  Required only for the matrix-free solver to update solutions within iterate function.
    */
   virtual void
-  update_solutions_for_multiphysics() = 0;
+  update_solutions_for_multiphysics()
+  {}
 
   virtual void
   set_initial_condition_fd(
