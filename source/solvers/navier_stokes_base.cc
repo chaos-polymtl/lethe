@@ -574,6 +574,12 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         announce_string(this->pcout, "Fluid Dynamics");
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
+      // If the physics need to be solved after the physics, the matrix free
+      // solver requires to update the value here. This is due to the different
+      // type of vectors.
+      if (this->multiphysics->get_active_physics().size() > 1)
+        this->update_solutions_for_multiphysics();
+
       // Solve and percolate the auxiliary physics that should be treated AFTER
       // the fluid dynamics
       multiphysics->solve(true,
