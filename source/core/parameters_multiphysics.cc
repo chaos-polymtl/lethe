@@ -570,7 +570,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
             Parameters::EpsilonVerbosity::verbose;
         }
       else
-        throw(std::runtime_error("Invalid epsilon verbosity. "
+        AssertThrow(false,ExcMessage("Invalid epsilon verbosity. "
                                  "Options are 'quiet' or 'verbose'."));
 
       epsilon = prm.get_double("value");
