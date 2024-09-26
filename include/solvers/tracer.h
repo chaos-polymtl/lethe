@@ -81,7 +81,7 @@ public:
         else
           fe = std::make_shared<FE_Q<dim>>(
             simulation_parameters.fem_parameters.tracer_order);
-        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
+        mapping = std::make_shared<MappingQ<dim>>(std::max(int(fe->degree), 1));
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
