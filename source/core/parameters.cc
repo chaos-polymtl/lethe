@@ -57,7 +57,7 @@ DeclException3(ParameterStrictlyGreaterThanError,
                << ". However, it should be strictly greater than " << arg3
                << ".");
 
-//DeclException
+// DeclException
 
 namespace Parameters
 {

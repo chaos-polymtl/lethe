@@ -570,8 +570,9 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
             Parameters::EpsilonVerbosity::verbose;
         }
       else
-        AssertThrow(false,ExcMessage("Invalid epsilon verbosity. "
-                                 "Options are 'quiet' or 'verbose'."));
+        AssertThrow(false,
+                    ExcMessage("Invalid epsilon verbosity. "
+                               "Options are 'quiet' or 'verbose'."));
 
       epsilon = prm.get_double("value");
       epsilon *= dimensions.cahn_hilliard_epsilon_scaling;
