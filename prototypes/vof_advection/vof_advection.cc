@@ -125,24 +125,25 @@ inline void compute_residual(const Tensor<1,dim> &x_n_to_x_J_real, const Tensor<
 }
 
 template <int dim>
-inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(Point<dim-1> x_ref, unsigned int local_face_id, const double perturbation)
+inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(const Point<dim> x_ref, const unsigned int local_face_id, const double perturbation)
 {
   
   std::vector<Point<dim>> stencil( 2*dim - 1);
   
   for (unsigned int i = 0; i < 2*dim - 1; ++i)
   {
-    unsigned int k = 0;
-    for (unsigned int j = 0; j < dim; ++j)
-    {
-      if (local_face_id/2 == j)
-        {
-          stencil[i][j] = double(local_face_id%2);
-          continue;
-        }
-      stencil[i][j] = x_ref[k];
-      k += 1;
-    }
+    stencil[i] = x_ref;
+    // unsigned int k = 0;
+    // for (unsigned int j = 0; j < dim; ++j)
+    // {
+    //   if (local_face_id/2 == j)
+    //     {
+    //       stencil[i][j] = double(local_face_id%2);
+    //       continue;
+    //     }
+    //   stencil[i][j] = x_ref[j];
+    //   k += 1;
+    // }
   }
   
   for (unsigned int i = 1; i < dim; ++i)
@@ -159,39 +160,44 @@ inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(Point<dim-1> x
   return stencil;
 }
 
-template <int dim>
-inline Point<dim> transform_ref_face_to_ref_cell(Point<dim-1> x_ref_face, unsigned int local_face_id)
+template <int dim, typename VectorType>
+inline Tensor<1,dim> transform_ref_face_correction_to_ref_cell(const VectorType &correction_ref_face, const unsigned int local_face_id)
 {
+  Tensor<1,dim> correction_ref_cell;
   
+  unsigned int j = 0;
+  for (unsigned int i = 0; i < dim; ++i)
+  {
+    if (local_face_id/2 == i)
+      {
+        correction_ref_cell[i] = 0.0;
+        continue;
+      }
+    correction_ref_cell[i] = correction_ref_face[j];
+    j += 1;
+  }
+  
+  return correction_ref_cell;
+}
+
+template <int dim>
+inline Point<dim> transform_ref_face_point_to_ref_cell(const Point<dim-1> &x_ref_face, const unsigned int local_face_id)
+{
   Point<dim> x_ref_cell;
   
-  for (unsigned int i = 0; i < 2*dim - 1; ++i)
+  unsigned int j = 0;
+  for (unsigned int i = 0; i < dim; ++i)
   {
-    unsigned int k = 0;
-    for (unsigned int j = 0; j < dim; ++j)
-    {
-      if (local_face_id/2 == j)
-        {
-          stencil[i][j] = double(local_face_id%2);
-          continue;
-        }
-      stencil[i][j] = x_ref[k];
-      k += 1;
-    }
-  }
-  
-  for (unsigned int i = 1; i < dim; ++i)
-  {
-    for (unsigned int j = 0; j < dim; ++j)
-    {
-      if (local_face_id/2 == j)
+    if (local_face_id/2 == i)
+      {
+        x_ref_cell[i] = double(local_face_id%2);
         continue;
-      stencil[2*i-1][j] -= perturbation;
-      stencil[2*i][j] += perturbation;
-    }
+      }
+    x_ref_cell[i] = x_ref_face[j];
+    j += 1;
   }
   
-  return stencil;
+  return x_ref_cell;
 }
 
 template <int dim>
@@ -974,6 +980,7 @@ AdvectionProblem<dim>::compute_sign_distance()
     {
       if (cell->is_locally_owned())
       {
+        
         const unsigned int cell_index = cell->global_active_cell_index();
         
         const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
@@ -1000,26 +1007,24 @@ AdvectionProblem<dim>::compute_sign_distance()
           
           const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
           
+          
           // Loop on opposite faces
           for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
           {
             const auto opposite_face = cell->face(dof_opposite_faces[j]);
             
-            Point<dim-1> x_n_ref(0.5);
+            
+            
+            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(Point<dim-1>(0.5),dof_opposite_faces[j]);
             Point<dim> x_n_real;
             
-            Tensor<1,dim-1> correction;
-            for (unsigned int k = 0; k < dim-1; ++k)
-            {
-              correction[k] = 1;
-            }
-            
+            double correction_norm = 1.0;
             int outside_check = 0;
             
-            while (correction.norm() > 1e-11 && outside_check<3)
+            while (correction_norm > 1e-11 && outside_check<3)
             {
               const double perturbation = 0.1;
-              
+                      
               std::vector<Point<dim>> stencil_ref = compute_numerical_jacobian_stencil<dim>(x_n_ref, dof_opposite_faces[j], perturbation);
               
               fe_point_evaluation.reinit(cell, stencil_ref);
@@ -1038,14 +1043,18 @@ AdvectionProblem<dim>::compute_sign_distance()
                 cell_transformation_jacobians[k] = fe_point_evaluation.jacobian(k);
                 get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
               }
-              // FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(stencil_ref), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
+              // FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(Point<dim-1>(0.5)), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
               // 
               // fe_face_values.reinit(cell, opposite_face);
               // 
               // std::vector<Point<dim>> stencil_real = fe_face_values. get_quadrature_points();
               // 
               // std::vector<Tensor<1, dim>> distance_gradients(2*dim - 1);
-              // fe_face_values.get_function_gradients(distance,distance_gradients);
+              // std::vector<Tensor<1, dim>> distance_gradient(1);
+              
+              // fe_face_values.get_function_gradients(distance,distance_gradient);
+
+              
               // 
               // const std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians = fe_face_values.get_jacobians();
               // 
@@ -1063,6 +1072,7 @@ AdvectionProblem<dim>::compute_sign_distance()
               LAPACKFullMatrix<double> jacobian_matrix(dim-1,dim-1);
               compute_numerical_jacobians(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
               
+              
               const Tensor<1,dim> x_n_to_x_J_real = x_J_real - stencil_real[0];
               
               Tensor<1, dim-1> residual_n;
@@ -1079,14 +1089,24 @@ AdvectionProblem<dim>::compute_sign_distance()
               residual_n_vec *= -1.0;
               jacobian_matrix.solve(residual_n_vec);
               
-              for (unsigned int k = 0; k < dim-1; ++k)
-              {
-                correction[k] = residual_n_vec[k];
-              }
-              // 
-              // Point<dim-1> x_n_p1_ref = stencil_ref[0] + correction;
-              // 
+              
+              
+              // for (unsigned int k = 0; k < dim-1; ++k)
+              // {
+              //   correction[k] = residual_n_vec[k];
+              // }
+              correction_norm = residual_n_vec.l2_norm();
+              
+              Tensor<1,dim> correction = transform_ref_face_correction_to_ref_cell<dim, Vector<double>>(residual_n_vec,dof_opposite_faces[j]);
+              
+              Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
+              
+              
               // Tensor<1,dim> correction_real;
+              
+              
+              // fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::gradients);
+              
               // 
               // for (unsigned int k = 0; k < dim; ++k)
               // {
@@ -1095,30 +1115,37 @@ AdvectionProblem<dim>::compute_sign_distance()
               //     correction_real[k] = correction[l]*face_transformation_jacobians[0][k][l];
               //   }
               // }
+              
               // 
-              // Point<dim> x_n_p1_real = stencil_real[0] + correction_real;
-              // 
-              // bool check = true;
-              // // outside_check_tmp = false;
-              // 
-              // double relaxation = 1.0;
-              // while (check)
-              // {
-              //   x_n_p1_ref = stencil_ref[0] + relaxation*correction;
-              // 
-              //   for (unsigned int k = 0; k < dim-1; ++k)
-              //   {
-              //     if (x_n_p1_ref[k]<1.0 && x_n_p1_ref[k]>0.0)
-              //     {
-              //       check = false;
-              //     }
-              //   }
-              //   if (check)
-              //     outside_check +=1;
-              //     // outside_check_tmp = true;
-              // 
-              //   relaxation *= 0.999;
-              // }
+              bool check = true;
+              
+              double relaxation = 1.0;
+              while (check)
+              {
+                x_n_p1_ref = stencil_ref[0] + relaxation*correction;
+                
+                check = false;
+                for (unsigned int k = 0; k < dim; ++k)
+                {
+                  if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
+                  {
+                    check = true;
+                  }
+                }
+                if (check)
+                  outside_check +=1;
+                
+                relaxation *= 0.99;
+              }
+              
+              
+              std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_p1_ref}; 
+              
+              fe_point_evaluation.reinit(cell, x_n_p1_ref_vec);
+              
+              Point<dim> x_n_p1_real = fe_point_evaluation.quadrature_point(0);
+              
+              
               // x_n_p1_ref = stencil_ref[0] + relaxation*correction;
               // 
               // for (unsigned int k = 0; k < dim; ++k)
@@ -1131,8 +1158,8 @@ AdvectionProblem<dim>::compute_sign_distance()
               // 
               // x_n_p1_real = stencil_real[0] + correction_real;
               // 
-              // x_n_ref = x_n_p1_ref;
-              // x_n_real = x_n_p1_real;
+              x_n_ref = x_n_p1_ref;
+              x_n_real = x_n_p1_real;
               
               
               // if (check)
@@ -1168,15 +1195,19 @@ AdvectionProblem<dim>::compute_sign_distance()
           
           const Tensor<1,dim> x_n_to_x_J_real = x_J_real - x_n_real;
           
-          FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(x_n_ref), update_values);
+          fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::values);
           
-          fe_face_values.reinit(cell, opposite_face);
+          double distance_value_at_x_n = fe_point_evaluation.get_value(0);
           
-          std::vector<double> distance_value_at_x_n(1);
-          fe_face_values.get_function_values(distance, distance_value_at_x_n);
+          // FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(x_n_ref), update_values);
+          
+          // fe_face_values.reinit(cell, opposite_face);
+          
+          // std::vector<double> distance_value_at_x_n(1);
+          // fe_face_values.get_function_values(distance, distance_value_at_x_n);
           
 
-          double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n[0]);
+          double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n);
           
           if (cell_dof_values[i] > (approx_distance + 1e-8))
           {
@@ -1275,14 +1306,14 @@ void AdvectionProblem<dim>::run()
   pcout << "Bonjour from run" << std::endl;
   
   Point<dim> p_0 = Point<dim>();
-  p_0[0] = -2;
+  p_0[0] = -1;
   for (unsigned int i = 1; i < dim; ++i)
-    p_0[i] = -2;
+    p_0[i] = -1;
     
   Point<dim> p_1 = Point<dim>();
-  p_1[0] = 2;
+  p_1[0] = 1;
   for (unsigned int i = 1; i < dim; ++i)
-    p_1[i] = 2;
+    p_1[i] = 1;
     
   std::vector< unsigned int > repetitions(dim);
   repetitions[0] = 1;
@@ -1290,7 +1321,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(5);
+  triangulation.refine_global(6);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
