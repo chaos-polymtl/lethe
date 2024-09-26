@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-26
+
+### Changed
+
+- MINOR Made discontinuity-capturing directional dissipation (DCDD) stabilization optional for the VOF auxiliary physics. [#1296](https://github.com/chaos-polymtl/lethe/pull/1296)
+
 ## [Master] - 2024-09-25
 
 ## Changed

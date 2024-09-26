@@ -8,14 +8,16 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
 .. code-block:: text
 
   subsection stabilization
-    set use default stabilization   = true
+    set use default stabilization        = true
 
-    set stabilization               = pspg_supg     # <pspg_supg|gls|grad_div>.
+    set stabilization                    = pspg_supg     # <pspg_supg|gls|grad_div>.
 
-    set heat transfer stabilization = false
+    # DCDD stabilization
+    set heat transfer dcdd stabilization = false
+    set vof dcdd stabilization           = true
 
     # Pressure scaling factor
-    set pressure scaling factor     = 1
+    set pressure scaling factor          = 1
   end
   
 
@@ -29,7 +31,9 @@ There are three choices of stabilization strategy:
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
 
-* ``heat transfer stabilization``: Applies the discontinuity-capturing directional dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see Tezduyar, T. E. (2003).
+* ``heat transfer dcdd stabilization``: Applies the dDiscontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
+
+* ``vof dcdd stabilization``: Applies the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
 The ``pressure scaling factor`` parameter is used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
 

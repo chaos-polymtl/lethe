@@ -60,6 +60,12 @@ VolumeOfFluid<dim>::setup_assemblers()
     this->simulation_control,
     this->simulation_parameters.fem_parameters,
     this->simulation_parameters.multiphysics.vof_parameters));
+
+  // DCDD schock-capturing assembler
+  if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
+    this->assemblers.emplace_back(
+      std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
+        this->simulation_control));
 }
 
 template <int dim>
