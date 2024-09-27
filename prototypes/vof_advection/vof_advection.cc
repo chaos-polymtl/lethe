@@ -276,11 +276,14 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   
   Point<dim> center = Point<dim>();
   Tensor<1,dim> dist = center - p;
+  
+  double sign_dist = 1.0;
   if (dist.norm() > 0.25)
   {
-    return 0.0;
+    sign_dist = -1.0;
   }
-  return 1.0;
+  
+  return 0.5+0.5*std::tanh((0.25-dist.norm())/0.02);
   
   // if (p[0]> 0.25 || p[0]<-0.25)
   //   return 0.0;
@@ -1135,7 +1138,7 @@ AdvectionProblem<dim>::compute_sign_distance()
                 if (check)
                   outside_check +=1;
                 
-                relaxation *= 0.99;
+                relaxation *= 0.999;
               }
               
               
@@ -1321,7 +1324,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(6);
+  triangulation.refine_global(7);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
