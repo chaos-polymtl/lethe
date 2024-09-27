@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
-# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-
 # Listing of Parameters
 #----------------------
 
@@ -11,12 +8,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set time end         = 1.5
-  set time step        = 0.025
+  set method           = bdf2
+  set time end         = 10e-3
+  set time step        = 5e-6
   set output name      = static-bubble-chns
-  set output frequency = 3
-  set output path      = ./
+  set output frequency = 1
+  set output path      = ./output/
   set subdivision      = 1
 end
 
@@ -26,6 +23,7 @@ end
 
 subsection multiphysics
   set cahn hilliard = true
+  set fluid dynamics = false
 end
 
 #---------------------------------------------------
@@ -33,7 +31,8 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set potential smoothing coefficient = 0
+  set potential smoothing coefficient = 0.0
+
   subsection epsilon
     set method = automatic
     set verbosity = verbose
@@ -48,7 +47,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_rectangle
   set grid arguments     = -2.5, -2.5 : 2.5, 2.5 : true
-  set initial refinement = 9
+  set initial refinement = 7 
 end
 
 #---------------------------------------------------
@@ -57,7 +56,7 @@ end
 
 subsection initial conditions
   subsection cahn hilliard
-    set Function expression = -tanh(({{R}} - sqrt((x) * (x) + (y) * (y)))/(sqrt(2)*0.0138107)); 0
+    set Function expression = 2*rand()-1; 0
   end
 end
 
@@ -78,8 +77,8 @@ subsection physical properties
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient = 1
-      set cahn hilliard mobility constant = {{mobility}}
+      set surface tension coefficient = 10
+      set cahn hilliard mobility constant = 10
     end
   end
 end
@@ -89,54 +88,16 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
-  subsection bc 0
-    set id   = 0
-    set type = noslip
-  end
-  subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
-    set id   = 3
-    set type = noslip
-  end
+  set number = 0
 end
 
-#---------------------------------------------------
-# Analytical solution
-#---------------------------------------------------
-
-subsection analytical solution
-  set enable    = true
-  subsection uvwp
-    set Function expression = 0; 0; if (x^2 + y^2 < {{R}}^2 , 2, 0)
-  end
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
-end
 
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity        = verbose
-  set output frequency = 1
-  
-  set calculate barycenter = true
-  set calculate phase statistics = true
+  set verbosity        = quiet
 end
 #---------------------------------------------------
 # Non-Linear Solver Control
@@ -146,9 +107,6 @@ subsection non-linear solver
   subsection cahn hilliard
     set tolerance      = 1e-6
   end
-  subsection fluid dynamics
-    set tolerance      = 1e-4
-  end
 end
 
 #---------------------------------------------------
@@ -156,13 +114,9 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  subsection fluid dynamics
-    set relative residual = 1e-3
-    set minimum residual  = 1e-5
-  end
   subsection cahn hilliard
     set relative residual = 1e-3
-    set minimum residual  = 1e-7
+    set minimum residual  = 1e-8
   end
 end
 

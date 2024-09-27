@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
-# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-
 # Listing of Parameters
 #----------------------
 
@@ -57,7 +54,7 @@ end
 
 subsection initial conditions
   subsection cahn hilliard
-    set Function expression = -tanh(({{R}} - sqrt((x) * (x) + (y) * (y)))/(sqrt(2)*0.0138107)); 0
+    set Function expression = -tanh((0.3 - sqrt((x) * (x) + (y) * (y)))/(sqrt(2)*0.0138107)); 0
   end
 end
 
@@ -79,7 +76,7 @@ subsection physical properties
   subsection material interaction 0
     subsection fluid-fluid interaction
       set surface tension coefficient = 1
-      set cahn hilliard mobility constant = {{mobility}}
+      set cahn hilliard mobility constant = 6.2145e-05
     end
   end
 end
@@ -115,7 +112,7 @@ end
 subsection analytical solution
   set enable    = true
   subsection uvwp
-    set Function expression = 0; 0; if (x^2 + y^2 < {{R}}^2 , 2, 0)
+    set Function expression = 0; 0; if (x^2 + y^2 < 0.3^2 , 2, 0)
   end
 end
 
@@ -165,4 +162,3 @@ subsection linear solver
     set minimum residual  = 1e-7
   end
 end
-
