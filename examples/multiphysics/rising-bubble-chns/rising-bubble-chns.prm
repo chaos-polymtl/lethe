@@ -13,11 +13,11 @@ subsection simulation control
   set method           = bdf1
   set time end         = 3
   set time step        = 0.001
-  set adapt            = true
-  set max cfl          = 0.1
+  #set adapt            = true
+  #set max cfl          = 0.1
   set output name      = rising-bubble-chns
   set output frequency = 15
-  set output path      = ./outputs/output/
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -33,9 +33,9 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = L2projection
+  set type = nodal
   subsection cahn hilliard
-    set Function expression = -tanh((0.25 - sqrt((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5)))/(sqrt(2)*2^(-8))); 0
+    set Function expression = -tanh((0.25 - sqrt((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5)))/(sqrt(2)*0.005524)); 0
   end
 end
 
@@ -55,6 +55,10 @@ end
 
 subsection cahn hilliard
   set potential smoothing coefficient = 0.0
+  
+  subsection epsilon
+     set verbosity = verbose
+  end
 end
 
 #---------------------------------------------------
@@ -75,7 +79,7 @@ subsection physical properties
   subsection material interaction 0
     subsection fluid-fluid interaction
       set surface tension coefficient     = 24.5
-      set cahn hilliard mobility constant = 7.629394531e-6 #Proportionnal to the minimum cell size squared
+      set cahn hilliard mobility constant = 3.06e-5 #Proportionnal to the minimum cell size squared
     end
   end
 end
@@ -88,7 +92,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
-  set initial refinement = 6
+  set initial refinement = 8
 end
 
 #---------------------------------------------------
@@ -142,8 +146,6 @@ subsection boundary conditions
     set type = noslip
   end
 end
-
-
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
