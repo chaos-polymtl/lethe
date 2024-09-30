@@ -1907,7 +1907,10 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  this->average_velocities->sanitize_after_restart();
+  if (simulation_parameters.post_processing.calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::InitialConditionType::average_velocity_profile)
+    this->average_velocities->sanitize_after_restart();
 }
 
 template <int dim, typename VectorType, typename DofsType>
