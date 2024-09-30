@@ -396,9 +396,9 @@ std::vector<VectorType *>
 AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
 {
   std::vector<VectorType *> sum_vectors;
-  sum_vectors.push_back(&sum_velocity_dt);
-  sum_vectors.push_back(&sum_reynolds_normal_stress_dt);
-  sum_vectors.push_back(&sum_reynolds_shear_stress_dt);
+  sum_vectors.push_back(&sum_velocity_dt_with_ghost_cells);
+  sum_vectors.push_back(&sum_rns_dt_with_ghost_cells);
+  sum_vectors.push_back(&sum_rss_dt_with_ghost_cells);
 
 
   std::string   filename = prefix + ".averagevelocities";

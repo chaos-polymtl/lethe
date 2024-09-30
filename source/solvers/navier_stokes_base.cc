@@ -1906,6 +1906,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     {
       previous_solutions[i] = distributed_previous_solutions[i];
     }
+
+  this->average_velocities->sanitize_after_restart();
 }
 
 template <int dim, typename VectorType, typename DofsType>

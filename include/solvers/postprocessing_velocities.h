@@ -206,6 +206,22 @@ public:
   std::vector<VectorType *>
   read(const std::string &prefix);
 
+
+  /**
+   * @brief Sanitize the average velocity object after a checkpoint has been read by
+   * resetting all of the locally_owned vectors using the locally_relevant
+   * vectors. This is necessary because only the locally_relevant_vectors are
+   * saved, but the calculation routines expect that the content of the
+   * locally_owned vectors match that of the locally_relevant vectors.
+   */
+  void
+  sanitize_after_restart()
+  {
+    sum_velocity_dt               = sum_velocity_dt_with_ghost_cells;
+    sum_reynolds_normal_stress_dt = sum_rns_dt_with_ghost_cells;
+    sum_reynolds_shear_stress_dt  = sum_rss_dt_with_ghost_cells;
+  }
+
 private:
   /**
    * @brief Inverse for total time for averaging.
