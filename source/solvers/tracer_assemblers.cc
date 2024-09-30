@@ -66,10 +66,14 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       const Tensor<2, dim> rr          = outer_product(r, r);
       const Tensor<2, dim> dcdd_factor = rr - k_corr;
 
-
-      const double d_vdcdd = order * (0.5 * h * h) *
-                             (velocity.norm() * velocity.norm()) *
-                             pow(tracer_gradient_for_dcdd_norm * h, order - 1);
+      // If the method is not steady, we use the previous gradient to calculate
+      // the DCDD schock capture term and consequently we do not need an
+      // estimation of the derivative of the vdcdd term.
+      const double d_vdcdd =
+        is_steady(method) ?
+          order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
+            pow(tracer_gradient_for_dcdd_norm * h, order - 1) :
+          0;
 
 
 
