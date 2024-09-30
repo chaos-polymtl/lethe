@@ -95,25 +95,7 @@ A dependency required by Lethe, and that deal.II needs to be compiled with, is m
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. In the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with a text editor and change the following lines:
-
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
-| line # | initial line                                   | changed line                                                                 |
-+========+================================================+==============================================================================+
-|     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                                                           |
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
-|     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                                                     |
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
-|     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``                                    |
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
-|     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``                                    |
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
-|     13 |                                                | .. code-block:: text                                                         |
-|        |                                                |   :class: copy-button                                                        |
-|        |                                                |                                                                              |
-|        |                                                |   VERSION=2.3.6                                                              |
-|        |                                                |   CHECKSUM=4b35d9cc374e3b05cd29c552070940124f04af8f8e5e01ff046e39833de5e153  |
-+--------+------------------------------------------------+------------------------------------------------------------------------------+
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -150,7 +132,7 @@ Clone Lethe from the `Lethe official repository <https://github.com/chaos-polymt
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/chaos-polymtl/lethe 
+  git clone https://github.com/chaos-polymtl/lethe --single-branch
 
 Create a build folder at the same level as the lethe folder
 
@@ -194,7 +176,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 where $numprocs can be the number of physical cores on your machine.
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.2.1, otherwise the test which include restart files will fail.
+  The lethe test suites requires that deal.II be configured with p4est 2.3.6, otherwise the test which include restart files will fail.
 
 
 .. _install-deal.II-manually:

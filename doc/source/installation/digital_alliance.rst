@@ -92,7 +92,7 @@ In the ``$HOME/lethe`` directory, download Lethe:
 .. code-block:: text
   :class: copy-button
 
-  git clone https://github.com/chaos-polymtl/lethe.git
+  git clone https://github.com/chaos-polymtl/lethe.git --single-branch
 
 To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in ``inst/bin``), run in the ``$HOME/lethe/build`` directory:
 
