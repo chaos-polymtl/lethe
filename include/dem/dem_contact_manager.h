@@ -62,10 +62,6 @@ public:
    * cells.
    * @param[in] periodic_boundaries_cells_information Information of periodic
    * cells used if periodic boundaries are enabled (next parameter).
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
-   * @param[in] has_solid_objects Allow the computation of full neighbor lists
-   * of active cells computation if required.
    */
   void
   execute_cell_neighbors_search(
@@ -81,10 +77,6 @@ public:
    * cells.
    * @param[in] periodic_boundaries_cells_information Information of periodic
    * cells used if periodic boundaries are enabled (next parameter).
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
-   * @param[in] has_solid_objects Allow the computation of full neighbor lists
-   * of active cells computation if required.
    */
   void
   update_cell_neighbors(
@@ -113,9 +105,6 @@ public:
    * Contact pairs are local particle-particle, ghost particle-particle,
    * particle-wall, particle-floating wall contacts and particle-floating mesh
    * contacts.
-   *
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
    */
   void
   update_contacts();
@@ -130,9 +119,6 @@ public:
    *
    * @param[in] particle_handler Storage of particles and their accessor
    * functions.
-   * @param[in] clear_contact_structures Allow clearing the contact structures.
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
    */
   void
   update_local_particles_in_cells(
@@ -152,9 +138,7 @@ public:
    * @param[in,out] particle_handler Storage of particles and their accessor
    * functions.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
-   * status of cells
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
+   * status of cells.
    */
   void
   execute_particle_particle_broad_search(
@@ -180,8 +164,7 @@ public:
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] sparse_particle_contact_object Allow to check the mobility
-   * status of cells
-   * @param[in] has_solid_objects Allow dealing with floating mesh neighbors.
+   * status of cells.
    */
   void
   execute_particle_wall_broad_search(
@@ -200,15 +183,9 @@ public:
    * compute the contact information of the collision pairs.
    *
    * @param[in] neighborhood_threshold Threshold value of contact detection.
-   * @param[in] has_periodic_boundaries Allow manipulations of periodic
-   * containers if required.
-   * @param[in] periodic_offset Offset used for tuning particle locations in
-   * periodic boundaries.
    */
   void
-  execute_particle_particle_fine_search(
-    const double         neighborhood_threshold,
-    const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
+  execute_particle_particle_fine_search(const double neighborhood_threshold);
 
   /**
    * @brief Execute the particle-wall fine searches.
@@ -219,7 +196,6 @@ public:
    * @param[in] floating_wall Properties of the floating walls.
    * @param[in] simulation_time Current simulation time.
    * @param[in] neighborhood_threshold Threshold value of contact detection.
-   * @param[in] has_solid_objects Allow the fine search with floating meshes.
    */
   void
   execute_particle_wall_fine_search(
@@ -227,7 +203,128 @@ public:
     const double                                      simulation_time,
     const double                                      neighborhood_threshold);
 
+  /**
+   * @brief Set the constant periodic offset for the periodic boundaries. If
+   * they are no periodic boundaries, the default offset is zeros;
+   *
+   * @param[in] periodic_offset Offset used for tuning particle locations in
+   * periodic boundaries.
+   */
+  inline void
+  set_periodic_offset(const Tensor<1, dim> &offset)
+  {
+    this->periodic_offset = offset;
+  }
 
+  /**
+   * @brief Return the particle-floating mesh contact container.
+   */
+  inline typename dem_data_structures<dim>::particle_floating_mesh_in_contact &
+  get_particle_floating_mesh_in_contact()
+  {
+    return particle_floating_mesh_in_contact;
+  }
+
+  /**
+   * @brief Return the particle-floating wall contact container.
+   */
+  inline typename dem_data_structures<dim>::particle_wall_in_contact &
+  get_particle_floating_wall_in_contact()
+  {
+    return particle_floating_wall_in_contact;
+  }
+
+  /**
+   * @brief Return the particle-wall contact container.
+   */
+  inline typename dem_data_structures<dim>::particle_wall_in_contact &
+  get_particle_wall_in_contact()
+  {
+    return particle_wall_in_contact;
+  }
+
+  /**
+   * @brief Return the particle-line contact container.
+   */
+  inline typename dem_data_structures<dim>::particle_line_candidates &
+  get_particle_lines_in_contact()
+  {
+    return particle_lines_in_contact;
+  }
+
+  /**
+   * @brief Return the particle-point contact container.
+   */
+  inline typename dem_data_structures<dim>::particle_point_candidates &
+  get_particle_points_in_contact()
+  {
+    return particle_points_in_contact;
+  }
+
+  /**
+   * @brief Return the local-local particle contact container.
+   */
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_local_adjacent_particles()
+  {
+    return local_adjacent_particles;
+  }
+
+  /**
+   * @brief Return the local-ghost particle contact container.
+   */
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_ghost_adjacent_particles()
+  {
+    return ghost_adjacent_particles;
+  }
+
+  /**
+   * @brief Return the local-local periodic particle contact container.
+   */
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_local_local_periodic_adjacent_particles()
+  {
+    return local_local_periodic_adjacent_particles;
+  }
+
+  /**
+   * @brief Return the local-ghost periodic particle contact container.
+   */
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_local_ghost_periodic_adjacent_particles()
+  {
+    return local_ghost_periodic_adjacent_particles;
+  }
+
+  /**
+   * @brief Return the ghost-local periodic particle contact container.
+   */
+  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  get_ghost_local_periodic_adjacent_particles()
+  {
+    return ghost_local_periodic_adjacent_particles;
+  }
+
+  /**
+   * @brief Return the local particle-particle contact candidates.
+   */
+  inline typename dem_data_structures<dim>::particle_particle_candidates &
+  get_local_contact_pair_candidates()
+  {
+    return local_contact_pair_candidates;
+  }
+
+  /**
+   * @brief Return the ghost particle-particle contact candidates.
+   */
+  inline typename dem_data_structures<dim>::particle_particle_candidates &
+  get_ghost_contact_pair_candidates()
+  {
+    return ghost_contact_pair_candidates;
+  }
+
+private:
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
     particle_container;
@@ -279,9 +376,9 @@ public:
     particle_floating_wall_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_line_in_contact
+  typename dem_data_structures<dim>::particle_line_candidates
     particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_point_in_contact
+  typename dem_data_structures<dim>::particle_point_candidates
     particle_points_in_contact;
 
 
@@ -292,14 +389,17 @@ public:
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
-    local_periodic_adjacent_particles;
+    local_local_periodic_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_periodic_adjacent_particles;
+    local_ghost_periodic_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_local_periodic_adjacent_particles;
 
   // Containers with other information
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
+
+private:
+  Tensor<1, dim> periodic_offset = Tensor<1, dim>();
 };
 
 #endif

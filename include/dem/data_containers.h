@@ -163,11 +163,14 @@ namespace DEM
                                    particle_wall_contact_info<dim>>>
       particle_wall_in_contact;
 
+    // <particle id, particle-particle info>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         particle_particle_contact_info<dim>>
+      particle_contact_info;
+
     // <particle id, <particle id, particle-particle info>>
-    typedef ankerl::unordered_dense::map<
-      types::particle_index,
-      ankerl::unordered_dense::map<types::particle_index,
-                                   particle_particle_contact_info<dim>>>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         particle_contact_info>
       adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>

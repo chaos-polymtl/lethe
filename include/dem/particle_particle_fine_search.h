@@ -21,10 +21,6 @@
 
 #include <deal.II/base/tensor.h>
 
-
-template <int dim>
-class DEMContactManager;
-
 using namespace dealii;
 
 /**

@@ -58,12 +58,11 @@ find_cell_neighbors(
  * cells on the periodic boundary 1 for each cells. There is some check to
  * prevent repetition of a cell in a list (up to 8 vertices can have the
  * same cell in common in 3D).
- * 3 types of container are used for
- * periodic mapping of cell neighbors : local-local cells, local-ghost cells
- * and ghost-local cells. The last container is necessary since the mapping
- * are only from periodic boundary 0 to periodic boundary 1 and the
- * ghost-local particle pairs need distinction for proper handling of search
- * of particle pairs and contact forces.
+ * 3 types of container are used for periodic mapping of cell neighbors :
+ * local-local cells, local-ghost cells and ghost-local cells. The last
+ * container is necessary since the mapping are only from periodic boundary 0
+ * to periodic boundary 1 and the ghost-local particle pairs need distinction
+ * for proper handling of search of particle pairs and contact forces.
  *
  * @param triangulation Triangulation to access the information of the cells
  * @param periodic_boundaries_cells_information A container of information

@@ -43,9 +43,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
-  , contact_detection_frequency(
-      parameters.model_parameters.contact_detection_frequency)
-  , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , contact_build_number(0)
   , background_dh(triangulation)
   , size_distribution_object_container(
@@ -218,8 +215,6 @@ DEMSolver<dim>::setup_solid_objects()
   if ((solid_surfaces.size() + solid_volumes.size()) > 0)
     {
       action_manager->set_solid_objects_enabled();
-      contact_manager.particle_floating_mesh_in_contact.resize(
-        solid_surfaces.size() + solid_volumes.size());
     }
 }
 
@@ -353,6 +348,13 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
 
+  // Set the periodic offset to contact managers and particles contact forces
+  // for periodic contact detection (if PBC enabled)
+  contact_manager.set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
+  particle_particle_contact_force_object->set_periodic_offset(
+    periodic_boundaries_object.get_periodic_offset_distance());
+
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
@@ -461,21 +463,23 @@ template <int dim>
 inline void
 DEMSolver<dim>::check_contact_search_iteration_dynamic()
 {
-  find_particle_contact_detection_step<dim>(
-    particle_handler,
-    simulation_control->get_time_step(),
-    smallest_contact_search_criterion,
-    mpi_communicator,
-    displacement,
-    (simulation_control->get_step_number() % contact_detection_frequency) == 0);
+  const bool parallel_update =
+    (simulation_control->get_step_number() %
+     parameters.model_parameters.contact_detection_frequency) == 0;
+  find_particle_contact_detection_step<dim>(particle_handler,
+                                            simulation_control->get_time_step(),
+                                            smallest_contact_search_criterion,
+                                            mpi_communicator,
+                                            displacement,
+                                            parallel_update);
 }
 
 template <int dim>
 inline void
 DEMSolver<dim>::check_contact_search_iteration_constant()
 {
-  if ((simulation_control->get_step_number() % contact_detection_frequency) ==
-      0)
+  if ((simulation_control->get_step_number() %
+       parameters.model_parameters.contact_detection_frequency) == 0)
     action_manager->contact_detection_step();
 }
 
@@ -483,7 +487,8 @@ template <int dim>
 void
 DEMSolver<dim>::insert_particles()
 {
-  if ((simulation_control->get_step_number() % insertion_frequency) == 1)
+  if ((simulation_control->get_step_number() %
+       parameters.insertion_info.insertion_frequency) == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
 
@@ -497,7 +502,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    contact_manager.particle_wall_in_contact,
+    contact_manager.get_particle_wall_in_contact(),
     simulation_control->get_time_step(),
     torque,
     force);
@@ -514,7 +519,7 @@ DEMSolver<dim>::particle_wall_contact_force()
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        contact_manager.particle_floating_wall_in_contact,
+        contact_manager.get_particle_floating_wall_in_contact(),
         simulation_control->get_time_step(),
         torque,
         force);
@@ -525,7 +530,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
-          contact_manager.particle_floating_mesh_in_contact,
+          contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
           torque,
           force,
@@ -534,7 +539,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
-      &contact_manager.particle_points_in_contact,
+      &contact_manager.get_particle_points_in_contact(),
       parameters.lagrangian_physical_properties,
       force);
 
@@ -542,7 +547,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
-          &contact_manager.particle_lines_in_contact,
+          &contact_manager.get_particle_lines_in_contact(),
           parameters.lagrangian_physical_properties,
           force);
     }
@@ -678,7 +683,9 @@ DEMSolver<dim>::write_output_results()
       // Force chains visualization
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
-      particles_force_chains_object->calculate_force_chains(contact_manager);
+      particles_force_chains_object->calculate_force_chains(
+        contact_manager.get_local_adjacent_particles(),
+        contact_manager.get_ghost_adjacent_particles());
       particles_force_chains_object->write_force_chains(
         parameters,
         particles_pvdhandler_force_chains,
@@ -957,8 +964,7 @@ DEMSolver<dim>::solve()
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared,
-            periodic_boundaries_object.get_periodic_offset_distance());
+            neighborhood_threshold_squared);
 
           // Execute fine search by updating particle-wall contact
           // containers according to the neighborhood threshold
@@ -978,11 +984,14 @@ DEMSolver<dim>::solve()
       // Particle-particle contact force
       particle_particle_contact_force_object
         ->calculate_particle_particle_contact_force(
-          contact_manager,
+          contact_manager.get_local_adjacent_particles(),
+          contact_manager.get_ghost_adjacent_particles(),
+          contact_manager.get_local_local_periodic_adjacent_particles(),
+          contact_manager.get_local_ghost_periodic_adjacent_particles(),
+          contact_manager.get_ghost_local_periodic_adjacent_particles(),
           simulation_control->get_time_step(),
           torque,
-          force,
-          periodic_boundaries_object.get_periodic_offset_distance());
+          force);
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
@@ -993,7 +1002,7 @@ DEMSolver<dim>::solve()
       // search and they are not updated in the contact force calculations.
       grid_motion_object
         ->update_boundary_points_and_normal_vectors_in_contact_list(
-          contact_manager.particle_wall_in_contact,
+          contact_manager.get_particle_wall_in_contact(),
           updated_boundary_points_and_normal_vectors);
 
       // Move solid objects (if solid object)
