@@ -2185,14 +2185,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
       this->multiphysics_average_velocities.reinit(this->locally_owned_dofs,
                                                    this->locally_relevant_dofs,
                                                    this->mpi_communicator);
-
-      if (this->simulation_parameters.restart_parameters.checkpoint)
-        {
-          this->average_velocities->initialize_checkpoint_vectors(
-            this->locally_owned_dofs,
-            this->locally_relevant_dofs,
-            this->mpi_communicator);
-        }
     }
 
   double global_volume =

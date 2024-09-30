@@ -138,7 +138,8 @@ public:
 
   /**
    * @brief Initialize all the important vectors for the average velocities and
-   * reynolds stresses calculation.
+   * reynolds stresses calculation. This includes the vector for the
+   * checkpoints.
    *
    * @param[in] locally_owned_dofs The owned dofs.
    *
@@ -156,23 +157,6 @@ public:
                      const DofsType     &locally_relevant_dofs,
                      const unsigned int &dofs_per_vertex,
                      const MPI_Comm     &mpi_communicator);
-
-  /**
-   * @brief Initialize all the sum vectors for the average velocities and reynolds
-   *  stresses storage.
-   *
-   * @param[in] locally_owned_dofs The owned dofs.
-   *
-   * @param[in] locally_owned_rs_components The owned Reynolds stress
-   * components.
-   *
-   * @param[in] mpi_communicator The communicator information.
-   */
-  void
-  initialize_checkpoint_vectors(const DofsType &locally_owned_dofs,
-                                const DofsType &locally_relevant_dofs,
-                                const MPI_Comm &mpi_communicator);
-
 
   /**
    * @brief Prepare average velocity object for dynamic mesh adaptation.

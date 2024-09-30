@@ -144,14 +144,6 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
         this->locally_relevant_dofs,
         this->fe->n_dofs_per_vertex(),
         this->mpi_communicator);
-
-      if (this->simulation_parameters.restart_parameters.checkpoint)
-        {
-          this->average_velocities->initialize_checkpoint_vectors(
-            this->locally_owned_dofs,
-            this->locally_relevant_dofs,
-            this->mpi_communicator);
-        }
     }
 
   double global_volume =
