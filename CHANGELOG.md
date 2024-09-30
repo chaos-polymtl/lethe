@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-09-30
+
+### Fixed
+
+- MINOR Simulations with time-averaging of the velocity fields could be unable to restart when the domain was very large due to the fact that the restart vectors were read into the wrong vectors (locally_owned instead of locally_relevant). This PR fixes this. This also ensures that Lethe is able to restart with a different core-count than what was used to generate the restart file. [#1300](https://github.com/chaos-polymtl/lethe/pull/1300)
+
 ## [Master] - 2024-09-26
 
 ### Changed
