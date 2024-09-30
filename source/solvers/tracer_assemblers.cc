@@ -55,7 +55,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       const double order = scratch_data.fe_values_tracer.get_fe().degree;
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(tracer_gradient.norm() * h, order);
+                           pow(tracer_gradient_for_dcdd.norm() * h, order);
 
       const double   tolerance = 1e-12;
       Tensor<1, dim> s         = velocity / (velocity.norm() + tolerance);
