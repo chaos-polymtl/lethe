@@ -1099,10 +1099,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
@@ -1470,6 +1470,29 @@ Tracer<dim>::set_initial_conditions()
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
   percolate_time_vectors();
+}
+
+
+template <int dim>
+void
+Tracer<dim>::compute_kelly(
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
+  dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (ivar.first == Variable::tracer)
+    {
+      const FEValuesExtractors::Scalar tracer(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->temperature_mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        this->present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(tracer));
+    }
 }
 
 template <int dim>

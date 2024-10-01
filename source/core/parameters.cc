@@ -2917,7 +2917,7 @@ namespace Parameters
         Patterns::List(Patterns::Selection(
           "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard")),
         "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard>."
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -3012,9 +3012,11 @@ namespace Parameters
             vars = Variable::phase_cahn_hilliard;
           else if (var_vec[i] == "chemical_potential_cahn_hilliard")
             vars = Variable::chemical_potential_cahn_hilliard;
+          else if (var_vec[i] == "tracer")
+            vars = Variable::tracer;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard or chemical_potential_cahn_hilliard");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard or tracer");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
