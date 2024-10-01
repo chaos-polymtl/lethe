@@ -1,0 +1,4 @@
+<map id="HeatTransferAssemblerFreeSurfaceRadiationVOF&lt; dim &gt;" name="HeatTransferAssemblerFreeSurfaceRadiationVOF&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the radiation sink for the heat transfer solver at the free surface (air/metal i..." alt="" coords="5,95,220,136"/>
+<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="9,5,216,47"/>
+</map>

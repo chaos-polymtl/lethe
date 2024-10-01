@@ -1,0 +1,4 @@
+<map id="GLSNavierStokesAssemblerCore&lt; dim &gt;" name="GLSNavierStokesAssemblerCore&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the core of the Navier&#45;Stokes equation. According to the following weak form: &#160;w..." alt="" coords="9,95,211,136"/>
+<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="5,5,215,47"/>
+</map>

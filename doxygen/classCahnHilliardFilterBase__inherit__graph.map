@@ -1,0 +1,6 @@
+<map id="CahnHilliardFilterBase" name="CahnHilliardFilterBase">
+<area shape="rect" id="node1" title="Filter phase fraction according to the selected filtering method." alt="" coords="183,5,350,32"/>
+<area shape="rect" id="node2" href="$classCahnHilliardClipFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations. In this case, a simple clamping is..." alt="" coords="5,80,165,107"/>
+<area shape="rect" id="node3" href="$classCahnHilliardNoFilter.html" title="Used as a default when no filter is applied to the phase fraction." alt="" coords="190,80,343,107"/>
+<area shape="rect" id="node4" href="$classCahnHilliardTanhFilter.html" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations." alt="" coords="368,80,533,107"/>
+</map>

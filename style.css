@@ -1,0 +1,423 @@
+@charset "UTF-8";
+/* CSS Document */
+
+html,
+html *{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+}
+
+
+/* DEFAULT/GLOBAL/MOBILE VIEW */
+header{
+	padding: 24px;
+	background-color: #31587A;
+}
+
+body{
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #F9F9FB;
+}
+
+footer{
+	padding: 20px 30px;
+	background-color: #31587A;
+	color: #F9F9FB;
+}
+
+h1{
+	font-size: 42px;
+	text-transform: uppercase;
+	font-weight: 400;
+	margin-bottom: 12px;
+}
+
+p{
+	font-size: 16px;
+	font-weight: 400;
+	margin-bottom: 5px;
+}
+
+iframe{
+	width: 90%;
+	height: 400px;
+}
+
+
+/* HEADER */
+.style-logo{
+	padding-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 8px;
+	display: block;
+	width: 90%;
+}
+
+.style-nav ul{
+	list-style-type: none;
+}
+
+.style-nav ul li{
+	display: block;
+}
+
+.style-nav ul li a{
+	text-decoration: none;
+	font-size: 18px;
+	color: #F9F9FB;
+	text-align: center;
+	display: block;
+	text-transform: uppercase;
+	padding: 8px;
+	background-color: #274562;
+	margin-top: 4px;
+	font-weight: 600;
+	border-radius: 3px 3px;
+}
+
+.style-nav a:hover{
+	background-color: #1C314A;
+}
+
+
+/* LETHE */
+.Lethe-meaning{
+	background-color: #9CC6D0;
+	background-size: cover;
+	padding: 20px 20px 20px 20px;
+	color: #303030;
+}
+
+.Lethe-meaning h3{
+	text-align: center;
+	font-size: 20px;
+	text-transform: none;
+	font-weight: normal;
+	margin-bottom: 4px;
+}
+
+.Lethe-meaning a{
+	color: #F9F9FB;
+	font-weight: bold;
+}
+
+.Lethe-meaning a:hover{
+	color: #274769;
+}
+
+.Lethe-meaning blockquote{
+	font-style: italic;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 45px;
+	padding-left: 10px;
+	border-left: 3px solid #F9F9FB;
+	background-color: #B9D8DE;
+	border-radius: 0px 2px 2px 0px;
+}
+
+.note{
+	font-style: italic;
+	text-align: center;
+}
+
+
+/* GETTING STARTED */
+.getting-started{
+	background-color: #517D99;
+	text-align: center;
+	background-size: cover;
+	padding: 20px 20px 20px 20px;
+	color: #F9F9FB;
+}
+
+.getting-started a{
+	font-size: 18px;
+}
+
+.button{
+	border: 2px #FAF9EE solid;
+	padding: 8px 30px;
+	border-radius: 30px;
+	background-color: #517D99;
+	color: #F9F9FB;
+	text-decoration: none;
+	display: block;
+	margin-bottom: 8px;
+}
+
+.button:hover{
+	border: 2px #82B0C9 solid;
+	background-color: #F9F9FB;
+	color: #517D99;
+}
+
+
+/* PUBLICATIONS */
+.latest-articles{
+	text-align: center;
+	box-sizing: border-box;
+	margin: auto;
+	background-color: #CCCCCC;
+	background-size: cover;
+	padding: 15px 10px;
+	color: #303030;
+}
+
+.article-slide{
+	display: none;
+}
+
+.latest-articles img{
+	vertical-align: middle;
+	margin-bottom: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	height: auto;
+	width: 90%;
+}
+
+
+/* EXAMPLES */
+.benchmarks{
+	text-align: center;
+	box-sizing: border-box;
+	margin: auto;
+	background-color: #B9D8DE;
+	background-size: cover;
+	padding: 15px 10px;
+	color: #31587A;
+}
+
+.benchmark-slide{
+	display: none;
+}
+
+
+/* SLIDESHOWS */
+.slide-button{
+	color: #F9F9FB;
+	text-decoration: none;
+	border: 2px rgba(77,77,77,0.6) solid;
+	border-radius: 30px;
+	font-size: 14px;
+	padding: 8px 10px;
+	position: relative;
+	bottom: -15px;
+	width: 30%;
+	align-content: center;
+	text-align: center;
+	background-color: rgba(0,0,0,0.45);
+}
+
+.slide-button:hover{
+	background-color: rgba(0,0,0,0.7);
+}
+
+/* Next & previous buttons for publications and examples */
+.prev, .next{
+	cursor: pointer;
+	position: relative;
+	top: -225px;
+	right: 45%;
+	width: auto;
+	padding: 10px 8px;
+	color: white;
+	font-weight: bold;
+	font-size: 14px;
+	transition: 0.6s ease;
+	border-radius: 5px;
+	background-color: rgba(0,0,0,0.45);
+	user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next{
+	right: auto;
+	left: 45%;
+}
+
+.prev:hover, .next:hover{
+	background-color: rgba(0,0,0,0.7);
+}
+
+/* The dots/bullets/indicators */
+.dot{
+	position: relative;
+	bottom: -10px;
+	height: 18px;
+	width: 18px;
+	margin: 2px;
+	background-color: #F9F9FB;
+	border-radius: 50%;
+	border: 1px #777777 solid;
+	display: inline-block;
+	transition: background-color 0.6s ease;
+}
+
+.active{
+	background-color: rgba(0,0,0,0.45);
+}
+
+.dot:hover{
+	background-color: rgba(0,0,0,0.7);
+}
+
+/* Fading animation */
+.fade{
+	animation-name: fade;
+	animation-duration: 1.5s;
+}
+
+@keyframes fade{
+	from {opacity: .4} 
+	to {opacity: 1}
+}
+
+.row:before, .row:after{
+	content: "";
+	display: table;
+}
+
+.row:after{
+	clear: both;
+}
+
+.footer-text{
+	font-size: 14px;
+	margin-bottom: 20px;
+}
+
+.col{
+	width: 100%;
+}
+
+.col-one-half{
+	float: left;
+	width: 50%;
+}
+
+.col-one-half img{
+	position: relative;
+	top: 15px;
+}
+	
+.icons{
+	float: right;
+}
+
+.icons img{
+	vertical-align: center;
+	padding: 0px 5px;
+}
+
+@media screen and (min-width: 480px){
+	.prev, .next{
+		top: -250px;
+		padding: 16px 10px;
+	}
+
+	.dot{
+		height: 15px;
+		width: 15px;
+	}
+
+	.slide-button{
+		font-size: 16px;
+	}
+}
+
+@media screen and (min-width: 660px){
+	.prev, .next{
+		top: -300px;
+	}
+
+	iframe{
+		height: 550px;
+	}
+}
+
+/* TABLET VIEW */
+@media screen and (min-width: 768px){
+	.style-logo{
+		width: 360px;
+	}
+
+	.style-nav ul li{
+		display: inline-block;
+	}
+
+	.prev, .next{
+		top: -320px;
+		right: 46%;
+		padding: 16px 10px;
+		font-size: 18px;
+	}
+
+	.next{
+		right: auto;
+		left: 46%;
+	}
+
+	.style-nav ul{
+		text-align: center;
+	}
+
+	h1{
+		font-size: 45px;
+	}
+
+	h3{
+		font-size: 16px;
+	}
+
+	.latest-articles img{
+		max-width: 720px;
+		width: auto;
+		height: 550px;
+	}
+}
+
+
+/* DESKTOP VIEW */
+@media screen and (min-width : 1140px){
+	body{
+		max-width: 1200px;
+	}
+
+	.prev, .next{
+		padding: 16px 14px;
+		right: 46%;
+	}
+
+	.next{
+		right: auto;
+		left: 46%;
+	}
+	.style-logo{
+		float: left;
+	}
+
+	.style-nav ul{
+		padding-top: 12px;
+		float: right;
+	}
+}
+
+@media screen and (min-width : 1200px){
+	header{
+		border-radius: 0px 0px 3px 3px;
+	}
+
+	footer{
+		border-radius: 3px 3px 0px 0px;
+	}
+
+	.Lethe-meaning, .getting-started, .latest-articles, .benchmarks{
+		border-radius: 3px;
+	}
+}

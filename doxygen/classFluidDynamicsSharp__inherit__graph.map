@@ -1,0 +1,6 @@
+<map id="FluidDynamicsSharp&lt; dim &gt;" name="FluidDynamicsSharp&lt; dim &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="37,259,193,300"/>
+<area shape="rect" id="node2" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="14,169,215,211"/>
+<area shape="rect" id="node3" href="$classNavierStokesBase.html" title=" " alt="" coords="5,80,224,121"/>
+<area shape="rect" id="node4" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="8,5,221,32"/>
+</map>

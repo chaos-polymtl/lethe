@@ -1,0 +1,6 @@
+<map id="NonLinearSolver&lt; VectorType &gt;" name="NonLinearSolver&lt; VectorType &gt;">
+<area shape="rect" id="node1" title="Base class that works as an interface for all non&#45;linear solvers for all non&#45;linear systems of equati..." alt="" coords="5,78,236,105"/>
+<area shape="rect" id="node2" href="$classInexactNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses an inexact Newton method with &#160;relax..." alt="" coords="284,5,511,47"/>
+<area shape="rect" id="node3" href="$classKinsolNewtonNonLinearSolver.html" title="Non&#45;linear Newton solver for non&#45;linear systems of equations implemented in the SUNDIALS suite,..." alt="" coords="288,71,507,112"/>
+<area shape="rect" id="node4" href="$classNewtonNonLinearSolver.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses a Newton method with &#160;relaxation to ..." alt="" coords="308,136,487,177"/>
+</map>

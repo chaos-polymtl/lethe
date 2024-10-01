@@ -1,0 +1,9 @@
+<map id="FluidDynamicsMatrixBased&lt; dim &gt;" name="FluidDynamicsMatrixBased&lt; dim &gt;">
+<area shape="rect" id="node1" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="533,71,735,112"/>
+<area shape="rect" id="node4" href="$classFluidDynamicsNitsche.html" title=" " alt="" coords="783,5,951,47"/>
+<area shape="rect" id="node5" href="$classFluidDynamicsSharp.html" title=" " alt="" coords="789,71,945,112"/>
+<area shape="rect" id="node6" href="$classFluidDynamicsVANS.html" title=" " alt="" coords="784,136,949,177"/>
+<area shape="rect" id="node2" href="$classNavierStokesBase.html" title=" " alt="" coords="267,71,485,112"/>
+<area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,78,219,105"/>
+<area shape="rect" id="node7" href="$classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="999,143,1173,170"/>
+</map>

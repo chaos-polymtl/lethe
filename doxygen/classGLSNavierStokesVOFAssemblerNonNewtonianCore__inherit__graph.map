@@ -1,0 +1,4 @@
+<map id="GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;" name="GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;">
+<area shape="rect" id="node1" title="Assembles the core of the Navier&#45;Stokes equation using a Rheological model to predict non&#45;Newtonian b..." alt="" coords="5,95,232,136"/>
+<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="14,5,223,47"/>
+</map>

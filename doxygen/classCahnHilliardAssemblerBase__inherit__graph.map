@@ -1,0 +1,7 @@
+<map id="CahnHilliardAssemblerBase&lt; dim &gt;" name="CahnHilliardAssemblerBase&lt; dim &gt;">
+<area shape="rect" id="node1" title="A pure virtual class that serves as an interface for all of the assemblers for the Cahn&#45;Hilliard equa..." alt="" coords="5,104,208,145"/>
+<area shape="rect" id="node2" href="$classCahnHilliardAssemblerAngleOfContact.html" title="Class that assembles the boundary condition on the angle of contact in the Cahn&#45;Hilliard equations." alt="" coords="256,5,464,47"/>
+<area shape="rect" id="node3" href="$classCahnHilliardAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Cahn&#45;Hilliard equat..." alt="" coords="261,71,459,112"/>
+<area shape="rect" id="node4" href="$classCahnHilliardAssemblerCore.html" title="Class that assembles the core of the Cahn&#45;Hilliard equation : ." alt="" coords="259,136,461,177"/>
+<area shape="rect" id="node5" href="$classCahnHilliardAssemblerFreeAngle.html" title="Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree..." alt="" coords="261,201,459,243"/>
+</map>

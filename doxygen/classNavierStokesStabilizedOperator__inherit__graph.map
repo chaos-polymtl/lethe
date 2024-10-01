@@ -1,0 +1,5 @@
+<map id="NavierStokesStabilizedOperator&lt; dim, number &gt;" name="NavierStokesStabilizedOperator&lt; dim, number &gt;">
+<area shape="rect" id="node1" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="5,169,235,211"/>
+<area shape="rect" id="node2" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="21,80,219,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="73,5,167,32"/>
+</map>

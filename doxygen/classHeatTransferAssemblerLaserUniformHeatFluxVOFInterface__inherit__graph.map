@@ -1,0 +1,4 @@
+<map id="HeatTransferAssemblerLaserUniformHeatFluxVOFInterface&lt; dim &gt;" name="HeatTransferAssemblerLaserUniformHeatFluxVOFInterface&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the laser heating as a uniform surface flux for the heat transfer solver when VO..." alt="" coords="5,95,280,136"/>
+<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="39,5,246,47"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="ThermalConductivityPhaseChange" name="ThermalConductivityPhaseChange">
+<area shape="rect" id="node1" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="6,155,203,196"/>
+<area shape="rect" id="node2" href="$classThermalConductivityModel.html" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node3" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="19,5,190,32"/>
+</map>

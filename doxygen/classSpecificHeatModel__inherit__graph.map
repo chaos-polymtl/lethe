@@ -1,0 +1,6 @@
+<map id="SpecificHeatModel" name="SpecificHeatModel">
+<area shape="rect" id="node1" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="115,80,257,107"/>
+<area shape="rect" id="node3" href="$classConstantSpecificHeat.html" title="Constant specific heat model." alt="" coords="5,155,167,181"/>
+<area shape="rect" id="node4" href="$classPhaseChangeSpecificHeat.html" title="Phase change specific heat model." alt="" coords="191,155,381,181"/>
+<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="101,5,271,32"/>
+</map>

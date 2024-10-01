@@ -1,0 +1,5 @@
+<map id="HeatTransfer&lt; dim &gt;" name="HeatTransfer&lt; dim &gt;">
+<area shape="rect" id="node1" title="Implementation of heat transfer as an auxiliary physics. The heat equation is weakly coupled to the v..." alt="" coords="32,169,192,196"/>
+<area shape="rect" id="node2" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="25,80,199,121"/>
+<area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,5,219,32"/>
+</map>

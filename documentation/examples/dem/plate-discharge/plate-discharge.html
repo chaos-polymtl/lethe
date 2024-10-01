@@ -1,0 +1,970 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Bunny Drill" href="../bunny-drill/bunny-drill.html" /><link rel="prev" title="Granular Dam-Break" href="../granular-dam-break/granular-dam-break.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Plate Discharge - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/apple_arm.html">Installation on Apple ARM (M1 or M2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parameters/parameters.html">Parameters Guide</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/cfd/cfd.html">General, CFD and Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/physical_properties.html">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/timer.html">Timer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/detector_parameters.html">Detector Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/fem_reconstruction.html">FEM Reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/parameter_tuning.html">Parameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/rpt_parameters.html">RPT Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/laser-heating/laser-heating.html">Laser Heating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/laser-melt-pool/laser-melt-pool.html">Laser Melt Pool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html">Tracer through CAD Junction in Simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../dem.html">Discrete Element Method (DEM)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.html">Rotating Drum with Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html">Photon Count Calculation in a Cylindrical Vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html">Tuning Count Calculation Model Parameters with NOMAD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/particle-fem-reconstruction/particle-fem-reconstruction.html">Particle FEM Reconstruction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory/theory.html">Theory</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphase/cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/cfd_dem.html">CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/dem.html">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/updating-test-results.html">Updating Test Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="plate-discharge">
+<h1>Plate Discharge<a class="headerlink" href="#plate-discharge" title="Link to this heading">#</a></h1>
+<p>This example compares the angles of repose and performance results of a plate discharging particles with performance enhancement methods.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code></p></li>
+<li><p>Three-dimensional problem</p></li>
+<li><p>Uses <a class="reference external" href="../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc">adaptive sparse contacts (ASC)</a></p></li>
+<li><p>Uses <a class="reference external" href="../../../parameters/dem/model_parameters.html#load-balancing">dynamic load balancing</a></p></li>
+<li><p>Post-processes results and compares them to the literature</p></li>
+</ul>
+</section>
+<section id="files-used-in-this-example">
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<p>All the files mentioned below are located in the example folder <code class="docutils literal notranslate"><span class="pre">examples/dem/3d-plate-discharge</span></code>.</p>
+<ul>
+<li><p>There are 4 parameters files: a baseline case and three other cases with different features using one or a combination of performance enhancing methods. The parameters files are:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-center" style="width: 100%">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name of the .prm file</p></th>
+<th class="head"><p><a class="reference external" href="../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc">ASC</a></p></th>
+<th class="head"><p><a class="reference external" href="../../../parameters/dem/model_parameters.html#load-balancing">Load Balancing</a></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plate-discharge_base.prm</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plate-discharge_asc.prm</span></code></p></td>
+<td><p>×</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plate-discharge_lb.prm</span></code></p></td>
+<td></td>
+<td><p>×</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plate-discharge_asc-lb.prm</span></code></p></td>
+<td><p>×</p></td>
+<td><p>×</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li><p>These parameters files are ready for the simulations. We run 2 sets of simulation: performance and data. In the performance simulations, speedup is computed. Hence, the writing of solution files is deactivated. In the data simulations, those files are outputted to analyze the results. The performance analysis parameter files are in the folder <code class="docutils literal notranslate"><span class="pre">performance/</span></code>, and the ones for the data analysis are in the folder <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
+</ul>
+</section>
+<section id="description-of-the-case">
+<h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
+<p>This example simulates the discharge of particles at the sides of a plate in a rectangular container in order to get the angle of repose of the granular material as done by Zhou <em>et al</em>. <a class="footnote-reference brackets" href="#zhou2002" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> The example compares the angles of repose and the performance of the simulations with the use of adaptive sparse contacts and load balancing methods. The angles are also compared to literature values.</p>
+<figure class="align-center" id="id7">
+<a class="reference internal image-reference" href="../../../_images/plate-discharge-diagram.png"><img alt="Plate discharge diagram" src="../../../_images/plate-discharge-diagram.png" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Diagram of the container (black) with the plate (green) and the particles (blue).</span><a class="headerlink" href="#id7" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="dem-parameter-files">
+<h2>DEM Parameter files<a class="headerlink" href="#dem-parameter-files" title="Link to this heading">#</a></h2>
+<section id="baseline-case-simulation">
+<h3>Baseline case simulation<a class="headerlink" href="#baseline-case-simulation" title="Link to this heading">#</a></h3>
+<p>In this section, we introduce the different sections of the parameter file <code class="docutils literal notranslate"><span class="pre">plate-discharge_base.prm</span></code> which do not use any performance enhancement methods.</p>
+<section id="simulation-control">
+<h4>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h4>
+<p>The simulation lasts <span class="math notranslate nohighlight">\(15 \ \text{s}\)</span>  and the DEM time step is <span class="math notranslate nohighlight">\(0.0001 \ \text{s}\)</span>. The output are generated every  <span class="math notranslate nohighlight">\(0.01 \ \text{s}\)</span> for the simulation for data analysis.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
+  set time step        = 1e-4
+  set time end         = 15
+  set log frequency    = 500
+  set output frequency = 100
+  set output path      = ./output_base/
+end
+</pre></div>
+</div>
+</section>
+<section id="mesh">
+<h4>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h4>
+<p>The rectangular container is a <span class="math notranslate nohighlight">\(1.0 \times 1.0 \times 0.2 \ \text{m}\)</span> box.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,5,1 : -0.5, 0.0, 0.0 : 0.5, 1.0, 0.2 : true
+  set initial refinement = 3
+end
+</pre></div>
+</div>
+</section>
+<section id="solid-objects">
+<h4>Solid Objects<a class="headerlink" href="#solid-objects" title="Link to this heading">#</a></h4>
+<p>The plate is a solid object with a simple mesh of 2 triangles placed at a height of <span class="math notranslate nohighlight">\(0.4 \ \text{m}\)</span> in the container.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection solid objects
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type                = gmsh
+        set file name           = plate.msh
+        set simplex             = true
+        set initial translation = 0, 0.4, 0
+      end
+    end
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="lagrangian-physical-properties">
+<h4>Lagrangian Physical Properties<a class="headerlink" href="#lagrangian-physical-properties" title="Link to this heading">#</a></h4>
+<p>The lagrangian properties are relatively arbitrary. The simulation contains <span class="math notranslate nohighlight">\(52000\)</span> particles with a diameter of <span class="math notranslate nohighlight">\(0.01 \ \text{m}\)</span>, and a density of <span class="math notranslate nohighlight">\(2400 \ \frac{\text{kg}}{\text{m}^3}\)</span>. Both properties of particle-particle and particle-wall interactions are the same.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
+  set g                        = 0, -9.81, 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.01
+    set number of particles               = 52000
+    set density particles                 = 2400
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.2
+    set rolling friction particles        = 0.1
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.2
+  set rolling friction wall        = 0.1
+end
+</pre></div>
+</div>
+</section>
+<section id="insertion-info">
+<h4>Insertion Info<a class="headerlink" href="#insertion-info" title="Link to this heading">#</a></h4>
+<p>The particles are inserted above the plate with the volume insertion method.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection insertion info
+  set insertion method                               = volume
+  set inserted number of particles at each time step = 52000
+  set insertion frequency                            = 20000
+  set insertion box points coordinates               = -0.45, 0.4, 0 : 0.45, 1.0, 0.2
+  set insertion distance threshold                   = 1.25
+  set insertion maximum offset                       = 0.1
+  set insertion prn seed                             = 20
+  set insertion direction sequence                   = 0, 2, 1
+end
+</pre></div>
+</div>
+</section>
+<section id="floating-walls">
+<h4>Floating Walls<a class="headerlink" href="#floating-walls" title="Link to this heading">#</a></h4>
+<p>At the beginning of the simulation, floating walls are placed vertically at both extremities of the plate to keep all particles on the latter. The walls are removed suddenly after <span class="math notranslate nohighlight">\(0.75 \ \text{s}\)</span> of simulation, starting the discharge.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection floating walls
+  set number of floating walls = 2
+  subsection wall 0
+    subsection point on wall
+      set x = -0.45
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 0.75
+  end
+  subsection wall 1
+    subsection point on wall
+      set x = 0.45
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 0.75
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="model-parameters">
+<h4>Model Parameters<a class="headerlink" href="#model-parameters" title="Link to this heading">#</a></h4>
+<p>The model parameters are quite standard for a DEM simulation with the non-linear Hertz-Mindlin contact force model, a constant rolling resistance torque, and the velocity Verlet integration method. For the baseline case, we do not use any performance enhancement method.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = none
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = false
+  end
+  subsection load balancing
+    set load balance method = none
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="timer">
+<h4>Timer<a class="headerlink" href="#timer" title="Link to this heading">#</a></h4>
+<p>The timer is enabled since we want to profile the computational performance of the simulations. We print the total wallclock time elapsed since the start at every <cite>log frequency</cite> iteration.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection timer
+  set type = iteration
+end
+</pre></div>
+</div>
+</section>
+</section>
+<section id="asc-simulation">
+<h3>ASC Simulation<a class="headerlink" href="#asc-simulation" title="Link to this heading">#</a></h3>
+<p>The only differences between <code class="docutils literal notranslate"><span class="pre">plate-discharge_base.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">plate-discharge_asc.prm</span></code> are the enabling of the ASC and the name of the folder for outputs.</p>
+<section id="id2">
+<h4>Model Parameters<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<p>Here the ASC is enabled with a granular temperature threshold of <span class="math notranslate nohighlight">\(0.0001 \ \frac{\text{m}^2}{\text{s}^2}\)</span> and a solid fraction threshold of <span class="math notranslate nohighlight">\(0.4\)</span>. Those parameters have shown to be efficient in other DEM simulations with a good balance between performance gain and low impact on the simulation results. These parameters can be adjusted.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.4
+  end
+  subsection load balancing
+    set load balance method = none
+  end
+end
+</pre></div>
+</div>
+</section>
+</section>
+<section id="load-balancing-simulation">
+<h3>Load Balancing Simulation<a class="headerlink" href="#load-balancing-simulation" title="Link to this heading">#</a></h3>
+<p>The only differences between <code class="docutils literal notranslate"><span class="pre">plate-discharge_base.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">plate-discharge_lb.prm</span></code> are the usage of the load balancing and the name of the folder for outputs.</p>
+<section id="id3">
+<h4>Model Parameters<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>Here, the dynamic load balancing checks if a load balancing is needed every <span class="math notranslate nohighlight">\(2500\)</span> iterations with a load threshold of <span class="math notranslate nohighlight">\(0.5\)</span>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = false
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 2500
+  end
+end
+</pre></div>
+</div>
+</section>
+</section>
+<section id="asc-with-load-balancing-simulation">
+<h3>ASC with Load Balancing Simulation<a class="headerlink" href="#asc-with-load-balancing-simulation" title="Link to this heading">#</a></h3>
+<p>The only differences between <code class="docutils literal notranslate"><span class="pre">plate-discharge_base.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">plate-discharge_asc-lb.prm</span></code> are the usage of the ASC method with the load balancing, and the name of the folder for outputs.</p>
+<section id="id4">
+<h4>Model Parameters<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>Here, we use the ASC with the dynamic load balancing, using the same load balancing parameters. In this case, the mobility status of the cells from the ASC will influence the weight, i.e. the computational contribution of the cell in the load balancing evaluation. The additional parameters for <cite>active</cite> cells <cite>weight factor</cite> is <span class="math notranslate nohighlight">\(0.7\)</span>, and the <cite>inactive</cite> cells <cite>weight factor</cite> is <span class="math notranslate nohighlight">\(0.5\)</span>, while the mobile cells always have a fixed weight factor of <span class="math notranslate nohighlight">\(1\)</span>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = constant_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  subsection adaptive sparse contacts
+    set enable adaptive sparse contacts = true
+    set granular temperature threshold  = 1e-4
+    set solid fraction threshold        = 0.4
+  end
+  subsection load balancing
+    set load balance method     = dynamic_with_sparse_contacts
+    set threshold               = 0.5
+    set dynamic check frequency = 2500
+    set active weight factor    = 0.7
+    set inactive weight factor  = 0.5
+  end
+end
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="running-the-simulations">
+<h2>Running the Simulations<a class="headerlink" href="#running-the-simulations" title="Link to this heading">#</a></h2>
+<p>Simulations can be launched individually with the executable <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> and the parameter files, while saving the display in the terminal in a log file.
+To make things easier a script is provided to run all the simulations in a sequence from the <code class="docutils literal notranslate"><span class="pre">dem/3d-plate-discharge/</span></code> folder.</p>
+<p>In order to run the simulations for the performance analysis, you can use the following command:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>bash run-performance-simulations.sh
+</pre></div>
+</div>
+<p>Which corresponds to:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">simulations</span><span class="o">=(</span><span class="s2">&quot;base&quot;</span><span class="w"> </span><span class="s2">&quot;asc&quot;</span><span class="w"> </span><span class="s2">&quot;lb&quot;</span><span class="w"> </span><span class="s2">&quot;asc-lb&quot;</span><span class="o">)</span>
+
+<span class="nb">cd</span><span class="w"> </span>performance/
+
+<span class="k">for</span><span class="w"> </span>sim<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">simulations</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">do</span>
+<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running the </span><span class="nv">$sim</span><span class="s2"> simulation&quot;</span>
+<span class="w">   </span><span class="nb">time</span><span class="w"> </span>mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">8</span><span class="w"> </span>lethe-particles<span class="w"> </span>plate-discharge_<span class="nv">$sim</span>.prm<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>log_<span class="nv">$sim</span>.out
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>Or you can run the simulations in the <code class="docutils literal notranslate"><span class="pre">performance/</span></code> folder with the following commands:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>time mpirun -np 8 lethe-particles plate-discharge_base.prm | tee log_base.out
+time mpirun -np 8 lethe-particles plate-discharge_asc.prm | tee log_asc.out
+time mpirun -np 8 lethe-particles plate-discharge_lb.prm | tee log_lb.out
+time mpirun -np 8 lethe-particles plate-discharge_asc-lb.prm | tee log_asc-lb.out
+</pre></div>
+</div>
+<p>In order to run the simulations for the data analysis, you can use the following script:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>bash run-data-simulations.sh
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Running the simulations for the performance analysis using 8 cores takes between 25 and 45 minutes per simulation, for a total of around 2 hours. Running the simulations for data analysis takes a few minutes longer per simulation.</p>
+</div>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
+<p>The simulations should look like the following video:</p>
+<p align="center"><iframe width="800" height="450" src="https://www.youtube.com/embed/awRXtTLyM94?si=E1uzfONZ1QhQuN2T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><section id="post-processing-code">
+<h3>Post-Processing Code<a class="headerlink" href="#post-processing-code" title="Link to this heading">#</a></h3>
+<p>The data is extracted with the Lethe PyVista tool and post-processed with custom functions in the files <code class="docutils literal notranslate"><span class="pre">pyvista_utilities.py</span></code> and <code class="docutils literal notranslate"><span class="pre">log_utilities.py</span></code>.
+Extraction, post-processing and plotting are automated in the script <code class="docutils literal notranslate"><span class="pre">plate-discharge_post-processing.py</span></code>:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 plate-discharge_post-processing.py
+</pre></div>
+</div>
+<p>The script will generate the figures. If you want to modify the path or the filenames, you have to modify the script.</p>
+</section>
+<section id="performance-analysis">
+<h3>Performance Analysis<a class="headerlink" href="#performance-analysis" title="Link to this heading">#</a></h3>
+<p>The log files (outputs displayed in the terminal) are read to extract the simulation and wall times.</p>
+<p>The speedup is calculated with the baseline case as the reference. The results are plotted in the following figure, where the solid lines show the walltime during the simulation, the dashed lines show the speedup, and the points show to total speedup.</p>
+<figure class="align-center" id="plate-discharge-performance-graph">
+<img alt="Performance results" src="../../../_images/performance.png" />
+<figcaption>
+<p><span class="caption-text">The walltime during the simulations (solid line) and the speedup (dashed line) for the performance enhancement methods with the Adaptive Sparse Contacts (ASC) and the Load Balancing (LB) compared to the baseline case.</span><a class="headerlink" href="#plate-discharge-performance-graph" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The slight oscillations of the speedup are caused by the scientific notation format of the walltime by the timer feature after <span class="math notranslate nohighlight">\(1000 \ \text{s}\)</span>. The walltimes are attenuated by the moving average, but the division operation for the speedup accentuates the lack of time precision.</p>
+</div>
+<p>The load balancing method helps the performance of the simulation from the start, since the particles move within the domain during the discharge. The load balancing allows to distribute the particles, and therefore all their related computations, more evenly between the cores. Once the discharge of the particles is mostly done and only a few particles are still falling from the top part, the performance gain brought by the load balancing stays constant since the load across the cores is already balanced.
+The adaptive sparse contacts method helps the performance of the simulation mostly when there are large areas of motionless particles. As it was showed in the video, those areas are located in the core of the pile at the top and at the corners of settled particles below the plate. This explains why the ASC gives a limited performance gain at the start of the simulation (only from the core of the pile) and an increasing gain through the simulation (accumulation of motionless particles at the bottom part). Given that both methods help the computation performance at different times, their combination gives the best performance as observed.</p>
+</section>
+<section id="angle-of-repose">
+<h3>Angle of Repose<a class="headerlink" href="#angle-of-repose" title="Link to this heading">#</a></h3>
+<p>The angles of repose are calculated from the data extracted from the VTU output files. The 2 angles of repose are calculated from the pile of particles on the plate for comparison with the literature, and from the piles formed by the discharge for curiosity.</p>
+<p>The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate for the pile at the top of the plate and for the 2 piles at the bottom. The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from <span class="math notranslate nohighlight">\(-0.35 \ \text{m}\)</span> to <span class="math notranslate nohighlight">\(-0.15 \ \text{m}\)</span> for the left angles and from <span class="math notranslate nohighlight">\(0.15 \ \text{m}\)</span> to :math`0.35 text{m}` for the right angles along the x-axis. The following figure shows the areas where the angles are calculated. The areas where the angle of repose is calculated for the left (blue) and right (red) sides of the piles.</p>
+<figure class="align-center" id="plate-discharge-angle-areas">
+<img alt="Angle of repose areas" src="../../../_images/angle-areas.png" />
+</figure>
+<p>In order to show how the results may fluctuate, we show the angle obtained from the particle positions from the left and the right sides of the top pile (left plot) and of the 2 piles at bottom (right plot) as solid lines.
+The given angles of repose are the linear regressions from the positions with absolute x coordinates.</p>
+<figure class="align-center" id="plate-discharge-angle-graph">
+<img alt="Angle of repose results" src="../../../_images/angle-of-repose.png" />
+<figcaption>
+<p><span class="caption-text">The angles of repose calculated from the simulation data. The solid lines are the angles computed from the highest particles on both side, while the shaded areas represent the angles for the left and the right.</span><a class="headerlink" href="#plate-discharge-angle-graph" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>According to Zhou <em>et al.</em> <a class="footnote-reference brackets" href="#zhou2002" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, the angle of repose for this type of configuration is calculated with the following theoretical formula:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\phi = 68.61 \mu_{\text{f,pp}}^{0.27} \mu_{\text{f,pw}}^{0.22} \mu_{\text{r,pp}}^{0.06} \mu_{\text{r,pw}}^{0.12} d_p^{-0.2}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_{\text{f,pp}}\)</span> and <span class="math notranslate nohighlight">\(\mu_{\text{f,pw}}\)</span> are the friction coefficients of the particle-particle and particle-wall interactions, respectively, <span class="math notranslate nohighlight">\(\mu_{\text{r,pp}}\)</span> and <span class="math notranslate nohighlight">\(\mu_{\text{r,pw}}\)</span> are the rolling friction coefficients, and <span class="math notranslate nohighlight">\(d_p\)</span> is the particle diameter.</p>
+<p>The meaning of the rolling friction coefficient <span class="math notranslate nohighlight">\(\mu_{\text{r}}^{\text{eqt}}\)</span> by the authors <a class="footnote-reference brackets" href="#zhou2002" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is different than <span class="math notranslate nohighlight">\(\mu_{\text{r}}^{\text{Lethe}}\)</span> found in Lethe. They express the coefficient as a length in the <a class="reference external" href="../../../theory/multiphase/cfd_dem/dem.html#rolling-friction-models">rolling friction model</a>. However, they also use the constant torque, therefore the rolling friction coefficient in Lethe has to be multiplied by the effective radius of the particle for the results comparison:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mu_{\text{r}}^{\text{eqt}} = \mu_{\text{r}}^{\text{Lethe}}d_p\]</div>
+</div>
+<p>The theoretical angle of repose is <span class="math notranslate nohighlight">\(19.7^\text{o}\)</span>. We did not compute the mean of the angles of repose in order to compare the results with the literature since, even after <span class="math notranslate nohighlight">\(15 \ \text{s}\)</span> of simulation, some particles are still falling from the top. The angles are still not converging to a value. We can however state that the angles are close to the literature.</p>
+<p>Here we can see that the top angles from all simulations are in a range of around <span class="math notranslate nohighlight">\(\pm 1.5^\text{o}\)</span> from the baseline case, which we consider as a good agreement. We can clearly see a trend in the bottom angles using the ASC. The angles of repose are about <span class="math notranslate nohighlight">\(2^\text{o}\)</span> below the baseline and load balancing cases. It seems to be caused by the accumulation of particles at the bottom of the piles.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="zhou2002" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id5">2</a>,<a role="doc-backlink" href="#id6">3</a>)</span>
+<p>Y.C. Zhou, B.H. Xu, A.B. Yu, P. Zulli, “An experimental and numerical study of the angle of repose of coarse spheres,” <em>Powder Technology</em>, vol. 125, pp. 45-54, 2002. doi: <a class="reference external" href="https://doi.org/10.1016/S0032-5910(01)00520-4">10.1016/S0032-5910(01)00520-4</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../bunny-drill/bunny-drill.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Bunny Drill</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../granular-dam-break/granular-dam-break.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Granular Dam-Break</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Plate Discharge</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
+<li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
+<li><a class="reference internal" href="#dem-parameter-files">DEM Parameter files</a><ul>
+<li><a class="reference internal" href="#baseline-case-simulation">Baseline case simulation</a><ul>
+<li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>
+<li><a class="reference internal" href="#mesh">Mesh</a></li>
+<li><a class="reference internal" href="#solid-objects">Solid Objects</a></li>
+<li><a class="reference internal" href="#lagrangian-physical-properties">Lagrangian Physical Properties</a></li>
+<li><a class="reference internal" href="#insertion-info">Insertion Info</a></li>
+<li><a class="reference internal" href="#floating-walls">Floating Walls</a></li>
+<li><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
+<li><a class="reference internal" href="#timer">Timer</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asc-simulation">ASC Simulation</a><ul>
+<li><a class="reference internal" href="#id2">Model Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#load-balancing-simulation">Load Balancing Simulation</a><ul>
+<li><a class="reference internal" href="#id3">Model Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asc-with-load-balancing-simulation">ASC with Load Balancing Simulation</a><ul>
+<li><a class="reference internal" href="#id4">Model Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-the-simulations">Running the Simulations</a></li>
+<li><a class="reference internal" href="#results">Results</a><ul>
+<li><a class="reference internal" href="#post-processing-code">Post-Processing Code</a></li>
+<li><a class="reference internal" href="#performance-analysis">Performance Analysis</a></li>
+<li><a class="reference internal" href="#angle-of-repose">Angle of Repose</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+<map id="CahnHilliardNoFilter" name="CahnHilliardNoFilter">
+<area shape="rect" id="node1" title="Used as a default when no filter is applied to the phase fraction." alt="" coords="12,80,165,107"/>
+<area shape="rect" id="node2" href="$classCahnHilliardFilterBase.html" title="Filter phase fraction according to the selected filtering method." alt="" coords="5,5,172,32"/>
+</map>

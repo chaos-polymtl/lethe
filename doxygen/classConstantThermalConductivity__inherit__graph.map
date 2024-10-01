@@ -1,0 +1,5 @@
+<map id="ConstantThermalConductivity" name="ConstantThermalConductivity">
+<area shape="rect" id="node1" title="Constant thermal conductivity." alt="" coords="5,155,221,181"/>
+<area shape="rect" id="node2" href="$classThermalConductivityModel.html" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="14,80,213,107"/>
+<area shape="rect" id="node3" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="28,5,199,32"/>
+</map>

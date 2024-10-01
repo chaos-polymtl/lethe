@@ -1,0 +1,4 @@
+<map id="HeatTransferAssemblerDCDDstabilization&lt; dim &gt;" name="HeatTransferAssemblerDCDDstabilization&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the Discontinuity&#45;Capturing Directional Dissipation stabilization term for the h..." alt="" coords="5,95,299,136"/>
+<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="49,5,255,47"/>
+</map>

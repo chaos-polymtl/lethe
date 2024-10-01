@@ -1,0 +1,1165 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Post-processing" href="post_processing.html" /><link rel="prev" title="Non-linear Solver" href="non-linear_solver_control.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Physical Properties - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/apple_arm.html">Installation on Apple ARM (M1 or M2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../parameters.html">Parameters Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="cfd.html">General, CFD and Multiphysics</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/timer.html">Timer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/detector_parameters.html">Detector Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/fem_reconstruction.html">FEM Reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/parameter_tuning.html">Parameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/rpt_parameters.html">RPT Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/laser-heating/laser-heating.html">Laser Heating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/laser-melt-pool/laser-melt-pool.html">Laser Melt Pool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html">Tracer through CAD Junction in Simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.html">Rotating Drum with Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/plate-discharge/plate-discharge.html">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html">Photon Count Calculation in a Cylindrical Vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html">Tuning Count Calculation Model Parameters with NOMAD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/particle-fem-reconstruction/particle-fem-reconstruction.html">Particle FEM Reconstruction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../theory/theory.html">Theory</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd_dem/cfd_dem.html">CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/dem.html">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/updating-test-results.html">Updating Test Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="physical-properties">
+<h1>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lethe supports single phase, two phase (using VOF) and conjugate simulations. This is managed using the fluid and solid subsections.</p>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids      = 1
+  set reference temperature = 0
+  subsection fluid 0
+    # Rheology
+    set rheological model          = newtonian
+    set kinematic viscosity        = 1
+
+    # Density
+    set density model              = constant
+    set density                    = 1
+
+    # Specific heat
+    set specific heat model        = constant
+    set specific heat              = 1
+
+    # Thermal conductivity
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1
+
+    # Thermal expansion
+    set thermal expansion model    = constant
+    set thermal expansion          = 0
+
+    # Tracer diffusivity
+    set tracer diffusivity model   = constant
+    set tracer diffusivity         = 0
+  end
+
+  set number of solids = 0
+
+  set number of material interactions = 1 #by default it is set to 0
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id              = 0
+      set second fluid id             = 1
+
+      # Surface tension
+      set surface tension model                       = constant
+      set surface tension coefficient                 = 0
+      set reference state temperature                 = 0
+      set temperature-driven surface tension gradient = 0
+      set liquidus temperature                        = 0
+      set solidus temperature                         = 0
+
+      # Mobility Cahn-Hilliard
+      set cahn hilliard mobility model    = constant
+      set cahn hilliard mobility constant = 1e-7
+    end
+
+    # if fluid-solid interaction
+    subsection fluid-solid interaction
+      set fluid id                    = 0
+      set solid id                    = 0
+
+      # Surface tension
+      set surface tension model                       = constant
+      set surface tension coefficient                 = 0
+      set reference state temperature                 = 0
+      set temperature-driven surface tension gradient = 0
+      set liquidus temperature                        = 0
+      set solidus temperature                         = 0
+    end
+  end
+end
+</pre></div>
+</div>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">fluids</span></code> parameter controls the number of fluids in the simulation. This parameter is set to <code class="docutils literal notranslate"><span class="pre">1</span></code> except in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a> .</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">temperature</span></code> parameter specifies the reference temperature used in the calculation of some physical properties or the thermal expansion force.</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> parameter sets the choice of rheological model. The choices are between <code class="docutils literal notranslate"><span class="pre">newtonian</span></code>, <code class="docutils literal notranslate"><span class="pre">power-law</span></code>, <code class="docutils literal notranslate"><span class="pre">carreau</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. For more details on the rheological models, see  <a class="reference internal" href="#id4">Rheological Models</a> .</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> parameter is the kinematic viscosity of the newtonian fluid in units of <span class="math notranslate nohighlight">\(\text{Length}^{2} \cdot \text{Time}^{-1}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{m}^{2} \cdot \text{s}^{-1}\)</span>. This viscosity is only used when <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">newtonian</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">density</span> <span class="pre">model</span></code> specifies the model used to calculate the density. At the moment, a <code class="docutils literal notranslate"><span class="pre">constant</span></code> density and an <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> model are supported. For more details on the density models, see <a class="reference internal" href="#id5">Density Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">density</span></code> parameter is the constant density of the fluid in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Length}^{-3}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">model</span></code> specifies the model used to calculate the specific heat. At the moment, only a constant specific heat is supported.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span></code> parameter is the constant specific heat of the fluid in units of <span class="math notranslate nohighlight">\(\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}\)</span> .</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">model</span></code> specifies the model used to calculate the thermal conductivity. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span></code> thermal conductivity are available. For more details on the thermal conductivity models, see <a class="reference internal" href="#id6">Thermal Conductivity Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span></code> parameter is the thermal conductivity coefficient of the fluid with units of <span class="math notranslate nohighlight">\(\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}\)</span>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">model</span></code> specifies the model used to calculate the thermal expansion coefficient. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> thermal expansion are supported. For more details on the thermal expansion models, see <a class="reference internal" href="#thermal-expansion-models">Thermal Expansion Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span></code> parameter is the thermal expansion coefficient of the fluid with dimension of <span class="math notranslate nohighlight">\(\text{Temperature}^{-1}\)</span>. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[{\bf{F_{B}}} = -\beta {\bf{g}} (T-T_\text{ref})\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(F_B\)</span> denotes the buoyant force source term, <span class="math notranslate nohighlight">\(\beta\)</span> is the thermal expansion coefficient, <span class="math notranslate nohighlight">\(T\)</span> is temperature, and <span class="math notranslate nohighlight">\(T_\text{ref}\)</span> is the reference temperature. This is only used when a constant thermal expansion model is used.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based <span class="math notranslate nohighlight">\(\tanh\)</span> model are supported. The <code class="docutils literal notranslate"><span class="pre">immersed</span> <span class="pre">solid</span> <span class="pre">tanh</span></code> model is intended to be used with immersed solids with the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> executable as a way to set diffusivity inside solids as well (described more in <a class="reference internal" href="#immersed-solid-models">Immersed Solid Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span></code> parameter is the diffusivity coefficient of the tracer in units of <span class="math notranslate nohighlight">\(\text{Length}^{2} \cdot \text{Time}^{-1}\)</span> . In SI, this is <span class="math notranslate nohighlight">\(\text{m}^{2} \cdot \text{s}^{-1}\)</span>.</p></li>
+</ul>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">solids</span></code> parameter controls the number of solid regions. Solid regions are currently only implemented for <a class="reference internal" href="#conjugate-heat-transfer">Conjugate Heat Transfer</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">material</span> <span class="pre">interactions</span></code> parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in <a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a>.</p>
+<ul>
+<li><p>The material interaction <code class="docutils literal notranslate"><span class="pre">type</span></code> can either be <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">fluid-solid</span></code>.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> subsection we define the pair of fluids and their physical properties.</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the first fluid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">second</span> <span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the second fluid.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">second</span> <span class="pre">fluid</span> <span class="pre">id</span></code> should be greater than the <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">fluid</span> <span class="pre">id</span></code>.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code> specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, <code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> models are supported. For more details on the surface tension models, see <a class="reference internal" href="#id8">Surface Tension Models</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> parameter is a constant surface tension coefficient of the two interacting fluids in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Time}^{-2}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{N} \cdot \text{m}^{-1}\)</span>. The surface tension coefficient is used as defined in the Weber number (<span class="math notranslate nohighlight">\(We\)</span>):</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(Re\)</span> is the Reynolds number, <span class="math notranslate nohighlight">\(\mu_\text{ref}\)</span> and <span class="math notranslate nohighlight">\(u_\text{ref}\)</span> are some reference viscosity and velocity characterizing the flow problem, and <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient.</p>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">state</span> <span class="pre">temperature</span></code> parameter is the temperature of the reference state at which the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> is evaluated. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">temperature-driven</span> <span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">gradient</span></code> parameter is the surface tension gradient with respect to the temperature of the two interacting fluids in units of <span class="math notranslate nohighlight">\(\text{Mass} \cdot \text{Time}^{-2} \cdot \text{Temperature}^{-1}\)</span>. In SI, this is <span class="math notranslate nohighlight">\(\text{N} \cdot \text{m}^{-1} \cdot \text{K}^{-1}\)</span>. This parameter is used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> parameters are used in the calculation of the surface tension using the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> surface tension model (see <a class="reference internal" href="#id8">Surface Tension Models</a>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">model</span></code> specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a <code class="docutils literal notranslate"><span class="pre">constant</span></code> mobility and a <code class="docutils literal notranslate"><span class="pre">quartic</span></code> mobility. The reader is refered to <a class="reference internal" href="cahn_hilliard.html"><span class="doc">Cahn-Hilliard</span></a> for more details.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">coefficient</span></code> parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are <span class="math notranslate nohighlight">\(\text{Length}^{2} \cdot \text{Time}^{-1}\)</span>.</p></li>
+</ul>
+</li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">fluid-solid</span></code> subsection we define the fluid-solid pair and their physical properties.</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span></code> is the id of the fluid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solid</span> <span class="pre">id</span></code> is the id of the solid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>  and <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> are the same as described in the <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> subsection above.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default values for all physical properties models in Lethe is <code class="docutils literal notranslate"><span class="pre">constant</span></code>. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.</p>
+</div>
+<section id="material-physical-property-models">
+<h2>Material Physical Property Models<a class="headerlink" href="#material-physical-property-models" title="Link to this heading">#</a></h2>
+<section id="two-phase-simulations">
+<span id="id1"></span><h3>Two Phase Simulations<a class="headerlink" href="#two-phase-simulations" title="Link to this heading">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Two phase simulations require that either <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">VOF</span> <span class="pre">=</span> <span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">=</span> <span class="pre">true</span></code> in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection. By convention, air is usually the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> and the other fluid of interest is the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
+</div>
+<p>For two phases, the properties are defined for each fluid. Default values are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+set number of fluids = 2
+    subsection fluid 0
+       set density              = 1
+       set kinematic viscosity  = 1
+       set specific heat        = 1
+       set thermal conductivity = 1
+       set tracer diffusivity   = 0
+    end
+    subsection fluid 1
+       set density              = 1
+       set kinematic viscosity  = 1
+       set specific heat        = 1
+       set thermal conductivity = 1
+       set tracer diffusivity   = 0
+    end
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">fluids</span> <span class="pre">=</span> <span class="pre">2</span></code> is required for a free surface simulation, otherwise an error will be thrown in the terminal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">0</span></code> indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a> subsection), and correspondingly <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is located where the phase indicator = 1.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.</p>
+</div>
+</section>
+<section id="conjugate-heat-transfer">
+<span id="id2"></span><h3>Conjugate Heat Transfer<a class="headerlink" href="#conjugate-heat-transfer" title="Link to this heading">#</a></h3>
+<p>Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">solids</span></code> must be set to 1. By default, the region with the <code class="docutils literal notranslate"><span class="pre">material_id=0</span></code> will be the fluid region whereas the region with <code class="docutils literal notranslate"><span class="pre">material_id=1</span></code> will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is an experimental feature. It has not been tested on a large range of application cases.</p>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    ...
+  end
+  set number of solids = 1
+  subsection solid 0
+    # Density
+    set density model              = constant
+    set density                    = 1
+
+    # Specific heat
+    set specific heat model        = constant
+    set specific heat              = 1
+
+    # Thermal conductivity
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="immersed-solid-models">
+<span id="id3"></span><h3>Immersed Solid Models<a class="headerlink" href="#immersed-solid-models" title="Link to this heading">#</a></h3>
+<p>Immersed solid models can be used to affect specific behavior to immersed solids when <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> is used. At the moment, such a model is only available for the <code class="docutils literal notranslate"><span class="pre">tracer</span></code> multiphysics, but additional physics will be included in the future.</p>
+<p>The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as in the transition regions.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> parameter sets which diffusivity model is used. The default model is <code class="docutils literal notranslate"><span class="pre">constant</span></code>, which uses a constant <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span></code>. The alternative is <code class="docutils literal notranslate"><span class="pre">immersed</span> <span class="pre">solid</span> <span class="pre">tanh</span></code>, whose parameters are defined as such, with <span class="math notranslate nohighlight">\(D\)</span> being the tracer diffusivity (outside and inside), <span class="math notranslate nohighlight">\(\lambda\)</span> being signed distance and <span class="math notranslate nohighlight">\(t\)</span> the thickness of the transition zone between both diffusivity values:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[D(\lambda) = D_\text{inside} + \left(D_\text{outside} - D_\text{inside}\right) \left( 0.5 + 0.5 \tanh \left(\frac{\lambda}{t}\right)\right)\]</div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+    set tracer diffusivity model = immersed solid tanh
+    subsection immersed solid tanh
+      set tracer diffusivity inside    = 1
+      set tracer diffusivity outside   = 1
+      set thickness                    = 1
+    end
+  end
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">inside</span></code> parameter represents the desired diffusivity inside of the solid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">outside</span></code> parameter represents the desired diffusivity outside of the solid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thickness</span></code> parameter represents thickness of the applied <span class="math notranslate nohighlight">\(\tanh\)</span> function.</p></li>
+</ul>
+</section>
+<section id="rheological-models">
+<span id="id4"></span><h3>Rheological Models<a class="headerlink" href="#rheological-models" title="Link to this heading">#</a></h3>
+<p>Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> parameter sets which rheological model you are using. The default <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span></code> is <code class="docutils literal notranslate"><span class="pre">newtonian</span></code>, which uses a constant <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set rheological model   = newtonian
+    set kinematic viscosity = 1.0
+  end
+end
+</pre></div>
+</div>
+<dl class="simple">
+<dt>The rheological model available options are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">newtonian</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">power-law</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">carreau</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase_change</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<section id="power-law-model">
+<h4>Power-Law Model<a class="headerlink" href="#power-law-model" title="Link to this heading">#</a></h4>
+<p>The power-law model is the simplest rheological model, using only 2 parameters</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\eta(\dot{\gamma}) = K \dot{\gamma}^{n-1}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\eta\)</span> is the <strong>kinematic viscosity</strong> and <span class="math notranslate nohighlight">\(\dot{\gamma}\)</span> is the local shear rate magnitude.</p>
+<a class="reference internal image-reference" href="../../_images/physical_properties_powerlaw.png"><img alt="../../_images/physical_properties_powerlaw.png" class="align-center" src="../../_images/physical_properties_powerlaw.png" style="width: 600px;" /></a>
+<p>When using the power-law model, the default values are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set rheological model   = power-law
+    subsection non newtonian
+      subsection power-law
+        set K               = 1.0
+        set n               = 0.5
+        set shear rate min  = 1e-3
+      end
+    end
+  end
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">K</span></code> parameter is a fluid consistency index. It represents the fluid viscosity for a local shear rate of <span class="math notranslate nohighlight">\(1.0\)</span>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">n</span></code> parameter is the flow behavior index. It sets the slope in the log-log <span class="math notranslate nohighlight">\(\eta = f(\dot{\gamma})\)</span> graph.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">shear</span> <span class="pre">rate</span> <span class="pre">min</span></code> parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a null shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.</p></li>
+</ul>
+</section>
+<section id="carreau-model">
+<h4>Carreau Model<a class="headerlink" href="#carreau-model" title="Link to this heading">#</a></h4>
+<p>The Carreau model is in reality the five parameter Carreau model:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\eta(\dot{\gamma}) =\eta_{\infty} + (\eta_0 - \eta_{\infty}) \left[ 1 + (\dot{\gamma}\lambda)^a\right]^{\frac{n-1}{a}}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\eta\)</span> is the <strong>kinematic viscosity</strong> and <span class="math notranslate nohighlight">\(\dot{\gamma}\)</span> is the shear rate.</p>
+<a class="reference internal image-reference" href="../../_images/physical_properties_carreau.png"><img alt="../../_images/physical_properties_carreau.png" class="align-center" src="../../_images/physical_properties_carreau.png" style="width: 600px;" /></a>
+<p>The parameters for the Carreau model are defined by the <code class="docutils literal notranslate"><span class="pre">carreau</span></code> subsection. The default values are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set rheological model   = carreau
+    subsection non newtonian
+      subsection carreau
+        set viscosity_0     = 1.0
+        set viscosity_inf   = 1.0
+        set a               = 2.0
+        set lambda          = 1.0
+        set n               = 0.5
+      end
+    end
+  end
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">viscosity_0</span></code> parameter represents the viscosity when the shear rate on the fluid tends to 0.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">viscosity_inf</span></code> parameter represents the viscosity when the shear rate on the fluid becomes large.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">a</span></code> is the Carreau parameter, generally set to 2.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">lambda</span></code> is the relaxation time associated to the fluid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">n</span></code> is a power parameter. It sets the slope in the log-log <span class="math notranslate nohighlight">\(\eta = f(\dot{\gamma})\)</span> graph just like in the power-law model.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Carreau model is only suitable for Newtonian and shear-thinning flows.</p>
+</div>
+</section>
+<section id="phase-change-model">
+<span id="rheological-phase-change-model"></span><h4>Phase-Change Model<a class="headerlink" href="#phase-change-model" title="Link to this heading">#</a></h4>
+<p>The phase change model is a simple rheological model in which the viscosity depends on the temperature. This model is used to model melting and freezing of components. The kinematic viscosity <span class="math notranslate nohighlight">\(\nu\)</span> is given by :</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\nu =   c^{*}_\text{p}  = \begin{cases} \nu_\text{s} &amp; \text{if} \; T&lt;T_\text{s} \\
+            \frac{T-T_\text{s}}{T_\text{l}-T_\text{s}} \nu_\text{l} + \left(1-\frac{T-T_\text{s}}{T_\text{l}-T_\text{s}}\right) \nu_\text{s} &amp; \text{if} \; T_\text{l}&gt;T&gt;T_\text{s}\\
+            \nu_\text{l} &amp; \text{if} \; T&gt;T_\text{l}
+            \end{cases}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and <span class="math notranslate nohighlight">\(T_\text{s}\)</span> are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occur over a phase change interval. Melting will occur between <span class="math notranslate nohighlight">\(T_\text{s}\)</span> and <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and solidification will occur between <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and <span class="math notranslate nohighlight">\(T_\text{s}\)</span>.</p>
+<p>This model is parameterized using the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection phase change
+  # Temperature of the liquidus
+  set liquidus temperature = 1
+
+  # Temperature of the solidus
+  set solidus temperature  = 0
+
+  # Viscosity of the liquid phase
+  set viscosity liquid     = 1
+
+  # Viscosity of the solid phase
+  set viscosity solid      = 1
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{s}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">viscosity</span> <span class="pre">liquid</span></code> is <span class="math notranslate nohighlight">\(\nu_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">viscosity</span> <span class="pre">solid</span></code> is <span class="math notranslate nohighlight">\(\nu_\text{s}\)</span></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The phase change subsection is used to parametrize <em>both</em> <code class="docutils literal notranslate"><span class="pre">rheological</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">phase_change</span></code> <em>and</em> <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">phase_change</span></code>. This prevents parameter duplication.</p>
+</div>
+</section>
+</section>
+<section id="density-models">
+<span id="id5"></span><h3>Density Models<a class="headerlink" href="#density-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports both <code class="docutils literal notranslate"><span class="pre">constant</span></code> and <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid’s density varies according the following state equation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\rho = \rho_\text{ref} + \psi p = \rho_\text{ref} + \frac{1}{R T} \ p\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\rho_\text{ref}\)</span> is the density of the fluid at the reference state, <span class="math notranslate nohighlight">\(\psi = \frac{1}{R T}\)</span> is the compressibility factor derived from the ideal gas law with <span class="math notranslate nohighlight">\(R= \frac{R_u}{M}\)</span> the specific gas constant (universal gas constant (<span class="math notranslate nohighlight">\(R_u\)</span>) divided by the molar mass of the gas (<span class="math notranslate nohighlight">\(M\)</span>)) and <span class="math notranslate nohighlight">\(T\)</span> the temperature of the gas, finally, <span class="math notranslate nohighlight">\(p\)</span> is the differential pressure between the reference state and the current state. This model is used for weakly compressible flows when temperature fluctuations’ influence on density can be neglected.</p>
+<p>This model is parametrized using the <code class="docutils literal notranslate"><span class="pre">isothermal_ideal_gas</span></code> subsection:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set density model = isothermal_ideal_gas
+    subsection isothermal_ideal_gas
+      set density_ref = 1.2
+      set R           = 287.05
+      set T           = 293.15
+    end
+  end
+end
+</pre></div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">density_ref</span></code> corresponds to <span class="math notranslate nohighlight">\(\rho_\text{ref}\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">R</span></code> corresponds to <span class="math notranslate nohighlight">\(R\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> corresponds to <span class="math notranslate nohighlight">\(T\)</span></p></li>
+</ul>
+<p>By default, parameters are set to the values of dry air evaluated under normal temperature and pressure conditions <span class="math notranslate nohighlight">\((20 \ \text{°C}\)</span>, <span class="math notranslate nohighlight">\(1 \ \text{atm})\)</span>.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>When defining the initial pressure condition in the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection (see <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a>), make sure to set it to <span class="math notranslate nohighlight">\(0\)</span>, as it represents the reference state for the calculated pressure. In solving the Navier-Stokes equations, the pressure is defined to within a constant. Therefore, it is more appropriate to interpret it as a differential pressure.</p>
+</div>
+</section>
+<section id="thermal-conductivity-models">
+<span id="id6"></span><h3>Thermal Conductivity Models<a class="headerlink" href="#thermal-conductivity-models" title="Link to this heading">#</a></h3>
+<p>Constant, linear and phase_change thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that that the thermal conductivity <span class="math notranslate nohighlight">\(k\)</span> varies linearly with the temperature, taking the following form:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[k = k_{A,0}+ k_{A,1} T\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(k_{A,0}\)</span> and <span class="math notranslate nohighlight">\(k_{A,1}\)</span> are constants and <span class="math notranslate nohighlight">\(T\)</span> is the temperature. This enables a linear variation of the thermal conductivity as a function of the temperature.</p>
+<p id="thermal-conductivity-phase-change-model">In the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> thermal conductivity model, two different values (<code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">liquid</span></code>, and <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">solid</span></code>) are required for calculating the thermal conductivities of the liquid and solid phases, respectively. For the liquid phase (<span class="math notranslate nohighlight">\(T&gt;T_\text{liquidus}\)</span>), the <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">liquid</span></code> is applied, while for the solid phase (<span class="math notranslate nohighlight">\(T&lt;T_\text{solidus}\)</span>), the model uses the <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">solid</span></code>. In the mushy zone between <span class="math notranslate nohighlight">\(T_\text{solidus}\)</span> and <span class="math notranslate nohighlight">\(T_\text{liquidus}\)</span>, the thermal conductivity is equal to:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[k = \alpha_\text{l} k_\text{l} + (1 - \alpha_\text{l}) k_\text{s}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(k_\text{l}\)</span>, <span class="math notranslate nohighlight">\(k_\text{s}\)</span> and  <span class="math notranslate nohighlight">\(\alpha_\text{l}\)</span> denote thermal conductivities of the liquid and solid phases and the liquid fraction.</p>
+<p>This model is parameterized using the following section:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection phase change
+  # Temperature of the liquidus
+  set liquidus temperature = 1
+
+  # Temperature of the solidus
+  set solidus temperature  = 0
+
+  # Thermal conductivity of the liquid phase
+  set thermal conductivity liquid = 1
+
+  # Thermal conductivity of the solid phase
+  set thermal conductivity solid  = 1
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{s}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">liquid</span></code> is <span class="math notranslate nohighlight">\(k_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">solid</span></code> is <span class="math notranslate nohighlight">\(k_\text{s}\)</span></p></li>
+</ul>
+</section>
+<section id="specific-heat-models">
+<span id="specific-heat-phase-change-model"></span><h3>Specific Heat Models<a class="headerlink" href="#specific-heat-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports two types of specific heat models. Setting <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat=constant</span></code> sets a constant specific heat. Lethe also supports a <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais &amp; Ilinca <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a>. This approach defines the specific heat <span class="math notranslate nohighlight">\(C_\text{p}\)</span> as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[C_\text{p} = \frac{H(T)-H(T_0)}{T-T_0}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(T\)</span> is the temperature, <span class="math notranslate nohighlight">\(T_0\)</span> is the temperature at the previous time and <span class="math notranslate nohighlight">\(H(T)\)</span> is the enthalpy, as a function of the temperature, to be:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[H(T) = H_0 + \int_{T_0}^{T} c^{*}_\text{p} (T^*) dT\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(H_0\)</span> is a reference enthalpy, taken to be 0, and <span class="math notranslate nohighlight">\(c^{*}_\text{p}\)</span> is:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}c^{*}_\text{p}  = \begin{cases} C_\text{p,s} &amp; \text{if} \; T&lt;T_\text{s}\\
+            \frac{C_\text{p,s}+C_\text{p,l}}{2}+\frac{h_\text{l}}{T_\text{l}-T_\text{s}} &amp; \text{if} \; T\in[T_\text{s},T_\text{l}]\\
+            C_\text{p,l} &amp; \text{if} \; T&gt;T_\text{l}
+            \end{cases}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(C_\text{p,s}\)</span> and <span class="math notranslate nohighlight">\(C_\text{p,l}\)</span> are the solid and liquid specific heat, respectively. <span class="math notranslate nohighlight">\(h_\text{l}\)</span> is the latent enthalpy (enthalpy related to the phase change), <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and <span class="math notranslate nohighlight">\(T_\text{s}\)</span> are the liquidus and solidus temperature. The underlying hypothesis of this model is that the melting and the solidification occurs over a phase change interval. Melting will occur between <span class="math notranslate nohighlight">\(T_\text{s}\)</span> and <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and solidification will occur between <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and <span class="math notranslate nohighlight">\(T_\text{s}\)</span>.</p>
+<p>This model is parameterized using the following section:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection phase change
+  # Enthalpy of the phase change
+  set latent enthalpy      = 1
+
+  # Temperature of the liquidus
+  set liquidus temperature = 1
+
+  # Temperature of the solidus
+  set solidus temperature  = 0
+
+  # Specific heat of the liquid phase
+  set specific heat liquid = 1
+
+  # Specific heat of the solid phase
+  set specific heat solid  = 1
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">latent</span> <span class="pre">enthalpy</span></code> is the latent enthalpy of the phase change: <span class="math notranslate nohighlight">\(h_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{s}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">liquid</span></code> is <span class="math notranslate nohighlight">\(C_\text{p,l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">solid</span></code> is <span class="math notranslate nohighlight">\(C_\text{p,s}\)</span></p></li>
+</ul>
+</section>
+<section id="thermal-expansion-models">
+<span id="thermal-expansion-phase-change-model"></span><h3>Thermal Expansion Models<a class="headerlink" href="#thermal-expansion-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports two types of thermal expansion heat models. Setting <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">model=constant</span></code> sets a constant thermal expansion. Lethe also supports a <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> thermal expansion model. This model can simulate the melting and solidification of a material with natural convection. It works by defining a different value of the thermal expansion coefficient depending on the value of the temperature:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\beta = \begin{cases} \beta_\text{s} &amp; \text{if}\;T \leq T_\text{l}\\
+            \beta_\text{l} &amp; \text{if}\;T &gt; T_\text{l}
+            \end{cases}\end{split}\]</div>
+</div>
+<p>This model is parameterized using the following section:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection phase change
+  # Temperature of the liquidus
+  set liquidus temperature = 1
+
+  # Temperature of the solidus
+  set solidus temperature  = 0
+
+  # Thermal expansion of the liquid phase
+  set thermal expansion liquid = 1
+
+  # Thermal expansion of the solid phase
+  set thermal expansion solid  = 0
+end
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> is <span class="math notranslate nohighlight">\(T_\text{s}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">liquid</span></code> is <span class="math notranslate nohighlight">\(\beta_\text{l}\)</span></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">solid</span></code> is <span class="math notranslate nohighlight">\(\beta_\text{s}\)</span></p></li>
+</ul>
+</section>
+<section id="phase-change">
+<h3>Phase Change<a class="headerlink" href="#phase-change" title="Link to this heading">#</a></h3>
+<p>The current section recapitulates the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection.
+Snippets of this subsection can be found across the different physical property models’ descriptions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection phase change
+  set liquidus temperature = 1
+  set solidus temperature  = 0
+
+  # Rheology
+  set viscosity liquid = 1
+  set viscosity solid  = 1
+
+  # Specific heat
+  set latent enthalpy      = 1
+  set specific heat liquid = 1
+  set specific heat solid  = 1
+
+  # Thermal conductivity
+  set thermal conductivity liquid = 1
+  set thermal conductivity solid  = 1
+
+  # Thermal expansion
+  set thermal expansion liquid = 1
+  set thermal expansion solid  = 0
+
+  # Darcy penalization
+  set Darcy penalty liquid = 0
+  set Darcy penalty solid  = 0
+end
+</pre></div>
+</div>
+<p>The phase change is modelled with the underlying hypothesis that melting and solidification occur over a phase change interval. Melting occurs between <span class="math notranslate nohighlight">\(T_\text{s}\)</span> and <span class="math notranslate nohighlight">\(T_\text{l}\)</span>, respectively the <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> and the <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code>. Analogously, solidification occurs between <span class="math notranslate nohighlight">\(T_\text{l}\)</span> and <span class="math notranslate nohighlight">\(T_\text{s}\)</span>.</p>
+<ul class="simple">
+<li><p>Rheology (see <a class="reference internal" href="#rheological-phase-change-model">rheological phase change model</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">viscosity</span> <span class="pre">liquid</span></code>: kinematic viscosity of the liquid phase <span class="math notranslate nohighlight">\((\nu_\text{l})\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">viscosity</span> <span class="pre">solid</span></code>: kinematic viscosity of the solid phase <span class="math notranslate nohighlight">\((\nu_\text{s})\)</span></p></li>
+</ul>
+</li>
+<li><p>Specific heat (see <a class="reference internal" href="#specific-heat-phase-change-model">specific heat phase change model</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">latent</span> <span class="pre">enthalpy</span></code>: latent enthalpy of the phase change <span class="math notranslate nohighlight">\((h_\text{l})\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">liquid</span></code>: specific heat of the liquid phase <span class="math notranslate nohighlight">\((C_\text{p,l})\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">specific</span> <span class="pre">heat</span> <span class="pre">solid</span></code>: specific heat of the solid phase <span class="math notranslate nohighlight">\((C_\text{p,s})\)</span></p></li>
+</ul>
+</li>
+<li><p>Thermal conductivity (see <a class="reference internal" href="#thermal-conductivity-phase-change-model">thermal conductivity phase change model</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">liquid</span></code>: thermal conductivity of the liquid phase <span class="math notranslate nohighlight">\((k_\text{l})\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">conductivity</span> <span class="pre">solid</span></code>: thermal conductivity of the solid phase <span class="math notranslate nohighlight">\((k_\text{s})\)</span></p></li>
+</ul>
+</li>
+<li><p>Thermal expansion (see <a class="reference internal" href="#thermal-expansion-phase-change-model">thermal expansion phase change model</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">liquid</span></code>: thermal expansion of the liquid phase <span class="math notranslate nohighlight">\((\beta_\text{l})\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal</span> <span class="pre">expansion</span> <span class="pre">solid</span></code>: thermal expansion of the solid phase <span class="math notranslate nohighlight">\((\beta_\text{s})\)</span></p></li>
+</ul>
+</li>
+<li><p>Darcy penalization (see <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/velocity_source.html#darcy-penalization">Darcy penalization</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>: Darcy penalty coefficient for the liquid phase</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code>: Darcy penalty coefficient for the solid phase</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="interface-physical-property-models">
+<h2>Interface Physical Property Models<a class="headerlink" href="#interface-physical-property-models" title="Link to this heading">#</a></h2>
+<section id="surface-tension-models">
+<span id="id8"></span><h3>Surface Tension Models<a class="headerlink" href="#surface-tension-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports three types of surface tension models: <code class="docutils literal notranslate"><span class="pre">constant</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. A <code class="docutils literal notranslate"><span class="pre">constant</span></code> surface tension model assumes a constant value of surface tension, while a <code class="docutils literal notranslate"><span class="pre">linear</span></code> surface tension assumes that the surface tension evolves linearly with the temperature:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma(T) = \sigma_0 + \frac{d\sigma}{dT} (T-T_0)\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_0\)</span> is the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> evaluated at <code class="docutils literal notranslate"><span class="pre">reference</span> <span class="pre">state</span> <span class="pre">temperature</span></code> <span class="math notranslate nohighlight">\(T_0\)</span> and <span class="math notranslate nohighlight">\(\frac{d\sigma}{dT}\)</span> is the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">gradient</span></code> with respect to the temperature <span class="math notranslate nohighlight">\(T\)</span>.</p>
+<p>For problems treating solid-liquid phase change, the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model is intended to apply the surface tension force only when the fluid is liquid such that:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma(T) =
+  \begin{cases}
+      0 &amp;\quad\text{if}\; T&lt;T_\mathrm{s}\\
+      \alpha_\mathrm{l}\left(\sigma_0 + \dfrac{d\sigma}{dT} (T-T_0)\right) &amp;\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+      \sigma_0 + \dfrac{d\sigma}{dT} (T-T_0) &amp;\quad\text{if}\; T_\mathrm{l} &lt;T
+  \end{cases}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(T_\mathrm{s}\)</span> and <span class="math notranslate nohighlight">\(T_\mathrm{l}\)</span> correspond to the <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">material</span> <span class="pre">interaction</span></code> subsection, and <span class="math notranslate nohighlight">\(\alpha_{\mathrm{l}}\)</span> is the liquid fraction. The latter is defined as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\alpha_{\mathrm{l}} =
+  \begin{cases}
+      0 &amp;\quad\text{if}\; T&lt;T_\mathrm{s}\\
+      \dfrac{T-T_\mathrm{s}}{T_\mathrm{l}-T_\mathrm{s}} &amp;\quad\text{if}\; T_\mathrm{l}\le T \le T_\mathrm{s}\\
+      1 &amp;\quad\text{if}\; T_\mathrm{l} &lt;T
+  \end{cases}\end{split}\]</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In Lethe, the <code class="docutils literal notranslate"><span class="pre">linear</span></code> and <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> surface tension models are only used to account for the thermocapillary effect known as the Marangoni effect. Therefore, to enable the Marangoni effect, the surface tension model must be set to <code class="docutils literal notranslate"><span class="pre">linear</span></code> or <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> and a <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">gradient</span></code> different from zero <span class="math notranslate nohighlight">\((\frac{d\sigma}{dT} \neq 0)\)</span> must be specified.</p>
+</div>
+</section>
+<section id="cahn-hilliard-mobility-models">
+<h3>Cahn-Hilliard Mobility Models<a class="headerlink" href="#cahn-hilliard-mobility-models" title="Link to this heading">#</a></h3>
+<p>Lethe supports two types of mobility models for the Cahn-Hilliard equations. Setting <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">constant</span></code> sets a constant mobility. Setting a <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">quartic</span></code> sets a quartic model for mobility:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[M(\phi) = D(1-\phi^2)^2\]</div>
+</div>
+<p>with <span class="math notranslate nohighlight">\(D\)</span> the value set for <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">mobility</span> <span class="pre">constant</span></code>. A quartic mobility is required to recover a correct velocity according to Bretin <em>et al.</em> <a class="reference external" href="https://doi.org/10.48550/arXiv.2105.09627">[2]</a> Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations. A good rule of thumb for setting the mobility constant is to have it proportionnal to the square of the minimum cell size. This rule may depend on the duration of the simulation, so a finer tuning may be necessary.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://doi.org/10.1016/j.compfluid.2018.03.037">[1]</a> B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” <em>Comput. Fluids</em>, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.</p>
+<p><a class="reference external" href="https://doi.org/10.48550/arXiv.2105.09627">[2]</a>  E. Bretin, R. Denis, S. Masnou, A. Sengers, and G. Terii, “A multiphase Cahn-Hilliard system with mobilities and the numerical simulation of dewetting.” arXiv, Apr. 18, 2023. doi: 10.48550/arXiv.2105.09627.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="post_processing.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Post-processing</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="non-linear_solver_control.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Non-linear Solver</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Physical Properties</a><ul>
+<li><a class="reference internal" href="#material-physical-property-models">Material Physical Property Models</a><ul>
+<li><a class="reference internal" href="#two-phase-simulations">Two Phase Simulations</a></li>
+<li><a class="reference internal" href="#conjugate-heat-transfer">Conjugate Heat Transfer</a></li>
+<li><a class="reference internal" href="#immersed-solid-models">Immersed Solid Models</a></li>
+<li><a class="reference internal" href="#rheological-models">Rheological Models</a><ul>
+<li><a class="reference internal" href="#power-law-model">Power-Law Model</a></li>
+<li><a class="reference internal" href="#carreau-model">Carreau Model</a></li>
+<li><a class="reference internal" href="#phase-change-model">Phase-Change Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#density-models">Density Models</a></li>
+<li><a class="reference internal" href="#thermal-conductivity-models">Thermal Conductivity Models</a></li>
+<li><a class="reference internal" href="#specific-heat-models">Specific Heat Models</a></li>
+<li><a class="reference internal" href="#thermal-expansion-models">Thermal Expansion Models</a></li>
+<li><a class="reference internal" href="#phase-change">Phase Change</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interface-physical-property-models">Interface Physical Property Models</a><ul>
+<li><a class="reference internal" href="#surface-tension-models">Surface Tension Models</a></li>
+<li><a class="reference internal" href="#cahn-hilliard-mobility-models">Cahn-Hilliard Mobility Models</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

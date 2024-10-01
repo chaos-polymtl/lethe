@@ -1,0 +1,6 @@
+<map id="TracerDiffusivityModel" name="TracerDiffusivityModel">
+<area shape="rect" id="node1" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="127,80,295,107"/>
+<area shape="rect" id="node3" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="5,155,192,181"/>
+<area shape="rect" id="node4" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the levelset." alt="" coords="216,155,429,181"/>
+<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="125,5,296,32"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="ThermalExpansionPhaseChange" name="ThermalExpansionPhaseChange">
+<area shape="rect" id="node1" title="Implements a phase&#45;dependent thermal expansion coefficient." alt="" coords="5,155,236,181"/>
+<area shape="rect" id="node2" href="$classThermalExpansionModel.html" title="Abstract class that allows to calculate the thermal expansion coefficient (with unit of inverse tempe..." alt="" coords="29,80,212,107"/>
+<area shape="rect" id="node3" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="35,5,206,32"/>
+</map>

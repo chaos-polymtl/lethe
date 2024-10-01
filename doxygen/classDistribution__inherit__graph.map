@@ -1,0 +1,6 @@
+<map id="Distribution" name="Distribution">
+<area shape="rect" id="node1" title=" " alt="" coords="202,5,301,32"/>
+<area shape="rect" id="node2" href="$classCustomDistribution.html" title=" " alt="" coords="5,80,153,107"/>
+<area shape="rect" id="node3" href="$classNormalDistribution.html" title=" " alt="" coords="178,80,325,107"/>
+<area shape="rect" id="node4" href="$classUniformDistribution.html" title=" " alt="" coords="349,80,500,107"/>
+</map>

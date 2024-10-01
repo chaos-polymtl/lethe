@@ -1,0 +1,12 @@
+<map id="/home/runner/work/lethe/lethe/include/core/solutions_output.h" name="/home/runner/work/lethe/lethe/include/core/solutions_output.h">
+<area shape="rect" id="node1" title=" " alt="" coords="877,5,1082,61"/>
+<area shape="rect" id="node2" href="$serial__solid_8cc.html" title=" " alt="" coords="5,109,188,165"/>
+<area shape="rect" id="node3" href="$solutions__output_8cc.html" title=" " alt="" coords="212,109,413,165"/>
+<area shape="rect" id="node4" href="$dem_8cc.html" title=" " alt="" coords="437,117,628,158"/>
+<area shape="rect" id="node5" href="$lagrangian__post__processing_8cc.html" title=" " alt="" coords="652,109,864,165"/>
+<area shape="rect" id="node6" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="888,109,1071,165"/>
+<area shape="rect" id="node7" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="1095,109,1280,165"/>
+<area shape="rect" id="node8" href="$particle__visualization_8cc.html" title=" " alt="" coords="1304,109,1487,165"/>
+<area shape="rect" id="node9" href="$fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="1511,109,1707,165"/>
+<area shape="rect" id="node10" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="1731,109,1913,165"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="BoundaryConditions::HTBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::HTBoundaryConditions&lt; dim &gt;">
+<area shape="rect" id="node1" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="5,109,184,165"/>
+<area shape="rect" id="node2" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="14,5,175,61"/>
+</map>

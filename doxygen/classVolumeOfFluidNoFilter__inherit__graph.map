@@ -1,0 +1,4 @@
+<map id="VolumeOfFluidNoFilter" name="VolumeOfFluidNoFilter">
+<area shape="rect" id="node1" title="Default filter applied to phase fraction. The VolumeOfFluidNoFilter filter does not modify the phase ..." alt="" coords="12,80,181,107"/>
+<area shape="rect" id="node2" href="$classVolumeOfFluidFilterBase.html" title="Abstract class for filtering phase fraction in volume of fluid (VOF) simulations." alt="" coords="5,5,188,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="MobilityCahnHilliardModel" name="MobilityCahnHilliardModel">
+<area shape="rect" id="node1" title="Implementation of the computation of the mobility for Cahn&#45;Hilliard equations." alt="" coords="115,80,309,107"/>
+<area shape="rect" id="node3" href="$classMobilityCahnHilliardModelConstant.html" title="Constant mobility model." alt="" coords="5,155,200,196"/>
+<area shape="rect" id="node4" href="$classMobilityCahnHilliardModelQuartic.html" title="Quartic mobility model." alt="" coords="224,155,419,196"/>
+<area shape="rect" id="node2" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="125,5,299,32"/>
+</map>

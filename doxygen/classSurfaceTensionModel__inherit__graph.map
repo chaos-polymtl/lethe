@@ -1,0 +1,7 @@
+<map id="SurfaceTensionModel" name="SurfaceTensionModel">
+<area shape="rect" id="node1" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="111,80,271,107"/>
+<area shape="rect" id="node3" href="$classSurfaceTensionConstant.html" title="Constant surface tension." alt="" coords="5,155,184,181"/>
+<area shape="rect" id="node4" href="$classSurfaceTensionLinear.html" title="Linear surface tension. The surface tension is given by: sigma_0 + dsimga/dT * (T&#45;T_0)." alt="" coords="208,155,368,181"/>
+<area shape="rect" id="node2" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="103,5,278,32"/>
+<area shape="rect" id="node5" href="$classSurfaceTensionPhaseChange.html" title="Linear surface tension with phase change. The surface tension is given by: alpha_l*(sigma_0 + dsigma/..." alt="" coords="184,229,392,256"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="ThermalConductivityModel" name="ThermalConductivityModel">
+<area shape="rect" id="node1" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="224,56,423,83"/>
+<area shape="rect" id="node3" href="$classConstantThermalConductivity.html" title="Constant thermal conductivity." alt="" coords="471,5,687,32"/>
+<area shape="rect" id="node4" href="$classThermalConductivityLinear.html" title="Implements a linear temperature&#45;dependent thermal conductivity of the form k = A + BT." alt="" coords="479,56,678,83"/>
+<area shape="rect" id="node5" href="$classThermalConductivityPhaseChange.html" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="480,107,677,149"/>
+<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,56,176,83"/>
+</map>

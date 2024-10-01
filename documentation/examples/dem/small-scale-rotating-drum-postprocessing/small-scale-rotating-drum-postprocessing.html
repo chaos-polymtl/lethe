@@ -1,0 +1,752 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Rotating Drum" href="../rotating-drum/rotating-drum.html" /><link rel="prev" title="Small Scale Rotating Drum" href="../small-scale-rotating-drum/small-scale-rotating-drum.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Small Scale Rotating Drum Postprocessing - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/apple_arm.html">Installation on Apple ARM (M1 or M2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parameters/parameters.html">Parameters Guide</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/cfd/cfd.html">General, CFD and Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/physical_properties.html">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/timer.html">Timer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/detector_parameters.html">Detector Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/fem_reconstruction.html">FEM Reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/parameter_tuning.html">Parameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/rpt_parameters.html">RPT Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/laser-heating/laser-heating.html">Laser Heating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/laser-melt-pool/laser-melt-pool.html">Laser Melt Pool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html">Tracer through CAD Junction in Simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../dem.html">Discrete Element Method (DEM)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.html">Rotating Drum with Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../plate-discharge/plate-discharge.html">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html">Photon Count Calculation in a Cylindrical Vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html">Tuning Count Calculation Model Parameters with NOMAD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rpt/particle-fem-reconstruction/particle-fem-reconstruction.html">Particle FEM Reconstruction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory/theory.html">Theory</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphase/cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/cfd_dem.html">CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/dem.html">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/updating-test-results.html">Updating Test Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="small-scale-rotating-drum-postprocessing">
+<h1>Small Scale Rotating Drum Postprocessing<a class="headerlink" href="#small-scale-rotating-drum-postprocessing" title="Link to this heading">#</a></h1>
+<p>This is an example of how to post-process results obtained in the <a class="reference external" href="../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small scale rotating drum example</a> using <a class="reference external" href="https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing">lethe_pyvista_tools</a>, a Python module based on <a class="reference external" href="https://docs.pyvista.org/">PyVista</a>, built to facilitate the reading of Lethe results using <a class="reference external" href="https://www.python.org/">Python</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This example uses the DEM files of the <a class="reference external" href="../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small scale rotating drum example</a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Details about installing the module or using it without installing it are available on this <a class="reference external" href="../../../tools/postprocessing/postprocessing.py">documentation</a>.</p>
+</div>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>DEM simulation</p></li>
+<li><p>Post-processing using <a class="reference external" href="https://www.python.org/">Python</a>, <a class="reference external" href="https://docs.pyvista.org/">PyVista</a>, <a class="reference external" href="https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing">lethe_pyvista_tools</a>, and <a class="reference external" href="https://www.paraview.org/">ParaView</a>.</p></li>
+</ul>
+</section>
+<section id="files-used-in-this-example">
+<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Parameters file for particle insertion: <code class="docutils literal notranslate"><span class="pre">examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm</span></code></p></li>
+<li><p>Parameters file for drum rotation: <code class="docutils literal notranslate"><span class="pre">examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm</span></code></p></li>
+<li><p>Python module for Lethe data post-processing: <code class="docutils literal notranslate"><span class="pre">contrib/postprocessing/lethe_pyvista_tools</span></code></p></li>
+<li><p>Python script using module for rotating drum post-processing: <code class="docutils literal notranslate"><span class="pre">examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py</span></code></p></li>
+</ul>
+</section>
+<section id="description-of-the-case">
+<h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
+<p>In this example, we illustrate the mixing inside a rotating drum by coloring the particles according to their radial position right after their full packing. To do so, we post-process Lethe-DEM data using <a class="reference external" href="https://www.python.org/">Python</a>, <a class="reference external" href="https://docs.pyvista.org/">PyVista</a>, <a class="reference external" href="https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing">lethe_pyvista_tools</a>, and <a class="reference external" href="https://www.paraview.org/">ParaView</a>.</p>
+<p>Additionally, we calculate the mixing index using the Nearest Neighbors Method (NNM) [<a class="reference external" href="https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf">1</a>] and Doucet method [<a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724">2</a>, <a class="reference external" href="https://doi.org/10.1016/j.cherd.2016.12.018">3</a>].</p>
+<p>The DEM files used in this example are obtained following the <a class="reference external" href="../../dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small scale rotating drum example</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is not necessary to use all mentioned tools, but they are used in this example to show different ways to process the data according to user’s need.</p>
+</div>
+</section>
+<section id="python-code">
+<h2>Python Code<a class="headerlink" href="#python-code" title="Link to this heading">#</a></h2>
+<p>Please, read this <a class="reference external" href="../../../tools/postprocessing/postprocessing.py">documentation</a> before jumping to the following steps.</p>
+<section id="constructing-the-object">
+<h3>Constructing the Object<a class="headerlink" href="#constructing-the-object" title="Link to this heading">#</a></h3>
+<p>The first step is to create an object to receive the data. In the present case, the object is called <code class="docutils literal notranslate"><span class="pre">particles</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span> <span class="o">=</span> <span class="n">lethe_pyvista_tools</span><span class="p">(</span><span class="n">case_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">prm_file_name</span> <span class="o">=</span> <span class="s2">&quot;small-rotating-drum-dem.prm&quot;</span><span class="p">,</span> <span class="n">pvd_name</span> <span class="o">=</span> <span class="s2">&quot;out.pvd&quot;</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">n_procs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, the constructor <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> receives three arguments: <code class="docutils literal notranslate"><span class="pre">case_path</span></code>, <code class="docutils literal notranslate"><span class="pre">prm_file_name</span></code>, and the name of the <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> file generated by the simulation. In the above code line, <code class="docutils literal notranslate"><span class="pre">&quot;.&quot;</span></code> means that the <code class="docutils literal notranslate"><span class="pre">case_path</span></code> is the path where we currently are, but it can be any path where the case is. The <code class="docutils literal notranslate"><span class="pre">prm_file_name</span></code> argument takes <code class="docutils literal notranslate"><span class="pre">&quot;small-rotating-drum-dem.prm&quot;</span></code>. The constructor can take 3 other arguments: <code class="docutils literal notranslate"><span class="pre">first</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code>, and <code class="docutils literal notranslate"><span class="pre">step</span></code>, standing for the first and last time-steps to be read and the interval between the time-steps, respectively. By default, <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span> <span class="pre">=</span> <span class="pre">1</span></code>, and <code class="docutils literal notranslate"><span class="pre">last</span></code> is the last time-step of the data.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The special <code class="docutils literal notranslate"><span class="pre">n_procs</span></code> parameter controls the number of cores used in the post-processing routine. By default, it is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If no other value is provided, the <code class="docutils literal notranslate"><span class="pre">n_procs</span></code> will be the number of CPUs on your machines.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If we set <code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">=</span> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">particles.time_list[0]</span></code> will return the time corresponding to the second time-step. In all situations from now on, everytime we refer to a time-step, it will correspond to a dataset.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Together with the object <code class="docutils literal notranslate"><span class="pre">particles</span></code>, <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> creates a dictionary with all parameters in the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file. To access the parameter, we can use <code class="docutils literal notranslate"><span class="pre">particles.prm_dict['$NAME_OF_THE_PARAMETER']</span></code>. In the present case for example, the diameter of the particles can be easily printed using <code class="docutils literal notranslate"><span class="pre">print(particles.prm_dict['diameter'])</span></code>. This can be useful for post-processing routines with multiple simulations.</p>
+<p>Note that a list of values is returned when there is more than one parameter with the same name in the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file. The list is sorted according to parameters’ occurrence.</p>
+</div>
+<p>This command will also read all information necessary to read the data from the pvd file. To ensure that no original data will not be lost during the post-processing, on calling the constructor, copies of the <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> and all <code class="docutils literal notranslate"><span class="pre">.pvtu</span></code> files are created with a given <code class="docutils literal notranslate"><span class="pre">prefix</span></code>. This parameter can be added to <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> and is empty by default. If you wish to work with the original <code class="docutils literal notranslate"><span class="pre">.pvtu</span></code> and <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> files, just use <code class="docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">=</span> <span class="pre">&quot;&quot;</span></code>. If you want to create another file to prevent the original one from being modified, just change the prefix and all files will be named according to it. In this case, for example, we have used <code class="docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">=</span> <span class="pre">&quot;mod_&quot;</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">read_lethe_to_pyvista</span></code> reading function assigns the datasets of each time-step to the object <code class="docutils literal notranslate"><span class="pre">particles</span></code>. Each time-step corresponds to a <a class="reference external" href="https://docs.pyvista.org/user-guide/vtk_to_pyvista.html#">PyVista dataset</a>, and can be accessed using <code class="docutils literal notranslate"><span class="pre">particles.df[$TIME-step_NUMBER]</span></code>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Since this is a post-processing module, we can only have access to data that was previously output. If one needs more time resolution than the data in hand, the simulation must be <a class="reference external" href="../../../parameters/dem/simulation_control">reran with a smaller time-step</a></p>
+</div>
+</section>
+<section id="creation-of-a-new-array">
+<h3>Creation of a New Array<a class="headerlink" href="#creation-of-a-new-array" title="Link to this heading">#</a></h3>
+<p>To color the particles according to their position, we use the function <code class="docutils literal notranslate"><span class="pre">modify_array</span></code>, which takes the following arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">reference_array_name</span></code>: Name of the array used to sort the data and identify the particles at all time-steps. Other arrays, such as <code class="docutils literal notranslate"><span class="pre">Type</span></code> or any other array, can be used for this. By default: <code class="docutils literal notranslate"><span class="pre">&quot;ID&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">array_name</span></code>: Name of the new array. If there is an array with the same name, it will be rewritten according to the other arguments. By default: <code class="docutils literal notranslate"><span class="pre">&quot;new_array&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restart_array</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, gives <code class="docutils literal notranslate"><span class="pre">standard_value</span></code> to the entire array before applying the modifications to it. If one wants to modify part of the array keeping the rest intact, it must be set as <code class="docutils literal notranslate"><span class="pre">False</span></code>. By default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">condition</span></code>: Takes a string and uses it in an if condition to modify the array. Variables accepted include <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">w</span></code>, <code class="docutils literal notranslate"><span class="pre">t</span></code>, and any other array (<code class="docutils literal notranslate"><span class="pre">ID</span></code> for example). It also accepts a combination of them, such as <code class="docutils literal notranslate"><span class="pre">&quot;x*w**2</span> <span class="pre">+</span> <span class="pre">t</span> <span class="pre">&gt;</span> <span class="pre">2</span> <span class="pre">and</span> <span class="pre">ID</span> <span class="pre">&gt;</span> <span class="pre">0&quot;</span></code>. By default: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">array_values</span></code>: New values to the array. This argument accepts a single value (which will be repeated to all data respecting the given <code class="docutils literal notranslate"><span class="pre">condition</span></code>), a <a class="reference external" href="https://numpy.org/">NumPy</a> array, or <a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html">Python list</a> (with the same length (<code class="docutils literal notranslate"><span class="pre">len</span></code>) of all other arrays in <code class="docutils literal notranslate"><span class="pre">particles.df</span></code>), or a string such as <code class="docutils literal notranslate"><span class="pre">&quot;2*x</span> <span class="pre">+</span> <span class="pre">t&quot;</span></code> (working just like the <code class="docutils literal notranslate"><span class="pre">condition</span></code> argument). By default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">standard_value</span></code>: If <code class="docutils literal notranslate"><span class="pre">restart</span> <span class="pre">array</span> <span class="pre">=</span> <span class="pre">True</span></code> or the array is a completely new array, the <code class="docutils literal notranslate"><span class="pre">standard_value</span></code> will be plugged to the entire array before modifying it. By default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_dependent</span></code>: <code class="docutils literal notranslate"><span class="pre">modify_array</span></code> can be time dependent or not. If set <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">condition</span></code> will be tested to each of the time-steps, while if it is <code class="docutils literal notranslate"><span class="pre">False</span></code>, it will be applied using the <code class="docutils literal notranslate"><span class="pre">reference_time_step</span></code> instead, and the modification will be just replicated to the other time-steps. By default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reference_time_step</span></code>: Reference time-step to which the modification will be applied. If <code class="docutils literal notranslate"><span class="pre">time_dependent</span> <span class="pre">=</span> <span class="pre">False</span></code>, the result of the modificaition applied to <code class="docutils literal notranslate"><span class="pre">reference_time_step</span></code> will be simply replicated to the others. By default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>As explained in the previous subsection, <code class="docutils literal notranslate"><span class="pre">reference_time_step</span></code> only refers to time-steps that were read into the code using <code class="docutils literal notranslate"><span class="pre">read_lethe_to_pyvista</span></code>.</p>
+</div>
+<p>The following block of code creates an array named <code class="docutils literal notranslate"><span class="pre">particle_color</span></code> using the <code class="docutils literal notranslate"><span class="pre">modify_array</span></code> function, assigning <code class="docutils literal notranslate"><span class="pre">1</span></code> to all particles with radial position <span class="math notranslate nohighlight">\(&gt; 0.025\)</span> at the end of the packing (40th time-step):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span> <span class="o">=</span> <span class="s2">&quot;(y**2 + z**2)**(1/2) &gt; 0.025&quot;</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">modify_array</span><span class="p">(</span><span class="n">array_name</span> <span class="o">=</span> <span class="s2">&quot;particle_color&quot;</span><span class="p">,</span> <span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span><span class="p">,</span> <span class="n">array_values</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">reference_time_step</span> <span class="o">=</span> <span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since the rotating drum is placed along the <span class="math notranslate nohighlight">\(x\)</span> axis, we use <span class="math notranslate nohighlight">\(\sqrt{y^2 + z^2}\)</span> to assess the radial position of particles.</p>
+<p>To create an additional layer of particles with different colors, we use the same function again with a different condition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span> <span class="o">=</span> <span class="s2">&quot;(y**2 + z**2)**(1/2) &gt; 0.04&quot;</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">modify_array</span><span class="p">(</span><span class="n">array_name</span> <span class="o">=</span> <span class="s2">&quot;particle_color&quot;</span><span class="p">,</span> <span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span><span class="p">,</span> <span class="n">array_values</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">reference_time_step</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">restart_array</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This time, we set <code class="docutils literal notranslate"><span class="pre">restart_array</span> <span class="pre">=</span> <span class="pre">False</span></code> to guarantee it is not going to affect the previous modification to the array.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If we applied the second condition first, since conditions would overlap, intead of 3 layers of particles we would have only two.</p>
+</div>
+</section>
+</section>
+<section id="visualizing-the-results">
+<h2>Visualizing the Results<a class="headerlink" href="#visualizing-the-results" title="Link to this heading">#</a></h2>
+<p>We have two visualization options. One would be the <a class="reference external" href="https://docs.pyvista.org/api/plotting/index.html">PyVista visualization tools</a>, such as <a class="reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.html#pyvista.Plotter">PyVista Plotter</a>. The other option is to use <a class="reference external" href="https://www.paraview.org/">ParaView</a>.</p>
+<section id="pyvista-visualization">
+<h3>PyVista Visualization<a class="headerlink" href="#pyvista-visualization" title="Link to this heading">#</a></h3>
+<p>To visualize particle data using PyVista, first we need to create a single particle with diameter 1 and a given angular resolution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sphere</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Sphere</span><span class="p">(</span><span class="n">theta_resolution</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">phi_resolution</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The next step is to use this object as base to represent all particles:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particle_glyph</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="s1">&#39;Diameter&#39;</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="n">sphere</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we are using the first time-step of the data (<code class="docutils literal notranslate"><span class="pre">particles.get_df(0)</span></code>) as example. To access the full data as a PyVista dataset, we use the <code class="docutils literal notranslate"><span class="pre">.get_df($STEP_NUMBER)</span></code> function. It can be used to store data into variables, such as <code class="docutils literal notranslate"><span class="pre">variable</span> <span class="pre">=</span> <span class="pre">particles.get_df(0)</span></code>.</p>
+<p>Now that particles are created, we can visualize them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">particle_glyph</span><span class="p">,</span> <span class="n">scalars</span> <span class="o">=</span> <span class="s2">&quot;particle_color&quot;</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will open one iteractive window such as this one:</p>
+<img alt="PyVista visualization window" class="align-center" src="../../../_images/pyvista_window.png" />
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>It is possible to <a class="reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.BasePlotter.open_movie.html#open-movie">create movies with PyVista</a> looping through time-steps.</p>
+</div>
+</section>
+<section id="paraview-visualization">
+<h3>ParaView Visualization<a class="headerlink" href="#paraview-visualization" title="Link to this heading">#</a></h3>
+<p>Since all modifications are saved to the new <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> and <code class="docutils literal notranslate"><span class="pre">.pvtu</span></code> files, the results of the post-processing can be easily opened on ParaView, using the generated files.</p>
+<img alt="ParaView" class="align-center" src="../../../_images/paraview_window.png" />
+<img alt="ParaView zoom in" class="align-center" src="../../../_images/paraview_window_zoom.png" />
+<section id="mixing-index">
+<h4>Mixing Index<a class="headerlink" href="#mixing-index" title="Link to this heading">#</a></h4>
+<p>We used two methods to calculate the mixing index of the rotating drum:</p>
+<ul class="simple">
+<li><p>Nearest Neighbors Method (NNM) [<a class="reference external" href="https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf">1</a>].</p></li>
+<li><p>Doucet method [<a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724">2</a>, <a class="reference external" href="https://doi.org/10.1016/j.cherd.2016.12.018">3</a>].</p></li>
+</ul>
+</section>
+</section>
+<section id="nearest-neighbors-method">
+<h3>Nearest Neighbors Method<a class="headerlink" href="#nearest-neighbors-method" title="Link to this heading">#</a></h3>
+<p>One example of application of the <code class="docutils literal notranslate"><span class="pre">modify_array</span></code> method is on the calculation of the mixing index using the Nearest Neighbors Method (NNM) [<a class="reference external" href="https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf">1</a>]. To do so, we first need to split the domain in half. Since we are interested on working with the radial mixing, first we need to calculate the cylindric coordinates of each particle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">get_cylindrical_coords</span><span class="p">(</span><span class="n">radial_components</span> <span class="o">=</span> <span class="s2">&quot;yz&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Given the radial components, this method assigns <code class="docutils literal notranslate"><span class="pre">['points_cyl']</span></code> to the object <code class="docutils literal notranslate"><span class="pre">particles</span></code>. The coordinates <span class="math notranslate nohighlight">\([0, 1, 2]\)</span> are <span class="math notranslate nohighlight">\([r, \theta, Z]\)</span>, respectively</p>
+<p>To help us finding where to split the domain, we will also find the radial coordinate of the center of mass of the particles at <code class="docutils literal notranslate"><span class="pre">reference_time_step</span> <span class="pre">=</span> <span class="pre">40</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r_center_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">40</span><span class="p">)[</span><span class="s1">&#39;points_cyl&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Now we can split the domain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(y**2 + z**2)**(1/2) &gt; </span><span class="si">{</span><span class="n">r_center_mass</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">modify_array</span><span class="p">(</span><span class="n">array_name</span> <span class="o">=</span> <span class="s2">&quot;particle_color&quot;</span><span class="p">,</span> <span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span><span class="p">,</span> <span class="n">array_values</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">restart_array</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">reference_time_step</span> <span class="o">=</span> <span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We need to set <code class="docutils literal notranslate"><span class="pre">restart_array</span> <span class="pre">=</span> <span class="pre">True</span></code> since we are doing a new split on the particles using the same <code class="docutils literal notranslate"><span class="pre">array_name</span> <span class="pre">=</span> <span class="pre">'particle_color'</span></code>.</p>
+</div>
+<p>The following method is used to find the <code class="docutils literal notranslate"><span class="pre">15</span></code> nearest neighbors of each particle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">get_nearest_neighbors</span><span class="p">(</span><span class="n">return_id</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get the indice and the position of the nearest neighbor (<cite>0</cite>) of particle <cite>2</cite> at the 5th time-step, the following can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">neighbor_index</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;neighbors&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">neighbor_index</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>It is also possible to print the neighbor’s <cite>ID</cite> and its distance to particle <abbr>2</abbr></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;neighbors_id&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;neighbors_dist&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>All set, now we can calculate the mixing index using NNM and store it in <cite>particles.mixing_index_nnm</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_nearest_neighbors</span><span class="p">(</span><span class="n">reference_array</span> <span class="o">=</span> <span class="s2">&quot;particle_color&quot;</span><span class="p">,</span> <span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">mixing_index_array_name</span> <span class="o">=</span> <span class="s2">&quot;mixing_index_NNM&quot;</span><span class="p">)</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_nnm</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">mixing_index</span>
+</pre></div>
+</div>
+<p>This method calculates the mixing index for each particles and stores it in an array named according to the parameter <cite>mixing_index_array_name</cite>. This array can be used for vizualization.</p>
+<img alt="ParaView zoom in NNM" class="align-center" src="../../../_images/paraview_window_zoom_nnm.png" />
+</section>
+<section id="doucet-mixing-index">
+<h3>Doucet Mixing Index<a class="headerlink" href="#doucet-mixing-index" title="Link to this heading">#</a></h3>
+<p>Similar to NNM, we are interested in the mixing index results using cylindrical coordinates. Calculating the Doucet mixing index is as simple as running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_doucet</span><span class="p">(</span><span class="n">reference_time_step</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">use_cyl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">increasing_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_doucet</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">mixing_index</span>
+</pre></div>
+</div>
+<p>Usually, Doucet mixing index decreases with mixing, but for comparison with NNM purposes we do <code class="docutils literal notranslate"><span class="pre">increasing_index</span> <span class="pre">=</span> <span class="pre">True</span></code>. Doucet method does not need any sort of splitting of particles, so it is not necessary to split them previous to using this method.</p>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
+<p>Following we present one video of the full simulation with particles colored by their initial position.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qxO4MD_zg2w" title="Rotating drum - mixing study" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p>The simulation results show that the layers in red and green, that is, particles close to the walls, tend to mix faster than the ones in the center.</p>
+<p>The poor mixing of the particles is confirmed with NNM and Doucet mixing indices. To plot both indices as a function of time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="mi">40</span><span class="p">:],</span> <span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_nnm</span><span class="p">[</span><span class="mi">40</span><span class="p">:],</span> <span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Generalized NNM&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="mi">40</span><span class="p">:],</span> <span class="n">particles</span><span class="o">.</span><span class="n">mixing_index_doucet</span><span class="p">[</span><span class="mi">40</span><span class="p">:],</span> <span class="s1">&#39;--k&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Doucet&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="mi">40</span><span class="p">:],</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="mi">40</span><span class="p">:])),</span> <span class="s1">&#39;:r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixing index [-]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="n">particles</span><span class="o">.</span><span class="n">time_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;./mixing_index.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">rotational</span> <span class="pre">speed</span> <span class="pre">=</span> <span class="pre">2</span></code>, the following is observed:</p>
+<img alt="ParaView zoom in NNM" class="align-center" src="../../../_images/mixing_indices_comparison.png" />
+<p>As shown, neither of the mixing indices point to a full mixing of the particles, even at higher simulation times. NNM is always above Doucet, indicating that the main mixing component must not be the radius. Higher rotating velocities can improve results.</p>
+</section>
+<section id="possibilities-for-extension">
+<h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Give a different <code class="docutils literal notranslate"><span class="pre">condition</span></code> to create the <code class="docutils literal notranslate"><span class="pre">particle_color</span></code> array</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> for a different problem, modifying the <code class="docutils literal notranslate"><span class="pre">condition</span></code> accordingly</p></li>
+<li><p>Use the tools in the <a class="reference external" href="https://docs.pyvista.org">PyVista official repository</a> to create screenshots, movies, and plots with the data.</p></li>
+<li><p>Change the rotation velocity and track the mixing indices.</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../rotating-drum/rotating-drum.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Rotating Drum</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../small-scale-rotating-drum/small-scale-rotating-drum.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Small Scale Rotating Drum</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Small Scale Rotating Drum Postprocessing</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
+<li><a class="reference internal" href="#python-code">Python Code</a><ul>
+<li><a class="reference internal" href="#constructing-the-object">Constructing the Object</a></li>
+<li><a class="reference internal" href="#creation-of-a-new-array">Creation of a New Array</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#visualizing-the-results">Visualizing the Results</a><ul>
+<li><a class="reference internal" href="#pyvista-visualization">PyVista Visualization</a></li>
+<li><a class="reference internal" href="#paraview-visualization">ParaView Visualization</a><ul>
+<li><a class="reference internal" href="#mixing-index">Mixing Index</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nearest-neighbors-method">Nearest Neighbors Method</a></li>
+<li><a class="reference internal" href="#doucet-mixing-index">Doucet Mixing Index</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#results">Results</a></li>
+<li><a class="reference internal" href="#possibilities-for-extension">Possibilities for Extension</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

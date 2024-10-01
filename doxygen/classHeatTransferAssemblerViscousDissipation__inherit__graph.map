@@ -1,0 +1,4 @@
+<map id="HeatTransferAssemblerViscousDissipation&lt; dim &gt;" name="HeatTransferAssemblerViscousDissipation&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the viscous dissipation for the heat transfer solver." alt="" coords="5,95,229,136"/>
+<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="14,5,221,47"/>
+</map>

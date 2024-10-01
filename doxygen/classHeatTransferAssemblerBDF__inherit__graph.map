@@ -1,0 +1,4 @@
+<map id="HeatTransferAssemblerBDF&lt; dim &gt;" name="HeatTransferAssemblerBDF&lt; dim &gt;">
+<area shape="rect" id="node1" title="Class that assembles the transient time arising from BDF time integration for the heat transfer solve..." alt="" coords="8,95,209,136"/>
+<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="5,5,212,47"/>
+</map>

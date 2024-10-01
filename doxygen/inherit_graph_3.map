@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,78,100,105"/>
+<area shape="rect" id="node2" href="$classBlockDiagPreconditioner.html" title=" " alt="" coords="155,5,338,47"/>
+<area shape="rect" id="node3" href="$classBlockSchurPreconditioner.html" title=" " alt="" coords="153,71,341,112"/>
+<area shape="rect" id="node4" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="148,136,345,177"/>
+<area shape="rect" id="node5" href="$classNavierStokesStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="393,136,623,177"/>
+</map>

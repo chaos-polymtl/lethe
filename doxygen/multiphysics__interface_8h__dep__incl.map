@@ -1,0 +1,40 @@
+<map id="/home/runner/work/lethe/lethe/include/solvers/multiphysics_interface.h" name="/home/runner/work/lethe/lethe/include/solvers/multiphysics_interface.h">
+<area shape="rect" id="node1" title=" " alt="" coords="1036,5,1222,61"/>
+<area shape="rect" id="node2" href="$cahn__hilliard_8h.html" title=" " alt="" coords="446,339,628,395"/>
+<area shape="rect" id="node4" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="1084,451,1276,507"/>
+<area shape="rect" id="node5" href="$cahn__hilliard__assemblers_8h.html" title=" " alt="" coords="38,221,241,277"/>
+<area shape="rect" id="node7" href="$cahn__hilliard__scratch__data_8h.html" title=" " alt="" coords="302,109,513,165"/>
+<area shape="rect" id="node9" href="$heat__transfer_8h.html" title=" " alt="" coords="820,339,1003,395"/>
+<area shape="rect" id="node12" href="$heat__transfer__assemblers_8h.html" title=" " alt="" coords="626,221,832,277"/>
+<area shape="rect" id="node13" href="$heat__transfer__scratch__data_8h.html" title=" " alt="" coords="850,109,1064,165"/>
+<area shape="rect" id="node15" href="$navier__stokes__base_8h.html" title=" " alt="" coords="2310,109,2492,165"/>
+<area shape="rect" id="node31" href="$tracer_8h.html" title=" " alt="" coords="1218,109,1400,165"/>
+<area shape="rect" id="node33" href="$vof_8h.html" title=" " alt="" coords="1356,347,1553,388"/>
+<area shape="rect" id="node35" href="$vof__scratch__data_8h.html" title=" " alt="" coords="1527,109,1710,165"/>
+<area shape="rect" id="node3" href="$cahn__hilliard_8cc.html" title=" " alt="" coords="187,451,370,507"/>
+<area shape="rect" id="node6" href="$cahn__hilliard__assemblers_8cc.html" title=" " alt="" coords="31,339,240,395"/>
+<area shape="rect" id="node8" href="$cahn__hilliard__scratch__data_8cc.html" title=" " alt="" coords="316,213,499,284"/>
+<area shape="rect" id="node10" href="$heat__transfer_8cc.html" title=" " alt="" coords="860,451,1043,507"/>
+<area shape="rect" id="node11" href="$heat__transfer__assemblers_8cc.html" title=" " alt="" coords="622,451,836,507"/>
+<area shape="rect" id="node14" href="$heat__transfer__scratch__data_8cc.html" title=" " alt="" coords="908,213,1091,284"/>
+<area shape="rect" id="node16" href="$fluid__dynamics__block_8h.html" title=" " alt="" coords="2072,221,2255,277"/>
+<area shape="rect" id="node18" href="$fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="2310,213,2492,284"/>
+<area shape="rect" id="node28" href="$fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="2517,221,2736,277"/>
+<area shape="rect" id="node30" href="$navier__stokes__base_8cc.html" title=" " alt="" coords="2760,221,2943,277"/>
+<area shape="rect" id="node17" href="$fluid__dynamics__block_8cc.html" title=" " alt="" coords="1886,339,2070,395"/>
+<area shape="rect" id="node19" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="2516,339,2699,395"/>
+<area shape="rect" id="node21" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="2723,339,2906,395"/>
+<area shape="rect" id="node25" href="$fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="2095,339,2286,395"/>
+<area shape="rect" id="node27" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="2310,332,2492,403"/>
+<area shape="rect" id="node20" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="2514,451,2699,507"/>
+<area shape="rect" id="node22" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="2930,451,3112,507"/>
+<area shape="rect" id="node24" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="2723,451,2906,507"/>
+<area shape="rect" id="node23" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="2930,555,3112,611"/>
+<area shape="rect" id="node26" href="$fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="2092,451,2288,507"/>
+<area shape="rect" id="node29" href="$fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="2930,332,3112,403"/>
+<area shape="rect" id="node32" href="$tracer_8cc.html" title=" " alt="" coords="1268,221,1451,277"/>
+<area shape="rect" id="node34" href="$vof_8cc.html" title=" " alt="" coords="1499,451,1682,507"/>
+<area shape="rect" id="node36" href="$vof__assemblers_8h.html" title=" " alt="" coords="1628,221,1811,277"/>
+<area shape="rect" id="node38" href="$vof__scratch__data_8cc.html" title=" " alt="" coords="1835,221,2018,277"/>
+<area shape="rect" id="node37" href="$vof__assemblers_8cc.html" title=" " alt="" coords="1679,339,1862,395"/>
+</map>

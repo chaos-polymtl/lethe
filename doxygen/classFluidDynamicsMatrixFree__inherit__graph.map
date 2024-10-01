@@ -1,0 +1,5 @@
+<map id="FluidDynamicsMatrixFree&lt; dim &gt;" name="FluidDynamicsMatrixFree&lt; dim &gt;">
+<area shape="rect" id="node1" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="23,184,213,225"/>
+<area shape="rect" id="node2" href="$classNavierStokesBase.html" title=" " alt="" coords="5,80,231,136"/>
+<area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="11,5,225,32"/>
+</map>

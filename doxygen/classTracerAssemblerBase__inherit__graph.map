@@ -1,0 +1,5 @@
+<map id="TracerAssemblerBase&lt; dim &gt;" name="TracerAssemblerBase&lt; dim &gt;">
+<area shape="rect" id="node1" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="93,5,256,47"/>
+<area shape="rect" id="node2" href="$classTracerAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Tracer equations...." alt="" coords="5,95,163,136"/>
+<area shape="rect" id="node3" href="$classTracerAssemblerCore.html" title="Class that assembles the core of the Tracer equation. This class assembles the weak form of: &#160;with an..." alt="" coords="187,95,347,136"/>
+</map>

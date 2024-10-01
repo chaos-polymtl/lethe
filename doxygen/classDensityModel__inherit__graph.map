@@ -1,0 +1,6 @@
+<map id="DensityModel" name="DensityModel">
+<area shape="rect" id="node1" title="Abstract class for calculating the density of materials." alt="" coords="109,80,221,107"/>
+<area shape="rect" id="node3" href="$classDensityConstant.html" title="Constant density model." alt="" coords="5,155,136,181"/>
+<area shape="rect" id="node4" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="161,155,359,181"/>
+<area shape="rect" id="node2" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="80,5,251,32"/>
+</map>

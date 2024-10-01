@@ -1,0 +1,5 @@
+<map id="SurfaceTensionConstant" name="SurfaceTensionConstant">
+<area shape="rect" id="node1" title="Constant surface tension." alt="" coords="5,155,184,181"/>
+<area shape="rect" id="node2" href="$classSurfaceTensionModel.html" title="Abstract class that allows to calculate the surface tension coefficient." alt="" coords="15,80,175,107"/>
+<area shape="rect" id="node3" href="$classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr..." alt="" coords="7,5,182,32"/>
+</map>

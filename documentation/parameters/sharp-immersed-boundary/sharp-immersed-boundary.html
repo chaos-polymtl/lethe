@@ -1,0 +1,877 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Radioactive Particle Tracking (RPT)" href="../rpt/rpt.html" /><link rel="prev" title="Void Fraction" href="../unresolved-cfd-dem/void-fraction.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Sharp-Immersed-Boundary - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/apple_arm.html">Installation on Apple ARM (M1 or M2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../parameters.html">Parameters Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../cfd/cfd.html">General, CFD and Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/physical_properties.html">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/velocity_source.html">Velocity Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cfd/volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/timer.html">Timer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Sharp-Immersed-Boundary</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/detector_parameters.html">Detector Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/fem_reconstruction.html">FEM Reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/parameter_tuning.html">Parameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rpt/rpt_parameters.html">RPT Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/laser-heating/laser-heating.html">Laser Heating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/laser-melt-pool/laser-melt-pool.html">Laser Melt Pool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html">Tracer through CAD Junction in Simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotating-drum-with-postprocessing/rotating-drum-with-postprocessing.html">Rotating Drum with Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/plate-discharge/plate-discharge.html">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/dem/granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../examples/sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html">Photon Count Calculation in a Cylindrical Vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html">Tuning Count Calculation Model Parameters with NOMAD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/rpt/particle-fem-reconstruction/particle-fem-reconstruction.html">Particle FEM Reconstruction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../theory/theory.html">Theory</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd_dem/cfd_dem.html">CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/dem.html">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/updating-test-results.html">Updating Test Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="sharp-immersed-boundary">
+<h1>Sharp-Immersed-Boundary<a class="headerlink" href="#sharp-immersed-boundary" title="Link to this heading">#</a></h1>
+<p>This subsection contains the parameters related to the sharp immersed boundary solver using a <strong>sharp interface immersed boundary</strong> (IB) <strong>method</strong>. This part of the parameter file concerns the usage of the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code>. This solver can simulate the flow around static or moving objects (with a predetermined trajectory). It can also simulate the coupled flow around spherical particles (Resolved CFD-DEM). Using this solver eliminates the need to define a conformal mesh for the fluid between the particles.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All orientations and angular velocities in this solver use radians. The rotation sequence used to define the orientation of an object is the XYZ rotation.</p>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  subsection particles
+    set assemble Navier-Stokes inside particles = false
+    set number of particles                     = 1
+
+    subsection extrapolation function
+      set length ratio         = 4
+      set stencil order        = 2
+      set enable extrapolation = true
+    end
+
+    subsection output
+      set calculate force                               = true
+      set enable extra sharp interface vtu output field = false
+      set ib force output file                          = ib_force
+      set ib particles pvd file                         = ib_particles_data
+      set print DEM                                     = true
+    end
+
+    subsection local mesh refinement
+      set initial refinement                = 0
+      set refine mesh inside radius factor  = 0.5
+      set refine mesh outside radius factor = 1.5
+      set refinement zone extrapolation     = false
+    end
+
+    subsection DEM
+      set DEM coupling frequency             = 1000
+      set alpha                              = 1
+      set contact search frequency           = 1
+      set contact search radius factor       = 3
+      set enable lubrication force           = true
+      set lubrication range max              = 2
+      set lubrication range min              = 0.1
+      set particle nonlinear tolerance       = 1e-6
+      set explicit contact impulsion     = false
+      set explicit position integration  = false
+      set approximate radius for contact = false
+      subsection gravity
+        set Function expression = 0; 0; 0
+      end
+
+      subsection wall physical properties
+        set wall friction coefficient         = 0
+        set wall poisson ratio                = 0.3
+        set wall restitution coefficient      = 1
+        set wall rolling friction coefficient = 0
+        set wall youngs modulus               = 100000000
+      end
+    end
+
+    subsection input file
+      set load particles from file = false
+      set particles file           = particles
+    end
+
+    subsection particle info 0
+      set type                       = sphere
+      set shape arguments            = 1
+      set integrate motion           = false
+      set pressure location          = 0; 0; 0
+      set mesh-based precalculations = true
+      set layer thickening           = 0
+
+      subsection position
+        set Function expression = 0; 0; 0
+      end
+      subsection velocity
+        set Function expression = 0; 0; 0
+      end
+      subsection omega
+        set Function expression = 0; 0; 0
+      end
+      subsection orientation
+        set Function expression = 0; 0; 0
+      end
+
+      subsection physical properties
+        set density                      = 1
+        set volume                       = 0
+        set inertia                      = 1
+        set friction coefficient         = 0
+        set poisson ratio                = 0.3
+        set restitution coefficient      = 1
+        set rolling friction coefficient = 0
+        set youngs modulus               = 100000000
+      end
+    end
+  end
+end
+</pre></div>
+</div>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">particles</span></code> is the number of particles simulated by the sharp-edge IB.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">assemble</span> <span class="pre">Navier-Stokes</span> <span class="pre">inside</span> <span class="pre">particles</span></code> parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.</p></li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">extrapolation</span> <span class="pre">function</span></code> subsection contains the parameters associated with the extrapolation function used to impose the sharp immersed boundary condition.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order</span></code> parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of interpolation of the underlying FEM scheme (e.g. for Q2Q2 elements use <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order=2</span></code>). We suggest using the same order as the velocity field in most cases since it improves the condition number of the matrix.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The stencil order used does not alter the order of convergence of the solution.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">ratio</span></code> parameter controls the length of the zone used to define the Lagrange polynomial (see <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub">this article</a> for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogenous mesh (aspect ratio of 1), the length ratio should be 1.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">extrapolation</span></code> parameter controls if extrapolation is used to impose the immersed boundary condition. For debugging purposes, this parameter can be set to <code class="docutils literal notranslate"><span class="pre">false</span></code>; the particle velocity will then be imposed on velocity degrees of freedom of cells cut by the particle directly, which effectively amplifies the volume occupied by the solid.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Disabling the extrapolation is not recommended since it makes the Sharp-IB solver first-order accurate in space.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>The <code class="docutils literal notranslate"><span class="pre">output</span></code> subsection contains the parameters controlling the information printed in the terminal and output files.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">force</span></code> parameter controls if the force is evaluated on each particle.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ib</span> <span class="pre">force</span> <span class="pre">output</span> <span class="pre">file</span></code> parameter is the file name where the variables associated with each particle are stored. One file will be created for each particle in the simulation.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ib</span> <span class="pre">particles</span> <span class="pre">pvd</span> <span class="pre">file</span></code> parameter is the file’s name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">DEM</span></code> parameter is a boolean that define if particles’ informations are printed on the terminal when particles’ time-step is finished.</p></li>
+<li><p>When the <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">extra</span> <span class="pre">sharp</span> <span class="pre">interface</span> <span class="pre">vtu</span> <span class="pre">output</span> <span class="pre">field</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables the output of additional value fields in the vtu file produced by the simulation. Currently, these additional output fields consist of: the id of the cell that cuts a specific cell (<code class="docutils literal notranslate"><span class="pre">cell_cut</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">local</span> <span class="pre">mesh</span> <span class="pre">refinement</span></code> subsection contains the parameters associated with the local refinement around the particle. This refinement aims to form a near-surface zone of refined cells between two thresholds: <span class="math notranslate nohighlight">\(\textit{inside factor} * \textit{radius}\)</span> and <span class="math notranslate nohighlight">\(\textit{outside factor} * \textit{radius}\)</span>. An effective radius, for non spheres, is calculated at the shape initialization and its definition is given further below.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">inside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> parameter defines how deep inside the solid that cells can be refined. If the absolute distance between a cell’s degree of freedom and the solid’s surface is lower than <span class="math notranslate nohighlight">\((1 - \textit{inside factor}) * \textit{radius}\)</span>, one of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside reach of the refinement zone would be 0.4 (see example below).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">outside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> parameter defines how far outside the solid that cells can be refined. If the absolute distance between a cell’s degree of freedom and the solid’s surface is lower than <span class="math notranslate nohighlight">\((\textit{outside factor} - 1) * \textit{radius}\)</span>, the second of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside reach of the refinement zone would be 1 (see example below).</p></li>
+</ul>
+<img alt="../../_images/particle_hypershell.png" class="align-center" src="../../_images/particle_hypershell.png" />
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span> <span class="pre">type</span></code> must be <code class="docutils literal notranslate"><span class="pre">kelly</span></code> to use the near-particle refinement around particles; otherwise, no near-particle refinement will happen. See <a class="reference internal" href="../cfd/mesh_adaptation_control.html"><span class="doc">Mesh Adaptation</span></a> for more details on adaptative mesh refinement.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">inside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> and the <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">outside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> thresholds. Each cycle of refinement reduces the length of the elements by a factor two.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using values <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">outside</span> <span class="pre">radius</span> <span class="pre">factor</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">inside</span> <span class="pre">radius</span> <span class="pre">factor</span> <span class="pre">=</span> <span class="pre">1</span></code> activates a minimal refinement mode. This enables the solver to select automatically the smallest region near the particle that guarantees stability of the solution.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This near-particle zone will be systematically refined at each refinement step until reaching the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> parameter (<a class="reference internal" href="../cfd/mesh_adaptation_control.html"><span class="doc">Mesh Adaptation</span></a>).</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">refinement</span> <span class="pre">zone</span> <span class="pre">extrapolation</span></code> parameter controls how the refinement zone is evaluated. By default, the refinement zone is around the particle’s last position (If this parameter is false). If this parameter is set to true, the refinement zone position is extrapolated from the particle’s current velocity. It will then apply all the initial refinement steps at the particle’s new position. This is used when the particle moves significantly between two time steps.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">DEM</span></code> subsection contains all the parameters associated with the motion and contacts of spherical particles.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">DEM</span> <span class="pre">coupling</span> <span class="pre">frequency</span></code> parameter controls the number of iterations done on the DEM side for each CFD time step. It’s necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter is the relaxation parameter used when solving the dynamics equation of the particle.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">frequency</span></code> parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, which means that the contact search list is updated at each time-step.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">radius</span> <span class="pre">factor</span></code> parameter is used to create the list of potential contacting particles. Two given particles with respective radii <span class="math notranslate nohighlight">\(R_1\)</span> and <span class="math notranslate nohighlight">\(R_2\)</span> are in potential contact if the distance between them is &lt; <span class="math notranslate nohighlight">\((R_1 + R_2) * factor\)</span>. The default value of this parameter is set to 3.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If all particles may be taken into account in the contact search, a large value of <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">radius</span> <span class="pre">factor</span></code> should be set.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<blockquote>
+<div><p>If <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">radius</span> <span class="pre">factor</span></code> <span class="math notranslate nohighlight">\(\leq 1\)</span>, an error is thrown.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">lubrication</span> <span class="pre">force</span></code> parameter enables or disables the use of lubrication forces. This parameter must be set to <code class="docutils literal notranslate"><span class="pre">false</span></code> when using a non-newtonian fluid rheology.</p></li>
+</ul>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">explicit</span> <span class="pre">contact</span> <span class="pre">impulsion</span></code> parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton’s iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">explicit</span> <span class="pre">position</span> <span class="pre">integration</span></code> parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particles. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton’s iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">approximate</span> <span class="pre">radius</span> <span class="pre">for</span> <span class="pre">contact</span></code> parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using a non-Newtonian fluid, the lubrication force will be automatically deactivated.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">max</span></code> parameter defines the distance below which the lubrication force between 2 particles or between a particle and a wall is calculated. The range is defined as a multiple of the smallest cell. The lubrication force model is used to model the force between particles when they are too close to each other to accurately resolve the flow between them.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">lubrication</span> <span class="pre">range</span> <span class="pre">min</span></code> parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The lubrication force between two particles is expressed by the equation <span class="math notranslate nohighlight">\(\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}\)</span>. Where <span class="math notranslate nohighlight">\(\mu_f\)</span> is the fluid viscosity, <span class="math notranslate nohighlight">\(d_{p_i}\)</span> the diameter of the first particle, <span class="math notranslate nohighlight">\(d_{p_j}\)</span> the diameter of the second particle, <span class="math notranslate nohighlight">\(y\)</span> the gap between the two particles, <span class="math notranslate nohighlight">\(\mathbf{v_{ij}}\)</span> the relative velocity of the two particles, <span class="math notranslate nohighlight">\(\mathbf{e_{ij}}\)</span> the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity <a class="footnote-reference brackets" href="#kim2005" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
+This model requires a constant viscosity and density of the fluid.</p>
+</div>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">nonlinear</span> <span class="pre">tolerance</span></code> parameter controls particle dynamics’ nonlinear tolerance. The nonlinear solver won’t have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.</p></li>
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">gravity</span></code> defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> corresponds respectively to its magnitude in X, Y, and Z.</p></li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">physical</span> <span class="pre">properties</span></code> subsection contains the properties of the wall that are used if the particle impact one of the boundaries of the domain. The effective properties used for calculating the impact force are calculated using a harmonic mean of the properties of the wall and the particle.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">friction</span> <span class="pre">coefficient</span></code> parameter is the coefficient of friction of the wall. This parameter is used to define the effective coefficient of friction between the wall and the particles.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">poisson</span> <span class="pre">ratio</span></code> parameter is the Poisson’s ratio of the wall’s material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">restitution</span> <span class="pre">coefficient</span></code> parameter is the restitution coefficient of the wall’s material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">rolling</span> <span class="pre">friction</span> <span class="pre">coefficient</span></code> parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">wall</span> <span class="pre">youngs</span> <span class="pre">modulus</span></code> parameter is the Young’s modulus of the wall’s material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At this point in time, all the walls have the same properties.</p>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">input</span> <span class="pre">file</span></code> contains the parameter needed if the particles are loaded from a file.</dt><dd><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">load</span> <span class="pre">particles</span> <span class="pre">from</span> <span class="pre">file</span></code> boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle’s subsection and the number of particles are ignored.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently, this feature works only for shapes defined by less than three parameters.</p>
+</div>
+<ul>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">particles</span> <span class="pre">file</span></code> is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume; density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion. Each column is separated by a semicolon (“;”). When a shape has multiple shape arguments, each argument is separated by a colon (“:”). If “integrate motion” is set to false, then the particle dynamic is not integrated. Otherwise, it is integrated. Here is a quick example of a particle definition.</dt><dd><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type; shape_argument; p_x; p_y; p_z; v_x; v_y; v_z; omega_x; omega_y; omega_z; orientation_x; orientation_y; orientation_z; volume ;density; inertia; pressure_x; pressure_y; pressure_z; youngs_modulus; restitution_coefficient; friction_coefficient; poisson_ratio; rolling_friction_coefficient; integrate_motion;
+superquadric; 1: 1: 1: 3: 3: 3; 0.25; 0.25; 20.25; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.001953125; 0.0015; 7.6698974609375e-08; 0.0; 0.0; 0.0; 1000000.0; 0.9; 0.0; 0.3; 0.0; true
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The following parameter and subsection are all inside the subsection <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">info</span> <span class="pre">0</span></code> and have to be redefined for all particles separately.</p>
+<ul>
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">info</span> <span class="pre">0</span></code> is used to define relevant information that is specific to the particle with id <code class="docutils literal notranslate"><span class="pre">0</span></code>. For each particle with the index <code class="docutils literal notranslate"><span class="pre">n</span></code>, a new subsection name <code class="docutils literal notranslate"><span class="pre">particle</span> <span class="pre">info</span> <span class="pre">n</span></code> should be defined with relevant information.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter is used to define the geometry type of the particle. The alternatives in 2D are: <code class="docutils literal notranslate"><span class="pre">sphere</span></code>, <code class="docutils literal notranslate"><span class="pre">ellipsoid</span></code>, <code class="docutils literal notranslate"><span class="pre">hyper</span> <span class="pre">rectangle</span></code>. In 3D, in addition to the previous shapes, alternatives include: <code class="docutils literal notranslate"><span class="pre">cone</span></code>, <code class="docutils literal notranslate"><span class="pre">death</span> <span class="pre">star</span></code>, <code class="docutils literal notranslate"><span class="pre">cut</span> <span class="pre">hollow</span> <span class="pre">sphere</span></code>, <code class="docutils literal notranslate"><span class="pre">torus</span></code>, <code class="docutils literal notranslate"><span class="pre">cylinder</span></code>, <code class="docutils literal notranslate"><span class="pre">cylindrical</span> <span class="pre">tube</span></code>, <code class="docutils literal notranslate"><span class="pre">cylindrical</span> <span class="pre">helix</span></code>, <code class="docutils literal notranslate"><span class="pre">composite</span></code>, <code class="docutils literal notranslate"><span class="pre">rbf</span></code>, <code class="docutils literal notranslate"><span class="pre">opencascade</span></code>. An <code class="docutils literal notranslate"><span class="pre">rbf</span></code> geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a <a class="reference external" href="https://github.com/optimad/bitpit">bitpit</a>-based script, namely example <a class="reference external" href="https://github.com/optimad/bitpit/blob/master/examples/RBF_example_00001.cpp">RBF_example_00001</a>.</p></li>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">arguments</span></code> parameter is used to define the parameters of the shape in the form of a list separated by <code class="docutils literal notranslate"><span class="pre">;</span></code>. The required arguments and the effective radius, used for near-particle refinement, are:</dt><dd><ul class="simple">
+<li><p>Sphere: <em>radius</em>; the effective radius is the <em>radius</em>;</p></li>
+<li><p>Hyper Rectangle: <em>x half length</em>, <em>y half length</em>, [<em>z half length</em> (if 3D)]; the effective radius is the Euclidian norm of the half lengths;</p></li>
+<li><p>Ellipsoid: <em>x radius</em>, <em>y radius</em>, [<em>z radius</em> (if 3D)]; the effective radius is the Euclidian norm of the radii;</p></li>
+<li><p>Torus: <em>torus radius</em>, <em>torus thickness radius</em>; the effective radius is the <em>torus thickness radius</em>;</p></li>
+<li><p>Cone: <em>tan(base angle)</em>, <em>height</em>; the effective radius is the <em>height</em>;</p></li>
+<li><p>Cylinder: <em>radius</em>, <em>half-length</em>; the effective radius is the <em>radius</em>. The cylinder is aligned with the Z axis, and its center corresponds to the origin of its frame of reference.</p></li>
+<li><p>Cylindrical Tube: <em>hole radius</em>, <em>cylinder radius</em>, <em>half-length</em>; the effective radius is the average between <em>hole radius</em> and <em>cylinder radius</em>. The tube is aligned with the Z axis, and its center corresponds to the origin of its frame of reference.</p></li>
+<li><p>Cylindrical Helix: <em>helix radius</em>, <em>extruded disk radius</em>, <em>helicoid height</em>, <em>pitch</em> (height difference between each loop); the effective radius is the <em>extruded disk radius</em>.</p></li>
+<li><p>Cut Hollow Sphere: <em>radius</em>, <em>cut height</em>, <em>wall thickness</em>; the effective radius is the <em>radius</em>;</p></li>
+<li><p>Death Star: <em>sphere radius</em>, <em>hole radius</em>, <em>distance between centers</em>; the effective radius is the <em>sphere radius</em>;</p></li>
+<li><p>Superquadric: <em>x half length</em> (or <span class="math notranslate nohighlight">\(a\)</span>), <em>y half length</em> (or <span class="math notranslate nohighlight">\(b\)</span>), <em>z half length</em> (or <span class="math notranslate nohighlight">\(c\)</span>), <em>x exponent</em> (or <span class="math notranslate nohighlight">\(r\)</span>), <em>y exponent</em> (or <span class="math notranslate nohighlight">\(s\)</span>), <em>z exponent</em> (or <span class="math notranslate nohighlight">\(t\)</span>); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by <span class="math notranslate nohighlight">\(\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0\)</span>;</p></li>
+<li><p>Composite: <em>file name</em>.</p></li>
+</ul>
+<p>A composite shape is made from the composition, with boolean operations, of multiple primitive shapes (e.g., Sphere, Hyper Rectangle, Ellipsoid, Torus, Cone, Cylinder, etc). The composite shape has its own frame of reference that is used to place different primitives relative to each other. The position and orientation of the primitive objects are defined following the translation and then rotation in XYZ convention. The position and orientation of this object then define the position and orientation of the composite frame of reference in the global frame of reference. Note that the default position and orientation of a shape in a composite reference frame follow the same rule as it usually does in the global reference frame (for example, the cylinder is by default aligned in the Z-axis, and its center corresponds to the 0 of the reference frame). Composite shapes are defined by a text file that contains two sections that begin with their names: <code class="docutils literal notranslate"><span class="pre">shapes</span></code> and <code class="docutils literal notranslate"><span class="pre">operations</span></code>. All instructions are given on the lines following the section title in a similar syntax as the one from GMSH. For shapes, the syntax is: <code class="docutils literal notranslate"><span class="pre">&lt;shape_id&gt;;&lt;args</span> <span class="pre">separated</span> <span class="pre">by</span> <span class="pre">:&gt;;&lt;position</span> <span class="pre">components</span> <span class="pre">separated</span> <span class="pre">by</span> <span class="pre">:&gt;;&lt;orientation</span> <span class="pre">components</span> <span class="pre">separated</span> <span class="pre">by</span> <span class="pre">:&gt;</span></code>.For operations, the syntax is: <code class="docutils literal notranslate"><span class="pre">&lt;resulting_shape_id&gt;;&lt;union|difference|intersection&gt;;&lt;first</span> <span class="pre">shape</span> <span class="pre">id&gt;:&lt;second</span> <span class="pre">shape</span> <span class="pre">id&gt;</span></code>. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these boolean operations have been implemented.  Here is a general organization of a composite shape file.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>shapes
+&lt;shape_id&gt;;   &lt;shape type&gt;;    &lt;shape arguments separated by:&gt;; &lt;position components separated by :&gt; ; &lt;orientation components separated by :&gt;
+operations
+&lt;resulting_shape_id&gt;;  &lt;operation: union|difference|intersection&gt;; &lt;first shape id&gt; : &lt;second shape id&gt;
+</pre></div>
+</div>
+<p>Here is the content of a file that defines a cylinder topped with a sphere:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>shapes
+0;   sphere;     0.5; 0:0:0.5 ; 0:0:0
+1; cylinder; 0.5:0.5; 0:0:0.0 ; 0:0:0
+operations
+2;    union;     0:1
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](<a class="reference external" href="https://iquilezles.org/articles/interiordistance/">https://iquilezles.org/articles/interiordistance/</a>) for a relatively simple explanation of why this is the case). In general boolean operations only guarantee to preserve the surface of the object. The union operation also preserves the properties of the signed distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact signed distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.</p>
+</div>
+<ul class="simple">
+<li><p>RBF: <em>file name</em>; the effective radius is the <code class="docutils literal notranslate"><span class="pre">support_radius</span></code> of the first node. The file must be constructed with 6 columns of numbers containing: <code class="docutils literal notranslate"><span class="pre">weight</span></code>, <code class="docutils literal notranslate"><span class="pre">support_radius</span></code>, <code class="docutils literal notranslate"><span class="pre">basis_function</span></code>, <code class="docutils literal notranslate"><span class="pre">node_x</span></code>, <code class="docutils literal notranslate"><span class="pre">node_y</span></code>, <code class="docutils literal notranslate"><span class="pre">node_z</span></code>. The <code class="docutils literal notranslate"><span class="pre">weight</span></code> is the weight associated to each node, the <code class="docutils literal notranslate"><span class="pre">support_radius</span></code> relates to the influence radius of each node, the <code class="docutils literal notranslate"><span class="pre">basis_function</span></code> can be one of thirteen functions, described in an upcoming example, and the <code class="docutils literal notranslate"><span class="pre">node_*</span></code> describe the center of each node.</p></li>
+<li><p>OpenCascade: <em>file name</em>; the effective radius is the <em>dim</em>-root of the sphere that has the same volume as the shape. The OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. The .step file and the .stl file have a sign distance function. The .iges file has only a positive sign function assigned to them. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As could be expected, using this type of shape requires that <code class="docutils literal notranslate"><span class="pre">dealii</span></code> be compiled with OpenCascade. This module can be installed with candi, by uncommenting the appropriate line in <code class="docutils literal notranslate"><span class="pre">candi.cfg</span></code>.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion</span></code> parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles’ position, velocity, and angular velocity are defined directly by the functions. If <code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion=true</span></code> the position and the velocity will be defined by the integration of the particle dynamic.</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Even though non-spherical particles can now have their dynamic coupled with the fluid, this feature is not yet fully validated and remains experimental at this point. We note the following limitations:</p>
+<p>Particles can only have one point of contact between each other and with each wall. (this means contact detection for concave shapes may be wrong since these shapes can have more than 1 point of contact)</p>
+<p>Fluid entrapment between particles can happen more frequently for non-spherical shapes in 3D (fluid entrapment occurs when a portion of the fluid domain becomes completely isolated from the rest of the fluid domain due to the imposition of the immersed boundary by multiple particles. A simple example of a case that causes fluid entrapment would be three circles in contact in 2D. Fluid entrapment leads to a zone without reference pressure, which is not a well-posed problem). In this case, the linear solver may fail to converge for a given Newton iteration.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mesh-based</span> <span class="pre">precalculations</span></code> parameter controls if the mesh-based precalculations are applied. These precalculations are critical for good performance in medium to high detailed RBFs (and its composites), but can introduce deformations. These deformations appear when some RBF nodes are located outside of the background mesh.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">layer</span> <span class="pre">thickening</span></code> is used to artificially inflate (positive value) or deflate (negative value) a particle. It can be used, for example, to evaluate the impact of uniform coating on a particle.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">location</span></code> parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the <code class="docutils literal notranslate"><span class="pre">assemble</span> <span class="pre">Navier-Stokes</span> <span class="pre">inside</span> <span class="pre">particles</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to define the pressure reference point.</p></li>
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">position</span></code> defines the initial value of the particle position if the parameter <code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion=true</span></code>. Otherwise, it defines the particle’s position at all points in time. This position is expressed as a function that can evolve in time. Each component of the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> corresponds to the value of coordinates X, Y, and Z.</p></li>
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">velocity</span></code> defines the initial value of the particle velocity if the parameter <code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion=true</span></code>. Otherwise, it defines the particle’s velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> corresponds to the value of its component in the X, Y, and Z directions.</p></li>
+<li><p>The subsection <code class="docutils literal notranslate"><span class="pre">orientation</span></code> defines the initial value of the particle’s angular position around each of the axes: X, then Y, and lastly Z.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and lastly Z. The center of rotation for this rotation is the position point of the solid.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Concerning <code class="docutils literal notranslate"><span class="pre">omega</span></code> and <code class="docutils literal notranslate"><span class="pre">orientation</span></code>, it’s important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.</p>
+</div>
+<ul>
+<li><dl>
+<dt>The <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection contains all the parameters associated with the particle physical properties.</dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">density</span></code> parameter is used to define the density of the particle.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">volume</span></code> parameter is used to define the volume of the particle. If the value is left to 0, then the volume is automatically calculated based on the shape. If the shape does not have a direct definition of its volume (for example, in the case of a superquadric shape), the volume is defined by the volume of a sphere with a radius equivalent to the effective radius of the shape.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">inertia</span></code> parameter is used to define one of the diagonal elements of the rotational inertia matrix. This parameter expects either a single value or a three-by-three matrix for the moments of inertia of the particle in the reference frame of the particle. The entry sequence corresponds to : I_xx ;I_xy ;I_xz ;I_yx ;I_yy ;I_yz ;I_zx ;I_zy ;I_zz. If a single value is given, the inertia is assumed to be uniform for all the axes.</p>
+<blockquote>
+<div><div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The current implementation does not support inertia matrices that are not diagonal and shapes where the center of mass does not fall on the origin of the particle’s reference frame. To avoid such a problem, we recommend using the composite shape to align and center the principal axis of the inertia matrix and the center of mass with the origin of the particle.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">friction</span> <span class="pre">coefficient</span></code> parameter is the coefficient of friction of the particle. This parameter is used to define the effective coefficient of friction between the wall and the particles.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">poisson</span> <span class="pre">ratio</span></code> parameter is the Poisson’s ratio of the particle’s material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">restitution</span> <span class="pre">coefficient</span></code> parameter is the restitution coefficient of the particles’ material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rolling</span> <span class="pre">friction</span> <span class="pre">coefficient</span></code> parameter is the rolling friction coefficient of the particle. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. The effective coefficient is calculated using a harmonic mean of the properties of the particles and the other objects it impacts.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">youngs</span> <span class="pre">modulus</span></code> parameter is the Young’s modulus of the particle’s material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For a particle to be accounted for in the fluid mesh, it has to overlap at least one vertex of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).</p>
+</div>
+<p>Mesh refinement
+The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the <strong>global mesh refinement</strong>. It is set by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection.
+The second refinement is inside the <strong>box refinement zone</strong>, set by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> in the <code class="docutils literal notranslate"><span class="pre">box</span> <span class="pre">refinement</span></code> subsection. Lastly, the <strong>near-particle zone</strong> is refined, defined by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">particles</span></code> subsection.
+Therefore, the near-particle zone around each particle is refined <code class="docutils literal notranslate"><span class="pre">mesh</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> + <code class="docutils literal notranslate"><span class="pre">box</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> + <code class="docutils literal notranslate"><span class="pre">particle</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> times before the simulations starts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">adaptation</span> <span class="pre">control</span></code> subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>, but no cell can be refined more than this.</p>
+</div>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="kim2005" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>S. Kim and S. J. Karrila, <em>Microhydrodynamics: Principles and Selected Applications</em>. Courier Corporation, 2005. Available: <a class="reference external" href="https://books.google.ca/books?id=_8llnUUGo0wC&amp;lpg=PP1&amp;hl=pt-BR&amp;pg=PP1#v=onepage&amp;q&amp;f=false">https://books.google.ca/books?id=_8llnUUGo0wC&amp;lpg=PP1&amp;hl=pt-BR&amp;pg=PP1#v=onepage&amp;q&amp;f=false</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../rpt/rpt.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Radioactive Particle Tracking (RPT)</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../unresolved-cfd-dem/void-fraction.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Void Fraction</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Sharp-Immersed-Boundary</a><ul>
+<li><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

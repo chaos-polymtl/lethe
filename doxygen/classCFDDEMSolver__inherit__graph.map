@@ -1,0 +1,7 @@
+<map id="CFDDEMSolver&lt; dim &gt;" name="CFDDEMSolver&lt; dim &gt;">
+<area shape="rect" id="node1" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="27,348,202,375"/>
+<area shape="rect" id="node2" href="$classFluidDynamicsVANS.html" title=" " alt="" coords="32,259,197,300"/>
+<area shape="rect" id="node3" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="14,169,215,211"/>
+<area shape="rect" id="node4" href="$classNavierStokesBase.html" title=" " alt="" coords="5,80,224,121"/>
+<area shape="rect" id="node5" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="8,5,221,32"/>
+</map>
