@@ -231,31 +231,8 @@ Do not forget the ``.`` at the end of the command, which means "here".
   +--------+------------------------------------------------+-----------------------------------------------+
 
   * save and close
-  * still in the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with notepad and change the following lines:
-
-  .. tip::
-    The prefix ``#`` is used to comment a line. Here we are commenting lines 9 to 12 and adding 2 new lines to change the p4est version.
-
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-  | line # | initial line                                   | changed line                                                                  |
-  +========+================================================+===============================================================================+
-  |     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                                                            |
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-  |     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                                                      |
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-  |     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``                                     |
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-  |     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``                                     |
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-  |     13 |                                                | .. code-block:: text                                                          |
-  |        |                                                |   :class: copy-button                                                         |
-  |        |                                                |                                                                               |
-  |        |                                                |   VERSION=2.3.6                                                               |
-  |        |                                                |   CHECKSUM=4b35d9cc374e3b05cd29c552070940124f04af8f8e5e01ff046e39833de5e153   |
-  +--------+------------------------------------------------+-------------------------------------------------------------------------------+
-
-  * save and close
-
+  * To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
+  
 6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
 .. code-block:: text
@@ -264,7 +241,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
   ./candi.sh -j$numprocs
 
 Where ``$numprocs`` corresponds to the number of processors used for the compilation:
-  * if you have less than 8Gb of RAM, use 1 to 2 procs: ``./candi.sh -j1`` or ``./candi.sh -j2``
+  * if you have less than 8Gb of RAM, use 2 procs: ``./candi.sh -j2``
   * if you have 16Gb of RAM and above, ``$numprocs`` can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: ``./candi.sh -j5``
 
 .. tip::
@@ -327,7 +304,7 @@ After installation is complete, the folder structure will be:
   :class: copy-button
 
   cd lethe
-  git clone https://github.com/chaos-polymtl/lethe git
+  git clone https://github.com/chaos-polymtl/lethe --single-branch
 
 3. |linux_shell| Build lethe:
 
@@ -335,7 +312,7 @@ After installation is complete, the folder structure will be:
   :class: copy-button
 
   cd build
-  cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+  cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
 
 4. |linux_shell| Compile lethe:
 
