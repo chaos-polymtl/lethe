@@ -176,7 +176,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 where $numprocs can be the number of physical cores on your machine.
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.3.6, otherwise the test which include restart files will fail.
+  The lethe test suites requires that deal.II be configured with p4est 2.3.6, otherwise the test that include restart files will fail.
 
 
 .. _install-deal.II-manually:
