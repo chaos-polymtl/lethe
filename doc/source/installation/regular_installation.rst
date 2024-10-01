@@ -95,7 +95,7 @@ A dependency required by Lethe, and that deal.II needs to be compiled with, is m
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6 which is the current default candi version of p4est. Otherwise, application tests which include restart files will fail.
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
 
 From the candi folder, the installation of candi can be launched using:
 
