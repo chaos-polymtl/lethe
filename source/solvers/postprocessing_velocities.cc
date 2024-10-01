@@ -310,6 +310,18 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   sum_reynolds_shear_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
   reynolds_shear_stresses.reinit(locally_owned_dofs, mpi_communicator);
   get_rss.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+
+  // Initializing vector with locally_relevant_dofs because writing checkpoint
+  // needs to read ghost cells.
+  sum_velocity_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                          locally_relevant_dofs,
+                                          mpi_communicator);
+  sum_rns_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
+  sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -347,26 +359,6 @@ AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
 }
 
 template <int dim, typename VectorType, typename DofsType>
-void
-AverageVelocities<dim, VectorType, DofsType>::initialize_checkpoint_vectors(
-  const DofsType &locally_owned_dofs,
-  const DofsType &locally_relevant_dofs,
-  const MPI_Comm &mpi_communicator)
-{
-  // Initializing vector with locally_relevant_dofs because writing checkpoint
-  // needs to read ghost cells.
-  sum_velocity_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                          locally_relevant_dofs,
-                                          mpi_communicator);
-  sum_rns_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs,
-                                     mpi_communicator);
-  sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs,
-                                     mpi_communicator);
-}
-
-template <int dim, typename VectorType, typename DofsType>
 std::vector<const VectorType *>
 AverageVelocities<dim, VectorType, DofsType>::save(const std::string &prefix)
 {
@@ -396,9 +388,9 @@ std::vector<VectorType *>
 AverageVelocities<dim, VectorType, DofsType>::read(const std::string &prefix)
 {
   std::vector<VectorType *> sum_vectors;
-  sum_vectors.push_back(&sum_velocity_dt);
-  sum_vectors.push_back(&sum_reynolds_normal_stress_dt);
-  sum_vectors.push_back(&sum_reynolds_shear_stress_dt);
+  sum_vectors.push_back(&sum_velocity_dt_with_ghost_cells);
+  sum_vectors.push_back(&sum_rns_dt_with_ghost_cells);
+  sum_vectors.push_back(&sum_rss_dt_with_ghost_cells);
 
 
   std::string   filename = prefix + ".averagevelocities";
