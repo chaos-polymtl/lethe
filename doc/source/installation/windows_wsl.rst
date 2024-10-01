@@ -231,7 +231,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
   +--------+------------------------------------------------+-----------------------------------------------+
 
   * save and close
-  * To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6 which is the current default candi version of p4est. Otherwise, application tests which include restart files will fail.
+  * To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6, the current default candi version of p4est. Otherwise, application tests that include restart files will fail.
   
 6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
