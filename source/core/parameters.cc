@@ -2915,7 +2915,7 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard")),
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer")),
         "Variable(s) for kelly estimation"
         "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer>."
         "For multi-variables refinement, separate the different variables with a comma "
