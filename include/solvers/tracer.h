@@ -193,10 +193,7 @@ public:
   compute_kelly(
     const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
       & /*ivar*/,
-    dealii::Vector<float> & /*estimated_error_per_cell*/) override
-  {
-    return;
-  }
+    dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares Heat Transfer to write checkpoint
