@@ -17,11 +17,11 @@ import os
 
 number_of_procs = 5
 
-
+# Returns the analytical bubble volume with a given theoretical flux of air at bubble inlet.
 def analytical_volume(t, flux, v_init):
     return t * flux + v_init
 
-
+# Returns the computed bubble volume using the simulation data on the flux at the bubble inlet. It is different from the volume obtained by integrating the phase field in the domain.
 def computed_volume(t, flux, v_init):
     volume = np.empty(len(t))
     volume[0] = v_init
@@ -69,17 +69,23 @@ def read_my_data(results_path):
     return list_of_list_of_vars_name, list_of_list_of_vars
 
 
+# Returns the list of bubble volume for each time-step (analytical and computed and absolute) using the simulation's post-processing files.
 def bubble_volume(output_path):
 
     list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(
         output_path + "/phase_statistics.dat")
     list_of_list_of_vars_name_flux, list_of_list_of_vars_flux = read_my_data(
         output_path + "/flow_rate.dat")
-
+    
+    # This volume is the one obtained by integrating the phase field in the domain
     absolute_volume = list_of_list_of_vars[0][6]
+    
+    # This volume is the one obtaine by integrating the numerical inlet flux with respect to time
     time_integrated_flux_volume = computed_volume(
         list_of_list_of_vars_flux[0][0], list_of_list_of_vars_flux[0][3],
         list_of_list_of_vars[0][6][0])
+        
+    # This volume is the one obtained by integrating the theoretical inlet flux with respect to time
     analytical_volume_array = analytical_volume(list_of_list_of_vars[0][0],
                                                 5.0e2,
                                                 (2 * np.pi * (0.5) ** 3) / 3)
@@ -87,13 +93,14 @@ def bubble_volume(output_path):
 
     return absolute_volume, time_integrated_flux_volume, analytical_volume_array, time
 
-
+# Returns the volume of the bubble at a given time
 def get_volume_at_time(volume_list,time_list,time):
     time_list = np.array(time_list)
     time_index = (np.abs(time_list - time)).argmin()
 
     return volume_list[time_index]
 
+# Returns the time-step list, the detachment time and x and y coordinates of the contour of the bubble at detachment time.
 def get_numerical_detachment_time(output_path):
     list_vtu = os.listdir(output_path)
 
@@ -146,23 +153,14 @@ def get_numerical_detachment_time(output_path):
                 bar()
 
     time_clip = -1
-    x, y = get_contour_at_detachment(detachment_index,
-                                     list_vtu, output_path)
+    #x, y = get_contour_at_detachment(detachment_index,
+                                     #list_vtu, output_path)
+                                     
+    x, y = get_contour_at_fixed_time(detachment_time, output_path)
 
     return time, detachment_time, x, y
 
-
-def get_contour_at_detachment(index_detachment, list_vtu, output_path):
-    vtu_file = list_vtu[index_detachment]
-    sim = pv.read(f"{output_path}/{vtu_file}")
-    sim.set_active_scalars("phase_order")
-    slice_single = sim.slice(normal="z", origin=(0, 0, 0))
-    contour_val = np.array([0.0])
-    contour = slice_single.contour(contour_val, scalars="phase_order")
-    x, y = contour.points[:, 0], contour.points[:, 1]
-    return x, y
-
-
+# Returns the x and y coordinates of the bubble contour in the z=0 plane at a given time.
 def get_contour_at_fixed_time(time_value, output_path):
     list_vtu = os.listdir(output_path)
     pvd_file = [x for x in list_vtu if (x.endswith('.pvd'))]
@@ -184,8 +182,7 @@ def get_contour_at_fixed_time(time_value, output_path):
     x, y = contour.points[:, 0], contour.points[:, 1]
     return x, y
 
-
-
+# Finds the index of the element whose value is the nearest to the value in input.
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()

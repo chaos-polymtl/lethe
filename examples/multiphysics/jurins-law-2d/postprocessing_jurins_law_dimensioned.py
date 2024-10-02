@@ -2,6 +2,7 @@
 Postprocessing code for Jurin's law example
 This code extracts the difference in height between the meniscus
 and the fluid on the side.
+The functions of this file are used in the jurins_law_multiple_folders.py file.
 """
 # -------------------------------------------
 # Modules
@@ -20,9 +21,7 @@ import sys
 # Main
 # --------------------------------------------
 
-# To make it work, type "python3 rayleigh-taylor_postprocess.py ./output/adaptive/" or
-# "python3 rayleigh-taylor_postprocess.py ./output/constant/" into the terminal.
-
+# Returns the list of the difference of heights between the meniscus and the fluid on the side for each timestep.
 def get_deltaH(output_path,prm):
     print(output_path)
     
@@ -94,6 +93,8 @@ def get_deltaH(output_path,prm):
         
     return deltaH, time_list
         
+        
+# Returns the theoretical asymptotical value of DeltaH.
 def analytical_solution(prm,angle):
     g = prm.g
     mu = prm.mu
