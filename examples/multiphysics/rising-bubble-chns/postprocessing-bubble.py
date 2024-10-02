@@ -59,15 +59,6 @@ plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
-for i in range(len(filename_list)):
-    t, x, y, vx, vy = np.loadtxt(filename_list[i], skiprows=1, unpack=True)
-    t_list.append(t)
-    x_list.append(x)
-    y_list.append(y)
-    vx_list.append(vx)
-    vy_list.append(vy)
-
-
 colors = {
     'blue':    '#377eb8', 
     'orange':  '#ff7f00',
@@ -98,45 +89,62 @@ x_contour_ref = [0.15772151898734177, 0.15772151898734177, 0.15873417721518987, 
 
 y_contour_ref = [1.0266441821247891, 1.0347386172006745, 1.0408094435075885, 1.047892074198988, 1.0529510961214166, 1.0590219224283306, 1.0650927487352444, 1.0711635750421584, 1.0762225969645869, 1.082293423271501, 1.0893760539629005, 1.0954468802698145, 1.1005059021922428, 1.1065767284991568, 1.1126475548060708, 1.117706576728499, 1.1227655986509275, 1.1278246205733558, 1.1338954468802698, 1.1379426644182125, 1.1440134907251265, 1.1490725126475547, 1.154131534569983, 1.160202360876897, 1.1652613827993255, 1.1703204047217537, 1.1753794266441822, 1.1794266441821246, 1.184485666104553, 1.1885328836424958, 1.193591905564924, 1.1986509274873525, 1.2026981450252952, 1.2067453625632378, 1.2097807757166947, 1.2138279932546374, 1.21787521079258, 1.2219224283305228, 1.2249578414839797, 1.2290050590219224, 1.233052276559865, 1.2370994940978077, 1.2401349072512646, 1.2441821247892073, 1.24822934232715, 1.2512647554806071, 1.2553119730185496, 1.2583473861720067, 1.2593591905564923, 1.2644182124789207, 1.2674536256323776, 1.269477234401349, 1.2704890387858347, 1.275548060708263, 1.275548060708263, 1.2775716694772343, 1.2785834738617199, 1.2785834738617199, 1.2826306913996626, 1.2826306913996626, 1.2826306913996626, 1.2836424957841484, 1.2826306913996626, 1.284654300168634, 1.284654300168634, 1.284654300168634, 1.2856661045531197, 1.284654300168634, 1.2836424957841484, 1.2826306913996626, 1.281618887015177, 1.2826306913996626, 1.281618887015177, 1.281618887015177, 1.2785834738617199, 1.2785834738617199, 1.2775716694772343, 1.275548060708263, 1.2745362563237772, 1.2715008431703203, 1.2704890387858347, 1.2674536256323776, 1.266441821247892, 1.2644182124789207, 1.2623946037099494, 1.2593591905564923, 1.2553119730185496, 1.2532883642495785, 1.2492411467116358, 1.245193929173693, 1.2411467116357504, 1.2381112984822933, 1.2350758853288364, 1.2310286677908937, 1.2279932546374366, 1.2229342327150083, 1.2188870151770657, 1.214839797639123, 1.2107925801011805, 1.2067453625632378, 1.2026981450252952, 1.196627318718381, 1.1915682967959527, 1.1865092748735244, 1.1804384485666104, 1.1753794266441822, 1.1682967959527826, 1.1622259696458683, 1.1551433389544687, 1.1470489038785834, 1.1419898819561551, 1.1349072512647553, 1.1288364249578415, 1.1217537942664417, 1.1156829679595277, 1.1086003372681281, 1.102529510961214, 1.094435075885329, 1.0883642495784147, 1.082293423271501, 1.0721753794266442, 1.0661045531197302, 1.0600337268128162, 1.0519392917369308, 1.0428330522765599, 1.0347386172006745, 1.0286677908937605, 1.0205733558178751, 1.0145025295109613, 1.0053962900505902, 0.9993254637436763, 0.9922428330522766, 0.9851602023608769, 0.9801011804384485, 0.9740303541315346, 0.9699831365935918, 0.9649241146711636, 0.9598650927487353, 0.9558178752107926, 0.9537942664418213, 0.9487352445193928, 0.9467116357504216, 0.9436762225969646, 0.9396290050590218, 0.9365935919055649, 0.9345699831365937, 0.9315345699831366, 0.930522765598651, 0.9295109612141653, 0.9254637436762226, 0.9254637436762226, 0.924451939291737, 0.9224283305227655, 0.9224283305227655, 0.92141652613828, 0.92141652613828, 0.9183811129848228, 0.9183811129848228, 0.9183811129848228, 0.9183811129848228, 0.9173693086003374, 0.9153456998313659, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9153456998313659, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9133220910623947, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9143338954468803, 0.9163575042158516, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9173693086003374, 0.9183811129848228, 0.92141652613828, 0.92141652613828, 0.92141652613828, 0.92141652613828, 0.924451939291737, 0.9234401349072513, 0.9254637436762226, 0.924451939291737, 0.9284991568296797, 0.9284991568296797, 0.9295109612141653, 0.9325463743676223, 0.9335581787521079, 0.9335581787521079, 0.9355817875210792, 0.9386172006745364, 0.9396290050590218, 0.9416526138279933, 0.9436762225969646, 0.9477234401349073, 0.9477234401349073, 0.9507588532883643, 0.9558178752107926, 0.9588532883642495, 0.9618887015177066, 0.9649241146711636, 0.9689713322091063, 0.9740303541315346, 0.9811129848229343, 0.9881956155143339, 0.9942664418212479, 1.0023608768971333, 1.0094435075885329, 1.0165261382799324, 1.0205733558178751]
 
+# Define legend entries
 pparam0 = dict(xlabel=r'$t [-]$', ylabel=r'Bubble barycenter height [-]')
 pparam1 = dict(xlabel=r'$t [-]$', ylabel=r'Rise velocity [-]')
 pparam3 = dict(xlabel=r'$x [-]$', ylabel=r'y [-]')
 
+# Read the .dat files to extract relevant data for each sub-directory in the main directory : time list, barycenter coordinates list for each time step, barycenter velocity list for each timestep
+for i in range(len(filename_list)):
+    t, x, y, vx, vy = np.loadtxt(filename_list[i], skiprows=1, unpack=True)
+    t_list.append(t)
+    x_list.append(x)
+    y_list.append(y)
+    vx_list.append(vx)
+    vy_list.append(vy)
+    
+    
+# Syntax specific to the SciencePlots module 
 with plt.style.context(['science', 'ieee']):
    fig0 = plt.figure()
    ax0 = fig0.add_subplot(111)
+   
+   # This loops plots the barycenter coordinates for each subdirectory of the main directory
    for i in range(len(filename_list)):
       label_loop = dirs[i]
       ax0.plot(t_list[i], y_list[i], lw=1, label=label_loop)
+      
+   # Plot the reference barycenter coordinates
    ax0.plot(x_ref_ZKR, y_ref_ZKR, '+',markersize = 3,label="Zahedi et al. (2012)")
    ax0.plot(x_ref_H, y_ref_H, 'x',markersize = 3,alpha=0.8,label="Hysing et al. (2009)")
-   ax0.set(**pparam0)
-#ax0.set_ylabel(r'Bubble barycenter height')
-#ax0.set_xlabel(r'$t$')
-   ax0.grid( which='major', color='silver', linestyle='--')
-   #ax0.legend(loc="upper left",frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},fancybox=False,framealpha=1)
-   fig0.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
    
+   # Legend settings
+   ax0.set(**pparam0)
+   ax0.grid( which='major', color='silver', linestyle='--')
+   fig0.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
    y_ticks = [0.5, 0.6, 0.8,1.0, 1.2]
    ax0.set_yticks(y_ticks)
-   
    ax0.set_xlim([0,3])
    ax0.set_ylim([0.5,1.2])
-
+   
+   # Save figures
    fig0.savefig(f'./bubble-barycenter.pdf',format="pdf",dpi=500)
    fig0.savefig(f'./bubble-barycenter.png',format="png",dpi=500)
 
+# Syntax specific to the SciencePlots module 
 with plt.style.context(['science', 'ieee']):
    fig1 = plt.figure()
    ax1 = fig1.add_subplot(111)
+   # This loops plots the barycenter velocities for each subdirectory of the main directory
    for i in range(len(filename_list)):
       label_loop = dirs[i]
       ax1.plot(t_list[i], vy_list[i], lw=1, label=label_loop)
+   # Plot the reference barycenter velocities
    ax1.plot(x_vel_ZKR, y_vel_ZKR, '+',markersize = 3,label="Zahedi et al. (2012)")
    ax1.plot(x_vel_H, y_vel_H, '*',markersize = 3,alpha=0.8,label="Hysing et al. (2009)")
+   
+   # Legend settings
    ax1.set(**pparam1)
-   #ax1.set_ylabel(r'Rise velocity')
-   #ax1.set_xlabel(r'$t$')
    ax1.grid(which='major', color='silver', linestyle='--')
    ax1.legend(loc="lower right",frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},fancybox=False,framealpha=1)
    ax1.set_xlim([0,3])
@@ -151,9 +159,8 @@ for dir in dirs:
     list_vtu = [root + "/" + dir + "/" + x for x in list_vtu if(x.endswith('.vtu')) ]
     list_vtu = np.sort(list_vtu)
     list_latest_files.append(list_vtu[-1])
-#print("Opening file: ", list_latest_files)
 
-
+# Syntax specific to the SciencePlots module 
 with plt.style.context(['science', 'ieee']):
 
    fig3 = plt.figure()
@@ -161,6 +168,8 @@ with plt.style.context(['science', 'ieee']):
 
    for i in range(len(dirs)):
       sim = pv.read(list_latest_files[i])
+      # If VOF simulation results are in the main subdirectory, the script is able to output the contour of the bubble nonetheless.
+      # The VOF subdirectories should have VOF somewhere in their name
       if ("VOF" in list_latest_files[i]):
           sim.set_active_scalars("filtered_phase")
           contour_val = np.array([0.5])
@@ -169,7 +178,7 @@ with plt.style.context(['science', 'ieee']):
           label_loop = dirs[i]
           ax3.scatter(x, y, s=1, marker=",",color='k',label=label_loop)
 
-
+      # Plot the contour of the bubble	
       else:
           sim.set_active_scalars("phase_order")
           contour_val = np.array([0.0])
@@ -178,19 +187,15 @@ with plt.style.context(['science', 'ieee']):
           label_loop = dirs[i]
           ax3.scatter(x, y, s=1, marker=".",color='r',label=label_loop)
 
- 
+   # Plot the reference contour of the bubble.
    ax3.scatter(x_contour_ref, y_contour_ref,alpha=0.8, s=1,marker="*", color='b',label="Zahedi et al. (2012)")
    ax3.grid( which='major', color='silver', linestyle='--')
    ax3.set_xlim([0.1,0.9])
    ax3.set_ylim([0.8,1.4])
-   #ax3.set_ylim([0.6775,1.3])
-   #plt.legend(frameon = True,edgecolor='k')
    ax3.set(**pparam3)
-   #ax3.legend(loc="upper left")
-   #ax3.legend(loc=4)
-   #ax3.legend(loc="lower right",frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},fancybox=False,framealpha=1)
    fig3.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(1.4, 0.5))
+   
+   # Save figures
    fig3.savefig("bubble-contour.pdf",format="pdf",dpi=500)
    fig3.savefig("bubble-contour.png",format="png",dpi=500)
-   #plt.show()
 

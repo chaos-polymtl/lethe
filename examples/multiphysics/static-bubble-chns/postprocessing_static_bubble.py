@@ -52,6 +52,7 @@ def get_pressure_difference(output_path, prm):
     pressure_difference = avg_pressure_inside - avg_pressure_outside
     return pressure_difference
     
+# Returns the pressure along the [-2.5,0,0]->[2.5,0,0] line segment and the line segment itself to allow for an easy plot.
 def get_pressure_slice(output_path):
     list_vtu = os.listdir(output_path)
     pvd_file = [x for x in list_vtu if (x.endswith('.pvd'))]
@@ -69,7 +70,7 @@ def get_pressure_slice(output_path):
     
     return pressure_line, x_line
 
-
+# Returns the analytical pressure difference for a given set of parameters (surface tension coefficient)
 def analytical_solution(prm):
     radius_array = np.linspace(0.1, 0.5, 500)
     sigma = prm.sigma

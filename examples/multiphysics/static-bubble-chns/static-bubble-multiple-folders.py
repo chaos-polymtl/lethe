@@ -41,7 +41,7 @@ plt.rc('ytick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
 plt.rc('legend', fontsize=8)  # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-
+# Class containing relevant physical properties of the problem
 class parametres():
     sigma = 1
     radius = 0.15
@@ -65,9 +65,7 @@ for dir in dirs:
 folder_name_list = os_sorted(folder_name_list)
 dirs = os_sorted(dirs)
 
-print(folder_name_list)
-print(dirs)
-
+# Syntax specific to the SciencePlots module 
 with plt.style.context(['science', 'ieee']):
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -77,8 +75,10 @@ with plt.style.context(['science', 'ieee']):
 plots = []
 
 for i in range(len(folder_name_list)):
+    # Get the radius of the case from the directory name. (Works if the subdirectories were generated using the generate_cases_locally.py script)
     radius = float(dirs[i][2:])
     prm.set_radius(radius)
+    # Get the numerical pressure difference from each directory
     pressure_diff = get_pressure_difference(folder_name_list[i], prm)
     # Store the plot handle with label "Lethe"
     plot_handle, = ax.plot(radius, pressure_diff, 'k*', label="Lethe")
@@ -100,7 +100,7 @@ ax.set_ylim([2, 10])
 fig.savefig('pressure-difference.pdf', format="pdf", dpi=500)
 fig.savefig('pressure-difference.png', format="png", dpi=500)
 
-    
+# Syntax specific to the SciencePlots module     
 with plt.style.context(['science', 'ieee']):
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)

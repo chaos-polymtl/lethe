@@ -45,7 +45,6 @@ plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 # Get first and second argument
 rootdir = sys.argv[1]
-savedir = sys.argv[2]
 
 folder_name_list = []
 root, dirs, files = next(os.walk(rootdir, topdown=True))
@@ -71,7 +70,7 @@ with plt.style.context(['science', 'ieee']): # Syntax to use a specific plot sty
     for i in range(len(folder_name_list)): # Loop on the different directories in the output directory
          print(f'Reading directory : {folder_name_list[i]}')
          
-         # The three following lines gather the detachment time and detachment volume
+         # The three following lines gather the detachment time, detachment volume and the contour of the bubble at detachment.
          time, detachment_time,x,y = get_numerical_detachment_time(folder_name_list[i])
          absolute_volume, time_integrated_flux_volume, analytical_volume_array, time = bubble_volume(
          folder_name_list[i])
@@ -84,7 +83,6 @@ with plt.style.context(['science', 'ieee']): # Syntax to use a specific plot sty
          label_loop =r' ($t_{det}=$'+f'{detachment_time:2f} s)'
          
          # Plot and save the contour of the bubble at detachment
-         x, y = get_contour_at_fixed_time(detachment_time, folder_name_list[i])
          ax.scatter(x, y, s=0.5, marker=".", label=label_loop)
 
 
@@ -93,7 +91,7 @@ with plt.style.context(['science', 'ieee']): # Syntax to use a specific plot sty
     ax.set(**pparams)
     handles, labels = plt.gca().get_legend_handles_labels()
     fig.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(0.80, -0.15))
-    fig.savefig(savedir + '/' + savedir + '_bubble_contour.pdf', format="pdf", dpi=500)
-    fig.savefig(savedir + '/' + savedir + '_bubble_contour.png', format="png", dpi=500)
+    fig.savefig('./' + savedir + '_bubble_contour.pdf', format="pdf", dpi=500)
+    fig.savefig('./' + savedir + '_bubble_contour.png', format="png", dpi=500)
 
 
