@@ -1,18 +1,5 @@
 """
-
-Quick user guide : 
-
-This python script is used to plot a slice of the pressure field and the difference between the averaged pressure outside of the bubble and inside the bubble.
-
-How to use this script?
-
-1- Create a first directory (we will call it outputs but feel free to name it as you like).
-2- For each simulation, create a new directory in outputs : output1, output2, output3,...
-3- Run the simulations and store the results in their correct directories
-4- Execute the script with the path of outputs as argument :
-   python3 multiple_folders_new_bubble_detachment_post_processing /PATH/TO/OUTPUTS/DIR 
-5- Enjoy your plots. 
-
+Definition of the functions used in static-bubble-multiple-folders.py
 """
 # -------------------------------------------
 # Modules
@@ -20,11 +7,9 @@ How to use this script?
 
 import numpy as np
 import pyvista as pv
-
-import os
 from natsort import os_sorted
+import os
 import sys
-import pandas as pd
 
 
 # --------------------------------------------
@@ -39,6 +24,8 @@ def get_pressure_difference(output_path, prm):
     pvd_file = [x for x in list_vtu if (x.endswith('.pvd'))]
     list_vtu = [x for x in list_vtu if ("pvtu" in x)]
     list_vtu = os_sorted(list_vtu)
+    if len(pvd_file) == 0:
+        raise Exception(f"Folder {output_path} does not contain any .pvd file!")
     last_filename = list_vtu[-1]
     reader = pv.get_reader(output_path + "/" + pvd_file[0])
     # Sort VTU files to ensure they are in the same order as the time step
@@ -88,19 +75,6 @@ def analytical_solution(prm):
     sigma = prm.sigma
     return radius_array, sigma / radius_array
 
-
-def get_velocity_error_time(output_path):
-    time, error_velocity, error_pressure = np.loadtxt(
-        output_path + "/L2Error.dat", skiprows=1, unpack=True)
-
-    return time, error_velocity
-
-
-def get_last_velocity_error(output_path):
-    time, error_velocity, error_pressure = np.loadtxt(
-        output_path + "/L2Error.dat", skiprows=1, unpack=True)
-
-    return time, error_velocity
 
 
 
