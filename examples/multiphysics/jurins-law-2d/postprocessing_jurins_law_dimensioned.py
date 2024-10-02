@@ -110,21 +110,6 @@ def analytical_solution(prm,angle):
     
     return analytical_deltaH*1000
       
-#deltaH,time_list = get_deltaH('verifications/150',prm)
-# Figure
-#fig0 = plt.figure()
-#ax0 = fig0.add_subplot(111)
-#ax0.plot(time_list, deltaH, '-k', linewidth=2, label="Delta H")
-#ax0.plot(time_list, meniscus_height, '-r', linewidth=2, label="Meniscus height")
-#ax0.plot(time_list, side_height, '-b', linewidth=2, label="Side height")
-#ax0.set_ylabel(r'$\Delta h$')
-#ax0.set_xlabel(r'$t$')
-# ax0.set_xlim([0, 4.5])
-# ax0.set_ylim([0.0, 0.008])
-#ax0.legend(loc="upper left")
-#plt.title("DeltaH evolution in time")
-#fig0.savefig('./delta_H.png')
-#plt.show()
 
 
 
