@@ -1,0 +1,5 @@
+numpy>=2.1.1
+pyvista>=0.41.1
+SciencePlots>=2.1.1
+matplotlib>=3.9.2
+natsort>=8.4.0

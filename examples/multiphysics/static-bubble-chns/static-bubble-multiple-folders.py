@@ -52,6 +52,8 @@ class parametres():
 
 prm = parametres()
 
+if (len(sys.argv)==0):
+    raise Exception(f"No outputs folder was specified as an argument of the python script.")
 rootdir = sys.argv[1]
 
 folder_name_list = []
