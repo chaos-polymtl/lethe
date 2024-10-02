@@ -7,15 +7,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set output name      = jurins-law-2d
-  set output frequency = 10
-  set output path      = ./outputs/50-no-slip/
-  set max time step = 5e-4
-  set adapt = true 
-  set max cfl = 0.8
-  set time end = 1
-  set time step = 5e-4
+  set method            = bdf1
+  set output name       = jurins-law-2d
+  set output frequency  = 10
+  set output path       = ./outputs/50-no-slip/
+  set max time step     = 5e-4
+  set adapt             = true
+  set max cfl           = 0.8
+  set time end          = 1
+  set time step         = 5e-4
   set output boundaries = true
 end
 
@@ -24,7 +24,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set cahn hilliard  = true
+  set cahn hilliard = true
 end
 
 #---------------------------------------------------
@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection dimensionality
-  set length      = 0.001 #meter
+  set length = 0.001 #meter
 end
 
 #---------------------------------------------------
@@ -45,7 +45,6 @@ subsection FEM
   set velocity order                = 1
   set pressure order                = 1
 end
-
 
 #---------------------------------------------------
 # Mesh
@@ -79,21 +78,21 @@ end
 
 subsection physical properties
   set number of fluids = 2
-  subsection fluid 0 #air 
-    set kinematic viscosity        = 8e-5 #-4 pour air et eau c'est pas mal
-    set density                    = 1
+  subsection fluid 0 #air
+    set kinematic viscosity = 8e-5 #-4 pour air et eau c'est pas mal
+    set density             = 1
   end
-    subsection fluid 1 #water
-    set kinematic viscosity        = 1e-4
-    set density                    = 2000
+  subsection fluid 1 #water
+    set kinematic viscosity = 1e-4
+    set density             = 2000
   end
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient = 7.3e-2
+      set surface tension coefficient  = 7.3e-2
       set cahn hilliard mobility model = constant
-      #set cahn hilliard mobility constant  = 5e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF 
-      set cahn hilliard mobility constant  = 1e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF 
+      #set cahn hilliard mobility constant  = 5e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF
+      set cahn hilliard mobility constant = 1e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF
     end
   end
 end
@@ -104,12 +103,12 @@ end
 
 subsection cahn hilliard
   set potential smoothing coefficient = 0
-  
+
   subsection epsilon
     set method = automatic
     #set verbosity = verbose
   end
-  
+
   #subsection phase filtration
   #  set type      = tanh
   #  set verbosity = quiet
@@ -117,19 +116,17 @@ subsection cahn hilliard
   #end
 end
 
-
 #---------------------------------------------------
 # Boundary conditions Cahn-Hilliard
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
-
-set number = 1
-	subsection bc 0
-		set id = 2 # angle of contact
-		set type = angle_of_contact
-		set angle value = 50
-	end
+  set number = 1
+  subsection bc 0
+    set id          = 2 # angle of contact
+    set type        = angle_of_contact
+    set angle value = 50
+  end
 end
 
 #---------------------------------------------------
@@ -146,8 +143,8 @@ subsection boundary conditions
     set id   = 5 # walls
     set type = slip
   end
-  subsection bc 2 
-    set id = 4 #upper surface
+  subsection bc 2
+    set id   = 4 #upper surface
     set type = none
   end
   subsection bc 3
@@ -163,21 +160,19 @@ end
 subsection post-processing
   set verbosity        = verbose
   set output frequency = 1
-  
-  set calculate barycenter = true
+
+  set calculate barycenter       = true
   set calculate phase statistics = true
 end
-
 
 #---------------------------------------------------
 # Initial conditions
 #---------------------------------------------------
 
 subsection initial conditions
-subsection cahn hilliard
-set Function expression = tanh((y-4)/(1.41*2e-2));0
-end
-
+  subsection cahn hilliard
+    set Function expression = tanh((y-4)/(1.41*2e-2));0
+  end
 end
 
 #---------------------------------------------------
@@ -198,7 +193,6 @@ subsection timer
   set type = none
 end
 
-
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
@@ -216,27 +210,26 @@ subsection non-linear solver
   end
 end
 
-
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set max iters                             = 500
-    set relative residual                     = 1e-2
-    set minimum residual                      = 1e-3
-    set ilu preconditioner fill               = 1
-    set max krylov vectors                    = 300
+    set verbosity               = verbose
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-3
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
   end
   subsection cahn hilliard
-    set verbosity                             = verbose
-    set max iters                             = 500
-    set relative residual                     = 1e-2
-    set minimum residual                      = 1e-3
-    set ilu preconditioner fill               = 1
-    set max krylov vectors                    = 300
+    set verbosity               = verbose
+    set max iters               = 500
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-3
+    set ilu preconditioner fill = 1
+    set max krylov vectors      = 300
   end
 end
 
@@ -250,8 +243,9 @@ subsection restart
   set frequency  = 10
 
   # Output/input files
-  set filename   = restart
+  set filename = restart
 
   # Restarting parameter
-  set restart    = false
+  set restart = false
 end
+

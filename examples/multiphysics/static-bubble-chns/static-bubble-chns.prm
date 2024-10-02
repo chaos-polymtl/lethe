@@ -35,7 +35,7 @@ end
 subsection cahn hilliard
   set potential smoothing coefficient = 0
   subsection epsilon
-    set method = automatic
+    set method    = automatic
     set verbosity = verbose
   end
 end
@@ -78,7 +78,7 @@ subsection physical properties
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient = 1
+      set surface tension coefficient     = 1
       set cahn hilliard mobility constant = {{mobility}}
     end
   end
@@ -113,7 +113,7 @@ end
 #---------------------------------------------------
 
 subsection analytical solution
-  set enable    = true
+  set enable = true
   subsection uvwp
     set Function expression = 0; 0; if (x^2 + y^2 < {{R}}^2 , 2, 0)
   end
@@ -134,20 +134,21 @@ end
 subsection post-processing
   set verbosity        = verbose
   set output frequency = 1
-  
-  set calculate barycenter = true
+
+  set calculate barycenter       = true
   set calculate phase statistics = true
 end
+
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection cahn hilliard
-    set tolerance      = 1e-6
+    set tolerance = 1e-6
   end
   subsection fluid dynamics
-    set tolerance      = 1e-4
+    set tolerance = 1e-4
   end
 end
 
