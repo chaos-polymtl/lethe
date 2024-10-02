@@ -6,7 +6,6 @@ import numpy
 # Modules
 # -------------------------------------------
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import pyvista as pv
 from natsort import os_sorted
