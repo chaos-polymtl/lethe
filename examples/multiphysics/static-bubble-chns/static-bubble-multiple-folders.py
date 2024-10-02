@@ -18,8 +18,7 @@ This should be called as follows : python3 static-bubble-multiple-folders.py /PA
 # Modules
 # -------------------------------------------
 
-from postprocessing_static_bubble import get_pressure_difference, \
-    analytical_solution, get_velocity_error_time,get_pressure_slice
+from postprocessing_static_bubble import get_pressure_difference, analytical_solution,get_pressure_slice
 import numpy as np
 import os
 import sys
@@ -95,32 +94,17 @@ ax.legend(handles=plots, loc='upper right', frameon=True, edgecolor='k', prop={'
 ax.set(**pparams)
 ax.set_xlim([0, 0.5])
 ax.set_ylim([2, 10])
+# Save the figures
 fig.savefig('pressure-difference.pdf', format="pdf", dpi=500)
 fig.savefig('pressure-difference.png', format="png", dpi=500)
 
-with plt.style.context(['science', 'ieee']):
-    fig1 = plt.figure()
-    ax1 = fig1.add_subplot(111)
-    pparams1 = dict(xlabel=r'$\text{Time [s]}$',
-                    ylabel=r'$\mathrm{Velocity} \; L_2{\text-} \text{error}$')
-    for i in range(len(folder_name_list)):
-        time, error_velocity = get_velocity_error_time(folder_name_list[i])
-        label_loop = r'$R = \;$' + dirs[i][2:] + r'$\text{[m]}$'
-        ax1.plot(time, error_velocity,label=label_loop )
-    ax1.ticklabel_format(axis='y', scilimits=[-1, 1])    
-    ax1.legend(loc='upper right', frameon=True, edgecolor='k',
-               prop={'size': MEDIUM_SIZE}, ncol=1)
-    ax1.set(**pparams1)
-    ax1.grid(which='major', color='lightgrey', linestyle='--',alpha=0.8)
-    ax1.set_xlim([0, 3])
-    #ax1.set_ylim([, 10])
-    fig1.savefig('l2-error-velocity.pdf', format="pdf", dpi=500)
     
 with plt.style.context(['science', 'ieee']):
     fig2 = plt.figure()
     ax2 = fig2.add_subplot(111)
     pparams1 = dict(xlabel=r'$x \text{[m]}$',
                     ylabel=r'$\mathrm{Pression} \text{[Pa]}$')
+    # Get the pressure profile for each subdirectory of the main output directory
     for i in range(len(folder_name_list)):
         p, x = get_pressure_slice(folder_name_list[i])
         label_loop = r'$R = $ ' + dirs[i][2:] + r'$ \text{[m]}$'
