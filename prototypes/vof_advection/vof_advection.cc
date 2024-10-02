@@ -974,7 +974,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   // Compute the rest of the mesh
   bool change = true;
-  while (change)
+  // while (change)
+  for (unsigned int c = 0; c < 100; c++)
   {
     FEPointEvaluation<1, dim> fe_point_evaluation(mapping, fe, update_values | update_gradients | update_jacobians);
     
@@ -1120,27 +1121,50 @@ AdvectionProblem<dim>::compute_sign_distance()
               // }
               
               // 
-              bool check = true;
+              // bool check = true;
+              
+              // double relaxation = 1.0;
+              // while (check)
+              // {
+              //   x_n_p1_ref = stencil_ref[0] + relaxation*correction;
+              // 
+              //   check = false;
+              //   for (unsigned int k = 0; k < dim; ++k)
+              //   {
+              //     if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
+              //     {
+              //       check = true;
+              //     }
+              //   }
+              // 
+              //   relaxation *= 0.5;
+              // }
               
               double relaxation = 1.0;
-              while (check)
+              
+              bool check = false;
+              for (unsigned int k = 0; k < dim; ++k)
               {
-                x_n_p1_ref = stencil_ref[0] + relaxation*correction;
-                
-                check = false;
-                for (unsigned int k = 0; k < dim; ++k)
+                if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
                 {
-                  if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
+                  check = true;
+                  double step;
+                  if (correction[k] > 1e-8)
                   {
-                    check = true;
+                    relaxation = std::min((1.0 - x_n_ref[k])/(correction[k]+1e-8), relaxation);
                   }
+                  else if (correction[k] < -1e-8)
+                  {
+                    relaxation = std::min((0.0 - x_n_ref[k])/(correction[k]+1e-8), relaxation);
+                  }
+                  
                 }
-                if (check)
-                  outside_check +=1;
-                
-                relaxation *= 0.999;
               }
               
+              if (check)
+                outside_check +=1;
+              
+              x_n_p1_ref = stencil_ref[0] + relaxation*correction;
               
               std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_p1_ref}; 
               
@@ -1221,6 +1245,8 @@ AdvectionProblem<dim>::compute_sign_distance()
         }
       }
     }
+    
+    
     
     // Compute signed distance
     for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1324,7 +1350,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(7);
+  triangulation.refine_global(4);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
