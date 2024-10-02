@@ -1,9 +1,18 @@
 """
-Postprocessing code for static bubble example
-This code extracts the difference in pressure betwwen the interior and the
-exterior of the bubble for multiple folders
+Quick user guide : 
 
-This should be called as follows : python3 static-bubble-multiple-folders.py outputs
+This python script is used to plot a slice of the pressure field and the difference between the averaged pressure outside of the bubble and inside the bubble.
+
+How to use this script?
+
+1- Create a first directory (we will call it outputs but feel free to name it as you like).
+2- For each simulation, create a new directory in outputs : output1, output2, output3,...
+3- Run the simulations and store the results in their correct directories
+4- Execute the script with the path of outputs as argument :
+   python3 multiple_folders_new_bubble_detachment_post_processing /PATH/TO/OUTPUTS/DIR 
+5- Enjoy your plots. 
+
+This should be called as follows : python3 static-bubble-multiple-folders.py /PATH/TO/OUTPUTS/DIR
 """
 # -------------------------------------------
 # Modules

@@ -10,7 +10,7 @@ subsection simulation control
   set method           = bdf2
   set output name      = article-3d
   set output frequency = 15
-  set output path      = ./output/
+  set output path      = ./outputs/output/
   set time end = 0.5
   set adapt = true
   set max cfl = 0.9
