@@ -1,0 +1,8 @@
+Simulation control
+dt_0 0.01
+dt_1 0.01
+dt_2 0.01
+dt_3 0.01
+CFL  0.0219711
+Time 10.6
+Iter 1061
