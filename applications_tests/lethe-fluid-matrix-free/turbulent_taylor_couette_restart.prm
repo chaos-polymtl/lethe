@@ -126,8 +126,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance = 1e-3
-    set verbosity = verbose
+    set tolerance      = 1e-3
+    set verbosity      = verbose
     set max iterations = 1
   end
 end
@@ -160,6 +160,6 @@ subsection linear solver
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver
-    set mg coarse grid solver                 = direct
+    set mg coarse grid solver = direct
   end
 end
