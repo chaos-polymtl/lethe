@@ -14,6 +14,15 @@ file(COPY tgv_restart_bdf1/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BIN
 file(COPY tgv_restart_bdf1/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/tgv_restart_bdf1.${_build_type}")
 file(COPY tgv_restart_bdf1/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/tgv_restart_bdf1.${_build_type}")
 
+
+file(COPY turbulent_taylor_couette_restart/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+file(COPY turbulent_taylor_couette_restart/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/turbulent_taylor_couette_restart.${_build_type}")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

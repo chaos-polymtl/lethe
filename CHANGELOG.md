@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## [Master] - 2024-10-03
+
+### Fixed
+
+- MINOR Simulations with time-dependent boundary conditions would not restart corresctly in the matrix-free solver because the initial guess of the solution was reset to zero. This is fixed now and the initial guess of the solution is identical. [#1302](https://github.com/chaos-polymtl/lethe/pull/1302)
+
 ## [Master] - 2024-09-30
 
 ### Fixed
