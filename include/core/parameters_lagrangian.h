@@ -468,7 +468,7 @@ namespace Parameters
     struct LagrangianPostProcessing
     {
       // A bool variable which sets-up the Lagrangian post-processing
-      bool Lagrangian_post_processing;
+      bool lagrangian_post_processing_enabled;
       /// A bool variable which sets-up the force chains visualization
       bool force_chains;
 
