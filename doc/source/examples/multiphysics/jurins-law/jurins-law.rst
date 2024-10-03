@@ -296,7 +296,7 @@ Possibilities for Extension
 
 - **Going 3D**: the mesh can be extruded into the third dimension and there is an adaptation of the Jurin's law in three dimensions. Some results are available in the literature for comparison (see Lovrić et al. [#lovric2019]_)
 
-- **Investigate the the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transitory state with this new boundary condition, see the works of **FIND REFERENC EON SLIP VS NO SLIP BC**
+- **Investigate the the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transitory state with this new boundary condition.
 
 -----------
 References
