@@ -33,8 +33,8 @@ end
 subsection restart
   set checkpoint = false
   set frequency  = 10
-  set filename = restart
-  set restart = true
+  set filename   = restart
+  set restart    = true
 end
 
 #---------------------------------------------------
@@ -74,9 +74,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity = verbose
-  set calculate kinetic energy = true
-  set calculate enstrophy = true
+  set verbosity                    = verbose
+  set calculate kinetic energy     = true
+  set calculate enstrophy          = true
   set calculate average velocities = false
   set initial time                 = 0.
 end
