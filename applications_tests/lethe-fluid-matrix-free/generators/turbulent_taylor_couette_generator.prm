@@ -128,8 +128,8 @@ subsection linear solver
   subsection fluid dynamics
     set method            = gmres
     set max iters         = 100
-    set relative residual = 1e-4
-    set minimum residual  = 1e-7
+    set relative residual = 1e-11
+    set minimum residual  = 1e-12
     set preconditioner    = gcmg
     set verbosity         = quiet
 
@@ -148,14 +148,6 @@ subsection linear solver
     set eig estimation verbosity       = quiet
 
     # Coarse-grid solver
-    set mg coarse grid solver                 = gmres
-    set mg gmres max iterations               = 2000
-    set mg gmres tolerance                    = 1e-7
-    set mg gmres reduce                       = 1e-4
-    set mg gmres max krylov vectors           = 30
-    set mg gmres preconditioner               = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    set mg coarse grid solver                 = direct
   end
 end
