@@ -523,7 +523,7 @@ namespace dealii
         dst = dst_;
       }
     } // namespace MGCoarseGridApplyPreconditioner
-  } // namespace internal
+  }   // namespace internal
 
 
   template <class VectorType, class PreconditionerType>
