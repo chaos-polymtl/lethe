@@ -34,9 +34,6 @@ end
 
 subsection dimensionality
   set length      = 0.001 #meter
-  set mass        = 1     #kilogramm
-  set time        = 1     #second
-  set temperature = 1     #Kelvin
 end
 
 #---------------------------------------------------
