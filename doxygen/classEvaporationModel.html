@@ -135,7 +135,7 @@ Protected Attributes</h2></td></tr>
 <p>The EvaporativeModel is the parent class, and its children are specific types of evaporative models, e.g., constant, temperature dependent. The selected model is instantiated in the assemblers' constructor (<a class="el" href="classNavierStokesVOFAssemblerEvaporation.html" title="Assembles the momentum source due to evaporation for the Navier-Stokes equations.">NavierStokesVOFAssemblerEvaporation</a> and/or <a class="el" href="classHeatTransferAssemblerVOFEvaporation.html" title="Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal...">HeatTransferAssemblerVOFEvaporation</a>), using the model_cast method according to the evaporation model parameters.</p>
 <p>The assemblers call the required method of the <a class="el" href="classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu...">EvaporationModel</a> for either the assembly of the rhs or matrix terms. Hence, no matter the selected evaporation model, the same assembler is called, avoiding repetitions of the assembler classes. </p>
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00047">47</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00034">34</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a487277401c1e24e6de30784ed1627f9d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a487277401c1e24e6de30784ed1627f9d">&#9670;&nbsp;</a></span>EvaporationModel()</h2>
@@ -160,7 +160,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00050">50</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00037">37</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
 </div>
 </div>
@@ -198,7 +198,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Boolean stating if the <a class="el" href="classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu...">EvaporationModel</a> depends on the field. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00069">69</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00056">56</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
 </div>
 </div>
@@ -505,7 +505,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the instantiated <a class="el" href="classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu...">EvaporationModel</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8cc_source.html#l00020">20</a> of file <a class="el" href="evaporation__model_8cc_source.html">evaporation_model.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8cc_source.html#l00007">7</a> of file <a class="el" href="evaporation__model_8cc_source.html">evaporation_model.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1Evaporation.html#ae42d81884b2864647c4dc3cbc7b12196">Parameters::Evaporation::evaporative_mass_flux_model_type</a>.</p>
 
@@ -718,7 +718,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00200">200</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="evaporation__model_8h_source.html#l00187">187</a> of file <a class="el" href="evaporation__model_8h_source.html">evaporation_model.h</a>.</p>
 
 </div>
 </div>

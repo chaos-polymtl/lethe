@@ -79,158 +79,145 @@ $(function() {
 <div class="title">cahn_hilliard_scratch_data.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="cahn__hilliard__scratch__data_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="cahn__hilliard__scratch__data_8h.html">solvers/cahn_hilliard_scratch_data.h</a>&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">   22</a></span>&#160;<a class="code" href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">CahnHilliardScratchData&lt;dim&gt;::allocate</a>()</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="comment">// Initialize size of arrays</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  this-&gt;n_q_points = fe_values_cahn_hilliard.get_quadrature().size();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  this-&gt;n_dofs     = fe_values_cahn_hilliard.get_fe().n_dofs_per_cell();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="comment">// Initialize arrays related to quadrature</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  this-&gt;JxW = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// Forcing term array</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  this-&gt;source_phase_order        = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  this-&gt;source_chemical_potential = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="comment">// Initialize arrays related to phase order and chemical potential</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  this-&gt;phase_order.component        = 0;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  this-&gt;chemical_potential.component = 1;</div>
+<a href="cahn__hilliard__scratch__data_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="cahn__hilliard__scratch__data_8h.html">solvers/cahn_hilliard_scratch_data.h</a>&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">    9</a></span>&#160;<a class="code" href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">CahnHilliardScratchData&lt;dim&gt;::allocate</a>()</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  <span class="comment">// Initialize size of arrays</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  this-&gt;n_q_points = fe_values_cahn_hilliard.get_quadrature().size();</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  this-&gt;n_dofs     = fe_values_cahn_hilliard.get_fe().n_dofs_per_cell();</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="comment">// Initialize arrays related to quadrature</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  this-&gt;JxW = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="comment">// Forcing term array</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  this-&gt;source_phase_order        = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  this-&gt;source_chemical_potential = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="comment">// Initialize arrays related to phase order and chemical potential</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  this-&gt;phase_order.component        = 0;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  this-&gt;chemical_potential.component = 1;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// Variables for the Cahn-Hilliard equations</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  this-&gt;phase_order_values            = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  this-&gt;phase_order_gradients         = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_q_points);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  this-&gt;phase_order_laplacians        = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  this-&gt;chemical_potential_values     = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  this-&gt;chemical_potential_gradients  = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_q_points);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  this-&gt;chemical_potential_laplacians = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// Phase order for BDF schemes</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  this-&gt;previous_phase_order_values =</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(<a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                                     std::vector&lt;double&gt;(n_q_points));</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// Variables for the Cahn-Hilliard equations</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  this-&gt;phase_order_values            = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  this-&gt;phase_order_gradients         = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_q_points);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  this-&gt;phase_order_laplacians        = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  this-&gt;chemical_potential_values     = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  this-&gt;chemical_potential_gradients  = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_q_points);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  this-&gt;chemical_potential_laplacians = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="comment">// Phase order for BDF schemes</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  this-&gt;previous_phase_order_values =</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(<a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                     std::vector&lt;double&gt;(n_q_points));</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  this-&gt;previous_chemical_potential_values =</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(<a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                                     std::vector&lt;double&gt;(n_q_points));</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// Initialize arrays related to shape functions</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// Phase-order shape functions</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  this-&gt;phi_phase =</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  this-&gt;grad_phi_phase = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_dofs));</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  this-&gt;hess_phi_phase = std::vector&lt;std::vector&lt;Tensor&lt;2, dim&gt;&gt;&gt;(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;2, dim&gt;&gt;(n_dofs));</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  this-&gt;laplacian_phi_phase =</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="comment">// Chemical potential shape functions</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  this-&gt;phi_potential =</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  this-&gt;grad_phi_potential = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_dofs));</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  this-&gt;hess_phi_potential = std::vector&lt;std::vector&lt;Tensor&lt;2, dim&gt;&gt;&gt;(</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;2, dim&gt;&gt;(n_dofs));</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  this-&gt;laplacian_phi_potential =</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  this-&gt;previous_chemical_potential_values =</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(<a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                     std::vector&lt;double&gt;(n_q_points));</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Initialize arrays related to shape functions</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="comment">// Phase-order shape functions</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  this-&gt;phi_phase =</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  this-&gt;grad_phi_phase = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_dofs));</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  this-&gt;hess_phi_phase = std::vector&lt;std::vector&lt;Tensor&lt;2, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;2, dim&gt;&gt;(n_dofs));</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  this-&gt;laplacian_phi_phase =</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// Chemical potential shape functions</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  this-&gt;phi_potential =</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  this-&gt;grad_phi_potential = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;1, dim&gt;&gt;(n_dofs));</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  this-&gt;hess_phi_potential = std::vector&lt;std::vector&lt;Tensor&lt;2, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    n_q_points, std::vector&lt;Tensor&lt;2, dim&gt;&gt;(n_dofs));</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  this-&gt;laplacian_phi_potential =</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::vector&lt;std::vector&lt;double&gt;&gt;(n_q_points, std::vector&lt;double&gt;(n_dofs));</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="comment">// Velocity values</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  this-&gt;velocity_values = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  this-&gt;previous_velocity_values = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  this-&gt;velocity_gradient_values =</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    std::vector&lt;Tensor&lt;2, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="comment">// Allocate physical properties</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  this-&gt;surface_tension                 = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  this-&gt;mobility_cahn_hilliard          = std::vector&lt;double&gt;(n_q_points);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  this-&gt;mobility_cahn_hilliard_gradient = std::vector&lt;double&gt;(n_q_points);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Velocity values</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  this-&gt;velocity_values = std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  this-&gt;previous_velocity_values = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a>(),</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points));</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  this-&gt;velocity_gradient_values =</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    std::vector&lt;Tensor&lt;2, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Physical properties</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  fields.insert(</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    std::pair&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt;(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">field::phase_order_cahn_hilliard</a>,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                          n_q_points));</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  fields.insert(std::pair&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt;(</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373">field::phase_order_cahn_hilliard_filtered</a>, n_q_points));</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="comment">// Allocate physical properties</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  this-&gt;surface_tension                 = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  this-&gt;mobility_cahn_hilliard          = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  this-&gt;mobility_cahn_hilliard_gradient = std::vector&lt;double&gt;(n_q_points);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="comment">// Physical properties</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  fields.insert(</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    std::pair&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt;(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">field::phase_order_cahn_hilliard</a>,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                          n_q_points));</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  fields.insert(std::pair&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt;(</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373">field::phase_order_cahn_hilliard_filtered</a>, n_q_points));</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">  100</a></span>&#160;<a class="code" href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">CahnHilliardScratchData&lt;dim&gt;::calculate_physical_properties</a>()</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;{</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordflow">switch</span> (properties_manager.get_number_of_fluids())</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;          <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unsupported number of fluids (&lt;2)&quot;</span>);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <span class="keywordflow">case</span> 2:</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        {</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;          <a class="code" href="physical__property__model_8h.html#a545ac73a2b70d10beade7a2ffe30a970">set_field_vector</a>(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">field::phase_order_cahn_hilliard</a>,</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                           this-&gt;phase_order_values,</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                           this-&gt;fields);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;          <span class="comment">// Gather properties from material interactions</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> material_interaction_id =</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            properties_manager.get_material_interaction_id(</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;              <a class="code" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6">material_interactions_type::fluid_fluid</a>, 0, 1);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          <span class="comment">// Gather surface tension</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> surface_tension_model =</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            properties_manager.get_surface_tension(material_interaction_id);</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;          surface_tension_model-&gt;vector_value(fields, surface_tension);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;          <span class="comment">// Gather mobility</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> mobility_cahn_hilliard_model =</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            properties_manager.get_mobility_cahn_hilliard(</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;              material_interaction_id);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;          mobility_cahn_hilliard_model-&gt;vector_value(fields,</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                                                     mobility_cahn_hilliard);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;          mobility_cahn_hilliard_model-&gt;vector_jacobian(</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            fields, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">phase_order_cahn_hilliard</a>, mobility_cahn_hilliard_gradient);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;          <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unsupported number of fluids (&gt;2)&quot;</span>);</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">   87</a></span>&#160;<a class="code" href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">CahnHilliardScratchData&lt;dim&gt;::calculate_physical_properties</a>()</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;{</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keywordflow">switch</span> (properties_manager.get_number_of_fluids())</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;          <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unsupported number of fluids (&lt;2)&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="keywordflow">case</span> 2:</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;          <a class="code" href="physical__property__model_8h.html#a545ac73a2b70d10beade7a2ffe30a970">set_field_vector</a>(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">field::phase_order_cahn_hilliard</a>,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                           this-&gt;phase_order_values,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                           this-&gt;fields);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;          <span class="comment">// Gather properties from material interactions</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> material_interaction_id =</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            properties_manager.get_material_interaction_id(</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;              <a class="code" href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6">material_interactions_type::fluid_fluid</a>, 0, 1);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;          <span class="comment">// Gather surface tension</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> surface_tension_model =</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            properties_manager.get_surface_tension(material_interaction_id);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          surface_tension_model-&gt;vector_value(fields, surface_tension);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;          <span class="comment">// Gather mobility</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> mobility_cahn_hilliard_model =</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            properties_manager.get_mobility_cahn_hilliard(</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;              material_interaction_id);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;          mobility_cahn_hilliard_model-&gt;vector_value(fields,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                                                     mobility_cahn_hilliard);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          mobility_cahn_hilliard_model-&gt;vector_jacobian(</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            fields, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">phase_order_cahn_hilliard</a>, mobility_cahn_hilliard_gradient);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Unsupported number of fluids (&gt;2)&quot;</span>);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
-<div class="ttc" id="abdf_8h_html_a20abc47ca7441007f8923c529000ace5"><div class="ttname"><a href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a></div><div class="ttdeci">unsigned int maximum_number_of_previous_solutions()</div><div class="ttdoc">Get the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00099">bdf.h:99</a></div></div>
+<div class="ttc" id="abdf_8h_html_a20abc47ca7441007f8923c529000ace5"><div class="ttname"><a href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a></div><div class="ttdeci">unsigned int maximum_number_of_previous_solutions()</div><div class="ttdoc">Get the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00086">bdf.h:86</a></div></div>
 <div class="ttc" id="acahn__hilliard__scratch__data_8h_html"><div class="ttname"><a href="cahn__hilliard__scratch__data_8h.html">cahn_hilliard_scratch_data.h</a></div></div>
-<div class="ttc" id="aclassCahnHilliardScratchData_html"><div class="ttname"><a href="classCahnHilliardScratchData.html">CahnHilliardScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for the Cahn-Hilliard equations....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00067">cahn_hilliard_scratch_data.h:68</a></div></div>
-<div class="ttc" id="aclassCahnHilliardScratchData_html_a75faf2e0facd94fa79d52d0f26489e61"><div class="ttname"><a href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">CahnHilliardScratchData::allocate</a></div><div class="ttdeci">void allocate()</div><div class="ttdoc">Allocates the memory for the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8cc_source.html#l00022">cahn_hilliard_scratch_data.cc:22</a></div></div>
-<div class="ttc" id="aclassCahnHilliardScratchData_html_ac916ff90a35a98aaf860fea8a8679100"><div class="ttname"><a href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">CahnHilliardScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties that may be required by the Cahn-Hilliard problem....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8cc_source.html#l00100">cahn_hilliard_scratch_data.cc:100</a></div></div>
-<div class="ttc" id="aphysical__properties__manager_8h_html_a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6"><div class="ttname"><a href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6">fluid_fluid</a></div><div class="ttdeci">@ fluid_fluid</div><div class="ttdef"><b>Definition:</b> <a href="physical__properties__manager_8h_source.html#l00053">physical_properties_manager.h:53</a></div></div>
-<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a></div><div class="ttdeci">field</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00050">physical_property_model.h:51</a></div></div>
-<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373">phase_order_cahn_hilliard_filtered</a></div><div class="ttdeci">@ phase_order_cahn_hilliard_filtered</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00058">physical_property_model.h:58</a></div></div>
-<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">phase_order_cahn_hilliard</a></div><div class="ttdeci">@ phase_order_cahn_hilliard</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00057">physical_property_model.h:57</a></div></div>
-<div class="ttc" id="aphysical__property__model_8h_html_a545ac73a2b70d10beade7a2ffe30a970"><div class="ttname"><a href="physical__property__model_8h.html#a545ac73a2b70d10beade7a2ffe30a970">set_field_vector</a></div><div class="ttdeci">void set_field_vector(const field &amp;id, const std::vector&lt; double &gt; &amp;data, std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;fields)</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00063">physical_property_model.h:63</a></div></div>
+<div class="ttc" id="aclassCahnHilliardScratchData_html"><div class="ttname"><a href="classCahnHilliardScratchData.html">CahnHilliardScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for the Cahn-Hilliard equations....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00051">cahn_hilliard_scratch_data.h:52</a></div></div>
+<div class="ttc" id="aclassCahnHilliardScratchData_html_a75faf2e0facd94fa79d52d0f26489e61"><div class="ttname"><a href="classCahnHilliardScratchData.html#a75faf2e0facd94fa79d52d0f26489e61">CahnHilliardScratchData::allocate</a></div><div class="ttdeci">void allocate()</div><div class="ttdoc">Allocates the memory for the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8cc_source.html#l00009">cahn_hilliard_scratch_data.cc:9</a></div></div>
+<div class="ttc" id="aclassCahnHilliardScratchData_html_ac916ff90a35a98aaf860fea8a8679100"><div class="ttname"><a href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">CahnHilliardScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties that may be required by the Cahn-Hilliard problem....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8cc_source.html#l00087">cahn_hilliard_scratch_data.cc:87</a></div></div>
+<div class="ttc" id="aphysical__properties__manager_8h_html_a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6"><div class="ttname"><a href="physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6">fluid_fluid</a></div><div class="ttdeci">@ fluid_fluid</div><div class="ttdef"><b>Definition:</b> <a href="physical__properties__manager_8h_source.html#l00038">physical_properties_manager.h:38</a></div></div>
+<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a></div><div class="ttdeci">field</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00037">physical_property_model.h:38</a></div></div>
+<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a2d397f452fbf87274e898b191306e373">phase_order_cahn_hilliard_filtered</a></div><div class="ttdeci">@ phase_order_cahn_hilliard_filtered</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00045">physical_property_model.h:45</a></div></div>
+<div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a744f7cf7a054452bef69c506e47b4464">phase_order_cahn_hilliard</a></div><div class="ttdeci">@ phase_order_cahn_hilliard</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00044">physical_property_model.h:44</a></div></div>
+<div class="ttc" id="aphysical__property__model_8h_html_a545ac73a2b70d10beade7a2ffe30a970"><div class="ttname"><a href="physical__property__model_8h.html#a545ac73a2b70d10beade7a2ffe30a970">set_field_vector</a></div><div class="ttdeci">void set_field_vector(const field &amp;id, const std::vector&lt; double &gt; &amp;data, std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;fields)</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00050">physical_property_model.h:50</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

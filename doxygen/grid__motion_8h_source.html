@@ -79,153 +79,140 @@ $(function() {
 <div class="title">grid_motion.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="grid__motion_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_grid_motion_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_grid_motion_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="contact__info_8h.html">dem/contact_info.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
+<a href="grid__motion_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_grid_motion_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_grid_motion_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="contact__info_8h.html">dem/contact_info.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * @brief Carries out motion of the triangulation, including rotational, translational</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * and rotational-translational motions.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * @note Grid motion with a ParsedFunction should be added to the code as a future</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * improvement</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * @param dem_parameters Input DEM parameters in the parameter handler file</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * @brief Carries out motion of the triangulation, including rotational, translational</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * and rotational-translational motions.</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * @note Grid motion with a ParsedFunction should be added to the code as a future</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * improvement</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * @param dem_parameters Input DEM parameters in the parameter handler file</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim = dim&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classGridMotion.html">   40</a></span>&#160;<span class="keyword">class </span><a class="code" href="classGridMotion.html">GridMotion</a></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">   42</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">FuncPtrType</a> = void (<a class="code" href="classGridMotion.html">GridMotion&lt;dim, spacedim&gt;</a>::*)(</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">   44</a></span>&#160;  <a class="code" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">FuncPtrType</a> <a class="code" href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">grid_motion</a>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @brief The constructor sets up the grid motion function defined in the parameter</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * handler, and calculates the rotation angle for rotational and</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   * translational-rotational motions.</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @param grid_motion_parameters DEM parameters defined using the parameter handler</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @param dem_time_step DEM time-step</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <a class="code" href="classGridMotion.html">GridMotion</a>(</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1GridMotion.html">Parameters::Lagrangian::GridMotion&lt;spacedim&gt;</a> &amp;grid_motion_parameters,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>                                        dem_time_step);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @brief Calls the desired grid motion.</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">   65</a></span>&#160;  <a class="code" href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">move_grid</a>(Triangulation&lt;dim, spacedim&gt; &amp;triangulation)</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    (this-&gt;*grid_motion)(triangulation);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * @brief Carries out updating the boundary points and normal vectors in the</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * particle-wall contact list.</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @param particle_wall_pairs_in_contact The particle-wall contact list container.</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * We will update the positions of the boundary points and normal vectors</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * directly in this container.</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @param updated_boundary_points_and_normal_vectors A map that contains</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * updated points on boundaries and normal vectors of the boundary faces.</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * This container is used when the grid is moving. We use this vector to</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * update the boundary points and normal vectors in particle-wall contact</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * list.</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  update_boundary_points_and_normal_vectors_in_contact_list(</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures&lt;spacedim&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      &amp;particle_wall_pairs_in_contact,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      spacedim&gt;::boundary_points_and_normal_vectors</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      &amp;updated_boundary_points_and_normal_vectors);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   * @brief Carries out rotational motion of the triangulation</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classGridMotion.html#a9d47495e887736911334770f006891c1">   98</a></span>&#160;  <a class="code" href="classGridMotion.html#a9d47495e887736911334770f006891c1">move_grid_rotational</a>(Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   * @brief Carries out translational motion of the triangulation</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  move_grid_translational(Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   * @brief Dummy function for no motion for grid motion pointer to point to.</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classGridMotion.html#aed206185f847e9e45754bda462e42651">  114</a></span>&#160;  <a class="code" href="classGridMotion.html#aed206185f847e9e45754bda462e42651">no_motion</a>(Triangulation&lt;dim, spacedim&gt; &amp; <span class="comment">/* triangulation */</span>)</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  }</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="comment">// Since the DEM time-step and rotational speed are constant, we calculate the</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="comment">// rotation angle at each time-step once in the constructor and define it as a</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="comment">// member variable.</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">  123</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">rotation_angle</a>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">  125</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">rotation_axis</a>;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">  127</a></span>&#160;  Tensor&lt;1, spacedim&gt; <a class="code" href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">shift_vector</a>;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;};</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassGridMotion_html"><div class="ttname"><a href="classGridMotion.html">GridMotion</a></div><div class="ttdoc">Carries out motion of the triangulation, including rotational, translational and rotational-translati...</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00040">grid_motion.h:41</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_a13d4edd0e543af7a8631aaa24ba91d9e"><div class="ttname"><a href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">GridMotion::rotation_axis</a></div><div class="ttdeci">unsigned int rotation_axis</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00125">grid_motion.h:125</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_a1745560a13aac56edf35999822d085ca"><div class="ttname"><a href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">GridMotion::grid_motion</a></div><div class="ttdeci">FuncPtrType grid_motion</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00044">grid_motion.h:44</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_a265718c0e236abfc51bdcfda1ae8c18e"><div class="ttname"><a href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">GridMotion::move_grid</a></div><div class="ttdeci">void move_grid(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</div><div class="ttdoc">Calls the desired grid motion.</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00065">grid_motion.h:65</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_a3b24a212b18918958279f27c27fd4c58"><div class="ttname"><a href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">GridMotion::rotation_angle</a></div><div class="ttdeci">double rotation_angle</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00123">grid_motion.h:123</a></div></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim = dim&gt;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classGridMotion.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classGridMotion.html">GridMotion</a></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">   29</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">FuncPtrType</a> = void (<a class="code" href="classGridMotion.html">GridMotion&lt;dim, spacedim&gt;</a>::*)(</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">   31</a></span>&#160;  <a class="code" href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">FuncPtrType</a> <a class="code" href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">grid_motion</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @brief The constructor sets up the grid motion function defined in the parameter</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * handler, and calculates the rotation angle for rotational and</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   * translational-rotational motions.</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   * @param grid_motion_parameters DEM parameters defined using the parameter handler</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * @param dem_time_step DEM time-step</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <a class="code" href="classGridMotion.html">GridMotion</a>(</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1GridMotion.html">Parameters::Lagrangian::GridMotion&lt;spacedim&gt;</a> &amp;grid_motion_parameters,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span>                                        dem_time_step);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * @brief Calls the desired grid motion.</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">   52</a></span>&#160;  <a class="code" href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">move_grid</a>(Triangulation&lt;dim, spacedim&gt; &amp;triangulation)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    (this-&gt;*grid_motion)(triangulation);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * @brief Carries out updating the boundary points and normal vectors in the</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * particle-wall contact list.</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * @param particle_wall_pairs_in_contact The particle-wall contact list container.</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * We will update the positions of the boundary points and normal vectors</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * directly in this container.</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * @param updated_boundary_points_and_normal_vectors A map that contains</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * updated points on boundaries and normal vectors of the boundary faces.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * This container is used when the grid is moving. We use this vector to</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * update the boundary points and normal vectors in particle-wall contact</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * list.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  update_boundary_points_and_normal_vectors_in_contact_list(</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures&lt;spacedim&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      &amp;particle_wall_pairs_in_contact,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      spacedim&gt;::boundary_points_and_normal_vectors</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      &amp;updated_boundary_points_and_normal_vectors);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @brief Carries out rotational motion of the triangulation</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classGridMotion.html#a9d47495e887736911334770f006891c1">   85</a></span>&#160;  <a class="code" href="classGridMotion.html#a9d47495e887736911334770f006891c1">move_grid_rotational</a>(Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * @brief Carries out translational motion of the triangulation</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  move_grid_translational(Triangulation&lt;dim, spacedim&gt; &amp;triangulation);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * @brief Dummy function for no motion for grid motion pointer to point to.</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classGridMotion.html#aed206185f847e9e45754bda462e42651">  101</a></span>&#160;  <a class="code" href="classGridMotion.html#aed206185f847e9e45754bda462e42651">no_motion</a>(Triangulation&lt;dim, spacedim&gt; &amp; <span class="comment">/* triangulation */</span>)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="comment">// Since the DEM time-step and rotational speed are constant, we calculate the</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="comment">// rotation angle at each time-step once in the constructor and define it as a</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="comment">// member variable.</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">  110</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">rotation_angle</a>;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">  112</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">rotation_axis</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">  114</a></span>&#160;  Tensor&lt;1, spacedim&gt; <a class="code" href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">shift_vector</a>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;};</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassGridMotion_html"><div class="ttname"><a href="classGridMotion.html">GridMotion</a></div><div class="ttdoc">Carries out motion of the triangulation, including rotational, translational and rotational-translati...</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00027">grid_motion.h:28</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_a13d4edd0e543af7a8631aaa24ba91d9e"><div class="ttname"><a href="classGridMotion.html#a13d4edd0e543af7a8631aaa24ba91d9e">GridMotion::rotation_axis</a></div><div class="ttdeci">unsigned int rotation_axis</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00112">grid_motion.h:112</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_a1745560a13aac56edf35999822d085ca"><div class="ttname"><a href="classGridMotion.html#a1745560a13aac56edf35999822d085ca">GridMotion::grid_motion</a></div><div class="ttdeci">FuncPtrType grid_motion</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00031">grid_motion.h:31</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_a265718c0e236abfc51bdcfda1ae8c18e"><div class="ttname"><a href="classGridMotion.html#a265718c0e236abfc51bdcfda1ae8c18e">GridMotion::move_grid</a></div><div class="ttdeci">void move_grid(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</div><div class="ttdoc">Calls the desired grid motion.</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00052">grid_motion.h:52</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_a3b24a212b18918958279f27c27fd4c58"><div class="ttname"><a href="classGridMotion.html#a3b24a212b18918958279f27c27fd4c58">GridMotion::rotation_angle</a></div><div class="ttdeci">double rotation_angle</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00110">grid_motion.h:110</a></div></div>
 <div class="ttc" id="aclassGridMotion_html_a9d47495e887736911334770f006891c1"><div class="ttname"><a href="classGridMotion.html#a9d47495e887736911334770f006891c1">GridMotion::move_grid_rotational</a></div><div class="ttdeci">void move_grid_rotational(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</div><div class="ttdoc">Carries out rotational motion of the triangulation.</div></div>
-<div class="ttc" id="aclassGridMotion_html_accd121cda27c90d79ad4ba09f5c41c46"><div class="ttname"><a href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">GridMotion::shift_vector</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; shift_vector</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00127">grid_motion.h:127</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_aed206185f847e9e45754bda462e42651"><div class="ttname"><a href="classGridMotion.html#aed206185f847e9e45754bda462e42651">GridMotion::no_motion</a></div><div class="ttdeci">void no_motion(Triangulation&lt; dim, spacedim &gt; &amp;)</div><div class="ttdoc">Dummy function for no motion for grid motion pointer to point to.</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00114">grid_motion.h:114</a></div></div>
-<div class="ttc" id="aclassGridMotion_html_af227c03280158d4ce32cd8524e4d62d0"><div class="ttname"><a href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">GridMotion::FuncPtrType</a></div><div class="ttdeci">void(GridMotion&lt; dim, spacedim &gt;::*)(Triangulation&lt; dim, spacedim &gt; &amp;triangulation) FuncPtrType</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00042">grid_motion.h:43</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1GridMotion_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1GridMotion.html">Parameters::Lagrangian::GridMotion</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00450">parameters_lagrangian.h:451</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_accd121cda27c90d79ad4ba09f5c41c46"><div class="ttname"><a href="classGridMotion.html#accd121cda27c90d79ad4ba09f5c41c46">GridMotion::shift_vector</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; shift_vector</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00114">grid_motion.h:114</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_aed206185f847e9e45754bda462e42651"><div class="ttname"><a href="classGridMotion.html#aed206185f847e9e45754bda462e42651">GridMotion::no_motion</a></div><div class="ttdeci">void no_motion(Triangulation&lt; dim, spacedim &gt; &amp;)</div><div class="ttdoc">Dummy function for no motion for grid motion pointer to point to.</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00101">grid_motion.h:101</a></div></div>
+<div class="ttc" id="aclassGridMotion_html_af227c03280158d4ce32cd8524e4d62d0"><div class="ttname"><a href="classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0">GridMotion::FuncPtrType</a></div><div class="ttdeci">void(GridMotion&lt; dim, spacedim &gt;::*)(Triangulation&lt; dim, spacedim &gt; &amp;triangulation) FuncPtrType</div><div class="ttdef"><b>Definition:</b> <a href="grid__motion_8h_source.html#l00029">grid_motion.h:30</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1GridMotion_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1GridMotion.html">Parameters::Lagrangian::GridMotion</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00436">parameters_lagrangian.h:437</a></div></div>
 <div class="ttc" id="acontact__info_8h_html"><div class="ttname"><a href="contact__info_8h.html">contact_info.h</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
 <div class="ttc" id="adem__solver__parameters_8h_html"><div class="ttname"><a href="dem__solver__parameters_8h.html">dem_solver_parameters.h</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a></div><div class="ttdoc">DEM data structure containers To improve readability of containers, there's a simple description abov...</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00115">data_containers.h:116</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a192e455bef047459cba3816cd0c4874b"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures::particle_wall_in_contact</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, particle_wall_contact_info&lt; dim &gt; &gt; &gt; particle_wall_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00164">data_containers.h:164</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a></div><div class="ttdoc">DEM data structure containers To improve readability of containers, there's a simple description abov...</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00102">data_containers.h:103</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a192e455bef047459cba3816cd0c4874b"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures::particle_wall_in_contact</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, particle_wall_contact_info&lt; dim &gt; &gt; &gt; particle_wall_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00151">data_containers.h:151</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

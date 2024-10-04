@@ -79,70 +79,57 @@ $(function() {
 <div class="title">pvd_handler.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="pvd__handler_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2019 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
+<a href="pvd__handler_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2022, 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_pvd_handler_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_pvd_handler_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters_8h.html">core/parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * @brief The PVDHandler class manages the storage of the information required to write pvd file.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * It is particularly necessary for simulations which must be restarted from</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * checkpoint since it manages the continuity of the pvd output.</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_pvd_handler_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_pvd_handler_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters_8h.html">core/parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * @brief The PVDHandler class manages the storage of the information required to write pvd file.</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * It is particularly necessary for simulations which must be restarted from</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * checkpoint since it manages the continuity of the pvd output.</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classPVDHandler.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPVDHandler.html">PVDHandler</a></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * @brief save Saves the content of the pvd times_and_names to a file</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @param filename Name of the file to which the PVDHandler content is save</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  save(<span class="keyword">const</span> std::string &amp;filename);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   * @brief read Reads the content of a pvd times_and_names checpoint</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * @param filename Name of the file frin which the PVDHandler content is read</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  read(<span class="keyword">const</span> std::string &amp;filename);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classPVDHandler.html#adda153f105c911860df4812ea429421a">   49</a></span>&#160;  <a class="code" href="classPVDHandler.html#adda153f105c911860df4812ea429421a">append</a>(<span class="keywordtype">double</span> time, <span class="keyword">const</span> std::string &amp;pvtu_filename)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    times_and_names.push_back(</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      std::pair&lt;double, std::string&gt;(time, pvtu_filename));</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">// The name of the pvtu files and the time associated with each file</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// is stored in a simple vector of pairs.</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">   57</a></span>&#160;  std::vector&lt;std::pair&lt;double, std::string&gt;&gt; <a class="code" href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">times_and_names</a>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;};</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00029">pvd_handler.h:30</a></div></div>
-<div class="ttc" id="aclassPVDHandler_html_aad324db0b67a3b3e792d8891bf0ea4f9"><div class="ttname"><a href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">PVDHandler::times_and_names</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; double, std::string &gt; &gt; times_and_names</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00057">pvd_handler.h:57</a></div></div>
-<div class="ttc" id="aclassPVDHandler_html_adda153f105c911860df4812ea429421a"><div class="ttname"><a href="classPVDHandler.html#adda153f105c911860df4812ea429421a">PVDHandler::append</a></div><div class="ttdeci">void append(double time, const std::string &amp;pvtu_filename)</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00049">pvd_handler.h:49</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classPVDHandler.html">   16</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPVDHandler.html">PVDHandler</a></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">   * @brief save Saves the content of the pvd times_and_names to a file</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">   * @param filename Name of the file to which the PVDHandler content is save</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  save(<span class="keyword">const</span> std::string &amp;filename);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">   * @brief read Reads the content of a pvd times_and_names checpoint</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   * @param filename Name of the file frin which the PVDHandler content is read</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  read(<span class="keyword">const</span> std::string &amp;filename);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classPVDHandler.html#adda153f105c911860df4812ea429421a">   36</a></span>&#160;  <a class="code" href="classPVDHandler.html#adda153f105c911860df4812ea429421a">append</a>(<span class="keywordtype">double</span> time, <span class="keyword">const</span> std::string &amp;pvtu_filename)</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    times_and_names.push_back(</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      std::pair&lt;double, std::string&gt;(time, pvtu_filename));</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="comment">// The name of the pvtu files and the time associated with each file</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// is stored in a simple vector of pairs.</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">   44</a></span>&#160;  std::vector&lt;std::pair&lt;double, std::string&gt;&gt; <a class="code" href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">times_and_names</a>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00016">pvd_handler.h:17</a></div></div>
+<div class="ttc" id="aclassPVDHandler_html_aad324db0b67a3b3e792d8891bf0ea4f9"><div class="ttname"><a href="classPVDHandler.html#aad324db0b67a3b3e792d8891bf0ea4f9">PVDHandler::times_and_names</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; double, std::string &gt; &gt; times_and_names</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00044">pvd_handler.h:44</a></div></div>
+<div class="ttc" id="aclassPVDHandler_html_adda153f105c911860df4812ea429421a"><div class="ttname"><a href="classPVDHandler.html#adda153f105c911860df4812ea429421a">PVDHandler::append</a></div><div class="ttdeci">void append(double time, const std::string &amp;pvtu_filename)</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00036">pvd_handler.h:36</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="aparameters_8h_html"><div class="ttname"><a href="parameters_8h.html">parameters.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

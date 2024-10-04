@@ -79,179 +79,182 @@ $(function() {
 <div class="title">dem_post_processing.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="dem__post__processing_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__post__processing_8h.html">dem/dem_post_processing.h</a>&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceDEM.html">DEM</a></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, dem_statistic_variable var&gt;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">    9</a></span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>(</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">const</span> MPI_Comm                        &amp;mpi_communicator)</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">double</span> total_variable = 0;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keywordtype">double</span> max_variable   = DBL_MIN;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordtype">double</span> min_variable   = DBL_MAX;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : particle_handler)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;      {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">// Get the properties of the particle</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">auto</span> particle_properties = particle.get_properties();</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordtype">double</span> variable = 0;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordflow">if</span> constexpr (var ==</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                      <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>)</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;          {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="comment">// Put particle velocity in a tensor</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;              <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[d] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a> + d];</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <span class="comment">// Kinetic energy is 0.5*m*u^2</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            variable = 0.5 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                       <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm_square();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;          }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;          {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="comment">// Put angular velocity in a tensor</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            Tensor&lt;1, 3&gt; <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;              {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[2] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::PropertiesIndex::omega_z</a>];</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;              }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;              {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                  <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[d] =</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::PropertiesIndex::omega_x</a> + d];</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;              }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="comment">// Kinetic energy is 0.1*m*d^2 * w^2</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            variable = 0.1 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                       Utilities::fixed_power&lt;2&gt;(</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                         particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>]) *</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                       <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>.norm_square();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">dem_statistic_variable::velocity</a>)</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="comment">// Put particle velocity in a tensor</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;              <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[d] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a> + d];</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            variable = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;          }</div>
+<a href="dem__post__processing_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__post__processing_8h.html">dem/dem_post_processing.h</a>&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceDEM.html">DEM</a></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, dem_statistic_variable var&gt;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">   12</a></span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>(</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">const</span> MPI_Comm                        &amp;mpi_communicator)</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">double</span> total_variable = 0;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">double</span> max_variable   = DBL_MIN;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">double</span> min_variable   = DBL_MAX;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : particle_handler)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// Get the properties of the particle</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">auto</span> particle_properties = particle.get_properties();</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keywordtype">double</span> variable = 0;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordflow">if</span> constexpr (var ==</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                      <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>)</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;          {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="comment">// Put particle velocity in a tensor</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;              <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[d] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a> + d];</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="comment">// Kinetic energy is 0.5*m*u^2</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            variable = 0.5 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                       <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm_square();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;          }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="comment">// Put angular velocity in a tensor</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            Tensor&lt;1, 3&gt; <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;              {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[2] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::PropertiesIndex::omega_z</a>];</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;              }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;              {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                  <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[d] =</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::PropertiesIndex::omega_x</a> + d];</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;              }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="comment">// Kinetic energy is 0.1*m*d^2 * w^2</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            variable = 0.1 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                       Utilities::fixed_power&lt;2&gt;(</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                         particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>]) *</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                       <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>.norm_square();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">dem_statistic_variable::velocity</a>)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;          {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="comment">// Put particle velocity in a tensor</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;              <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>[d] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::PropertiesIndex::v_x</a> + d];</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">dem_statistic_variable::omega</a>)</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;          {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="comment">// Put angular velocity in a tensor</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            Tensor&lt;1, 3&gt; <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;              {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[2] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::PropertiesIndex::omega_z</a>];</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;              }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;              {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                  <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[d] =</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::PropertiesIndex::omega_x</a> + d];</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;              }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            variable = <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>.norm();</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            variable = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;          }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">if</span> constexpr (var == <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">dem_statistic_variable::omega</a>)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="comment">// Put angular velocity in a tensor</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            Tensor&lt;1, 3&gt; <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;              {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[2] = particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::PropertiesIndex::omega_z</a>];</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;              }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;              {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                  <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>[d] =</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                    particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::PropertiesIndex::omega_x</a> + d];</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;              }</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        total_variable += variable;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        max_variable = std::max(variable, max_variable);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        min_variable = std::min(variable, min_variable);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    total_variable = Utilities::MPI::sum(total_variable, mpi_communicator);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    max_variable   = Utilities::MPI::max(max_variable, mpi_communicator);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    min_variable   = Utilities::MPI::min(min_variable, mpi_communicator);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <a class="code" href="classstatistics.html">statistics</a> stats;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    stats.<a class="code" href="classstatistics.html#aa329652ce74ac69d02f7e2a2706083f8">total</a>   = total_variable;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    stats.<a class="code" href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">max</a>     = max_variable;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    stats.<a class="code" href="classstatistics.html#a369777f49617bdece739dc561218ef1d">min</a>     = min_variable;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    stats.<a class="code" href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">average</a> = total_variable / particle_handler.n_global_particles();</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> stats;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            variable = <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">omega</a>.norm();</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;          }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        total_variable += variable;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        max_variable = std::max(variable, max_variable);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        min_variable = std::min(variable, min_variable);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    total_variable = Utilities::MPI::sum(total_variable, mpi_communicator);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    max_variable   = Utilities::MPI::max(max_variable, mpi_communicator);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    min_variable   = Utilities::MPI::min(min_variable, mpi_communicator);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="classstatistics.html">statistics</a> stats;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    stats.<a class="code" href="classstatistics.html#aa329652ce74ac69d02f7e2a2706083f8">total</a>   = total_variable;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    stats.<a class="code" href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">max</a>     = max_variable;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    stats.<a class="code" href="classstatistics.html#a369777f49617bdece739dc561218ef1d">min</a>     = min_variable;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    stats.<a class="code" href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">average</a> = total_variable / particle_handler.n_global_particles();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ace8030f74c411eb88681d397621cad89">  108</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    2,</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>&gt;(</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab495d17d54636611704b1056c9d3475a">  115</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    3,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>&gt;(</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a578beb6b926ebfe7a7dd79eadcbcf29c">  122</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    2,</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>&gt;(</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab2a4192b3a269a0ceba4f3353340e3f2">  129</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    3,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>&gt;(</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ae0fc65c6d42c5f7786e3fc7f131b0c58">  136</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  calculate_granular_statistics&lt;2, dem_statistic_variable::velocity&gt;(</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="namespaceDEM.html#acc5d0248eef97afaa2fbe8128dc7231f">  141</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  calculate_granular_statistics&lt;3, dem_statistic_variable::velocity&gt;(</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab02c59b85d74cae0bd6ccc5c952f1413">  146</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  calculate_granular_statistics&lt;2, dem_statistic_variable::omega&gt;(</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a96b7266c3baa5f45906d8621613b9e59">  151</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  calculate_granular_statistics&lt;3, dem_statistic_variable::omega&gt;(</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;} <span class="comment">// namespace DEM</span></div>
-<div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">Small class that is used to store statistics (min,max,total,average) of variables that are used in si...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00041">utilities.h:42</a></div></div>
-<div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00054">utilities.h:54</a></div></div>
-<div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00052">utilities.h:52</a></div></div>
-<div class="ttc" id="aclassstatistics_html_a369777f49617bdece739dc561218ef1d"><div class="ttname"><a href="classstatistics.html#a369777f49617bdece739dc561218ef1d">statistics::min</a></div><div class="ttdeci">double min</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00051">utilities.h:51</a></div></div>
-<div class="ttc" id="aclassstatistics_html_aa329652ce74ac69d02f7e2a2706083f8"><div class="ttname"><a href="classstatistics.html#aa329652ce74ac69d02f7e2a2706083f8">statistics::total</a></div><div class="ttdeci">double total</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00053">utilities.h:53</a></div></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> stats;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ace8030f74c411eb88681d397621cad89">  111</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    2,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>&gt;(</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab495d17d54636611704b1056c9d3475a">  118</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    3,</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">dem_statistic_variable::translational_kinetic_energy</a>&gt;(</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a578beb6b926ebfe7a7dd79eadcbcf29c">  125</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    2,</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>&gt;(</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab2a4192b3a269a0ceba4f3353340e3f2">  132</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <a class="code" href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">calculate_granular_statistics</a>&lt;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    3,</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <a class="code" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">dem_statistic_variable::rotational_kinetic_energy</a>&gt;(</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ae0fc65c6d42c5f7786e3fc7f131b0c58">  139</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  calculate_granular_statistics&lt;2, dem_statistic_variable::velocity&gt;(</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="namespaceDEM.html#acc5d0248eef97afaa2fbe8128dc7231f">  144</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  calculate_granular_statistics&lt;3, dem_statistic_variable::velocity&gt;(</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="namespaceDEM.html#ab02c59b85d74cae0bd6ccc5c952f1413">  149</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  calculate_granular_statistics&lt;2, dem_statistic_variable::omega&gt;(</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;2, 2&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="namespaceDEM.html#a96b7266c3baa5f45906d8621613b9e59">  154</a></span>&#160;  <span class="keyword">template</span> <a class="code" href="classstatistics.html">statistics</a></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  calculate_granular_statistics&lt;3, dem_statistic_variable::omega&gt;(</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keyword">const</span> Particles::ParticleHandler&lt;3, 3&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keyword">const</span> MPI_Comm                         &amp;mpi_communicator);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;} <span class="comment">// namespace DEM</span></div>
+<div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">Small class that is used to store statistics (min,max,total,average) of variables that are used in si...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00028">utilities.h:29</a></div></div>
+<div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00041">utilities.h:41</a></div></div>
+<div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00039">utilities.h:39</a></div></div>
+<div class="ttc" id="aclassstatistics_html_a369777f49617bdece739dc561218ef1d"><div class="ttname"><a href="classstatistics.html#a369777f49617bdece739dc561218ef1d">statistics::min</a></div><div class="ttdeci">double min</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00038">utilities.h:38</a></div></div>
+<div class="ttc" id="aclassstatistics_html_aa329652ce74ac69d02f7e2a2706083f8"><div class="ttname"><a href="classstatistics.html#aa329652ce74ac69d02f7e2a2706083f8">statistics::total</a></div><div class="ttdeci">double total</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00040">utilities.h:40</a></div></div>
 <div class="ttc" id="adem__post__processing_8h_html"><div class="ttname"><a href="dem__post__processing_8h.html">dem_post_processing.h</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
-<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ab48351ba31a4bdc7a365239687fcfaff"><div class="ttname"><a href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">DEM::calculate_granular_statistics</a></div><div class="ttdeci">statistics calculate_granular_statistics(const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Calculate statistics on a DEM ParticleHandler. At the moment, the following statistics are supported:</div><div class="ttdef"><b>Definition:</b> <a href="dem__post__processing_8cc_source.html#l00009">dem_post_processing.cc:9</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::dp</a></div><div class="ttdeci">@ dp</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00038">dem_properties.h:38</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::omega_z</a></div><div class="ttdeci">@ omega_z</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00044">dem_properties.h:44</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::mass</a></div><div class="ttdeci">@ mass</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00051">dem_properties.h:51</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::omega_x</a></div><div class="ttdeci">@ omega_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00042">dem_properties.h:42</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00039">dem_properties.h:39</a></div></div>
+<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ab48351ba31a4bdc7a365239687fcfaff"><div class="ttname"><a href="namespaceDEM.html#ab48351ba31a4bdc7a365239687fcfaff">DEM::calculate_granular_statistics</a></div><div class="ttdeci">statistics calculate_granular_statistics(const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Calculate statistics on a DEM ParticleHandler. At the moment, the following statistics are supported:</div><div class="ttdef"><b>Definition:</b> <a href="dem__post__processing_8cc_source.html#l00012">dem_post_processing.cc:12</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::dp</a></div><div class="ttdeci">@ dp</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00023">dem_properties.h:23</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">DEM::omega_z</a></div><div class="ttdeci">@ omega_z</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00029">dem_properties.h:29</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::mass</a></div><div class="ttdeci">@ mass</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00036">dem_properties.h:36</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::omega_x</a></div><div class="ttdeci">@ omega_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00027">dem_properties.h:27</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00024">dem_properties.h:24</a></div></div>
 <div class="ttc" id="anamespaceDEM_html_af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e"><div class="ttname"><a href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::dem_statistic_variable::rotational_kinetic_energy</a></div><div class="ttdeci">@ rotational_kinetic_energy</div></div>
 <div class="ttc" id="anamespaceDEM_html_af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::dem_statistic_variable::velocity</a></div><div class="ttdeci">@ velocity</div></div>
 <div class="ttc" id="anamespaceDEM_html_af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81"><div class="ttname"><a href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::dem_statistic_variable::omega</a></div><div class="ttdeci">@ omega</div></div>

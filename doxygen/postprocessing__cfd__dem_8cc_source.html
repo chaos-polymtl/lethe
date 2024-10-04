@@ -79,141 +79,144 @@ $(function() {
 <div class="title">postprocessing_cfd_dem.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="postprocessing__cfd__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// Dofs</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_handler.h&gt;</span></div>
+<a href="postprocessing__cfd__dem_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// Lac - Trilinos includes</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;deal.II/lac/trilinos_parallel_block_vector.h&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// Dofs</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_handler.h&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// Fe</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_q.h&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_system.h&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_values.h&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/mapping_q.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">// Lethe includes</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="vector_8h.html">core/vector.h</a>&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// Lac - Trilinos includes</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;deal.II/lac/trilinos_parallel_block_vector.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// Fe</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_q.h&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_system.h&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/fe_values.h&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;deal.II/fe/mapping_q.h&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="postprocessing__cfd__dem_8h.html">fem-dem/postprocessing_cfd_dem.h</a>&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// Lethe includes</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="vector_8h.html">core/vector.h</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="postprocessing__cfd__dem_8h.html">fem-dem/postprocessing_cfd_dem.h</a>&gt;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8h.html#a6894859860dc0efa4857b5e0c84e00a9">   24</a></span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>(</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">const</span> VectorType      &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;quadrature_formula,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping)</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="comment">// Set up for void fraction fe values</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>       n_q_points = quadrature_formula.size();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">const</span> FESystem&lt;dim, dim&gt; fe_void_fraction =</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    void_fraction_dof_handler.get_fe();</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar void_fraction(0);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  std::vector&lt;double&gt;              void_fraction_values(n_q_points);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  FEValues&lt;dim&gt; fe_vf_values(mapping,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                             fe_void_fraction,</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                             quadrature_formula,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                             update_values | update_quadrature_points |</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                               update_JxW_values);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Initialize variables for summation</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">double</span> total_volume_fluid     = 0;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">double</span> total_volume_particles = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : void_fraction_dof_handler.active_cell_iterators())</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;          fe_vf_values.reinit(cell);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          <span class="comment">// Get the void fraction at the quadrature point</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;          fe_vf_values[void_fraction].get_function_values(</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            present_void_fraction_solution, void_fraction_values);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;              <span class="comment">// Calculate total volume</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;              total_volume_fluid +=</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                void_fraction_values[q] * fe_vf_values.JxW(q);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;              total_volume_particles +=</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                (1 - void_fraction_values[q]) * fe_vf_values.JxW(q);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">const</span> MPI_Comm mpi_communicator =</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    void_fraction_dof_handler.get_communicator();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  total_volume_fluid =</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    Utilities::MPI::sum(total_volume_fluid, mpi_communicator);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  total_volume_particles =</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    Utilities::MPI::sum(total_volume_particles, mpi_communicator);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordflow">return</span> {total_volume_fluid, total_volume_particles};</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8h.html#a6894859860dc0efa4857b5e0c84e00a9">   27</a></span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>(</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">const</span> VectorType      &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;quadrature_formula,</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">// Set up for void fraction fe values</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>       n_q_points = quadrature_formula.size();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">const</span> FESystem&lt;dim, dim&gt; fe_void_fraction =</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    void_fraction_dof_handler.get_fe();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar void_fraction(0);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::vector&lt;double&gt;              void_fraction_values(n_q_points);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  FEValues&lt;dim&gt; fe_vf_values(mapping,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                             fe_void_fraction,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                             quadrature_formula,</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                             update_values | update_quadrature_points |</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                               update_JxW_values);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="comment">// Initialize variables for summation</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordtype">double</span> total_volume_fluid     = 0;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">double</span> total_volume_particles = 0;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : void_fraction_dof_handler.active_cell_iterators())</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;          fe_vf_values.reinit(cell);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <span class="comment">// Get the void fraction at the quadrature point</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          fe_vf_values[void_fraction].get_function_values(</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            present_void_fraction_solution, void_fraction_values);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;              <span class="comment">// Calculate total volume</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;              total_volume_fluid +=</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                void_fraction_values[q] * fe_vf_values.JxW(q);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;              total_volume_particles +=</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                (1 - void_fraction_values[q]) * fe_vf_values.JxW(q);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keyword">const</span> MPI_Comm mpi_communicator =</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    void_fraction_dof_handler.get_communicator();</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  total_volume_fluid =</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    Utilities::MPI::sum(total_volume_fluid, mpi_communicator);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  total_volume_particles =</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    Utilities::MPI::sum(total_volume_particles, mpi_communicator);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a3710799711bbcff017c248d9bfb67dd8">   77</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a3710799711bbcff017c248d9bfb67dd8">calculate_fluid_and_particle_volumes&lt;2, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;    &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt;    &amp;quadrature_formula,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;       &amp;mapping);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a291d1062415b0cddeb61e745a00ed65e">   84</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a291d1062415b0cddeb61e745a00ed65e">calculate_fluid_and_particle_volumes&lt;3, GlobalVectorType&gt;</a>(</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;    &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt;    &amp;quadrature_formula,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;       &amp;mapping);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a4aeebe3c63ca3da55fdf1aa9c141ae2a">   91</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a4aeebe3c63ca3da55fdf1aa9c141ae2a">calculate_fluid_and_particle_volumes&lt;2, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;         &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt;         &amp;quadrature_formula,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;            &amp;mapping);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#aa3b592909cb77f760f388c6801a64703">   98</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#aa3b592909cb77f760f388c6801a64703">calculate_fluid_and_particle_volumes&lt;3, GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;         &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt;         &amp;quadrature_formula,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;            &amp;mapping);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#af6a1ea4553d3f5d847e134aa484f508e">  106</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>&lt;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  2,</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                      &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt; &amp;quadrature_formula,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;    &amp;mapping);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a299fb5b470d1fc05694fbbd00d31351a">  116</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>&lt;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  3,</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;void_fraction_dof_handler,</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                      &amp;present_void_fraction_solution,</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt; &amp;quadrature_formula,</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;    &amp;mapping);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">return</span> {total_volume_fluid, total_volume_particles};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a3710799711bbcff017c248d9bfb67dd8">   80</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a3710799711bbcff017c248d9bfb67dd8">calculate_fluid_and_particle_volumes&lt;2, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;    &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt;    &amp;quadrature_formula,</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;       &amp;mapping);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a291d1062415b0cddeb61e745a00ed65e">   87</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a291d1062415b0cddeb61e745a00ed65e">calculate_fluid_and_particle_volumes&lt;3, GlobalVectorType&gt;</a>(</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;    &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt;    &amp;quadrature_formula,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;       &amp;mapping);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a4aeebe3c63ca3da55fdf1aa9c141ae2a">   94</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a4aeebe3c63ca3da55fdf1aa9c141ae2a">calculate_fluid_and_particle_volumes&lt;2, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;         &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt;         &amp;quadrature_formula,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;            &amp;mapping);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#aa3b592909cb77f760f388c6801a64703">  101</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#aa3b592909cb77f760f388c6801a64703">calculate_fluid_and_particle_volumes&lt;3, GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;         &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt;         &amp;quadrature_formula,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;            &amp;mapping);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#af6a1ea4553d3f5d847e134aa484f508e">  109</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>&lt;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  2,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                      &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">const</span> Quadrature&lt;2&gt; &amp;quadrature_formula,</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keyword">const</span> Mapping&lt;2&gt;    &amp;mapping);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="postprocessing__cfd__dem_8cc.html#a299fb5b470d1fc05694fbbd00d31351a">  119</a></span>&#160;<span class="keyword">template</span> std::pair&lt;double, double&gt;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<a class="code" href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a>&lt;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  3,</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  LinearAlgebra::distributed::Vector&lt;double&gt;&gt;(</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;void_fraction_dof_handler,</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keyword">const</span> LinearAlgebra::distributed::Vector&lt;double&gt;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                      &amp;present_void_fraction_solution,</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="keyword">const</span> Quadrature&lt;3&gt; &amp;quadrature_formula,</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keyword">const</span> Mapping&lt;3&gt;    &amp;mapping);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="apostprocessing__cfd__dem_8cc_html_a291d1062415b0cddeb61e745a00ed65e"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#a291d1062415b0cddeb61e745a00ed65e">calculate_fluid_and_particle_volumes&lt; 3, GlobalVectorType &gt;</a></div><div class="ttdeci">template std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes&lt; 3, GlobalVectorType &gt;(const DoFHandler&lt; 3 &gt; &amp;void_fraction_dof_handler, const GlobalVectorType &amp;present_void_fraction_solution, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</div></div>
 <div class="ttc" id="apostprocessing__cfd__dem_8cc_html_a3710799711bbcff017c248d9bfb67dd8"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#a3710799711bbcff017c248d9bfb67dd8">calculate_fluid_and_particle_volumes&lt; 2, GlobalVectorType &gt;</a></div><div class="ttdeci">template std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes&lt; 2, GlobalVectorType &gt;(const DoFHandler&lt; 2 &gt; &amp;void_fraction_dof_handler, const GlobalVectorType &amp;present_void_fraction_solution, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</div></div>
 <div class="ttc" id="apostprocessing__cfd__dem_8cc_html_a4aeebe3c63ca3da55fdf1aa9c141ae2a"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#a4aeebe3c63ca3da55fdf1aa9c141ae2a">calculate_fluid_and_particle_volumes&lt; 2, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes&lt; 2, GlobalBlockVectorType &gt;(const DoFHandler&lt; 2 &gt; &amp;void_fraction_dof_handler, const GlobalBlockVectorType &amp;present_void_fraction_solution, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</div></div>
-<div class="ttc" id="apostprocessing__cfd__dem_8cc_html_a6894859860dc0efa4857b5e0c84e00a9"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes(const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const VectorType &amp;present_void_fraction_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessing__cfd__dem_8cc_source.html#l00024">postprocessing_cfd_dem.cc:24</a></div></div>
+<div class="ttc" id="apostprocessing__cfd__dem_8cc_html_a6894859860dc0efa4857b5e0c84e00a9"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#a6894859860dc0efa4857b5e0c84e00a9">calculate_fluid_and_particle_volumes</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes(const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const VectorType &amp;present_void_fraction_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessing__cfd__dem_8cc_source.html#l00027">postprocessing_cfd_dem.cc:27</a></div></div>
 <div class="ttc" id="apostprocessing__cfd__dem_8cc_html_aa3b592909cb77f760f388c6801a64703"><div class="ttname"><a href="postprocessing__cfd__dem_8cc.html#aa3b592909cb77f760f388c6801a64703">calculate_fluid_and_particle_volumes&lt; 3, GlobalBlockVectorType &gt;</a></div><div class="ttdeci">template std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes&lt; 3, GlobalBlockVectorType &gt;(const DoFHandler&lt; 3 &gt; &amp;void_fraction_dof_handler, const GlobalBlockVectorType &amp;present_void_fraction_solution, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</div></div>
 <div class="ttc" id="apostprocessing__cfd__dem_8h_html"><div class="ttname"><a href="postprocessing__cfd__dem_8h.html">postprocessing_cfd_dem.h</a></div></div>
 <div class="ttc" id="avector_8h_html"><div class="ttname"><a href="vector_8h.html">vector.h</a></div></div>
-<div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition:</b> <a href="vector_8h_source.html#l00028">vector.h:28</a></div></div>
-<div class="ttc" id="avector_8h_html_ac71ba75c5119edae876800f9e80b59e7"><div class="ttname"><a href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::BlockVector GlobalBlockVectorType</div><div class="ttdef"><b>Definition:</b> <a href="vector_8h_source.html#l00029">vector.h:29</a></div></div>
+<div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition:</b> <a href="vector_8h_source.html#l00015">vector.h:15</a></div></div>
+<div class="ttc" id="avector_8h_html_ac71ba75c5119edae876800f9e80b59e7"><div class="ttname"><a href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::BlockVector GlobalBlockVectorType</div><div class="ttdef"><b>Definition:</b> <a href="vector_8h_source.html#l00016">vector.h:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

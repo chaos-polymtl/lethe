@@ -79,115 +79,118 @@ $(function() {
 <div class="title">particle_visualization.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="particle__visualization_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="solutions__output_8h.html">core/solutions_output.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;deal.II/grid/grid_out.h&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;deal.II/numerics/data_out_faces.h&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/data_out.h&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__visualization_8h.html">rpt/particle_visualization.h</a>&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<a href="particle__visualization_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="solutions__output_8h.html">core/solutions_output.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;deal.II/grid/grid_out.h&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;deal.II/numerics/data_out_faces.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/data_out.h&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">   13</a></span>&#160;<a class="code" href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">ParticleVisualization&lt;dim&gt;::ParticleVisualization</a>(</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  Triangulation&lt;dim&gt;               &amp;background_triangulation,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  std::string                      &amp;filename,</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;          &amp;positions,</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  std::vector&lt;std::vector&lt;double&gt;&gt; &amp;counts)</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  : particle_positions(positions)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  , particle_counts(counts)</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  , visualization_filename(filename)</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  , mapping(1)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="comment">// Initialize particle handler and empty dof handler with reactor grid</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <a class="code" href="classParticleVisualization.html#a285956983fd3d32f62d41a7fceb0551d">particle_handler</a>.initialize(background_triangulation,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                              <a class="code" href="classParticleVisualization.html#ab9e054ad336b3d6a85af69cb6d1306b8">mapping</a>,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                              <a class="code" href="classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3">particle_counts</a>[0].size());</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <a class="code" href="classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e">empty_dof_handler</a>.reinit(background_triangulation);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">   32</a></span>&#160;<a class="code" href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">ParticleVisualization&lt;dim&gt;::build_visualization_files</a>()</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// Export grid at wall of the reactor grid</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  DataOutFaces&lt;dim&gt; grid_out_faces;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  grid_out_faces.attach_dof_handler(empty_dof_handler);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  grid_out_faces.build_patches();</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::string s        = visualization_filename;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  std::string filename = s.substr(0, s.find(<span class="charliteral">&#39;.&#39;</span>)) + <span class="stringliteral">&quot;_grid_&quot;</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  write_boundaries_vtu&lt;dim&gt;(</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    grid_out_faces, <span class="stringliteral">&quot;./&quot;</span>, 0, 0, MPI_COMM_WORLD, filename, 0);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Clear memory consuming used objects</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  grid_out_faces.clear();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  empty_dof_handler.clear();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="comment">// Insert and move the particle positions prior generate vtu/pvtu files</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; position(1);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; particle_counts.size(); i++)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="comment">// Put one position in a vector (mandatory to insert particle without</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="comment">// using triangulation iterator)</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      position[0] = particle_positions[i];</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="comment">// If first position, insert it in particle handler, otherwise the</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="comment">// position is moved</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="keywordflow">if</span> (i == 0)</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        particle_handler.insert_particles(position);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        particle_handler.set_particle_positions(position, <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="comment">// Set properties (counts for all detectors) to the particle position</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      particle_handler.begin()-&gt;set_properties(particle_counts[i]);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__visualization_8h.html">rpt/particle_visualization.h</a>&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">   16</a></span>&#160;<a class="code" href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">ParticleVisualization&lt;dim&gt;::ParticleVisualization</a>(</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  Triangulation&lt;dim&gt;               &amp;background_triangulation,</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  std::string                      &amp;filename,</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;          &amp;positions,</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  std::vector&lt;std::vector&lt;double&gt;&gt; &amp;counts)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  : particle_positions(positions)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  , particle_counts(counts)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  , visualization_filename(filename)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  , mapping(1)</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// Initialize particle handler and empty dof handler with reactor grid</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <a class="code" href="classParticleVisualization.html#a285956983fd3d32f62d41a7fceb0551d">particle_handler</a>.initialize(background_triangulation,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                              <a class="code" href="classParticleVisualization.html#ab9e054ad336b3d6a85af69cb6d1306b8">mapping</a>,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                              <a class="code" href="classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3">particle_counts</a>[0].size());</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e">empty_dof_handler</a>.reinit(background_triangulation);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">   35</a></span>&#160;<a class="code" href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">ParticleVisualization&lt;dim&gt;::build_visualization_files</a>()</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="comment">// Export grid at wall of the reactor grid</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  DataOutFaces&lt;dim&gt; grid_out_faces;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  grid_out_faces.attach_dof_handler(empty_dof_handler);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  grid_out_faces.build_patches();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  std::string s        = visualization_filename;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  std::string filename = s.substr(0, s.find(<span class="charliteral">&#39;.&#39;</span>)) + <span class="stringliteral">&quot;_grid_&quot;</span>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  write_boundaries_vtu&lt;dim&gt;(</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    grid_out_faces, <span class="stringliteral">&quot;./&quot;</span>, 0, 0, MPI_COMM_WORLD, filename, 0);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="comment">// Clear memory consuming used objects</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  grid_out_faces.clear();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  empty_dof_handler.clear();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">// Insert and move the particle positions prior generate vtu/pvtu files</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; position(1);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; particle_counts.size(); i++)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="comment">// Put one position in a vector (mandatory to insert particle without</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="comment">// using triangulation iterator)</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      position[0] = particle_positions[i];</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      <span class="comment">// If first position, insert it in particle handler, otherwise the</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="comment">// position is moved</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="keywordflow">if</span> (i == 0)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        particle_handler.insert_particles(position);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        particle_handler.set_particle_positions(position, <span class="keyword">false</span>);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="comment">// Generate files</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      output_particles(i);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">   72</a></span>&#160;<a class="code" href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">ParticleVisualization&lt;dim&gt;::output_particles</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> it)</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="comment">// Create DataOut for particles</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  Particles::DataOut&lt;dim&gt; particle_output;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Set detector ids</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>             n_detectors  = particle_counts[0].size();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  std::vector&lt;std::string&gt; detector_ids = {<span class="stringliteral">&quot;detector_counts_0&quot;</span>};</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    data_component_interpretation(</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      n_detectors, DataComponentInterpretation::component_is_scalar);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordflow">if</span> (n_detectors &gt; 1)</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 1; i &lt; n_detectors; i++)</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        detector_ids.push_back(<span class="stringliteral">&quot;detector_counts_&quot;</span> + std::to_string(i));</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  particle_output.build_patches(particle_handler,</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                                detector_ids,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                                data_component_interpretation);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  std::string s        = visualization_filename;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  std::string filename = s.substr(0, s.find(<span class="charliteral">&#39;.&#39;</span>)) + <span class="stringliteral">&quot;_&quot;</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  particle_output.write_vtu_with_pvtu_record(<span class="stringliteral">&quot;./&quot;</span>,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                                             filename,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                                             it,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                                             MPI_COMM_WORLD);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classParticleVisualization.html">ParticleVisualization&lt;3&gt;</a>;</div>
-<div class="ttc" id="aclassParticleVisualization_html"><div class="ttname"><a href="classParticleVisualization.html">ParticleVisualization</a></div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00037">particle_visualization.h:38</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_a285956983fd3d32f62d41a7fceb0551d"><div class="ttname"><a href="classParticleVisualization.html#a285956983fd3d32f62d41a7fceb0551d">ParticleVisualization::particle_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; dim &gt; particle_handler</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00058">particle_visualization.h:58</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_aad035b13791d3626c76901953cdf17ab"><div class="ttname"><a href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">ParticleVisualization::output_particles</a></div><div class="ttdeci">void output_particles(unsigned int it)</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00072">particle_visualization.cc:72</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_ab9e054ad336b3d6a85af69cb6d1306b8"><div class="ttname"><a href="classParticleVisualization.html#ab9e054ad336b3d6a85af69cb6d1306b8">ParticleVisualization::mapping</a></div><div class="ttdeci">MappingQGeneric&lt; dim &gt; mapping</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00060">particle_visualization.h:60</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_abe5fb61476c9d6aa76867e513b8e137e"><div class="ttname"><a href="classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e">ParticleVisualization::empty_dof_handler</a></div><div class="ttdeci">DoFHandler&lt; dim &gt; empty_dof_handler</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00059">particle_visualization.h:59</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_ac4e0d7a6ea011681fd7ed4123baec0a3"><div class="ttname"><a href="classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3">ParticleVisualization::particle_counts</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; particle_counts</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00055">particle_visualization.h:55</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_aea9ea51cf103b1416de0a5e11ae2ba22"><div class="ttname"><a href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">ParticleVisualization::build_visualization_files</a></div><div class="ttdeci">void build_visualization_files()</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00032">particle_visualization.cc:32</a></div></div>
-<div class="ttc" id="aclassParticleVisualization_html_af03830f3f507331671f0ba16b9163b77"><div class="ttname"><a href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">ParticleVisualization::ParticleVisualization</a></div><div class="ttdeci">ParticleVisualization(Triangulation&lt; dim &gt; &amp;background_triangulation, std::string &amp;filename, std::vector&lt; Point&lt; dim &gt;&gt; &amp;positions, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;counts)</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00013">particle_visualization.cc:13</a></div></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="comment">// Set properties (counts for all detectors) to the particle position</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      particle_handler.begin()-&gt;set_properties(particle_counts[i]);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="comment">// Generate files</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      output_particles(i);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;}</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">   75</a></span>&#160;<a class="code" href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">ParticleVisualization&lt;dim&gt;::output_particles</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> it)</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Create DataOut for particles</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  Particles::DataOut&lt;dim&gt; particle_output;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="comment">// Set detector ids</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>             n_detectors  = particle_counts[0].size();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  std::vector&lt;std::string&gt; detector_ids = {<span class="stringliteral">&quot;detector_counts_0&quot;</span>};</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    data_component_interpretation(</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      n_detectors, DataComponentInterpretation::component_is_scalar);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordflow">if</span> (n_detectors &gt; 1)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 1; i &lt; n_detectors; i++)</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        detector_ids.push_back(<span class="stringliteral">&quot;detector_counts_&quot;</span> + std::to_string(i));</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  particle_output.build_patches(particle_handler,</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                detector_ids,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                                data_component_interpretation);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  std::string s        = visualization_filename;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  std::string filename = s.substr(0, s.find(<span class="charliteral">&#39;.&#39;</span>)) + <span class="stringliteral">&quot;_&quot;</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  particle_output.write_vtu_with_pvtu_record(<span class="stringliteral">&quot;./&quot;</span>,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                                             filename,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                                             it,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                                             MPI_COMM_WORLD);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classParticleVisualization.html">ParticleVisualization&lt;3&gt;</a>;</div>
+<div class="ttc" id="aclassParticleVisualization_html"><div class="ttname"><a href="classParticleVisualization.html">ParticleVisualization</a></div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00023">particle_visualization.h:24</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_a285956983fd3d32f62d41a7fceb0551d"><div class="ttname"><a href="classParticleVisualization.html#a285956983fd3d32f62d41a7fceb0551d">ParticleVisualization::particle_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; dim &gt; particle_handler</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00044">particle_visualization.h:44</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_aad035b13791d3626c76901953cdf17ab"><div class="ttname"><a href="classParticleVisualization.html#aad035b13791d3626c76901953cdf17ab">ParticleVisualization::output_particles</a></div><div class="ttdeci">void output_particles(unsigned int it)</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00075">particle_visualization.cc:75</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_ab9e054ad336b3d6a85af69cb6d1306b8"><div class="ttname"><a href="classParticleVisualization.html#ab9e054ad336b3d6a85af69cb6d1306b8">ParticleVisualization::mapping</a></div><div class="ttdeci">MappingQGeneric&lt; dim &gt; mapping</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00046">particle_visualization.h:46</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_abe5fb61476c9d6aa76867e513b8e137e"><div class="ttname"><a href="classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e">ParticleVisualization::empty_dof_handler</a></div><div class="ttdeci">DoFHandler&lt; dim &gt; empty_dof_handler</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00045">particle_visualization.h:45</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_ac4e0d7a6ea011681fd7ed4123baec0a3"><div class="ttname"><a href="classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3">ParticleVisualization::particle_counts</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; particle_counts</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8h_source.html#l00041">particle_visualization.h:41</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_aea9ea51cf103b1416de0a5e11ae2ba22"><div class="ttname"><a href="classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22">ParticleVisualization::build_visualization_files</a></div><div class="ttdeci">void build_visualization_files()</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00035">particle_visualization.cc:35</a></div></div>
+<div class="ttc" id="aclassParticleVisualization_html_af03830f3f507331671f0ba16b9163b77"><div class="ttname"><a href="classParticleVisualization.html#af03830f3f507331671f0ba16b9163b77">ParticleVisualization::ParticleVisualization</a></div><div class="ttdeci">ParticleVisualization(Triangulation&lt; dim &gt; &amp;background_triangulation, std::string &amp;filename, std::vector&lt; Point&lt; dim &gt;&gt; &amp;positions, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;counts)</div><div class="ttdef"><b>Definition:</b> <a href="particle__visualization_8cc_source.html#l00016">particle_visualization.cc:16</a></div></div>
 <div class="ttc" id="aparticle__visualization_8h_html"><div class="ttname"><a href="particle__visualization_8h.html">particle_visualization.h</a></div></div>
 <div class="ttc" id="asolutions__output_8h_html"><div class="ttname"><a href="solutions__output_8h.html">solutions_output.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

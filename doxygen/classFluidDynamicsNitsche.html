@@ -417,7 +417,7 @@ class FluidDynamicsNitsche&lt; dim, spacedim &gt;</h3>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Bruno Blais, 2019 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00041">41</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00028">28</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a009bf21e725298f066f01dcdc60c13f5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a009bf21e725298f066f01dcdc60c13f5">&#9670;&nbsp;</a></span>FluidDynamicsNitsche()</h2>
@@ -437,9 +437,9 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00037">37</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00024">24</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00165">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00164">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00822">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00167">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00168">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00163">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00152">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00151">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00809">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00154">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00155">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00150">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
 
 </div>
 </div>
@@ -469,9 +469,9 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Same as in fluid_dynamics_matrix_based, but calls <a class="el" href="classFluidDynamicsNitsche.html#a5d142e2faaa64289b81d7317688d1030" title="Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immerse...">assemble_nitsche_restriction()</a> when global matrix and rhs are assembled. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00933">933</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00920">920</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00688">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00899">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00675">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_matrix()</a>, and <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00886">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
 </div>
 </div>
@@ -501,7 +501,7 @@ template&lt;bool assemble_matrix&gt; </div>
 
 <p>Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00063">63</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00050">50</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -532,9 +532,9 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Same as in fluid_dynamics_matrix_based, but calls <a class="el" href="classFluidDynamicsNitsche.html#a5d142e2faaa64289b81d7317688d1030" title="Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immerse...">assemble_nitsche_restriction()</a> when rhs is assembled. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00944">944</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00931">931</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00899">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00886">FluidDynamicsMatrixBased&lt; dim &gt;::assemble_system_rhs()</a>.</p>
 
 </div>
 </div>
@@ -567,9 +567,9 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a8e89abd997c09d50fad2eb8e2e092443">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00100">100</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00087">87</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
-<p class="reference">References <a class="el" href="rpt__fem__reconstruction_8cc_source.html#l00496">assemble_matrix_and_rhs()</a>.</p>
+<p class="reference">References <a class="el" href="rpt__fem__reconstruction_8cc_source.html#l00499">assemble_matrix_and_rhs()</a>.</p>
 
 </div>
 </div>
@@ -602,7 +602,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#ae20a8b3537aef54c5c53f26688c6667a">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00109">109</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00096">96</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>
@@ -635,7 +635,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Calculates the force due to the fluid motion on the solid. </p>
 <dl class="section return"><dt>Returns</dt><dd>Tensor of forces on the solid </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00331">331</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00318">318</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -665,9 +665,9 @@ template&lt;int dim, int spacedim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00235">235</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00222">222</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00056">pressure</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>.</p>
 
 </div>
 </div>
@@ -730,7 +730,7 @@ template&lt;int dim, int spacedim&gt; </div>
 <p>Calculates the torque due to the fluid motion on the solid. </p>
 <dl class="section return"><dt>Returns</dt><dd>Tensor of torque on the solid. This is always a 3D tensor even in 2D </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00410">410</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00397">397</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -764,7 +764,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Outputs a vtu file for each output frequency of the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00804">804</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00791">791</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 </div>
 </div>
@@ -796,7 +796,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Outputs a vtu file for each output frequency of the solid triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00832">832</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00819">819</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 </div>
 </div>
@@ -845,9 +845,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00511">511</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00498">498</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00047">make_table_scalars_tensors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00049">make_table_scalars_tensors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -896,9 +896,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00595">595</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00582">582</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00047">make_table_scalars_tensors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00049">make_table_scalars_tensors()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -928,9 +928,9 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00994">994</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00981">981</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00215">fill_table_from_file()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l01735">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00217">fill_table_from_file()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l01722">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
 
 </div>
 </div>
@@ -960,7 +960,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00892">892</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00879">879</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2aae074a5692dfb7c26aae5147e52ceb40">Parameters::MeshAdaptation::kelly</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::MeshAdaptation::none</a>, and <a class="el" href="structParameters_1_1MeshAdaptation.html#a20a32a04c8c684495ff2d3c7be73c5a2aa489ffed938ef1b9e86889bc413501ee">Parameters::MeshAdaptation::uniform</a>.</p>
 
@@ -993,9 +993,9 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixBased.html#a0851f8761d15071cf776a0467b339eaa">FluidDynamicsMatrixBased&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00678">678</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00665">665</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00321">read_mesh_and_manifolds()</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00323">read_mesh_and_manifolds()</a>.</p>
 
 </div>
 </div>
@@ -1025,9 +1025,9 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00953">953</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00940">940</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02502">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l02489">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>.</p>
 
 </div>
 </div>
@@ -1054,7 +1054,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00165">165</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00152">152</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>
@@ -1080,7 +1080,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00164">164</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00151">151</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +1106,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00167">167</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00154">154</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>
@@ -1132,7 +1132,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00168">168</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00155">155</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>
@@ -1158,7 +1158,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00163">163</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00150">150</a> of file <a class="el" href="fluid__dynamics__nitsche_8h_source.html">fluid_dynamics_nitsche.h</a>.</p>
 
 </div>
 </div>

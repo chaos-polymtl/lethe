@@ -79,136 +79,139 @@ $(function() {
 <div class="title">explicit_euler_integrator.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="explicit__euler__integrator_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="tensors__and__points__dimension__manipulation_8h.html">core/tensors_and_points_dimension_manipulation.h</a>&gt;</span></div>
+<a href="explicit__euler__integrator_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="explicit__euler__integrator_8h.html">dem/explicit_euler_integrator.h</a>&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// This function is empty for explicit Euler integrator</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">   11</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">ExplicitEulerIntegrator&lt;dim&gt;::integrate_half_step_location</a>(</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp; <span class="comment">/*particle_handler*/</span>,</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp; <span class="comment">/*body_force*/</span>,</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <span class="comment">/*time_step*/</span>,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp; <span class="comment">/*torque*/</span>,</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp; <span class="comment">/*force*/</span>,</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt; &amp; <span class="comment">/*MOI*/</span>)</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{}</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">   22</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator&lt;dim&gt;::integrate</a>(</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;              &amp;g,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;torque,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;force,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;       &amp;MOI)</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> particle = particle_handler.begin();</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;       particle != particle_handler.end();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;       ++particle)</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <span class="comment">// Get the total array view to the particle properties and location once</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="comment">// to improve efficiency</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      types::particle_index particle_id = particle-&gt;get_local_index();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="keyword">auto</span>          particle_properties = particle-&gt;get_properties();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      Tensor&lt;1, 3&gt; &amp;particle_torque     = torque[particle_id];</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      Tensor&lt;1, 3&gt; &amp;particle_force      = force[particle_id];</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      Point&lt;3&gt;      particle_position;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="keywordtype">double</span> mass_inverse = 1 / particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">PropertiesIndex::mass</a>];</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordtype">double</span> MOI_inverse  = 1 / MOI[particle_id];</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        particle_position = particle-&gt;get_location();</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="tensors__and__points__dimension__manipulation_8h.html">core/tensors_and_points_dimension_manipulation.h</a>&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="explicit__euler__integrator_8h.html">dem/explicit_euler_integrator.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// This function is empty for explicit Euler integrator</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">   14</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">ExplicitEulerIntegrator&lt;dim&gt;::integrate_half_step_location</a>(</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp; <span class="comment">/*particle_handler*/</span>,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp; <span class="comment">/*body_force*/</span>,</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <span class="comment">/*time_step*/</span>,</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp; <span class="comment">/*torque*/</span>,</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">const</span> std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp; <span class="comment">/*force*/</span>,</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt; &amp; <span class="comment">/*MOI*/</span>)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{}</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">   25</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator&lt;dim&gt;::integrate</a>(</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;              &amp;g,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;torque,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;force,</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;       &amp;MOI)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> particle = particle_handler.begin();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;       particle != particle_handler.end();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;       ++particle)</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="comment">// Get the total array view to the particle properties and location once</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="comment">// to improve efficiency</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      types::particle_index particle_id = particle-&gt;get_local_index();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="keyword">auto</span>          particle_properties = particle-&gt;get_properties();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      Tensor&lt;1, 3&gt; &amp;particle_torque     = torque[particle_id];</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      Tensor&lt;1, 3&gt; &amp;particle_force      = force[particle_id];</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      Point&lt;3&gt;      particle_position;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="keywordtype">double</span> mass_inverse = 1 / particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">PropertiesIndex::mass</a>];</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordtype">double</span> MOI_inverse  = 1 / MOI[particle_id];</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        particle_position = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(particle-&gt;get_location());</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        particle_position = particle-&gt;get_location();</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      Tensor&lt;1, 3&gt; acceleration;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; 3; ++d)</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          <span class="comment">// Velocity integration:</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a> + d] += dt * acceleration[d];</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        particle_position = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(particle-&gt;get_location());</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      Tensor&lt;1, 3&gt; acceleration;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; 3; ++d)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          <span class="comment">// Position integration</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          particle_position[d] +=</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            dt * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a> + d];</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a> + d] +=</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            dt * (particle_torque[d] * MOI_inverse);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="comment">// Reinitialize force</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      particle_force = 0;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          <span class="comment">// Velocity integration:</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a> + d] += dt * acceleration[d];</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;          <span class="comment">// Position integration</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          particle_position[d] +=</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            dt * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a> + d];</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;          particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a> + d] +=</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            dt * (particle_torque[d] * MOI_inverse);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="comment">// Reinitialize torque</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      particle_torque = 0;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="comment">// Reinitialize force</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      particle_force = 0;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        particle-&gt;set_location(particle_position);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="comment">// Reinitialize torque</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      particle_torque = 0;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          Point&lt;2&gt; position_2d;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          position_2d[0] = particle_position[0];</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          position_2d[1] = particle_position[1];</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          particle-&gt;set_location(position_2d);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">// Explicit Euler not implemented for adaptive sparse contacts</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#a5a73213625931f7312708776944c31dd">   90</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator&lt;dim&gt;::integrate</a>(</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;              &amp;g,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;torque,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;force,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;       &amp;MOI,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp; <span class="comment">/* triangulation */</span>,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp; <span class="comment">/* sparse_contacts_object */</span>)</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;{</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">auto</span> *action_manager = <a class="code" href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a>();</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordtype">bool</span> use_default_function =</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    !action_manager-&gt;check_sparse_contacts_enabled() ||</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    action_manager-&gt;check_mobility_status_reset();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keywordflow">if</span> (use_default_function)</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    {</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      integrate(particle_handler, g, dt, torque, force, MOI);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keywordflow">throw</span> std::runtime_error(</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="stringliteral">&quot;Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.&quot;</span>);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator&lt;3&gt;</a>;</div>
-<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00117">adaptive_sparse_contacts.h:118</a></div></div>
-<div class="ttc" id="aclassDEMActionManager_html_a4b4056b87d7e85d3832581f90a4daa53"><div class="ttname"><a href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a></div><div class="ttdeci">static DEMActionManager * get_action_manager()</div><div class="ttdoc">Getter of the unique instance of the DEMActionManager.</div><div class="ttdef"><b>Definition:</b> <a href="dem__action__manager_8cc_source.html#l00006">dem_action_manager.cc:6</a></div></div>
-<div class="ttc" id="aclassExplicitEulerIntegrator_html"><div class="ttname"><a href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator</a></div><div class="ttdoc">Implementation of a classical explicit euler scheme for the integration of the particle motion....</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8h_source.html#l00038">explicit_euler_integrator.h:39</a></div></div>
-<div class="ttc" id="aclassExplicitEulerIntegrator_html_ab2d67dd0acdeb58b06de7835887c7b63"><div class="ttname"><a href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">ExplicitEulerIntegrator::integrate_half_step_location</a></div><div class="ttdeci">virtual void integrate_half_step_location(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, const std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;torque, const std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</div><div class="ttdoc">Integrate new particles' location after insertion.</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8cc_source.html#l00011">explicit_euler_integrator.cc:11</a></div></div>
-<div class="ttc" id="aclassExplicitEulerIntegrator_html_af70d4321118e5a2eeabb44dd6f8308a1"><div class="ttname"><a href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator::integrate</a></div><div class="ttdeci">virtual void integrate(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</div><div class="ttdoc">Integrate motion of all particles by using the acceleration with the explicit Euler method.</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8cc_source.html#l00022">explicit_euler_integrator.cc:22</a></div></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        particle-&gt;set_location(particle_position);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          Point&lt;2&gt; position_2d;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          position_2d[0] = particle_position[0];</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          position_2d[1] = particle_position[1];</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          particle-&gt;set_location(position_2d);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">// Explicit Euler not implemented for adaptive sparse contacts</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classExplicitEulerIntegrator.html#a5a73213625931f7312708776944c31dd">   93</a></span>&#160;<a class="code" href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator&lt;dim&gt;::integrate</a>(</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keyword">const</span> Tensor&lt;1, 3&gt;              &amp;g,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                     dt,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;torque,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  std::vector&lt;Tensor&lt;1, 3&gt;&gt;       &amp;force,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keyword">const</span> std::vector&lt;double&gt;       &amp;MOI,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp; <span class="comment">/* triangulation */</span>,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp; <span class="comment">/* sparse_contacts_object */</span>)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;{</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">auto</span> *action_manager = <a class="code" href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a>();</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordtype">bool</span> use_default_function =</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    !action_manager-&gt;check_sparse_contacts_enabled() ||</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    action_manager-&gt;check_mobility_status_reset();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordflow">if</span> (use_default_function)</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    {</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      integrate(particle_handler, g, dt, torque, force, MOI);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordflow">throw</span> std::runtime_error(</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="stringliteral">&quot;Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.&quot;</span>);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator&lt;3&gt;</a>;</div>
+<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00104">adaptive_sparse_contacts.h:105</a></div></div>
+<div class="ttc" id="aclassDEMActionManager_html_a4b4056b87d7e85d3832581f90a4daa53"><div class="ttname"><a href="classDEMActionManager.html#a4b4056b87d7e85d3832581f90a4daa53">DEMActionManager::get_action_manager</a></div><div class="ttdeci">static DEMActionManager * get_action_manager()</div><div class="ttdoc">Getter of the unique instance of the DEMActionManager.</div><div class="ttdef"><b>Definition:</b> <a href="dem__action__manager_8cc_source.html#l00009">dem_action_manager.cc:9</a></div></div>
+<div class="ttc" id="aclassExplicitEulerIntegrator_html"><div class="ttname"><a href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator</a></div><div class="ttdoc">Implementation of a classical explicit euler scheme for the integration of the particle motion....</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8h_source.html#l00025">explicit_euler_integrator.h:26</a></div></div>
+<div class="ttc" id="aclassExplicitEulerIntegrator_html_ab2d67dd0acdeb58b06de7835887c7b63"><div class="ttname"><a href="classExplicitEulerIntegrator.html#ab2d67dd0acdeb58b06de7835887c7b63">ExplicitEulerIntegrator::integrate_half_step_location</a></div><div class="ttdeci">virtual void integrate_half_step_location(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, const std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;torque, const std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</div><div class="ttdoc">Integrate new particles' location after insertion.</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8cc_source.html#l00014">explicit_euler_integrator.cc:14</a></div></div>
+<div class="ttc" id="aclassExplicitEulerIntegrator_html_af70d4321118e5a2eeabb44dd6f8308a1"><div class="ttname"><a href="classExplicitEulerIntegrator.html#af70d4321118e5a2eeabb44dd6f8308a1">ExplicitEulerIntegrator::integrate</a></div><div class="ttdeci">virtual void integrate(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;body_force, const double time_step, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;torque, std::vector&lt; Tensor&lt; 1, 3 &gt;&gt; &amp;force, const std::vector&lt; double &gt; &amp;MOI) override</div><div class="ttdoc">Integrate motion of all particles by using the acceleration with the explicit Euler method.</div><div class="ttdef"><b>Definition:</b> <a href="explicit__euler__integrator_8cc_source.html#l00025">explicit_euler_integrator.cc:25</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="aexplicit__euler__integrator_8h_html"><div class="ttname"><a href="explicit__euler__integrator_8h.html">explicit_euler_integrator.h</a></div></div>
-<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::mass</a></div><div class="ttdeci">@ mass</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00051">dem_properties.h:51</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::omega_x</a></div><div class="ttdeci">@ omega_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00042">dem_properties.h:42</a></div></div>
-<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00039">dem_properties.h:39</a></div></div>
+<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::mass</a></div><div class="ttdeci">@ mass</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00036">dem_properties.h:36</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">DEM::omega_x</a></div><div class="ttdeci">@ omega_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00027">dem_properties.h:27</a></div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">DEM::v_x</a></div><div class="ttdeci">@ v_x</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00024">dem_properties.h:24</a></div></div>
 <div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html">tensors_and_points_dimension_manipulation.h</a></div></div>
-<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_ae6b1bfcf472bf014c96d7188128dfc89"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a></div><div class="ttdeci">Point&lt; 3 &gt; point_nd_to_3d(const Point&lt; dim &gt; &amp;point)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">tensors_and_points_dimension_manipulation.h:82</a></div></div>
+<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_ae6b1bfcf472bf014c96d7188128dfc89"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a></div><div class="ttdeci">Point&lt; 3 &gt; point_nd_to_3d(const Point&lt; dim &gt; &amp;point)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">tensors_and_points_dimension_manipulation.h:69</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

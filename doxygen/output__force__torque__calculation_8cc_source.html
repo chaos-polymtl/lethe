@@ -79,92 +79,95 @@ $(function() {
 <div class="title">output_force_torque_calculation.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="output__force__torque__calculation_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="output__force__torque__calculation_8h.html">dem/output_force_torque_calculation.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="output__force__torque__calculation_8h.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">    4</a></span>&#160;<a class="code" href="output__force__torque__calculation_8cc.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">write_forces_torques_output_locally</a>(</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;  std::map&lt;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, Tensor&lt;1, 3&gt;&gt; force_on_walls,</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;  std::map&lt;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, Tensor&lt;1, 3&gt;&gt; torque_on_walls)</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  TableHandler table;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;it : force_on_walls)</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;      table.add_value(<span class="stringliteral">&quot;B_id&quot;</span>, it.first);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fx&quot;</span>, force_on_walls[it.first][0]);</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fy&quot;</span>, force_on_walls[it.first][1]);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fz&quot;</span>, force_on_walls[it.first][2]);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      table.add_value(<span class="stringliteral">&quot;Tx&quot;</span>, torque_on_walls[it.first][0]);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      table.add_value(<span class="stringliteral">&quot;Ty&quot;</span>, torque_on_walls[it.first][1]);</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      table.add_value(<span class="stringliteral">&quot;Tz&quot;</span>, torque_on_walls[it.first][2]);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    }</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fx&quot;</span>, 9);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fy&quot;</span>, 9);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fz&quot;</span>, 9);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Tx&quot;</span>, 9);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Ty&quot;</span>, 9);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Tz&quot;</span>, 9);</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  table.write_text(std::cout);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<a href="output__force__torque__calculation_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2022, 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="output__force__torque__calculation_8h.html">dem/output_force_torque_calculation.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="output__force__torque__calculation_8h.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">    7</a></span>&#160;<a class="code" href="output__force__torque__calculation_8cc.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">write_forces_torques_output_locally</a>(</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  std::map&lt;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, Tensor&lt;1, 3&gt;&gt; force_on_walls,</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  std::map&lt;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, Tensor&lt;1, 3&gt;&gt; torque_on_walls)</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  TableHandler table;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;it : force_on_walls)</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;      table.add_value(<span class="stringliteral">&quot;B_id&quot;</span>, it.first);</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fx&quot;</span>, force_on_walls[it.first][0]);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fy&quot;</span>, force_on_walls[it.first][1]);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      table.add_value(<span class="stringliteral">&quot;Fz&quot;</span>, force_on_walls[it.first][2]);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;      table.add_value(<span class="stringliteral">&quot;Tx&quot;</span>, torque_on_walls[it.first][0]);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;      table.add_value(<span class="stringliteral">&quot;Ty&quot;</span>, torque_on_walls[it.first][1]);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      table.add_value(<span class="stringliteral">&quot;Tz&quot;</span>, torque_on_walls[it.first][2]);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    }</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fx&quot;</span>, 9);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fy&quot;</span>, 9);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Fz&quot;</span>, 9);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Tx&quot;</span>, 9);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Ty&quot;</span>, 9);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  table.set_precision(<span class="stringliteral">&quot;Tz&quot;</span>, 9);</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="output__force__torque__calculation_8h.html#aed3454d1eaee2ff1c575018f1a7a94c1">   31</a></span>&#160;<a class="code" href="output__force__torque__calculation_8cc.html#aed3454d1eaee2ff1c575018f1a7a94c1">write_forces_torques_output_results</a>(</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">const</span> std::string                               &amp;filename,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                               output_frequency,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">const</span> std::vector&lt;unsigned int&gt;                 &amp;boundary_index,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     time_step,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <a class="code" href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures&lt;3&gt;::vector_on_boundary</a> &amp;forces_boundary_information,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <a class="code" href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures&lt;3&gt;::vector_on_boundary</a> &amp;torques_boundary_information)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> this_mpi_process =</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_mpi_processes =</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; boundary_index.size(); i++)</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      std::string filename_boundary_description =</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        std::to_string(boundary_index[i]);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      std::string filename_output =</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        filename + <span class="stringliteral">&quot;_boundary_&quot;</span> + filename_boundary_description;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == i || (i + 1) &gt; n_mpi_processes)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;          TableHandler table;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; forces_boundary_information.size();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;               j += output_frequency)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force x&quot;</span>, forces_boundary_information[j][i][0]);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force y&quot;</span>, forces_boundary_information[j][i][1]);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force z&quot;</span>, forces_boundary_information[j][i][2]);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque x&quot;</span>,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                              torques_boundary_information[j][i][0]);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque y&quot;</span>,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                              torques_boundary_information[j][i][1]);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque z&quot;</span>,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                              torques_boundary_information[j][i][2]);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;              table.add_value(<span class="stringliteral">&quot;Current time&quot;</span>, j * time_step);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force x&quot;</span>, 9);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force y&quot;</span>, 9);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force z&quot;</span>, 9);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque x&quot;</span>, 9);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque y&quot;</span>, 9);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque z&quot;</span>, 9);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Current time&quot;</span>, 9);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          <span class="comment">// output</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          std::ofstream out_file(filename_output);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          table.write_text(out_file);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          out_file.close();</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
-<div class="ttc" id="aoutput__force__torque__calculation_8cc_html_a010e5d7ef53d2de1f71eb4ec1ffaf389"><div class="ttname"><a href="output__force__torque__calculation_8cc.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">write_forces_torques_output_locally</a></div><div class="ttdeci">void write_forces_torques_output_locally(std::map&lt; unsigned int, Tensor&lt; 1, 3 &gt;&gt; force_on_walls, std::map&lt; unsigned int, Tensor&lt; 1, 3 &gt;&gt; torque_on_walls)</div><div class="ttdoc">write_forces_torques_output_locally Writes the results of force and torque calculations in the termin...</div><div class="ttdef"><b>Definition:</b> <a href="output__force__torque__calculation_8cc_source.html#l00004">output_force_torque_calculation.cc:4</a></div></div>
-<div class="ttc" id="aoutput__force__torque__calculation_8cc_html_aed3454d1eaee2ff1c575018f1a7a94c1"><div class="ttname"><a href="output__force__torque__calculation_8cc.html#aed3454d1eaee2ff1c575018f1a7a94c1">write_forces_torques_output_results</a></div><div class="ttdeci">void write_forces_torques_output_results(const std::string &amp;filename, const unsigned int output_frequency, const std::vector&lt; unsigned int &gt; &amp;boundary_index, const double time_step, DEM::dem_data_structures&lt; 3 &gt;::vector_on_boundary &amp;forces_boundary_information, DEM::dem_data_structures&lt; 3 &gt;::vector_on_boundary &amp;torques_boundary_information)</div><div class="ttdoc">write_forces_torques_output_results Writes the results of force and torque calculations in a file,...</div><div class="ttdef"><b>Definition:</b> <a href="output__force__torque__calculation_8cc_source.html#l00031">output_force_torque_calculation.cc:31</a></div></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  table.write_text(std::cout);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="output__force__torque__calculation_8h.html#aed3454d1eaee2ff1c575018f1a7a94c1">   34</a></span>&#160;<a class="code" href="output__force__torque__calculation_8cc.html#aed3454d1eaee2ff1c575018f1a7a94c1">write_forces_torques_output_results</a>(</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">const</span> std::string                               &amp;filename,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                               output_frequency,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">const</span> std::vector&lt;unsigned int&gt;                 &amp;boundary_index,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     time_step,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <a class="code" href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures&lt;3&gt;::vector_on_boundary</a> &amp;forces_boundary_information,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <a class="code" href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures&lt;3&gt;::vector_on_boundary</a> &amp;torques_boundary_information)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> this_mpi_process =</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_mpi_processes =</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; boundary_index.size(); i++)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      std::string filename_boundary_description =</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        std::to_string(boundary_index[i]);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      std::string filename_output =</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        filename + <span class="stringliteral">&quot;_boundary_&quot;</span> + filename_boundary_description;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == i || (i + 1) &gt; n_mpi_processes)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;          TableHandler table;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; forces_boundary_information.size();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;               j += output_frequency)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force x&quot;</span>, forces_boundary_information[j][i][0]);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force y&quot;</span>, forces_boundary_information[j][i][1]);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;              table.add_value(<span class="stringliteral">&quot;Force z&quot;</span>, forces_boundary_information[j][i][2]);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque x&quot;</span>,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                              torques_boundary_information[j][i][0]);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque y&quot;</span>,</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                              torques_boundary_information[j][i][1]);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;              table.add_value(<span class="stringliteral">&quot;Torque z&quot;</span>,</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                              torques_boundary_information[j][i][2]);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;              table.add_value(<span class="stringliteral">&quot;Current time&quot;</span>, j * time_step);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force x&quot;</span>, 9);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force y&quot;</span>, 9);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Force z&quot;</span>, 9);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque x&quot;</span>, 9);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque y&quot;</span>, 9);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Torque z&quot;</span>, 9);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          table.set_precision(<span class="stringliteral">&quot;Current time&quot;</span>, 9);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          <span class="comment">// output</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          std::ofstream out_file(filename_output);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          table.write_text(out_file);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          out_file.close();</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
+<div class="ttc" id="aoutput__force__torque__calculation_8cc_html_a010e5d7ef53d2de1f71eb4ec1ffaf389"><div class="ttname"><a href="output__force__torque__calculation_8cc.html#a010e5d7ef53d2de1f71eb4ec1ffaf389">write_forces_torques_output_locally</a></div><div class="ttdeci">void write_forces_torques_output_locally(std::map&lt; unsigned int, Tensor&lt; 1, 3 &gt;&gt; force_on_walls, std::map&lt; unsigned int, Tensor&lt; 1, 3 &gt;&gt; torque_on_walls)</div><div class="ttdoc">write_forces_torques_output_locally Writes the results of force and torque calculations in the termin...</div><div class="ttdef"><b>Definition:</b> <a href="output__force__torque__calculation_8cc_source.html#l00007">output_force_torque_calculation.cc:7</a></div></div>
+<div class="ttc" id="aoutput__force__torque__calculation_8cc_html_aed3454d1eaee2ff1c575018f1a7a94c1"><div class="ttname"><a href="output__force__torque__calculation_8cc.html#aed3454d1eaee2ff1c575018f1a7a94c1">write_forces_torques_output_results</a></div><div class="ttdeci">void write_forces_torques_output_results(const std::string &amp;filename, const unsigned int output_frequency, const std::vector&lt; unsigned int &gt; &amp;boundary_index, const double time_step, DEM::dem_data_structures&lt; 3 &gt;::vector_on_boundary &amp;forces_boundary_information, DEM::dem_data_structures&lt; 3 &gt;::vector_on_boundary &amp;torques_boundary_information)</div><div class="ttdoc">write_forces_torques_output_results Writes the results of force and torque calculations in a file,...</div><div class="ttdef"><b>Definition:</b> <a href="output__force__torque__calculation_8cc_source.html#l00034">output_force_torque_calculation.cc:34</a></div></div>
 <div class="ttc" id="aoutput__force__torque__calculation_8h_html"><div class="ttname"><a href="output__force__torque__calculation_8h.html">output_force_torque_calculation.h</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_ad9e0dd1b9ca1443dfb6eb64aa5fea108"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures::vector_on_boundary</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; unsigned int, std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt; &gt; vector_on_boundary</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00234">data_containers.h:234</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_ad9e0dd1b9ca1443dfb6eb64aa5fea108"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#ad9e0dd1b9ca1443dfb6eb64aa5fea108">DEM::dem_data_structures::vector_on_boundary</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; unsigned int, std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt; &gt; vector_on_boundary</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00221">data_containers.h:221</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

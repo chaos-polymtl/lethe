@@ -79,287 +79,290 @@ $(function() {
 <div class="title">insertion_volume.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="insertion__volume_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="insertion__volume_8h.html">dem/insertion_volume.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">// The constructor of volume insertion class. In the constructor, we</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">// investigate if the insertion box is adequately large to handle the desired</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// number of inserted particles. The number of insertion points in each</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// direction (number_of_particles_x_direction, number_of_particles_y_direction</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// and number_of_particles_z_direction) are also obtained</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">   11</a></span>&#160;<a class="code" href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">InsertionVolume&lt;dim&gt;::InsertionVolume</a>(</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Distribution&gt;&gt;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    &amp;size_distribution_object_container,</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     maximum_particle_diameter)</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  : <a class="code" href="classInsertion.html">Insertion</a>&lt;dim&gt;(size_distribution_object_container,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                   triangulation,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                   dem_parameters)</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  , particles_of_each_type_remaining(</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      dem_parameters.lagrangian_physical_properties.number.at(0))</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="comment">// Initializing current inserting particle type</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <a class="code" href="classInsertionVolume.html#a7e875ce68570ed72099eccc15b113ea3">current_inserting_particle_type</a> = 0;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  this-&gt;<a class="code" href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">inserted_this_step</a>        = 0;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  this-&gt;<a class="code" href="classInsertion.html#ac9e99cb2c9755016ad092f8879f3f4cd">maximum_diameter</a>          = maximum_particle_diameter;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// The main insertion function. Insert_global_function is utilized to insert</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">// the particles</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">   33</a></span>&#160;<a class="code" href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">InsertionVolume&lt;dim&gt;::insert</a>(</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  Particles::ParticleHandler&lt;dim&gt;                 &amp;particle_handler,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">if</span> (particles_of_each_type_remaining == 0 &amp;&amp;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      current_inserting_particle_type !=</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">lagrangian_physical_properties</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#abb75740b4bc84088e1ee30c6063a2e55">particle_type_number</a> - 1)</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      particles_of_each_type_remaining =</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">lagrangian_physical_properties</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a5f5414f468157e733de83b82ca84e15f">number</a>.at(</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;          ++current_inserting_particle_type);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="comment">// Check to see if the remaining un-inserted particles are equal to zero or</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">// not</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordflow">if</span> (particles_of_each_type_remaining != 0)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="keywordflow">if</span> (this-&gt;removing_particles_in_region)</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          <span class="keywordflow">if</span> (this-&gt;mark_for_update)</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;              this-&gt;find_cells_in_removing_box(triangulation);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;              this-&gt;mark_for_update = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          this-&gt;remove_particles_in_box(particle_handler);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      MPI_Comm           communicator = triangulation.get_communicator();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      ConditionalOStream pcout(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="keyword">auto</span> this_mpi_process = Utilities::MPI::this_mpi_process(communicator);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="keyword">auto</span> n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);</div>
+<a href="insertion__volume_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="insertion__volume_8h.html">dem/insertion_volume.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// The constructor of volume insertion class. In the constructor, we</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// investigate if the insertion box is adequately large to handle the desired</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// number of inserted particles. The number of insertion points in each</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// direction (number_of_particles_x_direction, number_of_particles_y_direction</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// and number_of_particles_z_direction) are also obtained</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">   14</a></span>&#160;<a class="code" href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">InsertionVolume&lt;dim&gt;::InsertionVolume</a>(</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Distribution&gt;&gt;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    &amp;size_distribution_object_container,</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     maximum_particle_diameter)</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  : <a class="code" href="classInsertion.html">Insertion</a>&lt;dim&gt;(size_distribution_object_container,</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                   triangulation,</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                   dem_parameters)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  , particles_of_each_type_remaining(</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      dem_parameters.lagrangian_physical_properties.number.at(0))</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// Initializing current inserting particle type</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <a class="code" href="classInsertionVolume.html#a7e875ce68570ed72099eccc15b113ea3">current_inserting_particle_type</a> = 0;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  this-&gt;<a class="code" href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">inserted_this_step</a>        = 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  this-&gt;<a class="code" href="classInsertion.html#ac9e99cb2c9755016ad092f8879f3f4cd">maximum_diameter</a>          = maximum_particle_diameter;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// The main insertion function. Insert_global_function is utilized to insert</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// the particles</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">   36</a></span>&#160;<a class="code" href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">InsertionVolume&lt;dim&gt;::insert</a>(</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  Particles::ParticleHandler&lt;dim&gt;                 &amp;particle_handler,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">if</span> (particles_of_each_type_remaining == 0 &amp;&amp;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      current_inserting_particle_type !=</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">lagrangian_physical_properties</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#abb75740b4bc84088e1ee30c6063a2e55">particle_type_number</a> - 1)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      particles_of_each_type_remaining =</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">lagrangian_physical_properties</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a5f5414f468157e733de83b82ca84e15f">number</a>.at(</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;          ++current_inserting_particle_type);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">// Check to see if the remaining un-inserted particles are equal to zero or</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">// not</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">if</span> (particles_of_each_type_remaining != 0)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="keywordflow">if</span> (this-&gt;removing_particles_in_region)</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <span class="keywordflow">if</span> (this-&gt;mark_for_update)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;              this-&gt;find_cells_in_removing_box(triangulation);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;              this-&gt;mark_for_update = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          this-&gt;remove_particles_in_box(particle_handler);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      MPI_Comm           communicator = triangulation.get_communicator();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      ConditionalOStream pcout(</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      this-&gt;calculate_insertion_domain_maximum_particle_number(dem_parameters,</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                                               pcout);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="comment">// The inserted_this_step value is the minimum of</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="comment">// particles_of_each_type_remaining and inserted_this_step</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      this-&gt;inserted_this_step =</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        std::min(particles_of_each_type_remaining, this-&gt;inserted_this_step);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      <span class="comment">// Obtaining global bounding boxes</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="keyword">const</span> <span class="keyword">auto</span> my_bounding_box =</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        GridTools::compute_mesh_predicate_bounding_box(</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          triangulation, IteratorFilters::LocallyOwnedCell());</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keyword">const</span> <span class="keyword">auto</span> global_bounding_boxes =</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        Utilities::MPI::all_gather(communicator, my_bounding_box);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="comment">// Distributing particles between processors</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      this-&gt;inserted_this_step_this_proc =</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        floor(this-&gt;inserted_this_step / n_mpi_process);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == (n_mpi_process - 1))</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        this-&gt;inserted_this_step_this_proc =</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;          this-&gt;inserted_this_step -</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;          (n_mpi_process - 1) * floor(this-&gt;inserted_this_step / n_mpi_process);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="comment">// Call random number generator</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      std::vector&lt;double&gt; random_number_vector;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      random_number_vector.reserve(this-&gt;inserted_this_step_this_proc);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      this-&gt;create_random_number_container(</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        random_number_vector,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a2cc5dd8ffadd54ceb7e186de449664e0">insertion_maximum_offset</a>,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a85413c6a3c9c9bcdee878962a5e4c0ed">seed_for_insertion</a>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      Point&lt;dim&gt;              insertion_location;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      std::vector&lt;Point&lt;dim&gt;&gt; insertion_points_on_proc;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      insertion_points_on_proc.reserve(this-&gt;inserted_this_step_this_proc);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="comment">// Find the first and the last particle id for each process</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="comment">// The number of particles on the last process is different</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> first_id;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> last_id;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == (n_mpi_process - 1))</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          first_id =</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            this-&gt;inserted_this_step - this-&gt;inserted_this_step_this_proc;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;          last_id = this-&gt;inserted_this_step;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="comment">// For the processes 1 : n-1</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;          first_id = this_mpi_process * this-&gt;inserted_this_step_this_proc;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          last_id = (this_mpi_process + 1) * this-&gt;inserted_this_step_this_proc;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <span class="comment">// Looping through the particles on each process and finding their</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <span class="comment">// insertion location</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_counter = 0;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span> = first_id; <span class="keywordtype">id</span> &lt; last_id; ++id, ++particle_counter)</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;          find_insertion_location_volume(</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            insertion_location,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <span class="keywordtype">id</span>,</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            random_number_vector[particle_counter],</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            random_number_vector[this-&gt;inserted_this_step - particle_counter -</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                                 1],</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;          insertion_points_on_proc.push_back(insertion_location);</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        }</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      std::vector&lt;std::vector&lt;double&gt;&gt; particle_properties;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      <span class="comment">// Assigning inserted particles properties using</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="comment">// assign_particle_properties function</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      this-&gt;assign_particle_properties(dem_parameters,</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                                       this-&gt;inserted_this_step_this_proc,</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                                       current_inserting_particle_type,</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                                       particle_properties);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;      <span class="comment">// Insert the particles using the points and assigned properties</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      particle_handler.insert_global_particles(insertion_points_on_proc,</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                                               global_bounding_boxes,</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                               particle_properties);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="comment">// Updating remaining particles</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      particles_of_each_type_remaining -= this-&gt;inserted_this_step;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="keyword">auto</span> this_mpi_process = Utilities::MPI::this_mpi_process(communicator);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keyword">auto</span> n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      this-&gt;calculate_insertion_domain_maximum_particle_number(dem_parameters,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                                               pcout);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="comment">// The inserted_this_step value is the minimum of</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      <span class="comment">// particles_of_each_type_remaining and inserted_this_step</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      this-&gt;inserted_this_step =</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        std::min(particles_of_each_type_remaining, this-&gt;inserted_this_step);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <span class="comment">// Obtaining global bounding boxes</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keyword">const</span> <span class="keyword">auto</span> my_bounding_box =</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        GridTools::compute_mesh_predicate_bounding_box(</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          triangulation, IteratorFilters::LocallyOwnedCell());</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keyword">const</span> <span class="keyword">auto</span> global_bounding_boxes =</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        Utilities::MPI::all_gather(communicator, my_bounding_box);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      <span class="comment">// Distributing particles between processors</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      this-&gt;inserted_this_step_this_proc =</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        floor(this-&gt;inserted_this_step / n_mpi_process);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == (n_mpi_process - 1))</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        this-&gt;inserted_this_step_this_proc =</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;          this-&gt;inserted_this_step -</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          (n_mpi_process - 1) * floor(this-&gt;inserted_this_step / n_mpi_process);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="comment">// Call random number generator</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      std::vector&lt;double&gt; random_number_vector;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      random_number_vector.reserve(this-&gt;inserted_this_step_this_proc);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      this-&gt;create_random_number_container(</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        random_number_vector,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a2cc5dd8ffadd54ceb7e186de449664e0">insertion_maximum_offset</a>,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a85413c6a3c9c9bcdee878962a5e4c0ed">seed_for_insertion</a>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      Point&lt;dim&gt;              insertion_location;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      std::vector&lt;Point&lt;dim&gt;&gt; insertion_points_on_proc;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      insertion_points_on_proc.reserve(this-&gt;inserted_this_step_this_proc);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      <span class="comment">// Find the first and the last particle id for each process</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <span class="comment">// The number of particles on the last process is different</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> first_id;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> last_id;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <span class="keywordflow">if</span> (this_mpi_process == (n_mpi_process - 1))</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;          first_id =</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            this-&gt;inserted_this_step - this-&gt;inserted_this_step_this_proc;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;          last_id = this-&gt;inserted_this_step;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      <span class="comment">// For the processes 1 : n-1</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          first_id = this_mpi_process * this-&gt;inserted_this_step_this_proc;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;          last_id = (this_mpi_process + 1) * this-&gt;inserted_this_step_this_proc;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="comment">// Looping through the particles on each process and finding their</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="comment">// insertion location</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> particle_counter = 0;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span> = first_id; <span class="keywordtype">id</span> &lt; last_id; ++id, ++particle_counter)</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;          find_insertion_location_volume(</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            insertion_location,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            random_number_vector[particle_counter],</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            random_number_vector[this-&gt;inserted_this_step - particle_counter -</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                                 1],</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            dem_parameters.<a class="code" href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">insertion_info</a>);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          insertion_points_on_proc.push_back(insertion_location);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      std::vector&lt;std::vector&lt;double&gt;&gt; particle_properties;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;      <span class="comment">// Assigning inserted particles properties using</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      <span class="comment">// assign_particle_properties function</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      this-&gt;assign_particle_properties(dem_parameters,</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                                       this-&gt;inserted_this_step_this_proc,</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                                       current_inserting_particle_type,</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                                       particle_properties);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <span class="comment">// Insert the particles using the points and assigned properties</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      particle_handler.insert_global_particles(insertion_points_on_proc,</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                                               global_bounding_boxes,</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                                               particle_properties);</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      this-&gt;print_insertion_info(this-&gt;inserted_this_step,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                                 particles_of_each_type_remaining,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                                 current_inserting_particle_type,</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                                 pcout);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    }</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;}</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">// This function creates a vector of random doubles using the input parameters</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">// in the parameter handler</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">  163</a></span>&#160;<a class="code" href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">InsertionVolume&lt;dim&gt;::create_random_number_container</a>(</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  std::vector&lt;double&gt; &amp;random_container,</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>         maximum_range,</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">int</span>            seed_for_insertion)</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;{</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; this-&gt;inserted_this_step; ++i)</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    {</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      srand(seed_for_insertion * (i + 1));</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      random_container.push_back((((<span class="keywordtype">double</span>)rand()) / ((<span class="keywordtype">double</span>)RAND_MAX)) *</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                                 maximum_range);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;}</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">// This function assigns the insertion points of the inserted particles</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a56e2aefb9fe87b3633f466fe5a133047">  179</a></span>&#160;<a class="code" href="classInsertionVolume.html#a760196b2e3df1434cd580dd5aec6a5f7">InsertionVolume&lt;2&gt;::find_insertion_location_volume</a>(</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  Point&lt;2&gt;                                    &amp;insertion_location,</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                           <span class="keywordtype">id</span>,</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number1,</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number2,</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a> &amp;insertion_information)</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;{</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  std::vector&lt;int&gt; insertion_index;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  insertion_index.resize(2);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> axis_0, axis_1;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="keywordtype">int</span>          number_of_particles_0;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      <span class="comment">// Updating remaining particles</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      particles_of_each_type_remaining -= this-&gt;inserted_this_step;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      this-&gt;print_insertion_info(this-&gt;inserted_this_step,</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                                 particles_of_each_type_remaining,</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                 current_inserting_particle_type,</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                                 pcout);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;}</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">// This function creates a vector of random doubles using the input parameters</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">// in the parameter handler</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">  166</a></span>&#160;<a class="code" href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">InsertionVolume&lt;dim&gt;::create_random_number_container</a>(</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  std::vector&lt;double&gt; &amp;random_container,</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>         maximum_range,</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">int</span>            seed_for_insertion)</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;{</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; this-&gt;inserted_this_step; ++i)</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      srand(seed_for_insertion * (i + 1));</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      random_container.push_back((((<span class="keywordtype">double</span>)rand()) / ((<span class="keywordtype">double</span>)RAND_MAX)) *</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                                 maximum_range);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    }</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;}</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">// This function assigns the insertion points of the inserted particles</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a56e2aefb9fe87b3633f466fe5a133047">  182</a></span>&#160;<a class="code" href="classInsertionVolume.html#a760196b2e3df1434cd580dd5aec6a5f7">InsertionVolume&lt;2&gt;::find_insertion_location_volume</a>(</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  Point&lt;2&gt;                                    &amp;insertion_location,</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                           <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number1,</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number2,</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a> &amp;insertion_information)</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;{</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  std::vector&lt;int&gt; insertion_index;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  insertion_index.resize(2);</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="comment">// First direction (axis) to have particles inserted</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  axis_0                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(0);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  number_of_particles_0   = this-&gt;number_of_particles_directions[axis_0];</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  insertion_index[axis_0] = <span class="keywordtype">id</span> % number_of_particles_0;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  insertion_location[axis_0] =</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    this-&gt;axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                              random_number1) *</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                               this-&gt;maximum_diameter;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  <span class="comment">// Second direction (axis) to have particles inserted</span></div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  axis_1                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(1);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;  insertion_index[axis_1] = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> / number_of_particles_0);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  insertion_location[axis_1] =</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    this-&gt;axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                              random_number2) *</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                               this-&gt;maximum_diameter;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;}</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a7c8cbc706cdee5d7bb8d324cd4857f5f">  214</a></span>&#160;<a class="code" href="classInsertionVolume.html#a760196b2e3df1434cd580dd5aec6a5f7">InsertionVolume&lt;3&gt;::find_insertion_location_volume</a>(</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  Point&lt;3&gt;                                    &amp;insertion_location,</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                           <span class="keywordtype">id</span>,</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number1,</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number2,</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a> &amp;insertion_information)</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;{</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  std::vector&lt;int&gt; insertion_index;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  insertion_index.resize(3);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> axis_0, axis_1, axis_2;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  <span class="keywordtype">int</span>          number_of_particles_0, number_of_particles_1;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> axis_0, axis_1;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="keywordtype">int</span>          number_of_particles_0;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="comment">// First direction (axis) to have particles inserted</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  axis_0                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(0);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  number_of_particles_0   = this-&gt;number_of_particles_directions[axis_0];</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  insertion_index[axis_0] = <span class="keywordtype">id</span> % number_of_particles_0;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  insertion_location[axis_0] =</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    this-&gt;axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                              random_number1) *</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                               this-&gt;maximum_diameter;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  <span class="comment">// Second direction (axis) to have particles inserted</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  axis_1                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(1);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  insertion_index[axis_1] = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> / number_of_particles_0);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  insertion_location[axis_1] =</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    this-&gt;axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                              random_number2) *</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                               this-&gt;maximum_diameter;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;}</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="classInsertionVolume.html#a7c8cbc706cdee5d7bb8d324cd4857f5f">  217</a></span>&#160;<a class="code" href="classInsertionVolume.html#a760196b2e3df1434cd580dd5aec6a5f7">InsertionVolume&lt;3&gt;::find_insertion_location_volume</a>(</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  Point&lt;3&gt;                                    &amp;insertion_location,</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                           <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number1,</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                 random_number2,</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a> &amp;insertion_information)</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;{</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  std::vector&lt;int&gt; insertion_index;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  insertion_index.resize(3);</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="comment">// First direction (axis) to have particles inserted</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  axis_0                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(0);</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  number_of_particles_0   = this-&gt;number_of_particles_directions[axis_0];</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  insertion_index[axis_0] = <span class="keywordtype">id</span> % number_of_particles_0;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  insertion_location[axis_0] =</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    this-&gt;axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                              random_number1) *</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                               this-&gt;maximum_diameter;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="comment">// Second direction (axis) to have particles inserted</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  axis_1                = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(1);</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  number_of_particles_1 = this-&gt;number_of_particles_directions[axis_1];</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  insertion_index[axis_1] =</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> % (number_of_particles_0 * number_of_particles_1)) /</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    (number_of_particles_0);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  insertion_location[axis_1] =</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    this-&gt;axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                              random_number2) *</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                               this-&gt;maximum_diameter;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="comment">// Third direction (axis) to have particles inserted</span></div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;  axis_2 = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(2);</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  insertion_index[axis_2] =</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> / (number_of_particles_0 * number_of_particles_1));</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  insertion_location[axis_2] =</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    this-&gt;axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                              random_number1) *</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                               this-&gt;maximum_diameter;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;}</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classInsertionVolume.html">InsertionVolume&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classInsertionVolume.html">InsertionVolume&lt;3&gt;</a>;</div>
-<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00029">dem_solver_parameters.h:30</a></div></div>
-<div class="ttc" id="aclassDEMSolverParameters_html_a31f718dd8b672529e5a68b96e0bbea05"><div class="ttname"><a href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">DEMSolverParameters::lagrangian_physical_properties</a></div><div class="ttdeci">Parameters::Lagrangian::LagrangianPhysicalProperties lagrangian_physical_properties</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00038">dem_solver_parameters.h:38</a></div></div>
-<div class="ttc" id="aclassDEMSolverParameters_html_a6ce760fb585c8c32db8412144314741e"><div class="ttname"><a href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">DEMSolverParameters::insertion_info</a></div><div class="ttdeci">Parameters::Lagrangian::InsertionInfo insertion_info</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00039">dem_solver_parameters.h:39</a></div></div>
-<div class="ttc" id="aclassInsertionVolume_html"><div class="ttname"><a href="classInsertionVolume.html">InsertionVolume</a></div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8h_source.html#l00026">insertion_volume.h:27</a></div></div>
-<div class="ttc" id="aclassInsertionVolume_html_a1c0ceac469413e5268938c4dc970cd37"><div class="ttname"><a href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">InsertionVolume::insert</a></div><div class="ttdeci">virtual void insert(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters) override</div><div class="ttdoc">Carries out the volume insertion of particles.</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00033">insertion_volume.cc:33</a></div></div>
-<div class="ttc" id="aclassInsertionVolume_html_a578575596925a3cd489b987746a62b19"><div class="ttname"><a href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">InsertionVolume::InsertionVolume</a></div><div class="ttdeci">InsertionVolume(const std::vector&lt; std::shared_ptr&lt; Distribution &gt;&gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double maximum_particle_diameter)</div><div class="ttdoc">The constructor investigates if the insertion box is large enough to handleto insert the desired numb...</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00011">insertion_volume.cc:11</a></div></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> axis_0, axis_1, axis_2;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  <span class="keywordtype">int</span>          number_of_particles_0, number_of_particles_1;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  <span class="comment">// First direction (axis) to have particles inserted</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  axis_0                  = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(0);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  number_of_particles_0   = this-&gt;number_of_particles_directions[axis_0];</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  insertion_index[axis_0] = <span class="keywordtype">id</span> % number_of_particles_0;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  insertion_location[axis_0] =</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    this-&gt;axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                              random_number1) *</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                               this-&gt;maximum_diameter;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="comment">// Second direction (axis) to have particles inserted</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  axis_1                = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(1);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  number_of_particles_1 = this-&gt;number_of_particles_directions[axis_1];</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  insertion_index[axis_1] =</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> % (number_of_particles_0 * number_of_particles_1)) /</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    (number_of_particles_0);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  insertion_location[axis_1] =</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    this-&gt;axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                              random_number2) *</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                               this-&gt;maximum_diameter;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  <span class="comment">// Third direction (axis) to have particles inserted</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  axis_2 = insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">direction_sequence</a>.at(2);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  insertion_index[axis_2] =</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keywordtype">id</span> / (number_of_particles_0 * number_of_particles_1));</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  insertion_location[axis_2] =</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    this-&gt;axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                                insertion_information.<a class="code" href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">distance_threshold</a> -</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                              random_number1) *</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                               this-&gt;maximum_diameter;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;}</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classInsertionVolume.html">InsertionVolume&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classInsertionVolume.html">InsertionVolume&lt;3&gt;</a>;</div>
+<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
+<div class="ttc" id="aclassDEMSolverParameters_html_a31f718dd8b672529e5a68b96e0bbea05"><div class="ttname"><a href="classDEMSolverParameters.html#a31f718dd8b672529e5a68b96e0bbea05">DEMSolverParameters::lagrangian_physical_properties</a></div><div class="ttdeci">Parameters::Lagrangian::LagrangianPhysicalProperties lagrangian_physical_properties</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00025">dem_solver_parameters.h:25</a></div></div>
+<div class="ttc" id="aclassDEMSolverParameters_html_a6ce760fb585c8c32db8412144314741e"><div class="ttname"><a href="classDEMSolverParameters.html#a6ce760fb585c8c32db8412144314741e">DEMSolverParameters::insertion_info</a></div><div class="ttdeci">Parameters::Lagrangian::InsertionInfo insertion_info</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00026">dem_solver_parameters.h:26</a></div></div>
+<div class="ttc" id="aclassInsertionVolume_html"><div class="ttname"><a href="classInsertionVolume.html">InsertionVolume</a></div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8h_source.html#l00013">insertion_volume.h:14</a></div></div>
+<div class="ttc" id="aclassInsertionVolume_html_a1c0ceac469413e5268938c4dc970cd37"><div class="ttname"><a href="classInsertionVolume.html#a1c0ceac469413e5268938c4dc970cd37">InsertionVolume::insert</a></div><div class="ttdeci">virtual void insert(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters) override</div><div class="ttdoc">Carries out the volume insertion of particles.</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00036">insertion_volume.cc:36</a></div></div>
+<div class="ttc" id="aclassInsertionVolume_html_a578575596925a3cd489b987746a62b19"><div class="ttname"><a href="classInsertionVolume.html#a578575596925a3cd489b987746a62b19">InsertionVolume::InsertionVolume</a></div><div class="ttdeci">InsertionVolume(const std::vector&lt; std::shared_ptr&lt; Distribution &gt;&gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double maximum_particle_diameter)</div><div class="ttdoc">The constructor investigates if the insertion box is large enough to handleto insert the desired numb...</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00014">insertion_volume.cc:14</a></div></div>
 <div class="ttc" id="aclassInsertionVolume_html_a760196b2e3df1434cd580dd5aec6a5f7"><div class="ttname"><a href="classInsertionVolume.html#a760196b2e3df1434cd580dd5aec6a5f7">InsertionVolume::find_insertion_location_volume</a></div><div class="ttdeci">void find_insertion_location_volume(Point&lt; dim &gt; &amp;insertion_location, const unsigned int id, const double random_number1, const double random_number2, const Parameters::Lagrangian::InsertionInfo &amp;insertion_information)</div><div class="ttdoc">Converts id of particles to volume insertion location.</div></div>
-<div class="ttc" id="aclassInsertionVolume_html_a7e875ce68570ed72099eccc15b113ea3"><div class="ttname"><a href="classInsertionVolume.html#a7e875ce68570ed72099eccc15b113ea3">InsertionVolume::current_inserting_particle_type</a></div><div class="ttdeci">unsigned int current_inserting_particle_type</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8h_source.html#l00126">insertion_volume.h:126</a></div></div>
-<div class="ttc" id="aclassInsertionVolume_html_aa8ca7fdf02002b1c457fb6b835e91f92"><div class="ttname"><a href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">InsertionVolume::create_random_number_container</a></div><div class="ttdeci">void create_random_number_container(std::vector&lt; double &gt; &amp;random_container, const double maximum_range, const int seed_for_insertion)</div><div class="ttdoc">Creates a vector of random numbers with size of particles which are going to be inserted at each inse...</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00163">insertion_volume.cc:163</a></div></div>
-<div class="ttc" id="aclassInsertion_html"><div class="ttname"><a href="classInsertion.html">Insertion</a></div><div class="ttdoc">Base interface for classes that carry out the insertion of particles in the system.</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00057">insertion.h:58</a></div></div>
-<div class="ttc" id="aclassInsertion_html_ac9e99cb2c9755016ad092f8879f3f4cd"><div class="ttname"><a href="classInsertion.html#ac9e99cb2c9755016ad092f8879f3f4cd">Insertion::maximum_diameter</a></div><div class="ttdeci">double maximum_diameter</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00201">insertion.h:201</a></div></div>
-<div class="ttc" id="aclassInsertion_html_af2c570045018de7fc91c0fb63ba084b1"><div class="ttname"><a href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">Insertion::inserted_this_step</a></div><div class="ttdeci">unsigned int inserted_this_step</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00190">insertion.h:190</a></div></div>
+<div class="ttc" id="aclassInsertionVolume_html_a7e875ce68570ed72099eccc15b113ea3"><div class="ttname"><a href="classInsertionVolume.html#a7e875ce68570ed72099eccc15b113ea3">InsertionVolume::current_inserting_particle_type</a></div><div class="ttdeci">unsigned int current_inserting_particle_type</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8h_source.html#l00113">insertion_volume.h:113</a></div></div>
+<div class="ttc" id="aclassInsertionVolume_html_aa8ca7fdf02002b1c457fb6b835e91f92"><div class="ttname"><a href="classInsertionVolume.html#aa8ca7fdf02002b1c457fb6b835e91f92">InsertionVolume::create_random_number_container</a></div><div class="ttdeci">void create_random_number_container(std::vector&lt; double &gt; &amp;random_container, const double maximum_range, const int seed_for_insertion)</div><div class="ttdoc">Creates a vector of random numbers with size of particles which are going to be inserted at each inse...</div><div class="ttdef"><b>Definition:</b> <a href="insertion__volume_8cc_source.html#l00166">insertion_volume.cc:166</a></div></div>
+<div class="ttc" id="aclassInsertion_html"><div class="ttname"><a href="classInsertion.html">Insertion</a></div><div class="ttdoc">Base interface for classes that carry out the insertion of particles in the system.</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00044">insertion.h:45</a></div></div>
+<div class="ttc" id="aclassInsertion_html_ac9e99cb2c9755016ad092f8879f3f4cd"><div class="ttname"><a href="classInsertion.html#ac9e99cb2c9755016ad092f8879f3f4cd">Insertion::maximum_diameter</a></div><div class="ttdeci">double maximum_diameter</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00188">insertion.h:188</a></div></div>
+<div class="ttc" id="aclassInsertion_html_af2c570045018de7fc91c0fb63ba084b1"><div class="ttname"><a href="classInsertion.html#af2c570045018de7fc91c0fb63ba084b1">Insertion::inserted_this_step</a></div><div class="ttdeci">unsigned int inserted_this_step</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00177">insertion.h:177</a></div></div>
 <div class="ttc" id="ainsertion__volume_8h_html"><div class="ttname"><a href="insertion__volume_8h.html">insertion_volume.h</a></div></div>
-<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00171">parameters_lagrangian.h:172</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a1990d27b2f510679b220fc02e3508a9a"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">Parameters::Lagrangian::InsertionInfo::direction_sequence</a></div><div class="ttdeci">std::vector&lt; unsigned int &gt; direction_sequence</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00210">parameters_lagrangian.h:210</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a2cc5dd8ffadd54ceb7e186de449664e0"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a2cc5dd8ffadd54ceb7e186de449664e0">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a></div><div class="ttdeci">double insertion_maximum_offset</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00218">parameters_lagrangian.h:218</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a85413c6a3c9c9bcdee878962a5e4c0ed"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a85413c6a3c9c9bcdee878962a5e4c0ed">Parameters::Lagrangian::InsertionInfo::seed_for_insertion</a></div><div class="ttdeci">int seed_for_insertion</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00220">parameters_lagrangian.h:220</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_aa14c2bbd39ad2d8554a625bef4489fe2"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">Parameters::Lagrangian::InsertionInfo::distance_threshold</a></div><div class="ttdeci">double distance_threshold</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00216">parameters_lagrangian.h:216</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties_html_a5f5414f468157e733de83b82ca84e15f"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a5f5414f468157e733de83b82ca84e15f">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a></div><div class="ttdeci">std::unordered_map&lt; unsigned int, int &gt; number</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00087">parameters_lagrangian.h:87</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties_html_abb75740b4bc84088e1ee30c6063a2e55"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#abb75740b4bc84088e1ee30c6063a2e55">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a></div><div class="ttdeci">unsigned int particle_type_number</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00063">parameters_lagrangian.h:63</a></div></div>
+<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00157">parameters_lagrangian.h:158</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a1990d27b2f510679b220fc02e3508a9a"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a1990d27b2f510679b220fc02e3508a9a">Parameters::Lagrangian::InsertionInfo::direction_sequence</a></div><div class="ttdeci">std::vector&lt; unsigned int &gt; direction_sequence</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00196">parameters_lagrangian.h:196</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a2cc5dd8ffadd54ceb7e186de449664e0"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a2cc5dd8ffadd54ceb7e186de449664e0">Parameters::Lagrangian::InsertionInfo::insertion_maximum_offset</a></div><div class="ttdeci">double insertion_maximum_offset</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00204">parameters_lagrangian.h:204</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_a85413c6a3c9c9bcdee878962a5e4c0ed"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#a85413c6a3c9c9bcdee878962a5e4c0ed">Parameters::Lagrangian::InsertionInfo::seed_for_insertion</a></div><div class="ttdeci">int seed_for_insertion</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00206">parameters_lagrangian.h:206</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1InsertionInfo_html_aa14c2bbd39ad2d8554a625bef4489fe2"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1InsertionInfo.html#aa14c2bbd39ad2d8554a625bef4489fe2">Parameters::Lagrangian::InsertionInfo::distance_threshold</a></div><div class="ttdeci">double distance_threshold</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00202">parameters_lagrangian.h:202</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties_html_a5f5414f468157e733de83b82ca84e15f"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a5f5414f468157e733de83b82ca84e15f">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a></div><div class="ttdeci">std::unordered_map&lt; unsigned int, int &gt; number</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00073">parameters_lagrangian.h:73</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties_html_abb75740b4bc84088e1ee30c6063a2e55"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#abb75740b4bc84088e1ee30c6063a2e55">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a></div><div class="ttdeci">unsigned int particle_type_number</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00049">parameters_lagrangian.h:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

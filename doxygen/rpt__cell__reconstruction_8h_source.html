@@ -79,96 +79,96 @@ $(function() {
 <div class="title">rpt_cell_reconstruction.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="rpt__cell__reconstruction_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2020 - by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_rpt_cell_reconstruction_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_rpt_cell_reconstruction_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * This class allows cell position reconstruction of unknown particle positions</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * with counts value for many detector. It finds the center position of the best</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * cell that its vertices counts range contains the counts value of unknown</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * particle positions.</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/config.h&gt;</span></div>
+<a href="rpt__cell__reconstruction_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2023 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_rpt_cell_reconstruction_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_rpt_cell_reconstruction_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * This class allows cell position reconstruction of unknown particle positions</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * with counts value for many detector. It finds the center position of the best</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * cell that its vertices counts range contains the counts value of unknown</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * particle positions.</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/config.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/timer.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;deal.II/grid/tria.h&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="detector_8h.html">rpt/detector.h</a>&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__rpt_8h.html">rpt/parameters_rpt.h</a>&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__visualization_8h.html">rpt/particle_visualization.h</a>&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="radioactive__particle_8h.html">rpt/radioactive_particle.h</a>&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="rpt__calculating__parameters_8h.html">rpt/rpt_calculating_parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/timer.h&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;deal.II/grid/tria.h&gt;</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="detector_8h.html">rpt/detector.h</a>&gt;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__rpt_8h.html">rpt/parameters_rpt.h</a>&gt;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__visualization_8h.html">rpt/particle_visualization.h</a>&gt;</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="radioactive__particle_8h.html">rpt/radioactive_particle.h</a>&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="rpt__calculating__parameters_8h.html">rpt/rpt_calculating_parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html">   45</a></span>&#160;<span class="keyword">class </span><a class="code" href="classRPTCellReconstruction.html">RPTCellReconstruction</a></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;{</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="classRPTCellReconstruction.html">RPTCellReconstruction</a></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * @brief Constructor for the RPTCellReconstruction</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * @param detectors Vector of all detector object</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * @param rpt_parameters All parameters for the RPT</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <a class="code" href="classRPTCellReconstruction.html">RPTCellReconstruction</a>(</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a>               &amp;rpt_parameters,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a> &amp;rpt_reconstruction_parameters,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <a class="code" href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a>          &amp;rpt_detector_parameters);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * @brief Constructor for the RPTCellReconstruction</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @param detectors Vector of all detector object</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @param rpt_parameters All parameters for the RPT</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <a class="code" href="classRPTCellReconstruction.html">RPTCellReconstruction</a>(</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <a class="code" href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a>               &amp;rpt_parameters,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a> &amp;rpt_reconstruction_parameters,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a>          &amp;rpt_detector_parameters);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * @brief Set up grid and find positions for every unknown particle positions.</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  execute_cell_reconstruction();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @brief Calculate counts at vertices for the coarse mesh.</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  set_coarse_mesh_counts();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @brief Find the position of the best cell that contains the unknown particle</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * position</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @param particle_reconstruction_counts Counts the the current unknown particle</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * position for every detector</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * @brief Set up grid and find positions for every unknown particle positions.</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  execute_cell_reconstruction();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * @brief Calculate counts at vertices for the coarse mesh.</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  set_coarse_mesh_counts();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * @brief Find the position of the best cell that contains the unknown particle</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * position</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * @param particle_reconstruction_counts Counts the the current unknown particle</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * position for every detector</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * @param id Index of the unknown particle, useful when &quot;positions_evaluation&quot; is enable</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  find_unknown_position(std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         <span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  find_all_positions();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @brief Find the vertices position of coarse mesh vertices or the candidate</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * cells</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @param id Index of the unknown particle, useful when &quot;positions_evaluation&quot; is enable</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  find_unknown_position(std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @param level Level of the current cells of the mesh</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * @param parent_cell_indexes List of the parent cells which are candidate.</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   *                            Is {-1} by default when executing coarse mesh</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   *                            (no parent cells)</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   */</span></div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  find_all_positions();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  find_vertices_positions(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>     level,</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                          std::vector&lt;int&gt; parent_cell_indexes = {-1});<span class="comment"></span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @brief Find the vertices position of coarse mesh vertices or the candidate</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @brief Find the cell candidates indexes for the unknown particle positions</span></div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   * cells</span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   *</span></div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   * @param level Level of the current cells of the mesh</span></div>
@@ -177,130 +177,117 @@ $(function() {
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   *                            Is {-1} by default when executing coarse mesh</span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   *                            (no parent cells)</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  find_vertices_positions(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>     level,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                          std::vector&lt;int&gt; parent_cell_indexes = {-1});<span class="comment"></span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @brief Find the cell candidates indexes for the unknown particle positions</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * cells</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * @param level Level of the current cells of the mesh</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  std::vector&lt;int&gt;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  find_cells(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         level,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;             std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;             std::vector&lt;int&gt;     parent_cell_indexes = {-1});</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @brief Find the best cell candidates indexes for the unknown particle positions</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * with the least squared method comparing vertices counts for every detectors</span></div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * @param parent_cell_indexes List of the parent cells which are candidate.</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   *                            Is {-1} by default when executing coarse mesh</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   *                            (no parent cells)</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  std::vector&lt;int&gt;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  find_cells(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         level,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;             std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;             std::vector&lt;int&gt;     parent_cell_indexes = {-1});</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * @brief Find the best cell candidates indexes for the unknown particle positions</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * with the least squared method comparing vertices counts for every detectors</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @param level Level of the current cells of the mesh</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param particle_reconstruction_counts Counts for every detectors associated</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   *                                       to the unknown position of the</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * particle</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   * @param candidate List of cell candidates</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  find_best_cell(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         level,</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                 std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                 std::vector&lt;int&gt;     candidate);</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * @brief Calculate counts at new vertices</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  calculate_counts();</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * @brief Export positions and cell volumes in .csv or .dat</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  export_positions();</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   * @brief Generate files for visualization (pvtu/vtu)</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  visualize_positions();</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">  154</a></span>&#160;  Triangulation&lt;dim&gt;                      <a class="code" href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">triangulation</a>;</div>
-<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">  155</a></span>&#160;  <a class="code" href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a>               <a class="code" href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">parameters</a>;</div>
-<div class="line"><a name="l00156"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">  156</a></span>&#160;  <a class="code" href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a> <a class="code" href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">reconstruction_parameters</a>;</div>
-<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">  157</a></span>&#160;  <a class="code" href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a>          <a class="code" href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">detector_parameters</a>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">  158</a></span>&#160;  std::vector&lt;Detector&lt;dim&gt;&gt;              <a class="code" href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">detectors</a>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="comment">// All counts of the unknown particle positions</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <span class="comment">// Data structure : [[detector_counts_0_particle_0, ...,</span></div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  <span class="comment">//                    detector_counts_n_particle_0],</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  <span class="comment">//                   [...],</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="comment">//                   [detector_counts_0_particle_n, ...,</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  <span class="comment">//                   detector_counts_n_particle_n]]</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">  166</a></span>&#160;  std::vector&lt;std::vector&lt;double&gt;&gt; <a class="code" href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">reconstruction_counts</a>;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="comment">// Map of all calculated counts of vertices (key : vertex_id)</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="comment">// Data structure : {{vertex_id_0, &lt;vertex_position_0(x, y, z),</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="comment">//                    [detector_counts_0_particle_0, ...]&gt;},</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="comment">//                   {...},</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="comment">//                   {vertex_id_m, &lt;vertex_position_m(x, y, z),</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  <span class="comment">//                   [detector_counts_0_particle_0, ...]&gt;}}</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  std::map&lt;unsigned int, std::pair&lt;Point&lt;dim&gt;, std::vector&lt;double&gt;&gt;&gt;</div>
-<div class="line"><a name="l00175"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">  175</a></span>&#160;    <a class="code" href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">map_vertices_index</a>;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00177"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">  177</a></span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; <a class="code" href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">reconstruction_positions</a>; <span class="comment">// Found positions</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  std::vector&lt;double&gt;</div>
-<div class="line"><a name="l00179"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">  179</a></span>&#160;    <a class="code" href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">cells_volumes</a>; <span class="comment">// Cell volumes of the cell that contains positions</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">  180</a></span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;   <a class="code" href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">known_positions</a>;  <span class="comment">// Known positions to analyse</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">  181</a></span>&#160;  std::vector&lt;unsigned int&gt; <a class="code" href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">final_cell_level</a>; <span class="comment">// Level of the best cells</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="comment">// Status of the best cells after analyse of reconstructed positions vs real</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="comment">// positions (many status can be associated to a cell)</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="comment">//  - right_cell :    The reconstructed position is in the same cell than the</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="comment">//  real</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="comment">//                    position</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="comment">//  - cost_function : There was many cell candidates at refined mesh and a</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="comment">//                    cost function was needed to get the best cell</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="comment">//  - parent_cell :   The best cell is not at the highest refined level</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="comment">//  - wrong_cell :    The reconstructed position is not in the same cell than</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="comment">//                    the real position</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">  193</a></span>&#160;  std::vector&lt;std::string&gt; <a class="code" href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">cell_status</a>;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">  195</a></span>&#160;  TimerOutput <a class="code" href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">computing_timer</a>;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;};</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// lethe_rpt_cell_reconstruction_h</span></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html"><div class="ttname"><a href="classRPTCellReconstruction.html">RPTCellReconstruction</a></div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00045">rpt_cell_reconstruction.h:46</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a11d9da7924406b1c8e97e8507af0ea7a"><div class="ttname"><a href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">RPTCellReconstruction::cells_volumes</a></div><div class="ttdeci">std::vector&lt; double &gt; cells_volumes</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00179">rpt_cell_reconstruction.h:179</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a2ceb242746ff1fade839129265c0e1b9"><div class="ttname"><a href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">RPTCellReconstruction::detectors</a></div><div class="ttdeci">std::vector&lt; Detector&lt; dim &gt; &gt; detectors</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00158">rpt_cell_reconstruction.h:158</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a3c5e0f67ad1b62966bd5b189d721e4c7"><div class="ttname"><a href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">RPTCellReconstruction::reconstruction_positions</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; reconstruction_positions</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00177">rpt_cell_reconstruction.h:177</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a4963ded7838c02485b641d3ccb234112"><div class="ttname"><a href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">RPTCellReconstruction::parameters</a></div><div class="ttdeci">Parameters::RPTParameters parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00155">rpt_cell_reconstruction.h:155</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a54a0dbf57c136675094d68661a74e414"><div class="ttname"><a href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">RPTCellReconstruction::computing_timer</a></div><div class="ttdeci">TimerOutput computing_timer</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00195">rpt_cell_reconstruction.h:195</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a5a63e80aa71a9e21b094d1563617bd77"><div class="ttname"><a href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">RPTCellReconstruction::detector_parameters</a></div><div class="ttdeci">Parameters::DetectorParameters detector_parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00157">rpt_cell_reconstruction.h:157</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_a66ab59996c24742ccf799504b8fbf13f"><div class="ttname"><a href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">RPTCellReconstruction::reconstruction_parameters</a></div><div class="ttdeci">Parameters::RPTReconstructionParameters reconstruction_parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00156">rpt_cell_reconstruction.h:156</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_aa040782e872abddb8d394acb4455e814"><div class="ttname"><a href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">RPTCellReconstruction::cell_status</a></div><div class="ttdeci">std::vector&lt; std::string &gt; cell_status</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00193">rpt_cell_reconstruction.h:193</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_aa8a492e50c9b07d48ced65bcdea71cba"><div class="ttname"><a href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">RPTCellReconstruction::known_positions</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; known_positions</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00180">rpt_cell_reconstruction.h:180</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_aca103d2b0e645e5b32726492020f68b6"><div class="ttname"><a href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">RPTCellReconstruction::map_vertices_index</a></div><div class="ttdeci">std::map&lt; unsigned int, std::pair&lt; Point&lt; dim &gt;, std::vector&lt; double &gt; &gt; &gt; map_vertices_index</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00175">rpt_cell_reconstruction.h:175</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_adf8746637dc63820afd0df86ab486b56"><div class="ttname"><a href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">RPTCellReconstruction::reconstruction_counts</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; reconstruction_counts</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00166">rpt_cell_reconstruction.h:166</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_aec3a9c1960a6372b39ce497c3460b131"><div class="ttname"><a href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">RPTCellReconstruction::triangulation</a></div><div class="ttdeci">Triangulation&lt; dim &gt; triangulation</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00154">rpt_cell_reconstruction.h:154</a></div></div>
-<div class="ttc" id="aclassRPTCellReconstruction_html_af77bff6f81b81d335aca6602972cfc37"><div class="ttname"><a href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">RPTCellReconstruction::final_cell_level</a></div><div class="ttdeci">std::vector&lt; unsigned int &gt; final_cell_level</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00181">rpt_cell_reconstruction.h:181</a></div></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * @param level Level of the current cells of the mesh</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @param particle_reconstruction_counts Counts for every detectors associated</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   *                                       to the unknown position of the</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * particle</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @param candidate List of cell candidates</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  find_best_cell(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>         level,</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                 std::vector&lt;double&gt; &amp;particle_reconstruction_counts,</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                 std::vector&lt;int&gt;     candidate);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @brief Calculate counts at new vertices</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  calculate_counts();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   * @brief Export positions and cell volumes in .csv or .dat</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  export_positions();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   * @brief Generate files for visualization (pvtu/vtu)</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  visualize_positions();</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">  141</a></span>&#160;  Triangulation&lt;dim&gt;                      <a class="code" href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">triangulation</a>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">  142</a></span>&#160;  <a class="code" href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a>               <a class="code" href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">parameters</a>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">  143</a></span>&#160;  <a class="code" href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a> <a class="code" href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">reconstruction_parameters</a>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">  144</a></span>&#160;  <a class="code" href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a>          <a class="code" href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">detector_parameters</a>;</div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">  145</a></span>&#160;  std::vector&lt;Detector&lt;dim&gt;&gt;              <a class="code" href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">detectors</a>;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="comment">// All counts of the unknown particle positions</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="comment">// Data structure : [[detector_counts_0_particle_0, ...,</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="comment">//                    detector_counts_n_particle_0],</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="comment">//                   [...],</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="comment">//                   [detector_counts_0_particle_n, ...,</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <span class="comment">//                   detector_counts_n_particle_n]]</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">  153</a></span>&#160;  std::vector&lt;std::vector&lt;double&gt;&gt; <a class="code" href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">reconstruction_counts</a>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="comment">// Map of all calculated counts of vertices (key : vertex_id)</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="comment">// Data structure : {{vertex_id_0, &lt;vertex_position_0(x, y, z),</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="comment">//                    [detector_counts_0_particle_0, ...]&gt;},</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  <span class="comment">//                   {...},</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="comment">//                   {vertex_id_m, &lt;vertex_position_m(x, y, z),</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="comment">//                   [detector_counts_0_particle_0, ...]&gt;}}</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  std::map&lt;unsigned int, std::pair&lt;Point&lt;dim&gt;, std::vector&lt;double&gt;&gt;&gt;</div>
+<div class="line"><a name="l00162"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">  162</a></span>&#160;    <a class="code" href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">map_vertices_index</a>;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">  164</a></span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; <a class="code" href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">reconstruction_positions</a>; <span class="comment">// Found positions</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  std::vector&lt;double&gt;</div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">  166</a></span>&#160;    <a class="code" href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">cells_volumes</a>; <span class="comment">// Cell volumes of the cell that contains positions</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">  167</a></span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;   <a class="code" href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">known_positions</a>;  <span class="comment">// Known positions to analyse</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">  168</a></span>&#160;  std::vector&lt;unsigned int&gt; <a class="code" href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">final_cell_level</a>; <span class="comment">// Level of the best cells</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="comment">// Status of the best cells after analyse of reconstructed positions vs real</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="comment">// positions (many status can be associated to a cell)</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="comment">//  - right_cell :    The reconstructed position is in the same cell than the</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  <span class="comment">//  real</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  <span class="comment">//                    position</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="comment">//  - cost_function : There was many cell candidates at refined mesh and a</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  <span class="comment">//                    cost function was needed to get the best cell</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="comment">//  - parent_cell :   The best cell is not at the highest refined level</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="comment">//  - wrong_cell :    The reconstructed position is not in the same cell than</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="comment">//                    the real position</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">  180</a></span>&#160;  std::vector&lt;std::string&gt; <a class="code" href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">cell_status</a>;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">  182</a></span>&#160;  TimerOutput <a class="code" href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">computing_timer</a>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;};</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// lethe_rpt_cell_reconstruction_h</span></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html"><div class="ttname"><a href="classRPTCellReconstruction.html">RPTCellReconstruction</a></div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00032">rpt_cell_reconstruction.h:33</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a11d9da7924406b1c8e97e8507af0ea7a"><div class="ttname"><a href="classRPTCellReconstruction.html#a11d9da7924406b1c8e97e8507af0ea7a">RPTCellReconstruction::cells_volumes</a></div><div class="ttdeci">std::vector&lt; double &gt; cells_volumes</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00166">rpt_cell_reconstruction.h:166</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a2ceb242746ff1fade839129265c0e1b9"><div class="ttname"><a href="classRPTCellReconstruction.html#a2ceb242746ff1fade839129265c0e1b9">RPTCellReconstruction::detectors</a></div><div class="ttdeci">std::vector&lt; Detector&lt; dim &gt; &gt; detectors</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00145">rpt_cell_reconstruction.h:145</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a3c5e0f67ad1b62966bd5b189d721e4c7"><div class="ttname"><a href="classRPTCellReconstruction.html#a3c5e0f67ad1b62966bd5b189d721e4c7">RPTCellReconstruction::reconstruction_positions</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; reconstruction_positions</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00164">rpt_cell_reconstruction.h:164</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a4963ded7838c02485b641d3ccb234112"><div class="ttname"><a href="classRPTCellReconstruction.html#a4963ded7838c02485b641d3ccb234112">RPTCellReconstruction::parameters</a></div><div class="ttdeci">Parameters::RPTParameters parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00142">rpt_cell_reconstruction.h:142</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a54a0dbf57c136675094d68661a74e414"><div class="ttname"><a href="classRPTCellReconstruction.html#a54a0dbf57c136675094d68661a74e414">RPTCellReconstruction::computing_timer</a></div><div class="ttdeci">TimerOutput computing_timer</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00182">rpt_cell_reconstruction.h:182</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a5a63e80aa71a9e21b094d1563617bd77"><div class="ttname"><a href="classRPTCellReconstruction.html#a5a63e80aa71a9e21b094d1563617bd77">RPTCellReconstruction::detector_parameters</a></div><div class="ttdeci">Parameters::DetectorParameters detector_parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00144">rpt_cell_reconstruction.h:144</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_a66ab59996c24742ccf799504b8fbf13f"><div class="ttname"><a href="classRPTCellReconstruction.html#a66ab59996c24742ccf799504b8fbf13f">RPTCellReconstruction::reconstruction_parameters</a></div><div class="ttdeci">Parameters::RPTReconstructionParameters reconstruction_parameters</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00143">rpt_cell_reconstruction.h:143</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_aa040782e872abddb8d394acb4455e814"><div class="ttname"><a href="classRPTCellReconstruction.html#aa040782e872abddb8d394acb4455e814">RPTCellReconstruction::cell_status</a></div><div class="ttdeci">std::vector&lt; std::string &gt; cell_status</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00180">rpt_cell_reconstruction.h:180</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_aa8a492e50c9b07d48ced65bcdea71cba"><div class="ttname"><a href="classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba">RPTCellReconstruction::known_positions</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; known_positions</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00167">rpt_cell_reconstruction.h:167</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_aca103d2b0e645e5b32726492020f68b6"><div class="ttname"><a href="classRPTCellReconstruction.html#aca103d2b0e645e5b32726492020f68b6">RPTCellReconstruction::map_vertices_index</a></div><div class="ttdeci">std::map&lt; unsigned int, std::pair&lt; Point&lt; dim &gt;, std::vector&lt; double &gt; &gt; &gt; map_vertices_index</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00162">rpt_cell_reconstruction.h:162</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_adf8746637dc63820afd0df86ab486b56"><div class="ttname"><a href="classRPTCellReconstruction.html#adf8746637dc63820afd0df86ab486b56">RPTCellReconstruction::reconstruction_counts</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; reconstruction_counts</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00153">rpt_cell_reconstruction.h:153</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_aec3a9c1960a6372b39ce497c3460b131"><div class="ttname"><a href="classRPTCellReconstruction.html#aec3a9c1960a6372b39ce497c3460b131">RPTCellReconstruction::triangulation</a></div><div class="ttdeci">Triangulation&lt; dim &gt; triangulation</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00141">rpt_cell_reconstruction.h:141</a></div></div>
+<div class="ttc" id="aclassRPTCellReconstruction_html_af77bff6f81b81d335aca6602972cfc37"><div class="ttname"><a href="classRPTCellReconstruction.html#af77bff6f81b81d335aca6602972cfc37">RPTCellReconstruction::final_cell_level</a></div><div class="ttdeci">std::vector&lt; unsigned int &gt; final_cell_level</div><div class="ttdef"><b>Definition:</b> <a href="rpt__cell__reconstruction_8h_source.html#l00168">rpt_cell_reconstruction.h:168</a></div></div>
 <div class="ttc" id="adetector_8h_html"><div class="ttname"><a href="detector_8h.html">detector.h</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="aparameters__rpt_8h_html"><div class="ttname"><a href="parameters__rpt_8h.html">parameters_rpt.h</a></div></div>
 <div class="ttc" id="aparticle__visualization_8h_html"><div class="ttname"><a href="particle__visualization_8h.html">particle_visualization.h</a></div></div>
 <div class="ttc" id="aradioactive__particle_8h_html"><div class="ttname"><a href="radioactive__particle_8h.html">radioactive_particle.h</a></div></div>
 <div class="ttc" id="arpt__calculating__parameters_8h_html"><div class="ttname"><a href="rpt__calculating__parameters_8h.html">rpt_calculating_parameters.h</a></div></div>
-<div class="ttc" id="astructParameters_1_1DetectorParameters_html"><div class="ttname"><a href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a></div><div class="ttdoc">DetectorParameters - Defines information related to detectors. All detectors must have the same dimen...</div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00116">parameters_rpt.h:117</a></div></div>
-<div class="ttc" id="astructParameters_1_1RPTParameters_html"><div class="ttname"><a href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a></div><div class="ttdoc">RPTParameters - Defines the common parameters for the RPT simulation as fixed parameters,...</div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00043">parameters_rpt.h:44</a></div></div>
-<div class="ttc" id="astructParameters_1_1RPTReconstructionParameters_html"><div class="ttname"><a href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00134">parameters_rpt.h:135</a></div></div>
+<div class="ttc" id="astructParameters_1_1DetectorParameters_html"><div class="ttname"><a href="structParameters_1_1DetectorParameters.html">Parameters::DetectorParameters</a></div><div class="ttdoc">DetectorParameters - Defines information related to detectors. All detectors must have the same dimen...</div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00103">parameters_rpt.h:104</a></div></div>
+<div class="ttc" id="astructParameters_1_1RPTParameters_html"><div class="ttname"><a href="structParameters_1_1RPTParameters.html">Parameters::RPTParameters</a></div><div class="ttdoc">RPTParameters - Defines the common parameters for the RPT simulation as fixed parameters,...</div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00030">parameters_rpt.h:31</a></div></div>
+<div class="ttc" id="astructParameters_1_1RPTReconstructionParameters_html"><div class="ttname"><a href="structParameters_1_1RPTReconstructionParameters.html">Parameters::RPTReconstructionParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__rpt_8h_source.html#l00121">parameters_rpt.h:122</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

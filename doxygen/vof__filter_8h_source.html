@@ -79,155 +79,142 @@ $(function() {
 <div class="title">vof_filter.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="vof__filter_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_vof_filter_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_vof_filter_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__multiphysics_8h.html">core/parameters_multiphysics.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * @brief Abstract class for filtering phase fraction in volume of fluid (VOF)</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * simulations.</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classVolumeOfFluidFilterBase.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   * @brief Instantiate and return a pointer to a VolumeOfFluidFilterBase</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * object by casting it to the proper child class.</span></div>
+<a href="vof__filter_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_vof_filter_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_vof_filter_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__multiphysics_8h.html">core/parameters_multiphysics.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * @brief Abstract class for filtering phase fraction in volume of fluid (VOF)</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * simulations.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classVolumeOfFluidFilterBase.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;{</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">   * @brief Instantiate and return a pointer to a VolumeOfFluidFilterBase</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">   * object by casting it to the proper child class.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">   * @param[in] phase_filter_parameters VOF filtration parameters.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">   * @return Casted VolumeOfFluidFilterBase child class object.</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;VolumeOfFluidFilterBase&gt;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="classVolumeOfFluidFilterBase.html#a87286b158579e34a40627510e9824536">model_cast</a>(<span class="keyword">const</span> <a class="code" href="structParameters_1_1VOF__PhaseFilter.html">Parameters::VOF_PhaseFilter</a> &amp;phase_filter_parameters);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">   * @brief Compute the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * filter.</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @param[in] phase_filter_parameters VOF filtration parameters.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * @return Casted VolumeOfFluidFilterBase child class object.</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;VolumeOfFluidFilterBase&gt;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <a class="code" href="classVolumeOfFluidFilterBase.html#a87286b158579e34a40627510e9824536">model_cast</a>(<span class="keyword">const</span> <a class="code" href="structParameters_1_1VOF__PhaseFilter.html">Parameters::VOF_PhaseFilter</a> &amp;phase_filter_parameters);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   * @brief Compute the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * filter.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * @return Value of the computed phase fraction after applying the filter.</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classVolumeOfFluidFilterBase.html#af1568c1acd6c380e70c704b6825cb03e">   50</a></span>&#160;  <a class="code" href="classVolumeOfFluidFilterBase.html#af1568c1acd6c380e70c704b6825cb03e">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase) = 0;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;};</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment"> * @brief Default filter applied to phase fraction. The VolumeOfFluidNoFilter</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment"> * filter does not modify the phase fraction value and returns it as it is.</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html">   57</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidNoFilter.html">VolumeOfFluidNoFilter</a> : <span class="keyword">public</span> <a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;{</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * @brief Constructor of the transparent filter.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * No filter is applied to the computed filtered phase fraction and the</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * unfiltered phase fraction is returned.</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">   66</a></span>&#160;  <a class="code" href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">VolumeOfFluidNoFilter</a>()</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  {}</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @brief Computes the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * Here, the filtered phase fraction value corresponds to the unfiltered one</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   * (@p unfiltered_phase).</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * filter.</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * @return Value of @p unfiltered_phase.</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">   81</a></span>&#160;  <a class="code" href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">return</span> unfiltered_phase;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;};</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"> * @brief Filter phase fraction with a hyperbolic tangent function</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment"> * for VOF simulations.</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment"> * The filtered phase is defined as:</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment"> * \f$\phi&#39; = 0.5 \tanh(\beta(\phi-0.5)) + 0.5\f$</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment"> * where \f$\phi&#39;\f$ is the filtered phase fraction value and \f$\beta\f$</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"> * is a model parameter that enables sharper definition when increased.</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment"> * The filter allows a sharper definition of the interface and clamps the value</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"> * of the phase fraction between 0 and 1.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html">  101</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidTanhFilter.html">VolumeOfFluidTanhFilter</a> : <span class="keyword">public</span> <a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;{</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @brief Constructor of the hyperbolic tangent phase fraction filter.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @return Value of the computed phase fraction after applying the filter.</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classVolumeOfFluidFilterBase.html#af1568c1acd6c380e70c704b6825cb03e">   37</a></span>&#160;  <a class="code" href="classVolumeOfFluidFilterBase.html#af1568c1acd6c380e70c704b6825cb03e">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase) = 0;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * @brief Default filter applied to phase fraction. The VolumeOfFluidNoFilter</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * filter does not modify the phase fraction value and returns it as it is.</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html">   44</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidNoFilter.html">VolumeOfFluidNoFilter</a> : <span class="keyword">public</span> <a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;{</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @brief Constructor of the transparent filter.</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   * No filter is applied to the computed filtered phase fraction and the</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * unfiltered phase fraction is returned.</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">   53</a></span>&#160;  <a class="code" href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">VolumeOfFluidNoFilter</a>()</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  {}</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * @brief Computes the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * Here, the filtered phase fraction value corresponds to the unfiltered one</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * (@p unfiltered_phase).</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * filter.</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @return Value of @p unfiltered_phase.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">   68</a></span>&#160;  <a class="code" href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">return</span> unfiltered_phase;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;};</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"> * @brief Filter phase fraction with a hyperbolic tangent function</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"> * for VOF simulations.</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"> * The filtered phase is defined as:</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"> * \f$\phi&#39; = 0.5 \tanh(\beta(\phi-0.5)) + 0.5\f$</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment"> * where \f$\phi&#39;\f$ is the filtered phase fraction value and \f$\beta\f$</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"> * is a model parameter that enables sharper definition when increased.</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment"> * The filter allows a sharper definition of the interface and clamps the value</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"> * of the phase fraction between 0 and 1.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html">   88</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVolumeOfFluidTanhFilter.html">VolumeOfFluidTanhFilter</a> : <span class="keyword">public</span> <a class="code" href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   * @brief Constructor of the hyperbolic tangent phase fraction filter.</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   * @param[in] beta Value of the \f$\beta\f$ parameter modulating the</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * interface sharpness.</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">   97</a></span>&#160;  <a class="code" href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">VolumeOfFluidTanhFilter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>)</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    : <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>(<a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  {}</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * @brief Computes the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * filter.</span></div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * @param[in] beta Value of the \f$\beta\f$ parameter modulating the</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * interface sharpness.</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">  110</a></span>&#160;  <a class="code" href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">VolumeOfFluidTanhFilter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>)</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    : <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>(<a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>)</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  {}</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   * @brief Computes the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * filter.</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @return Value of the computed phase fraction after applying the filter.</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">  123</a></span>&#160;  <a class="code" href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordflow">return</span> 0.5 * tanh(<a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a> * (unfiltered_phase - 0.5)) + 0.5;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  }</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">   * User-defined parameter that influences the sharpness of the interface</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * between fluids. A greater value leads to a sharper interface. The</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   * recommended value is \f$\beta=20\f$.</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">  134</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;};</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassVolumeOfFluidFilterBase_html"><div class="ttname"><a href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div><div class="ttdoc">Abstract class for filtering phase fraction in volume of fluid (VOF) simulations.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00027">vof_filter.h:28</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidFilterBase_html_a87286b158579e34a40627510e9824536"><div class="ttname"><a href="classVolumeOfFluidFilterBase.html#a87286b158579e34a40627510e9824536">VolumeOfFluidFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; VolumeOfFluidFilterBase &gt; model_cast(const Parameters::VOF_PhaseFilter &amp;phase_filter_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a VolumeOfFluidFilterBase object by casting it to the proper chil...</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8cc_source.html#l00020">vof_filter.cc:20</a></div></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * @return Value of the computed phase fraction after applying the filter.</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">  110</a></span>&#160;  <a class="code" href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">return</span> 0.5 * tanh(<a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a> * (unfiltered_phase - 0.5)) + 0.5;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * User-defined parameter that influences the sharpness of the interface</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * between fluids. A greater value leads to a sharper interface. The</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * recommended value is \f$\beta=20\f$.</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">  121</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">beta</a>;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;};</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassVolumeOfFluidFilterBase_html"><div class="ttname"><a href="classVolumeOfFluidFilterBase.html">VolumeOfFluidFilterBase</a></div><div class="ttdoc">Abstract class for filtering phase fraction in volume of fluid (VOF) simulations.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00014">vof_filter.h:15</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidFilterBase_html_a87286b158579e34a40627510e9824536"><div class="ttname"><a href="classVolumeOfFluidFilterBase.html#a87286b158579e34a40627510e9824536">VolumeOfFluidFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; VolumeOfFluidFilterBase &gt; model_cast(const Parameters::VOF_PhaseFilter &amp;phase_filter_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a VolumeOfFluidFilterBase object by casting it to the proper chil...</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8cc_source.html#l00007">vof_filter.cc:7</a></div></div>
 <div class="ttc" id="aclassVolumeOfFluidFilterBase_html_af1568c1acd6c380e70c704b6825cb03e"><div class="ttname"><a href="classVolumeOfFluidFilterBase.html#af1568c1acd6c380e70c704b6825cb03e">VolumeOfFluidFilterBase::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase)=0</div><div class="ttdoc">Compute the value of the filtered phase fraction.</div></div>
-<div class="ttc" id="aclassVolumeOfFluidNoFilter_html"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html">VolumeOfFluidNoFilter</a></div><div class="ttdoc">Default filter applied to phase fraction. The VolumeOfFluidNoFilter filter does not modify the phase ...</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00057">vof_filter.h:58</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidNoFilter_html_a0490ea8bca9180f2629fa9855b4230e2"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">VolumeOfFluidNoFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Computes the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00081">vof_filter.h:81</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidNoFilter_html_ac2613bce63b54ffa8ad9aa70aee7c2e0"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">VolumeOfFluidNoFilter::VolumeOfFluidNoFilter</a></div><div class="ttdeci">VolumeOfFluidNoFilter()</div><div class="ttdoc">Constructor of the transparent filter.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00066">vof_filter.h:66</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html">VolumeOfFluidTanhFilter</a></div><div class="ttdoc">Filter phase fraction with a hyperbolic tangent function for VOF simulations.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00101">vof_filter.h:102</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_a55a91a2904fce77cd357cd2264dc32f5"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">VolumeOfFluidTanhFilter::beta</a></div><div class="ttdeci">const double beta</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00134">vof_filter.h:134</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_a75c6d88403324724d5145ce27fa31755"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">VolumeOfFluidTanhFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Computes the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00123">vof_filter.h:123</a></div></div>
-<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_aac0927cf8cfabf02f2a08114eb5fe1eb"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">VolumeOfFluidTanhFilter::VolumeOfFluidTanhFilter</a></div><div class="ttdeci">VolumeOfFluidTanhFilter(const double beta)</div><div class="ttdoc">Constructor of the hyperbolic tangent phase fraction filter.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00110">vof_filter.h:110</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidNoFilter_html"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html">VolumeOfFluidNoFilter</a></div><div class="ttdoc">Default filter applied to phase fraction. The VolumeOfFluidNoFilter filter does not modify the phase ...</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00044">vof_filter.h:45</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidNoFilter_html_a0490ea8bca9180f2629fa9855b4230e2"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html#a0490ea8bca9180f2629fa9855b4230e2">VolumeOfFluidNoFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Computes the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00068">vof_filter.h:68</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidNoFilter_html_ac2613bce63b54ffa8ad9aa70aee7c2e0"><div class="ttname"><a href="classVolumeOfFluidNoFilter.html#ac2613bce63b54ffa8ad9aa70aee7c2e0">VolumeOfFluidNoFilter::VolumeOfFluidNoFilter</a></div><div class="ttdeci">VolumeOfFluidNoFilter()</div><div class="ttdoc">Constructor of the transparent filter.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00053">vof_filter.h:53</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html">VolumeOfFluidTanhFilter</a></div><div class="ttdoc">Filter phase fraction with a hyperbolic tangent function for VOF simulations.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00088">vof_filter.h:89</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_a55a91a2904fce77cd357cd2264dc32f5"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#a55a91a2904fce77cd357cd2264dc32f5">VolumeOfFluidTanhFilter::beta</a></div><div class="ttdeci">const double beta</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00121">vof_filter.h:121</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_a75c6d88403324724d5145ce27fa31755"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#a75c6d88403324724d5145ce27fa31755">VolumeOfFluidTanhFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Computes the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00110">vof_filter.h:110</a></div></div>
+<div class="ttc" id="aclassVolumeOfFluidTanhFilter_html_aac0927cf8cfabf02f2a08114eb5fe1eb"><div class="ttname"><a href="classVolumeOfFluidTanhFilter.html#aac0927cf8cfabf02f2a08114eb5fe1eb">VolumeOfFluidTanhFilter::VolumeOfFluidTanhFilter</a></div><div class="ttdeci">VolumeOfFluidTanhFilter(const double beta)</div><div class="ttdoc">Constructor of the hyperbolic tangent phase fraction filter.</div><div class="ttdef"><b>Definition:</b> <a href="vof__filter_8h_source.html#l00097">vof_filter.h:97</a></div></div>
 <div class="ttc" id="aparameters__multiphysics_8h_html"><div class="ttname"><a href="parameters__multiphysics_8h.html">parameters_multiphysics.h</a></div></div>
-<div class="ttc" id="astructParameters_1_1VOF__PhaseFilter_html"><div class="ttname"><a href="structParameters_1_1VOF__PhaseFilter.html">Parameters::VOF_PhaseFilter</a></div><div class="ttdoc">VOF_PhaseFilter - Defines the parameters for the phase filtration.</div><div class="ttdef"><b>Definition:</b> <a href="parameters__multiphysics_8h_source.html#l00169">parameters_multiphysics.h:170</a></div></div>
+<div class="ttc" id="astructParameters_1_1VOF__PhaseFilter_html"><div class="ttname"><a href="structParameters_1_1VOF__PhaseFilter.html">Parameters::VOF_PhaseFilter</a></div><div class="ttdoc">VOF_PhaseFilter - Defines the parameters for the phase filtration.</div><div class="ttdef"><b>Definition:</b> <a href="parameters__multiphysics_8h_source.html#l00156">parameters_multiphysics.h:157</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

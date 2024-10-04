@@ -79,503 +79,490 @@ $(function() {
 <div class="title">load_balancing.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="load__balancing_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
+<a href="load__balancing_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_load_balancing_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_load_balancing_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__lagrangian_8h.html">core/parameters_lagrangian.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="simulation__control_8h.html">core/simulation_control.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="adaptive__sparse__contacts_8h.html">dem/adaptive_sparse_contacts.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_load_balancing_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_load_balancing_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__lagrangian_8h.html">core/parameters_lagrangian.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="simulation__control_8h.html">core/simulation_control.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="adaptive__sparse__contacts_8h.html">dem/adaptive_sparse_contacts.h</a>&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * @brief Manages the load balancing (repartitioning), of the domain according</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * to the computational load of the cells and the particles.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * It is used by the DEM and the coupling CFD-DEM solvers.</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>();</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * @brief Manages the load balancing (repartitioning), of the domain according</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * to the computational load of the cells and the particles.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * It is used by the DEM and the coupling CFD-DEM solvers.</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html">   38</a></span>&#160;<span class="keyword">class </span><a class="code" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;{</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a>();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * @brief Sets the parameters for the load balancing method given by the model</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   * parameters. It also initializes the iteration load balancing check method.</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @param[in] model_parameters The model parameter of DEM including the load</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * balancing parameters.</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">   52</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">set_parameters</a>(</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a> &amp;model_parameters)</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="comment">// Load balancing method and the setup of the check iteration function</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    load_balance_method      = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f1a6925fb27516aa95b67e12bcb7f">load_balance_method</a>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    iteration_check_function = set_iteration_check_function();</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">// Parameters related to the total cell weight</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    particle_weight        = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a32108db89db44ca9ba18ab7e38a8824e">load_balance_particle_weight</a>;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    inactive_status_factor = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a7c6be250d44ec70918dc7e5c17fea2c8">inactive_load_balancing_factor</a>;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    active_status_factor   = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a56c112a8008843e3ccd9bfdf102de674">active_load_balancing_factor</a>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">// Parameters related to the frequency of the load balance execution</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    dynamic_check_frequency =</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a316931a45ce605f85f0fb95bc0c2d8c2">dynamic_load_balance_check_frequency</a>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    load_balance_step      = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#adc20400bc54a803a8729b5500480b5c5">load_balance_step</a>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    load_balance_frequency = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a8cc0e88370a4cc531cb4590c49e517f6">load_balance_frequency</a>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    load_threshold         = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a319a0d49cce87e81ebec7b9ef31a3c6d">load_balance_threshold</a>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   * @brief Copies the references to the simulation control, triangulation,</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * particle handler and adaptive sparse contacts (enabled or disabled).</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * This is necessary to access the data structures and functions of these</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * during the load balancing check</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * @param[in] simulation_control The simulation control object (accesses to</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * the time step)</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * @param[in] triangulation The triangulation object (for dynamics connexion</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * of signals with ASC)</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * @param[in] particle_handler The particle handler object (accesses to the</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   * particles in cells)</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * @param[in] adaptive_sparse_contacts The adaptive sparse contacts object</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * (accesses to the mobility status of the cells)</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">   91</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">copy_references</a>(std::shared_ptr&lt;SimulationControl&gt;        &amp;simulation_control,</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                  parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                  Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp;adaptive_sparse_contacts)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    this-&gt;simulation_control       = simulation_control;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    this-&gt;triangulation            = &amp;triangulation;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    this-&gt;particle_handler         = &amp;particle_handler;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    this-&gt;adaptive_sparse_contacts = &amp;adaptive_sparse_contacts;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @brief Checks if the current iteration is a load balance iteration.</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @return bool indicating if this is a load balance iteration.</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">  108</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">check_load_balance_iteration</a>()</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  {</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span> iteration_check_function();</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @brief Sets the load balancing iteration check function according</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   * to the chosen load balancing method. During the setup of the parameters,</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   * the validation of the method is already checked, so the default value is</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * when the method is `none`.</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * @return Return a function that returns a bool indicating if the current</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * time step is a load balance iteration.</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keyword">inline</span> std::function&lt;void()&gt;</div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">  123</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">set_iteration_check_function</a>()</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">using namespace </span><a class="code" href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a>;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">switch</span> (load_balance_method)</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;      {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::once:</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_once(); };</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::frequent:</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_frequent(); };</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::dynamic:</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_dynamic(); };</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::dynamic_with_sparse_contacts:</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_with_sparse_contacts(); };</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordflow">default</span>: <span class="comment">// Default is no load balance (none)</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;          <span class="keywordflow">return</span> [&amp;]() { <span class="keywordflow">return</span>; };</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      }</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  }</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * when load balance method is `once`.</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   * iteration according to the load balancing `step`.</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  check_load_balance_once();</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">   * when load balance method is `frequent`.</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">   * iteration according to the load balancing `frequency`.</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  check_load_balance_frequent();</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">   * when load balance method is `dynamic`.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * @brief Sets the parameters for the load balancing method given by the model</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * parameters. It also initializes the iteration load balancing check method.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @param[in] model_parameters The model parameter of DEM including the load</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * balancing parameters.</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">   39</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">set_parameters</a>(</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">const</span> <a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a> &amp;model_parameters)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">// Load balancing method and the setup of the check iteration function</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    load_balance_method      = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f1a6925fb27516aa95b67e12bcb7f">load_balance_method</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    iteration_check_function = set_iteration_check_function();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="comment">// Parameters related to the total cell weight</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    particle_weight        = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a32108db89db44ca9ba18ab7e38a8824e">load_balance_particle_weight</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    inactive_status_factor = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a7c6be250d44ec70918dc7e5c17fea2c8">inactive_load_balancing_factor</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    active_status_factor   = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a56c112a8008843e3ccd9bfdf102de674">active_load_balancing_factor</a>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Parameters related to the frequency of the load balance execution</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    dynamic_check_frequency =</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a316931a45ce605f85f0fb95bc0c2d8c2">dynamic_load_balance_check_frequency</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    load_balance_step      = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#adc20400bc54a803a8729b5500480b5c5">load_balance_step</a>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    load_balance_frequency = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a8cc0e88370a4cc531cb4590c49e517f6">load_balance_frequency</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    load_threshold         = model_parameters.<a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a319a0d49cce87e81ebec7b9ef31a3c6d">load_balance_threshold</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @brief Copies the references to the simulation control, triangulation,</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * particle handler and adaptive sparse contacts (enabled or disabled).</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * This is necessary to access the data structures and functions of these</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * during the load balancing check</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @param[in] simulation_control The simulation control object (accesses to</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * the time step)</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @param[in] triangulation The triangulation object (for dynamics connexion</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * of signals with ASC)</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * @param[in] particle_handler The particle handler object (accesses to the</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * particles in cells)</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @param[in] adaptive_sparse_contacts The adaptive sparse contacts object</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * (accesses to the mobility status of the cells)</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">   78</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">copy_references</a>(std::shared_ptr&lt;SimulationControl&gt;        &amp;simulation_control,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                  parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                  Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> &amp;adaptive_sparse_contacts)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    this-&gt;simulation_control       = simulation_control;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    this-&gt;triangulation            = &amp;triangulation;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    this-&gt;particle_handler         = &amp;particle_handler;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    this-&gt;adaptive_sparse_contacts = &amp;adaptive_sparse_contacts;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @brief Checks if the current iteration is a load balance iteration.</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   * @return bool indicating if this is a load balance iteration.</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">   95</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">check_load_balance_iteration</a>()</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span> iteration_check_function();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   * @brief Sets the load balancing iteration check function according</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * to the chosen load balancing method. During the setup of the parameters,</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * the validation of the method is already checked, so the default value is</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * when the method is `none`.</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * @return Return a function that returns a bool indicating if the current</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * time step is a load balance iteration.</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">inline</span> std::function&lt;void()&gt;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">  110</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">set_iteration_check_function</a>()</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">using namespace </span><a class="code" href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">switch</span> (load_balance_method)</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::once:</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_once(); };</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::frequent:</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_frequent(); };</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::dynamic:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_dynamic(); };</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordflow">case</span> ModelParameters::LoadBalanceMethod::dynamic_with_sparse_contacts:</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;          <span class="keywordflow">return</span> [&amp;] { check_load_balance_with_sparse_contacts(); };</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordflow">default</span>: <span class="comment">// Default is no load balance (none)</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;          <span class="keywordflow">return</span> [&amp;]() { <span class="keywordflow">return</span>; };</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * when load balance method is `once`.</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   * iteration according to the load balancing `step`.</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  check_load_balance_once();</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * when load balance method is `frequent`.</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * iteration according to the load balancing `frequency`.</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  check_load_balance_frequent();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">   * @brief Determines whether the present iteration is the load balance step</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">   * when load balance method is `dynamic`.</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">   * iteration according to the load balancing `dynamic check frequency`and</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">   * `threshold`.</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  check_load_balance_dynamic();</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">   * @brief Determines whether the present is the load balance step when</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">   * load balance method is `dynamic_with_sparse_contacts`. It used the same</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">   * method as `dynamic` but with the addition of factors according to the cell</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">   * mobility status of the sparse contacts mechanism.</span></div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">   *</span></div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * iteration according to the load balancing `dynamic check frequency`and</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   * `threshold`.</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * iteration according to the load balancing `dynamic check frequency`,</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   * `threshold` and load factors.</span></div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">   */</span></div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  check_load_balance_dynamic();</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  check_load_balance_with_sparse_contacts();</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * @brief Determines whether the present is the load balance step when</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   * load balance method is `dynamic_with_sparse_contacts`. It used the same</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   * method as `dynamic` but with the addition of factors according to the cell</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">   * mobility status of the sparse contacts mechanism.</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">   * @return bool indicating if the current time step is a load balance</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">   * iteration according to the load balancing `dynamic check frequency`,</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">   * `threshold` and load factors.</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  check_load_balance_with_sparse_contacts();</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">   * @brief Connects the weight signals of the cells to the triangulation.</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="comment">   * In order to consider the particles when repartitioning the triangulation</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment">   * the algorithm needs to know three things:</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment">   * 1. How much weight to assign to each cell (how many particles are in</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment">   * there)</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">   * 2. How to pack the particles before shipping data around</span></div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment">   * 3. How to unpack the particles after repartitioning</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment">   * Attach the correct functions to the signals inside</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="comment">   * parallel::distributed::Triangulation, which will be called every time the</span></div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;<span class="comment">   * load balancing or refinement functions are called.</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">  202</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">connect_weight_signals</a>()</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        <span class="keywordflow">return</span> cell_weight;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      });</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * @brief Connects the weight signals of the cells to the triangulation.</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   * In order to consider the particles when repartitioning the triangulation</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">   * the algorithm needs to know three things:</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">   * 1. How much weight to assign to each cell (how many particles are in</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">   * there)</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">   * 2. How to pack the particles before shipping data around</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">   * 3. How to unpack the particles after repartitioning</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment">   * Attach the correct functions to the signals inside</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">   * parallel::distributed::Triangulation, which will be called every time the</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">   * load balancing or refinement functions are called.</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">  189</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">connect_weight_signals</a>()</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  {</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordflow">return</span> cell_weight;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      });</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight(cell, status);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      });</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="comment">// Connect the default cell weight function</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;          <span class="keyword">const</span> CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> { <span class="keywordflow">return</span> cell_weight; });</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;          <span class="keyword">const</span> CellStatus       status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight(cell, status);</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;      });</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="comment">// Connect the default cell weight function</span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;          <span class="keyword">const</span> CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> { <span class="keywordflow">return</span> cell_weight; });</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;          <span class="keyword">const</span> CellStatus       status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight(cell, status);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;      });</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  }</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment">   * @brief Connects the weight signals of the cells to the triangulation with</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">   * the mobility status. Cells are reconnected when load balancing is checked</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">   * with the new mobility status.</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">  242</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">connect_mobility_status_weight_signals</a>()</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="comment">// Clear and connect a new cell weight function</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    triangulation-&gt;signals.weight.disconnect_all_slots();</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="keywordflow">return</span> cell_weight;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      });</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight_with_mobility_status(cell,</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                                                                      status);</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;      });</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="comment">// Connect, or reconnect, the default cell weight function</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;          <span class="keyword">const</span> CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> { <span class="keywordflow">return</span> cell_weight; });</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;          <span class="keyword">const</span> CellStatus       status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight_with_mobility_status(cell,</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                                                                      status);</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;      });</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  }</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;<span class="comment"> * @brief Indicates to the triangulation how much computational work is</span></div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="comment"> * expected to happen on this cell, and consequently how the domain needs to</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment"> * be partitioned.</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="comment"> * Every MPI rank receives a roughly equal amount of work (potentially not an</span></div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="comment"> * equal number of cells). While the function is called from the outside,</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="comment"> * it is connected to the corresponding signal from inside this class,</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="comment"> * therefore it can be private. This function is the key component that allows</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="comment"> * dynamically balance the computational load. The function attributes a</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment"> * weight to every cell that represents the computational work on this cell.</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment"> * Here the majority of work is expected to happen on the particles, therefore</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment"> * the return value of this function is calculated based on the number of</span></div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment"> * particles in the current cell. The function is connected to the</span></div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment"> * cell_weight() signal inside the triangulation, and will be called once per</span></div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment"> * cell, whenever the triangulation repartitions the domain between ranks.</span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment"> * @param[in] cell The cell for which the load is calculated.</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment"> * @param[in] status The status of the cell related to the coarsening level.</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="comment"> * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment"> * @return The total weight of the cell.</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  calculate_total_cell_weight(</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                                                                        &amp;cell,</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus status)</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  calculate_total_cell_weight(</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                    &amp;cell,</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">const</span> CellStatus status) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">   * @brief Indicates to the triangulation how much computational work is</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">   * expected to happen on this cell, and consequently how the domain needs to</span></div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">   * be partitioned. Only used with the Adaptive Sparse Contacts mechanism.</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">   * Similar to the calculate_total_cell_weight(), this function is used when</span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">   * the cell weight is adapted to the mobility status. For instance, if the</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">   * cell is inactive, its computational load will be significantly lower than</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">   * if it is a mobile cell since there is no force calculation and no velocity</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment">   * integration for the particles that lie within it. The weight of the cells</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment">   * must thus be adapted to the status of the cell.</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment">   * total cell weight = cell weight +</span></div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment">   *                     load balancing factor * n particles * particle weight</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;<span class="comment">   * @param[in] cell The cell for which the load is calculated</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="comment">   * @param[in] status The status of the cell related to the coarsening level</span></div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">   * @return The total weight of the cell</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  calculate_total_cell_weight_with_mobility_status(</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                                                                        &amp;cell,</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus status)</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  calculate_total_cell_weight_with_mobility_status(</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                    &amp;cell,</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keyword">const</span> CellStatus status) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment">   * @brief The load balancing method chosen by the user.</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;  <a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a></div>
-<div class="line"><a name="l00362"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">  362</a></span>&#160;    <a class="code" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">load_balance_method</a>;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="comment">   * @brief The load balancing iteration check function according to the load</span></div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">   * balancing method.</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">  368</a></span>&#160;  std::function&lt;void()&gt; <a class="code" href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">iteration_check_function</a>;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="comment">   * @brief Default hard-coded load weight of a cell.</span></div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99">  373</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> cell_weight = 1000;</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">   * @brief Load weight of a particle, the default parameters is 10000.</span></div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00378"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">  378</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">particle_weight</a>;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">   * @brief Load weight factor of particle weight in a cell with an inactive</span></div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">   * mobility status (only with ASC).</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">  384</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">inactive_status_factor</a>;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">   * @brief Load weight factor of particle weight in a cell with an active</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">   * mobility status (only with ASC).</span></div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">  390</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">active_status_factor</a>;</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">   * @brief Iteration number for load balancing execution, only when method</span></div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">   * is `once`.</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00396"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">  396</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">load_balance_step</a>;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="comment">   * @brief Frequency of load balancing execution, only when method is</span></div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="comment">   * `frequent`.</span></div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00402"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">  402</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">load_balance_frequency</a>;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">   * @brief Frequency of check for the load balancing execution, only when</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">   * method is `dynamic`.</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">  408</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">dynamic_check_frequency</a>;</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">   * @brief Threshold (\beta) for the check load balancing execution, only when</span></div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">   * method is `dynamic`.</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">   * Load balancing will be done when the computational load amongst core is too</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment">   * uneven. If L_{max} - L_{min} &gt; \beta \bar{L}, where L_{max}, L_{min}, and</span></div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment">   * \bar{L} are the maximum, minimum, and the average load, the load balancing</span></div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment">   * will be executed.</span></div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00419"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">  419</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">load_threshold</a>;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment">   * @brief MPI communicator.</span></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00424"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">  424</a></span>&#160;  MPI_Comm <a class="code" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">mpi_communicator</a>;</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment">   * @brief Number of MPI processes.</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">  429</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">n_mpi_processes</a>;</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment">   * @brief Rank of the current MPI process.</span></div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">  434</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">this_mpi_process</a>;</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment">   * @brief Pointer to the simulation control object.</span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00439"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">  439</a></span>&#160;  std::shared_ptr&lt;SimulationControl&gt; <a class="code" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">simulation_control</a>;</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment">   * @brief Pointer to the triangulation object.</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">  444</a></span>&#160;  parallel::distributed::Triangulation&lt;dim&gt; *<a class="code" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">triangulation</a>;</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">   * @brief Pointer to the particle handler object.</span></div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">  449</a></span>&#160;  Particles::ParticleHandler&lt;dim&gt; *<a class="code" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">particle_handler</a>;</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="comment">   * @brief Pointer to the adaptive sparse contacts object.</span></div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00454"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">  454</a></span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> *<a class="code" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">adaptive_sparse_contacts</a>;</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;};</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160; </div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment">   * @brief Connects the weight signals of the cells to the triangulation with</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="comment">   * the mobility status. Cells are reconnected when load balancing is checked</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment">   * with the new mobility status.</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">  229</a></span>&#160;  <a class="code" href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">connect_mobility_status_weight_signals</a>()</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="comment">// Clear and connect a new cell weight function</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    triangulation-&gt;signals.weight.disconnect_all_slots();</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <span class="keywordflow">return</span> cell_weight;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      });</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;          <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight_with_mobility_status(cell,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                                                                      status);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      });</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="comment">// Connect, or reconnect, the default cell weight function</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::cell_iterator &amp;,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;          <span class="keyword">const</span> CellStatus) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> { <span class="keywordflow">return</span> cell_weight; });</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    triangulation-&gt;signals.weight.connect(</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;      [&amp;](<span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            dim&gt;::cell_iterator &amp;cell,</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;          <span class="keyword">const</span> CellStatus       status) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keywordflow">return</span> this-&gt;calculate_total_cell_weight_with_mobility_status(cell,</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                                                                      status);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      });</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  }</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment"> * @brief Indicates to the triangulation how much computational work is</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment"> * expected to happen on this cell, and consequently how the domain needs to</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment"> * be partitioned.</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment"> * Every MPI rank receives a roughly equal amount of work (potentially not an</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment"> * equal number of cells). While the function is called from the outside,</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="comment"> * it is connected to the corresponding signal from inside this class,</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="comment"> * therefore it can be private. This function is the key component that allows</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="comment"> * dynamically balance the computational load. The function attributes a</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="comment"> * weight to every cell that represents the computational work on this cell.</span></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment"> * Here the majority of work is expected to happen on the particles, therefore</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="comment"> * the return value of this function is calculated based on the number of</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="comment"> * particles in the current cell. The function is connected to the</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;<span class="comment"> * cell_weight() signal inside the triangulation, and will be called once per</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="comment"> * cell, whenever the triangulation repartitions the domain between ranks.</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="comment"> * @param[in] cell The cell for which the load is calculated.</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="comment"> * @param[in] status The status of the cell related to the coarsening level.</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="comment"> * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment"> * @return The total weight of the cell.</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  calculate_total_cell_weight(</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                                                                        &amp;cell,</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus status)</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  calculate_total_cell_weight(</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                    &amp;cell,</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keyword">const</span> CellStatus status) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">   * @brief Indicates to the triangulation how much computational work is</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">   * expected to happen on this cell, and consequently how the domain needs to</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">   * be partitioned. Only used with the Adaptive Sparse Contacts mechanism.</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">   * Similar to the calculate_total_cell_weight(), this function is used when</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">   * the cell weight is adapted to the mobility status. For instance, if the</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">   * cell is inactive, its computational load will be significantly lower than</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">   * if it is a mobile cell since there is no force calculation and no velocity</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * integration for the particles that lie within it. The weight of the cells</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   * must thus be adapted to the status of the cell.</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="comment">   * total cell weight = cell weight +</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="comment">   *                     load balancing factor * n particles * particle weight</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">   * TODO: Remove preprocessor directives after deal.ii v.9.6 release</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   * @param[in] cell The cell for which the load is calculated</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">   * @param[in] status The status of the cell related to the coarsening level</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">   * @return The total weight of the cell</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="preprocessor">#if (DEAL_II_VERSION_MAJOR &lt; 10 &amp;&amp; DEAL_II_VERSION_MINOR &lt; 6)</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  calculate_total_cell_weight_with_mobility_status(</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                                                                        &amp;cell,</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::CellStatus status)</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;  calculate_total_cell_weight_with_mobility_status(</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                    &amp;cell,</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="keyword">const</span> CellStatus status) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="comment">   * @brief The load balancing method chosen by the user.</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <a class="code" href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a></div>
+<div class="line"><a name="l00349"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">  349</a></span>&#160;    <a class="code" href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">load_balance_method</a>;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">   * @brief The load balancing iteration check function according to the load</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">   * balancing method.</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">  355</a></span>&#160;  std::function&lt;void()&gt; <a class="code" href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">iteration_check_function</a>;</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">   * @brief Default hard-coded load weight of a cell.</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#acd54766e7c9bffcd0f0b6072516d0f99">  360</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> cell_weight = 1000;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="comment">   * @brief Load weight of a particle, the default parameters is 10000.</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">  365</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">particle_weight</a>;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">   * @brief Load weight factor of particle weight in a cell with an inactive</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment">   * mobility status (only with ASC).</span></div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">  371</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">inactive_status_factor</a>;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">   * @brief Load weight factor of particle weight in a cell with an active</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">   * mobility status (only with ASC).</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">  377</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">active_status_factor</a>;</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment">   * @brief Iteration number for load balancing execution, only when method</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">   * is `once`.</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">  383</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">load_balance_step</a>;</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">   * @brief Frequency of load balancing execution, only when method is</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">   * `frequent`.</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">  389</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">load_balance_frequency</a>;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="comment">   * @brief Frequency of check for the load balancing execution, only when</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">   * method is `dynamic`.</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">  395</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">dynamic_check_frequency</a>;</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment">   * @brief Threshold (\beta) for the check load balancing execution, only when</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="comment">   * method is `dynamic`.</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment">   * Load balancing will be done when the computational load amongst core is too</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="comment">   * uneven. If L_{max} - L_{min} &gt; \beta \bar{L}, where L_{max}, L_{min}, and</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment">   * \bar{L} are the maximum, minimum, and the average load, the load balancing</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">   * will be executed.</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">  406</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">load_threshold</a>;</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment">   * @brief MPI communicator.</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">  411</a></span>&#160;  MPI_Comm <a class="code" href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">mpi_communicator</a>;</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">   * @brief Number of MPI processes.</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">  416</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">n_mpi_processes</a>;</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="comment">   * @brief Rank of the current MPI process.</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">  421</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">this_mpi_process</a>;</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;<span class="comment">   * @brief Pointer to the simulation control object.</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">  426</a></span>&#160;  std::shared_ptr&lt;SimulationControl&gt; <a class="code" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">simulation_control</a>;</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">   * @brief Pointer to the triangulation object.</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">  431</a></span>&#160;  parallel::distributed::Triangulation&lt;dim&gt; *<a class="code" href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">triangulation</a>;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">   * @brief Pointer to the particle handler object.</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">  436</a></span>&#160;  Particles::ParticleHandler&lt;dim&gt; *<a class="code" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">particle_handler</a>;</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">   * @brief Pointer to the adaptive sparse contacts object.</span></div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00441"></a><span class="lineno"><a class="line" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">  441</a></span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a> *<a class="code" href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">adaptive_sparse_contacts</a>;</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;};</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160; </div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aadaptive__sparse__contacts_8h_html"><div class="ttname"><a href="adaptive__sparse__contacts_8h.html">adaptive_sparse_contacts.h</a></div></div>
-<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00117">adaptive_sparse_contacts.h:118</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html"><div class="ttname"><a href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></div><div class="ttdoc">Manages the load balancing (repartitioning), of the domain according to the computational load of the...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00038">load_balancing.h:39</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a0e75af594e71c988a505f881429c308a"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">LagrangianLoadBalancing::active_status_factor</a></div><div class="ttdeci">double active_status_factor</div><div class="ttdoc">Load weight factor of particle weight in a cell with an active mobility status (only with ASC).</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00390">load_balancing.h:390</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a188425d9ce4907b7256d3d8687288165"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">LagrangianLoadBalancing::particle_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; dim &gt; * particle_handler</div><div class="ttdoc">Pointer to the particle handler object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00449">load_balancing.h:449</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a2bb3a59b289f6924abb5f1ec53bd2afd"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">LagrangianLoadBalancing::n_mpi_processes</a></div><div class="ttdeci">const unsigned int n_mpi_processes</div><div class="ttdoc">Number of MPI processes.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00429">load_balancing.h:429</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a31c2a698cfeb236fd68ced77179d4c90"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">LagrangianLoadBalancing::set_iteration_check_function</a></div><div class="ttdeci">std::function&lt; void()&gt; set_iteration_check_function()</div><div class="ttdoc">Sets the load balancing iteration check function according to the chosen load balancing method....</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00123">load_balancing.h:123</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a3c29f7ee76a8967586b69624584f9821"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">LagrangianLoadBalancing::set_parameters</a></div><div class="ttdeci">void set_parameters(const Parameters::Lagrangian::ModelParameters &amp;model_parameters)</div><div class="ttdoc">Sets the parameters for the load balancing method given by the model parameters. It also initializes ...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00052">load_balancing.h:52</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a4a7871198521c989f1d7efb239fad8b7"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">LagrangianLoadBalancing::connect_weight_signals</a></div><div class="ttdeci">void connect_weight_signals()</div><div class="ttdoc">Connects the weight signals of the cells to the triangulation.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00202">load_balancing.h:202</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a4ab39e278c613d1ff742aac45f14a306"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">LagrangianLoadBalancing::dynamic_check_frequency</a></div><div class="ttdeci">unsigned int dynamic_check_frequency</div><div class="ttdoc">Frequency of check for the load balancing execution, only when method is dynamic.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00408">load_balancing.h:408</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a52d7c667fd38712b283f764f52e8da20"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">LagrangianLoadBalancing::triangulation</a></div><div class="ttdeci">parallel::distributed::Triangulation&lt; dim &gt; * triangulation</div><div class="ttdoc">Pointer to the triangulation object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00444">load_balancing.h:444</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a5822945b326436fbce253c13fd6923db"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">LagrangianLoadBalancing::copy_references</a></div><div class="ttdeci">void copy_references(std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, AdaptiveSparseContacts&lt; dim &gt; &amp;adaptive_sparse_contacts)</div><div class="ttdoc">Copies the references to the simulation control, triangulation, particle handler and adaptive sparse ...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00091">load_balancing.h:91</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a585e5a35d1f1a29dd9defa2c2cacf158"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">LagrangianLoadBalancing::load_balance_frequency</a></div><div class="ttdeci">unsigned int load_balance_frequency</div><div class="ttdoc">Frequency of load balancing execution, only when method is frequent.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00402">load_balancing.h:402</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a65f0757ace17cf18d8e38c841a704910"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">LagrangianLoadBalancing::simulation_control</a></div><div class="ttdeci">std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdoc">Pointer to the simulation control object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00439">load_balancing.h:439</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a878c6f8f754244af0ee7c44a1f7e3208"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">LagrangianLoadBalancing::iteration_check_function</a></div><div class="ttdeci">std::function&lt; void()&gt; iteration_check_function</div><div class="ttdoc">The load balancing iteration check function according to the load balancing method.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00368">load_balancing.h:368</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_a9ad9cad6318916aea8ccc510bbd1ab2b"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">LagrangianLoadBalancing::adaptive_sparse_contacts</a></div><div class="ttdeci">AdaptiveSparseContacts&lt; dim &gt; * adaptive_sparse_contacts</div><div class="ttdoc">Pointer to the adaptive sparse contacts object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00454">load_balancing.h:454</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_aa5d81d7eb20c13b2593ed052708ad31d"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">LagrangianLoadBalancing::connect_mobility_status_weight_signals</a></div><div class="ttdeci">void connect_mobility_status_weight_signals()</div><div class="ttdoc">Connects the weight signals of the cells to the triangulation with the mobility status....</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00242">load_balancing.h:242</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_acabfc750689ecb4aacc1e6b4303cea7a"><div class="ttname"><a href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">LagrangianLoadBalancing::load_balance_step</a></div><div class="ttdeci">unsigned int load_balance_step</div><div class="ttdoc">Iteration number for load balancing execution, only when method is once.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00396">load_balancing.h:396</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_ace8d5aea56f58d6221cdb0043f49cfae"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">LagrangianLoadBalancing::mpi_communicator</a></div><div class="ttdeci">MPI_Comm mpi_communicator</div><div class="ttdoc">MPI communicator.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00424">load_balancing.h:424</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_ad24773ce56f88f2490ec96dd37b37e42"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">LagrangianLoadBalancing::particle_weight</a></div><div class="ttdeci">unsigned int particle_weight</div><div class="ttdoc">Load weight of a particle, the default parameters is 10000.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00378">load_balancing.h:378</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_ad4db3ec8349c520c3292574429ce71b1"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">LagrangianLoadBalancing::load_threshold</a></div><div class="ttdeci">double load_threshold</div><div class="ttdoc">Threshold (\beta) for the check load balancing execution, only when method is dynamic.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00419">load_balancing.h:419</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_ae5b61ad96bddd97a299d5f5f378590d0"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">LagrangianLoadBalancing::this_mpi_process</a></div><div class="ttdeci">const unsigned int this_mpi_process</div><div class="ttdoc">Rank of the current MPI process.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00434">load_balancing.h:434</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_aea8e6c7b36eed8ee91cbcab90b2ed3ed"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">LagrangianLoadBalancing::check_load_balance_iteration</a></div><div class="ttdeci">void check_load_balance_iteration()</div><div class="ttdoc">Checks if the current iteration is a load balance iteration.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00108">load_balancing.h:108</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_aedc69e52d60976511c3b77ea0c15baac"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">LagrangianLoadBalancing::inactive_status_factor</a></div><div class="ttdeci">double inactive_status_factor</div><div class="ttdoc">Load weight factor of particle weight in a cell with an inactive mobility status (only with ASC).</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00384">load_balancing.h:384</a></div></div>
-<div class="ttc" id="aclassLagrangianLoadBalancing_html_af8fe02e9a628afceae401264b496c249"><div class="ttname"><a href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">LagrangianLoadBalancing::load_balance_method</a></div><div class="ttdeci">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod load_balance_method</div><div class="ttdoc">The load balancing method chosen by the user.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00362">load_balancing.h:362</a></div></div>
+<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00104">adaptive_sparse_contacts.h:105</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html"><div class="ttname"><a href="classLagrangianLoadBalancing.html">LagrangianLoadBalancing</a></div><div class="ttdoc">Manages the load balancing (repartitioning), of the domain according to the computational load of the...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00025">load_balancing.h:26</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a0e75af594e71c988a505f881429c308a"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a0e75af594e71c988a505f881429c308a">LagrangianLoadBalancing::active_status_factor</a></div><div class="ttdeci">double active_status_factor</div><div class="ttdoc">Load weight factor of particle weight in a cell with an active mobility status (only with ASC).</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00377">load_balancing.h:377</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a188425d9ce4907b7256d3d8687288165"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">LagrangianLoadBalancing::particle_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; dim &gt; * particle_handler</div><div class="ttdoc">Pointer to the particle handler object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00436">load_balancing.h:436</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a2bb3a59b289f6924abb5f1ec53bd2afd"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a2bb3a59b289f6924abb5f1ec53bd2afd">LagrangianLoadBalancing::n_mpi_processes</a></div><div class="ttdeci">const unsigned int n_mpi_processes</div><div class="ttdoc">Number of MPI processes.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00416">load_balancing.h:416</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a31c2a698cfeb236fd68ced77179d4c90"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a31c2a698cfeb236fd68ced77179d4c90">LagrangianLoadBalancing::set_iteration_check_function</a></div><div class="ttdeci">std::function&lt; void()&gt; set_iteration_check_function()</div><div class="ttdoc">Sets the load balancing iteration check function according to the chosen load balancing method....</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00110">load_balancing.h:110</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a3c29f7ee76a8967586b69624584f9821"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a3c29f7ee76a8967586b69624584f9821">LagrangianLoadBalancing::set_parameters</a></div><div class="ttdeci">void set_parameters(const Parameters::Lagrangian::ModelParameters &amp;model_parameters)</div><div class="ttdoc">Sets the parameters for the load balancing method given by the model parameters. It also initializes ...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00039">load_balancing.h:39</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a4a7871198521c989f1d7efb239fad8b7"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a4a7871198521c989f1d7efb239fad8b7">LagrangianLoadBalancing::connect_weight_signals</a></div><div class="ttdeci">void connect_weight_signals()</div><div class="ttdoc">Connects the weight signals of the cells to the triangulation.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00189">load_balancing.h:189</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a4ab39e278c613d1ff742aac45f14a306"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a4ab39e278c613d1ff742aac45f14a306">LagrangianLoadBalancing::dynamic_check_frequency</a></div><div class="ttdeci">unsigned int dynamic_check_frequency</div><div class="ttdoc">Frequency of check for the load balancing execution, only when method is dynamic.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00395">load_balancing.h:395</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a52d7c667fd38712b283f764f52e8da20"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a52d7c667fd38712b283f764f52e8da20">LagrangianLoadBalancing::triangulation</a></div><div class="ttdeci">parallel::distributed::Triangulation&lt; dim &gt; * triangulation</div><div class="ttdoc">Pointer to the triangulation object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00431">load_balancing.h:431</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a5822945b326436fbce253c13fd6923db"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a5822945b326436fbce253c13fd6923db">LagrangianLoadBalancing::copy_references</a></div><div class="ttdeci">void copy_references(std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, AdaptiveSparseContacts&lt; dim &gt; &amp;adaptive_sparse_contacts)</div><div class="ttdoc">Copies the references to the simulation control, triangulation, particle handler and adaptive sparse ...</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00078">load_balancing.h:78</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a585e5a35d1f1a29dd9defa2c2cacf158"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a585e5a35d1f1a29dd9defa2c2cacf158">LagrangianLoadBalancing::load_balance_frequency</a></div><div class="ttdeci">unsigned int load_balance_frequency</div><div class="ttdoc">Frequency of load balancing execution, only when method is frequent.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00389">load_balancing.h:389</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a65f0757ace17cf18d8e38c841a704910"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">LagrangianLoadBalancing::simulation_control</a></div><div class="ttdeci">std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdoc">Pointer to the simulation control object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00426">load_balancing.h:426</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a878c6f8f754244af0ee7c44a1f7e3208"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a878c6f8f754244af0ee7c44a1f7e3208">LagrangianLoadBalancing::iteration_check_function</a></div><div class="ttdeci">std::function&lt; void()&gt; iteration_check_function</div><div class="ttdoc">The load balancing iteration check function according to the load balancing method.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00355">load_balancing.h:355</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_a9ad9cad6318916aea8ccc510bbd1ab2b"><div class="ttname"><a href="classLagrangianLoadBalancing.html#a9ad9cad6318916aea8ccc510bbd1ab2b">LagrangianLoadBalancing::adaptive_sparse_contacts</a></div><div class="ttdeci">AdaptiveSparseContacts&lt; dim &gt; * adaptive_sparse_contacts</div><div class="ttdoc">Pointer to the adaptive sparse contacts object.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00441">load_balancing.h:441</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_aa5d81d7eb20c13b2593ed052708ad31d"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aa5d81d7eb20c13b2593ed052708ad31d">LagrangianLoadBalancing::connect_mobility_status_weight_signals</a></div><div class="ttdeci">void connect_mobility_status_weight_signals()</div><div class="ttdoc">Connects the weight signals of the cells to the triangulation with the mobility status....</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00229">load_balancing.h:229</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_acabfc750689ecb4aacc1e6b4303cea7a"><div class="ttname"><a href="classLagrangianLoadBalancing.html#acabfc750689ecb4aacc1e6b4303cea7a">LagrangianLoadBalancing::load_balance_step</a></div><div class="ttdeci">unsigned int load_balance_step</div><div class="ttdoc">Iteration number for load balancing execution, only when method is once.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00383">load_balancing.h:383</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_ace8d5aea56f58d6221cdb0043f49cfae"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ace8d5aea56f58d6221cdb0043f49cfae">LagrangianLoadBalancing::mpi_communicator</a></div><div class="ttdeci">MPI_Comm mpi_communicator</div><div class="ttdoc">MPI communicator.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00411">load_balancing.h:411</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_ad24773ce56f88f2490ec96dd37b37e42"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ad24773ce56f88f2490ec96dd37b37e42">LagrangianLoadBalancing::particle_weight</a></div><div class="ttdeci">unsigned int particle_weight</div><div class="ttdoc">Load weight of a particle, the default parameters is 10000.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00365">load_balancing.h:365</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_ad4db3ec8349c520c3292574429ce71b1"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ad4db3ec8349c520c3292574429ce71b1">LagrangianLoadBalancing::load_threshold</a></div><div class="ttdeci">double load_threshold</div><div class="ttdoc">Threshold (\beta) for the check load balancing execution, only when method is dynamic.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00406">load_balancing.h:406</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_ae5b61ad96bddd97a299d5f5f378590d0"><div class="ttname"><a href="classLagrangianLoadBalancing.html#ae5b61ad96bddd97a299d5f5f378590d0">LagrangianLoadBalancing::this_mpi_process</a></div><div class="ttdeci">const unsigned int this_mpi_process</div><div class="ttdoc">Rank of the current MPI process.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00421">load_balancing.h:421</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_aea8e6c7b36eed8ee91cbcab90b2ed3ed"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aea8e6c7b36eed8ee91cbcab90b2ed3ed">LagrangianLoadBalancing::check_load_balance_iteration</a></div><div class="ttdeci">void check_load_balance_iteration()</div><div class="ttdoc">Checks if the current iteration is a load balance iteration.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00095">load_balancing.h:95</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_aedc69e52d60976511c3b77ea0c15baac"><div class="ttname"><a href="classLagrangianLoadBalancing.html#aedc69e52d60976511c3b77ea0c15baac">LagrangianLoadBalancing::inactive_status_factor</a></div><div class="ttdeci">double inactive_status_factor</div><div class="ttdoc">Load weight factor of particle weight in a cell with an inactive mobility status (only with ASC).</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00371">load_balancing.h:371</a></div></div>
+<div class="ttc" id="aclassLagrangianLoadBalancing_html_af8fe02e9a628afceae401264b496c249"><div class="ttname"><a href="classLagrangianLoadBalancing.html#af8fe02e9a628afceae401264b496c249">LagrangianLoadBalancing::load_balance_method</a></div><div class="ttdeci">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod load_balance_method</div><div class="ttdoc">The load balancing method chosen by the user.</div><div class="ttdef"><b>Definition:</b> <a href="load__balancing_8h_source.html#l00349">load_balancing.h:349</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
-<div class="ttc" id="anamespaceParameters_1_1Lagrangian_html"><div class="ttname"><a href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00030">parameters_lagrangian.h:31</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="ttc" id="anamespaceParameters_1_1Lagrangian_html"><div class="ttname"><a href="namespaceParameters_1_1Lagrangian.html">Parameters::Lagrangian</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00016">parameters_lagrangian.h:17</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="aparameters__lagrangian_8h_html"><div class="ttname"><a href="parameters__lagrangian_8h.html">parameters_lagrangian.h</a></div></div>
 <div class="ttc" id="asimulation__control_8h_html"><div class="ttname"><a href="simulation__control_8h.html">simulation_control.h</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00228">parameters_lagrangian.h:229</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a316931a45ce605f85f0fb95bc0c2d8c2"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a316931a45ce605f85f0fb95bc0c2d8c2">Parameters::Lagrangian::ModelParameters::dynamic_load_balance_check_frequency</a></div><div class="ttdeci">unsigned int dynamic_load_balance_check_frequency</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00250">parameters_lagrangian.h:250</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a319a0d49cce87e81ebec7b9ef31a3c6d"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a319a0d49cce87e81ebec7b9ef31a3c6d">Parameters::Lagrangian::ModelParameters::load_balance_threshold</a></div><div class="ttdeci">double load_balance_threshold</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00247">parameters_lagrangian.h:247</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a32108db89db44ca9ba18ab7e38a8824e"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a32108db89db44ca9ba18ab7e38a8824e">Parameters::Lagrangian::ModelParameters::load_balance_particle_weight</a></div><div class="ttdeci">unsigned int load_balance_particle_weight</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00256">parameters_lagrangian.h:256</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a3e6eb8f5729483f84a436e4222d86e66"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a></div><div class="ttdeci">LoadBalanceMethod</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00231">parameters_lagrangian.h:232</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00214">parameters_lagrangian.h:215</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a316931a45ce605f85f0fb95bc0c2d8c2"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a316931a45ce605f85f0fb95bc0c2d8c2">Parameters::Lagrangian::ModelParameters::dynamic_load_balance_check_frequency</a></div><div class="ttdeci">unsigned int dynamic_load_balance_check_frequency</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00236">parameters_lagrangian.h:236</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a319a0d49cce87e81ebec7b9ef31a3c6d"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a319a0d49cce87e81ebec7b9ef31a3c6d">Parameters::Lagrangian::ModelParameters::load_balance_threshold</a></div><div class="ttdeci">double load_balance_threshold</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00233">parameters_lagrangian.h:233</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a32108db89db44ca9ba18ab7e38a8824e"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a32108db89db44ca9ba18ab7e38a8824e">Parameters::Lagrangian::ModelParameters::load_balance_particle_weight</a></div><div class="ttdeci">unsigned int load_balance_particle_weight</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00242">parameters_lagrangian.h:242</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a3e6eb8f5729483f84a436e4222d86e66"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66">Parameters::Lagrangian::ModelParameters::LoadBalanceMethod</a></div><div class="ttdeci">LoadBalanceMethod</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00217">parameters_lagrangian.h:218</a></div></div>
 <div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a482f1a6925fb27516aa95b67e12bcb7f"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a482f1a6925fb27516aa95b67e12bcb7f">Parameters::Lagrangian::ModelParameters::load_balance_method</a></div><div class="ttdeci">enum Parameters::Lagrangian::ModelParameters::LoadBalanceMethod load_balance_method</div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a56c112a8008843e3ccd9bfdf102de674"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a56c112a8008843e3ccd9bfdf102de674">Parameters::Lagrangian::ModelParameters::active_load_balancing_factor</a></div><div class="ttdeci">double active_load_balancing_factor</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00261">parameters_lagrangian.h:261</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a7c6be250d44ec70918dc7e5c17fea2c8"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a7c6be250d44ec70918dc7e5c17fea2c8">Parameters::Lagrangian::ModelParameters::inactive_load_balancing_factor</a></div><div class="ttdeci">double inactive_load_balancing_factor</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00262">parameters_lagrangian.h:262</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a8cc0e88370a4cc531cb4590c49e517f6"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a8cc0e88370a4cc531cb4590c49e517f6">Parameters::Lagrangian::ModelParameters::load_balance_frequency</a></div><div class="ttdeci">unsigned int load_balance_frequency</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00244">parameters_lagrangian.h:244</a></div></div>
-<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_adc20400bc54a803a8729b5500480b5c5"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#adc20400bc54a803a8729b5500480b5c5">Parameters::Lagrangian::ModelParameters::load_balance_step</a></div><div class="ttdeci">unsigned int load_balance_step</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00241">parameters_lagrangian.h:241</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a56c112a8008843e3ccd9bfdf102de674"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a56c112a8008843e3ccd9bfdf102de674">Parameters::Lagrangian::ModelParameters::active_load_balancing_factor</a></div><div class="ttdeci">double active_load_balancing_factor</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00247">parameters_lagrangian.h:247</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a7c6be250d44ec70918dc7e5c17fea2c8"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a7c6be250d44ec70918dc7e5c17fea2c8">Parameters::Lagrangian::ModelParameters::inactive_load_balancing_factor</a></div><div class="ttdeci">double inactive_load_balancing_factor</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00248">parameters_lagrangian.h:248</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_a8cc0e88370a4cc531cb4590c49e517f6"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#a8cc0e88370a4cc531cb4590c49e517f6">Parameters::Lagrangian::ModelParameters::load_balance_frequency</a></div><div class="ttdeci">unsigned int load_balance_frequency</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00230">parameters_lagrangian.h:230</a></div></div>
+<div class="ttc" id="astructParameters_1_1Lagrangian_1_1ModelParameters_html_adc20400bc54a803a8729b5500480b5c5"><div class="ttname"><a href="structParameters_1_1Lagrangian_1_1ModelParameters.html#adc20400bc54a803a8729b5500480b5c5">Parameters::Lagrangian::ModelParameters::load_balance_step</a></div><div class="ttdeci">unsigned int load_balance_step</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00227">parameters_lagrangian.h:227</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -79,78 +79,65 @@ $(function() {
 <div class="title">write_checkpoint.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="write__checkpoint_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
+<a href="write__checkpoint_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_write_checkpoint_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_write_checkpoint_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="pvd__handler_8h.html">core/pvd_handler.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="serial__solid_8h.html">core/serial_solid.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="insertion_8h.html">dem/insertion.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/timer.h&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_write_checkpoint_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_write_checkpoint_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="pvd__handler_8h.html">core/pvd_handler.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="serial__solid_8h.html">core/serial_solid.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="insertion_8h.html">dem/insertion.h</a>&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/timer.h&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * @brief Write_checkpoint Write a DEM simulation checkpointing to allow for DEM</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * simulation restart.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> * @param computing_timer Dem timer</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * @param parameters Input DEM parameters in the parameter handler file</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * @param simulation_control Simulation control</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * @param particles_pvdhandler PVD handler</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * @param grid_pvdhandler PVD handler for post-processing</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * @param triangulation Triangulation</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * @param particle_handler Particle handler</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> * @param insertion_object Insertion object</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"> * @param solid_objects Vector of solids objects used in DEM simulations</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> * @param pcout Printing in parallel</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"> * @param mpi_communicator</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<a class="code" href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a>(</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  TimerOutput                                             &amp;computing_timer,</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                          &amp;parameters,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  std::shared_ptr&lt;SimulationControl&gt;                      &amp;simulation_control,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                              &amp;particles_pvdhandler,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                              &amp;grid_pvdhandler,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  parallel::distributed::Triangulation&lt;dim&gt;               &amp;triangulation,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  Particles::ParticleHandler&lt;dim&gt;                         &amp;particle_handler,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  std::shared_ptr&lt;<a class="code" href="classInsertion.html">Insertion&lt;dim&gt;</a>&gt;                         &amp;insertion_object,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; &amp;solid_objects,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">const</span> ConditionalOStream                                &amp;pcout,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  MPI_Comm                                                &amp;mpi_communicator);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00029">dem_solver_parameters.h:30</a></div></div>
-<div class="ttc" id="aclassInsertion_html"><div class="ttname"><a href="classInsertion.html">Insertion</a></div><div class="ttdoc">Base interface for classes that carry out the insertion of particles in the system.</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00057">insertion.h:58</a></div></div>
-<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00029">pvd_handler.h:30</a></div></div>
-<div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition:</b> <a href="serial__solid_8h_source.html#l00061">serial_solid.h:62</a></div></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * @brief Write_checkpoint Write a DEM simulation checkpointing to allow for DEM</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * simulation restart.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * @param computing_timer Dem timer</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * @param parameters Input DEM parameters in the parameter handler file</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * @param simulation_control Simulation control</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * @param particles_pvdhandler PVD handler</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * @param grid_pvdhandler PVD handler for post-processing</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * @param triangulation Triangulation</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * @param particle_handler Particle handler</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * @param insertion_object Insertion object</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * @param solid_objects Vector of solids objects used in DEM simulations</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * @param pcout Printing in parallel</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * @param mpi_communicator</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<a class="code" href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a>(</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  TimerOutput                                             &amp;computing_timer,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                          &amp;parameters,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  std::shared_ptr&lt;SimulationControl&gt;                      &amp;simulation_control,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                              &amp;particles_pvdhandler,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                              &amp;grid_pvdhandler,</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  parallel::distributed::Triangulation&lt;dim&gt;               &amp;triangulation,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  Particles::ParticleHandler&lt;dim&gt;                         &amp;particle_handler,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  std::shared_ptr&lt;<a class="code" href="classInsertion.html">Insertion&lt;dim&gt;</a>&gt;                         &amp;insertion_object,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  std::vector&lt;std::shared_ptr&lt;<a class="code" href="classSerialSolid.html">SerialSolid&lt;dim - 1, dim&gt;</a>&gt;&gt; &amp;solid_objects,</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">const</span> ConditionalOStream                                &amp;pcout,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  MPI_Comm                                                &amp;mpi_communicator);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
+<div class="ttc" id="aclassInsertion_html"><div class="ttname"><a href="classInsertion.html">Insertion</a></div><div class="ttdoc">Base interface for classes that carry out the insertion of particles in the system.</div><div class="ttdef"><b>Definition:</b> <a href="insertion_8h_source.html#l00044">insertion.h:45</a></div></div>
+<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00016">pvd_handler.h:17</a></div></div>
+<div class="ttc" id="aclassSerialSolid_html"><div class="ttname"><a href="classSerialSolid.html">SerialSolid</a></div><div class="ttdef"><b>Definition:</b> <a href="serial__solid_8h_source.html#l00048">serial_solid.h:49</a></div></div>
 <div class="ttc" id="adem__solver__parameters_8h_html"><div class="ttname"><a href="dem__solver__parameters_8h.html">dem_solver_parameters.h</a></div></div>
 <div class="ttc" id="ainsertion_8h_html"><div class="ttname"><a href="insertion_8h.html">insertion.h</a></div></div>
 <div class="ttc" id="apvd__handler_8h_html"><div class="ttname"><a href="pvd__handler_8h.html">pvd_handler.h</a></div></div>
 <div class="ttc" id="aserial__solid_8h_html"><div class="ttname"><a href="serial__solid_8h.html">serial_solid.h</a></div></div>
-<div class="ttc" id="awrite__checkpoint_8h_html_a50fb25fa8e609c50806ac52f1a2c0ab3"><div class="ttname"><a href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a></div><div class="ttdeci">void write_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.</div><div class="ttdef"><b>Definition:</b> <a href="write__checkpoint_8cc_source.html#l00012">write_checkpoint.cc:12</a></div></div>
+<div class="ttc" id="awrite__checkpoint_8h_html_a50fb25fa8e609c50806ac52f1a2c0ab3"><div class="ttname"><a href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a></div><div class="ttdeci">void write_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.</div><div class="ttdef"><b>Definition:</b> <a href="write__checkpoint_8cc_source.html#l00015">write_checkpoint.cc:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -79,197 +79,184 @@ $(function() {
 <div class="title">fluid_dynamics_nitsche.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="fluid__dynamics__nitsche_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2019 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_fluid_dynamics_nitsche_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_fluid_dynamics_nitsche_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="exceptions_8h.html">core/exceptions.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="solid__base_8h.html">core/solid_base.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fluid__dynamics__matrix__based_8h.html">solvers/fluid_dynamics_matrix_based.h</a>&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;deal.II/lac/trilinos_vector.h&gt;</span></div>
+<a href="fluid__dynamics__nitsche_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_fluid_dynamics_nitsche_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_fluid_dynamics_nitsche_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="exceptions_8h.html">core/exceptions.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="solid__base_8h.html">core/solid_base.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fluid__dynamics__matrix__based_8h.html">solvers/fluid_dynamics_matrix_based.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;deal.II/lac/trilinos_vector.h&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * A solver class for the Navier-Stokes equation using GLS stabilization</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * and Nitsche immersed boundary method</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * @tparam dim An integer that denotes the dimension of the space in which</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * the flow is solved</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * @ingroup solvers</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * @author Bruno Blais, 2019</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * A solver class for the Navier-Stokes equation using GLS stabilization</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * and Nitsche immersed boundary method</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * @tparam dim An integer that denotes the dimension of the space in which</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * the flow is solved</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> * @ingroup solvers</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * @author Bruno Blais, 2019</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim = dim&gt;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html">   41</a></span>&#160;<span class="keyword">class </span><a class="code" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a> : <span class="keyword">public</span> <a class="code" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a>&lt;spacedim&gt;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a>(<a class="code" href="classSimulationParameters.html">SimulationParameters&lt;spacedim&gt;</a> &amp;nsparam);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <a class="code" href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html#a7e018053872a10cc20f642cc067b7b66">solve</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> assemble_matrix&gt;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  assemble_nitsche_restriction();</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * @brief Calculates the force due to the fluid motion on the solid</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * @return Tensor of forces on the solid</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  Tensor&lt;1, spacedim&gt;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  calculate_forces_on_solid(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @brief Calculates the torque due to the fluid motion on the solid</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  Tensor&lt;1, 3&gt;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  calculate_torque_on_solid(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * @brief Calculates the torque due to the fluid motion on the solid</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  Tensor&lt;1, 3&gt;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ab7d15af3c6189504797cf5240b07f7a3">   76</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#ab7d15af3c6189504797cf5240b07f7a3">calculate_torque_on_solid</a>();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * @brief Post-process for forces on solid after an iteration</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @param i_solid is the solid index</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * @param first_solid_forces is a boolean set to true for the first call of this method, used for table output formatting</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  postprocess_solid_forces(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid, <span class="keywordtype">bool</span> first_solid_forces);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * @brief Post-process for torques on solid after an iteration</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   * @param i_solid is the solid index</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @param first_solid_torques is a boolean set to true for the first call of this method, used for table output formatting</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  postprocess_solid_torques(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                            <span class="keywordtype">bool</span>               first_solid_torques);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @brief Call for the assembly of the matrix</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">  100</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">assemble_system_matrix</a>()<span class="keyword"> override</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a>();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * @brief Call for the assembly of the right-hand side</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">  109</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">assemble_system_rhs</a>()<span class="keyword"> override</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    assemble_rhs();</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @deprecated This function is to be deprecated when the new assembly mechanism</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * is integrated to this solver</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <a class="code" href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a>();</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when rhs is assembled</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   * @deprecated This function is to be deprecated when the new assembly mechanism</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   * is integrated to this solver</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  assemble_rhs();</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * @brief Outputs a vtu file for each output frequency of the particles</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim = dim&gt;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a> : <span class="keyword">public</span> <a class="code" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a>&lt;spacedim&gt;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a>(<a class="code" href="classSimulationParameters.html">SimulationParameters&lt;spacedim&gt;</a> &amp;nsparam);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <a class="code" href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html#a7e018053872a10cc20f642cc067b7b66">solve</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> assemble_matrix&gt;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  assemble_nitsche_restriction();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * @brief Calculates the force due to the fluid motion on the solid</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   * @return Tensor of forces on the solid</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  Tensor&lt;1, spacedim&gt;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  calculate_forces_on_solid(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @brief Calculates the torque due to the fluid motion on the solid</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  Tensor&lt;1, 3&gt;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  calculate_torque_on_solid(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * @brief Calculates the torque due to the fluid motion on the solid</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  Tensor&lt;1, 3&gt;</div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ab7d15af3c6189504797cf5240b07f7a3">   63</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#ab7d15af3c6189504797cf5240b07f7a3">calculate_torque_on_solid</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * @brief Post-process for forces on solid after an iteration</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * @param i_solid is the solid index</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @param first_solid_forces is a boolean set to true for the first call of this method, used for table output formatting</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  postprocess_solid_forces(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid, <span class="keywordtype">bool</span> first_solid_forces);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * @brief Post-process for torques on solid after an iteration</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * @param i_solid is the solid index</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @param first_solid_torques is a boolean set to true for the first call of this method, used for table output formatting</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  postprocess_solid_torques(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                            <span class="keywordtype">bool</span>               first_solid_torques);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * @brief Call for the assembly of the matrix</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">   87</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">assemble_system_matrix</a>()<span class="keyword"> override</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <a class="code" href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a>();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   * @brief Call for the assembly of the right-hand side</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">   96</a></span>&#160;  <a class="code" href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">assemble_system_rhs</a>()<span class="keyword"> override</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    assemble_rhs();</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * @deprecated This function is to be deprecated when the new assembly mechanism</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * is integrated to this solver</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <a class="code" href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a>();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * @brief Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when rhs is assembled</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   * @deprecated This function is to be deprecated when the new assembly mechanism</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * is integrated to this solver</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  assemble_rhs();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @brief Outputs a vtu file for each output frequency of the particles</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  output_solid_particles(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);<span class="comment"></span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @brief Outputs a vtu file for each output frequency of the solid triangulation</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  output_solid_triangulation(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @brief Allow the refinement of the mesh according to one of the 2 methods proposed.</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   * Overrides the regular mesh adaptation by ensuring that the Nitsche solids</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * are prepared for adaptation.</span></div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  output_solid_particles(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);<span class="comment"></span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * @brief Outputs a vtu file for each output frequency of the solid triangulation</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  output_solid_triangulation(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * @brief Allow the refinement of the mesh according to one of the 2 methods proposed.</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * Overrides the regular mesh adaptation by ensuring that the Nitsche solids</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * are prepared for adaptation.</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  refine_mesh() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">   * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">   * @brief Read a gls_nitsche simulation checkpoint and initiate simulation restart</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <a class="code" href="read__checkpoint_8h.html#a9054e133f1e31c5036f6e6aa3daeb23f">read_checkpoint</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">  163</a></span>&#160;  std::vector&lt;std::shared_ptr&lt;SolidBase&lt;dim, spacedim&gt;&gt;&gt; <a class="code" href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">solids</a>;</div>
-<div class="line"><a name="l00164"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">  164</a></span>&#160;  std::vector&lt;PVDHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">pvdhandler_solid_triangulation</a>;</div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">  165</a></span>&#160;  std::vector&lt;PVDHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">pvdhandler_solid_particles</a>;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">  167</a></span>&#160;  std::vector&lt;TableHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">solid_forces_table</a>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">  168</a></span>&#160;  std::vector&lt;TableHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">solid_torques_table</a>;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;};</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassFluidDynamicsMatrixBased_html"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a></div><div class="ttdoc">A solver class for the Navier-Stokes equation using GLS stabilization.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__based_8h_source.html#l00044">fluid_dynamics_matrix_based.h:46</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html"><div class="ttname"><a href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00041">fluid_dynamics_nitsche.h:42</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_a1cf9d7c4b9bbf80e1f95bd25b1b3d83e"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">FluidDynamicsNitsche::solids</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; SolidBase&lt; dim, spacedim &gt; &gt; &gt; solids</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00163">fluid_dynamics_nitsche.h:163</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_a6d9ca16aa669641e67d01a7e4b519c27"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">FluidDynamicsNitsche::pvdhandler_solid_triangulation</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_triangulation</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00164">fluid_dynamics_nitsche.h:164</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_aa71737d19a026c5b7533769ef220e190"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">FluidDynamicsNitsche::solid_forces_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_forces_table</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00167">fluid_dynamics_nitsche.h:167</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_aaafba3f2cf1bb7a7774638360cbc8972"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">FluidDynamicsNitsche::assemble_system_matrix</a></div><div class="ttdeci">virtual void assemble_system_matrix() override</div><div class="ttdoc">Call for the assembly of the matrix.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00100">fluid_dynamics_nitsche.h:100</a></div></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  refine_mesh() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <a class="code" href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * @brief Read a gls_nitsche simulation checkpoint and initiate simulation restart</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <a class="code" href="read__checkpoint_8h.html#a9054e133f1e31c5036f6e6aa3daeb23f">read_checkpoint</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">  150</a></span>&#160;  std::vector&lt;std::shared_ptr&lt;SolidBase&lt;dim, spacedim&gt;&gt;&gt; <a class="code" href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">solids</a>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">  151</a></span>&#160;  std::vector&lt;PVDHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">pvdhandler_solid_triangulation</a>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">  152</a></span>&#160;  std::vector&lt;PVDHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">pvdhandler_solid_particles</a>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">  154</a></span>&#160;  std::vector&lt;TableHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">solid_forces_table</a>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">  155</a></span>&#160;  std::vector&lt;TableHandler&gt; <a class="code" href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">solid_torques_table</a>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;};</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassFluidDynamicsMatrixBased_html"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a></div><div class="ttdoc">A solver class for the Navier-Stokes equation using GLS stabilization.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__based_8h_source.html#l00032">fluid_dynamics_matrix_based.h:34</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html"><div class="ttname"><a href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00028">fluid_dynamics_nitsche.h:29</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a1cf9d7c4b9bbf80e1f95bd25b1b3d83e"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">FluidDynamicsNitsche::solids</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; SolidBase&lt; dim, spacedim &gt; &gt; &gt; solids</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00150">fluid_dynamics_nitsche.h:150</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a6d9ca16aa669641e67d01a7e4b519c27"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">FluidDynamicsNitsche::pvdhandler_solid_triangulation</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_triangulation</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00151">fluid_dynamics_nitsche.h:151</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_aa71737d19a026c5b7533769ef220e190"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">FluidDynamicsNitsche::solid_forces_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_forces_table</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00154">fluid_dynamics_nitsche.h:154</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_aaafba3f2cf1bb7a7774638360cbc8972"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aaafba3f2cf1bb7a7774638360cbc8972">FluidDynamicsNitsche::assemble_system_matrix</a></div><div class="ttdeci">virtual void assemble_system_matrix() override</div><div class="ttdoc">Call for the assembly of the matrix.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00087">fluid_dynamics_nitsche.h:87</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_ab7d15af3c6189504797cf5240b07f7a3"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ab7d15af3c6189504797cf5240b07f7a3">FluidDynamicsNitsche::calculate_torque_on_solid</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; calculate_torque_on_solid()</div><div class="ttdoc">Calculates the torque due to the fluid motion on the solid.</div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_abd838581c2d01afe8f02cef6efb62de2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">FluidDynamicsNitsche::pvdhandler_solid_particles</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_particles</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00165">fluid_dynamics_nitsche.h:165</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_ad2a2b2ff2fb0386faac1e3499e52eca7"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">FluidDynamicsNitsche::assemble_system_rhs</a></div><div class="ttdeci">virtual void assemble_system_rhs() override</div><div class="ttdoc">Call for the assembly of the right-hand side.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00109">fluid_dynamics_nitsche.h:109</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_afa77adde92f255d3908d7beeedbec3a2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">FluidDynamicsNitsche::solid_torques_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_torques_table</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00168">fluid_dynamics_nitsche.h:168</a></div></div>
-<div class="ttc" id="aclassSimulationParameters_html"><div class="ttname"><a href="classSimulationParameters.html">SimulationParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="simulation__parameters_8h_source.html#l00035">simulation_parameters.h:36</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_abd838581c2d01afe8f02cef6efb62de2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">FluidDynamicsNitsche::pvdhandler_solid_particles</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_particles</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00152">fluid_dynamics_nitsche.h:152</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_ad2a2b2ff2fb0386faac1e3499e52eca7"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ad2a2b2ff2fb0386faac1e3499e52eca7">FluidDynamicsNitsche::assemble_system_rhs</a></div><div class="ttdeci">virtual void assemble_system_rhs() override</div><div class="ttdoc">Call for the assembly of the right-hand side.</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00096">fluid_dynamics_nitsche.h:96</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_afa77adde92f255d3908d7beeedbec3a2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">FluidDynamicsNitsche::solid_torques_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_torques_table</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00155">fluid_dynamics_nitsche.h:155</a></div></div>
+<div class="ttc" id="aclassSimulationParameters_html"><div class="ttname"><a href="classSimulationParameters.html">SimulationParameters</a></div><div class="ttdef"><b>Definition:</b> <a href="simulation__parameters_8h_source.html#l00022">simulation_parameters.h:23</a></div></div>
 <div class="ttc" id="aexceptions_8h_html"><div class="ttname"><a href="exceptions_8h.html">exceptions.h</a></div></div>
 <div class="ttc" id="afluid__dynamics__matrix__based_8h_html"><div class="ttname"><a href="fluid__dynamics__matrix__based_8h.html">fluid_dynamics_matrix_based.h</a></div></div>
-<div class="ttc" id="anamespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner_html_a7e018053872a10cc20f642cc067b7b66"><div class="ttname"><a href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html#a7e018053872a10cc20f642cc067b7b66">dealii::internal::MGCoarseGridApplyPreconditioner::solve</a></div><div class="ttdeci">void solve(const PreconditionerType preconditioner, VectorType &amp;dst, const VectorType &amp;src)</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00492">fluid_dynamics_matrix_free.cc:492</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
-<div class="ttc" id="aread__checkpoint_8h_html_a9054e133f1e31c5036f6e6aa3daeb23f"><div class="ttname"><a href="read__checkpoint_8h.html#a9054e133f1e31c5036f6e6aa3daeb23f">read_checkpoint</a></div><div class="ttdeci">void read_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_surfaces)</div><div class="ttdoc">Read a DEM simulation checkpoint, allowing the simulation to restart from where it stopped.</div><div class="ttdef"><b>Definition:</b> <a href="read__checkpoint_8cc_source.html#l00014">read_checkpoint.cc:14</a></div></div>
-<div class="ttc" id="arpt__fem__reconstruction_8h_html_a3b067da022e1afc62faaae6d681d57df"><div class="ttname"><a href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a></div><div class="ttdeci">Vector&lt; double &gt; assemble_matrix_and_rhs(std::vector&lt; std::vector&lt; double &gt;&gt; &amp;vertex_count, std::vector&lt; double &gt; &amp;experimental_count, Parameters::RPTFEMReconstructionParameters::FEMCostFunction &amp;cost_function_type)</div><div class="ttdoc">Sets-up, assembles and solves the linear system to find the location of a particle in reference coord...</div><div class="ttdef"><b>Definition:</b> <a href="rpt__fem__reconstruction_8cc_source.html#l00496">rpt_fem_reconstruction.cc:496</a></div></div>
+<div class="ttc" id="anamespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner_html_a7e018053872a10cc20f642cc067b7b66"><div class="ttname"><a href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html#a7e018053872a10cc20f642cc067b7b66">dealii::internal::MGCoarseGridApplyPreconditioner::solve</a></div><div class="ttdeci">void solve(const PreconditionerType preconditioner, VectorType &amp;dst, const VectorType &amp;src)</div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00480">fluid_dynamics_matrix_free.cc:480</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
+<div class="ttc" id="aread__checkpoint_8h_html_a9054e133f1e31c5036f6e6aa3daeb23f"><div class="ttname"><a href="read__checkpoint_8h.html#a9054e133f1e31c5036f6e6aa3daeb23f">read_checkpoint</a></div><div class="ttdeci">void read_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_surfaces)</div><div class="ttdoc">Read a DEM simulation checkpoint, allowing the simulation to restart from where it stopped.</div><div class="ttdef"><b>Definition:</b> <a href="read__checkpoint_8cc_source.html#l00017">read_checkpoint.cc:17</a></div></div>
+<div class="ttc" id="arpt__fem__reconstruction_8h_html_a3b067da022e1afc62faaae6d681d57df"><div class="ttname"><a href="rpt__fem__reconstruction_8h.html#a3b067da022e1afc62faaae6d681d57df">assemble_matrix_and_rhs</a></div><div class="ttdeci">Vector&lt; double &gt; assemble_matrix_and_rhs(std::vector&lt; std::vector&lt; double &gt;&gt; &amp;vertex_count, std::vector&lt; double &gt; &amp;experimental_count, Parameters::RPTFEMReconstructionParameters::FEMCostFunction &amp;cost_function_type)</div><div class="ttdoc">Sets-up, assembles and solves the linear system to find the location of a particle in reference coord...</div><div class="ttdef"><b>Definition:</b> <a href="rpt__fem__reconstruction_8cc_source.html#l00499">rpt_fem_reconstruction.cc:499</a></div></div>
 <div class="ttc" id="asolid__base_8h_html"><div class="ttname"><a href="solid__base_8h.html">solid_base.h</a></div></div>
-<div class="ttc" id="awrite__checkpoint_8h_html_a50fb25fa8e609c50806ac52f1a2c0ab3"><div class="ttname"><a href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a></div><div class="ttdeci">void write_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.</div><div class="ttdef"><b>Definition:</b> <a href="write__checkpoint_8cc_source.html#l00012">write_checkpoint.cc:12</a></div></div>
+<div class="ttc" id="awrite__checkpoint_8h_html_a50fb25fa8e609c50806ac52f1a2c0ab3"><div class="ttname"><a href="write__checkpoint_8h.html#a50fb25fa8e609c50806ac52f1a2c0ab3">write_checkpoint</a></div><div class="ttdeci">void write_checkpoint(TimerOutput &amp;computing_timer, const DEMSolverParameters&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, PVDHandler &amp;particles_pvdhandler, PVDHandler &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; Insertion&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; SerialSolid&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_objects, const ConditionalOStream &amp;pcout, MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.</div><div class="ttdef"><b>Definition:</b> <a href="write__checkpoint_8cc_source.html#l00015">write_checkpoint.cc:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

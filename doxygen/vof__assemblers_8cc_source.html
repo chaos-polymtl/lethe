@@ -79,498 +79,501 @@ $(function() {
 <div class="title">vof_assemblers.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="vof__assemblers_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="time__integration__utilities_8h.html">core/time_integration_utilities.h</a>&gt;</span></div>
+<a href="vof__assemblers_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="copy__data_8h.html">solvers/copy_data.h</a>&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="vof__assemblers_8h.html">solvers/vof_assemblers.h</a>&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="time__integration__utilities_8h.html">core/time_integration_utilities.h</a>&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">   11</a></span>&#160;<a class="code" href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">VOFAssemblerCore&lt;dim&gt;::assemble_matrix</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;                                       <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="comment">// Scheme and physical properties</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="comment">// Time steps and inverse time steps which is used for stabilization constant</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  std::vector&lt;double&gt; time_steps_vector =</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    this-&gt;simulation_control-&gt;get_time_steps_vector();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> dt  = time_steps_vector[0];</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> sdt = 1. / dt;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="comment">// Add a small diffusivity, used to artificially diffuse VOF</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity = this-&gt;vof_parameters.diffusivity;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="copy__data_8h.html">solvers/copy_data.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="vof__assemblers_8h.html">solvers/vof_assemblers.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">   14</a></span>&#160;<a class="code" href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">VOFAssemblerCore&lt;dim&gt;::assemble_matrix</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                                       <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="comment">// Scheme and physical properties</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// Time steps and inverse time steps which is used for stabilization constant</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  std::vector&lt;double&gt; time_steps_vector =</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    this-&gt;simulation_control-&gt;get_time_steps_vector();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> dt  = time_steps_vector[0];</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> sdt = 1. / dt;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">auto</span> &amp;strong_jacobian_vec = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">strong_jacobian</a>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix        = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="comment">// Assemble local matrix and right-hand side</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="comment">// Gather into local variables the relevant fields</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>    = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_divergence = scratch_data.<a class="code" href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">velocity_divergences</a>[q];</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="comment">// Store JxW in local variable for faster access;</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = JxW_vec[q];</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// Add a small diffusivity, used to artificially diffuse VOF</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity = this-&gt;vof_parameters.diffusivity;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">auto</span> &amp;strong_jacobian_vec = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">strong_jacobian</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix        = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// Assemble local matrix and right-hand side</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="comment">// Gather into local variables the relevant fields</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>    = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_divergence = scratch_data.<a class="code" href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">velocity_divergences</a>[q];</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="comment">// Define tolerance to avoid division by zero</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="comment">// Store JxW in local variable for faster access;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = JxW_vec[q];</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="comment">// Compute the velocity magnitude for the stabilization parameter and the</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="comment">// compression term for the phase indicator</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> u_mag = std::max(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm(), tolerance);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="comment">// steady or unsteady. In the unsteady case, it includes the value</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="comment">// of the time-step. Hypothesis: advection dominated problem</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="comment">// (Pe&gt;3) [Bochev et al., Stability of the SUPG finite element</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      <span class="comment">// method for transient advection-diffusion problems, CMAME 2004]</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <a class="code" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          1. / std::sqrt(</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                 Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                 9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h))) :</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          1. /</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            std::sqrt(Utilities::fixed_power&lt;2&gt;(sdt) +</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                      Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                      9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h)));</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j           = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j      = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> laplacian_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a91972185602c37789a8cd29c3edc55c5">laplacian_phi</a>[q][j];</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          <span class="comment">// Strong Jacobian associated with the GLS stabilization</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          strong_jacobian_vec[q][j] +=</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * grad_phi_phase_j - diffusivity * laplacian_phi_phase_j;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          <span class="keywordflow">if</span> (compressible)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            strong_jacobian_vec[q][j] += phi_phase_j * velocity_divergence;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;              <span class="comment">// Weak form for advection-diffusion:</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;              <span class="comment">// u * grad(phase) + phase * grad(u) - diffusivity *</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;              <span class="comment">// laplacian(phase) = 0</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              local_matrix(i, j) +=</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                (phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * grad_phi_phase_j +</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                 diffusivity * grad_phi_phase_i * grad_phi_phase_j) *</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                JxW;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;              <span class="comment">// Add compressibility term if the VOF is compressible</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;              <span class="keywordflow">if</span> (compressible)</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                local_matrix(i, j) +=</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                  phi_phase_i * phi_phase_j * velocity_divergence * JxW;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;              <span class="comment">// Addition to the cell matrix for GLS stabilization</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;              local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                    (grad_phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>) * JxW;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            }</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    } <span class="comment">// end loop on quadrature points</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;}</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">  118</a></span>&#160;<a class="code" href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">VOFAssemblerCore&lt;dim&gt;::assemble_rhs</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                                    <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;{</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="comment">// Scheme and physical properties</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="comment">// Add a small diffusivity, used to artificially diffuse VOF</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity = this-&gt;vof_parameters.diffusivity;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="comment">// Define tolerance to avoid division by zero</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="comment">// Compute the velocity magnitude for the stabilization parameter and the</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <span class="comment">// compression term for the phase indicator</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> u_mag = std::max(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm(), tolerance);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      <span class="comment">// steady or unsteady. In the unsteady case, it includes the value</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="comment">// of the time-step. Hypothesis: advection dominated problem</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="comment">// (Pe&gt;3) [Bochev et al., Stability of the SUPG finite element</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="comment">// method for transient advection-diffusion problems, CMAME 2004]</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          1. / std::sqrt(</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                 Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                 9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h))) :</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;          1. /</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            std::sqrt(Utilities::fixed_power&lt;2&gt;(sdt) +</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                      Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                      9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h)));</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j           = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j      = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> laplacian_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a91972185602c37789a8cd29c3edc55c5">laplacian_phi</a>[q][j];</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          <span class="comment">// Strong Jacobian associated with the GLS stabilization</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          strong_jacobian_vec[q][j] +=</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * grad_phi_phase_j - diffusivity * laplacian_phi_phase_j;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          <span class="keywordflow">if</span> (compressible)</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            strong_jacobian_vec[q][j] += phi_phase_j * velocity_divergence;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              <span class="comment">// Weak form for advection-diffusion:</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;              <span class="comment">// u * grad(phase) + phase * grad(u) - diffusivity *</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;              <span class="comment">// laplacian(phase) = 0</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;              local_matrix(i, j) +=</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                (phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * grad_phi_phase_j +</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                 diffusivity * grad_phi_phase_i * grad_phi_phase_j) *</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                JxW;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;              <span class="comment">// Add compressibility term if the VOF is compressible</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;              <span class="keywordflow">if</span> (compressible)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                local_matrix(i, j) +=</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                  phi_phase_i * phi_phase_j * velocity_divergence * JxW;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;              <span class="comment">// Addition to the cell matrix for GLS stabilization</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;              local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                                    (grad_phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>) * JxW;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    } <span class="comment">// end loop on quadrature points</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;}</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">  121</a></span>&#160;<a class="code" href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">VOFAssemblerCore&lt;dim&gt;::assemble_rhs</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                                    <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;{</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="comment">// Scheme and physical properties</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="comment">// Time steps and inverse time steps which is used for stabilization constant</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  std::vector&lt;double&gt; time_steps_vector =</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    this-&gt;simulation_control-&gt;get_time_steps_vector();</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> dt  = time_steps_vector[0];</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> sdt = 1. / dt;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual_vec = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs           = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="comment">// Assemble local matrix and right-hand side</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="comment">// Gather into local variables the relevant fields</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; phase_gradient   = scratch_data.<a class="code" href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">phase_gradients</a>[q];</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         phase_laplacians = scratch_data.<a class="code" href="classVOFScratchData.html#a9d6ad576100b507c60381870bb925085">phase_laplacians</a>[q];</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>         = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_divergence = scratch_data.<a class="code" href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">velocity_divergences</a>[q];</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      <span class="comment">// Store JxW in local variable for faster access;</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = JxW_vec[q];</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="comment">// Add a small diffusivity, used to artificially diffuse VOF</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> diffusivity = this-&gt;vof_parameters.diffusivity;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="comment">// Time steps and inverse time steps which is used for stabilization constant</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  std::vector&lt;double&gt; time_steps_vector =</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    this-&gt;simulation_control-&gt;get_time_steps_vector();</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> dt  = time_steps_vector[0];</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> sdt = 1. / dt;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual_vec = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs           = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="comment">// Assemble local matrix and right-hand side</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      <span class="comment">// Gather into local variables the relevant fields</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; phase_gradient   = scratch_data.<a class="code" href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">phase_gradients</a>[q];</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         phase_laplacians = scratch_data.<a class="code" href="classVOFScratchData.html#a9d6ad576100b507c60381870bb925085">phase_laplacians</a>[q];</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>         = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_divergence = scratch_data.<a class="code" href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">velocity_divergences</a>[q];</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      <span class="comment">// Define tolerance to avoid division by zero</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      <span class="comment">// Store JxW in local variable for faster access;</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW = JxW_vec[q];</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      <span class="comment">// Compute the velocity magnitude for the stabilization parameter</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> u_mag = std::max(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm(), tolerance);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      <span class="comment">// Define tolerance to avoid division by zero</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      <span class="comment">// steady or unsteady. In the unsteady case, it includes the value</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      <span class="comment">// of the time-step. Hypothesis: advection dominated problem</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      <span class="comment">// (Pe&gt;3) [Bochev et al., Stability of the SUPG finite element</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="comment">// method for transient advection-diffusion problems, CMAME 2004]</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <a class="code" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;          1. / std::sqrt(</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                 Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                 9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h))) :</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;          1. /</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            std::sqrt(Utilities::fixed_power&lt;2&gt;(sdt) +</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                      Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                      9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h)));</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      strong_residual_vec[q] +=</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phase_gradient - diffusivity * phase_laplacians;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      <span class="keywordflow">if</span> (compressible)</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        strong_residual_vec[q] += <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * velocity_divergence;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      <span class="comment">// Compute the velocity magnitude for the stabilization parameter</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> u_mag = std::max(<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm(), tolerance);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="comment">// steady or unsteady. In the unsteady case, it includes the value</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      <span class="comment">// of the time-step. Hypothesis: advection dominated problem</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      <span class="comment">// (Pe&gt;3) [Bochev et al., Stability of the SUPG finite element</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      <span class="comment">// method for transient advection-diffusion problems, CMAME 2004]</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <a class="code" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;          1. / std::sqrt(</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                 Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                 9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h))) :</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;          1. /</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;            std::sqrt(Utilities::fixed_power&lt;2&gt;(sdt) +</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                      Utilities::fixed_power&lt;2&gt;(2. * u_mag / h) +</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                      9 * Utilities::fixed_power&lt;2&gt;(4 * diffusivity / (h * h)));</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;      <span class="comment">// Calculate the strong residual for GLS stabilization</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      strong_residual_vec[q] +=</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phase_gradient - diffusivity * phase_laplacians;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        {</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          <span class="comment">// rhs for: u * grad(phase) + phase * grad(u) - diffusivity *</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;          <span class="comment">// laplacian(phase) = 0</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;          local_rhs(i) -= (phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phase_gradient +</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                           diffusivity * grad_phi_phase_i * phase_gradient) *</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                          JxW;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;          <span class="keywordflow">if</span> (compressible)</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            local_rhs(i) -= phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * velocity_divergence * JxW;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      <span class="keywordflow">if</span> (compressible)</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        strong_residual_vec[q] += <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * velocity_divergence;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i      = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;          <span class="comment">// rhs for: u * grad(phase) + phase * grad(u) - diffusivity *</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;          <span class="comment">// laplacian(phase) = 0</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;          local_rhs(i) -= (phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> * phase_gradient +</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                           diffusivity * grad_phi_phase_i * phase_gradient) *</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                          JxW;</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          local_rhs(i) -=</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            tau * (strong_residual_vec[q] * (grad_phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>)) *</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            JxW;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        }</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    }</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;}</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerCore.html">VOFAssemblerCore&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerCore.html">VOFAssemblerCore&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;          <span class="keywordflow">if</span> (compressible)</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            local_rhs(i) -= phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> * velocity_divergence * JxW;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;          local_rhs(i) -=</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            tau * (strong_residual_vec[q] * (grad_phi_phase_i * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>)) *</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            JxW;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        }</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;}</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">  211</a></span>&#160;<a class="code" href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">VOFAssemblerBDF&lt;dim&gt;::assemble_matrix</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                                      <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;{</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keyword">auto</span> &amp;strong_jacobian = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">strong_jacobian</a>;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix    = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  <span class="comment">// Time stepping information</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  std::vector&lt;double&gt; phase_value(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    {</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;      phase_value[0] = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        phase_value[p + 1] = scratch_data.<a class="code" href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">previous_phase_values</a>[p][q];</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerCore.html">VOFAssemblerCore&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerCore.html">VOFAssemblerCore&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno"><a class="line" href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">  214</a></span>&#160;<a class="code" href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">VOFAssemblerBDF&lt;dim&gt;::assemble_matrix</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                                      <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;{</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keyword">auto</span> &amp;strong_jacobian = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">strong_jacobian</a>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix    = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="comment">// Time stepping information</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  std::vector&lt;double&gt; phase_value(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      phase_value[0] = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;           ++p)</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;          strong_residual[q] += (bdf_coefs[p] * phase_value[p]);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        }</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        {</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;          strong_jacobian[q][j] += bdf_coefs[0] * scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        }</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        {</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;              local_matrix(i, j) +=</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            }</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        }</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    }</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;}</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno"><a class="line" href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">  268</a></span>&#160;<a class="code" href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">VOFAssemblerBDF&lt;dim&gt;::assemble_rhs</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                                   <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;{</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs       = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="comment">// Time stepping information</span></div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  std::vector&lt;double&gt; phase_value(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    {</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;      phase_value[0] = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        phase_value[p + 1] = scratch_data.<a class="code" href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">previous_phase_values</a>[p][q];</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        phase_value[p + 1] = scratch_data.<a class="code" href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">previous_phase_values</a>[p][q];</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;           ++p)</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        {</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;          strong_residual[q] += (bdf_coefs[p] * phase_value[p]);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;          strong_jacobian[q][j] += bdf_coefs[0] * scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        {</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            {</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][j];</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;              local_matrix(i, j) +=</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            }</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        }</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;}</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">  271</a></span>&#160;<a class="code" href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">VOFAssemblerBDF&lt;dim&gt;::assemble_rhs</a>(<a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                                   <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;{</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="keyword">auto</span> &amp;strong_residual = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">strong_residual</a>;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs       = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  <span class="comment">// Time stepping information</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  std::vector&lt;double&gt; phase_value(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    {</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      phase_value[0] = scratch_data.<a class="code" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">present_phase_values</a>[q];</div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;           ++p)</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;          strong_residual[q] += (bdf_coefs[p] * phase_value[p]);</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        }</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;          <span class="keywordtype">double</span>       local_rhs_i = 0;</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;               ++p)</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;              local_rhs_i -= bdf_coefs[p] * (phase_value[p] * phi_phase_i);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            }</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;          local_rhs(i) += local_rhs_i * JxW[q];</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        }</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;}</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerBDF.html">VOFAssemblerBDF&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerBDF.html">VOFAssemblerBDF&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        phase_value[p + 1] = scratch_data.<a class="code" href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">previous_phase_values</a>[p][q];</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;           ++p)</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;          strong_residual[q] += (bdf_coefs[p] * phase_value[p]);</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        }</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">phi</a>[q][i];</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;          <span class="keywordtype">double</span>       local_rhs_i = 0;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;               ++p)</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            {</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;              local_rhs_i -= bdf_coefs[p] * (phase_value[p] * phi_phase_i);</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;          local_rhs(i) += local_rhs_i * JxW[q];</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    }</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;}</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">  320</a></span>&#160;<a class="code" href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">VOFAssemblerDCDDStabilization&lt;dim&gt;::assemble_matrix</a>(</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  <a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;{</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerBDF.html">VOFAssemblerBDF&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerBDF.html">VOFAssemblerBDF&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">  323</a></span>&#160;<a class="code" href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">VOFAssemblerDCDDStabilization&lt;dim&gt;::assemble_matrix</a>(</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  <a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;{</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="comment">// Assemble local matrix</span></div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    {</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;      <span class="comment">// Gather into local variables the relevant fields for faster access</span></div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW      = JxW_vec[q];</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;      <span class="comment">// We use the previous phase gradient for the shock capture (explicit)</span></div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; previous_phase_gradient =</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        scratch_data.<a class="code" href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">previous_phase_gradients</a>[q];</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      <span class="comment">// Define a tolerance to avoid division by zero</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  <span class="comment">// Assemble local matrix</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    {</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      <span class="comment">// Gather into local variables the relevant fields for faster access</span></div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW      = JxW_vec[q];</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;      <span class="comment">// We use the previous phase gradient for the shock capture (explicit)</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; previous_phase_gradient =</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        scratch_data.<a class="code" href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">previous_phase_gradients</a>[q];</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      <span class="comment">// Compute the velocity magnitude and phase gradient norm for the</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="comment">// stabilization term</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_norm       = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> phase_gradient_norm = previous_phase_gradient.norm();</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;      <span class="comment">// In Tezduyar 2003, this is denoted r in equation (67).</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;      Tensor&lt;1, dim&gt; gradient_unit_vector =</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        previous_phase_gradient / (phase_gradient_norm + tolerance);</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      <span class="comment">// We remove the diffusion aligned with the velocity as is done in the</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;      <span class="comment">// original article. In Tezduyar 2003, this is denoted s in equation (67).</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;      Tensor&lt;1, dim&gt; velocity_unit_vector =</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> / (velocity_norm + tolerance);</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;      <span class="comment">// Directionality tensor describing [rr - (r⋅s)^2*ss]</span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;      <span class="keyword">const</span> Tensor&lt;2, dim&gt; dir_tensor =</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        outer_product(gradient_unit_vector, gradient_unit_vector) -</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        (Utilities::fixed_power&lt;2&gt;(gradient_unit_vector *</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                                   velocity_unit_vector) *</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;         outer_product(velocity_unit_vector, velocity_unit_vector));</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160; </div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      <span class="comment">// Compute the artificial viscosity of the shock capture</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> nu_dcdd =</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        (0.5 * h * h) * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() * phase_gradient_norm;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160; </div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;      <span class="comment">// Assemble DCDD shock capturing contributions</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        {</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160; </div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            {</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;              local_matrix(i, j) +=</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                (nu_dcdd * scalar_product(grad_phi_phase_i,</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;                                          dir_tensor * grad_phi_phase_j)) *</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                JxW;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            }</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        }</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    }</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;}</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160; </div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00391"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">  391</a></span>&#160;<a class="code" href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">VOFAssemblerDCDDStabilization&lt;dim&gt;::assemble_rhs</a>(</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  <a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;{</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      <span class="comment">// Define a tolerance to avoid division by zero</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;      <span class="comment">// Compute the velocity magnitude and phase gradient norm for the</span></div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;      <span class="comment">// stabilization term</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_norm       = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> phase_gradient_norm = previous_phase_gradient.norm();</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;      <span class="comment">// In Tezduyar 2003, this is denoted r in equation (67).</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      Tensor&lt;1, dim&gt; gradient_unit_vector =</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        previous_phase_gradient / (phase_gradient_norm + tolerance);</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;      <span class="comment">// We remove the diffusion aligned with the velocity as is done in the</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;      <span class="comment">// original article. In Tezduyar 2003, this is denoted s in equation (67).</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;      Tensor&lt;1, dim&gt; velocity_unit_vector =</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> / (velocity_norm + tolerance);</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;      <span class="comment">// Directionality tensor describing [rr - (r⋅s)^2*ss]</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;      <span class="keyword">const</span> Tensor&lt;2, dim&gt; dir_tensor =</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        outer_product(gradient_unit_vector, gradient_unit_vector) -</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        (Utilities::fixed_power&lt;2&gt;(gradient_unit_vector *</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                   velocity_unit_vector) *</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;         outer_product(velocity_unit_vector, velocity_unit_vector));</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;      <span class="comment">// Compute the artificial viscosity of the shock capture</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> nu_dcdd =</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        (0.5 * h * h) * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() * phase_gradient_norm;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160; </div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      <span class="comment">// Assemble DCDD shock capturing contributions</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        {</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160; </div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            {</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;              <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_j = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][j];</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;              local_matrix(i, j) +=</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;                (nu_dcdd * scalar_product(grad_phi_phase_i,</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;                                          dir_tensor * grad_phi_phase_j)) *</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;                JxW;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            }</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        }</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    }</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;}</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">  394</a></span>&#160;<a class="code" href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">VOFAssemblerDCDDStabilization&lt;dim&gt;::assemble_rhs</a>(</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  <a class="code" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>       &amp;scratch_data,</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;{</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW_vec    = scratch_data.<a class="code" href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">JxW</a>;</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">n_q_points</a>;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">n_dofs</a>;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>       h          = scratch_data.<a class="code" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">cell_size</a>;</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;  <span class="comment">// Assemble local matrix</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    {</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      <span class="comment">// Gather into local variables the relevant fields for faster access</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; phase_gradient = scratch_data.<a class="code" href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">phase_gradients</a>[q];</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>       = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW            = JxW_vec[q];</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;      <span class="comment">// We use the previous phase gradient for the shock capture (explicit)</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; previous_phase_gradient =</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        scratch_data.<a class="code" href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">previous_phase_gradients</a>[q];</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      <span class="comment">// Define a tolerance to avoid division by zero</span></div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160; </div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  <span class="comment">// Assemble local matrix</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    {</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;      <span class="comment">// Gather into local variables the relevant fields for faster access</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; phase_gradient = scratch_data.<a class="code" href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">phase_gradients</a>[q];</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>       = scratch_data.<a class="code" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q];</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW            = JxW_vec[q];</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;      <span class="comment">// We use the previous phase gradient for the shock capture (explicit)</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      <span class="keyword">const</span> Tensor&lt;1, dim&gt; previous_phase_gradient =</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        scratch_data.<a class="code" href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">previous_phase_gradients</a>[q];</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;      <span class="comment">// Compute the velocity magnitude and phase gradient norm for the</span></div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;      <span class="comment">// stabilization term</span></div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_norm       = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> phase_gradient_norm = previous_phase_gradient.norm();</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;      <span class="comment">// In Tezduyar 2003, this is denoted r in equation (67).</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;      Tensor&lt;1, dim&gt; gradient_unit_vector =</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        previous_phase_gradient / (phase_gradient_norm + tolerance);</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;      <span class="comment">// We remove the diffusion aligned with the velocity as is done in the</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;      <span class="comment">// original article. In Tezduyar 2003, this is denoted s in equation (67).</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;      Tensor&lt;1, dim&gt; velocity_unit_vector =</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> / (velocity_norm + tolerance);</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160; </div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;      <span class="comment">// Directionality tensor describing [rr - (r⋅s)^2*ss]</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;      <span class="keyword">const</span> Tensor&lt;2, dim&gt; dir_tensor =</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;        outer_product(gradient_unit_vector, gradient_unit_vector) -</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        (Utilities::fixed_power&lt;2&gt;(gradient_unit_vector *</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                                   velocity_unit_vector) *</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;         outer_product(velocity_unit_vector, velocity_unit_vector));</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160; </div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;      <span class="comment">// Compute the artificial viscosity of the shock capture</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> nu_dcdd =</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        (0.5 * h * h) * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() * phase_gradient_norm;</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160; </div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;      <span class="comment">// Assemble DCDD shock capturing contributions</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        {</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;          local_rhs(i) -=</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;            nu_dcdd *</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;            scalar_product(grad_phi_phase_i, dir_tensor * phase_gradient) * JxW;</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;        }</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    }</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;}</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;      <span class="comment">// Define a tolerance to avoid division by zero</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> tolerance = 1e-12;</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160; </div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;      <span class="comment">// Compute the velocity magnitude and phase gradient norm for the</span></div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;      <span class="comment">// stabilization term</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> velocity_norm       = <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm();</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> phase_gradient_norm = previous_phase_gradient.norm();</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;      <span class="comment">// In Tezduyar 2003, this is denoted r in equation (67).</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;      Tensor&lt;1, dim&gt; gradient_unit_vector =</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;        previous_phase_gradient / (phase_gradient_norm + tolerance);</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160; </div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;      <span class="comment">// We remove the diffusion aligned with the velocity as is done in the</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;      <span class="comment">// original article. In Tezduyar 2003, this is denoted s in equation (67).</span></div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;      Tensor&lt;1, dim&gt; velocity_unit_vector =</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;        <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a> / (velocity_norm + tolerance);</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160; </div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;      <span class="comment">// Directionality tensor describing [rr - (r⋅s)^2*ss]</span></div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;      <span class="keyword">const</span> Tensor&lt;2, dim&gt; dir_tensor =</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        outer_product(gradient_unit_vector, gradient_unit_vector) -</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        (Utilities::fixed_power&lt;2&gt;(gradient_unit_vector *</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                                   velocity_unit_vector) *</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;         outer_product(velocity_unit_vector, velocity_unit_vector));</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;      <span class="comment">// Compute the artificial viscosity of the shock capture</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;      <span class="keyword">const</span> <span class="keywordtype">double</span> nu_dcdd =</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        (0.5 * h * h) * <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() * phase_gradient_norm;</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160; </div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;      <span class="comment">// Assemble DCDD shock capturing contributions</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        {</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;          <span class="keyword">const</span> <span class="keyword">auto</span> grad_phi_phase_i = scratch_data.<a class="code" href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">grad_phi</a>[q][i];</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;          local_rhs(i) -=</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;            nu_dcdd *</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;            scalar_product(grad_phi_phase_i, dir_tensor * phase_gradient) * JxW;</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;        }</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    }</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;}</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160; </div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
-<div class="ttc" id="abdf_8h_html_a8b5d2bb44cdac716464d7e779fa14c4c"><div class="ttname"><a href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00112">bdf.h:112</a></div></div>
-<div class="ttc" id="aclassStabilizedMethodsCopyData_html"><div class="ttname"><a href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a></div><div class="ttdoc">Class responsible for storing the information calculated using the assembly of stabilized scalar equa...</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00081">copy_data.h:82</a></div></div>
-<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a3f0641e43ef491085155e7c75f2181ee"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">StabilizedMethodsCopyData::local_rhs</a></div><div class="ttdeci">Vector&lt; double &gt; local_rhs</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00120">copy_data.h:120</a></div></div>
-<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a6426ba51103634253386421c053eee9a"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">StabilizedMethodsCopyData::strong_residual</a></div><div class="ttdeci">Vector&lt; double &gt; strong_residual</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00122">copy_data.h:122</a></div></div>
-<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a6c3e7385d9e533d5c5ec749a856edcae"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">StabilizedMethodsCopyData::local_matrix</a></div><div class="ttdeci">FullMatrix&lt; double &gt; local_matrix</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00119">copy_data.h:119</a></div></div>
-<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a79618004b1316140323d44a547ba6d3c"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">StabilizedMethodsCopyData::strong_jacobian</a></div><div class="ttdeci">std::vector&lt; Vector&lt; double &gt; &gt; strong_jacobian</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00123">copy_data.h:123</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerBDF_html"><div class="ttname"><a href="classVOFAssemblerBDF.html">VOFAssemblerBDF</a></div><div class="ttdoc">Class that assembles the transient time arising from BDF time integration for the VOF equations....</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00128">vof_assemblers.h:129</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerBDF_html_a213bafd94c5199426a0f39b23f7af8f5"><div class="ttname"><a href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">VOFAssemblerBDF::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00268">vof_assemblers.cc:268</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerBDF_html_abb31504dee264b6f7beb2dcc8a952bcd"><div class="ttname"><a href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">VOFAssemblerBDF::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00211">vof_assemblers.cc:211</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerCore_html"><div class="ttname"><a href="classVOFAssemblerCore.html">VOFAssemblerCore</a></div><div class="ttdoc">Class that assembles the core of the VOF solver. According to the following weak form:  with an SUPG ...</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00078">vof_assemblers.h:79</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerCore_html_a9e0eaa8178f1d0e57df80c0dec131d62"><div class="ttname"><a href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">VOFAssemblerCore::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00118">vof_assemblers.cc:118</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerCore_html_ade84531434d78a40d7554a1ee383fea3"><div class="ttname"><a href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">VOFAssemblerCore::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00011">vof_assemblers.cc:11</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a></div><div class="ttdoc">Assemble the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term for the VOF ph...</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00172">vof_assemblers.h:173</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_ae090d503229af2642d217a5214c2394e"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">VOFAssemblerDCDDStabilization::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the right-hand side (rhs).</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00391">vof_assemblers.cc:391</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_afcacc2c1b5d927eef044772693b52eda"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">VOFAssemblerDCDDStabilization::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00320">vof_assemblers.cc:320</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html"><div class="ttname"><a href="classVOFScratchData.html">VOFScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a VOF free surface equation....</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00060">vof_scratch_data.h:61</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a0e1db24cc565ea3fcf25d8bcaf1cc0d6"><div class="ttname"><a href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">VOFScratchData::previous_phase_values</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; previous_phase_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00309">vof_scratch_data.h:309</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a17eba8e1acd046930dfecdff0eb03c5e"><div class="ttname"><a href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">VOFScratchData::present_phase_values</a></div><div class="ttdeci">std::vector&lt; double &gt; present_phase_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00304">vof_scratch_data.h:304</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a297102d4a2720f4ae1bcb99a0b1cba5b"><div class="ttname"><a href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">VOFScratchData::velocity_divergences</a></div><div class="ttdeci">std::vector&lt; double &gt; velocity_divergences</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00328">vof_scratch_data.h:328</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a37d729c26dde4a3b53f3c2eab4f9b67c"><div class="ttname"><a href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">VOFScratchData::previous_phase_gradients</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; previous_phase_gradients</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00306">vof_scratch_data.h:306</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a39b164eb5f819487b4b9cc49337550ca"><div class="ttname"><a href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">VOFScratchData::grad_phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &gt; grad_phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00313">vof_scratch_data.h:313</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a535ed79ffc709df79d7dd4c6f6224dec"><div class="ttname"><a href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">VOFScratchData::phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00312">vof_scratch_data.h:312</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a7bb10776227d847b3bd78187a3b20b78"><div class="ttname"><a href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">VOFScratchData::cell_size</a></div><div class="ttdeci">double cell_size</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00297">vof_scratch_data.h:297</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a8b98b15e63558b21b7de3e50dced8cb5"><div class="ttname"><a href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">VOFScratchData::JxW</a></div><div class="ttdeci">std::vector&lt; double &gt; JxW</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00300">vof_scratch_data.h:300</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a91972185602c37789a8cd29c3edc55c5"><div class="ttname"><a href="classVOFScratchData.html#a91972185602c37789a8cd29c3edc55c5">VOFScratchData::laplacian_phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; laplacian_phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00315">vof_scratch_data.h:315</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a975342db7005203294f4846add104f8a"><div class="ttname"><a href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">VOFScratchData::n_dofs</a></div><div class="ttdeci">unsigned int n_dofs</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00295">vof_scratch_data.h:295</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a9d6ad576100b507c60381870bb925085"><div class="ttname"><a href="classVOFScratchData.html#a9d6ad576100b507c60381870bb925085">VOFScratchData::phase_laplacians</a></div><div class="ttdeci">std::vector&lt; double &gt; phase_laplacians</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00308">vof_scratch_data.h:308</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_abc49d4575b7a8b4cf3c6e40a5b7c32f4"><div class="ttname"><a href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">VOFScratchData::n_q_points</a></div><div class="ttdeci">unsigned int n_q_points</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00296">vof_scratch_data.h:296</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_abf45e78d655a35826c643fe8fc903636"><div class="ttname"><a href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">VOFScratchData::velocity_values</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; velocity_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00325">vof_scratch_data.h:325</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_ae2d42887b29a53a12e1a98654b9bac28"><div class="ttname"><a href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">VOFScratchData::phase_gradients</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; phase_gradients</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00305">vof_scratch_data.h:305</a></div></div>
+<div class="ttc" id="abdf_8h_html_a8b5d2bb44cdac716464d7e779fa14c4c"><div class="ttname"><a href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00099">bdf.h:99</a></div></div>
+<div class="ttc" id="aclassStabilizedMethodsCopyData_html"><div class="ttname"><a href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a></div><div class="ttdoc">Class responsible for storing the information calculated using the assembly of stabilized scalar equa...</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00067">copy_data.h:68</a></div></div>
+<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a3f0641e43ef491085155e7c75f2181ee"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">StabilizedMethodsCopyData::local_rhs</a></div><div class="ttdeci">Vector&lt; double &gt; local_rhs</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00106">copy_data.h:106</a></div></div>
+<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a6426ba51103634253386421c053eee9a"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a6426ba51103634253386421c053eee9a">StabilizedMethodsCopyData::strong_residual</a></div><div class="ttdeci">Vector&lt; double &gt; strong_residual</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00108">copy_data.h:108</a></div></div>
+<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a6c3e7385d9e533d5c5ec749a856edcae"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">StabilizedMethodsCopyData::local_matrix</a></div><div class="ttdeci">FullMatrix&lt; double &gt; local_matrix</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00105">copy_data.h:105</a></div></div>
+<div class="ttc" id="aclassStabilizedMethodsCopyData_html_a79618004b1316140323d44a547ba6d3c"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a79618004b1316140323d44a547ba6d3c">StabilizedMethodsCopyData::strong_jacobian</a></div><div class="ttdeci">std::vector&lt; Vector&lt; double &gt; &gt; strong_jacobian</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00109">copy_data.h:109</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerBDF_html"><div class="ttname"><a href="classVOFAssemblerBDF.html">VOFAssemblerBDF</a></div><div class="ttdoc">Class that assembles the transient time arising from BDF time integration for the VOF equations....</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00115">vof_assemblers.h:116</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerBDF_html_a213bafd94c5199426a0f39b23f7af8f5"><div class="ttname"><a href="classVOFAssemblerBDF.html#a213bafd94c5199426a0f39b23f7af8f5">VOFAssemblerBDF::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00271">vof_assemblers.cc:271</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerBDF_html_abb31504dee264b6f7beb2dcc8a952bcd"><div class="ttname"><a href="classVOFAssemblerBDF.html#abb31504dee264b6f7beb2dcc8a952bcd">VOFAssemblerBDF::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00214">vof_assemblers.cc:214</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerCore_html"><div class="ttname"><a href="classVOFAssemblerCore.html">VOFAssemblerCore</a></div><div class="ttdoc">Class that assembles the core of the VOF solver. According to the following weak form:  with an SUPG ...</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00065">vof_assemblers.h:66</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerCore_html_a9e0eaa8178f1d0e57df80c0dec131d62"><div class="ttname"><a href="classVOFAssemblerCore.html#a9e0eaa8178f1d0e57df80c0dec131d62">VOFAssemblerCore::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00121">vof_assemblers.cc:121</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerCore_html_ade84531434d78a40d7554a1ee383fea3"><div class="ttname"><a href="classVOFAssemblerCore.html#ade84531434d78a40d7554a1ee383fea3">VOFAssemblerCore::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00014">vof_assemblers.cc:14</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a></div><div class="ttdoc">Assemble the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term for the VOF ph...</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8h_source.html#l00159">vof_assemblers.h:160</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_ae090d503229af2642d217a5214c2394e"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">VOFAssemblerDCDDStabilization::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the right-hand side (rhs).</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00394">vof_assemblers.cc:394</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_afcacc2c1b5d927eef044772693b52eda"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">VOFAssemblerDCDDStabilization::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition:</b> <a href="vof__assemblers_8cc_source.html#l00323">vof_assemblers.cc:323</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html"><div class="ttname"><a href="classVOFScratchData.html">VOFScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a VOF free surface equation....</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00044">vof_scratch_data.h:45</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a0e1db24cc565ea3fcf25d8bcaf1cc0d6"><div class="ttname"><a href="classVOFScratchData.html#a0e1db24cc565ea3fcf25d8bcaf1cc0d6">VOFScratchData::previous_phase_values</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; previous_phase_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00293">vof_scratch_data.h:293</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a17eba8e1acd046930dfecdff0eb03c5e"><div class="ttname"><a href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">VOFScratchData::present_phase_values</a></div><div class="ttdeci">std::vector&lt; double &gt; present_phase_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00288">vof_scratch_data.h:288</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a297102d4a2720f4ae1bcb99a0b1cba5b"><div class="ttname"><a href="classVOFScratchData.html#a297102d4a2720f4ae1bcb99a0b1cba5b">VOFScratchData::velocity_divergences</a></div><div class="ttdeci">std::vector&lt; double &gt; velocity_divergences</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00312">vof_scratch_data.h:312</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a37d729c26dde4a3b53f3c2eab4f9b67c"><div class="ttname"><a href="classVOFScratchData.html#a37d729c26dde4a3b53f3c2eab4f9b67c">VOFScratchData::previous_phase_gradients</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; previous_phase_gradients</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00290">vof_scratch_data.h:290</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a39b164eb5f819487b4b9cc49337550ca"><div class="ttname"><a href="classVOFScratchData.html#a39b164eb5f819487b4b9cc49337550ca">VOFScratchData::grad_phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &gt; grad_phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00297">vof_scratch_data.h:297</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a535ed79ffc709df79d7dd4c6f6224dec"><div class="ttname"><a href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">VOFScratchData::phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00296">vof_scratch_data.h:296</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a7bb10776227d847b3bd78187a3b20b78"><div class="ttname"><a href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">VOFScratchData::cell_size</a></div><div class="ttdeci">double cell_size</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00281">vof_scratch_data.h:281</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a8b98b15e63558b21b7de3e50dced8cb5"><div class="ttname"><a href="classVOFScratchData.html#a8b98b15e63558b21b7de3e50dced8cb5">VOFScratchData::JxW</a></div><div class="ttdeci">std::vector&lt; double &gt; JxW</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00284">vof_scratch_data.h:284</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a91972185602c37789a8cd29c3edc55c5"><div class="ttname"><a href="classVOFScratchData.html#a91972185602c37789a8cd29c3edc55c5">VOFScratchData::laplacian_phi</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; laplacian_phi</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00299">vof_scratch_data.h:299</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a975342db7005203294f4846add104f8a"><div class="ttname"><a href="classVOFScratchData.html#a975342db7005203294f4846add104f8a">VOFScratchData::n_dofs</a></div><div class="ttdeci">unsigned int n_dofs</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00279">vof_scratch_data.h:279</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_a9d6ad576100b507c60381870bb925085"><div class="ttname"><a href="classVOFScratchData.html#a9d6ad576100b507c60381870bb925085">VOFScratchData::phase_laplacians</a></div><div class="ttdeci">std::vector&lt; double &gt; phase_laplacians</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00292">vof_scratch_data.h:292</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_abc49d4575b7a8b4cf3c6e40a5b7c32f4"><div class="ttname"><a href="classVOFScratchData.html#abc49d4575b7a8b4cf3c6e40a5b7c32f4">VOFScratchData::n_q_points</a></div><div class="ttdeci">unsigned int n_q_points</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00280">vof_scratch_data.h:280</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_abf45e78d655a35826c643fe8fc903636"><div class="ttname"><a href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">VOFScratchData::velocity_values</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; velocity_values</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00309">vof_scratch_data.h:309</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_ae2d42887b29a53a12e1a98654b9bac28"><div class="ttname"><a href="classVOFScratchData.html#ae2d42887b29a53a12e1a98654b9bac28">VOFScratchData::phase_gradients</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; phase_gradients</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00289">vof_scratch_data.h:289</a></div></div>
 <div class="ttc" id="acopy__data_8h_html"><div class="ttname"><a href="copy__data_8h.html">copy_data.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">Variable::phase</a></div><div class="ttdeci">@ phase</div><div class="ttdoc">Phase fraction scalar field from VOF.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
 <div class="ttc" id="atime__integration__utilities_8h_html"><div class="ttname"><a href="time__integration__utilities_8h.html">time_integration_utilities.h</a></div></div>
-<div class="ttc" id="atime__integration__utilities_8h_html_a2070dbfdd25ef92b18165612d533e92d"><div class="ttname"><a href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a></div><div class="ttdeci">bool is_steady(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Determines if the time integration method is a steady-state method.</div><div class="ttdef"><b>Definition:</b> <a href="time__integration__utilities_8h_source.html#l00013">time_integration_utilities.h:13</a></div></div>
+<div class="ttc" id="atime__integration__utilities_8h_html_a2070dbfdd25ef92b18165612d533e92d"><div class="ttname"><a href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a></div><div class="ttdeci">bool is_steady(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Determines if the time integration method is a steady-state method.</div><div class="ttdef"><b>Definition:</b> <a href="time__integration__utilities_8h_source.html#l00016">time_integration_utilities.h:16</a></div></div>
 <div class="ttc" id="avof__assemblers_8h_html"><div class="ttname"><a href="vof__assemblers_8h.html">vof_assemblers.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -79,399 +79,385 @@ $(function() {
 <div class="title">ib_particles_dem.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="ib__particles__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#ifndef lethe_ib_particles_dem_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#define lethe_ib_particles_dem_h</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="ib__particle_8h.html">core/ib_particle.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="ib__stencil_8h.html">core/ib_stencil.h</a>&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="lethe__grid__tools_8h.html">core/lethe_grid_tools.h</a>&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__force_8h.html">dem/particle_particle_contact_force.h</a>&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__wall__contact__force_8h.html">dem/particle_wall_contact_force.h</a>&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/tensor.h&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_handler.h&gt;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_tools.h&gt;</span></div>
+<a href="ib__particles__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_ib_particles_dem_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_ib_particles_dem_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="ib__particle_8h.html">core/ib_particle.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="ib__stencil_8h.html">core/ib_stencil.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="lethe__grid__tools_8h.html">core/lethe_grid_tools.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__particle__contact__force_8h.html">dem/particle_particle_contact_force.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__wall__contact__force_8h.html">dem/particle_wall_contact_force.h</a>&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;deal.II/base/tensor.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_handler.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;deal.II/dofs/dof_tools.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * @brief A solver class for the DEM used in conjunction with IB particles and</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * fluid_dynamics_sharp. This class defines and uses some functions of the</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * DEM class that have been modified and simplified to be compatible with</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * IB_particles.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * @tparam dim An integer that denotes the dimension of the space in which</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * the flow is solved</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * @ingroup solvers</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> * @brief A solver class for the DEM used in conjunction with IB particles and</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * fluid_dynamics_sharp. This class defines and uses some functions of the</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * DEM class that have been modified and simplified to be compatible with</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * IB_particles.</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * @tparam dim An integer that denotes the dimension of the space in which</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * the flow is solved</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"> * @ingroup solvers</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="classIBParticlesDEM.html">IBParticlesDEM</a></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">  /** @brief Struct that contains history of the contact between two objects. This is the commonly used</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * constructor since it houses all the information required to perform the</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * contact calculation.</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * */</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html">   55</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  {</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">   57</a></span>&#160;    Tensor&lt;1, 3&gt; <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">normal_vector</a>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">   58</a></span>&#160;    Point&lt;3&gt;     <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">contact_point</a>;</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">   59</a></span>&#160;    <span class="keywordtype">double</span>       <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">normal_overlap</a>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">   60</a></span>&#160;    <span class="keywordtype">double</span>       <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">normal_relative_velocity</a>;</div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">   61</a></span>&#160;    Tensor&lt;1, 3&gt; <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::vector&lt;Tensor&lt;1, 3&gt;&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">   63</a></span>&#160;      <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">tangential_relative_velocity</a>; <span class="comment">// keep each step of RK4 in memory</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  };</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">  /** @brief Struct is used to reduce the number of parameters passed in the function calculate_force_model.</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * */</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html">   68</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  {</div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">   70</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">object_mass</a>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">   71</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">object_radius</a>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">   72</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">object_youngs_modulus</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">   73</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">object_poisson_ratio</a>;</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">   74</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">object_restitution_coefficient</a>;</div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">   75</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">object_friction_coefficient</a>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">   76</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">object_rolling_friction_coefficient</a>;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  };</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @brief</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * Initialize the IBParticlesDEM object with the parameters, the mpi</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * communicator and the particles.</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * @param p_nsparam The parameters for the immersed boundary particles</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   * @param dem_parameters</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * @param mpi_communicator_input The mpi communicator of the simulation.</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  initialize(<span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classParameters_1_1IBParticles.html">Parameters::IBParticles&lt;dim&gt;</a>&gt; &amp;p_nsparam,</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;             <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;dim&gt;</a>&gt;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                                 floating_walls_parameters,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;             <span class="keyword">const</span> MPI_Comm                     &amp;mpi_communicator_input,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;             <span class="keyword">const</span> std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * @brief</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   * Updates the boundary cells that are contact candidates for each of the</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   * particles.</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @param time The current CFD time.</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  update_particles(<span class="keyword">const</span> std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles, <span class="keywordtype">double</span> time);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * @brief</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   * Integrates the dynamics of the IB_particle taking into account the contact</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * between particles and between particles and walls.</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   * @param dt The CFD time step.</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * @param h_max The gap between the two particle.</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @param rho The fluid density.</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  integrate_particles_motion(<span class="keyword">const</span> <span class="keywordtype">double</span> dt,</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> h_max,</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> h_min,</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> rho,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> mu);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="classIBParticlesDEM.html">IBParticlesDEM</a></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">  /** @brief Struct that contains history of the contact between two objects. This is the commonly used</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * constructor since it houses all the information required to perform the</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   * contact calculation.</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * */</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html">   41</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  {</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">   43</a></span>&#160;    Tensor&lt;1, 3&gt; <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">normal_vector</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">   44</a></span>&#160;    Point&lt;3&gt;     <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">contact_point</a>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">   45</a></span>&#160;    <span class="keywordtype">double</span>       <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">normal_overlap</a>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">   46</a></span>&#160;    <span class="keywordtype">double</span>       <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">normal_relative_velocity</a>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">   47</a></span>&#160;    Tensor&lt;1, 3&gt; <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">tangential_overlap</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    std::vector&lt;Tensor&lt;1, 3&gt;&gt;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">   49</a></span>&#160;      <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">tangential_relative_velocity</a>; <span class="comment">// keep each step of RK4 in memory</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  };</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">  /** @brief Struct is used to reduce the number of parameters passed in the function calculate_force_model.</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * */</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html">   54</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  {</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">   56</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">object_mass</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">   57</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">object_radius</a>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">   58</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">object_youngs_modulus</a>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">   59</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">object_poisson_ratio</a>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">   60</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">object_restitution_coefficient</a>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">   61</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">object_friction_coefficient</a>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">   62</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">object_rolling_friction_coefficient</a>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  };</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * @brief</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * Initialize the IBParticlesDEM object with the parameters, the mpi</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * communicator and the particles.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @param p_nsparam The parameters for the immersed boundary particles</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * @param dem_parameters</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * @param mpi_communicator_input The mpi communicator of the simulation.</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  initialize(<span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classParameters_1_1IBParticles.html">Parameters::IBParticles&lt;dim&gt;</a>&gt; &amp;p_nsparam,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;             <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;dim&gt;</a>&gt;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                 floating_walls_parameters,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;             <span class="keyword">const</span> MPI_Comm                     &amp;mpi_communicator_input,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;             <span class="keyword">const</span> std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   * @brief</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * Updates the boundary cells that are contact candidates for each of the</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * particles.</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   * @param time The current CFD time.</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  update_particles(<span class="keyword">const</span> std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles, <span class="keywordtype">double</span> time);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * @brief</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * Integrates the dynamics of the IB_particle taking into account the contact</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   * between particles and between particles and walls.</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * @param dt The CFD time step.</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * @param h_max The gap between the two particle.</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * @param rho The fluid density.</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  integrate_particles_motion(<span class="keyword">const</span> <span class="keywordtype">double</span> dt,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> h_max,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> h_min,</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> rho,</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> mu);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) particle-particle contact force</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact force between particles</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact torques between particles</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  calculate_pp_contact_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_force,</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_torque);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) particle-particle contact force</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact force between particles</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact torques between particles</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  calculate_pp_contact_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_force,</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_torque);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">   * @brief Updates the contact candidates of all the particles</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  update_contact_candidates();</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) particle-wall contact force</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact force between particles</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact torques between particles</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  calculate_pw_contact_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_force,</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_torque);</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">   * @param normal_overlap Contact normal overlap</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * @param contact_info A container that contains the required information for</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   * calculation of the contact force for a particle pair in contact</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   * @param contact_point The contact point between the two objects</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">   * @param contact_normal Contact normal unit vector</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">   * @param normal_force Contact normal force</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">   * @param tangential_force Contact tangential force</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">   * @param rolling_resistance_torque Contact rolling resistance torque</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">   * @param particle_one_position the position of particle one</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment">   * @param particle_one_velocity the velocity of particle one</span></div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">   * @param particle_one_omega the angular velocity of particle one</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">   * @param particle_one_properties the physical properties of particle one</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment">   * @param particle_two_position the position of particle two</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">   * @param particle_two_velocity the velocity of particle two</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">   * @param particle_two_omega the angular velocity of particle two</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="comment">   * @param particle_two_properties the physical properties of particle two</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="comment">   * @param dt the dem time step.</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  calculate_force_model(<span class="keyword">const</span> <span class="keywordtype">double</span>           normal_overlap,</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                        <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a>           &amp;contact_info,</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                        Point&lt;3&gt;              &amp;contact_point,</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;contact_normal,</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;normal_force,</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;tangential_force,</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;rolling_resistance_torque,</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                        Point&lt;dim&gt;            &amp;particle_one_position,</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_one_velocity,</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_one_omega,</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                        <span class="keyword">const</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a> particle_one_properties,</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        Point&lt;dim&gt;            &amp;particle_two_position,</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_two_velocity,</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_two_omega,</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                        <span class="keyword">const</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a> particle_two_properties,</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">double</span>           dt);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment">   *  @brief Calculates particle-particle lubrication force. The force is based on the formula from</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment">   * Karrila, Seppo J. ISBN 13: 9780750691734</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="comment">   * @param h_max The gap between the two particle.</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="comment">   * @param lubrication_force a vector containing the lubrication force on the particles.</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   * @brief Updates the contact candidates of all the particles</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  update_contact_candidates();</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) particle-wall contact force</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact force between particles</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">   * @param contact_force a vector containing the contact torques between particles</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  calculate_pw_contact_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_force,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                             std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;contact_torque);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">   * @brief Calculates non-linear (Hertzian) force between two objects. Take into input the physical properties and contact state of the two objects.</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">   * @param normal_overlap Contact normal overlap</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">   * @param contact_info A container that contains the required information for</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">   * calculation of the contact force for a particle pair in contact</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">   * @param contact_point The contact point between the two objects</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">   * @param contact_normal Contact normal unit vector</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">   * @param normal_force Contact normal force</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">   * @param tangential_force Contact tangential force</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">   * @param rolling_resistance_torque Contact rolling resistance torque</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * @param particle_one_position the position of particle one</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   * @param particle_one_velocity the velocity of particle one</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">   * @param particle_one_omega the angular velocity of particle one</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">   * @param particle_one_properties the physical properties of particle one</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">   * @param particle_two_position the position of particle two</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">   * @param particle_two_velocity the velocity of particle two</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">   * @param particle_two_omega the angular velocity of particle two</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * @param particle_two_properties the physical properties of particle two</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   * @param dt the dem time step.</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  calculate_force_model(<span class="keyword">const</span> <span class="keywordtype">double</span>           normal_overlap,</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                        <a class="code" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a>           &amp;contact_info,</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                        Point&lt;3&gt;              &amp;contact_point,</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;contact_normal,</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;normal_force,</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;tangential_force,</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;rolling_resistance_torque,</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                        Point&lt;dim&gt;            &amp;particle_one_position,</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_one_velocity,</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_one_omega,</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                        <span class="keyword">const</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a> particle_one_properties,</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                        Point&lt;dim&gt;            &amp;particle_two_position,</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_two_velocity,</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                        Tensor&lt;1, 3&gt;          &amp;particle_two_omega,</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                        <span class="keyword">const</span> <a class="code" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a> particle_two_properties,</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">double</span>           dt);</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;<span class="comment">   *  @brief Calculates particle-particle lubrication force. The force is based on the formula from</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="comment">   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment">   * Karrila, Seppo J. ISBN 13: 9780750691734</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">   * @param h_max The gap between the two particle.</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment">   * @param lubrication_force a vector containing the lubrication force on the particles.</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment">   * @param lubrication_torque a vector containing the lubrication torques on the particles.</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  calculate_pp_lubrication_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_max,</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_min,</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               mu,</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_force,</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_torque);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="comment">   * @brief Calculates particle-wall lubrication force</span></div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">   * @param lubrication_torque a vector containing the lubrication torques on the particles.</span></div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  calculate_pp_lubrication_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_max,</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_min,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               mu,</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_force,</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_torque);</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">   * @brief Calculates particle-wall lubrication force</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">   * @param h_max The gap between particle and the wall below which we evaluate the force.</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">   * @param lubrication_force a vector containing the lubrication force on the particles.</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment">   * @param lubrication_torque a vector containing the lubrication torques on the particles.</span></div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  calculate_pw_lubrication_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_max,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_min,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               mu,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_force,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_torque);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">   * Karrila, Seppo J. ISBN 13: 9780750691734</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment">   * @param dof_handler The dof handler of the mesh used for the fluid simulation.</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">   * @param face_quadrature_formula The face quadrature formula used in the elements.</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">   * @param mapping The FEM mapping of the face element.</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  update_particles_boundary_contact(</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles,</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">const</span> DoFHandler&lt;dim&gt;        &amp;dof_handler,</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keyword">const</span> Quadrature&lt;dim - 1&gt;    &amp;face_quadrature_formula,</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keyword">const</span> Mapping&lt;dim&gt;           &amp;mapping);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
-<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">  281</a></span>&#160;  std::vector&lt;IBParticle&lt;dim&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">dem_particles</a>;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="comment">// A struct to store boundary cells&#39; information</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">  285</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">  289</a></span>&#160;    <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">serialize</a>(Archive &amp;ar, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="comment">/*version*/</span>)</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;          ar &amp;normal_vector;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;          ar &amp;point_on_boundary;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;          ar &amp;boundary_index;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">  299</a></span>&#160;    Tensor&lt;1, dim&gt; <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">normal_vector</a>;</div>
-<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">  300</a></span>&#160;    Point&lt;dim&gt;     <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">point_on_boundary</a>;</div>
-<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">  301</a></span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">boundary_index</a>;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  };</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  <span class="comment">// These structs are used to specify the default value of a variable in a map</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  <span class="comment">// or set. This is used to find the best particle wall contact candidate.</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">  306</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">DefaultDBL_MAX</a></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  {</div>
-<div class="line"><a name="l00308"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html#a13b6e3e9b63714f00ba0b917ba082965">  308</a></span>&#160;    <span class="keywordtype">double</span> value = DBL_MAX;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  };</div>
-<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">  310</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">DefaultUINT_MAX</a></div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;  {</div>
-<div class="line"><a name="l00312"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html#af9078abedd5e4480f62bdbaad40d1a66">  312</a></span>&#160;    <span class="keywordtype">int</span> value = UINT_MAX;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  };</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">   * @param dt_dem The sub time stepping time step.</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment">   * @param h_max The gap between particle and the wall below which we evaluate the force.</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment">   * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">   * @param mu The fluid viscosity.</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment">   * @param lubrication_force a vector containing the lubrication force on the particles.</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment">   * @param lubrication_torque a vector containing the lubrication torques on the particles.</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  calculate_pw_lubrication_force(<span class="keyword">const</span> <span class="keywordtype">double</span>               dt_dem,</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_max,</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               h_min,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">double</span>               mu,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_force,</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                                 std::vector&lt;Tensor&lt;1, 3&gt;&gt; &amp;lubrication_torque);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">   * Karrila, Seppo J. ISBN 13: 9780750691734</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">   * @param particles The particles vector containing all the IB particles.</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment">   * @param dof_handler The dof handler of the mesh used for the fluid simulation.</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">   * @param face_quadrature_formula The face quadrature formula used in the elements.</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">   * @param mapping The FEM mapping of the face element.</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  update_particles_boundary_contact(</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    std::vector&lt;<a class="code" href="classIBParticle.html">IBParticle&lt;dim&gt;</a>&gt; &amp;particles,</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">const</span> DoFHandler&lt;dim&gt;        &amp;dof_handler,</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">const</span> Quadrature&lt;dim - 1&gt;    &amp;face_quadrature_formula,</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">const</span> Mapping&lt;dim&gt;           &amp;mapping);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
+<div class="line"><a name="l00267"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">  267</a></span>&#160;  std::vector&lt;IBParticle&lt;dim&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">dem_particles</a>;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  <span class="comment">// A struct to store boundary cells&#39; information</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">  271</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Archive&gt;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">  275</a></span>&#160;    <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">serialize</a>(Archive &amp;ar, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="comment">/*version*/</span>)</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    {</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;          ar &amp;normal_vector;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;          ar &amp;point_on_boundary;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;          ar &amp;boundary_index;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        }</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">  285</a></span>&#160;    Tensor&lt;1, dim&gt; <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">normal_vector</a>;</div>
+<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">  286</a></span>&#160;    Point&lt;dim&gt;     <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">point_on_boundary</a>;</div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">  287</a></span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>   <a class="code" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">boundary_index</a>;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  };</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="comment">// These structs are used to specify the default value of a variable in a map</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="comment">// or set. This is used to find the best particle wall contact candidate.</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">  292</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">DefaultDBL_MAX</a></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  {</div>
+<div class="line"><a name="l00294"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html#a13b6e3e9b63714f00ba0b917ba082965">  294</a></span>&#160;    <span class="keywordtype">double</span> value = DBL_MAX;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  };</div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">  296</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">DefaultUINT_MAX</a></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  {</div>
+<div class="line"><a name="l00298"></a><span class="lineno"><a class="line" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html#af9078abedd5e4480f62bdbaad40d1a66">  298</a></span>&#160;    <span class="keywordtype">int</span> value = UINT_MAX;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  };</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="comment">// This enum defines the lowest index of a floating wall in the particle wall</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  <span class="comment">// contact. This prevents a wall floating wall from shearing the same index as</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <span class="comment">// a standard boundary.</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">  304</a></span>&#160;  <span class="keyword">enum</span> <a class="code" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">lowest_floating_wall_indices</a></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <a class="code" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">lowest_floating_wall_indices</a> = 1000000</div>
+<div class="line"><a name="l00307"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3">  307</a></span>&#160;  };</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">  309</a></span>&#160;  std::shared_ptr&lt;Parameters::IBParticles&lt;dim&gt;&gt; <a class="code" href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">parameters</a>;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  std::shared_ptr&lt;Parameters::Lagrangian::FloatingWalls&lt;dim&gt;&gt;</div>
+<div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">  311</a></span>&#160;                           <a class="code" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">floating_walls_parameters</a>;</div>
+<div class="line"><a name="l00312"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ab11f4924385815079eeb14f8db3af97b">  312</a></span>&#160;  <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> dem_parameters{};</div>
+<div class="line"><a name="l00313"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">  313</a></span>&#160;  MPI_Comm                 <a class="code" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">mpi_communicator</a>;</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  <span class="comment">// This enum defines the lowest index of a floating wall in the particle wall</span></div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;  <span class="comment">// contact. This prevents a wall floating wall from shearing the same index as</span></div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  <span class="comment">// a standard boundary.</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">  318</a></span>&#160;  <span class="keyword">enum</span> <a class="code" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">lowest_floating_wall_indices</a></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  {</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <a class="code" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">lowest_floating_wall_indices</a> = 1000000</div>
-<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3">  321</a></span>&#160;  };</div>
+<div class="line"><a name="l00315"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">  315</a></span>&#160;  std::vector&lt;std::set&lt;unsigned int&gt;&gt; <a class="code" href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">particles_contact_candidates</a>;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  <span class="comment">// Store the previous contact point as initial guess for the next search</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, Point&lt;dim&gt;&gt;&gt;</div>
+<div class="line"><a name="l00319"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">  319</a></span>&#160;    <a class="code" href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">previous_wall_contact_point</a>;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, Point&lt;dim&gt;&gt;&gt;</div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">  321</a></span>&#160;    <a class="code" href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">previous_particle_particle_contact_point</a>;</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
-<div class="line"><a name="l00323"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">  323</a></span>&#160;  std::shared_ptr&lt;Parameters::IBParticles&lt;dim&gt;&gt; <a class="code" href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">parameters</a>;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  std::shared_ptr&lt;Parameters::Lagrangian::FloatingWalls&lt;dim&gt;&gt;</div>
-<div class="line"><a name="l00325"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">  325</a></span>&#160;                           <a class="code" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">floating_walls_parameters</a>;</div>
-<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ab11f4924385815079eeb14f8db3af97b">  326</a></span>&#160;  <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a> dem_parameters{};</div>
-<div class="line"><a name="l00327"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">  327</a></span>&#160;  MPI_Comm                 <a class="code" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">mpi_communicator</a>;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">  329</a></span>&#160;  std::vector&lt;std::set&lt;unsigned int&gt;&gt; <a class="code" href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">particles_contact_candidates</a>;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;  <span class="comment">// Store the previous contact point as initial guess for the next search</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, Point&lt;dim&gt;&gt;&gt;</div>
-<div class="line"><a name="l00333"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">  333</a></span>&#160;    <a class="code" href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">previous_wall_contact_point</a>;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, Point&lt;dim&gt;&gt;&gt;</div>
-<div class="line"><a name="l00335"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">  335</a></span>&#160;    <a class="code" href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">previous_particle_particle_contact_point</a>;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="comment">// Particles contact history</span></div>
-<div class="line"><a name="l00338"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">  338</a></span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, ContactInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">pp_contact_map</a>;</div>
-<div class="line"><a name="l00339"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">  339</a></span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, ContactInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">pw_contact_map</a>;</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="comment">// A vector of vectors of candidate cells for each of the particle.</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">  342</a></span>&#160;  std::vector&lt;std::map&lt;unsigned int, BoundaryCellsInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">boundary_cells</a>;</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
-<div class="line"><a name="l00344"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">  344</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">cfd_time</a>;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;};</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// LETHE_IB_PARTICLES_DEM_H</span></div>
-<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00029">dem_solver_parameters.h:30</a></div></div>
-<div class="ttc" id="aclassIBParticle_html"><div class="ttname"><a href="classIBParticle.html">IBParticle</a></div><div class="ttdoc">Define the behavior of a specific particle for the sharp interface IB solver.</div><div class="ttdef"><b>Definition:</b> <a href="ib__particle_8h_source.html#l00044">ib_particle.h:45</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html"><div class="ttname"><a href="classIBParticlesDEM.html">IBParticlesDEM</a></div><div class="ttdoc">A solver class for the DEM used in conjunction with IB particles and fluid_dynamics_sharp....</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00048">ib_particles_dem.h:49</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a3d34e45792721525f65652647a935067"><div class="ttname"><a href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">IBParticlesDEM::boundary_cells</a></div><div class="ttdeci">std::vector&lt; std::map&lt; unsigned int, BoundaryCellsInfo &gt; &gt; boundary_cells</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00342">ib_particles_dem.h:342</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a4ab78944a34b43434562208a26b38a6a"><div class="ttname"><a href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">IBParticlesDEM::previous_wall_contact_point</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, Point&lt; dim &gt; &gt; &gt; previous_wall_contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00333">ib_particles_dem.h:333</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a67db1f9118341d04081c9378f631accb"><div class="ttname"><a href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">IBParticlesDEM::previous_particle_particle_contact_point</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, Point&lt; dim &gt; &gt; &gt; previous_particle_particle_contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00335">ib_particles_dem.h:335</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a71310bd230b6cc15d733f660f19f0b26"><div class="ttname"><a href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">IBParticlesDEM::pp_contact_map</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, ContactInfo &gt; &gt; pp_contact_map</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00338">ib_particles_dem.h:338</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a7c87d9b0d197e1085826b0f2da52a711"><div class="ttname"><a href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">IBParticlesDEM::floating_walls_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::Lagrangian::FloatingWalls&lt; dim &gt; &gt; floating_walls_parameters</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00325">ib_particles_dem.h:325</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a822049666d7c14803c87450ae1c99f5d"><div class="ttname"><a href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">IBParticlesDEM::dem_particles</a></div><div class="ttdeci">std::vector&lt; IBParticle&lt; dim &gt; &gt; dem_particles</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00281">ib_particles_dem.h:281</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_a893106eed57bce2dc8e7602cc58f3b56"><div class="ttname"><a href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">IBParticlesDEM::lowest_floating_wall_indices</a></div><div class="ttdeci">lowest_floating_wall_indices</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00318">ib_particles_dem.h:319</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_aafe80a0ef9727ddaeecbbae94278f92a"><div class="ttname"><a href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">IBParticlesDEM::cfd_time</a></div><div class="ttdeci">double cfd_time</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00344">ib_particles_dem.h:344</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_ac08b292d09d4a36f8289d27e9f3d47b2"><div class="ttname"><a href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">IBParticlesDEM::particles_contact_candidates</a></div><div class="ttdeci">std::vector&lt; std::set&lt; unsigned int &gt; &gt; particles_contact_candidates</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00329">ib_particles_dem.h:329</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_ac906e78d2bef134e8652ed0cc1511343"><div class="ttname"><a href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">IBParticlesDEM::parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::IBParticles&lt; dim &gt; &gt; parameters</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00323">ib_particles_dem.h:323</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_af001b80b1fd8c576f9531f5cce01aaac"><div class="ttname"><a href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">IBParticlesDEM::pw_contact_map</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, ContactInfo &gt; &gt; pw_contact_map</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00339">ib_particles_dem.h:339</a></div></div>
-<div class="ttc" id="aclassIBParticlesDEM_html_af15966bd42a420d254b0c41c4a74ca9d"><div class="ttname"><a href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">IBParticlesDEM::mpi_communicator</a></div><div class="ttdeci">MPI_Comm mpi_communicator</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00327">ib_particles_dem.h:327</a></div></div>
-<div class="ttc" id="aclassParameters_1_1IBParticles_html"><div class="ttname"><a href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters_8h_source.html#l01568">parameters.h:1569</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00353">parameters_lagrangian.h:354</a></div></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;  <span class="comment">// Particles contact history</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">  324</a></span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, ContactInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">pp_contact_map</a>;</div>
+<div class="line"><a name="l00325"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">  325</a></span>&#160;  std::map&lt;unsigned int, std::map&lt;unsigned int, ContactInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">pw_contact_map</a>;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="comment">// A vector of vectors of candidate cells for each of the particle.</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">  328</a></span>&#160;  std::vector&lt;std::map&lt;unsigned int, BoundaryCellsInfo&gt;&gt; <a class="code" href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">boundary_cells</a>;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno"><a class="line" href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">  330</a></span>&#160;  <span class="keywordtype">double</span> <a class="code" href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">cfd_time</a>;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;};</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// LETHE_IB_PARTICLES_DEM_H</span></div>
+<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
+<div class="ttc" id="aclassIBParticle_html"><div class="ttname"><a href="classIBParticle.html">IBParticle</a></div><div class="ttdoc">Define the behavior of a specific particle for the sharp interface IB solver.</div><div class="ttdef"><b>Definition:</b> <a href="ib__particle_8h_source.html#l00028">ib_particle.h:29</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html"><div class="ttname"><a href="classIBParticlesDEM.html">IBParticlesDEM</a></div><div class="ttdoc">A solver class for the DEM used in conjunction with IB particles and fluid_dynamics_sharp....</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00034">ib_particles_dem.h:35</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a3d34e45792721525f65652647a935067"><div class="ttname"><a href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">IBParticlesDEM::boundary_cells</a></div><div class="ttdeci">std::vector&lt; std::map&lt; unsigned int, BoundaryCellsInfo &gt; &gt; boundary_cells</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00328">ib_particles_dem.h:328</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a4ab78944a34b43434562208a26b38a6a"><div class="ttname"><a href="classIBParticlesDEM.html#a4ab78944a34b43434562208a26b38a6a">IBParticlesDEM::previous_wall_contact_point</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, Point&lt; dim &gt; &gt; &gt; previous_wall_contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00319">ib_particles_dem.h:319</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a67db1f9118341d04081c9378f631accb"><div class="ttname"><a href="classIBParticlesDEM.html#a67db1f9118341d04081c9378f631accb">IBParticlesDEM::previous_particle_particle_contact_point</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, Point&lt; dim &gt; &gt; &gt; previous_particle_particle_contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00321">ib_particles_dem.h:321</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a71310bd230b6cc15d733f660f19f0b26"><div class="ttname"><a href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">IBParticlesDEM::pp_contact_map</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, ContactInfo &gt; &gt; pp_contact_map</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00324">ib_particles_dem.h:324</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a7c87d9b0d197e1085826b0f2da52a711"><div class="ttname"><a href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">IBParticlesDEM::floating_walls_parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::Lagrangian::FloatingWalls&lt; dim &gt; &gt; floating_walls_parameters</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00311">ib_particles_dem.h:311</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a822049666d7c14803c87450ae1c99f5d"><div class="ttname"><a href="classIBParticlesDEM.html#a822049666d7c14803c87450ae1c99f5d">IBParticlesDEM::dem_particles</a></div><div class="ttdeci">std::vector&lt; IBParticle&lt; dim &gt; &gt; dem_particles</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00267">ib_particles_dem.h:267</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_a893106eed57bce2dc8e7602cc58f3b56"><div class="ttname"><a href="classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56">IBParticlesDEM::lowest_floating_wall_indices</a></div><div class="ttdeci">lowest_floating_wall_indices</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00304">ib_particles_dem.h:305</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_aafe80a0ef9727ddaeecbbae94278f92a"><div class="ttname"><a href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">IBParticlesDEM::cfd_time</a></div><div class="ttdeci">double cfd_time</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00330">ib_particles_dem.h:330</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_ac08b292d09d4a36f8289d27e9f3d47b2"><div class="ttname"><a href="classIBParticlesDEM.html#ac08b292d09d4a36f8289d27e9f3d47b2">IBParticlesDEM::particles_contact_candidates</a></div><div class="ttdeci">std::vector&lt; std::set&lt; unsigned int &gt; &gt; particles_contact_candidates</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00315">ib_particles_dem.h:315</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_ac906e78d2bef134e8652ed0cc1511343"><div class="ttname"><a href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">IBParticlesDEM::parameters</a></div><div class="ttdeci">std::shared_ptr&lt; Parameters::IBParticles&lt; dim &gt; &gt; parameters</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00309">ib_particles_dem.h:309</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_af001b80b1fd8c576f9531f5cce01aaac"><div class="ttname"><a href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">IBParticlesDEM::pw_contact_map</a></div><div class="ttdeci">std::map&lt; unsigned int, std::map&lt; unsigned int, ContactInfo &gt; &gt; pw_contact_map</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00325">ib_particles_dem.h:325</a></div></div>
+<div class="ttc" id="aclassIBParticlesDEM_html_af15966bd42a420d254b0c41c4a74ca9d"><div class="ttname"><a href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">IBParticlesDEM::mpi_communicator</a></div><div class="ttdeci">MPI_Comm mpi_communicator</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00313">ib_particles_dem.h:313</a></div></div>
+<div class="ttc" id="aclassParameters_1_1IBParticles_html"><div class="ttname"><a href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters_8h_source.html#l01555">parameters.h:1556</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00339">parameters_lagrangian.h:340</a></div></div>
 <div class="ttc" id="aib__particle_8h_html"><div class="ttname"><a href="ib__particle_8h.html">ib_particle.h</a></div></div>
 <div class="ttc" id="aib__stencil_8h_html"><div class="ttname"><a href="ib__stencil_8h.html">ib_stencil.h</a></div></div>
 <div class="ttc" id="alethe__grid__tools_8h_html"><div class="ttname"><a href="lethe__grid__tools_8h.html">lethe_grid_tools.h</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="aparticle__particle__contact__force_8h_html"><div class="ttname"><a href="particle__particle__contact__force_8h.html">particle_particle_contact_force.h</a></div></div>
 <div class="ttc" id="aparticle__wall__contact__force_8h_html"><div class="ttname"><a href="particle__wall__contact__force_8h.html">particle_wall_contact_force.h</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">IBParticlesDEM::BoundaryCellsInfo</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00285">ib_particles_dem.h:286</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a86990defec0343fbaecaeecc94088fa0"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">IBParticlesDEM::BoundaryCellsInfo::boundary_index</a></div><div class="ttdeci">unsigned int boundary_index</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00301">ib_particles_dem.h:301</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a86cc264f160c251b8c57287cc7f428b5"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">IBParticlesDEM::BoundaryCellsInfo::point_on_boundary</a></div><div class="ttdeci">Point&lt; dim &gt; point_on_boundary</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00300">ib_particles_dem.h:300</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a8d270579b00a9f5c632d32f1b4d47f52"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">IBParticlesDEM::BoundaryCellsInfo::serialize</a></div><div class="ttdeci">void serialize(Archive &amp;ar, const unsigned int)</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00289">ib_particles_dem.h:289</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_aae39f588d4584f819144c4e7bc348e45"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">IBParticlesDEM::BoundaryCellsInfo::normal_vector</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; normal_vector</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00299">ib_particles_dem.h:299</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html">IBParticlesDEM::ContactInfo</a></div><div class="ttdoc">Struct that contains history of the contact between two objects. This is the commonly used constructo...</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00055">ib_particles_dem.h:56</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0b0b3abb94f57fe6c038f8c224ec8306"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">IBParticlesDEM::ContactInfo::normal_relative_velocity</a></div><div class="ttdeci">double normal_relative_velocity</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00060">ib_particles_dem.h:60</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0ca921f1b3f66b4d55bebcbfd2a37338"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">IBParticlesDEM::ContactInfo::normal_vector</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; normal_vector</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00057">ib_particles_dem.h:57</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0e7bfaf9d59cb7e34fdbf1de9a5753f8"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">IBParticlesDEM::ContactInfo::normal_overlap</a></div><div class="ttdeci">double normal_overlap</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00059">ib_particles_dem.h:59</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a1a5fdc174f0ad61d5f20bdef5d96aa1f"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">IBParticlesDEM::ContactInfo::tangential_relative_velocity</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; tangential_relative_velocity</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00063">ib_particles_dem.h:63</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a9238350d0412c863254843d60c168c7a"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">IBParticlesDEM::ContactInfo::tangential_overlap</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_overlap</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00061">ib_particles_dem.h:61</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a970883a09c3d0cec92fb872e29dc163e"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">IBParticlesDEM::ContactInfo::contact_point</a></div><div class="ttdeci">Point&lt; 3 &gt; contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00058">ib_particles_dem.h:58</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1DefaultDBL__MAX_html"><div class="ttname"><a href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">IBParticlesDEM::DefaultDBL_MAX</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00306">ib_particles_dem.h:307</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1DefaultUINT__MAX_html"><div class="ttname"><a href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">IBParticlesDEM::DefaultUINT_MAX</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00310">ib_particles_dem.h:311</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html">IBParticlesDEM::ObjectProperties</a></div><div class="ttdoc">Struct is used to reduce the number of parameters passed in the function calculate_force_model.</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00068">ib_particles_dem.h:69</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a0ee6783e5c8fd39a0207746c2d80dd09"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">IBParticlesDEM::ObjectProperties::object_mass</a></div><div class="ttdeci">double object_mass</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00070">ib_particles_dem.h:70</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a1b62a3b88fa72874489a2205d987a688"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">IBParticlesDEM::ObjectProperties::object_radius</a></div><div class="ttdeci">double object_radius</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00071">ib_particles_dem.h:71</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a2f15a15da1fbe93d0851552a92e7e626"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">IBParticlesDEM::ObjectProperties::object_rolling_friction_coefficient</a></div><div class="ttdeci">double object_rolling_friction_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00076">ib_particles_dem.h:76</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a4bec641e4786c4a9a14f4222baba972f"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">IBParticlesDEM::ObjectProperties::object_restitution_coefficient</a></div><div class="ttdeci">double object_restitution_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00074">ib_particles_dem.h:74</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a8589a41322f7f2572f840a8fbf67d6d2"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">IBParticlesDEM::ObjectProperties::object_poisson_ratio</a></div><div class="ttdeci">double object_poisson_ratio</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00073">ib_particles_dem.h:73</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_ad67674d2d52e0237ce505c1cb51b6466"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">IBParticlesDEM::ObjectProperties::object_youngs_modulus</a></div><div class="ttdeci">double object_youngs_modulus</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00072">ib_particles_dem.h:72</a></div></div>
-<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_add30919328b4a280599839c40dbe8bcb"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">IBParticlesDEM::ObjectProperties::object_friction_coefficient</a></div><div class="ttdeci">double object_friction_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00075">ib_particles_dem.h:75</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">IBParticlesDEM::BoundaryCellsInfo</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00271">ib_particles_dem.h:272</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a86990defec0343fbaecaeecc94088fa0"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">IBParticlesDEM::BoundaryCellsInfo::boundary_index</a></div><div class="ttdeci">unsigned int boundary_index</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00287">ib_particles_dem.h:287</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a86cc264f160c251b8c57287cc7f428b5"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">IBParticlesDEM::BoundaryCellsInfo::point_on_boundary</a></div><div class="ttdeci">Point&lt; dim &gt; point_on_boundary</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00286">ib_particles_dem.h:286</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_a8d270579b00a9f5c632d32f1b4d47f52"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a8d270579b00a9f5c632d32f1b4d47f52">IBParticlesDEM::BoundaryCellsInfo::serialize</a></div><div class="ttdeci">void serialize(Archive &amp;ar, const unsigned int)</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00275">ib_particles_dem.h:275</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1BoundaryCellsInfo_html_aae39f588d4584f819144c4e7bc348e45"><div class="ttname"><a href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#aae39f588d4584f819144c4e7bc348e45">IBParticlesDEM::BoundaryCellsInfo::normal_vector</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; normal_vector</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00285">ib_particles_dem.h:285</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html">IBParticlesDEM::ContactInfo</a></div><div class="ttdoc">Struct that contains history of the contact between two objects. This is the commonly used constructo...</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00041">ib_particles_dem.h:42</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0b0b3abb94f57fe6c038f8c224ec8306"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0b0b3abb94f57fe6c038f8c224ec8306">IBParticlesDEM::ContactInfo::normal_relative_velocity</a></div><div class="ttdeci">double normal_relative_velocity</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00046">ib_particles_dem.h:46</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0ca921f1b3f66b4d55bebcbfd2a37338"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0ca921f1b3f66b4d55bebcbfd2a37338">IBParticlesDEM::ContactInfo::normal_vector</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; normal_vector</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00043">ib_particles_dem.h:43</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a0e7bfaf9d59cb7e34fdbf1de9a5753f8"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a0e7bfaf9d59cb7e34fdbf1de9a5753f8">IBParticlesDEM::ContactInfo::normal_overlap</a></div><div class="ttdeci">double normal_overlap</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00045">ib_particles_dem.h:45</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a1a5fdc174f0ad61d5f20bdef5d96aa1f"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a1a5fdc174f0ad61d5f20bdef5d96aa1f">IBParticlesDEM::ContactInfo::tangential_relative_velocity</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; tangential_relative_velocity</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00049">ib_particles_dem.h:49</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a9238350d0412c863254843d60c168c7a"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a9238350d0412c863254843d60c168c7a">IBParticlesDEM::ContactInfo::tangential_overlap</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tangential_overlap</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00047">ib_particles_dem.h:47</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ContactInfo_html_a970883a09c3d0cec92fb872e29dc163e"><div class="ttname"><a href="structIBParticlesDEM_1_1ContactInfo.html#a970883a09c3d0cec92fb872e29dc163e">IBParticlesDEM::ContactInfo::contact_point</a></div><div class="ttdeci">Point&lt; 3 &gt; contact_point</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00044">ib_particles_dem.h:44</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1DefaultDBL__MAX_html"><div class="ttname"><a href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">IBParticlesDEM::DefaultDBL_MAX</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00292">ib_particles_dem.h:293</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1DefaultUINT__MAX_html"><div class="ttname"><a href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">IBParticlesDEM::DefaultUINT_MAX</a></div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00296">ib_particles_dem.h:297</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html">IBParticlesDEM::ObjectProperties</a></div><div class="ttdoc">Struct is used to reduce the number of parameters passed in the function calculate_force_model.</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00054">ib_particles_dem.h:55</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a0ee6783e5c8fd39a0207746c2d80dd09"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a0ee6783e5c8fd39a0207746c2d80dd09">IBParticlesDEM::ObjectProperties::object_mass</a></div><div class="ttdeci">double object_mass</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00056">ib_particles_dem.h:56</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a1b62a3b88fa72874489a2205d987a688"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a1b62a3b88fa72874489a2205d987a688">IBParticlesDEM::ObjectProperties::object_radius</a></div><div class="ttdeci">double object_radius</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00057">ib_particles_dem.h:57</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a2f15a15da1fbe93d0851552a92e7e626"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a2f15a15da1fbe93d0851552a92e7e626">IBParticlesDEM::ObjectProperties::object_rolling_friction_coefficient</a></div><div class="ttdeci">double object_rolling_friction_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00062">ib_particles_dem.h:62</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a4bec641e4786c4a9a14f4222baba972f"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a4bec641e4786c4a9a14f4222baba972f">IBParticlesDEM::ObjectProperties::object_restitution_coefficient</a></div><div class="ttdeci">double object_restitution_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00060">ib_particles_dem.h:60</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_a8589a41322f7f2572f840a8fbf67d6d2"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#a8589a41322f7f2572f840a8fbf67d6d2">IBParticlesDEM::ObjectProperties::object_poisson_ratio</a></div><div class="ttdeci">double object_poisson_ratio</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00059">ib_particles_dem.h:59</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_ad67674d2d52e0237ce505c1cb51b6466"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#ad67674d2d52e0237ce505c1cb51b6466">IBParticlesDEM::ObjectProperties::object_youngs_modulus</a></div><div class="ttdeci">double object_youngs_modulus</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00058">ib_particles_dem.h:58</a></div></div>
+<div class="ttc" id="astructIBParticlesDEM_1_1ObjectProperties_html_add30919328b4a280599839c40dbe8bcb"><div class="ttname"><a href="structIBParticlesDEM_1_1ObjectProperties.html#add30919328b4a280599839c40dbe8bcb">IBParticlesDEM::ObjectProperties::object_friction_coefficient</a></div><div class="ttdeci">double object_friction_coefficient</div><div class="ttdef"><b>Definition:</b> <a href="ib__particles__dem_8h_source.html#l00061">ib_particles_dem.h:61</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

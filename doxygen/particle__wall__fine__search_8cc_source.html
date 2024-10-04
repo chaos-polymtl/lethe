@@ -79,276 +79,279 @@ $(function() {
 <div class="title">particle_wall_fine_search.cc</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="particle__wall__fine__search_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="tensors__and__points__dimension__manipulation_8h.html">core/tensors_and_points_dimension_manipulation.h</a>&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="contact__info_8h.html">dem/contact_info.h</a>&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__wall__fine__search_8h.html">dem/particle_wall_fine_search.h</a>&gt;</span></div>
+<a href="particle__wall__fine__search_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="tensors__and__points__dimension__manipulation_8h.html">core/tensors_and_points_dimension_manipulation.h</a>&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;boost/math/special_functions/sign.hpp&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="contact__info_8h.html">dem/contact_info.h</a>&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="particle__wall__fine__search_8h.html">dem/particle_wall_fine_search.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;boost/math/special_functions/sign.hpp&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a5e4b61424d0f264259197c9f57bdb6b3">   17</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aafbf878724a7c1cfb4adcfd18de76bfc">particle_wall_fine_search</a>(</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;dim&gt;::particle_wall_candidates</a></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;dim&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    &amp;particle_wall_pairs_in_contact)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="comment">// Iterating over contact candidates from broad search and adding the pairs to</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="comment">// the particle_wall_pairs_in_contact</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[particle_id, particle_pair_candidates] :</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;       particle_wall_contact_pair_candidates)</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      <span class="keywordflow">if</span> (!particle_pair_candidates.empty())</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;          <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[face_id, particle_pair_candidate_content] :</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;               particle_pair_candidates)</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;              <span class="keyword">auto</span> particle = std::get&lt;0&gt;(particle_pair_candidate_content);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;              <span class="comment">// Normal vector of the boundary and a point on the boudary are</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;              <span class="comment">// defined as local parameters</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;              <span class="keyword">auto</span> normal_vector = std::get&lt;1&gt;(particle_pair_candidate_content);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;              Point&lt;dim&gt; point_on_boundary =</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                std::get&lt;2&gt;(particle_pair_candidate_content);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;              Tensor&lt;1, 3&gt; normal_vector_3d;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                normal_vector_3d = normal_vector;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                normal_vector_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a>(normal_vector);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespaceDEM.html">DEM</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a5e4b61424d0f264259197c9f57bdb6b3">   20</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aafbf878724a7c1cfb4adcfd18de76bfc">particle_wall_fine_search</a>(</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;dim&gt;::particle_wall_candidates</a></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;dim&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    &amp;particle_wall_pairs_in_contact)</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// Iterating over contact candidates from broad search and adding the pairs to</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="comment">// the particle_wall_pairs_in_contact</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[particle_id, particle_pair_candidates] :</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;       particle_wall_contact_pair_candidates)</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      <span class="keywordflow">if</span> (!particle_pair_candidates.empty())</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;          <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[face_id, particle_pair_candidate_content] :</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;               particle_pair_candidates)</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;              <span class="keyword">auto</span> particle = std::get&lt;0&gt;(particle_pair_candidate_content);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;              <span class="comment">// Normal vector of the boundary and a point on the boudary are</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;              <span class="comment">// defined as local parameters</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;              <span class="keyword">auto</span> normal_vector = std::get&lt;1&gt;(particle_pair_candidate_content);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;              Point&lt;dim&gt; point_on_boundary =</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                std::get&lt;2&gt;(particle_pair_candidate_content);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;              Tensor&lt;1, 3&gt; normal_vector_3d;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                normal_vector_3d = normal_vector;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;              Point&lt;3&gt; point_on_boundary_3d;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                point_on_boundary_3d = point_on_boundary;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                point_on_boundary_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(point_on_boundary);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                normal_vector_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a>(normal_vector);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;              Point&lt;3&gt; point_on_boundary_3d;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                point_on_boundary_3d = point_on_boundary;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;              particle_wall_pairs_in_contact[particle_id].emplace(</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                face_id,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                  particle,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                  normal_vector_3d,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                  point_on_boundary_3d,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                  std::get&lt;3&gt;(particle_pair_candidate_content)));</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;              <span class="comment">// std::get&lt;3&gt; contains the boundary id</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a2196be813e3a2fc1a404ad36040263b3">   70</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a98dc1641d0c1d1ea11d7652c7dd4dbfa">particle_floating_wall_fine_search</a>(</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;dim&gt;::particle_floating_wall_candidates</a></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    &amp;particle_floating_wall_candidates,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;dim&gt;</a> &amp;floating_wall_properties,</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                      simulation_time,</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;dim&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    &amp;particle_floating_wall_pairs_in_contact)</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="comment">// Reading floating wall properties</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; point_on_wall =</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a5ed33e811469326e683da50b146bbda1">points_on_walls</a>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; wall_normal_vector =</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a98dd1a5b3f6f923b717cdbe7b49f19d5">floating_walls_normal_vectors</a>;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="comment">// Iterating over contact candidates from broad search and adding the pairs to</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="comment">// the particle_floating_wall_pairs_in_contact</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[particle_id, particle_pair_candidates] :</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;       particle_floating_wall_candidates)</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> (!particle_pair_candidates.empty())</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;          <span class="keywordflow">for</span> (<span class="keyword">auto</span> particle_pair_candidate_iterator =</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                 particle_pair_candidates.begin();</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;               particle_pair_candidate_iterator !=</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;               particle_pair_candidates.end();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;               ++particle_pair_candidate_iterator)</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              <span class="comment">// Getting the floating wall id once to improve efficiency</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;              <span class="keyword">auto</span> floating_wall_id = particle_pair_candidate_iterator-&gt;first;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;              <span class="comment">// Checking simulation time for temporary floating walls</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;              <span class="keywordflow">if</span> (simulation_time &gt;=</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#af96b258a1b4c00b1218242841634985d">time_start</a>[floating_wall_id] &amp;&amp;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                  simulation_time &lt;=</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a2c65953b82e380a34205fb3753a74684">time_end</a>[floating_wall_id])</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                  <span class="comment">// Reading particle, normal vector and point on wall once to</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                  <span class="comment">// improve efficiency</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                  <span class="keyword">auto</span> particle = particle_pair_candidate_iterator-&gt;second;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                  Tensor&lt;1, dim&gt; normal_vector =</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                    wall_normal_vector[floating_wall_id];</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                  Point&lt;dim&gt; point_on_floating_wall =</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                    point_on_wall[floating_wall_id];</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                  Point&lt;3&gt; point_on_floating_wall_3d;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                    point_on_floating_wall_3d = point_on_floating_wall;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                    point_on_floating_wall_3d =</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                      <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(point_on_floating_wall);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                  <span class="comment">// Check to see on which side of the wall the particle is</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                  <span class="comment">// located:</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;              <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                point_on_boundary_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(point_on_boundary);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;              particle_wall_pairs_in_contact[particle_id].emplace(</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                face_id,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                  particle,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                  normal_vector_3d,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                  point_on_boundary_3d,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                  std::get&lt;3&gt;(particle_pair_candidate_content)));</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;              <span class="comment">// std::get&lt;3&gt; contains the boundary id</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a2196be813e3a2fc1a404ad36040263b3">   73</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a98dc1641d0c1d1ea11d7652c7dd4dbfa">particle_floating_wall_fine_search</a>(</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;dim&gt;::particle_floating_wall_candidates</a></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    &amp;particle_floating_wall_candidates,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;dim&gt;</a> &amp;floating_wall_properties,</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                      simulation_time,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;dim&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    &amp;particle_floating_wall_pairs_in_contact)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="comment">// Reading floating wall properties</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt; point_on_wall =</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a5ed33e811469326e683da50b146bbda1">points_on_walls</a>;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; wall_normal_vector =</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a98dd1a5b3f6f923b717cdbe7b49f19d5">floating_walls_normal_vectors</a>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="comment">// Iterating over contact candidates from broad search and adding the pairs to</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="comment">// the particle_floating_wall_pairs_in_contact</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[particle_id, particle_pair_candidates] :</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;       particle_floating_wall_candidates)</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      <span class="keywordflow">if</span> (!particle_pair_candidates.empty())</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;          <span class="keywordflow">for</span> (<span class="keyword">auto</span> particle_pair_candidate_iterator =</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                 particle_pair_candidates.begin();</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;               particle_pair_candidate_iterator !=</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;               particle_pair_candidates.end();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;               ++particle_pair_candidate_iterator)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;              <span class="comment">// Getting the floating wall id once to improve efficiency</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;              <span class="keyword">auto</span> floating_wall_id = particle_pair_candidate_iterator-&gt;first;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;              <span class="comment">// Checking simulation time for temporary floating walls</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;              <span class="keywordflow">if</span> (simulation_time &gt;=</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#af96b258a1b4c00b1218242841634985d">time_start</a>[floating_wall_id] &amp;&amp;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                  simulation_time &lt;=</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                    floating_wall_properties.<a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a2c65953b82e380a34205fb3753a74684">time_end</a>[floating_wall_id])</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                  <span class="comment">// Reading particle, normal vector and point on wall once to</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                  <span class="comment">// improve efficiency</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                  <span class="keyword">auto</span> particle = particle_pair_candidate_iterator-&gt;second;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                  Tensor&lt;1, dim&gt; normal_vector =</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                    wall_normal_vector[floating_wall_id];</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                  Point&lt;dim&gt; point_on_floating_wall =</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    point_on_wall[floating_wall_id];</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                  Point&lt;3&gt; point_on_floating_wall_3d;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                    point_on_floating_wall_3d = point_on_floating_wall;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                    point_on_floating_wall_3d =</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                      <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a>(point_on_floating_wall);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                  <span class="comment">// Finding connecting vector from defined point on the</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                  <span class="comment">// boundary wall to the particle location</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                  Tensor&lt;1, dim&gt; connecting_vector =</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                    particle-&gt;get_location() - point_on_floating_wall;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                  <span class="keywordtype">int</span> inner_product_sign =</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                    boost::math::sign(connecting_vector * normal_vector);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                  <span class="comment">// If the cell is located on the opposite side of the defined</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                  <span class="comment">// normal vector, the normal vector of the cell should be</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                  <span class="comment">// reversed</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                  <span class="keywordflow">if</span> (inner_product_sign &lt; 0)</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                    {</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                      normal_vector = -1 * normal_vector;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                    }</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                  Tensor&lt;1, 3&gt; normal_vector_3d;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 3)</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                    normal_vector_3d = normal_vector;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 2)</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                    normal_vector_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a>(normal_vector);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                  <span class="comment">// Check to see on which side of the wall the particle is</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                  <span class="comment">// located:</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                  <span class="comment">// Finding connecting vector from defined point on the</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                  <span class="comment">// boundary wall to the particle location</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                  Tensor&lt;1, dim&gt; connecting_vector =</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                    particle-&gt;get_location() - point_on_floating_wall;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                  <span class="keywordtype">int</span> inner_product_sign =</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                    boost::math::sign(connecting_vector * normal_vector);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                  <span class="comment">// If the cell is located on the opposite side of the defined</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                  <span class="comment">// normal vector, the normal vector of the cell should be</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                  <span class="comment">// reversed</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                  <span class="keywordflow">if</span> (inner_product_sign &lt; 0)</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                    {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                      normal_vector = -1 * normal_vector;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                    }</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                  Tensor&lt;1, 3&gt; normal_vector_3d;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 3)</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                    normal_vector_3d = normal_vector;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                  <span class="comment">// The boundary ID of floating walls is set to 100, it should</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                  <span class="comment">// be modified after adding motion of floating walls</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                  particle_floating_wall_pairs_in_contact[particle_id].emplace(</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                    floating_wall_id,</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                    <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(particle,</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                                                    normal_vector_3d,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                                                    point_on_floating_wall_3d,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                                                    100));</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            }</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        }</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;}</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a43e1adb19e8d704bfab980a7cff4a27e">  163</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a5b5a77c91ac3905aaa87faa445488163">particle_floating_mesh_fine_search</a>(</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;dim&gt;::particle_floating_mesh_candidates</a></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;dim&gt;::particle_floating_mesh_in_contact</a></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    &amp;particle_floating_mesh_in_contact)</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;{</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  particle_floating_mesh_in_contact.resize(</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    particle_floating_mesh_contact_candidates.size());</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> solid_counter = 0;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;       solid_counter &lt; particle_floating_mesh_contact_candidates.size();</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;       ++solid_counter)</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    {</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <span class="keyword">auto</span> &amp;particle_floating_mesh_element =</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        particle_floating_mesh_in_contact[solid_counter];</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      <span class="keyword">auto</span> &amp;candidates =</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        particle_floating_mesh_contact_candidates[solid_counter];</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                  <span class="keywordflow">if</span> constexpr (dim == 2)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                    normal_vector_3d = <a class="code" href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a>(normal_vector);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                  <span class="comment">// The boundary ID of floating walls is set to 100, it should</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                  <span class="comment">// be modified after adding motion of floating walls</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                  particle_floating_wall_pairs_in_contact[particle_id].emplace(</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                    floating_wall_id,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(particle,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                                                    normal_vector_3d,</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                                                    point_on_floating_wall_3d,</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                                    100));</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;}</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8h.html#a43e1adb19e8d704bfab980a7cff4a27e">  166</a></span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a5b5a77c91ac3905aaa87faa445488163">particle_floating_mesh_fine_search</a>(</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;dim&gt;::particle_floating_mesh_candidates</a></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;dim&gt;::particle_floating_mesh_in_contact</a></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    &amp;particle_floating_mesh_in_contact)</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;{</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  particle_floating_mesh_in_contact.resize(</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    particle_floating_mesh_contact_candidates.size());</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> solid_counter = 0;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;       solid_counter &lt; particle_floating_mesh_contact_candidates.size();</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;       ++solid_counter)</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    {</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      <span class="keyword">auto</span> &amp;particle_floating_mesh_element =</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        particle_floating_mesh_in_contact[solid_counter];</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[cut_cell_key, candidate_particles] : candidates)</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        {</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;          <span class="keywordflow">if</span> (!candidate_particles.empty())</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle_floating_mesh_candidate_iterator :</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                   candidate_particles)</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                {</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                  particle_floating_mesh_element[cut_cell_key].emplace(</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                    particle_floating_mesh_candidate_iterator.first,</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                    <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                      particle_floating_mesh_candidate_iterator.second));</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                }</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;            }</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        }</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;}</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#ab14e3e9163551f3d48467da22916937d">  199</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#ab14e3e9163551f3d48467da22916937d">particle_wall_fine_search&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;2&gt;::particle_wall_candidates</a></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;2&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    &amp;particle_wall_pairs_in_contact);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
-<div class="line"><a name="l00206"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#aec0ee53586952bc9a3f7458893ca602a">  206</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aec0ee53586952bc9a3f7458893ca602a">particle_wall_fine_search&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;3&gt;::particle_wall_candidates</a></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;3&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    &amp;particle_wall_pairs_in_contact);</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#ab6727f090745132467a8179e85f9a786">  213</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#ab6727f090745132467a8179e85f9a786">particle_floating_wall_fine_search&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;2&gt;::particle_floating_wall_candidates</a></div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    &amp;particle_floating_wall_candidates,</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;2&gt;</a> &amp;floating_wall_properties,</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                    simulation_time,</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;2&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    &amp;particle_floating_wall_pairs_in_contact);</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
-<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#a64be1c938babf6cecfa746596e072cb4">  222</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a64be1c938babf6cecfa746596e072cb4">particle_floating_wall_fine_search&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;3&gt;::particle_floating_wall_candidates</a></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    &amp;particle_floating_wall_candidates,</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;3&gt;</a> &amp;floating_wall_properties,</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                    simulation_time,</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;3&gt;::particle_wall_in_contact</a></div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    &amp;particle_floating_wall_pairs_in_contact);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00231"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#aaf998308ec8fddf7d81f059d2bed0796">  231</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aaf998308ec8fddf7d81f059d2bed0796">particle_floating_mesh_fine_search&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;2&gt;::particle_floating_mesh_candidates</a></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;2&gt;::particle_floating_mesh_in_contact</a></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    &amp;particle_floating_mesh_in_contact);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#a66b7861b1b49e3827e8bdf8420a49126">  238</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a66b7861b1b49e3827e8bdf8420a49126">particle_floating_mesh_fine_search&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;3&gt;::particle_floating_mesh_candidates</a></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;3&gt;::particle_floating_mesh_in_contact</a></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    &amp;particle_floating_mesh_in_contact);</div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00353">parameters_lagrangian.h:354</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a2c65953b82e380a34205fb3753a74684"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a2c65953b82e380a34205fb3753a74684">Parameters::Lagrangian::FloatingWalls::time_end</a></div><div class="ttdeci">std::vector&lt; double &gt; time_end</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00369">parameters_lagrangian.h:369</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a5ed33e811469326e683da50b146bbda1"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a5ed33e811469326e683da50b146bbda1">Parameters::Lagrangian::FloatingWalls::points_on_walls</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; points_on_walls</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00360">parameters_lagrangian.h:360</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a98dd1a5b3f6f923b717cdbe7b49f19d5"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a98dd1a5b3f6f923b717cdbe7b49f19d5">Parameters::Lagrangian::FloatingWalls::floating_walls_normal_vectors</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; floating_walls_normal_vectors</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00363">parameters_lagrangian.h:363</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_af96b258a1b4c00b1218242841634985d"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#af96b258a1b4c00b1218242841634985d">Parameters::Lagrangian::FloatingWalls::time_start</a></div><div class="ttdeci">std::vector&lt; double &gt; time_start</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00366">parameters_lagrangian.h:366</a></div></div>
-<div class="ttc" id="aclassparticle__wall__contact__info_html"><div class="ttname"><a href="classparticle__wall__contact__info.html">particle_wall_contact_info</a></div><div class="ttdef"><b>Definition:</b> <a href="contact__info_8h_source.html#l00042">contact_info.h:43</a></div></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      <span class="keyword">auto</span> &amp;candidates =</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        particle_floating_mesh_contact_candidates[solid_counter];</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[cut_cell_key, candidate_particles] : candidates)</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;          <span class="keywordflow">if</span> (!candidate_particles.empty())</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;              <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle_floating_mesh_candidate_iterator :</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                   candidate_particles)</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                {</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                  particle_floating_mesh_element[cut_cell_key].emplace(</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                    particle_floating_mesh_candidate_iterator.first,</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                    <a class="code" href="classparticle__wall__contact__info.html">particle_wall_contact_info&lt;dim&gt;</a>(</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                      particle_floating_mesh_candidate_iterator.second));</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                }</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    }</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;}</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#ab14e3e9163551f3d48467da22916937d">  202</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#ab14e3e9163551f3d48467da22916937d">particle_wall_fine_search&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;2&gt;::particle_wall_candidates</a></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;2&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    &amp;particle_wall_pairs_in_contact);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
+<div class="line"><a name="l00209"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#aec0ee53586952bc9a3f7458893ca602a">  209</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aec0ee53586952bc9a3f7458893ca602a">particle_wall_fine_search&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">dem_data_structures&lt;3&gt;::particle_wall_candidates</a></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    &amp;particle_wall_contact_pair_candidates,</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;3&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    &amp;particle_wall_pairs_in_contact);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#ab6727f090745132467a8179e85f9a786">  216</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#ab6727f090745132467a8179e85f9a786">particle_floating_wall_fine_search&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;2&gt;::particle_floating_wall_candidates</a></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    &amp;particle_floating_wall_candidates,</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;2&gt;</a> &amp;floating_wall_properties,</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                    simulation_time,</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;2&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    &amp;particle_floating_wall_pairs_in_contact);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
+<div class="line"><a name="l00225"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#a64be1c938babf6cecfa746596e072cb4">  225</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a64be1c938babf6cecfa746596e072cb4">particle_floating_wall_fine_search&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">dem_data_structures&lt;3&gt;::particle_floating_wall_candidates</a></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    &amp;particle_floating_wall_candidates,</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  <span class="keyword">const</span> <a class="code" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls&lt;3&gt;</a> &amp;floating_wall_properties,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                    simulation_time,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">dem_data_structures&lt;3&gt;::particle_wall_in_contact</a></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    &amp;particle_floating_wall_pairs_in_contact);</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#aaf998308ec8fddf7d81f059d2bed0796">  234</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#aaf998308ec8fddf7d81f059d2bed0796">particle_floating_mesh_fine_search&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;2&gt;::particle_floating_mesh_candidates</a></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;2&gt;::particle_floating_mesh_in_contact</a></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    &amp;particle_floating_mesh_in_contact);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00241"></a><span class="lineno"><a class="line" href="particle__wall__fine__search_8cc.html#a66b7861b1b49e3827e8bdf8420a49126">  241</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<a class="code" href="particle__wall__fine__search_8cc.html#a66b7861b1b49e3827e8bdf8420a49126">particle_floating_mesh_fine_search&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">dem_data_structures&lt;3&gt;::particle_floating_mesh_candidates</a></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    &amp;particle_floating_mesh_contact_candidates,</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  <span class="keyword">typename</span> <a class="code" href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">dem_data_structures&lt;3&gt;::particle_floating_mesh_in_contact</a></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    &amp;particle_floating_mesh_in_contact);</div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00339">parameters_lagrangian.h:340</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a2c65953b82e380a34205fb3753a74684"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a2c65953b82e380a34205fb3753a74684">Parameters::Lagrangian::FloatingWalls::time_end</a></div><div class="ttdeci">std::vector&lt; double &gt; time_end</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00355">parameters_lagrangian.h:355</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a5ed33e811469326e683da50b146bbda1"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a5ed33e811469326e683da50b146bbda1">Parameters::Lagrangian::FloatingWalls::points_on_walls</a></div><div class="ttdeci">std::vector&lt; Point&lt; dim &gt; &gt; points_on_walls</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00346">parameters_lagrangian.h:346</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_a98dd1a5b3f6f923b717cdbe7b49f19d5"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#a98dd1a5b3f6f923b717cdbe7b49f19d5">Parameters::Lagrangian::FloatingWalls::floating_walls_normal_vectors</a></div><div class="ttdeci">std::vector&lt; Tensor&lt; 1, dim &gt; &gt; floating_walls_normal_vectors</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00349">parameters_lagrangian.h:349</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Lagrangian_1_1FloatingWalls_html_af96b258a1b4c00b1218242841634985d"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1FloatingWalls.html#af96b258a1b4c00b1218242841634985d">Parameters::Lagrangian::FloatingWalls::time_start</a></div><div class="ttdeci">std::vector&lt; double &gt; time_start</div><div class="ttdef"><b>Definition:</b> <a href="parameters__lagrangian_8h_source.html#l00352">parameters_lagrangian.h:352</a></div></div>
+<div class="ttc" id="aclassparticle__wall__contact__info_html"><div class="ttname"><a href="classparticle__wall__contact__info.html">particle_wall_contact_info</a></div><div class="ttdef"><b>Definition:</b> <a href="contact__info_8h_source.html#l00029">contact_info.h:30</a></div></div>
 <div class="ttc" id="acontact__info_8h_html"><div class="ttname"><a href="contact__info_8h.html">contact_info.h</a></div></div>
-<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00025">dem_properties.h:26</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
-<div class="ttc" id="aparticle__wall__fine__search_8cc_html_a5b5a77c91ac3905aaa87faa445488163"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a5b5a77c91ac3905aaa87faa445488163">particle_floating_mesh_fine_search</a></div><div class="ttdeci">void particle_floating_mesh_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename dem_data_structures&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-floating mesh broad search (particle_floating_mesh_...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00163">particle_wall_fine_search.cc:163</a></div></div>
+<div class="ttc" id="anamespaceDEM_html"><div class="ttname"><a href="namespaceDEM.html">DEM</a></div><div class="ttdoc">This namespace defines all the data containers and required operations on these containers for the DE...</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00010">dem_properties.h:11</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
+<div class="ttc" id="aparticle__wall__fine__search_8cc_html_a5b5a77c91ac3905aaa87faa445488163"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a5b5a77c91ac3905aaa87faa445488163">particle_floating_mesh_fine_search</a></div><div class="ttdeci">void particle_floating_mesh_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename dem_data_structures&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-floating mesh broad search (particle_floating_mesh_...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00166">particle_wall_fine_search.cc:166</a></div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_a64be1c938babf6cecfa746596e072cb4"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a64be1c938babf6cecfa746596e072cb4">particle_floating_wall_fine_search&lt; 3 &gt;</a></div><div class="ttdeci">template void particle_floating_wall_fine_search&lt; 3 &gt;(const typename dem_data_structures&lt; 3 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const Parameters::Lagrangian::FloatingWalls&lt; 3 &gt; &amp;floating_wall_properties, const double simulation_time, typename dem_data_structures&lt; 3 &gt;::particle_wall_in_contact &amp;particle_floating_wall_pairs_in_contact)</div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_a66b7861b1b49e3827e8bdf8420a49126"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a66b7861b1b49e3827e8bdf8420a49126">particle_floating_mesh_fine_search&lt; 3 &gt;</a></div><div class="ttdeci">template void particle_floating_mesh_fine_search&lt; 3 &gt;(const typename dem_data_structures&lt; 3 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename dem_data_structures&lt; 3 &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact)</div></div>
-<div class="ttc" id="aparticle__wall__fine__search_8cc_html_a98dc1641d0c1d1ea11d7652c7dd4dbfa"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a98dc1641d0c1d1ea11d7652c7dd4dbfa">particle_floating_wall_fine_search</a></div><div class="ttdeci">void particle_floating_wall_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const Parameters::Lagrangian::FloatingWalls&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename dem_data_structures&lt; dim &gt;::particle_wall_in_contact &amp;particle_floating_wall_pairs_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-floating wall broad search (particle_floating_wall_...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00070">particle_wall_fine_search.cc:70</a></div></div>
+<div class="ttc" id="aparticle__wall__fine__search_8cc_html_a98dc1641d0c1d1ea11d7652c7dd4dbfa"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#a98dc1641d0c1d1ea11d7652c7dd4dbfa">particle_floating_wall_fine_search</a></div><div class="ttdeci">void particle_floating_wall_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const Parameters::Lagrangian::FloatingWalls&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename dem_data_structures&lt; dim &gt;::particle_wall_in_contact &amp;particle_floating_wall_pairs_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-floating wall broad search (particle_floating_wall_...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00073">particle_wall_fine_search.cc:73</a></div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_aaf998308ec8fddf7d81f059d2bed0796"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#aaf998308ec8fddf7d81f059d2bed0796">particle_floating_mesh_fine_search&lt; 2 &gt;</a></div><div class="ttdeci">template void particle_floating_mesh_fine_search&lt; 2 &gt;(const typename dem_data_structures&lt; 2 &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename dem_data_structures&lt; 2 &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact)</div></div>
-<div class="ttc" id="aparticle__wall__fine__search_8cc_html_aafbf878724a7c1cfb4adcfd18de76bfc"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#aafbf878724a7c1cfb4adcfd18de76bfc">particle_wall_fine_search</a></div><div class="ttdeci">void particle_wall_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_wall_candidates &amp;particle_wall_contact_pair_candidates, typename dem_data_structures&lt; dim &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-wall broad search (particle_wall_contact_pair_candi...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00017">particle_wall_fine_search.cc:17</a></div></div>
+<div class="ttc" id="aparticle__wall__fine__search_8cc_html_aafbf878724a7c1cfb4adcfd18de76bfc"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#aafbf878724a7c1cfb4adcfd18de76bfc">particle_wall_fine_search</a></div><div class="ttdeci">void particle_wall_fine_search(const typename dem_data_structures&lt; dim &gt;::particle_wall_candidates &amp;particle_wall_contact_pair_candidates, typename dem_data_structures&lt; dim &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact)</div><div class="ttdoc">Iterate over the contact candidates from particle-wall broad search (particle_wall_contact_pair_candi...</div><div class="ttdef"><b>Definition:</b> <a href="particle__wall__fine__search_8cc_source.html#l00020">particle_wall_fine_search.cc:20</a></div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_ab14e3e9163551f3d48467da22916937d"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#ab14e3e9163551f3d48467da22916937d">particle_wall_fine_search&lt; 2 &gt;</a></div><div class="ttdeci">template void particle_wall_fine_search&lt; 2 &gt;(const typename dem_data_structures&lt; 2 &gt;::particle_wall_candidates &amp;particle_wall_contact_pair_candidates, typename dem_data_structures&lt; 2 &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact)</div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_ab6727f090745132467a8179e85f9a786"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#ab6727f090745132467a8179e85f9a786">particle_floating_wall_fine_search&lt; 2 &gt;</a></div><div class="ttdeci">template void particle_floating_wall_fine_search&lt; 2 &gt;(const typename dem_data_structures&lt; 2 &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_candidates, const Parameters::Lagrangian::FloatingWalls&lt; 2 &gt; &amp;floating_wall_properties, const double simulation_time, typename dem_data_structures&lt; 2 &gt;::particle_wall_in_contact &amp;particle_floating_wall_pairs_in_contact)</div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8cc_html_aec0ee53586952bc9a3f7458893ca602a"><div class="ttname"><a href="particle__wall__fine__search_8cc.html#aec0ee53586952bc9a3f7458893ca602a">particle_wall_fine_search&lt; 3 &gt;</a></div><div class="ttdeci">template void particle_wall_fine_search&lt; 3 &gt;(const typename dem_data_structures&lt; 3 &gt;::particle_wall_candidates &amp;particle_wall_contact_pair_candidates, typename dem_data_structures&lt; 3 &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact)</div></div>
 <div class="ttc" id="aparticle__wall__fine__search_8h_html"><div class="ttname"><a href="particle__wall__fine__search_8h.html">particle_wall_fine_search.h</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a192e455bef047459cba3816cd0c4874b"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures::particle_wall_in_contact</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, particle_wall_contact_info&lt; dim &gt; &gt; &gt; particle_wall_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00164">data_containers.h:164</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a1f112827a26379fc4d558b41c39d2c94"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">DEM::dem_data_structures::particle_floating_wall_candidates</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, std::unordered_map&lt; global_face_id, Particles::ParticleIterator&lt; dim &gt; &gt; &gt; particle_floating_wall_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00146">data_containers.h:146</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a34d9555cd6c00d064a4de21b3bd004b2"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">DEM::dem_data_structures::particle_floating_mesh_candidates</a></div><div class="ttdeci">std::vector&lt; particle_floating_wall_from_mesh_candidates &gt; particle_floating_mesh_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00192">data_containers.h:192</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a9dec7c120aedd772d8a124b989a2df9e"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">DEM::dem_data_structures::particle_floating_mesh_in_contact</a></div><div class="ttdeci">std::vector&lt; particle_floating_wall_from_mesh_in_contact &gt; particle_floating_mesh_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00196">data_containers.h:196</a></div></div>
-<div class="ttc" id="astructDEM_1_1dem__data__structures_html_aa6ee0ba8f43d17a376fa64027f3ab1fc"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">DEM::dem_data_structures::particle_wall_candidates</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, std::tuple&lt; Particles::ParticleIterator&lt; dim &gt;, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt;, global_face_id &gt; &gt; &gt; particle_wall_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00157">data_containers.h:157</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a192e455bef047459cba3816cd0c4874b"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b">DEM::dem_data_structures::particle_wall_in_contact</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, particle_wall_contact_info&lt; dim &gt; &gt; &gt; particle_wall_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00151">data_containers.h:151</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a1f112827a26379fc4d558b41c39d2c94"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94">DEM::dem_data_structures::particle_floating_wall_candidates</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, std::unordered_map&lt; global_face_id, Particles::ParticleIterator&lt; dim &gt; &gt; &gt; particle_floating_wall_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00133">data_containers.h:133</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a34d9555cd6c00d064a4de21b3bd004b2"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2">DEM::dem_data_structures::particle_floating_mesh_candidates</a></div><div class="ttdeci">std::vector&lt; particle_floating_wall_from_mesh_candidates &gt; particle_floating_mesh_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00179">data_containers.h:179</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_a9dec7c120aedd772d8a124b989a2df9e"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e">DEM::dem_data_structures::particle_floating_mesh_in_contact</a></div><div class="ttdeci">std::vector&lt; particle_floating_wall_from_mesh_in_contact &gt; particle_floating_mesh_in_contact</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00183">data_containers.h:183</a></div></div>
+<div class="ttc" id="astructDEM_1_1dem__data__structures_html_aa6ee0ba8f43d17a376fa64027f3ab1fc"><div class="ttname"><a href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">DEM::dem_data_structures::particle_wall_candidates</a></div><div class="ttdeci">ankerl::unordered_dense::map&lt; types::particle_index, ankerl::unordered_dense::map&lt; global_face_id, std::tuple&lt; Particles::ParticleIterator&lt; dim &gt;, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt;, global_face_id &gt; &gt; &gt; particle_wall_candidates</div><div class="ttdef"><b>Definition:</b> <a href="data__containers_8h_source.html#l00144">data_containers.h:144</a></div></div>
 <div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html">tensors_and_points_dimension_manipulation.h</a></div></div>
-<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_a46aac20f08a720c94e25ef4d02867304"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tensor_nd_to_3d(const Tensor&lt; 1, dim &gt; &amp;tensor)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00037">tensors_and_points_dimension_manipulation.h:37</a></div></div>
-<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_ae6b1bfcf472bf014c96d7188128dfc89"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a></div><div class="ttdeci">Point&lt; 3 &gt; point_nd_to_3d(const Point&lt; dim &gt; &amp;point)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00082">tensors_and_points_dimension_manipulation.h:82</a></div></div>
+<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_a46aac20f08a720c94e25ef4d02867304"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#a46aac20f08a720c94e25ef4d02867304">tensor_nd_to_3d</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; tensor_nd_to_3d(const Tensor&lt; 1, dim &gt; &amp;tensor)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensors_and_points_dimension_manipulation.h:24</a></div></div>
+<div class="ttc" id="atensors__and__points__dimension__manipulation_8h_html_ae6b1bfcf472bf014c96d7188128dfc89"><div class="ttname"><a href="tensors__and__points__dimension__manipulation_8h.html#ae6b1bfcf472bf014c96d7188128dfc89">point_nd_to_3d</a></div><div class="ttdeci">Point&lt; 3 &gt; point_nd_to_3d(const Point&lt; dim &gt; &amp;point)</div><div class="ttdef"><b>Definition:</b> <a href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">tensors_and_points_dimension_manipulation.h:69</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

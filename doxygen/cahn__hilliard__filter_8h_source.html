@@ -79,150 +79,137 @@ $(function() {
 <div class="title">cahn_hilliard_filter.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="cahn__hilliard__filter_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_cahn_hilliard_filter_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_cahn_hilliard_filter_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__multiphysics_8h.html">core/parameters_multiphysics.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * @brief Filter phase fraction according to the selected filtering method.</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">   28</a></span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">CahnHilliardFilterBase</a>()</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  {}</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * @brief Instantiate and return a pointer to a CahnHilliardFilterBase</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * object by casting it to the proper child class.</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @param[in] cahn_hilliard_parameters CahnHilliard model parameters.</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;CahnHilliardFilterBase&gt;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">model_cast</a>(<span class="keyword">const</span> <a class="code" href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a> &amp;cahn_hilliard_parameters);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * the filter.</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html#a1f54247e036dc7c33e3ff08cf411a11a">   47</a></span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#a1f54247e036dc7c33e3ff08cf411a11a">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase) = 0;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;};</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"> * @brief Used as a default when no filter is applied to the phase fraction.</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html">   54</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardNoFilter.html">CahnHilliardNoFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">   57</a></span>&#160;  <a class="code" href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">CahnHilliardNoFilter</a>()</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  {}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * @brief Return the phase fraction with no modification.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">   64</a></span>&#160;  <a class="code" href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> unfiltered_phase;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;};</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"> * @brief Calculate a filtered phase fraction for Cahn-Hilliard simulations.</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"> * In this case, a simple clamping is performed on the phase fraction parameter</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"> * for it to remain in the [-1,1] interval.</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html">   75</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardClipFilter.html">CahnHilliardClipFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">   78</a></span>&#160;  <a class="code" href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">CahnHilliardClipFilter</a>()</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  {}</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * filter.</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">   88</a></span>&#160;  <a class="code" href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">return</span> (std::abs(unfiltered_phase) &lt; 1) ? unfiltered_phase :</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                                              <a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(unfiltered_phase);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;};</div>
+<a href="cahn__hilliard__filter_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_cahn_hilliard_filter_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_cahn_hilliard_filter_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parameters__multiphysics_8h.html">core/parameters_multiphysics.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * @brief Filter phase fraction according to the selected filtering method.</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">   15</a></span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">CahnHilliardFilterBase</a>()</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  {}</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">   * @brief Instantiate and return a pointer to a CahnHilliardFilterBase</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">   * object by casting it to the proper child class.</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">   * @param[in] cahn_hilliard_parameters CahnHilliard model parameters.</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;CahnHilliardFilterBase&gt;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">model_cast</a>(<span class="keyword">const</span> <a class="code" href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a> &amp;cahn_hilliard_parameters);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   * the filter.</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classCahnHilliardFilterBase.html#a1f54247e036dc7c33e3ff08cf411a11a">   34</a></span>&#160;  <a class="code" href="classCahnHilliardFilterBase.html#a1f54247e036dc7c33e3ff08cf411a11a">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase) = 0;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * @brief Used as a default when no filter is applied to the phase fraction.</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html">   41</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardNoFilter.html">CahnHilliardNoFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">   44</a></span>&#160;  <a class="code" href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">CahnHilliardNoFilter</a>()</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  {}</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @brief Return the phase fraction with no modification.</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">   51</a></span>&#160;  <a class="code" href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">return</span> unfiltered_phase;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"> * @brief Calculate a filtered phase fraction for Cahn-Hilliard simulations.</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"> * In this case, a simple clamping is performed on the phase fraction parameter</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"> * for it to remain in the [-1,1] interval.</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html">   62</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardClipFilter.html">CahnHilliardClipFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">   65</a></span>&#160;  <a class="code" href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">CahnHilliardClipFilter</a>()</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  {}</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * filter.</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">   75</a></span>&#160;  <a class="code" href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> (std::abs(unfiltered_phase) &lt; 1) ? unfiltered_phase :</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                                              <a class="code" href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a>(unfiltered_phase);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;};</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"> * @brief Calculate a filtered phase fraction for Cahn-Hilliard simulations.</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment"> * The filtered phase is defined as \f$\phi_f = \tanh(\beta \phi)\f$ with</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"> * \f$ \phi \f$ the unfiltered phase field.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html">   88</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardTanhFilter.html">CahnHilliardTanhFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">   91</a></span>&#160;  <a class="code" href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">CahnHilliardTanhFilter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>)</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    : <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>(<a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>)</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  {}</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"> * @brief Calculate a filtered phase fraction for Cahn-Hilliard simulations.</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment"> * The filtered phase is defined as \f$\phi_f = \tanh(\beta \phi)\f$ with</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"> * \f$ \phi \f$ the unfiltered phase field.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html">  101</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardTanhFilter.html">CahnHilliardTanhFilter</a> : <span class="keyword">public</span> <a class="code" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;{</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">  104</a></span>&#160;  <a class="code" href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">CahnHilliardTanhFilter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>)</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    : <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>(<a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>)</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  {}</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * filter.</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">  102</a></span>&#160;  <a class="code" href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> tanh(<a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a> * unfiltered_phase);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   * @brief Calculate the value of the filtered phase fraction.</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @param[in] unfiltered_phase Value of the phase fraction before applying the</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * filter.</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * @return Value of the phase fraction after applying the filter.</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">  115</a></span>&#160;  <a class="code" href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">filter_phase</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;unfiltered_phase)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> tanh(<a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a> * unfiltered_phase);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * User-defined parameter that influences how sharp the filtering is.</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">  124</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;};</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassCahnHilliardClipFilter_html"><div class="ttname"><a href="classCahnHilliardClipFilter.html">CahnHilliardClipFilter</a></div><div class="ttdoc">Calculate a filtered phase fraction for Cahn-Hilliard simulations. In this case, a simple clamping is...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00075">cahn_hilliard_filter.h:76</a></div></div>
-<div class="ttc" id="aclassCahnHilliardClipFilter_html_a169ee9ac92f32bf962bab941c091dd22"><div class="ttname"><a href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">CahnHilliardClipFilter::CahnHilliardClipFilter</a></div><div class="ttdeci">CahnHilliardClipFilter()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00078">cahn_hilliard_filter.h:78</a></div></div>
-<div class="ttc" id="aclassCahnHilliardClipFilter_html_a858f9b26e701e3d222815bba4779f06c"><div class="ttname"><a href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">CahnHilliardClipFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Calculate the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00088">cahn_hilliard_filter.h:88</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFilterBase_html"><div class="ttname"><a href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div><div class="ttdoc">Filter phase fraction according to the selected filtering method.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00025">cahn_hilliard_filter.h:26</a></div></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   * User-defined parameter that influences how sharp the filtering is.</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">  111</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">beta</a>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;};</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassCahnHilliardClipFilter_html"><div class="ttname"><a href="classCahnHilliardClipFilter.html">CahnHilliardClipFilter</a></div><div class="ttdoc">Calculate a filtered phase fraction for Cahn-Hilliard simulations. In this case, a simple clamping is...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00062">cahn_hilliard_filter.h:63</a></div></div>
+<div class="ttc" id="aclassCahnHilliardClipFilter_html_a169ee9ac92f32bf962bab941c091dd22"><div class="ttname"><a href="classCahnHilliardClipFilter.html#a169ee9ac92f32bf962bab941c091dd22">CahnHilliardClipFilter::CahnHilliardClipFilter</a></div><div class="ttdeci">CahnHilliardClipFilter()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00065">cahn_hilliard_filter.h:65</a></div></div>
+<div class="ttc" id="aclassCahnHilliardClipFilter_html_a858f9b26e701e3d222815bba4779f06c"><div class="ttname"><a href="classCahnHilliardClipFilter.html#a858f9b26e701e3d222815bba4779f06c">CahnHilliardClipFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Calculate the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00075">cahn_hilliard_filter.h:75</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFilterBase_html"><div class="ttname"><a href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a></div><div class="ttdoc">Filter phase fraction according to the selected filtering method.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00012">cahn_hilliard_filter.h:13</a></div></div>
 <div class="ttc" id="aclassCahnHilliardFilterBase_html_a1f54247e036dc7c33e3ff08cf411a11a"><div class="ttname"><a href="classCahnHilliardFilterBase.html#a1f54247e036dc7c33e3ff08cf411a11a">CahnHilliardFilterBase::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase)=0</div><div class="ttdoc">Calculate the value of the filtered phase fraction.</div></div>
-<div class="ttc" id="aclassCahnHilliardFilterBase_html_a3768b77608aa7e5f45fe38efdc5827f4"><div class="ttname"><a href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; CahnHilliardFilterBase &gt; model_cast(const Parameters::CahnHilliard &amp;cahn_hilliard_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a CahnHilliardFilterBase object by casting it to the proper child...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8cc_source.html#l00020">cahn_hilliard_filter.cc:20</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFilterBase_html_ad2f2bcdd6044afc4e546844cc23e4ba7"><div class="ttname"><a href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">CahnHilliardFilterBase::CahnHilliardFilterBase</a></div><div class="ttdeci">CahnHilliardFilterBase()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00028">cahn_hilliard_filter.h:28</a></div></div>
-<div class="ttc" id="aclassCahnHilliardNoFilter_html"><div class="ttname"><a href="classCahnHilliardNoFilter.html">CahnHilliardNoFilter</a></div><div class="ttdoc">Used as a default when no filter is applied to the phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00054">cahn_hilliard_filter.h:55</a></div></div>
-<div class="ttc" id="aclassCahnHilliardNoFilter_html_a1cee6b229f059d9010e27c914351a7af"><div class="ttname"><a href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">CahnHilliardNoFilter::CahnHilliardNoFilter</a></div><div class="ttdeci">CahnHilliardNoFilter()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00057">cahn_hilliard_filter.h:57</a></div></div>
-<div class="ttc" id="aclassCahnHilliardNoFilter_html_a9c3ff62c7b4fc63d85a1493a010bb101"><div class="ttname"><a href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">CahnHilliardNoFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Return the phase fraction with no modification.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00064">cahn_hilliard_filter.h:64</a></div></div>
-<div class="ttc" id="aclassCahnHilliardTanhFilter_html"><div class="ttname"><a href="classCahnHilliardTanhFilter.html">CahnHilliardTanhFilter</a></div><div class="ttdoc">Calculate a filtered phase fraction for Cahn-Hilliard simulations.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00101">cahn_hilliard_filter.h:102</a></div></div>
-<div class="ttc" id="aclassCahnHilliardTanhFilter_html_abf102820b84d8509b372d49287708827"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">CahnHilliardTanhFilter::beta</a></div><div class="ttdeci">const double beta</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00124">cahn_hilliard_filter.h:124</a></div></div>
-<div class="ttc" id="aclassCahnHilliardTanhFilter_html_acd880b367a5acacf69291281878dc2f9"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">CahnHilliardTanhFilter::CahnHilliardTanhFilter</a></div><div class="ttdeci">CahnHilliardTanhFilter(const double beta)</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00104">cahn_hilliard_filter.h:104</a></div></div>
-<div class="ttc" id="aclassCahnHilliardTanhFilter_html_aee65f1104c1fd3e795d54c000dab8958"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">CahnHilliardTanhFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Calculate the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00115">cahn_hilliard_filter.h:115</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFilterBase_html_a3768b77608aa7e5f45fe38efdc5827f4"><div class="ttname"><a href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; CahnHilliardFilterBase &gt; model_cast(const Parameters::CahnHilliard &amp;cahn_hilliard_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a CahnHilliardFilterBase object by casting it to the proper child...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8cc_source.html#l00007">cahn_hilliard_filter.cc:7</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFilterBase_html_ad2f2bcdd6044afc4e546844cc23e4ba7"><div class="ttname"><a href="classCahnHilliardFilterBase.html#ad2f2bcdd6044afc4e546844cc23e4ba7">CahnHilliardFilterBase::CahnHilliardFilterBase</a></div><div class="ttdeci">CahnHilliardFilterBase()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00015">cahn_hilliard_filter.h:15</a></div></div>
+<div class="ttc" id="aclassCahnHilliardNoFilter_html"><div class="ttname"><a href="classCahnHilliardNoFilter.html">CahnHilliardNoFilter</a></div><div class="ttdoc">Used as a default when no filter is applied to the phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00041">cahn_hilliard_filter.h:42</a></div></div>
+<div class="ttc" id="aclassCahnHilliardNoFilter_html_a1cee6b229f059d9010e27c914351a7af"><div class="ttname"><a href="classCahnHilliardNoFilter.html#a1cee6b229f059d9010e27c914351a7af">CahnHilliardNoFilter::CahnHilliardNoFilter</a></div><div class="ttdeci">CahnHilliardNoFilter()</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00044">cahn_hilliard_filter.h:44</a></div></div>
+<div class="ttc" id="aclassCahnHilliardNoFilter_html_a9c3ff62c7b4fc63d85a1493a010bb101"><div class="ttname"><a href="classCahnHilliardNoFilter.html#a9c3ff62c7b4fc63d85a1493a010bb101">CahnHilliardNoFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Return the phase fraction with no modification.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00051">cahn_hilliard_filter.h:51</a></div></div>
+<div class="ttc" id="aclassCahnHilliardTanhFilter_html"><div class="ttname"><a href="classCahnHilliardTanhFilter.html">CahnHilliardTanhFilter</a></div><div class="ttdoc">Calculate a filtered phase fraction for Cahn-Hilliard simulations.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00088">cahn_hilliard_filter.h:89</a></div></div>
+<div class="ttc" id="aclassCahnHilliardTanhFilter_html_abf102820b84d8509b372d49287708827"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#abf102820b84d8509b372d49287708827">CahnHilliardTanhFilter::beta</a></div><div class="ttdeci">const double beta</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00111">cahn_hilliard_filter.h:111</a></div></div>
+<div class="ttc" id="aclassCahnHilliardTanhFilter_html_acd880b367a5acacf69291281878dc2f9"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#acd880b367a5acacf69291281878dc2f9">CahnHilliardTanhFilter::CahnHilliardTanhFilter</a></div><div class="ttdeci">CahnHilliardTanhFilter(const double beta)</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00091">cahn_hilliard_filter.h:91</a></div></div>
+<div class="ttc" id="aclassCahnHilliardTanhFilter_html_aee65f1104c1fd3e795d54c000dab8958"><div class="ttname"><a href="classCahnHilliardTanhFilter.html#aee65f1104c1fd3e795d54c000dab8958">CahnHilliardTanhFilter::filter_phase</a></div><div class="ttdeci">virtual double filter_phase(const double &amp;unfiltered_phase) override</div><div class="ttdoc">Calculate the value of the filtered phase fraction.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8h_source.html#l00102">cahn_hilliard_filter.h:102</a></div></div>
 <div class="ttc" id="aparameters__multiphysics_8h_html"><div class="ttname"><a href="parameters__multiphysics_8h.html">parameters_multiphysics.h</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__multiphysics_8h_source.html#l00214">parameters_multiphysics.h:215</a></div></div>
-<div class="ttc" id="autilities_8h_html_a1ab31b90bc584c635ec159468ceed9b2"><div class="ttname"><a href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a></div><div class="ttdeci">int sgn(T val)</div><div class="ttdoc">Used in the calculate_properties_ch to retrieve the sign of the phase parameter.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00304">utilities.h:304</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a></div><div class="ttdef"><b>Definition:</b> <a href="parameters__multiphysics_8h_source.html#l00201">parameters_multiphysics.h:202</a></div></div>
+<div class="ttc" id="autilities_8h_html_a1ab31b90bc584c635ec159468ceed9b2"><div class="ttname"><a href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a></div><div class="ttdeci">int sgn(T val)</div><div class="ttdoc">Used in the calculate_properties_ch to retrieve the sign of the phase parameter.</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00291">utilities.h:291</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

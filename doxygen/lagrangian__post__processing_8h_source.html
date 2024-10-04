@@ -79,145 +79,132 @@ $(function() {
 <div class="title">lagrangian_post_processing.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="lagrangian__post__processing_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * Copyright (C) 2019 - 2024 by the Lethe authors</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * This file is part of the Lethe library</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * The Lethe library is free software; you can use it, redistribute</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * it, and/or modify it under the terms of the GNU Lesser General</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * Public License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * The full text of the license can be found in the file LICENSE at</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * the top level of the Lethe distribution.</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * ---------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifndef lethe_lagrangian_post_processing_h</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define lethe_lagrangian_post_processing_h</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="pvd__handler_8h.html">core/pvd_handler.h</a>&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="adaptive__sparse__contacts_8h.html">dem/adaptive_sparse_contacts.h</a>&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * This class deals with Lagrangian post-processing. At the moment, calculation</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * of time-averaged particles velocity and granular temperature are added to the</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * class.</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * @todo Add tracer particles</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> * @brief Carries out writing the cell data of the domain.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"> * @param triangulation Triangulation of the domain.</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment"> * @param grid_pvdhandler PVD handler for grid.</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"> * @param background_dh Background DoF handler.</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"> * @param dem_parameters DEM parameters.</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"> * @param current_time Simulation time.</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"> * @param step_number DEM step number.</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment"> * @param mpi_communicator MPI communicator.</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment"> * @param sparse_contacts_object Àdaptive sparse contacts object.</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#abe7a499291841396fb422459798e2a7b">write_post_processing_results</a>(</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                      &amp;grid_pvdhandler,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                           &amp;background_dh,</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     current_time,</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                               step_number,</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">const</span> MPI_Comm                                  &amp;mpi_communicator,</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a>                     &amp;sparse_contacts_object);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"> * @brief Carries out the calculation of the average particles velocity in each local</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"> * cell. These values are summed up during the post-processing steps (imposed</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"> * by post-processing frequency), and finally divided by the sampling counter</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"> * to calculate time-averaged particles velocity distribution.</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"> * @param triangulation Triangulation.</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"> * @param velocity_average_x Average velocity in x-direction.</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"> * @param velocity_average_y Average velocity in y-direction.</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"> * @param velocity_average_z Average velocity in z-direction.</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"> * @param velocity_average_magnitude Average velocity magnitude.</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#ada2cf361ce037cc7f5e04cf2c9f94901">calculate_average_particles_velocity</a>(</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_x,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_y,</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_z,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_magnitude);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"> * @brief Carries out the calculation of the granular temperature in each local cell.</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment"> * These values are summed up during the post-processing steps (imposed by</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"> * post-processing frequency), and finally divided by the sampling counter to</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"> * calculate time-averaged granular temperature distribution.</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"> * @param triangulation Triangulation.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment"> * @param granular_temperature_average Average granular temperature.</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#a9c6b742d6934ae7b1c717b6c2218686a">calculate_average_granular_temperature</a>(</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  Vector&lt;double&gt; &amp;granular_temperature_average);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment"> * @brief Carries out the calculation of average particles velocity for a single</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment"> * cell. It is defined as a separate private function since the</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment"> * calculate_average_granular_temperature function also needs to obtain the</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment"> * average velocity in the cell.</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment"> * @param cell A single cell in the triangulation</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment"> * @param particle_handler</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment"> * @return A tensor which stores the average particles velocity in the input cell</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;Tensor&lt;1, dim&gt;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#aab702fbf5d2f93b7b10b979555f8b18d">calculate_cell_average_particles_velocity</a>(</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator &amp;cell,</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#endif</span></div>
+<a href="lagrangian__post__processing_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#ifndef lethe_lagrangian_post_processing_h</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#define lethe_lagrangian_post_processing_h</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__properties_8h.html">core/dem_properties.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="pvd__handler_8h.html">core/pvd_handler.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="adaptive__sparse__contacts_8h.html">dem/adaptive_sparse_contacts.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="data__containers_8h.html">dem/data_containers.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="dem__solver__parameters_8h.html">dem/dem_solver_parameters.h</a>&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;deal.II/distributed/tria.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;deal.II/particles/particle_handler.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacedealii.html">dealii</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * This class deals with Lagrangian post-processing. At the moment, calculation</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * of time-averaged particles velocity and granular temperature are added to the</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * class.</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * @todo Add tracer particles</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * @brief Carries out writing the cell data of the domain.</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * @param triangulation Triangulation of the domain.</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * @param grid_pvdhandler PVD handler for grid.</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> * @param background_dh Background DoF handler.</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * @param dem_parameters DEM parameters.</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * @param current_time Simulation time.</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * @param step_number DEM step number.</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * @param mpi_communicator MPI communicator.</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * @param sparse_contacts_object Àdaptive sparse contacts object.</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#abe7a499291841396fb422459798e2a7b">write_post_processing_results</a>(</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                      &amp;grid_pvdhandler,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt;                           &amp;background_dh,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;dim&gt;</a>                  &amp;dem_parameters,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                     current_time,</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                               step_number,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">const</span> MPI_Comm                                  &amp;mpi_communicator,</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;dim&gt;</a>                     &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"> * @brief Carries out the calculation of the average particles velocity in each local</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"> * cell. These values are summed up during the post-processing steps (imposed</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"> * by post-processing frequency), and finally divided by the sampling counter</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"> * to calculate time-averaged particles velocity distribution.</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment"> * @param triangulation Triangulation.</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"> * @param velocity_average_x Average velocity in x-direction.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"> * @param velocity_average_y Average velocity in y-direction.</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"> * @param velocity_average_z Average velocity in z-direction.</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"> * @param velocity_average_magnitude Average velocity magnitude.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#ada2cf361ce037cc7f5e04cf2c9f94901">calculate_average_particles_velocity</a>(</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_x,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_y,</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_z,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  Vector&lt;double&gt;                                  &amp;velocity_average_magnitude);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"> * @brief Carries out the calculation of the granular temperature in each local cell.</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment"> * These values are summed up during the post-processing steps (imposed by</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"> * post-processing frequency), and finally divided by the sampling counter to</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"> * calculate time-averaged granular temperature distribution.</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"> * @param triangulation Triangulation.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"> * @param particle_handler Particle handler.</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"> * @param granular_temperature_average Average granular temperature.</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#a9c6b742d6934ae7b1c717b6c2218686a">calculate_average_granular_temperature</a>(</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;dim&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  Vector&lt;double&gt; &amp;granular_temperature_average);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment"> * @brief Carries out the calculation of average particles velocity for a single</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"> * cell. It is defined as a separate private function since the</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"> * calculate_average_granular_temperature function also needs to obtain the</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment"> * average velocity in the cell.</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"> * @param cell A single cell in the triangulation</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment"> * @param particle_handler</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment"> * @return A tensor which stores the average particles velocity in the input cell</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;Tensor&lt;1, dim&gt;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<a class="code" href="lagrangian__post__processing_8h.html#aab702fbf5d2f93b7b10b979555f8b18d">calculate_cell_average_particles_velocity</a>(</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">const</span> <span class="keyword">typename</span> parallel::distributed::Triangulation&lt;dim&gt;::cell_iterator &amp;cell,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aadaptive__sparse__contacts_8h_html"><div class="ttname"><a href="adaptive__sparse__contacts_8h.html">adaptive_sparse_contacts.h</a></div></div>
-<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00117">adaptive_sparse_contacts.h:118</a></div></div>
-<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00029">dem_solver_parameters.h:30</a></div></div>
-<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00029">pvd_handler.h:30</a></div></div>
+<div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00104">adaptive_sparse_contacts.h:105</a></div></div>
+<div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
+<div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00016">pvd_handler.h:17</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
 <div class="ttc" id="adem__properties_8h_html"><div class="ttname"><a href="dem__properties_8h.html">dem_properties.h</a></div></div>
 <div class="ttc" id="adem__solver__parameters_8h_html"><div class="ttname"><a href="dem__solver__parameters_8h.html">dem_solver_parameters.h</a></div></div>
-<div class="ttc" id="alagrangian__post__processing_8h_html_a9c6b742d6934ae7b1c717b6c2218686a"><div class="ttname"><a href="lagrangian__post__processing_8h.html#a9c6b742d6934ae7b1c717b6c2218686a">calculate_average_granular_temperature</a></div><div class="ttdeci">void calculate_average_granular_temperature(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;granular_temperature_average)</div><div class="ttdoc">Carries out the calculation of the granular temperature in each local cell. These values are summed u...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00058">lagrangian_post_processing.cc:58</a></div></div>
-<div class="ttc" id="alagrangian__post__processing_8h_html_aab702fbf5d2f93b7b10b979555f8b18d"><div class="ttname"><a href="lagrangian__post__processing_8h.html#aab702fbf5d2f93b7b10b979555f8b18d">calculate_cell_average_particles_velocity</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; calculate_cell_average_particles_velocity(const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</div><div class="ttdoc">Carries out the calculation of average particles velocity for a single cell. It is defined as a separ...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00128">lagrangian_post_processing.cc:128</a></div></div>
-<div class="ttc" id="alagrangian__post__processing_8h_html_abe7a499291841396fb422459798e2a7b"><div class="ttname"><a href="lagrangian__post__processing_8h.html#abe7a499291841396fb422459798e2a7b">write_post_processing_results</a></div><div class="ttdeci">void write_post_processing_results(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, PVDHandler &amp;grid_pvdhandler, const DoFHandler&lt; dim &gt; &amp;background_dh, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double current_time, const unsigned int step_number, const MPI_Comm &amp;mpi_communicator, AdaptiveSparseContacts&lt; dim &gt; &amp;sparse_contacts_object)</div><div class="ttdoc">Carries out writing the cell data of the domain.</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00171">lagrangian_post_processing.cc:171</a></div></div>
-<div class="ttc" id="alagrangian__post__processing_8h_html_ada2cf361ce037cc7f5e04cf2c9f94901"><div class="ttname"><a href="lagrangian__post__processing_8h.html#ada2cf361ce037cc7f5e04cf2c9f94901">calculate_average_particles_velocity</a></div><div class="ttdeci">void calculate_average_particles_velocity(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;velocity_average_x, Vector&lt; double &gt; &amp;velocity_average_y, Vector&lt; double &gt; &amp;velocity_average_z, Vector&lt; double &gt; &amp;velocity_average_magnitude)</div><div class="ttdoc">Carries out the calculation of the average particles velocity in each local cell. These values are su...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00017">lagrangian_post_processing.cc:17</a></div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00388">fluid_dynamics_matrix_free.cc:389</a></div></div>
+<div class="ttc" id="alagrangian__post__processing_8h_html_a9c6b742d6934ae7b1c717b6c2218686a"><div class="ttname"><a href="lagrangian__post__processing_8h.html#a9c6b742d6934ae7b1c717b6c2218686a">calculate_average_granular_temperature</a></div><div class="ttdeci">void calculate_average_granular_temperature(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;granular_temperature_average)</div><div class="ttdoc">Carries out the calculation of the granular temperature in each local cell. These values are summed u...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00061">lagrangian_post_processing.cc:61</a></div></div>
+<div class="ttc" id="alagrangian__post__processing_8h_html_aab702fbf5d2f93b7b10b979555f8b18d"><div class="ttname"><a href="lagrangian__post__processing_8h.html#aab702fbf5d2f93b7b10b979555f8b18d">calculate_cell_average_particles_velocity</a></div><div class="ttdeci">Tensor&lt; 1, dim &gt; calculate_cell_average_particles_velocity(const typename parallel::distributed::Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler)</div><div class="ttdoc">Carries out the calculation of average particles velocity for a single cell. It is defined as a separ...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00131">lagrangian_post_processing.cc:131</a></div></div>
+<div class="ttc" id="alagrangian__post__processing_8h_html_abe7a499291841396fb422459798e2a7b"><div class="ttname"><a href="lagrangian__post__processing_8h.html#abe7a499291841396fb422459798e2a7b">write_post_processing_results</a></div><div class="ttdeci">void write_post_processing_results(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, PVDHandler &amp;grid_pvdhandler, const DoFHandler&lt; dim &gt; &amp;background_dh, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const DEMSolverParameters&lt; dim &gt; &amp;dem_parameters, const double current_time, const unsigned int step_number, const MPI_Comm &amp;mpi_communicator, AdaptiveSparseContacts&lt; dim &gt; &amp;sparse_contacts_object)</div><div class="ttdoc">Carries out writing the cell data of the domain.</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00174">lagrangian_post_processing.cc:174</a></div></div>
+<div class="ttc" id="alagrangian__post__processing_8h_html_ada2cf361ce037cc7f5e04cf2c9f94901"><div class="ttname"><a href="lagrangian__post__processing_8h.html#ada2cf361ce037cc7f5e04cf2c9f94901">calculate_average_particles_velocity</a></div><div class="ttdeci">void calculate_average_particles_velocity(const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, Vector&lt; double &gt; &amp;velocity_average_x, Vector&lt; double &gt; &amp;velocity_average_y, Vector&lt; double &gt; &amp;velocity_average_z, Vector&lt; double &gt; &amp;velocity_average_magnitude)</div><div class="ttdoc">Carries out the calculation of the average particles velocity in each local cell. These values are su...</div><div class="ttdef"><b>Definition:</b> <a href="lagrangian__post__processing_8cc_source.html#l00020">lagrangian_post_processing.cc:20</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition:</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l00376">fluid_dynamics_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="apvd__handler_8h_html"><div class="ttname"><a href="pvd__handler_8h.html">pvd_handler.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
