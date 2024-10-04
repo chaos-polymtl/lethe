@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-04
+
+### Changed
+
+- MINOR Values outputted on terminal have been uniformized using the log precision parameter. [#1310](https://github.com/chaos-polymtl/lethe/pull/1310)
 
 ## [Master] - 2024-10-03
 
