@@ -34,6 +34,7 @@ See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing
 
 Code related list:
 - [ ] All in-code documentation related to this PR is up to date (Doxygen format)
+- [ ] If new files are added, the license is included in the header
 - [ ] Lethe documentation is up to date
 - [ ] Fix has unit test(s) (preferred) or application test(s), and restart files are in the generator folder
 - [ ] The branch is rebased onto master
