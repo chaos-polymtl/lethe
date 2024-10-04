@@ -1,5 +1,7 @@
+// SPDX-FileCopyrightText: Copyright (c) 2021 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 // Structured 3D sphere in rectangular domain
-// Catherine Radburn, April 2021
 
 // Variables
 gr=4; 		// Global refinement

@@ -2,7 +2,7 @@
 # * hyphenate-examples — hyphenate file and directory names of Lethe's examples
 #
 # SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
-# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 #
 # * Synopsis
 #

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Tests the linear thermal conductivity model. This model should always return A+B*T.
  * In this case k=5+10*T.

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Tests the Power law rheology model. This model should always return
  * K*gamma^{n-1}.

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 // Define a variable
 
 H=0.45; // height of bed

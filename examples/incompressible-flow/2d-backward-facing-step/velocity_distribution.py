@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 """
 Postprocessing code for 2D-backward-facing-step example
 Computes velocity distributions at inlet and outlet and

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 // Variables
 // L_out : step to outlet
 // L_in : inlet to step

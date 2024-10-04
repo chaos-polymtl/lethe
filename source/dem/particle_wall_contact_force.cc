@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 #include <dem/particle_wall_contact_force.h>
 
 // Updates the contact information (contact_info) based on the new information

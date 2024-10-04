@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-#!/usr/bin/python
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 from sympy import *
 import numpy as np

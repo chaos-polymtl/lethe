@@ -1,6 +1,6 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: Copyright (C) 2023 The Lethe Authors
-# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # To install:
 #   

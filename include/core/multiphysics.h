@@ -1,22 +1,5 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2020 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
- *
- * This file defines a small enum which is used to identify
- * the various physics solved within Lethe.
- */
-
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h

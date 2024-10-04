@@ -1,19 +1,5 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2024 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * Mortar: Create points on intersected mesh and determine owners on both sides.
- *
- * ---------------------------------------------------------------------*/
+// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/floating_point_comparator.h>
 

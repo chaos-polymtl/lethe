@@ -2,7 +2,7 @@
 # * prmindent — indent and format deal.II PRM configuration files
 #
 # SPDX-FileCopyrightText: Copyright (c) 2022 Paul A. Patience <paul@apatience.com>
-# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 #
 # This is a version of prmindent relicensed for inclusion in the Lethe
 # CFD project.

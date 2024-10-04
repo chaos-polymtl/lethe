@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 """
 Postprocessing code for the 3D dam-break with obstacle example
 This code extracts the height of fluid1 and compares them to

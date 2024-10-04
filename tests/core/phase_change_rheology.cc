@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Tests the phase change viscosity rheology model. If T_liquidus > T > T_solidus this model should
  * always return (T-T_solidus)/(T_liquidus-T_solidus) * kinematic_viscosity_l +
