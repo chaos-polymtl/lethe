@@ -3074,8 +3074,8 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
         {
           std::cout << "+------------------------------------------+"
                     << std::endl;
-          std::cout << "|  Force  summary particles  "
-                    << "              |" << std::endl;
+          std::cout << "|  Force summary particles  "
+                    << "               |" << std::endl;
           std::cout << "+------------------------------------------+"
                     << std::endl;
           table_all_p.write_text(std::cout);

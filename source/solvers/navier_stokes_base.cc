@@ -291,7 +291,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         true);
 
       std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Force  summary                          |" << std::endl;
+      std::cout << "|  Force summary                           |" << std::endl;
       std::cout << "+------------------------------------------+" << std::endl;
       table.write_text(std::cout);
     }
