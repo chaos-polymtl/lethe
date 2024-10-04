@@ -921,11 +921,12 @@ CFDDEMSolver<dim>::report_particle_statistics()
     {
       TableHandler report;
 
-      report.declare_column("Variable");
-      report.declare_column("Min");
-      report.declare_column("Max");
-      report.declare_column("Average");
-      report.declare_column("Total");
+      std::vector<std::string> column_names{
+        "Variable", "Min", "Max", "Average", "Total"};
+
+      for (std::string column_name : column_names)
+        report.declare_column(column_name);
+
       add_statistics_to_table_handler("Contact list generation",
                                       contact_list,
                                       report);
@@ -940,12 +941,13 @@ CFDDEMSolver<dim>::report_particle_statistics()
                                       rotational_kinetic_energy,
                                       report);
 
-
-
-      report.set_scientific("Min", true);
-      report.set_scientific("Max", true);
-      report.set_scientific("Average", true);
-      report.set_scientific("Total", true);
+      // Only for Min, Max, Average and Total columns
+      for (unsigned int i = 1; i < column_names.size(); ++i)
+        {
+          report.set_scientific(column_names[i], true);
+          report.set_precision(column_names[i],
+                               this->simulation_control->get_log_precision());
+        }
 
       announce_string(this->pcout, "Particle statistics");
       report.write_text(std::cout, dealii::TableHandler::org_mode_table);

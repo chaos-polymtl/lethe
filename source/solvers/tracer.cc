@@ -429,7 +429,7 @@ Tracer<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error tracer : " << tracer_error << std::endl;
+          this->pcout << "L2 error tracer: " << tracer_error << std::endl;
         }
     }
 
@@ -541,11 +541,13 @@ Tracer<dim>::calculate_tracer_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Tracer statistics : " << std::endl;
-      this->pcout << "\t     Min : " << min_tracer_value << std::endl;
-      this->pcout << "\t     Max : " << max_tracer_value << std::endl;
-      this->pcout << "\t Average : " << tracer_average << std::endl;
-      this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+      this->pcout << std::setprecision(
+        this->simulation_control->get_log_precision());
+      this->pcout << "Tracer statistics: " << std::endl;
+      this->pcout << "\t     Min: " << min_tracer_value << std::endl;
+      this->pcout << "\t     Max: " << max_tracer_value << std::endl;
+      this->pcout << "\t Average: " << tracer_average << std::endl;
+      this->pcout << "\t Std-Dev: " << tracer_std_deviation << std::endl;
     }
 
   statistics_table.add_value("time", simulation_control->get_current_time());

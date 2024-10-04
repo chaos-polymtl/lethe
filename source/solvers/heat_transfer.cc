@@ -1597,12 +1597,12 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Temperature statistics on " << domain_name << " : "
+      this->pcout << "Temperature statistics on " << domain_name << ": "
                   << std::endl;
-      this->pcout << "\t     Min : " << minimum_temperature << std::endl;
-      this->pcout << "\t     Max : " << maximum_temperature << std::endl;
-      this->pcout << "\t Average : " << temperature_average << std::endl;
-      this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
+      this->pcout << "\t     Min: " << minimum_temperature << std::endl;
+      this->pcout << "\t     Max: " << maximum_temperature << std::endl;
+      this->pcout << "\t Average: " << temperature_average << std::endl;
+      this->pcout << "\t Std-Dev: " << temperature_std_deviation << std::endl;
     }
 
   // Fill table
