@@ -287,7 +287,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         independent_column_names,
         this->forces_on_boundaries,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision,true);
+        this->simulation_parameters.simulation_control.log_precision,
+        true);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
@@ -399,7 +400,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
         independent_column_names,
         this->torques_on_boundaries,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision,true);
+        this->simulation_parameters.simulation_control.log_precision,
+        true);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;

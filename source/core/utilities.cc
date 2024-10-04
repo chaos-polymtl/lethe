@@ -109,7 +109,8 @@ make_table_scalars_tensors(
               table.set_precision(dependent_column_names[d + vect_index],
                                   display_precision);
               if (display_scientific_notation)
-                  table.set_scientific(dependent_column_names[d + vect_index],true);
+                table.set_scientific(dependent_column_names[d + vect_index],
+                                     true);
             }
         }
       vect_index += dim;
@@ -150,10 +151,10 @@ make_table_tensors_tensors(
     }
 
   for (unsigned int d = 0; d < dim; ++d)
-  {
-    table.set_precision(independent_column_names[d], display_precision);
-    table.set_precision(dependent_column_names[d], display_precision);
-  }
+    {
+      table.set_precision(independent_column_names[d], display_precision);
+      table.set_precision(dependent_column_names[d], display_precision);
+    }
 
   if (display_scientific_notation)
     for (unsigned int d = 0; d < dim; ++d)
