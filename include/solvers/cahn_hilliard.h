@@ -1,19 +1,7 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2020 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
+// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
- *
+/*
  * Implementation of the Cahn-Hilliard equations as an auxiliary physics.
  * Equations solved:
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
@@ -22,8 +10,7 @@
  * potential, and M the mobility function and epsilon the interface thickness.
  * The phase field parameter must not be confused with the order (respectively
  * phase_cahn_hilliard_order and potential_cahn_hilliard_order) of the finite
- elements related to the
- * phase field parameter and the chemical potential.
+ * elements related to the phase field parameter and the chemical potential.
  */
 
 #ifndef lethe_cahn_hilliard_h

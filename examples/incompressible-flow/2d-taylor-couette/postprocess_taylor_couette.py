@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 """
 Postprocessing code for the 2D taylor-couette example
 This code extracts the data from the vtu file and plots it against the analytical solution

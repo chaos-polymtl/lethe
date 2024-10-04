@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parsed_function_custom.h>
 

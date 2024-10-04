@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Tests the linear surface tension model. This model should always
  * return sigma_0 + dsigma/dT * (T-T_0).

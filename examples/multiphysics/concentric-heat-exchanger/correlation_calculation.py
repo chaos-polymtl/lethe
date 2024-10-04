@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Small software to calculate the outlet temperature of the concentric heat exchanger example
 # The Bergman et al. is used as a reference : Bergman, T. L., Lavine, A. S., Incropera, F. P., & DeWitt, D. P. (2011). Introduction to heat transfer. John Wiley & Sons.
 # The code uses the NTU approach explained in Chapter 11. The correlations are derived from the content of chapter 8 é

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 """
 Summary: Script to launch all the Lethe simulations, one at a time locally.
 """

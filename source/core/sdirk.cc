@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 #include <core/sdirk.h>
 
 #include <deal.II/lac/full_matrix.h>

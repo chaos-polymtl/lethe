@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 //Gmsh project created on Thu Jan 19 11:58:52 2023
 
 //Greatly inspired of https://github.com/ComputationalDomain/CMesh_rae69ck-il of the "Computational Domain" YouTube channel (https://www.youtube.com/@computational_domain)

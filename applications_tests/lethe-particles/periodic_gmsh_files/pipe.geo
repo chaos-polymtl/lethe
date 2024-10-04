@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 // Gmsh project created on Tue Sep 13 15:49:36 2022
 SetFactory("OpenCASCADE");
 //+

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 // Generates the hexahedral mesh for the flow within the concentric heat exchanger example
 // This is achieved by generating 3 concentric circles in 2D, meshing them and extruding the resulting mesh 
 // Two physical volumes are used. Volume 0 indicates the fluid, whereas Volume 1 indicates the solid

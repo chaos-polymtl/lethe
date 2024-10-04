@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Tests the quartic mobility model. This model should always return $$ D(1-\phi^2)^2 $$
  */

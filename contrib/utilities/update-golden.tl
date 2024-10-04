@@ -1,6 +1,6 @@
 #!/usr/bin/env txr
-;;; SPDX-FileCopyrightText: Copyright (C) 2021, 2023 The Lethe Authors
-;;; SPDX-License-Identifier: LGPL-2.1-or-later
+;;; SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
+;;; SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 (define-option-struct opts nil
   (n dry-run :bool "Don't copy any files, just show what would be done.")

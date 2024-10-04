@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 """
 Script used to prepare multiple simulations subdirectories and modify .prm to replace a 
 -------------------
