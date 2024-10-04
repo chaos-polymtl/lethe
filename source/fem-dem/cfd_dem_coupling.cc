@@ -975,8 +975,16 @@ template <int dim>
 void
 CFDDEMSolver<dim>::print_particles_summary()
 {
+  const int display_width = this->simulation_control->get_log_precision() + 8;
   this->pcout << "Particle Summary" << std::endl;
-  this->pcout << "id, x, y, z, v_x, v_y, v_z" << std::endl;
+  //  this->pcout << "id, x, y, z, v_x, v_y, v_z" << std::endl;
+  this->pcout << std::setw(display_width) << std::left << "id, "
+              << std::setw(display_width) << std::left << "x, "
+              << std::setw(display_width) << std::left << "y, "
+              << std::setw(display_width) << std::left << "z, "
+              << std::setw(display_width) << std::left << "v_x, "
+              << std::setw(display_width) << std::left << "v_y, "
+              << std::setw(display_width) << std::left << "v_z" << std::endl;
   // Agressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(this->mpi_communicator);
@@ -1012,10 +1020,17 @@ CFDDEMSolver<dim>::print_particles_summary()
               auto particle_properties = particle->get_properties();
               auto particle_location   = particle->get_location();
 
-              std::cout << std::setprecision(6) << id << " "
-                        << particle_location << " "
-                        << particle_properties[DEM::PropertiesIndex::v_x] << " "
-                        << particle_properties[DEM::PropertiesIndex::v_y] << " "
+              std::cout << std::setprecision(
+                             this->simulation_control->get_log_precision())
+                        << std::setw(display_width) << std::left << id;
+              for (unsigned int d = 0; d < dim; ++d)
+                std::cout << std::setw(display_width) << std::left
+                          << particle_location[d];
+              std::cout << std::setw(display_width) << std::left
+                        << particle_properties[DEM::PropertiesIndex::v_x]
+                        << std::setw(display_width) << std::left
+                        << particle_properties[DEM::PropertiesIndex::v_y]
+                        << std::setw(display_width) << std::left
                         << particle_properties[DEM::PropertiesIndex::v_z]
                         << std::endl;
             }
