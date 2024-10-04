@@ -523,7 +523,7 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_forces(
         independent_column_names,
         force,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision, true);
 
       // printed only for the first i_solid for which calculate_forces is true
       // to be improved so that the column_names are not repeated
@@ -606,7 +606,7 @@ FluidDynamicsNitsche<dim, spacedim>::postprocess_solid_torques(
         independent_column_names,
         torque,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision,true);
 
       // printed only for the first i_solid for which calculate_torques is true
       // to be improved so that the column_names are not repeated

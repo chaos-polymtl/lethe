@@ -804,7 +804,8 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                 independent_column_names,
                 position_and_velocity_vectors,
                 dependent_column_names,
-                this->simulation_parameters.simulation_control.log_precision);
+                this->simulation_parameters.simulation_control.log_precision,
+                true);
 
               announce_string(this->pcout, "Cahn-Hilliard Barycenter");
 

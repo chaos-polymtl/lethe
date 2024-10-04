@@ -967,6 +967,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 true);
 
               std::cout << std::endl;
+
+
+
               announce_string(this->pcout, "VOF Mass Conservation");
               table.write_text(std::cout);
             }
@@ -1035,11 +1038,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               std::vector<std::string> dependent_column_names;
               dependent_column_names.emplace_back("x_vof");
               dependent_column_names.emplace_back("y_vof");
-              if (dim == 3)
+              if constexpr (dim == 3)
                 dependent_column_names.emplace_back("z_vof");
               dependent_column_names.emplace_back("vx_vof");
               dependent_column_names.emplace_back("vy_vof");
-              if (dim == 3)
+              if constexpr (dim == 3)
                 dependent_column_names.emplace_back("vz_vof");
 
               std::vector<Tensor<1, dim>> position_vector{
@@ -1058,7 +1061,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 independent_column_names,
                 position_and_velocity_vectors,
                 dependent_column_names,
-                this->simulation_parameters.simulation_control.log_precision);
+                this->simulation_parameters.simulation_control.log_precision,
+                true);
 
               announce_string(this->pcout, "VOF Barycenter");
               table.write_text(std::cout);

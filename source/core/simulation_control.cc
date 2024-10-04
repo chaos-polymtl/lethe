@@ -230,6 +230,7 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
   pcout << std::endl;
 
   std::stringstream ss;
+  ss << std::setprecision(this->log_precision);
 
   // Copy information into a string stream
   ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
@@ -424,7 +425,9 @@ SimulationControlAdjointSteady::print_progression(
     return;
 
   pcout << std::endl;
+
   std::stringstream ss;
+  ss << std::setprecision(this->log_precision);
 
   // Copy information into a string stream
   ss << "Pseudo steady-state iteration: " << std::setw(8) << std::left
