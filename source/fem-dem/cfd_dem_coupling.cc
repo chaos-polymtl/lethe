@@ -924,7 +924,7 @@ CFDDEMSolver<dim>::report_particle_statistics()
       std::vector<std::string> column_names{
         "Variable", "Min", "Max", "Average", "Total"};
 
-      for (std::string column_name : column_names)
+      for (const std::string &column_name : column_names)
         report.declare_column(column_name);
 
       add_statistics_to_table_handler("Contact list generation",
