@@ -287,10 +287,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         independent_column_names,
         this->forces_on_boundaries,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision,
+        true);
 
       std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Force  summary                          |" << std::endl;
+      std::cout << "|  Force summary                           |" << std::endl;
       std::cout << "+------------------------------------------+" << std::endl;
       table.write_text(std::cout);
     }
@@ -399,7 +400,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
         independent_column_names,
         this->torques_on_boundaries,
         dependent_column_names,
-        this->simulation_parameters.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision,
+        true);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;
@@ -1233,7 +1235,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Enstrophy  : " << enstrophy << std::endl;
+          this->pcout << "Enstrophy: " << enstrophy << std::endl;
         }
 
       // Output Enstrophy to a text file from processor 0
@@ -1272,7 +1274,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Pressure power : " << pressure_power << std::endl;
+          this->pcout << "Pressure power: " << pressure_power << std::endl;
         }
 
       // Output pressure power to a text file from processor 0
@@ -1315,7 +1317,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Viscous dissipation : " << viscous_dissipation
+          this->pcout << "Viscous dissipation: " << viscous_dissipation
                       << std::endl;
         }
 
@@ -1373,7 +1375,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "Kinetic energy : " << kE << std::endl;
+          this->pcout << "Kinetic energy: " << kE << std::endl;
         }
 
       // Output Kinetic Energy to a text file from processor 0
@@ -1650,13 +1652,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity : "
+              this->pcout << "L2 error velocity: "
                           << std::setprecision(
                                simulation_control->get_log_precision())
                           << error_velocity << std::endl;
               if (this->simulation_parameters.multiphysics.cahn_hilliard)
                 {
-                  this->pcout << "L2 error pressure : "
+                  this->pcout << "L2 error pressure: "
                               << std::setprecision(
                                    simulation_control->get_log_precision())
                               << error_pressure << std::endl;

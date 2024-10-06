@@ -1964,6 +1964,9 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
     Utilities::MPI::max(max_local_continuity, this->mpi_communicator);
 
 
+  this->pcout << std::setprecision(
+    this->simulation_control->get_log_precision());
+
   this->pcout << "Global continuity equation error: " << continuity << " s^-1"
               << std::endl;
   this->pcout << "Max local continuity error: " << max_local_continuity
