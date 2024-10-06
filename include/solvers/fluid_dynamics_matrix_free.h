@@ -27,6 +27,9 @@ using namespace dealii;
 template <typename VectorType>
 class PreconditionBase;
 
+template <typename VectorType, typename VectorTypePrecondition>
+class PreconditionAdapter;
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
@@ -34,15 +37,27 @@ class PreconditionBase;
 template <int dim>
 class MFNavierStokesPreconditionGMG
 {
-  using VectorType     = LinearAlgebra::distributed::Vector<double>;
-  using LSTransferType = MGTransferMatrixFree<dim, double>;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, VectorType>;
-  using OperatorType   = NavierStokesOperatorBase<dim, double>;
-  using SmootherPreconditionerType = PreconditionBase<VectorType>;
+  using Number = double;
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+  using MGNumber = float;
+#else
+  using MGNumber = double;
+#endif
+
+  using VectorType         = LinearAlgebra::distributed::Vector<Number>;
+  using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
+  using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
+  using LSTransferType     = MGTransferMatrixFree<dim, MGNumber>;
+  using GCTransferType     = MGTransferGlobalCoarsening<dim, MGVectorType>;
+  using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
+  using SmootherPreconditionerType = PreconditionBase<MGVectorType>;
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
-  using PreconditionerTypeLS = PreconditionMG<dim, VectorType, LSTransferType>;
-  using PreconditionerTypeGC = PreconditionMG<dim, VectorType, GCTransferType>;
+  using PreconditionerTypeLS =
+    PreconditionMG<dim, MGVectorType, LSTransferType>;
+  using PreconditionerTypeGC =
+    PreconditionMG<dim, MGVectorType, GCTransferType>;
 
 public:
   /**
@@ -118,7 +133,7 @@ public:
    *
    * @return Multigrid object that contains all level smoother preconditioners.
    */
-  const MGLevelObject<std::shared_ptr<PreconditionBase<VectorType>>> &
+  const MGLevelObject<std::shared_ptr<PreconditionBase<MGVectorType>>> &
   get_mg_smoother_preconditioners() const;
 
 private:
@@ -155,28 +170,28 @@ private:
   MGLevelObject<DoFHandler<dim>> dof_handlers;
 
   /// Transfers for each of the levels of the global coarsening algorithm
-  MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers;
 
   /// Level operators for the geometric multigrid
   MGLevelObject<std::shared_ptr<OperatorType>> mg_operators;
 
   /// Multigrid level object storing all operators
-  std::shared_ptr<mg::Matrix<VectorType>> mg_matrix;
+  std::shared_ptr<mg::Matrix<MGVectorType>> mg_matrix;
 
   /// Interface edge matrix needed only for local smoothing
-  std::shared_ptr<mg::Matrix<VectorType>> mg_interface_matrix_in;
+  std::shared_ptr<mg::Matrix<MGVectorType>> mg_interface_matrix_in;
   MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_operators;
   MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
     ls_mg_interface_in;
 
   /// Preconditioners associated to smoothers
-  mutable MGLevelObject<std::shared_ptr<PreconditionBase<VectorType>>>
+  mutable MGLevelObject<std::shared_ptr<PreconditionBase<MGVectorType>>>
     mg_smoother_preconditioners;
 
   /// Smoother object
   std::shared_ptr<
-    MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>
+    MGSmootherPrecondition<OperatorType, SmootherType, MGVectorType>>
     mg_smoother;
 
   /// Collection of boundary constraints and refinement edge constrations for
@@ -189,14 +204,9 @@ private:
   /// Transfer operator for global coarsening
   std::shared_ptr<GCTransferType> mg_transfer_gc;
 
-  /// Algebraic multigrid as coarse grid solver
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> precondition_amg;
-
-  /// Incomplete LU as coarse grid solver
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> precondition_ilu;
-
-  /// Direct solver as coarse grid solver
-  std::shared_ptr<TrilinosWrappers::SolverDirect> precondition_direct;
+  /// Coarse grid solver (algebraic multigrid, ILU, direct solver)
+  std::shared_ptr<PreconditionAdapter<MGVectorType, TrilinosVectorType>>
+    coarse_grid_precondition;
 
   /// Solver control for the coarse grid solver
   std::shared_ptr<SolverControl> coarse_grid_solver_control;
@@ -205,36 +215,36 @@ private:
   std::shared_ptr<SolverControl> direct_solver_control;
 
   /// GMRES as coarse grid solver
-  std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
+  std::shared_ptr<SolverGMRES<TrilinosVectorType>> coarse_grid_solver;
 
   /// Multigrid wrapper for the coarse grid solver
-  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+  std::shared_ptr<MGCoarseGridBase<MGVectorType>> mg_coarse;
 
   /// Solver control for the coarse grid solver (intermediate level)
   std::shared_ptr<SolverControl> coarse_grid_solver_control_intermediate;
 
   /// Multigrid wrapper for the coarse grid solver (intermediate level)
-  std::shared_ptr<MGCoarseGridBase<VectorType>> mg_coarse_intermediate;
+  std::shared_ptr<MGCoarseGridBase<MGVectorType>> mg_coarse_intermediate;
 
   /// GMRES as coarse grid solver (intermediate level)
-  std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver_intermediate;
+  std::shared_ptr<SolverGMRES<MGVectorType>> coarse_grid_solver_intermediate;
 
   /// Multigrid method (intermediate level)
-  std::shared_ptr<Multigrid<VectorType>> mg_intermediate;
+  std::shared_ptr<Multigrid<MGVectorType>> mg_intermediate;
 
   /// Global coarsening multigrid preconditioner object (intermediate level)
-  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+  std::shared_ptr<PreconditionMG<dim, MGVectorType, GCTransferType>>
     gc_multigrid_preconditioner_intermediate;
 
   /// Multigrid method
-  std::shared_ptr<Multigrid<VectorType>> mg;
+  std::shared_ptr<Multigrid<MGVectorType>> mg;
 
   /// Local smoothing multigrid preconditioner object
-  std::shared_ptr<PreconditionMG<dim, VectorType, LSTransferType>>
+  std::shared_ptr<PreconditionMG<dim, MGVectorType, LSTransferType>>
     ls_multigrid_preconditioner;
 
   /// Global coarsening multigrid preconditioner object
-  std::shared_ptr<PreconditionMG<dim, VectorType, GCTransferType>>
+  std::shared_ptr<PreconditionMG<dim, MGVectorType, GCTransferType>>
     gc_multigrid_preconditioner;
 
   /// Conditional Ostream
