@@ -19,6 +19,7 @@ See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing
 
 Code related list:
 - [ ] Lethe documentation is up to date
+- [ ] Copyright headers are present and up to date
 - [ ] The branch is rebased onto master
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
 - [ ] Links are added to parent .rst files
