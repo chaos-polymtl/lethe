@@ -133,7 +133,7 @@ private:
    *
    */
   void
-  setup_AMG();
+  setup_AMG(const bool use_double);
 
   /**
    * @brief Set up ILU object needed for coarse-grid solver or
@@ -141,7 +141,7 @@ private:
    *
    */
   void
-  setup_ILU();
+  setup_ILU(const bool use_double);
 
   /// Min level of the multigrid hierarchy
   unsigned int minlevel;
@@ -194,6 +194,10 @@ private:
   /// Transfer operator for global coarsening
   std::shared_ptr<GCTransferType> mg_transfer_gc;
 
+  /// Preconditioner of coarse grid solver (algebraic multigrid, ILU, direct
+  /// solver)
+  std::shared_ptr<PreconditionBase<VectorType>> coarse_grid_precondition_double;
+
   /// Coarse grid solver (algebraic multigrid, ILU, direct solver)
   std::shared_ptr<PreconditionBase<MGVectorType>> coarse_grid_precondition;
 
@@ -204,7 +208,7 @@ private:
   std::shared_ptr<SolverControl> direct_solver_control;
 
   /// GMRES as coarse grid solver
-  std::shared_ptr<SolverGMRES<MGVectorType>> coarse_grid_solver;
+  std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
 
   /// Multigrid wrapper for the coarse grid solver
   std::shared_ptr<MGCoarseGridBase<MGVectorType>> mg_coarse;
