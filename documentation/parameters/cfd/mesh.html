@@ -431,13 +431,13 @@
 <h1>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h1>
 <p>This subsection provides information of the simulation geometry and its mesh. The simulation geometry shape and size, number of refinements and other required information can be provided here. It should be mentioned that meshes from gmsh can also be defined in this section by setting <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">gmsh</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  # Type of mesh. Choices are &lt;gmsh|dealii|cylinder|colorized_cylinder_shell|periodic_hills&gt;
+  # Type of mesh. Choices are &lt;gmsh|dealii|cylinder|periodic_hills&gt;
   set type = dealii
 
   # GMSH file name
   set file name = none
 
-  # Grid arguments for dealii, cylinder, colorized_cylinder_shell and periodic_hills
+  # Grid arguments for dealii, cylinder and periodic_hills
   set grid type      = hyper_cube
   set grid arguments = -1 : 1 : false
 
@@ -485,7 +485,6 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">gmsh</span></code>: if this type is chosen, a <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file generated from GMSH can be used. In this case, the grid file name must be specified in the <code class="docutils literal notranslate"><span class="pre">file</span> <span class="pre">name</span></code> variable.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dealii</span></code>: if this type is chosen, the deal.II grid generator class can be used. For additional documentation on these grids, you can consult the deal.II documentation for the <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> . The type of grid is specified by the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">type</span></code> parameter and the arguments used for grid generation by the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">periodic_hills</span></code>: if this type is chosen a mesh for the periodic hills CFD benchmark is created. For more details on this type of mesh and its grid arguments refer to <a class="reference internal" href="../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html"><span class="doc">Flow over Periodic Hills</span></a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">colorized_cylinder_shell</span></code>: if this type is chosen, the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> must follow their <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a760789a93b1e0fe7f5c2675c31b6f14f">related deal.II documentation for a cylinder shell</a>. The only difference is that this cylinder shell is colorized with boundary ids. Boundary 0 is the inner cylinder, boundary 1 is the outer cylinder, boundary 2 is the bottom surface (z=0) and boundary 3 is the top surface (z=length).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cylinder</span></code>: if this type is chosen, the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">type</span></code> must be chosen according to the following figure. The <code class="docutils literal notranslate"><span class="pre">classic</span></code> type is equivalent to a subdivided cylinder from deal.II and <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> must follow their <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a95f6e6a7ae2fe3a862df035dd2cb4467">related deal.II documentation for a cylinder</a> and this applies to all cylinder grid types.</p></li>
 </ul>
 <div class="admonition warning">
