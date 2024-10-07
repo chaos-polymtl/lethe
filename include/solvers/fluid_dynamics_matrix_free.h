@@ -27,6 +27,9 @@ using namespace dealii;
 template <typename VectorType>
 class PreconditionBase;
 
+template <typename VectorType, typename VectorTypePrecondition>
+class PreconditionAdapter;
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
@@ -133,7 +136,7 @@ private:
    *
    */
   void
-  setup_AMG(const bool use_double);
+  setup_AMG();
 
   /**
    * @brief Set up ILU object needed for coarse-grid solver or
@@ -141,7 +144,7 @@ private:
    *
    */
   void
-  setup_ILU(const bool use_double);
+  setup_ILU();
 
   /// Min level of the multigrid hierarchy
   unsigned int minlevel;
@@ -194,12 +197,11 @@ private:
   /// Transfer operator for global coarsening
   std::shared_ptr<GCTransferType> mg_transfer_gc;
 
-  /// Preconditioner of coarse grid solver (algebraic multigrid, ILU, direct
-  /// solver)
-  std::shared_ptr<PreconditionBase<VectorType>> coarse_grid_precondition_double;
-
   /// Coarse grid solver (algebraic multigrid, ILU, direct solver)
-  std::shared_ptr<PreconditionBase<MGVectorType>> coarse_grid_precondition;
+  std::shared_ptr<
+    PreconditionAdapter<MGVectorType,
+                        LinearAlgebra::distributed::Vector<double>>>
+    coarse_grid_precondition;
 
   /// Solver control for the coarse grid solver
   std::shared_ptr<SolverControl> coarse_grid_solver_control;
