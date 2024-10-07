@@ -56,6 +56,27 @@
 
 using namespace dealii;
 
+namespace ChangeVectorTypes
+{
+  template <typename number>
+  void copy(TrilinosWrappers::MPI::Vector                    &out,
+            const LinearAlgebra::distributed::Vector<number> &in)
+  {
+    LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
+    rwv.import_elements(in, VectorOperation::insert);
+    out.import_elements(rwv, VectorOperation::insert);
+  }
+
+  template <typename number>
+  void copy(LinearAlgebra::distributed::Vector<number> &out,
+            const TrilinosWrappers::MPI::Vector        &in)
+  {
+    LinearAlgebra::ReadWriteVector<double> rwv;
+    rwv.reinit(in);
+    out.import_elements(rwv, VectorOperation::insert);
+  }
+}
+
 template <int dim>
 inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,const Point<dim> &point_1,const Point<dim> &y)
 {
@@ -274,16 +295,13 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   (void)component;
   Assert(component == 0, ExcIndexRange(component, 0, 1));
   
-  Point<dim> center = Point<dim>();
+  Point<dim> center = Point<dim>(0.0,0.75);
   Tensor<1,dim> dist = center - p;
   
-  double sign_dist = 1.0;
-  if (dist.norm() > 0.25)
-  {
-    sign_dist = -1.0;
-  }
+  return 0.5+0.5*std::tanh((0.15-dist.norm())/0.02);
   
-  return 0.5+0.5*std::tanh((0.25-dist.norm())/0.02);
+  // return 0.5+0.5*std::tanh((dist[1])/0.02);
+  
   
   // if (p[0]> 0.25 || p[0]<-0.25)
   //   return 0.0;
@@ -332,34 +350,27 @@ Visualization<dim>::build_patches(DoFHandler<dim> &dof_handler, NonMatching::FEV
 
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
-  
-    
     if (cell->is_locally_owned())
     {
+      non_matching_fe_values.reinit(cell);
   
-    
-    
-    non_matching_fe_values.reinit(cell);
-  
-    const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+      const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
       &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
-      
+
+      if (surface_fe_values)
+      {
+        
+        for (const unsigned int q :
+             surface_fe_values->quadrature_point_indices())
+          {
+            const Point<dim> &point = surface_fe_values->quadrature_point(q);
+            // pcout << "x = " << point[0] << "\t y = " << point[1] << std::endl;
     
-    
-    if (surface_fe_values)
-    {
-      
-      for (const unsigned int q :
-           surface_fe_values->quadrature_point_indices())
-        {
-          const Point<dim> &point = surface_fe_values->quadrature_point(q);
-          // pcout << "x = " << point[0] << "\t y = " << point[1] << std::endl;
-  
-          DataOutBase::Patch<0, dim> temp;
-          temp.vertices[0] = point;
-          patches.push_back(temp);
+            DataOutBase::Patch<0, dim> temp;
+            temp.vertices[0] = point;
+            patches.push_back(temp);
+          }
         }
-      }
     }
   }
 }
@@ -457,12 +468,16 @@ private:
   types::global_dof_index n_locally_owned_dofs;
   
   IndexSet locally_relevant_dofs;
+  IndexSet locally_active_dofs;
+  
   
   VectorType solution;
   VectorType previous_solution;
   VectorType location;
-  VectorType signed_distance;
-  VectorType distance;
+  LinearAlgebra::distributed::Vector<double> signed_distance;
+  LinearAlgebra::distributed::Vector<double> distance;
+  LinearAlgebra::distributed::Vector<double> distance_with_ghost;
+  
   
   std::map<types::global_cell_index,std::vector<Point<dim>>> intersection_point;
   
@@ -514,6 +529,8 @@ void AdvectionProblem<dim>::setup_system()
     {
       // const NonMatching::LocationToLevelSet cell_location =
       //   mesh_classifier.location_to_level_set(cell);
+      if (!cell->is_locally_owned())
+        continue;
       cell->set_active_fe_index(ActiveFEIndex::lagrange);
     }
         
@@ -527,22 +544,26 @@ void AdvectionProblem<dim>::setup_system()
   
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
   
+  locally_active_dofs = DoFTools::extract_locally_active_dofs(dof_handler);
+  
+  
   pcout << "boop 2" << std::endl;
   
-  solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  previous_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  location.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  signed_distance.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
-  distance.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  solution.reinit(locally_owned_dofs, mpi_communicator);
+  previous_solution.reinit(locally_owned_dofs, mpi_communicator);
+  level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
+  location.reinit(locally_owned_dofs, mpi_communicator);
+  signed_distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
+  distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
+  distance_with_ghost.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
   
   
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
                      
   constraints.clear();
   constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(dof_handler,
-                                          constraints);
+  // DoFTools::make_hanging_node_constraints(dof_handler,
+                                          // constraints);
   constraints.close();
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -697,7 +718,8 @@ template <int dim>
 void
 AdvectionProblem<dim>::set_initial_conditions()
 {
-  VectorTools::interpolate(this->dof_handler,
+  
+  VectorTools::interpolate(this->mapping, this->dof_handler,
                            InitialConditions<dim>(),
                            this->previous_solution);
   this->solution = this->previous_solution;                 
@@ -763,14 +785,16 @@ AdvectionProblem<dim>::compute_sign_distance()
   const auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
   
   // Local distance vetors initialization
-  VectorType distance_owned(this->locally_owned_dofs,
+  VectorType distance_owned(this->locally_owned_dofs, 
                                            mpi_communicator);
-  VectorType signed_distance_owned(this->locally_owned_dofs,
+  VectorType signed_distance_owned(this->locally_owned_dofs, 
                                            mpi_communicator);           
-                                       
+  
+                                 
   // Should be initialized to the max distance that we want to redistantiate
-  distance_owned = 2;
-                              
+  distance = 2;
+  // VectorTools::interpolate(mapping,dof_handler,Functions::ConstantFunction<dim>(2.0),distance);
+  distance.print(std::cout);                            
   // 
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
@@ -806,6 +830,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   
   pcout << "In intersection" << std::endl;
+  
+  
   
   // Loop to identify intersected cells and compute the intersection points (interface reconstruction)
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -849,6 +875,38 @@ AdvectionProblem<dim>::compute_sign_distance()
     }
   }
   
+  pcout << "Out of intersection, in distance of first neighbors" << std::endl;
+  
+  auto locally_owned_dofs = dof_handler.locally_owned_dofs();
+  
+  locally_owned_dofs.print(std::cout);
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      Vector<double> local_distance(fe.n_dofs_per_cell());
+      local_distance = 2;
+      
+      
+      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      cell->get_dof_indices(dof_indices);
+      
+      
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        distance(dof_indices[i]) = 2.0;
+        distance_with_ghost(dof_indices[i]) = 2.0;
+        
+      }
+    }
+  }
+  // distance.compress(VectorOperation::insert);
+  
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
@@ -856,10 +914,15 @@ AdvectionProblem<dim>::compute_sign_distance()
     {
       const unsigned int cell_index = cell->global_active_cell_index();
       
+      Vector<double> local_distance(fe.n_dofs_per_cell());
+      local_distance = 2;
+      
+      
       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-
+      cell->get_dof_indices(dof_indices);
+    
       // If the cell is not stored in the intersection_point map, it means it is not intersected. So no distance computation for now.
       if (intersection_point.find(cell_index) == intersection_point.end())
       {
@@ -875,72 +938,154 @@ AdvectionProblem<dim>::compute_sign_distance()
       
       const unsigned int vertices_per_cell =
             GeometryInfo<dim>::vertices_per_cell;
-      
-      // Loop on the vertices of the cell
-      for (unsigned int i = 0; i < vertices_per_cell; i++)
-      {
-        unsigned int vextex_index = cell->vertex_index(i);
-        
-        // Loop vertice's neighbor cells
-        for (const auto &neighbor_cell_acc : vetex_2_cells[vextex_index])
-        {
-          const auto neighbor_cell = neighbor_cell_acc->as_dof_handler_iterator(dof_handler);
-          
-          const unsigned int neighbor_cell_index = neighbor_cell->global_active_cell_index();
-      
-          const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-      
-          std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      
-          neighbor_cell->get_dof_indices(dof_indices);
-          
-          intersection_halo_cell.insert(neighbor_cell_index);
-      
-          // Compute distance of the cell's dof 
-          for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          {
-            dofs_in_interface_halo.insert(dof_indices[i]);
             
-            const Point<dim> y = dof_support_points.at(dof_indices[i]);
-          
-            double D = compute_point_2_interface_min_distance(point_0, point_1, y);
-            const double previous_D = distance_owned[dof_indices[i]];
-          
-            distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D));
-            dofs_location_status.insert(dof_indices[i]);
-          }
-      
-        }
+  
+      // Compute distance of the cell's dof 
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        
+        dofs_in_interface_halo.insert(dof_indices[i]);
+  
+        const Point<dim> y = dof_support_points.at(dof_indices[i]);
+  
+        double D = compute_point_2_interface_min_distance(point_0, point_1, y);
+        
+        distance(dof_indices[i]) = std::min(std::abs(distance(dof_indices[i])), std::abs(D));
+        
+        // if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+          // distance(dof_indices[i]) = -1.0;
+        // const double previous_D = distance_owned[dof_indices[i]];
+  
+        // distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D));
+        
+        dofs_location_status.insert(dof_indices[i]);
       }
+      
+      // constraints.distribute_local_to_global(local_distance,dof_indices,distance);
+      // constraints.distribute_local_to_global(local_distance, dof_indices, distance);
+      
+      // // Loop on the vertices of the cell
+      // for (unsigned int i = 0; i < vertices_per_cell; i++)
+      // {
+      //   unsigned int vextex_index = cell->vertex_index(i);
+      // 
+      //   // Loop vertice's neighbor cells
+      //   for (const auto &neighbor_cell_acc : vetex_2_cells[vextex_index])
+      //   {
+      //     const auto neighbor_cell = neighbor_cell_acc->as_dof_handler_iterator(dof_handler);
+      //     if (!neighbor_cell->is_locally_owned())
+      //     {
+      //       continue;
+      //     }
+      // 
+      //     const unsigned int neighbor_cell_index = neighbor_cell->global_active_cell_index();
+      // 
+      //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+      // 
+      //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      // 
+      //     neighbor_cell->get_dof_indices(dof_indices);
+      // 
+      //     intersection_halo_cell.insert(neighbor_cell_index);
+      // 
+      //     // Compute distance of the cell's dof 
+      //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      //     {
+      //       dofs_in_interface_halo.insert(dof_indices[i]);
+      // 
+      //       const Point<dim> y = dof_support_points.at(dof_indices[i]);
+      // 
+      //       double D = compute_point_2_interface_min_distance(point_0, point_1, y);
+      //       const double previous_D = distance_owned[dof_indices[i]];
+      // 
+      //       distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D));
+      //       dofs_location_status.insert(dof_indices[i]);
+      //     }
+      // 
+      //   }
+      // }
       
     }
   }
   
-  // Compute signed distance
+  
+  
+  pcout << "Distance before compress" << std::endl;
+  distance.print(std::cout);                            
+  
+  pcout << "has_ghost_elements before compress = " << distance.has_ghost_elements() << std::endl;
+  
+  distance.compress(VectorOperation::min);
+  pcout << "COMPRESS" << std::endl;
+  pcout << "has_ghost_elements after compress = " << distance.has_ghost_elements() << std::endl;
+  
+  // distance.update_ghost_values();
+  pcout << "Distance after compress" << std::endl;
+  distance.print(std::cout); 
+  
+  // distance.compress(VectorOperation::add);      
+                     
+  
+  distance.update_ghost_values();      
+  
+  
+                     
+   pcout << "Distance after update_ghost_values" << std::endl;
+  distance.print(std::cout); 
+
+  
+  
+  
+  // return;
+  // LinearAlgebra::distributed::Vector<double> distance_with_ghost;
+  // 
+  // distance_with_ghost.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
+  // 
+  distance_with_ghost = distance;
+  // 
+  
+  pcout << "Distance before update_ghost_values" << std::endl;
+  distance_with_ghost.print(std::cout);    
+  
+  distance.zero_out_ghost_values();    
+  
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
     if (cell->is_locally_owned())
     {
       const unsigned int cell_index = cell->global_active_cell_index();
       
+      Vector<double> local_distance(fe.n_dofs_per_cell());
+      local_distance = 2;
+      
+      
       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      
       cell->get_dof_indices(dof_indices);
+      
       
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        const double level_set_value = level_set[dof_indices[i]];
-      
-        signed_distance_owned[dof_indices[i]] = distance_owned[dof_indices[i]]*sgn(level_set_value);
+        distance(dof_indices[i]) = distance_with_ghost(dof_indices[i]);
       }
     }
-  }
+  }                    
+  
+  
+  
+  // distance.update_ghost_values();
+  // pcout << "has_ghost_elements = " << distance.has_ghost_elements() << std::endl;
+  // distance.zero_out_ghost_values();
+  // pcout << "has_ghost_elements = " << distance.has_ghost_elements() << std::endl;
+  
+  
+  
+  
   
   // Exchange
-  signed_distance = signed_distance_owned;
-  distance = distance_owned;
+  // signed_distance = signed_distance_owned;
+  // distance = distance_owned;
   
   // for (const auto &cell : dof_handler.active_cell_iterators())
   // {
@@ -967,16 +1112,18 @@ AdvectionProblem<dim>::compute_sign_distance()
   // 
   // distance = distance_owned;
   
-  
   pcout << "In redistancation from the rest of the mesh" << std::endl;
   const unsigned int n_opposite_faces_per_dofs = dim;
 
   
   // Compute the rest of the mesh
   bool change = true;
-  // while (change)
-  for (unsigned int c = 0; c < 100; c++)
+  
+  int count = 0;
+  while (change)
+  // for (unsigned int q =0 ; q<1; q++)
   {
+    count +=1;
     FEPointEvaluation<1, dim> fe_point_evaluation(mapping, fe, update_values | update_gradients | update_jacobians);
     
     change = false;
@@ -992,18 +1139,18 @@ AdvectionProblem<dim>::compute_sign_distance()
         std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
         
         cell->get_dof_indices(dof_indices);
-        
         std::vector<double> cell_dof_values(dofs_per_cell);
-        cell->get_dof_values(distance, cell_dof_values.begin(), cell_dof_values.end());
-        
+        cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
         
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
+          
           if (dofs_in_interface_halo.find(dof_indices[i]) != dofs_in_interface_halo.end())
           {
             continue;
           }
-
+          // distance(dof_indices[i]) = distance_with_ghost(dof_indices[i]);
+          
           // Get opposite faces 
           std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
           
@@ -1025,9 +1172,9 @@ AdvectionProblem<dim>::compute_sign_distance()
             double correction_norm = 1.0;
             int outside_check = 0;
             
-            while (correction_norm > 1e-11 && outside_check<3)
+            while (correction_norm > 1e-10 && outside_check<3)
             {
-              const double perturbation = 0.1;
+              const double perturbation = 0.01;
                       
               std::vector<Point<dim>> stencil_ref = compute_numerical_jacobian_stencil<dim>(x_n_ref, dof_opposite_faces[j], perturbation);
               
@@ -1047,35 +1194,9 @@ AdvectionProblem<dim>::compute_sign_distance()
                 cell_transformation_jacobians[k] = fe_point_evaluation.jacobian(k);
                 get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
               }
-              // FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(Point<dim-1>(0.5)), update_gradients | update_jacobians | update_jacobian_grads | update_normal_vectors | update_quadrature_points);
-              // 
-              // fe_face_values.reinit(cell, opposite_face);
-              // 
-              // std::vector<Point<dim>> stencil_real = fe_face_values. get_quadrature_points();
-              // 
-              // std::vector<Tensor<1, dim>> distance_gradients(2*dim - 1);
-              // std::vector<Tensor<1, dim>> distance_gradient(1);
               
-              // fe_face_values.get_function_gradients(distance,distance_gradient);
-
-              
-              // 
-              // const std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians = fe_face_values.get_jacobians();
-              // 
-              // const std::vector<Tensor<1, dim>> normal_vectors = fe_face_values.get_normal_vectors();
-              // 
-              // std::vector<DerivativeForm<1, dim-1, dim>> face_transformation_jacobians(2*dim-1);
-              // 
-              // for (unsigned int k = 0; k < 2*dim-1; ++k)
-              // {
-              //   const DerivativeForm<1, dim, dim> cell_transformation_jacobian = cell_transformation_jacobians[k]; 
-              // 
-              //   get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
-              // }
-              // 
               LAPACKFullMatrix<double> jacobian_matrix(dim-1,dim-1);
               compute_numerical_jacobians(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
-              
               
               const Tensor<1,dim> x_n_to_x_J_real = x_J_real - stencil_real[0];
               
@@ -1093,71 +1214,30 @@ AdvectionProblem<dim>::compute_sign_distance()
               residual_n_vec *= -1.0;
               jacobian_matrix.solve(residual_n_vec);
               
-              
-              
-              // for (unsigned int k = 0; k < dim-1; ++k)
-              // {
-              //   correction[k] = residual_n_vec[k];
-              // }
               correction_norm = residual_n_vec.l2_norm();
               
               Tensor<1,dim> correction = transform_ref_face_correction_to_ref_cell<dim, Vector<double>>(residual_n_vec,dof_opposite_faces[j]);
               
               Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
               
-              
-              // Tensor<1,dim> correction_real;
-              
-              
-              // fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::gradients);
-              
-              // 
-              // for (unsigned int k = 0; k < dim; ++k)
-              // {
-              //   for (unsigned int l = 0; l < dim-1; ++l)
-              //   {
-              //     correction_real[k] = correction[l]*face_transformation_jacobians[0][k][l];
-              //   }
-              // }
-              
-              // 
-              // bool check = true;
-              
-              // double relaxation = 1.0;
-              // while (check)
-              // {
-              //   x_n_p1_ref = stencil_ref[0] + relaxation*correction;
-              // 
-              //   check = false;
-              //   for (unsigned int k = 0; k < dim; ++k)
-              //   {
-              //     if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
-              //     {
-              //       check = true;
-              //     }
-              //   }
-              // 
-              //   relaxation *= 0.5;
-              // }
-              
               double relaxation = 1.0;
               
               bool check = false;
               for (unsigned int k = 0; k < dim; ++k)
               {
-                if (x_n_p1_ref[k] > 1.0 + 1e-8|| x_n_p1_ref[k] < 0.0 - 1e-8)
+                if (x_n_p1_ref[k] > 1.0 + 1e-11|| x_n_p1_ref[k] < 0.0 - 1e-11)
                 {
                   check = true;
                   double step;
-                  if (correction[k] > 1e-8)
+                  if (correction[k] > 1e-11)
                   {
-                    relaxation = std::min((1.0 - x_n_ref[k])/(correction[k]+1e-8), relaxation);
+                    relaxation = std::min((1.0 - x_n_ref[k])/(correction[k]+1e-11), relaxation);
                   }
-                  else if (correction[k] < -1e-8)
+                  else if (correction[k] < -1e-11)
                   {
-                    relaxation = std::min((0.0 - x_n_ref[k])/(correction[k]+1e-8), relaxation);
+                    relaxation = std::min((0.0 - x_n_ref[k])/(correction[k]+1e-11), relaxation);
                   }
-                  
+              
                 }
               }
               
@@ -1172,52 +1252,8 @@ AdvectionProblem<dim>::compute_sign_distance()
               
               Point<dim> x_n_p1_real = fe_point_evaluation.quadrature_point(0);
               
-              
-              // x_n_p1_ref = stencil_ref[0] + relaxation*correction;
-              // 
-              // for (unsigned int k = 0; k < dim; ++k)
-              // {
-              //   for (unsigned int l = 0; l < dim-1; ++l)
-              //   {
-              //     correction_real[k] = relaxation*correction[l]*face_transformation_jacobians[0][k][l];
-              //   }
-              // }
-              // 
-              // x_n_p1_real = stencil_real[0] + correction_real;
-              // 
               x_n_ref = x_n_p1_ref;
               x_n_real = x_n_p1_real;
-              
-              
-              // if (check)
-              // {
-                
-                
-                // Tensor<1,dim> x_n_p1_to_x_J_real = x_J_real - x_n_p1_real;
-                // Tensor<1, dim-1> residual_n_p1;
-                // 
-                // // this works only for Q1 in 2D and linear mapping
-                // compute_residual(x_n_p1_to_x_J_real, distance_gradients[0],face_transformation_jacobians[0],residual_n_p1);
-                // 
-                // // outside the face, adaptively relax the scheme
-                // while (residual_n_p1.norm() > residual_n.norm())
-                // {
-                //   relaxation *= 0.5;
-                //   std::cout << "relaxation " << relaxation << std::endl;
-                // 
-                //   x_n_p1_real = stencil_real[0] + relaxation*correction_real;
-                // 
-                //   std::cout << "x_n_p1_real " << x_n_p1_real << std::endl;
-                // 
-                //   x_n_p1_to_x_J_real = x_J_real - x_n_p1_real;
-                // 
-                //   // this works only for Q1 in 2D and linear mapping
-                //   compute_residual(x_n_p1_to_x_J_real, distance_gradients[0],face_transformation_jacobians[0],residual_n_p1);
-                // 
-                // }
-              // }
-              // x_n_p1_ref = stencil_ref[0] + relaxation*correction;
-              // x_n_p1_real = stencil_real[0] + relaxation*correction_real;
           }
           
           const Tensor<1,dim> x_n_to_x_J_real = x_J_real - x_n_real;
@@ -1225,21 +1261,33 @@ AdvectionProblem<dim>::compute_sign_distance()
           fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::values);
           
           double distance_value_at_x_n = fe_point_evaluation.get_value(0);
-          
-          // FEFaceValues<dim> fe_face_values(mapping, fe, Quadrature<dim-1>(x_n_ref), update_values);
-          
-          // fe_face_values.reinit(cell, opposite_face);
-          
-          // std::vector<double> distance_value_at_x_n(1);
-          // fe_face_values.get_function_values(distance, distance_value_at_x_n);
-          
 
           double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n);
           
-          if (cell_dof_values[i] > (approx_distance + 1e-8))
-          {
+          if (distance(dof_indices[i])> (approx_distance + 1e-8))
+          {    // for (const auto &cell : dof_handler.active_cell_iterators())
+    // {
+    //   if (cell->is_locally_owned())
+    //   {
+    //     const unsigned int cell_index = cell->global_active_cell_index();
+    // 
+    //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    // 
+    //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+    // 
+    //     cell->get_dof_indices(dof_indices);
+    // 
+    //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+    //     {
+    //       const double level_set_value = level_set[dof_indices[i]];
+    // 
+    //       signed_distance(dof_indices[i]) = distance(dof_indices[i])*sgn(level_set_value);
+    //     }
+    //   }
+    // }
             change = true;
-            distance_owned[dof_indices[i]] = approx_distance;
+            distance(dof_indices[i]) = approx_distance;
+            
           }
         }
         }
@@ -1247,59 +1295,167 @@ AdvectionProblem<dim>::compute_sign_distance()
     }
     
     
+    // LinearAlgebra::ReadWriteVector<double> rwv(distance_rest_of_the_mesh.locally_owned_elements());
+    // rwv.import_elements(distance_rest_of_the_mesh, VectorOperation::insert);
     
-    // Compute signed distance
+    // distance.import_elements(rwv, VectorOperation::min);
+    
+    // distance_rest_of_the_mesh.zero_out_ghost_values();
+    
+    // distance_rest_of_the_mesh = distance;
+    // distance.compress(VectorOperation::min);
+    pcout << "====================================================" << std::endl;
+
+    
+    pcout << "distance before compress" << std::endl;
+    distance.print(std::cout); 
+    distance.compress(VectorOperation::min);
+    
+    
+    pcout << "distance after compress" << std::endl;
+    distance.print(std::cout); 
+    
+    distance.update_ghost_values();
+    pcout << "distance after update_ghost_values" << std::endl;
+    distance.print(std::cout); 
+    
+  
+    
+    distance_with_ghost = distance;
+    
+    
+    distance.zero_out_ghost_values();  
+    
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
       {
         const unsigned int cell_index = cell->global_active_cell_index();
         
+        Vector<double> local_distance(fe.n_dofs_per_cell());
+        local_distance = 2;
+        
+        
         const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
         
         std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-        
         cell->get_dof_indices(dof_indices);
+        
         
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
-          const double level_set_value = level_set[dof_indices[i]];
-        
-          signed_distance_owned[dof_indices[i]] = distance_owned[dof_indices[i]]*sgn(level_set_value);
+          distance(dof_indices[i]) = distance_with_ghost(dof_indices[i]);
         }
       }
-    }
+    }  
+    // return;
+    // 
+    // pcout << "distance_with_ghost before zero_out_ghost_values" << std::endl;
+    // distance_with_ghost.print(std::cout);   
+    // 
+    // distance_with_ghost.zero_out_ghost_values();   
+    // 
+    // distance_with_ghost = distance;
+    // 
+    // pcout << "distance_with_ghost before compress" << std::endl;
+    // distance_with_ghost.print(std::cout);     
+    // 
+    // distance_with_ghost.compress(VectorOperation::min);
+    // 
+    // distance = distance_with_ghost;
+    // 
+    // pcout << "distance_with_ghost after compress" << std::endl;
+    // distance_with_ghost.print(std::cout);    
+    // 
+    // distance_with_ghost.update_ghost_values();
+    // pcout << "distance_with_ghost after update_ghost_values" << std::endl;
+    
+    change = Utilities::MPI::logical_or(change, mpi_communicator);
+    // distance.compress(VectorOperation::min);
+    // return;
+    
+    // distance.update_ghost_values();
+    
+    // for (const auto &cell : dof_handler.active_cell_iterators())
+    // {
+    //   if (cell->is_locally_owned())
+    //   {
+    //     const unsigned int cell_index = cell->global_active_cell_index();
+    // 
+    //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    // 
+    //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+    // 
+    //     cell->get_dof_indices(dof_indices);
+    //     std::vector<double> cell_dof_values(dofs_per_cell);
+    //     cell->get_dof_values(distance, cell_dof_values.begin(), cell_dof_values.end());
+    // 
+    //     pcout << "cell_index = " << cell_index << std::endl;
+    //     pcout << "cell_dof_values = " << std::endl;
+    //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+    //     {
+    //       pcout << cell_dof_values[i] << std::endl;
+    // 
+    //     }
+    //   }
+    // }
+    // return;
+    
+    // Compute signed distance
+    // for (const auto &cell : dof_handler.active_cell_iterators())
+    // {
+    //   if (cell->is_locally_owned())
+    //   {
+    //     const unsigned int cell_index = cell->global_active_cell_index();
+    // 
+    //     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    // 
+    //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+    // 
+    //     cell->get_dof_indices(dof_indices);
+    // 
+    //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+    //     {
+    //       const double level_set_value = level_set[dof_indices[i]];
+    // 
+    //       signed_distance(dof_indices[i]) = distance(dof_indices[i])*sgn(level_set_value);
+    //     }
+    //   }
+    // }
     
     // Exchange
-    signed_distance = signed_distance_owned;
-    distance = distance_owned;
+    // signed_distance = signed_distance_owned;
+    // distance = distance_owned;
+    
+    // distance.compress(VectorOperation::min);
+    pcout << "count = "<< count << std::endl;
+    
   }
-  
-  // const Tensor<1,dim> d = point_1 - point_0;
-  // 
-  // // compute sign distance of intersected cell's dof 
-  // for (unsigned int i = 0; i < dofs_per_cell; ++i)
-  // {
-  //   const Point<dim> y = dof_support_points.at(dof_indices[i]);
-  // 
-  //   double D = compute_point_2_interface_min_distance(point_0, point_1, y);
-  //   const double previous_D = distance_owned[dof_indices[i]];
-  //   const double level_set_value = level_set[dof_indices[i]];
-  // 
-  //   distance_owned[dof_indices[i]] = std::min(std::abs(previous_D), std::abs(D))*sgn(level_set_value);
-  //   dofs_location_status.insert(dof_indices[i]);
-  // }
 
 }
 
 template <int dim>
 void AdvectionProblem<dim>::output_results(const int time_iteration, const double time) const
 {
+  pcout << "bloop" << std::endl;
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
-  data_out.add_data_vector(solution, "solution");
-  data_out.add_data_vector(level_set, "level_set");
-  data_out.add_data_vector(signed_distance, "signed_distance");
+  pcout << "bleep" << std::endl;
+  
+  // data_out.add_data_vector(solution, "solution");
+  pcout << "bliip" << std::endl;
+  
+  // data_out.add_data_vector(level_set, "level_set");
+  pcout << "blaap" << std::endl;
+  
+  // data_out.add_data_vector(signed_distance, "signed_distance");
+  distance.update_ghost_values();
+  
+  data_out.add_data_vector(distance, "distance");
+  data_out.add_data_vector(distance_with_ghost, "distance_with_ghost");
+  
+  
+  
   
   // data_out.add_data_vector(location, "location");
   
@@ -1311,9 +1467,13 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
   //       });
   data_out.build_patches();
 
+  pcout << "bliip" << std::endl;
+
   DataOutBase::VtkFlags vtk_flags;
   vtk_flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(vtk_flags);
+
+  pcout << "bliaap" << std::endl;
 
   const std::string filename = "solution.vtu";
   // std::ofstream     output(filename);
@@ -1324,9 +1484,9 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
                                       MPI_COMM_WORLD,
                                       3);
   // pcout << "Solution written to " << filename << std::endl;
-  std::ofstream out("grid-2.svg");
-  GridOut       grid_out;
-    grid_out.write_svg(triangulation, out);
+  // std::ofstream out("grid-2.svg");
+  // GridOut       grid_out;
+  //   grid_out.write_svg(triangulation, out);
 }
 
 template <int dim>
@@ -1350,7 +1510,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(4);
+  triangulation.refine_global(6);
             
   pcout << "Bonjour from after triangulation" << std::endl;
   // initial time step
@@ -1368,14 +1528,19 @@ void AdvectionProblem<dim>::run()
   
   compute_level_set_from_phase_fraction();
   
+  // level_set.update_ghost_values();
   mesh_classifier.reclassify();
 
 
   compute_sign_distance();
 
+  pcout << "blah" << std::endl;
+
 
     
   output_results(it,time);
+  
+  return;
   
   
   pcout << "Bonjour from after set_initial_conditions()" << std::endl;
