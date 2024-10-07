@@ -37,13 +37,14 @@ class PreconditionAdapter;
 template <int dim>
 class MFNavierStokesPreconditionGMG
 {
-  using Number         = double;
-  using MGNumber       = float;
-  using VectorType     = LinearAlgebra::distributed::Vector<Number>;
-  using MGVectorType   = LinearAlgebra::distributed::Vector<MGNumber>;
-  using LSTransferType = MGTransferMatrixFree<dim, MGNumber>;
-  using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
-  using OperatorType   = NavierStokesOperatorBase<dim, MGNumber>;
+  using Number             = double;
+  using MGNumber           = float;
+  using VectorType         = LinearAlgebra::distributed::Vector<Number>;
+  using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
+  using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
+  using LSTransferType     = MGTransferMatrixFree<dim, MGNumber>;
+  using GCTransferType     = MGTransferGlobalCoarsening<dim, MGVectorType>;
+  using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
@@ -198,9 +199,7 @@ private:
   std::shared_ptr<GCTransferType> mg_transfer_gc;
 
   /// Coarse grid solver (algebraic multigrid, ILU, direct solver)
-  std::shared_ptr<
-    PreconditionAdapter<MGVectorType,
-                        LinearAlgebra::distributed::Vector<double>>>
+  std::shared_ptr<PreconditionAdapter<MGVectorType, TrilinosVectorType>>
     coarse_grid_precondition;
 
   /// Solver control for the coarse grid solver
@@ -210,7 +209,7 @@ private:
   std::shared_ptr<SolverControl> direct_solver_control;
 
   /// GMRES as coarse grid solver
-  std::shared_ptr<SolverGMRES<VectorType>> coarse_grid_solver;
+  std::shared_ptr<SolverGMRES<TrilinosVectorType>> coarse_grid_solver;
 
   /// Multigrid wrapper for the coarse grid solver
   std::shared_ptr<MGCoarseGridBase<MGVectorType>> mg_coarse;

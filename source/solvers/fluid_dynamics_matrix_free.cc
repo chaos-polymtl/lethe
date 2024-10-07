@@ -134,6 +134,12 @@ public:
       }
   }
 
+  /**
+   * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
   template <
     typename U = VectorTypePrecondition,
     std::enable_if_t<!std::is_same_v<VectorType, U>, VectorType> * = nullptr>
@@ -1521,13 +1527,14 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           .mg_gmres_reduce;
       this->coarse_grid_solver_control = std::make_shared<ReductionControl>(
         max_iterations, tolerance, reduce, false, false);
-      SolverGMRES<VectorType>::AdditionalData solver_parameters;
+      SolverGMRES<TrilinosVectorType>::AdditionalData solver_parameters;
       solver_parameters.max_n_tmp_vectors =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_gmres_max_krylov_vectors;
 
-      this->coarse_grid_solver = std::make_shared<SolverGMRES<VectorType>>(
-        *this->coarse_grid_solver_control, solver_parameters);
+      this->coarse_grid_solver =
+        std::make_shared<SolverGMRES<TrilinosVectorType>>(
+          *this->coarse_grid_solver_control, solver_parameters);
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
@@ -1538,10 +1545,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
-            SolverGMRES<VectorType>,
+            SolverGMRES<TrilinosVectorType>,
             TrilinosWrappers::SparseMatrix,
-            PreconditionAdapter<MGVectorType,
-                                LinearAlgebra::distributed::Vector<double>>>>(
+            PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
             this->mg_operators[this->minlevel]->get_system_matrix(),
             *this->coarse_grid_precondition);
@@ -1555,10 +1561,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
           this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
             MGVectorType,
-            SolverGMRES<VectorType>,
+            SolverGMRES<TrilinosVectorType>,
             TrilinosWrappers::SparseMatrix,
-            PreconditionAdapter<MGVectorType,
-                                LinearAlgebra::distributed::Vector<double>>>>(
+            PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
             this->mg_operators[this->minlevel]->get_system_matrix(),
             *this->coarse_grid_precondition);
@@ -1573,8 +1578,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
       this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
         MGVectorType,
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>>(
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
         *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
@@ -1586,8 +1590,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
 
       this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
         MGVectorType,
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>>(
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
         *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
@@ -1607,15 +1610,13 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       precondition_direct->initialize(
         this->mg_operators[this->minlevel]->get_system_matrix());
 
-      coarse_grid_precondition = std::make_shared<
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>(
-        precondition_direct);
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_direct);
 
       this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
         MGVectorType,
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>>(
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
         *this->coarse_grid_precondition);
 #else
       AssertThrow(
@@ -1973,20 +1974,18 @@ MFNavierStokesPreconditionGMG<dim>::setup_AMG()
 
       precondition_amg->initialize(min_level_matrix, parameter_ml);
 
-      coarse_grid_precondition = std::make_shared<
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>(
-        precondition_amg);
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_amg);
     }
   else
     {
       auto precondition_amg =
         std::make_shared<TrilinosWrappers::PreconditionAMG>();
 
-      coarse_grid_precondition = std::make_shared<
-        PreconditionAdapter<MGVectorType,
-                            LinearAlgebra::distributed::Vector<double>>>(
-        precondition_amg);
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_amg);
     }
 }
 
@@ -2012,10 +2011,9 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
     this->mg_operators[this->minlevel]->get_system_matrix(),
     preconditionerOptions);
 
-  coarse_grid_precondition = std::make_shared<
-    PreconditionAdapter<MGVectorType,
-                        LinearAlgebra::distributed::Vector<double>>>(
-    precondition_ilu);
+  coarse_grid_precondition =
+    std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+      precondition_ilu);
 }
 
 template <int dim>
