@@ -371,12 +371,6 @@ protected:
   calculate_time_derivative_previous_solutions();
 
   /**
-   * @brief Define the non-zero constraints used to solve the problem.
-   */
-  void
-  define_non_zero_constraints();
-
-  /**
    * @brief Define the zero constraints used to solve the problem.
    */
   void

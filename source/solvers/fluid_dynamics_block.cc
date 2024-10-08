@@ -581,76 +581,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  {
-    nonzero_constraints.clear();
-    nonzero_constraints.reinit(locally_relevant_dofs_acquisition);
-
-
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::noslip)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              dealii::Functions::ZeroFunction<dim>(dim + 1),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->simulation_parameters.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              nonzero_constraints);
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::function)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              NavierStokesFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .u,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .v,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .w),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-              this->simulation_parameters.boundary_conditions
-                .periodic_direction[i_bc],
-              nonzero_constraints);
-          }
-      }
-  }
-  nonzero_constraints.close();
+  this->define_non_zero_constraints();
 
   {
     this->zero_constraints.clear();
@@ -739,7 +670,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   coupling,
                                   sparsity_pattern,
-                                  nonzero_constraints,
+                                  this->nonzero_constraints,
                                   true,
                                   Utilities::MPI::this_mpi_process(
                                     MPI_COMM_WORLD));

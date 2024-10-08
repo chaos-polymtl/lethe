@@ -103,12 +103,6 @@ protected:
   setup_preconditioner() override;
 
   /**
-   * @brief Define the non-zero constraints used to solve the problem.
-   */
-  void
-  define_non_zero_constraints();
-
-  /**
    * @brief Define the zero constraints used to solve the problem.
    */
   void
