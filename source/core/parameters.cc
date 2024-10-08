@@ -69,7 +69,8 @@ namespace Parameters
   {
     SizeOfSubsections sizes;
     sizes.boundary_conditions =
-      get_max_number_of_boundary_conditions(file_name);
+      get_max_subsection_size(file_name);
+    sizes.manifolds = get_max_subsection_size(file_name);
     return sizes;
   }
 
