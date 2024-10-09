@@ -13,8 +13,6 @@ subsection simulation control
   set method    = bdf1
   set time end  = 3
   set time step = 0.001
-  #set adapt            = true
-  #set max cfl          = 0.1
   set output name      = rising-bubble-chns
   set output frequency = 15
   set output path      = ./output/
@@ -178,3 +176,4 @@ subsection linear solver
     set max krylov vectors      = 200
   end
 end
+

@@ -22,7 +22,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set cahn hilliard = true
+  set cahn hilliard  = true
   set fluid dynamics = false
 end
 
@@ -34,7 +34,7 @@ subsection cahn hilliard
   set potential smoothing coefficient = 0.0
 
   subsection epsilon
-    set method = automatic
+    set method    = automatic
     set verbosity = verbose
   end
 end
@@ -47,7 +47,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_rectangle
   set grid arguments     = -2.5, -2.5 : 2.5, 2.5 : true
-  set initial refinement = 7 
+  set initial refinement = 7
 end
 
 #---------------------------------------------------
@@ -77,7 +77,7 @@ subsection physical properties
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient = 10
+      set surface tension coefficient     = 10
       set cahn hilliard mobility constant = 10
     end
   end
@@ -91,21 +91,21 @@ subsection boundary conditions
   set number = 0
 end
 
-
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity        = quiet
+  set verbosity = quiet
 end
+
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection cahn hilliard
-    set tolerance      = 1e-6
+    set tolerance = 1e-6
   end
 end
 
@@ -119,4 +119,3 @@ subsection linear solver
     set minimum residual  = 1e-8
   end
 end
-
