@@ -263,16 +263,20 @@ class AdvectionField : public TensorFunction<1, dim>
 {
 public:
   virtual Tensor<1, dim> value(const Point<dim> &p) const override;
+
 };
 
 
 template <int dim>
 Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
 {
+  const double period = 2.0;
   Tensor<1, dim> value;
-  value[0] = 1;
-  for (unsigned int i = 1; i < dim; ++i)
-    value[i] = 0;
+  value[0] = -(Utilities::pow(sin(numbers::PI*p[0]),2)*sin(2*numbers::PI*p[1])*cos(numbers::PI*this->get_time()/period));
+  value[1] = Utilities::pow(sin(numbers::PI*p[1]),2)*sin(2*numbers::PI*p[0])*cos(numbers::PI*this->get_time()/period);
+  
+  // value[0] = 1;
+  // value[1] = 0;
 
   return value;
 }
@@ -295,17 +299,12 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   (void)component;
   Assert(component == 0, ExcIndexRange(component, 0, 1));
   
-  Point<dim> center = Point<dim>(0.0,0.75);
+  Point<dim> center = Point<dim>(0.5,0.75);
   Tensor<1,dim> dist = center - p;
   
   return 0.5+0.5*std::tanh((0.15-dist.norm())/0.02);
   
-  // return 0.5+0.5*std::tanh((dist[1])/0.02);
-  
-  
-  // if (p[0]> 0.25 || p[0]<-0.25)
-  //   return 0.0;
-  // return 0.5 + 0.5*std::cos(4*p[0]*M_PI);
+  // return 0.5+0.5*std::tanh((dist[0])/0.02);
 }
 
 template <int dim>
@@ -440,7 +439,7 @@ private:
   
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
-  void compute_sign_distance();
+  void compute_sign_distance(unsigned int time_iteration);
   
   
   void refine_grid();
@@ -471,7 +470,7 @@ private:
   IndexSet locally_active_dofs;
   
   
-  VectorType solution;
+  VectorType locally_relevant_solution;
   VectorType previous_solution;
   VectorType location;
   LinearAlgebra::distributed::Vector<double> signed_distance;
@@ -490,6 +489,7 @@ private:
   VectorType system_rhs;
   
   double dt;
+  double time = 0.0;
   
   MPI_Comm           mpi_communicator;
   ConditionalOStream pcout;
@@ -514,7 +514,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , fe_level_set(1)
   , level_set_dof_handler(triangulation)
   , mesh_classifier(dof_handler, level_set)
-  , dt(0.001)
+  , dt(2.0/300.0)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {}
@@ -549,8 +549,8 @@ void AdvectionProblem<dim>::setup_system()
   
   pcout << "boop 2" << std::endl;
   
-  solution.reinit(locally_owned_dofs, mpi_communicator);
-  previous_solution.reinit(locally_owned_dofs, mpi_communicator);
+  locally_relevant_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  previous_solution.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, mpi_communicator);
   signed_distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
@@ -571,7 +571,10 @@ void AdvectionProblem<dim>::setup_system()
                                   dsp,
                                   constraints,
                                   /*keep_constrained_dofs =*/false);
-  
+  SparsityTools::distribute_sparsity_pattern(dsp,
+                                                 locally_owned_dofs,
+                                                 mpi_communicator,
+                                                 locally_relevant_dofs);
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
@@ -592,6 +595,10 @@ void AdvectionProblem<dim>::assemble_system()
                   &AdvectionProblem::copy_local_to_global,
                   AssemblyScratchData(fe),
                   AssemblyCopyData());
+                  
+  system_matrix.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
+  
 }      
 
 template <int dim>
@@ -646,6 +653,7 @@ void AdvectionProblem<dim>::local_assemble_system(
   scratch_data.fe_values.reinit(cell);
   scratch_data.fe_values.get_function_values(previous_solution, scratch_data.previous_phase_values);
   
+  scratch_data.advection_field.set_time(time);
   scratch_data.advection_field.value_list(
     scratch_data.fe_values.get_quadrature_points(),
     scratch_data.advection_directions);
@@ -712,6 +720,7 @@ AdvectionProblem<dim>::copy_local_to_global(const AssemblyCopyData &copy_data)
     copy_data.local_dof_indices,
     system_matrix,
     system_rhs);
+    
 }
 
 template <int dim>
@@ -719,10 +728,14 @@ void
 AdvectionProblem<dim>::set_initial_conditions()
 {
   
+  VectorType completely_distributed_solution(locally_owned_dofs,
+                                                      mpi_communicator);
   VectorTools::interpolate(this->mapping, this->dof_handler,
                            InitialConditions<dim>(),
-                           this->previous_solution);
-  this->solution = this->previous_solution;                 
+                           completely_distributed_solution);
+  this->constraints.distribute(completely_distributed_solution);
+  this->locally_relevant_solution = completely_distributed_solution;
+  this->previous_solution = completely_distributed_solution; 
 }
 
 template <int dim>
@@ -736,22 +749,25 @@ void AdvectionProblem<dim>::solve()
   TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
   
   preconditioner.initialize(system_matrix, data_ilu);
-
+  
+  VectorType completely_distributed_solution(this->locally_owned_dofs, mpi_communicator);  
+  
   solver.solve(system_matrix,
-              solution,
+              completely_distributed_solution,
               system_rhs,
               preconditioner);
 
-  VectorType residual(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  VectorType residual(locally_owned_dofs,  mpi_communicator);
   
-  system_matrix.vmult(residual, solution);
+  system_matrix.vmult(residual, completely_distributed_solution);
   // residual -= system_rhs;
   pcout << "   Iterations required for convergence: "
             << solver_control.last_step() << '\n'
             << "   Max norm of residual:                "
             << residual.linfty_norm() << '\n';
 
-  constraints.distribute(solution);
+  constraints.distribute(completely_distributed_solution);
+  locally_relevant_solution = completely_distributed_solution;
 }
 
 template <int dim>
@@ -762,17 +778,24 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
                                            mpi_communicator);
   for (auto p : this->locally_owned_dofs)
     {
-      level_set_owned[p] = 2.0*solution[p] - 1.0;
+      // level_set_owned[p] = 2.0*locally_relevant_solution[p] - 1.0;
+      const double phase = locally_relevant_solution[p];
+      level_set_owned[p] = log10(std::max(phase,1e-8)/std::max(1.0-phase,1e-8));
     }
   level_set = level_set_owned;  
 }
 
 template <int dim>
 void 
-AdvectionProblem<dim>::compute_sign_distance()
+AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
 {   
   
   pcout << "In redistancation" << std::endl;
+  
+  intersection_point.clear();
+  intersection_cell.clear();
+  intersection_halo_cell.clear();
+  dofs_location_status.clear();
   
   unsigned int n;
   
@@ -785,17 +808,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   const auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
   
   // Local distance vetors initialization
-  VectorType distance_owned(this->locally_owned_dofs, 
-                                           mpi_communicator);
-  VectorType signed_distance_owned(this->locally_owned_dofs, 
-                                           mpi_communicator);           
+          
   
-                                 
-  // Should be initialized to the max distance that we want to redistantiate
-  distance = 2;
-  // VectorTools::interpolate(mapping,dof_handler,Functions::ConstantFunction<dim>(2.0),distance);
-  distance.print(std::cout);                            
-  // 
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
   // Dummy quadrature to have the intersection points 
@@ -820,7 +834,7 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   intersection_data_out.write_vtu_with_pvtu_record("output/",
                                       "interface",
-                                      1,
+                                      time_iteration,
                                       MPI_COMM_WORLD,
                                       3);
   
@@ -877,9 +891,9 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   pcout << "Out of intersection, in distance of first neighbors" << std::endl;
   
-  auto locally_owned_dofs = dof_handler.locally_owned_dofs();
+  // auto locally_owned_dofs = dof_handler.locally_owned_dofs();
   
-  locally_owned_dofs.print(std::cout);
+  // locally_owned_dofs.print(std::cout);
   
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
@@ -887,25 +901,19 @@ AdvectionProblem<dim>::compute_sign_distance()
     {
       const unsigned int cell_index = cell->global_active_cell_index();
       
-      Vector<double> local_distance(fe.n_dofs_per_cell());
-      local_distance = 2;
-      
-      
       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
       
-      
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        distance(dof_indices[i]) = 2.0;
-        distance_with_ghost(dof_indices[i]) = 2.0;
+        distance(dof_indices[i]) = 0.1;
+        distance_with_ghost(dof_indices[i]) = 0.1;
         
       }
     }
   }
-  // distance.compress(VectorOperation::insert);
   
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1010,18 +1018,18 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   
   
-  pcout << "Distance before compress" << std::endl;
-  distance.print(std::cout);                            
+  // pcout << "Distance before compress" << std::endl;
+  // distance.print(std::cout);                            
   
-  pcout << "has_ghost_elements before compress = " << distance.has_ghost_elements() << std::endl;
+  // pcout << "has_ghost_elements before compress = " << distance.has_ghost_elements() << std::endl;
   
   distance.compress(VectorOperation::min);
-  pcout << "COMPRESS" << std::endl;
-  pcout << "has_ghost_elements after compress = " << distance.has_ghost_elements() << std::endl;
+  // pcout << "COMPRESS" << std::endl;
+  // pcout << "has_ghost_elements after compress = " << distance.has_ghost_elements() << std::endl;
   
   // distance.update_ghost_values();
-  pcout << "Distance after compress" << std::endl;
-  distance.print(std::cout); 
+  // pcout << "Distance after compress" << std::endl;
+  // distance.print(std::cout); 
   
   // distance.compress(VectorOperation::add);      
                      
@@ -1030,8 +1038,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   
   
                      
-   pcout << "Distance after update_ghost_values" << std::endl;
-  distance.print(std::cout); 
+   // pcout << "Distance after update_ghost_values" << std::endl;
+  // distance.print(std::cout); 
 
   
   
@@ -1044,8 +1052,8 @@ AdvectionProblem<dim>::compute_sign_distance()
   distance_with_ghost = distance;
   // 
   
-  pcout << "Distance before update_ghost_values" << std::endl;
-  distance_with_ghost.print(std::cout);    
+  // pcout << "Distance before update_ghost_values" << std::endl;
+  // distance_with_ghost.print(std::cout);    
   
   distance.zero_out_ghost_values();    
   
@@ -1055,15 +1063,10 @@ AdvectionProblem<dim>::compute_sign_distance()
     {
       const unsigned int cell_index = cell->global_active_cell_index();
       
-      Vector<double> local_distance(fe.n_dofs_per_cell());
-      local_distance = 2;
-      
-      
       const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
-      
       
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
@@ -1304,20 +1307,20 @@ AdvectionProblem<dim>::compute_sign_distance()
     
     // distance_rest_of_the_mesh = distance;
     // distance.compress(VectorOperation::min);
-    pcout << "====================================================" << std::endl;
+    // pcout << "====================================================" << std::endl;
 
     
-    pcout << "distance before compress" << std::endl;
-    distance.print(std::cout); 
+    // pcout << "distance before compress" << std::endl;
+    // distance.print(std::cout); 
     distance.compress(VectorOperation::min);
     
     
-    pcout << "distance after compress" << std::endl;
-    distance.print(std::cout); 
+    // pcout << "distance after compress" << std::endl;
+    // distance.print(std::cout); 
     
     distance.update_ghost_values();
-    pcout << "distance after update_ghost_values" << std::endl;
-    distance.print(std::cout); 
+    // pcout << "distance after update_ghost_values" << std::endl;
+    // distance.print(std::cout); 
     
   
     
@@ -1431,22 +1434,20 @@ AdvectionProblem<dim>::compute_sign_distance()
     pcout << "count = "<< count << std::endl;
     
   }
-
+  
 }
 
 template <int dim>
 void AdvectionProblem<dim>::output_results(const int time_iteration, const double time) const
 {
-  pcout << "bloop" << std::endl;
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
-  pcout << "bleep" << std::endl;
   
-  // data_out.add_data_vector(solution, "solution");
-  pcout << "bliip" << std::endl;
+  data_out.add_data_vector(locally_relevant_solution, "locally_relevant_solution");
+  data_out.add_data_vector(previous_solution, "previous_solution");
   
-  // data_out.add_data_vector(level_set, "level_set");
-  pcout << "blaap" << std::endl;
+  
+  data_out.add_data_vector(level_set, "level_set");
   
   // data_out.add_data_vector(signed_distance, "signed_distance");
   distance.update_ghost_values();
@@ -1454,6 +1455,7 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
   data_out.add_data_vector(distance, "distance");
   data_out.add_data_vector(distance_with_ghost, "distance_with_ghost");
   
+  distance.zero_out_ghost_values();  
   
   
   
@@ -1467,13 +1469,9 @@ void AdvectionProblem<dim>::output_results(const int time_iteration, const doubl
   //       });
   data_out.build_patches();
 
-  pcout << "bliip" << std::endl;
-
   DataOutBase::VtkFlags vtk_flags;
   vtk_flags.compression_level = DataOutBase::CompressionLevel::best_speed;
   data_out.set_flags(vtk_flags);
-
-  pcout << "bliaap" << std::endl;
 
   const std::string filename = "solution.vtu";
   // std::ofstream     output(filename);
@@ -1495,9 +1493,9 @@ void AdvectionProblem<dim>::run()
   pcout << "Bonjour from run" << std::endl;
   
   Point<dim> p_0 = Point<dim>();
-  p_0[0] = -1;
+  p_0[0] = 0;
   for (unsigned int i = 1; i < dim; ++i)
-    p_0[i] = -1;
+    p_0[i] = 0;
     
   Point<dim> p_1 = Point<dim>();
   p_1[0] = 1;
@@ -1523,8 +1521,7 @@ void AdvectionProblem<dim>::run()
   
   
   unsigned int it = 0;
-  double time = 0.0;
-  double final_time = 0.01;
+  double final_time = 2.0;
   
   compute_level_set_from_phase_fraction();
   
@@ -1532,15 +1529,13 @@ void AdvectionProblem<dim>::run()
   mesh_classifier.reclassify();
 
 
-  compute_sign_distance();
-
-  pcout << "blah" << std::endl;
+  compute_sign_distance(it);
 
 
     
   output_results(it,time);
   
-  return;
+  // return;
   
   
   pcout << "Bonjour from after set_initial_conditions()" << std::endl;
@@ -1559,12 +1554,15 @@ void AdvectionProblem<dim>::run()
     solve();
     
     compute_level_set_from_phase_fraction();
+    mesh_classifier.reclassify();
+    compute_sign_distance(it);
     
     output_results(it, time);
     
     // 
-    // previous_solution = solution;
-    this->previous_solution = this->solution; 
+    previous_solution = locally_relevant_solution;
+    
+    // this->previous_solution = this->solution; 
   } 
   
   
