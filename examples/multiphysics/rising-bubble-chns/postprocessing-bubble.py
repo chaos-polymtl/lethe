@@ -37,7 +37,6 @@ y_list=[]
 vx_list=[]
 vy_list=[]
 root, dirs, files = next(os.walk(rootdir, topdown=True))
-#print(files)
 
 for dir in dirs:
     for filename in os.listdir(root + "/" + dir):

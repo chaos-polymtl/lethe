@@ -33,7 +33,7 @@ end
 #---------------------------------------------------
 
 subsection dimensionality
-  set length      = 0.001 #meter
+  set length = 0.001 #meter
 end
 
 #---------------------------------------------------

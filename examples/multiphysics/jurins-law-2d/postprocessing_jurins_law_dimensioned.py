@@ -110,7 +110,3 @@ def analytical_solution(prm,angle):
     print(analytical_deltaH)
     
     return analytical_deltaH*1000
-      
-
-
-
