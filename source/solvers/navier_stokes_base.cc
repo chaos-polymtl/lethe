@@ -1720,8 +1720,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::
-  define_non_zero_constraints()
+NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -1830,81 +1829,110 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints_global()
+NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 {
-  // FEValuesExtractors::Vector velocities(0);
-  // FEValuesExtractors::Scalar pressure(dim);
-  // this->zero_constraints.clear();
-  // this->locally_relevant_dofs =
-  //   DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-  // this->zero_constraints.reinit(this->locally_relevant_dofs);
+  FEValuesExtractors::Vector velocities(0);
+  FEValuesExtractors::Scalar pressure(dim);
+  this->zero_constraints.clear();
 
-  // DoFTools::make_hanging_node_constraints(this->dof_handler,
-  //                                         this->zero_constraints);
+  if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
+    {
+      std::vector<unsigned int> block_component(dim + 1, 0);
+      block_component[dim] = 1;
+      DoFRenumbering::component_wise(this->dof_handler, block_component);
+      std::vector<types::global_dof_index> dofs_per_block =
+        DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
 
-  // for (unsigned int i_bc = 0;
-  //      i_bc < this->simulation_parameters.boundary_conditions.size;
-  //      ++i_bc)
-  //   {
-  //     if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //         BoundaryConditions::BoundaryType::slip)
-  //       {
-  //         std::set<types::boundary_id> no_normal_flux_boundaries;
-  //         no_normal_flux_boundaries.insert(
-  //           this->simulation_parameters.boundary_conditions.id[i_bc]);
-  //         VectorTools::compute_no_normal_flux_constraints(
-  //           this->dof_handler,
-  //           0,
-  //           no_normal_flux_boundaries,
-  //           this->zero_constraints,
-  //           *this->mapping);
-  //       }
-  //     else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //              BoundaryConditions::BoundaryType::periodic)
-  //       {
-  //         DoFTools::make_periodicity_constraints(
-  //           this->dof_handler,
-  //           this->simulation_parameters.boundary_conditions.id[i_bc],
-  //           this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-  //           this->simulation_parameters.boundary_conditions
-  //             .periodic_direction[i_bc],
-  //           this->zero_constraints);
-  //       }
-  //     else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //              BoundaryConditions::BoundaryType::pressure)
-  //       {
-  //         /*do nothing*/
-  //       }
-  //     else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //              BoundaryConditions::BoundaryType::function_weak)
-  //       {
-  //         /*do nothing*/
-  //       }
-  //     else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //              BoundaryConditions::BoundaryType::partial_slip)
-  //       {
-  //         /*do nothing*/
-  //       }
-  //     else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-  //              BoundaryConditions::BoundaryType::outlet)
-  //       {
-  //         /*do nothing*/
-  //       }
-  //     else
-  //       {
-  //         VectorTools::interpolate_boundary_values(
-  //           *this->mapping,
-  //           this->dof_handler,
-  //           this->simulation_parameters.boundary_conditions.id[i_bc],
-  //           dealii::Functions::ZeroFunction<dim>(dim + 1),
-  //           this->zero_constraints,
-  //           this->fe->component_mask(velocities));
-  //       }
-  //   }
+      unsigned int dof_u = dofs_per_block[0];
+      unsigned int dof_p = dofs_per_block[1];
 
-  // this->establish_solid_domain(false);
+      IndexSet locally_relevant_dofs_acquisition;
+      locally_relevant_dofs_acquisition =
+        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+      this->locally_relevant_dofs.resize(2);
+      this->locally_relevant_dofs[0] =
+        locally_relevant_dofs_acquisition.get_view(0, dof_u);
+      this->locally_relevant_dofs[1] =
+        locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
+      this->zero_constraints.reinit(locally_relevant_dofs_acquisition);
+    }
+  else
+    {
+      this->locally_relevant_dofs =
+        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+      this->zero_constraints.reinit(this->locally_relevant_dofs);
+    }
 
-  // this->zero_constraints.close();
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          this->zero_constraints);
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::slip)
+        {
+          std::set<types::boundary_id> no_normal_flux_boundaries;
+          no_normal_flux_boundaries.insert(
+            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          VectorTools::compute_no_normal_flux_constraints(
+            this->dof_handler,
+            0,
+            no_normal_flux_boundaries,
+            this->zero_constraints,
+            *this->mapping);
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+            this->simulation_parameters.boundary_conditions
+              .periodic_direction[i_bc],
+            this->zero_constraints);
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::pressure)
+        {
+          /*The pressure boundary condition is implemented in the matrix-based
+           * assemblers*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::function_weak)
+        {
+          /*The function weak boundary condition is implemented in the
+           * matrix-based assemblers and the matrix-free operators*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::partial_slip)
+        {
+          /*The partial slip boundary condition is implemented in the
+           * matrix-based assemblers*/
+        }
+      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+               BoundaryConditions::BoundaryType::outlet)
+        {
+          /*The directional do-nothing boundary condition is implemented
+           * in the matrix-based assemblers and the matrix-free operators*/
+        }
+      else
+        {
+          VectorTools::interpolate_boundary_values(
+            *this->mapping,
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            dealii::Functions::ZeroFunction<dim>(dim + 1),
+            this->zero_constraints,
+            this->fe->component_mask(velocities));
+        }
+    }
+
+  this->establish_solid_domain(false);
+
+  this->zero_constraints.close();
 }
 
 template <int dim, typename VectorType, typename DofsType>

@@ -82,7 +82,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_non_zero_constraints();
 
   // Zero constraints
-  define_zero_constraints();
+  this->define_zero_constraints();
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -201,85 +201,6 @@ FluidDynamicsMatrixBased<dim>::update_boundary_conditions()
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
-}
-
-template <int dim>
-void
-FluidDynamicsMatrixBased<dim>::define_zero_constraints()
-{
-  FEValuesExtractors::Vector velocities(0);
-  FEValuesExtractors::Scalar pressure(dim);
-  this->zero_constraints.clear();
-  this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-  this->zero_constraints.reinit(this->locally_relevant_dofs);
-
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                          this->zero_constraints);
-
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::slip)
-        {
-          std::set<types::boundary_id> no_normal_flux_boundaries;
-          no_normal_flux_boundaries.insert(
-            this->simulation_parameters.boundary_conditions.id[i_bc]);
-          VectorTools::compute_no_normal_flux_constraints(
-            this->dof_handler,
-            0,
-            no_normal_flux_boundaries,
-            this->zero_constraints,
-            *this->mapping);
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::periodic)
-        {
-          DoFTools::make_periodicity_constraints(
-            this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-            this->simulation_parameters.boundary_conditions
-              .periodic_direction[i_bc],
-            this->zero_constraints);
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::pressure)
-        {
-          /*do nothing*/
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::function_weak)
-        {
-          /*do nothing*/
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::partial_slip)
-        {
-          /*do nothing*/
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::outlet)
-        {
-          /*do nothing*/
-        }
-      else
-        {
-          VectorTools::interpolate_boundary_values(
-            *this->mapping,
-            this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            dealii::Functions::ZeroFunction<dim>(dim + 1),
-            this->zero_constraints,
-            this->fe->component_mask(velocities));
-        }
-    }
-
-  this->establish_solid_domain(false);
-
-  this->zero_constraints.close();
 }
 
 template <int dim>

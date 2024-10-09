@@ -404,7 +404,7 @@ protected:
    * @brief Define the zero constraints used to solve the problem.
    */
   void
-  define_zero_constraints_global();
+  define_zero_constraints();
 
   /**
    * @brief Check if a specifique boundary condition exist
