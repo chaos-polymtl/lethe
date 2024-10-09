@@ -2032,7 +2032,7 @@ FluidDynamicsMatrixFree<dim>::solve()
         this->forcing_function->set_time(
           this->simulation_control->get_current_time());
 
-      update_boundary_conditions();
+      this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);
@@ -2223,40 +2223,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     update_solutions_for_multiphysics();
-}
-
-template <int dim>
-void
-FluidDynamicsMatrixFree<dim>::update_boundary_conditions()
-{
-  if (!this->simulation_parameters.boundary_conditions.time_dependent)
-    return;
-
-  // We can never assume in the code anywhere that the local_evaluation_point is
-  // at the right value its value must always be reinitialized from the present
-  // solution. This may appear trivial, but this is extremely important when we
-  // are checkpointing. Trust me future Bruno.
-  this->local_evaluation_point = this->present_solution;
-
-  double time = this->simulation_control->get_current_time();
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    {
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .u.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .v.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .w.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
-        .p.set_time(time);
-    }
-  this->define_non_zero_constraints();
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
