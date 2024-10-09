@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection dimensionality
-  set length = 0.001 #meter
+  set length = 0.001
 end
 
 #---------------------------------------------------
@@ -78,20 +78,20 @@ end
 
 subsection physical properties
   set number of fluids = 2
-  subsection fluid 0 #air
+  subsection fluid 0
     set kinematic viscosity = 8e-5
     set density             = 1
   end
-  subsection fluid 1 #water
+  subsection fluid 1
     set kinematic viscosity = 1e-4
     set density             = 2000
   end
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient  = 7.3e-2
-      set cahn hilliard mobility model = constant
-      #set cahn hilliard mobility constant  = 5e-7 
+      set surface tension coefficient     = 7.3e-2
+      set cahn hilliard mobility model    = constant
+      set cahn hilliard mobility constant = 1e-7
     end
   end
 end
@@ -104,15 +104,9 @@ subsection cahn hilliard
   set potential smoothing coefficient = 0
 
   subsection epsilon
-    set method = automatic
-    #set verbosity = verbose
+    set method    = automatic
+    set verbosity = verbose
   end
-
-  #subsection phase filtration
-  #  set type      = tanh
-  #  set verbosity = quiet
-  #  set beta      = 4
-  #end
 end
 
 #---------------------------------------------------
@@ -122,7 +116,7 @@ end
 subsection boundary conditions cahn hilliard
   set number = 1
   subsection bc 0
-    set id          = 2 
+    set id          = 2
     set type        = angle_of_contact
     set angle value = 50
   end
