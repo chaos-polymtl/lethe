@@ -313,12 +313,6 @@ protected:
   setup_dofs_fd() override;
 
   /**
-   * @brief Update non zero constraints if the boundary is time dependent.
-   */
-  void
-  update_boundary_conditions();
-
-  /**
    * @brief Set the initial conditions for the solver. If the simulation is
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
@@ -369,18 +363,6 @@ protected:
    */
   void
   calculate_time_derivative_previous_solutions();
-
-  /**
-   * @brief Define the non-zero constraints used to solve the problem.
-   */
-  void
-  define_non_zero_constraints();
-
-  /**
-   * @brief Define the zero constraints used to solve the problem.
-   */
-  void
-  define_zero_constraints();
 
   /**
    * @brief Set up appropriate preconditioner.

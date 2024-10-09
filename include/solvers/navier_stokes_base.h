@@ -395,6 +395,25 @@ protected:
   set_nodal_values();
 
   /**
+   * @brief Define the non-zero constraints used to solve the problem.
+   */
+  void
+  define_non_zero_constraints();
+
+  /**
+   * @brief Define the zero constraints used to solve the problem.
+   */
+  void
+  define_zero_constraints();
+
+  /**
+   * @brief Update non-zero constraints if the boundary is time dependent.
+   * Note: not implemented for the block fluid dynamics application.
+   */
+  void
+  update_boundary_conditions();
+
+  /**
    * @brief Check if a specifique boundary condition exist
    * @param bc, the boundary type that we want to check if it exists
    */

@@ -54,12 +54,6 @@ protected:
   setup_dofs_fd() override;
 
   /**
-   * @brief update non zero constraint if the boundary is time-dependent
-   */
-  void
-  update_boundary_conditions();
-
-  /**
    * @brief Sets the initial condition for the solver
    *
    * If the simulation is restarted from a checkpoint, the initial solution
@@ -101,18 +95,6 @@ protected:
    */
   void
   setup_preconditioner() override;
-
-  /**
-   * @brief Define the non-zero constraints used to solve the problem.
-   */
-  void
-  define_non_zero_constraints();
-
-  /**
-   * @brief Define the zero constraints used to solve the problem.
-   */
-  void
-  define_zero_constraints();
 
   /**
    * @brief Define the zero constraints used to solved the problem that change

@@ -2032,7 +2032,7 @@ FluidDynamicsMatrixFree<dim>::solve()
         this->forcing_function->set_time(
           this->simulation_control->get_current_time());
 
-      update_boundary_conditions();
+      this->update_boundary_conditions();
       this->multiphysics->update_boundary_conditions();
 
       this->simulation_control->print_progression(this->pcout);
@@ -2119,11 +2119,30 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
-  // Non Zero constraints
-  define_non_zero_constraints();
+  // Non-zero constraints
+  this->define_non_zero_constraints();
+
+  // Check whether the boundary conditions specified in the parameter file are
+  // available for this solver
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::pressure ||
+          this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::partial_slip)
+        {
+          Assert(
+            false,
+            ExcMessage(
+              "The following boundary conditions are not supported by the lethe-fluid-matrix-free application: pressure and partial slip."));
+        }
+    }
 
   // Zero constraints
-  define_zero_constraints();
+  this->define_zero_constraints();
 
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
@@ -2204,40 +2223,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     update_solutions_for_multiphysics();
-}
-
-template <int dim>
-void
-FluidDynamicsMatrixFree<dim>::update_boundary_conditions()
-{
-  if (!this->simulation_parameters.boundary_conditions.time_dependent)
-    return;
-
-  // We can never assume in the code anywhere that the local_evaluation_point is
-  // at the right value its value must always be reinitialized from the present
-  // solution. This may appear trivial, but this is extremely important when we
-  // are checkpointing. Trust me future Bruno.
-  this->local_evaluation_point = this->present_solution;
-
-  double time = this->simulation_control->get_current_time();
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    {
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .u.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .v.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .w.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
-        .p.set_time(time);
-    }
-  define_non_zero_constraints();
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
@@ -2711,183 +2696,6 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
 #endif
-}
-
-template <int dim>
-void
-FluidDynamicsMatrixFree<dim>::define_non_zero_constraints()
-{
-  double time = this->simulation_control->get_current_time();
-  FEValuesExtractors::Vector velocities(0);
-  FEValuesExtractors::Scalar pressure(dim);
-  // Non-zero constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
-  {
-    nonzero_constraints.clear();
-    nonzero_constraints.reinit(this->locally_relevant_dofs);
-
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            nonzero_constraints);
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::noslip)
-          {
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              dealii::Functions::ZeroFunction<dim>(dim + 1),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->simulation_parameters.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              nonzero_constraints,
-              *this->mapping);
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::function)
-          {
-            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-              .u.set_time(time);
-            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-              .v.set_time(time);
-            this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-              .w.set_time(time);
-            VectorTools::interpolate_boundary_values(
-              *this->mapping,
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              NavierStokesFunctionDefined<dim>(
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .u,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .v,
-                &this->simulation_parameters.boundary_conditions
-                   .bcFunctions[i_bc]
-                   .w),
-              nonzero_constraints,
-              this->fe->component_mask(velocities));
-          }
-        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints(
-              this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-              this->simulation_parameters.boundary_conditions
-                .periodic_direction[i_bc],
-              nonzero_constraints);
-          }
-      }
-  }
-
-
-
-  this->establish_solid_domain(true);
-
-  nonzero_constraints.close();
-}
-
-template <int dim>
-void
-FluidDynamicsMatrixFree<dim>::define_zero_constraints()
-{
-  FEValuesExtractors::Vector velocities(0);
-  FEValuesExtractors::Scalar pressure(dim);
-  this->zero_constraints.clear();
-  this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-  this->zero_constraints.reinit(this->locally_relevant_dofs);
-
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                          this->zero_constraints);
-
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::slip)
-        {
-          std::set<types::boundary_id> no_normal_flux_boundaries;
-          no_normal_flux_boundaries.insert(
-            this->simulation_parameters.boundary_conditions.id[i_bc]);
-          VectorTools::compute_no_normal_flux_constraints(
-            this->dof_handler,
-            0,
-            no_normal_flux_boundaries,
-            this->zero_constraints,
-            *this->mapping);
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::periodic)
-        {
-          DoFTools::make_periodicity_constraints(
-            this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-            this->simulation_parameters.boundary_conditions
-              .periodic_direction[i_bc],
-            this->zero_constraints);
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::pressure)
-        {
-          Assert(
-            false,
-            ExcMessage(
-              "Pressure boundary conditions are not supported by the matrix free application."));
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::function_weak)
-        {
-          /*The function weak boundary condition is implemented in the
-           * operators*/
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::partial_slip)
-        {
-          Assert(
-            false,
-            ExcMessage(
-              "Partial slip boundary conditions are not supported by the matrix free application."));
-        }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::outlet)
-        {
-          /*The directional do-nothing boundary condition is implemented
-           * in the operators*/
-        }
-      else
-        {
-          VectorTools::interpolate_boundary_values(
-            *this->mapping,
-            this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            dealii::Functions::ZeroFunction<dim>(dim + 1),
-            this->zero_constraints,
-            this->fe->component_mask(velocities));
-        }
-    }
-
-  this->establish_solid_domain(false);
-
-  this->zero_constraints.close();
 }
 
 template <int dim>

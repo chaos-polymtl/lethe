@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-09
+
+### Changed
+
+- MAJOR The boundary conditions for the fluid dynamics applications: matrix-based, matrix-free and block applications are now implemented only in the NavierStokesBase class. [#1313](https://github.com/chaos-polymtl/lethe/pull/1313)
+
 ## [Master] - 2024-10-04
 
 ### Changed
