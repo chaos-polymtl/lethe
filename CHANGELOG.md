@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-15
+
+### Added
+
+- MINOR Five examples of the Cahn-Hilliard-Navier-Stokes solver were added to keep a trace of the work made with this solver. [#1307](https://github.com/chaos-polymtl/lethe/pull/1307)
+
 ## [Master] - 2024-10-11
 
 ### Fixed

@@ -3,7 +3,7 @@ Postprocessing code for Jurin's law example
 This code extracts the difference in height between the meniscus
 and the fluid on the side.
 
-Quick user guide : 
+Quick user guide: 
 
 This python script is used to plot the difference in height between the meniscus
 and the fluid on the side for different cases of capillary rise.
@@ -99,5 +99,3 @@ with plt.style.context(['science','ieee']):
    ax.set(**pparams)
    fig.savefig('height_differences.pdf',format="pdf",dpi=500)
    fig.savefig('height_differences.png',format="png",dpi=500)
-
-    

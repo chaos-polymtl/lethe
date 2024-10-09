@@ -1,5 +1,5 @@
 """
-Quick user guide : 
+Quick user guide: 
 
 This python script is used to plot a slice of the pressure field and the difference between the averaged pressure outside of the bubble and inside the bubble.
 

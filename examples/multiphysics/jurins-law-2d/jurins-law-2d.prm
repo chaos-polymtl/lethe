@@ -79,7 +79,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0 #air
-    set kinematic viscosity = 8e-5 #-4 pour air et eau c'est pas mal
+    set kinematic viscosity = 8e-5
     set density             = 1
   end
   subsection fluid 1 #water
@@ -91,8 +91,7 @@ subsection physical properties
     subsection fluid-fluid interaction
       set surface tension coefficient  = 7.3e-2
       set cahn hilliard mobility model = constant
-      #set cahn hilliard mobility constant  = 5e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF
-      set cahn hilliard mobility constant = 1e-7 # CE PARAMETRE MARCHE, EN DESSOUS C UNE MODIF
+      #set cahn hilliard mobility constant  = 5e-7 
     end
   end
 end
@@ -123,7 +122,7 @@ end
 subsection boundary conditions cahn hilliard
   set number = 1
   subsection bc 0
-    set id          = 2 # angle of contact
+    set id          = 2 
     set type        = angle_of_contact
     set angle value = 50
   end
@@ -248,4 +247,3 @@ subsection restart
   # Restarting parameter
   set restart = false
 end
-

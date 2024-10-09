@@ -1,5 +1,5 @@
 """
-Quick user guide : 
+Quick user guide: 
 
 This python script is used to plot the contour of the bubble at detachment time.
 
