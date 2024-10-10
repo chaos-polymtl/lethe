@@ -78,7 +78,3 @@ def analytical_solution(prm):
     radius_array = np.linspace(0.1, 0.5, 500)
     sigma = prm.sigma
     return radius_array, sigma / radius_array
-
-
-
-
