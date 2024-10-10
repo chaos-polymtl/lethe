@@ -35,9 +35,9 @@ write_checkpoint(
       simulation_control->save(prefix);
       particles_pvdhandler.save(prefix);
 
-      if (parameters.post_processing.Lagrangian_post_processing)
+      if (parameters.post_processing.lagrangian_post_processing_enabled)
         {
-          grid_pvdhandler.save(prefix + "_postprocess_data");
+          grid_pvdhandler.save(prefix + "_lagrangian_postprocessing");
         }
     }
 

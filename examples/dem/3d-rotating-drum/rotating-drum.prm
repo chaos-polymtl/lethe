@@ -97,3 +97,11 @@ subsection DEM boundary conditions
     set rotational vector  = 1,0,0
   end
 end
+
+#---------------------------------------------------
+# Lagrangian post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set lagrangian post-processing = true
+end

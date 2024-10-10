@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Simulations with time-dependent boundary conditions would not restart corresctly in the matrix-free solver because the initial guess of the solution was reset to zero. This is fixed now and the initial guess of the solution is identical. [#1302](https://github.com/chaos-polymtl/lethe/pull/1302)
 
+### Changed
+
+- MINOR The parameter "Lagrangian post-processing" has been renamed "lagrangian post-processing" to ensure that our parameter nomenclature (all lowercase) is homogenous. [#1303](https://github.com/chaos-polymtl/lethe/pull/1303)
+
 ## [Master] - 2024-09-30
 
 ### Fixed

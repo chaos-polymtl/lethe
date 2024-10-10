@@ -1426,10 +1426,10 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         prm.declare_entry(
-          "Lagrangian post-processing",
+          "lagrangian post-processing",
           "false",
           Patterns::Bool(),
-          "State whether Lagrangian post-processing should be performed.");
+          "State whether lagrangian post-processing should be performed.");
         prm.declare_entry(
           "force chains",
           "false",
@@ -1444,8 +1444,9 @@ namespace Parameters
     {
       prm.enter_subsection("post-processing");
       {
-        Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
-        force_chains               = prm.get_bool("force chains");
+        lagrangian_post_processing_enabled =
+          prm.get_bool("lagrangian post-processing");
+        force_chains = prm.get_bool("force chains");
       }
       prm.leave_subsection();
     }

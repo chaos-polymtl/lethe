@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set Lagrangian post-processing = true
+  set lagrangian post-processing = true
 end
 
 #---------------------------------------------------

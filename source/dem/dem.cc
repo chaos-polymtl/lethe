@@ -710,7 +710,7 @@ template <int dim>
 void
 DEMSolver<dim>::post_process_results()
 {
-  if (parameters.post_processing.Lagrangian_post_processing &&
+  if (parameters.post_processing.lagrangian_post_processing_enabled &&
       simulation_control->is_output_iteration())
     {
       write_post_processing_results<dim>(triangulation,
