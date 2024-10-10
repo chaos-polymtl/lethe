@@ -54,3 +54,5 @@ Preprints
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
 * `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, August 2024 <https://doi.org/10.48550/arXiv.2408.04711>`_.
+
+* `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", available at SSRN, October 2024 <https://dx.doi.org/10.2139/ssrn.4981567>`_.
