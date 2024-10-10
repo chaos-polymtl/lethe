@@ -424,9 +424,8 @@ private:
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration);
   
-  
   void refine_grid();
-  void output_results(const int time_iteration, const double time) const;
+  void output_results(const int time_iteration) const;
   
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
@@ -910,10 +909,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
       const Point<dim> point_0 = cells_intersection_point[0];
       const Point<dim> point_1 = cells_intersection_point[1];
       
-      const unsigned int vertices_per_cell =
-            GeometryInfo<dim>::vertices_per_cell;
-            
-  
       // Compute distance of the cell's dof 
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
@@ -961,8 +956,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
     {
       if (cell->is_locally_owned())
       {
-        const unsigned int cell_index = cell->global_active_cell_index();
-        
         const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
         
         std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
@@ -988,7 +981,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
           // Loop on opposite faces
           for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
           {
-            const auto opposite_face = cell->face(dof_opposite_faces[j]);
+            // const auto opposite_face = cell->face(dof_opposite_faces[j]);
             
             Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(Point<dim-1>(0.5),dof_opposite_faces[j]);
             Point<dim> x_n_real;
@@ -1052,7 +1045,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
                 if (x_n_p1_ref[k] > 1.0 + 1e-11|| x_n_p1_ref[k] < 0.0 - 1e-11)
                 {
                   check = true;
-                  double step;
                   if (correction[k] > 1e-11)
                   {
                     relaxation = std::min((1.0 - x_n_ref[k])/(correction[k]+1e-11), relaxation);
@@ -1127,7 +1119,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
 }
 
 template <int dim>
-void AdvectionProblem<dim>::output_results(const int time_iteration, const double time) const
+void AdvectionProblem<dim>::output_results(const int time_iteration) const
 {
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
@@ -1197,7 +1189,7 @@ void AdvectionProblem<dim>::run()
   mesh_classifier.reclassify();
   compute_sign_distance(it);
 
-  output_results(it,time);
+  output_results(it);
   
   pcout << "Solve system" << std::endl;
   while (time < final_time) 
@@ -1215,7 +1207,7 @@ void AdvectionProblem<dim>::run()
     mesh_classifier.reclassify();
     compute_sign_distance(it);
     
-    output_results(it, time);
+    output_results(it);
     
     compute_phase_fraction_from_level_set();
     previous_solution = locally_relevant_solution;
