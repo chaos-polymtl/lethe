@@ -10,9 +10,10 @@ How to use this script?
 
 1- Create a first directory (we will call it outputs but feel free to name it as you like).
 2- For each simulation, create a new directory in outputs : output1, output2, output3,...
-   For this step, it may be easier to use the "generate_cases_locally.py" script to generate
+   For this step, you must use the "generate_cases_locally.py" script to generate
    all the directories. Then launch the simulations with "launch_lethe_locally.py" and then 
-   use "static-bubble-multiple-folders.py"
+   use "static-bubble-multiple-folders.py". Unless, the script cannot deduce any information
+   from the folder's name.
 3- Run the simulations and store the results in their correct directories
 4- Execute the script with the path of outputs as argument :
    python3 multiple_folders_new_bubble_detachment_post_processing /PATH/TO/OUTPUTS/DIR 
@@ -82,7 +83,13 @@ plots = []
 
 for i in range(len(folder_name_list)):
     # Get the radius of the case from the directory name. (Works if the subdirectories were generated using the generate_cases_locally.py script)
-    radius = float(dirs[i][2:])
+    try: 
+         radius = float(dirs[i][2:])
+    except ValueError as err:
+         custom_message = "The script is not able to deduce the radius value from the folder's name. Please use generate_cases_locally.py to create the subdirectories"
+         err.args += (custom_message,)
+         raise
+   
     prm.set_radius(radius)
     # Get the numerical pressure difference from each directory
     pressure_diff = get_pressure_difference(folder_name_list[i], prm)
