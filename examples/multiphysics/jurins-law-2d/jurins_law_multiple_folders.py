@@ -17,7 +17,7 @@ How to use this script?
 2- For each simulation, create a new directory in outputs : output1, output2, output3,...
 3- Run the simulations and store the results in their correct directories
 4- Execute the script with the path of outputs as argument
-5- Enjoy your plots. Each curve will be given the name of the directory containing the data required to plot it. In this example, you will get 3 curves. with names output1, output2 and output3.
+5- Enjoy your plots. Each curve will be given the name of the directory containing the data required to plot it. In this example, you will get 3 curves with names output1, output2 and output3.
 """
 # -------------------------------------------
 # Modules
