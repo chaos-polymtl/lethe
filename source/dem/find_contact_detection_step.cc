@@ -13,7 +13,7 @@ find_particle_contact_detection_step(
   const double                     dt,
   const double                     smallest_contact_search_criterion,
   MPI_Comm                        &mpi_communicator,
-  std::vector<double>             &displacement,
+  std::vector<Tensor<1, dim>>     &displacement,
   const bool                       parallel_update)
 {
   // Get the action manager
@@ -33,16 +33,22 @@ find_particle_contact_detection_step(
       auto &particle_displacement = displacement[particle.get_local_index()];
 
       // Finding displacement of each particle during last step
-      particle_displacement +=
-        dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
-                    particle_properties[DEM::PropertiesIndex::v_x] +
-                  particle_properties[DEM::PropertiesIndex::v_y] *
-                    particle_properties[DEM::PropertiesIndex::v_y] +
-                  particle_properties[DEM::PropertiesIndex::v_z] *
-                    particle_properties[DEM::PropertiesIndex::v_z]);
+      particle_displacement += [&] {
+        if constexpr (dim == 2)
+          return dt *
+                 Tensor<1, 2>({particle_properties[DEM::PropertiesIndex::v_x],
+                               particle_properties[DEM::PropertiesIndex::v_y]});
+        else
+          return dt *
+                 Tensor<1, 3>({particle_properties[DEM::PropertiesIndex::v_x],
+                               particle_properties[DEM::PropertiesIndex::v_y],
+                               particle_properties[DEM::PropertiesIndex::v_z]});
+      }();
+
 
       // Updating maximum displacement of particles
-      max_displacement = std::max(max_displacement, particle_displacement);
+      max_displacement =
+        std::max(max_displacement, particle_displacement.norm());
     }
 
   // If the maximum displacement of particles exceeds criterion, this step
@@ -60,21 +66,21 @@ find_particle_contact_detection_step(
 }
 
 template void
-find_particle_contact_detection_step(
+find_particle_contact_detection_step<2>(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
   MPI_Comm                      &mpi_communicator,
-  std::vector<double>           &displacement,
+  std::vector<Tensor<1, 2>>     &displacement,
   const bool                     parallel_update);
 
 template void
-find_particle_contact_detection_step(
+find_particle_contact_detection_step<3>(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
   MPI_Comm                      &mpi_communicator,
-  std::vector<double>           &displacement,
+  std::vector<Tensor<1, 3>>     &displacement,
   const bool                     parallel_update);
 
 

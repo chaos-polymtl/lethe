@@ -198,7 +198,7 @@ private:
   Tensor<1, 3>                               g;
   std::vector<Tensor<1, 3>>                  torque;
   std::vector<Tensor<1, 3>>                  force;
-  std::vector<double>                        displacement;
+  std::vector<Tensor<1, dim>>                displacement;
   std::vector<double>                        MOI;
   double                                     neighborhood_threshold_squared;
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;

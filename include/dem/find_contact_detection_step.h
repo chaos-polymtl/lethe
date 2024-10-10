@@ -22,7 +22,7 @@ using namespace dealii;
  * dynamic contact search steps. This value is defined as the minimum of
  * particle-particle and particle-wall displacement threshold values
  * @param mpi_communicator
- * @param displacement Displacement of particles since last sorting step
+ * @param displacement Displacement tensor of particles since last sorting step
  * @param parallel_update Update the identification of the contact detection
  * step in parallel. If this parameter is set to false, the distance will be
  * calculated but the
@@ -40,7 +40,7 @@ find_particle_contact_detection_step(
   const double                     dt,
   const double                     smallest_contact_search_criterion,
   MPI_Comm                        &mpi_communicator,
-  std::vector<double>             &displacement,
+  std::vector<Tensor<1, dim>>     &displacement,
   const bool                       parallel_update = true);
 
 /**

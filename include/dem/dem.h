@@ -392,7 +392,7 @@ private:
    * @brief The displacement tracking of particles for the dynamic contact
    * detection.
    */
-  std::vector<double> displacement;
+  std::vector<Tensor<1, dim>> displacement;
 
   /**
    * @brief The moment of inertia of particles.
