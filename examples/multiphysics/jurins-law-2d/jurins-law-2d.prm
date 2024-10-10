@@ -39,17 +39,6 @@ subsection dimensionality
 end
 
 #---------------------------------------------------
-# Cahn-Hilliard order
-#---------------------------------------------------
-
-subsection FEM
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
-  set velocity order                = 1
-  set pressure order                = 1
-end
-
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -140,25 +129,13 @@ subsection boundary conditions
     set type = slip
   end
   subsection bc 2
-    set id   = 4 #upper surface
+    set id   = 4 # upper surface
     set type = none
   end
   subsection bc 3
     set id   = 3 # middle
     set type = slip
   end
-end
-
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity        = verbose
-  set output frequency = 1
-
-  set calculate barycenter       = true
-  set calculate phase statistics = true
 end
 
 #---------------------------------------------------
@@ -181,14 +158,6 @@ subsection source term
   end
 end
 
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
@@ -197,12 +166,10 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance      = 1e-2
     set max iterations = 20
-    set verbosity      = verbose
   end
   subsection cahn hilliard
     set tolerance      = 1e-2
     set max iterations = 20
-    set verbosity      = verbose
   end
 end
 
@@ -212,7 +179,6 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity               = verbose
     set max iters               = 500
     set relative residual       = 1e-2
     set minimum residual        = 1e-3
@@ -220,27 +186,10 @@ subsection linear solver
     set max krylov vectors      = 300
   end
   subsection cahn hilliard
-    set verbosity               = verbose
     set max iters               = 500
     set relative residual       = 1e-2
     set minimum residual        = 1e-3
     set ilu preconditioner fill = 1
     set max krylov vectors      = 300
   end
-end
-
-# --------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  # Checkpointing parameters
-  set checkpoint = true
-  set frequency  = 10
-
-  # Output/input files
-  set filename = restart
-
-  # Restarting parameter
-  set restart = false
 end
