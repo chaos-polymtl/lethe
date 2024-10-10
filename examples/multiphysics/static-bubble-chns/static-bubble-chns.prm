@@ -17,7 +17,6 @@ subsection simulation control
   set output name      = static-bubble-chns
   set output frequency = 3
   set output path      = ./
-  set subdivision      = 1
 end
 
 #---------------------------------------------------
@@ -117,14 +116,6 @@ subsection analytical solution
   subsection uvwp
     set Function expression = 0; 0; if (x^2 + y^2 < {{R}}^2 , 2, 0)
   end
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity order = 1
 end
 
 #---------------------------------------------------
