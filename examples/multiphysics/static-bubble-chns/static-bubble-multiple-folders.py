@@ -10,6 +10,9 @@ How to use this script?
 
 1- Create a first directory (we will call it outputs but feel free to name it as you like).
 2- For each simulation, create a new directory in outputs : output1, output2, output3,...
+   For this step, it may be easier to use the "generate_cases_locally.py" script to generate
+   all the directories. Then launch the simulations with "launch_lethe_locally.py" and then 
+   use "static-bubble-multiple-folders.py"
 3- Run the simulations and store the results in their correct directories
 4- Execute the script with the path of outputs as argument :
    python3 multiple_folders_new_bubble_detachment_post_processing /PATH/TO/OUTPUTS/DIR 
