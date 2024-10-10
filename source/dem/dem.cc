@@ -828,7 +828,10 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
     }
 
   // Always reset the displacement values since we are doing a search detection
-  std::fill(displacement.begin(), displacement.end(), 0.);
+  std::fill(displacement.begin(), displacement.end(), Tensor<1, dim>());
+
+  // Exchange ghost particles
+  particle_handler.exchange_ghost_particles(true);
 }
 
 template <int dim>
