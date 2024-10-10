@@ -57,7 +57,7 @@ def get_deltaH(output_path,prm):
     a_meniscus = [1, 0, 0]
     b_meniscus = [1, 8, 0]
 
-    a_side_left = [2.1, 0, 0] # eventuellement décaler légèrement pour que ce soit dans le domaine
+    a_side_left = [2.1, 0, 0]
     b_side_left = [2.1, 8, 0]
 
     side_lines = [[[2, 0, 0], [2, 8, 0]]]
