@@ -10,14 +10,18 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_subequations_solver.h>
+#include <solvers/subequations_interface.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
+#include <solvers/vof_phase_gradient_projection.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/timer.h>
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
@@ -27,6 +31,7 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
@@ -134,6 +139,14 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
+    // Initialize objects for subequations to solve
+    this->subequations =
+      std::make_shared<SubequationsInterface<dim>>(this->simulation_parameters,
+                                                   this->multiphysics,
+                                                   this->triangulation,
+                                                   this->simulation_control,
+                                                   this->pcout);
   }
 
   /**
@@ -316,7 +329,7 @@ public:
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
+   * only support imposing nodal values, but some physics additionally support
    * the use of L2 projection or steady-state solutions.
    */
   void
@@ -714,7 +727,6 @@ private:
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               solution_pw;
   GlobalVectorType               filtered_solution;
 
   // Previous solutions vectors
@@ -745,6 +757,8 @@ private:
   TrilinosWrappers::SparseMatrix
                    system_matrix_projected_phase_fraction_gradient;
   GlobalVectorType system_rhs_projected_phase_fraction_gradient;
+
+  std::shared_ptr<SubequationsInterface<dim>> subequations;
 
   // Projected curvature solution
   GlobalVectorType          present_curvature_solution;

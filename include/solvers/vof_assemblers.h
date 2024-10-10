@@ -59,8 +59,6 @@ public:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
@@ -103,7 +101,7 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the VOF equations. For example, if a BDF1 scheme is
+ * integration for the VOF equation. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
@@ -195,6 +193,49 @@ public:
                StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
+};
+
+template <int dim>
+class VOFAssemblerPhaseGradientProjection
+{
+public:
+  /**
+   * @brief Default constructor of the assembler.
+   */
+  VOFAssemblerPhaseGradientProjection(const Parameters::VOF vof_parameters)
+    : vof_parameters(vof_parameters)
+  {}
+
+  /**
+   * @brief Assemble the matrix.
+   *
+   * @param[in] scratch_data Scratch data containing the VOF phase gradient
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   *
+   * @param[out] copy_data Destination where the local_matrix is copied to.
+   */
+  virtual void
+  assemble_matrix(VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData                  &copy_data);
+
+  /**
+   * @brief Assemble the right-hand side (rhs).
+   *
+   * @param[in] scratch_data Scratch data containing the VOF phase gradient
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for rhs assembly.
+   *
+   * @param[out] copy_data Destination where the local_rhs is copied to.
+   */
+  virtual void
+  assemble_rhs(VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData                  &copy_data);
+
+private:
+  const Parameters::VOF vof_parameters;
 };
 
 #endif
