@@ -88,7 +88,6 @@ def get_numerical_detachment_time(output_path):
             detachment_time = 0.
             detachment_index = int(0)
             for i, vtu_file in enumerate(list_vtu):
-                # print(f'Processing file {i+1} out of {len(list_vtu)} files')
                 # Sort VTU files to ensure they are in the same order as the time step
                 sim = pv.read(f"{output_path}/{vtu_file}")
                 # Extract pressure field
