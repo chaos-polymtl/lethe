@@ -20,7 +20,6 @@ subsection simulation control
   set time step         = 5e-7
   set max time step     = 7.9784e-06 # Capillary timestep condition
   set output boundaries = true
-  set subdivision       = 1
 end
 
 #---------------------------------------------------
@@ -37,17 +36,6 @@ end
 
 subsection dimensionality
   set length = 0.001 #meter
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
-  set velocity order                = 1
-  set pressure order                = 1
 end
 
 #---------------------------------------------------

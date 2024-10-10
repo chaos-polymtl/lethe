@@ -4,7 +4,6 @@
 """
 Postprocessing code for controlling the volume of the phases in the 3d bubble detachment case.
 """
-import numpy
 # -------------------------------------------
 # Modules
 # -------------------------------------------
@@ -14,11 +13,8 @@ import pyvista as pv
 from natsort import os_sorted
 from alive_progress import alive_bar
 from alive_progress.styles import showtime
-import multiprocessing
 
 import os
-
-number_of_procs = 5
 
 # Returns the analytical bubble volume with a given theoretical flux of air at bubble inlet.
 def analytical_volume(t, flux, v_init):
@@ -34,65 +30,24 @@ def computed_volume(t, flux, v_init):
     return volume
 
 
-# Functions to turn .dat data in numpy array
-# Credits to Lucka Barbeau for the two functions below !
-def is_number(s):
-    try:
-        float(s)
-    except ValueError:
-        return False
-    return True
-
-
-def read_my_data(results_path):
-    force_file = open(results_path, 'r')
-    list_of_list_of_vars_name = [[]];
-    list_of_list_of_vars = [[]];
-    fix_vars_name = False
-
-    nb_set_of_vars = 0;
-    for line in force_file.readlines():
-        i = 0;
-        for word in line.split():
-            if is_number(word):
-                fix_vars_name = True
-                list_of_list_of_vars[nb_set_of_vars][i] = np.append(
-                    list_of_list_of_vars[nb_set_of_vars][i],
-                    float(word))
-                i += 1
-            else:
-                if word != 'particle':
-                    if fix_vars_name:
-                        nb_set_of_vars += 1
-                        list_of_list_of_vars_name.append([])
-                        list_of_list_of_vars.append([])
-                        fix_vars_name = False
-                    list_of_list_of_vars_name[nb_set_of_vars].append(word)
-                    list_of_list_of_vars[nb_set_of_vars].append(np.array([]))
-    return list_of_list_of_vars_name, list_of_list_of_vars
-
-
 # Returns the list of bubble volume for each time-step (analytical and computed and absolute) using the simulation's post-processing files.
 def bubble_volume(output_path):
 
-    list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(
-        output_path + "/phase_statistics.dat")
-    list_of_list_of_vars_name_flux, list_of_list_of_vars_flux = read_my_data(
-        output_path + "/flow_rate.dat")
-    
     # This volume is the one obtained by integrating the phase field in the domain
-    absolute_volume = list_of_list_of_vars[0][6]
+    time, absolute_volume = np.loadtxt(output_path + "/      phase_statistics.dat",skiprows=1,usecols=(0,6),unpack=True)
     
-    # This volume is the one obtaine by integrating the numerical inlet flux with respect to time
+    volume_flux = np.loadtxt(output_path + "/flow_rate.dat",skiprows=1,usecols=3,unpack=True)
+    
+        
+    # This volume is the one obtained by integrating the numerical inlet flux with respect to time
     time_integrated_flux_volume = computed_volume(
-        list_of_list_of_vars_flux[0][0], list_of_list_of_vars_flux[0][3],
-        list_of_list_of_vars[0][6][0])
+        time, volume_flux,absolute_volume[0])
         
     # This volume is the one obtained by integrating the theoretical inlet flux with respect to time
-    analytical_volume_array = analytical_volume(list_of_list_of_vars[0][0],
+    analytical_volume_array = analytical_volume(time,
                                                 5.0e2,
-                                                (2 * np.pi * (0.5) ** 3) / 3)
-    time = list_of_list_of_vars[0][0]
+                                                (2 * np.pi * (0.5) ** 3) / 3)  
+
 
     return absolute_volume, time_integrated_flux_volume, analytical_volume_array, time
 
@@ -154,10 +109,6 @@ def get_numerical_detachment_time(output_path):
                             detachment_index)
                     break
                 bar()
-
-    time_clip = -1
-    #x, y = get_contour_at_detachment(detachment_index,
-                                     #list_vtu, output_path)
                                      
     x, y = get_contour_at_fixed_time(detachment_time, output_path)
 
@@ -167,8 +118,10 @@ def get_numerical_detachment_time(output_path):
 def get_contour_at_fixed_time(time_value, output_path):
     list_vtu = os.listdir(output_path)
     pvd_file = [x for x in list_vtu if (x.endswith('.pvd'))]
+    
     if len(pvd_file) == 0:
         return [], []
+        
     list_vtu = [x for x in list_vtu if ("pvtu" in x)]
     list_vtu = os_sorted(list_vtu)
     reader = pv.get_reader(output_path + "/" + pvd_file[0])
@@ -177,6 +130,7 @@ def get_contour_at_fixed_time(time_value, output_path):
     time_index = (np.abs(time - time_value)).argmin()
 
     vtu_file = list_vtu[time_index]
+    
     sim = pv.read(f"{output_path}/{vtu_file}")
     sim.set_active_scalars("phase_order")
     slice_single = sim.slice(normal="z", origin=(0, 0, 0))
@@ -184,10 +138,4 @@ def get_contour_at_fixed_time(time_value, output_path):
     contour = slice_single.contour(contour_val, scalars="phase_order")
     x, y = contour.points[:, 0], contour.points[:, 1]
     return x, y
-
-# Finds the index of the element whose value is the nearest to the value in input.
-def find_nearest(array, value):
-    array = np.asarray(array)
-    idx = (np.abs(array - value)).argmin()
-    return array[idx]
     
