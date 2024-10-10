@@ -470,14 +470,17 @@ unsigned int
 get_dimension(const std::string &file_name);
 
 /**
- * @brief Extract the maximum number of boundary conditions from the file.
- * The number of boundary conditions is linked to the string "number" so
- * this feature will need to be monitored extensively in the future.
+ * @brief Extract the maximum value between the number of boundary conditions and the number of manifolds from the file.
+This value is linked to the "number" string defined in the simulation parameter
+file. It provides an estimate for the amount of parameters or manifolds and is
+used to determine the size of the vectors that will store boundary conditions
+and manifold data. This feature will need to be monitored extensively in the
+future.
  * @param file_name The file name from which the number of boundary conditions
  * is read
  */
 int
-get_max_number_of_boundary_conditions(const std::string &file_name);
+get_max_subsection_size(const std::string &file_name);
 
 /**
  * @brief Return the tensor corresponding to the @p value_string. If the

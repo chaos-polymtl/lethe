@@ -684,7 +684,7 @@ get_dimension(const std::string &file_name)
 
 
 int
-get_max_number_of_boundary_conditions(const std::string &file_name)
+get_max_subsection_size(const std::string &file_name)
 {
   int max_number_of_boundary_conditions =
     get_max_value_of_parameter(file_name, "number");

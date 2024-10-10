@@ -109,7 +109,7 @@ public:
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
-    manifolds_parameters.declare_parameters(prm);
+    manifolds_parameters.declare_parameters(prm, size_of_subsections.manifolds);
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);

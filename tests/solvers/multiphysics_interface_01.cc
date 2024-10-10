@@ -39,7 +39,8 @@ test()
   SimulationParameters<dim>     solver_parameters;
   ParameterHandler              dummy_handler;
   Parameters::SizeOfSubsections size_of_subsections;
-  size_of_subsections.boundary_conditions = 0;
+  size_of_subsections.boundary_conditions = 1;
+  size_of_subsections.manifolds           = 1;
 
   solver_parameters.declare(dummy_handler, size_of_subsections);
   solver_parameters.parse(dummy_handler);

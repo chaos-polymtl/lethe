@@ -59,7 +59,7 @@ namespace Parameters
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, unsigned int subsection_max_size);
 
     void
     parse_parameters(ParameterHandler &prm);
