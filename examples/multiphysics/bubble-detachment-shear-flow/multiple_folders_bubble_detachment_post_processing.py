@@ -94,7 +94,7 @@ with plt.style.context(['science', 'ieee']): # Syntax to use a specific plot sty
     ax.set(**pparams)
     handles, labels = plt.gca().get_legend_handles_labels()
     fig.legend(loc='outside center right',frameon = True,edgecolor='k',prop={'size': MEDIUM_SIZE},ncol=1, fancybox=False, bbox_to_anchor=(0.80, -0.15))
-    fig.savefig('./' + savedir + '_bubble_contour.pdf', format="pdf", dpi=500)
-    fig.savefig('./' + savedir + '_bubble_contour.png', format="png", dpi=500)
+    fig.savefig('bubble_contour.pdf', format="pdf", dpi=500)
+    fig.savefig('bubble_contour.png', format="png", dpi=500)
 
 
