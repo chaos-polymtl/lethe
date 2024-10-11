@@ -803,6 +803,9 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 {
   particle_handler.sort_particles_into_subdomains_and_cells();
 
+  // Exchange ghost particles
+  particle_handler.exchange_ghost_particles(true);
+
   // Resize the displacement, force and torque containers only if the particles
   // have changed subdomains
   if (action_manager->check_resize_containers())
@@ -827,9 +830,6 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 
   // Always reset the displacement values since we are doing a search detection
   std::fill(displacement.begin(), displacement.end(), 0.);
-
-  // Exchange ghost particles
-  particle_handler.exchange_ghost_particles(true);
 }
 
 template <int dim>
