@@ -128,7 +128,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
             }
 
           // If it's not the first iteration of alpha check if the residual is
-          // smaller then the last alpha iteration. If it's not smaller we fall
+          // smaller than the last alpha iteration. If it's not smaller, we fall
           // back to the last alpha iteration.
           if (current_res > last_alpha_res and alpha_iter != 0)
             {
