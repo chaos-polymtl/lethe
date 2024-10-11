@@ -1190,6 +1190,9 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 {
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
+  // Exchange ghost particles
+  this->particle_handler.exchange_ghost_particles(true);
+
   // Resize the displacement, force and torque containers only if the particles
   // have changed subdomains
   if (dem_action_manager->check_resize_containers())

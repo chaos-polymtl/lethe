@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-11
+
+### Fixed
+
+- MAJOR Unexpected segmentation faults were occuring when using large simulation with aperiodic boundary condition. The cause of thuis bug was identify and fixed. It was related to the resizing of the force, torque and displacement vectors which was not considering the ghost particles when resized. [#1316](https://github.com/chaos-polymtl/lethe/pull/1316)
+
 ## [Master] - 2024-10-09
 
 ### Changed
