@@ -41,7 +41,7 @@ end
 #---------------------------------------------------
 subsection post-processing
  # Enable output of grid, granular temperature, and particles' average velocity
- set Lagrangian post-processing = true
+ set lagrangian post-processing = true
 end
 
 #---------------------------------------------------

@@ -243,7 +243,8 @@ write_post_processing_results(
   data_out.add_data_vector(subdomain, "subdomain");
 
   const std::string postprocess_file_name =
-    dem_parameters.simulation_control.output_name + "-postprocess_data";
+    dem_parameters.simulation_control.output_name +
+    "_lagrangian_postprocessing";
 
   data_out.build_patches();
 
