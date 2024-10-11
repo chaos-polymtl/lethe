@@ -1130,6 +1130,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
+  TimerOutput::Scope t(this->computing_timer, "Modify solution");
+
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Interface sharpening
   if (vof_parameters.sharpening.enable)
@@ -1541,7 +1543,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver (phase fraction gradient) took : "
+      this->pcout << "  -Iterative solver (phase fraction) took : "
                   << solver_control.last_step() << " steps " << std::endl;
     }
 
@@ -1788,7 +1790,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
     {
-      this->subequations->solve();
+      this->subequations->solve(true);
       find_projected_interface_curvature();
     }
 }
@@ -2295,9 +2297,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     false,
     simulation_parameters.linear_solver.at(PhysicsID::VOF).max_krylov_vectors);
 
-
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
-
 
   solver.solve(this->system_matrix,
                completely_distributed_solution,

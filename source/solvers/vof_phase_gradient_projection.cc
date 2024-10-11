@@ -53,7 +53,6 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
   this->evaluation_point = this->present_solution;
 
 
-  // TODO AMISHGA verbosity parameters
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
     {
@@ -214,11 +213,25 @@ VOFPhaseGradientProjection<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
+VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
+  const bool &is_post_mesh_adaptation)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
   const AffineConstraints<double> &constraints_used = this->constraints;
+
+  const bool verbose(
+    this->simulation_parameters.multiphysics.vof_parameters
+        .surface_tension_force.verbosity != Parameters::Verbosity::quiet &&
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
+      Parameters::Verbosity::quiet &&
+    !is_post_mesh_adaptation);
+
+  if (verbose)
+    {
+      this->pcout << "  -Solving phase fraction gradient projection: "
+                  << std::endl;
+    }
 
   // Set tolerance
   const double linear_solver_tolerance = 1e-13;
@@ -231,11 +244,10 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
                                                    mpi_communicator);
   completely_distributed_solution = this->present_solution;
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
-      Parameters::Verbosity::quiet)
+  if (verbose)
     {
       this->pcout
-        << "  -Tolerance of iterative solver for the phase fraction gradient is: "
+        << "    -Tolerance of iterative solver for the phase fraction gradient is: "
         << linear_solver_tolerance << std::endl;
     }
 
@@ -255,7 +267,7 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
   this->ilu_preconditioner->initialize(this->system_matrix,
                                        preconditionerOptions);
 
-  // Solver
+  // CG solver
   SolverControl solver_control(
     simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
@@ -269,11 +281,10 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
                this->system_rhs,
                *this->ilu_preconditioner);
 
-  if (simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
-      Parameters::Verbosity::quiet)
+  if (verbose)
     {
       this->pcout
-        << "  -Iterative solver for the phase fraction gradient took: "
+        << "    -Iterative solver for the phase fraction gradient took: "
         << solver_control.last_step() << " steps." << std::endl;
     }
 
@@ -287,14 +298,11 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
 
 template <int dim>
 void
-VOFPhaseGradientProjection<dim>::solve()
+VOFPhaseGradientProjection<dim>::solve(const bool &is_post_mesh_adaptation)
 {
-  TimerOutput::Scope t(this->computing_timer,
-                       "Solve phase fraction projection linear system");
-
   assemble_system_matrix();
   assemble_system_rhs();
-  solve_linear_system_and_update_solution();
+  solve_linear_system_and_update_solution(is_post_mesh_adaptation);
 }
 
 

@@ -16,8 +16,8 @@ enum SubequationsID : unsigned int
 };
 
 /**
- * @brief Sub-equations solved inside a physic (or auxiliary physic) that is not
- * part of the main equations set are solved through the
+ * @brief Linear subequations solved inside a physic (or auxiliary physic) that
+ * is not part of the main equations set are solved through the
  * PhysicsLinearSubequationsSolver object. It contains all the common elements
  * of a physic solver. It creates the non-linear solver as specified by the user
  * using the parameters file and provides all the necessary elements needed by
@@ -33,17 +33,13 @@ class PhysicsLinearSubequationsSolver
 {
 public:
   /**
-   * @brief Constructor for physics sub-equations that require the use of a
-   * linear and/or non-linear solver within the span of the physics resolution.
+   * @brief Constructor for physics subequations that require the use of a
+   * linear solver within the span of the physics resolution.
    *
    * @param[in] pcout Parallel cout used to print the information.
    */
-  PhysicsLinearSubequationsSolver(
-    const ConditionalOStream &pcout
-    //    const Parameters::NonLinearSolver non_linear_solver_parameters
-    )
-    : //    : PhysicsSolver<VectorType>(non_linear_solver_parameters),
-    pcout(pcout)
+  PhysicsLinearSubequationsSolver(const ConditionalOStream &pcout)
+    : pcout(pcout)
   {}
 
   /**
@@ -68,16 +64,23 @@ public:
   /**
    * @brief Solve the linear system associated with the equation to solve, when
    * the equation is already linear.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
    */
   virtual void
-  solve_linear_system_and_update_solution() = 0;
+  solve_linear_system_and_update_solution(
+    const bool &is_post_mesh_adaptation = false) = 0;
 
   /**
    * @brief Assemble and solve linear system when the equation to solve is
    * linear without using the non-linear solver interface.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
    */
   virtual void
-  solve() = 0;
+  solve(const bool &is_post_mesh_adaptation) = 0;
 
 protected:
   ConditionalOStream pcout;
