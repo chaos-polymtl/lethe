@@ -200,7 +200,10 @@ class VOFAssemblerPhaseGradientProjection
 {
 public:
   /**
-   * @brief Default constructor of the assembler.
+   * @brief Constructor of the assembler for phase fraction gradient (pfg)
+   * L2 projection.
+   *
+   * @param[in] vof_parameters VOF simulation parameters.
    */
   VOFAssemblerPhaseGradientProjection(const Parameters::VOF vof_parameters)
     : vof_parameters(vof_parameters)

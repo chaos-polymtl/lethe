@@ -23,20 +23,29 @@ class SubequationsInterface
 {
 public:
   /**
-   * @brief Default constructor of
+   * @brief Constructor of an interface subequations that require the use of a
+   * linear solver within the span of the physics resolution.
    *
-   * @param nsparam
-   * @param p_triangulation
-   * @param p_simulation_control
-   * @param p_pcout
+   * @param[in] sim_param Simulation parameters.
+   *
+   * @param[in] p_multiphysics Multiphysics interface object used to get
+   * information from physics.
+   *
+   * @param[in] p_triangulation Distributed mesh information.
+   *
+   * @param[in] p_simulation_control Object responsible for the control of
+   * steady-state and transient simulations. Contains all the information
+   * related to time stepping and the stopping criteria.
+   *
+   * @param[in] p_pcout Parallel cout used to print the information.
    */
   SubequationsInterface(
     const SimulationParameters<dim> &sim_param,
     MultiphysicsInterface<dim>      *p_multiphysics,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
-    std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream                &p_pcout);
+                                       &p_triangulation,
+    std::shared_ptr<SimulationControl> &p_simulation_control,
+    ConditionalOStream                 &p_pcout);
 
   /**
    * @brief Default destructor.
@@ -58,35 +67,26 @@ public:
   };
 
   /**
-   * @brief
+   * @brief Call solving method of active subequations.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
    */
   void
-  solve()
+  solve(const bool &is_post_mesh_adaptation = false)
   {
     for (const auto &subequation : subequations)
       {
-        subequation.second->solve();
+        subequation.second->solve(is_post_mesh_adaptation);
       }
   }
 
-  /**
-   * @brief
-   *
-   * @return
-   */
   std::vector<SubequationsID>
   get_active_subequations()
   {
     return this->active_subequations;
   }
 
-  /**
-   * @brief
-   *
-   * @param[in] subequation_id
-   *
-   * @return
-   */
   DoFHandler<dim> *
   get_dof_handler(const SubequationsID subequation_id)
   {
@@ -98,13 +98,6 @@ public:
     return this->subequations_dof_handler[subequation_id];
   }
 
-  /**
-   * @brief
-   *
-   * @param[in] subequation_id
-   *
-   * @return
-   */
   GlobalVectorType *
   get_solution(const SubequationsID subequation_id)
   {
@@ -115,13 +108,6 @@ public:
     return subequations_solutions[subequation_id];
   }
 
-  /**
-   * @brief
-   *
-   * @param[in] subequation_id
-   *
-   * @param[in] dof_handler
-   */
   void
   set_dof_handler(const SubequationsID subequation_id,
                   DoFHandler<dim>     *dof_handler)
@@ -133,13 +119,6 @@ public:
     subequations_dof_handler[subequation_id] = dof_handler;
   }
 
-  /**
-   * @brief
-   *
-   * @param[in] subequation_id
-   *
-   * @param[in] solution_vector
-   */
   void
   set_solution(const SubequationsID subequation_id,
                GlobalVectorType    *solution_vector)
@@ -156,8 +135,7 @@ public:
 private:
   MultiphysicsInterface<dim> *multiphysics;
 
-  std::map<SubequationsID, Parameters::Verbosity> verbosity;
-  ConditionalOStream                              pcout;
+  ConditionalOStream pcout;
 
   // Data structure that stores all enabled physics
   std::vector<SubequationsID> active_subequations;
