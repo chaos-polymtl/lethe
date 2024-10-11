@@ -1001,7 +1001,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                                             ivar.second.refinement_fraction,
                                             ivar_coarsening_factor);
 
-      // Remove the flags if the cell is at the boundary and is set as do not touch in the parameter file
+      // Remove the flags if the cell is at the boundary and is set as do not
+      // touch in the parameter file
       if (this->simulation_parameters.mesh.is_boundary_refinement_fixed)
         for (const auto &cell : tria.active_cell_iterators())
           if (cell->is_locally_owned())
@@ -1009,7 +1010,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
               if (cell->at_boundary())
                 for (const auto &face : cell->face_iterators())
                   {
-                    if (std::find(this->simulation_parameters.mesh.boundaries_to_fix.begin(), this->simulation_parameters.mesh.boundaries_to_fix.end(), face->boundary_id()) != this->simulation_parameters.mesh.boundaries_to_fix.end())
+                    if (std::find(this->simulation_parameters.mesh
+                                    .boundaries_to_fix.begin(),
+                                  this->simulation_parameters.mesh
+                                    .boundaries_to_fix.end(),
+                                  face->boundary_id()) !=
+                        this->simulation_parameters.mesh.boundaries_to_fix
+                          .end())
                       {
                         cell->clear_refine_flag();
                         cell->clear_coarsen_flag();
