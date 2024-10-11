@@ -727,54 +727,6 @@ private:
 };
 
 /**
- * @brief Compute the density scalar field of a material within a domain.
- *
- * The expression for the density depends on the density model of the material.
- * See <a
- * href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/
- * physical_properties.html#density-models" target="_blank">documentation on
- * density models</a>.
- */
-template <int dim>
-class PhaseGradientPostprocessor : public DataPostprocessorVector<dim>
-{
-public:
-  /**
-   * @brief Constructor for the density postprocessor.
-   *
-   * @param[in] p_density_model Density model of the material.
-   *
-   * @param[in] material_id Identifier corresponding to the material (fluid or
-   * solid).
-   */
-  PhaseGradientPostprocessor() : DataPostprocessorVector<dim>("phase_fraction_gradient_real", update_gradients)
-  {}
-  /**
-   *
-   * @param inputs
-   * @param computed_quantities
-   */
-  virtual void
-  evaluate_scalar_field(
-    const DataPostprocessorInputs::Scalar<dim> &inputs,
-    std::vector<Vector<double>> &computed_quantities) const override
-  {
-    AssertDimension(inputs.solution_gradients.size(), computed_quantities.size());
-
-    for (unsigned int p = 0; p <inputs.solution_gradients.size(); ++p)
-      {
-        AssertDimension(computed_quantities[p].size(), dim);
-
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            computed_quantities[p][i] = inputs.solution_gradients[p][i];
-          }
-      }
-  }
-};
-
-
-/**
  * @brief Compute the local heat flux vector field within a domain.
  *
  * The local heat flux is defined as \f$\mathbf{q} = -k \nabla T\f$ where

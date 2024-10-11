@@ -16,7 +16,6 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
   // Distribute and renumber DoFs
   this->dof_handler.distribute_dofs(*this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
-  //  auto &dummy_fe= this->dof_handler.get_fe();
 
   // Get locally owned and relevant DoFs
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
@@ -55,10 +54,15 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
 
 
   // TODO AMISHGA verbosity parameters
-  //  this->pcout
-  //    << "   Number of VOF Phase Gradient Projection degrees of freedom: "
-  //    << this->dof_handler.n_dofs() << std::endl;
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout
+        << "   Number of VOF Phase Gradient Projection degrees of freedom: "
+        << this->dof_handler.n_dofs() << std::endl;
+    }
 
+  // Provide DoFHandler and solutions to the subequations interface
   this->subequations->set_dof_handler(SubequationsID::phase_gradient_projection,
                                       &this->dof_handler);
   this->subequations->set_solution(SubequationsID::phase_gradient_projection,
@@ -209,8 +213,8 @@ VOFPhaseGradientProjection<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void ::VOFPhaseGradientProjection<
-  dim>::solve_linear_system_and_update_solution()
+void
+VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution()
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -230,8 +234,9 @@ void ::VOFPhaseGradientProjection<
   if (this->simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Tolerance of iterative solver for the phase fraction gradient is : "
-                  << linear_solver_tolerance << std::endl;
+      this->pcout
+        << "  -Tolerance of iterative solver for the phase fraction gradient is: "
+        << linear_solver_tolerance << std::endl;
     }
 
   // ILU preconditioner
@@ -268,7 +273,7 @@ void ::VOFPhaseGradientProjection<
       Parameters::Verbosity::quiet)
     {
       this->pcout
-        << "  -Iterative solver for the phase fraction gradient took : "
+        << "  -Iterative solver for the phase fraction gradient took: "
         << solver_control.last_step() << " steps." << std::endl;
     }
 
@@ -281,7 +286,8 @@ void ::VOFPhaseGradientProjection<
 }
 
 template <int dim>
-void ::VOFPhaseGradientProjection<dim>::solve()
+void
+VOFPhaseGradientProjection<dim>::solve()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Solve phase fraction projection linear system");
