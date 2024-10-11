@@ -55,8 +55,6 @@ public:
                                        &p_triangulation,
     std::shared_ptr<SimulationControl> &p_simulation_control)
     : PhysicsLinearSubequationsSolver<dim, GlobalVectorType>(p_pcout)
-    //    PhysicsLinearSubequationsSolver<dim, GlobalVectorType>(false,
-    //        p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
     , computing_timer(p_triangulation->get_communicator(),
                       this->pcout,
                       TimerOutput::summary,
@@ -217,15 +215,6 @@ private:
 
   // Assembler for the matrix and rhs
   std::shared_ptr<VOFAssemblerPhaseGradientProjection<dim>> assembler;
-
-  // TODO AMISHGA check if this is necessary
-  /*// Solution transfer classes
-  std::shared_ptr<
-    parallel::distributed::SolutionTransfer<dim, GlobalVectorType>>
-    solution_transfer;
-  std::vector<parallel::distributed::SolutionTransfer<dim,
-  GlobalVectorType>>
-    previous_solutions_transfer;*/
 };
 
 

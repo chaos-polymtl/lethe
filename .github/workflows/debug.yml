@@ -6,6 +6,7 @@ on:
     # Runs on every push on master branch
     branches:
       - master
+      - refactor-vof-phase-gradrient-projection
   pull_request:
     paths-ignore:
       - 'doc/**'

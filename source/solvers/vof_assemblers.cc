@@ -470,8 +470,8 @@ VOFAssemblerPhaseGradientProjection<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
 
-  const double diffusion_factor =
-    this->vof_parameters.surface_tension_force.phase_fraction_gradient_diffusion_factor;
+  const double diffusion_factor = this->vof_parameters.surface_tension_force
+                                    .phase_fraction_gradient_diffusion_factor;
 
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
