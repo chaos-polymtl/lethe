@@ -2275,6 +2275,12 @@ namespace Parameters
         Patterns::List(Patterns::Integer()),
         "Boundary ids of the boundaries to be initially refined");
 
+      prm.declare_entry("fix boundary refinement", "false", Patterns::Bool(),
+                        "Enable fix boundary refinement");
+
+      prm.declare_entry("boundaries fixed", "", Patterns::List(Patterns::Integer()),
+                        "Boundary ids of the boundaries to be fixed");
+
       if (prm.get("type") == "periodic_hills")
         {
           prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
@@ -2375,6 +2381,10 @@ namespace Parameters
 
       boundaries_to_refine =
         convert_string_to_vector<int>(prm, "boundaries refined");
+
+      is_boundary_refinement_fixed = prm.get_bool("fix boundary refinement");
+
+      boundaries_to_fix = convert_string_to_vector<int>(prm, "boundaries fixed");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");

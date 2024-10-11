@@ -22,8 +22,14 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Initial refinement of the mesh near user-specified boundaries
     set initial boundary refinement = 0
 
-    # Lists of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
+    # List of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
     set boundaries refined = 0, 1
+
+    # Fix the boundary mesh size at the initial refinement level when the kelly mesh refinement estimator is used.
+    set fix boundary refinement = false
+
+    # List of boundaries next to which the mesh refinement level should not be modified. The list must contain the boundary ids separated by commas.
+    set boundaries fixed = 0, 1
 
     # Enable initial refinement until target size is reached
     set enable target size = false
@@ -71,6 +77,8 @@ This subsection provides information of the simulation geometry and its mesh. Th
 * The `initial refinement` number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
 
 * The `initial boundary refinement` determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the ``boundaries refined`` parameter.
+
+* The `fix boundary refinement` parameter is used to fix the boundary mesh size at the defined initial refinement level. This can prevent the unwanted coarsening of the mesh at the boundary when mesh adaptation using the kelly estimator is activated. Cells on the boundary will still be refined when using global refinement or when neighbouring cells force the refinement of a boundary mesh cell.
 
 * The `enable target size` and `target size` respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.
 
