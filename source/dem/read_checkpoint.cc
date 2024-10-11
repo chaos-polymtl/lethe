@@ -33,7 +33,7 @@ read_checkpoint(
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);
 
-  if (parameters.post_processing.Lagrangian_post_processing)
+  if (parameters.post_processing.lagrangian_post_processing_enabled)
     {
       grid_pvdhandler.read(prefix + "_postprocess_data");
     }

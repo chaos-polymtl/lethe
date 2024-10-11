@@ -353,7 +353,8 @@ CFDDEMSolver<dim>::write_checkpoint()
       this->pvdhandler.save(prefix);
       particles_pvdhandler.save(prefix_particles);
 
-      if (this->dem_parameters.post_processing.Lagrangian_post_processing)
+      if (this->dem_parameters.post_processing
+            .lagrangian_post_processing_enabled)
         grid_pvdhandler.save(prefix_grid);
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
@@ -434,7 +435,7 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->pvdhandler.read(prefix);
   particles_pvdhandler.read(prefix_particles);
 
-  if (this->dem_parameters.post_processing.Lagrangian_post_processing)
+  if (this->dem_parameters.post_processing.lagrangian_post_processing_enabled)
     {
       grid_pvdhandler.read(prefix_grid);
     }
@@ -953,7 +954,7 @@ CFDDEMSolver<dim>::report_particle_statistics()
       report.write_text(std::cout, dealii::TableHandler::org_mode_table);
     }
 
-  if (dem_parameters.post_processing.Lagrangian_post_processing &&
+  if (dem_parameters.post_processing.lagrangian_post_processing_enabled &&
       this->simulation_control->is_output_iteration())
     {
       const auto parallel_triangulation =
