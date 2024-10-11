@@ -884,33 +884,33 @@ $(function() {
 <div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;{</div>
 <div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;  particle_handler.sort_particles_into_subdomains_and_cells();</div>
 <div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160; </div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;  <span class="comment">// Resize the displacement, force and torque containers only if the particles</span></div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;  <span class="comment">// have changed subdomains</span></div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;  <span class="keywordflow">if</span> (action_manager-&gt;check_resize_containers())</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;    {</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;      <span class="comment">// Resize and reinitialize displacement container</span></div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;      displacement.resize(particle_handler.get_max_local_particle_index());</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;      <span class="comment">// Resize and reinitialize displacement container</span></div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      force.resize(displacement.size());</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      torque.resize(displacement.size());</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;      MOI.resize(displacement.size());</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160; </div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;      <span class="comment">// Updating moment of inertia container</span></div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : particle_handler)</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        {</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;          <span class="keyword">auto</span> particle_properties = particle.get_properties();</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;          MOI[particle.get_local_index()] =</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;            0.1 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;            particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>] *</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;            particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>];</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;        }</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;    }</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160; </div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;  <span class="comment">// Always reset the displacement values since we are doing a search detection</span></div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;  std::fill(displacement.begin(), displacement.end(), 0.);</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;  <span class="comment">// Exchange ghost particles</span></div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;  particle_handler.exchange_ghost_particles(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160; </div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;  <span class="comment">// Resize the displacement, force and torque containers only if the particles</span></div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;  <span class="comment">// have changed subdomains</span></div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;  <span class="keywordflow">if</span> (action_manager-&gt;check_resize_containers())</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;    {</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      <span class="comment">// Resize and reinitialize displacement container</span></div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      displacement.resize(particle_handler.get_max_local_particle_index());</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;      <span class="comment">// Resize and reinitialize displacement container</span></div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;      force.resize(displacement.size());</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;      torque.resize(displacement.size());</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;      MOI.resize(displacement.size());</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160; </div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;      <span class="comment">// Updating moment of inertia container</span></div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : particle_handler)</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        {</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;          <span class="keyword">auto</span> particle_properties = particle.get_properties();</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;          MOI[particle.get_local_index()] =</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;            0.1 * particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca787e641c130169e5d91cd2d6ec48c3da">DEM::PropertiesIndex::mass</a>] *</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;            particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>] *</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;            particle_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">DEM::PropertiesIndex::dp</a>];</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;        }</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;    }</div>
 <div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160; </div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;  <span class="comment">// Exchange ghost particles</span></div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;  particle_handler.exchange_ghost_particles(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;  <span class="comment">// Always reset the displacement values since we are doing a search detection</span></div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;  std::fill(displacement.begin(), displacement.end(), 0.);</div>
 <div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;}</div>
 <div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160; </div>
 <div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
