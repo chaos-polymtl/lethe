@@ -12,26 +12,12 @@ set dimension = 3
 
 subsection simulation control
   set time step         = 1e-5
-  set time end          = 0.2
-  set log frequency     = 20000
-  set output frequency  = -1
-  set output boundaries = false
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
-#---------------------------------------------------
-# Test
-#---------------------------------------------------
-
-subsection test
-  set enable = true
+  set time end          = 7.5
+  set log frequency     = 1000
+  set output frequency  = 1000
+  set output path       = ./output_periodic/
+  set output name       = hopper
+  set output boundaries = true
 end
 
 #---------------------------------------------------
@@ -46,7 +32,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 9000
+    set frequency           = 50000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -64,7 +50,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.00224
-    set number of particles               = 485
+    set number of particles               = 6790
     set density particles                 = 2500
     set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
@@ -142,3 +128,10 @@ subsection DEM boundary conditions
   end
 end
 
+#---------------------------------------------------
+# DEM Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set lagrangian post-processing = true
+end
