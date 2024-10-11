@@ -37,14 +37,25 @@ class VOFPhaseGradientProjection
 {
 public:
   /**
-   * @brief Default constructor for the VOFPhaseGradientProjection.
-   * TODO AMISHGA
+   * @brief Constructor for the L2 projection of the VOF phase fraction gradient
+   * (pfg)
+   *
+   * @param[in] p_pcout Parallel cout used to print the information.
+   *
+   * @param[in,out] p_subequations Subequations interface object used to get
+   * information from other subequations and store information from the current
+   * one.
+   *
+   * @param[in] p_multiphysics Multiphysics interface object used to get
+   * information from physics.
    *
    * @param[in] p_simulation_parameters Simulation parameters.
    *
-   * @param[in] p_triangulation
+   * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_simulation_control
+   * @param[in] p_simulation_control Object responsible for the control of
+   * steady-state and transient simulations. Contains all the information
+   * related to time stepping and the stopping criteria.
    */
   VOFPhaseGradientProjection(
     const ConditionalOStream        &p_pcout,
@@ -55,10 +66,6 @@ public:
                                        &p_triangulation,
     std::shared_ptr<SimulationControl> &p_simulation_control)
     : PhysicsLinearSubequationsSolver<dim, GlobalVectorType>(p_pcout)
-    , computing_timer(p_triangulation->get_communicator(),
-                      this->pcout,
-                      TimerOutput::summary,
-                      TimerOutput::wall_times)
     , subequations(p_subequations)
     , multiphysics(p_multiphysics)
     , simulation_parameters(p_simulation_parameters)
@@ -89,10 +96,8 @@ public:
           std::make_shared<QGauss<dim>>(this->fe->degree + 1);
       }
 
-    // Change the behavior of the timer for situations when you don't want
-    // outputs
-    if (this->simulation_parameters.timer.type == Parameters::Timer::Type::none)
-      this->computing_timer.disable_output();
+    this->verbosity =
+      simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity;
   }
 
   /**
@@ -110,16 +115,23 @@ public:
   /**
    * @brief Solve linear system of equation using a strategy appropriate
    * for the partial differential equation.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
    */
   void
-  solve_linear_system_and_update_solution() override;
+  solve_linear_system_and_update_solution(
+    const bool &is_post_mesh_adaptation = false) override;
 
   /**
    * @brief Assemble and solve linear system when the equation to solve is
    * linear without using the non-linear solver interface.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
    */
   void
-  solve() override;
+  solve(const bool &is_post_mesh_adaptation = false) override;
 
 private:
   /**
@@ -168,7 +180,7 @@ private:
     StabilizedMethodsCopyData                            &copy_data);
 
   /**
-   * @brief Copy local cell matrix information to global matrix
+   * @brief Copy local cell matrix information to global matrix.
    *
    * @param[in] copy_data Stores the results of the assembly over a cell.
    */
@@ -184,11 +196,11 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
-
-  TimerOutput computing_timer;
-
   SubequationsInterface<dim> *subequations;
-  MultiphysicsInterface<dim> *multiphysics; // to get VOF DoFHandler
+  MultiphysicsInterface<dim>
+    *multiphysics; // to get VOF DoFHandler and solution
+
+  Parameters::Verbosity verbosity;
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
@@ -216,7 +228,5 @@ private:
   // Assembler for the matrix and rhs
   std::shared_ptr<VOFAssemblerPhaseGradientProjection<dim>> assembler;
 };
-
-
 
 #endif

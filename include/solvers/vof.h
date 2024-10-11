@@ -354,58 +354,69 @@ public:
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method
    */
+
   const DoFHandler<dim> &
   get_dof_handler() override
   {
     return dof_handler;
   }
+
   GlobalVectorType &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
+
   GlobalVectorType &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
+
   GlobalVectorType &
   get_newton_update() override
   {
     return newton_update;
   }
+
   GlobalVectorType &
   get_present_solution() override
   {
     return present_solution;
   }
+
   GlobalVectorType &
   get_system_rhs() override
   {
     return system_rhs;
   }
+
   AffineConstraints<double> &
   get_nonzero_constraints() override
   {
     return nonzero_constraints;
   }
+
   DoFHandler<dim> *
   get_projected_phase_fraction_gradient_dof_handler()
   {
     return this->subequations->get_dof_handler(
       SubequationsID::phase_gradient_projection);
   }
+
   DoFHandler<dim> *
   get_curvature_dof_handler()
   {
     return &curvature_dof_handler;
   }
+
   GlobalVectorType *
   get_projected_phase_fraction_gradient_solution()
   {
     return this->subequations->get_solution(
       SubequationsID::phase_gradient_projection);
   }
+
   GlobalVectorType *
   get_curvature_solution()
   {
@@ -610,15 +621,6 @@ private:
   void
   smooth_phase_fraction();
 
-  //  /**
-  //   * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
-  //   * fraction is used in find_projected_interface_curvature to find
-  //   interface
-  //   * curvature (k).
-  //   */
-  //  void
-  //  find_projected_phase_fraction_gradient();
-
   /**
    * @brief Carries out finding the interface curvature.
    */
@@ -721,7 +723,7 @@ private:
   GlobalVectorType               complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
-  // For projected phase fraction gradient (pfg)
+  // For projected phase fraction gradient (pfg) and eventually curvature
   std::shared_ptr<SubequationsInterface<dim>> subequations;
 
   // Projected curvature solution

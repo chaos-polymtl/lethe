@@ -393,7 +393,6 @@ public:
   void
   allocate();
 
-
   /**
    * @brief Reinitialize the content of the
    * VOFPhaseGradientProjectionScratchData object for a given cell using
