@@ -229,15 +229,13 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   if (verbose)
     {
-      this->pcout << "  -Solving phase fraction gradient projection: "
+      this->pcout << "  -Solving phase fraction gradient (pfg) L2 projection:"
                   << std::endl;
     }
 
   // Set tolerance
-  const double linear_solver_tolerance = 1e-13;
-  // TODO AMISHGA uncomment after testing
-  //  const double linear_solver_tolerance =
-  //  simulation_parameters.linear_solver.at(PhysicsID::VOF).minimum_residual;
+  const double linear_solver_tolerance =
+    simulation_parameters.linear_solver.at(PhysicsID::VOF).minimum_residual;
 
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
@@ -246,9 +244,8 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   if (verbose)
     {
-      this->pcout
-        << "    -Tolerance of iterative solver for the phase fraction gradient is: "
-        << linear_solver_tolerance << std::endl;
+      this->pcout << "    -Tolerance of iterative solver (pfg) is: "
+                  << linear_solver_tolerance << std::endl;
     }
 
   // ILU preconditioner
@@ -283,9 +280,10 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   if (verbose)
     {
-      this->pcout
-        << "    -Iterative solver for the phase fraction gradient took: "
-        << solver_control.last_step() << " steps." << std::endl;
+      this->pcout << "    -Iterative solver (pfg) took: "
+                  << solver_control.last_step()
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() << std::endl;
     }
 
   // Update constraints vector
