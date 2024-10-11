@@ -488,8 +488,7 @@ public:
   std::vector<Tensor<2, dim>> present_phase_gradient_projection_gradients;
 
   // VOF phase gradient values
-  std::vector<Tensor<1, dim>>
-    present_filtered_vof_phase_gradients;
+  std::vector<Tensor<1, dim>> present_filtered_vof_phase_gradients;
 
   // Shape functions
   std::vector<std::vector<Tensor<1, dim>>> phi;
