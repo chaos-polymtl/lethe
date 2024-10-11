@@ -324,43 +324,44 @@ $(function() {
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  data_out.add_data_vector(subdomain, <span class="stringliteral">&quot;subdomain&quot;</span>);</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  <span class="keyword">const</span> std::string postprocess_file_name =</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    dem_parameters.<a class="code" href="classDEMSolverParameters.html#abe03b7dc0f361ad437aa5a4bca2ed7f2">simulation_control</a>.<a class="code" href="structParameters_1_1SimulationControl.html#af8b7be4d5aeb3c86939eb2f78d623dfd">output_name</a> + <span class="stringliteral">&quot;-postprocess_data&quot;</span>;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  data_out.build_patches();</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;  write_vtu_and_pvd&lt;dim&gt;(grid_pvdhandler,</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                         data_out,</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                         folder,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                         postprocess_file_name,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                         current_time,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                         step_number,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                         group_files,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                         mpi_communicator);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;}</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="lagrangian__post__processing_8cc.html#a548c851b2203a246cb316fc0a321dff8">  260</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<a class="code" href="lagrangian__post__processing_8cc.html#a548c851b2203a246cb316fc0a321dff8">write_post_processing_results&lt;2&gt;</a>(</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;2&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                    &amp;grid_pvdhandler,</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;                           &amp;background_dh,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;2&gt;</a>                  &amp;dem_parameters,</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                   current_time,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                             step_number,</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  <span class="keyword">const</span> MPI_Comm                                &amp;mpi_communicator,</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2&gt;</a>                     &amp;sparse_contacts_object);</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
-<div class="line"><a name="l00272"></a><span class="lineno"><a class="line" href="lagrangian__post__processing_8cc.html#a3f85e312feb5c18e40f88dd9ced0cdee">  272</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<a class="code" href="lagrangian__post__processing_8cc.html#a3f85e312feb5c18e40f88dd9ced0cdee">write_post_processing_results&lt;3&gt;</a>(</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;3&gt; &amp;triangulation,</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                    &amp;grid_pvdhandler,</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;                           &amp;background_dh,</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt;           &amp;particle_handler,</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;3&gt;</a>                  &amp;dem_parameters,</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                   current_time,</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                             step_number,</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">const</span> MPI_Comm                                &amp;mpi_communicator,</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3&gt;</a>                     &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    dem_parameters.<a class="code" href="classDEMSolverParameters.html#abe03b7dc0f361ad437aa5a4bca2ed7f2">simulation_control</a>.<a class="code" href="structParameters_1_1SimulationControl.html#af8b7be4d5aeb3c86939eb2f78d623dfd">output_name</a> +</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="stringliteral">&quot;_lagrangian_postprocessing&quot;</span>;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  data_out.build_patches();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  write_vtu_and_pvd&lt;dim&gt;(grid_pvdhandler,</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                         data_out,</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                         folder,</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                         postprocess_file_name,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                         current_time,</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                         step_number,</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                         group_files,</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                         mpi_communicator);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;}</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="lagrangian__post__processing_8cc.html#a548c851b2203a246cb316fc0a321dff8">  261</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<a class="code" href="lagrangian__post__processing_8cc.html#a548c851b2203a246cb316fc0a321dff8">write_post_processing_results&lt;2&gt;</a>(</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;2&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                    &amp;grid_pvdhandler,</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;2&gt;                           &amp;background_dh,</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;2&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;2&gt;</a>                  &amp;dem_parameters,</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                   current_time,</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                             step_number,</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  <span class="keyword">const</span> MPI_Comm                                &amp;mpi_communicator,</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;2&gt;</a>                     &amp;sparse_contacts_object);</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="lagrangian__post__processing_8cc.html#a3f85e312feb5c18e40f88dd9ced0cdee">  273</a></span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<a class="code" href="lagrangian__post__processing_8cc.html#a3f85e312feb5c18e40f88dd9ced0cdee">write_post_processing_results&lt;3&gt;</a>(</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  <span class="keyword">const</span> parallel::distributed::Triangulation&lt;3&gt; &amp;triangulation,</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <a class="code" href="classPVDHandler.html">PVDHandler</a>                                    &amp;grid_pvdhandler,</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;3&gt;                           &amp;background_dh,</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="keyword">const</span> Particles::ParticleHandler&lt;3&gt;           &amp;particle_handler,</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="keyword">const</span> <a class="code" href="classDEMSolverParameters.html">DEMSolverParameters&lt;3&gt;</a>                  &amp;dem_parameters,</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span>                                   current_time,</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                             step_number,</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keyword">const</span> MPI_Comm                                &amp;mpi_communicator,</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  <a class="code" href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts&lt;3&gt;</a>                     &amp;sparse_contacts_object);</div>
 <div class="ttc" id="aclassAdaptiveSparseContacts_html"><div class="ttname"><a href="classAdaptiveSparseContacts.html">AdaptiveSparseContacts</a></div><div class="ttdoc">Mechanism that disables contacts computation through mobility status of cells based on granular tempe...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00104">adaptive_sparse_contacts.h:105</a></div></div>
 <div class="ttc" id="aclassAdaptiveSparseContacts_html_a97107cf2fcecfdc57c5c18e1444b1634"><div class="ttname"><a href="classAdaptiveSparseContacts.html#a97107cf2fcecfdc57c5c18e1444b1634">AdaptiveSparseContacts::get_mobility_status_vector</a></div><div class="ttdeci">void get_mobility_status_vector(Vector&lt; float &gt; &amp;status)</div><div class="ttdoc">Convert the map of mobility status to a vector of mobility status because map cannot be used as is in...</div><div class="ttdef"><b>Definition:</b> <a href="adaptive__sparse__contacts_8h_source.html#l00319">adaptive_sparse_contacts.h:319</a></div></div>
 <div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
