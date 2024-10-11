@@ -244,15 +244,6 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
-      // Get translational and rotational velocities and center of
-      // rotation
-      Tensor<1, 3> translational_velocity =
-        solids[solid_counter]->get_translational_velocity();
-      Tensor<1, 3> angular_velocity =
-        solids[solid_counter]->get_angular_velocity();
-      Point<3> center_of_rotation =
-        solids[solid_counter]->get_center_of_rotation();
-
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
@@ -328,6 +319,15 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
 
                       if (normal_overlap > 0)
                         {
+                          // Get translational and rotational velocities and
+                          // center of rotation
+                          Tensor<1, 3> translational_velocity =
+                            solids[solid_counter]->get_translational_velocity();
+                          Tensor<1, 3> angular_velocity =
+                            solids[solid_counter]->get_angular_velocity();
+                          Point<3> center_of_rotation =
+                            solids[solid_counter]->get_center_of_rotation();
+
                           contact_info.normal_overlap = normal_overlap;
 
                           contact_info.normal_vector =
