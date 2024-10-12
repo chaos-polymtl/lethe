@@ -62,12 +62,12 @@ namespace Parameters
   }
 
   void
-  Manifolds::declare_parameters(ParameterHandler &prm)
+  Manifolds::declare_parameters(ParameterHandler &prm,
+                                unsigned int      subsection_max_size)
   {
-    max_size = 14;
-    manifold_point.resize(max_size);
-    manifold_direction.resize(max_size);
-    cad_files.resize(max_size);
+    manifold_point.resize(subsection_max_size);
+    manifold_direction.resize(subsection_max_size);
+    cad_files.resize(subsection_max_size);
 
     prm.enter_subsection("manifolds");
     {
@@ -75,9 +75,9 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
-      id.resize(max_size);
-      types.resize(max_size);
-      for (unsigned int i = 0; i < max_size; i++)
+      id.resize(subsection_max_size);
+      types.resize(subsection_max_size);
+      for (unsigned int i = 0; i < subsection_max_size; i++)
         {
           prm.enter_subsection("manifold " + Utilities::int_to_string(i));
           declareDefaultEntry(prm, i);
@@ -120,8 +120,7 @@ attach_manifolds_to_triangulation(
           Point<spacedim> circle_center(
             value_string_to_tensor<spacedim>(manifolds.manifold_point[i]));
 
-          static const SphericalManifold<dim, spacedim> manifold_description(
-            circle_center);
+          SphericalManifold<dim, spacedim> manifold_description(circle_center);
           triangulation.set_manifold(manifolds.id[i], manifold_description);
         }
       else if (manifolds.types[i] ==
@@ -139,8 +138,8 @@ attach_manifolds_to_triangulation(
                 value_string_to_tensor<spacedim>(
                   manifolds.manifold_direction[i]));
 
-              static const CylindricalManifold<dim, spacedim>
-                manifold_description(cylinder_axis, point_on_axis);
+              CylindricalManifold<dim, spacedim> manifold_description(
+                cylinder_axis, point_on_axis);
               triangulation.set_manifold(manifolds.id[i], manifold_description);
             }
           else
