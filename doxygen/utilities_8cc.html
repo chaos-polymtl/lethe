@@ -170,8 +170,8 @@ Functions</h2></td></tr>
 <tr class="separator:a9fc5d803036352e72efcd625b2466707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f4c4c70d98da93b973297b97e085b90"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:a2f4c4c70d98da93b973297b97e085b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa286625bb871dd4165a509b7ebc41763"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#aa286625bb871dd4165a509b7ebc41763">get_max_number_of_boundary_conditions</a> (const std::string &amp;file_name)</td></tr>
-<tr class="separator:aa286625bb871dd4165a509b7ebc41763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9be87343e816d07edaee585ada17cd4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a> (const std::string &amp;file_name)</td></tr>
+<tr class="separator:a9be87343e816d07edaee585ada17cd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a4b182f49ed10ffa3d2d50a9a309cd2f0"></a>
@@ -409,14 +409,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa286625bb871dd4165a509b7ebc41763"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa286625bb871dd4165a509b7ebc41763">&#9670;&nbsp;</a></span>get_max_number_of_boundary_conditions()</h2>
+<a id="a9be87343e816d07edaee585ada17cd4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9be87343e816d07edaee585ada17cd4a">&#9670;&nbsp;</a></span>get_max_subsection_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int get_max_number_of_boundary_conditions </td>
+          <td class="memname">int get_max_subsection_size </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>file_name</em></td><td>)</td>
@@ -425,7 +425,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Extract the maximum number of boundary conditions from the file. The number of boundary conditions is linked to the string "number" so this feature will need to be monitored extensively in the future. </p>
+<p>Extract the maximum value between the number of boundary conditions and the number of manifolds from the file. This value is linked to the "number" string defined in the simulation parameter file. It provides an estimate for the amount of parameters or manifolds and is used to determine the size of the vectors that will store boundary conditions and manifold data. This feature will need to be monitored extensively in the future. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file_name</td><td>The file name from which the number of boundary conditions is read </td></tr>
