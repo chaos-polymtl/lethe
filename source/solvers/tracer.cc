@@ -443,21 +443,12 @@ Tracer<dim>::assemble_system_rhs_dg()
       const unsigned int boundary_index =
         get_lethe_boundary_index(triangulation_boundary_id);
 
-      const double extent1 = cell->measure() / cell->face(face_no)->measure();
-      scratch_data.penalty_factor =
-        get_penalty_factor(fe->degree, extent1, extent1);
-
-
-      scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
-      const FEFaceValuesBase<dim> &fe_face =
-        scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
-
-      const auto &q_points = fe_face.get_quadrature_points();
-      scratch_data.values_here.resize(q_points.size());
-      scratch_data.gradients_here.resize(q_points.size());
-      fe_face.get_function_values(evaluation_point, scratch_data.values_here);
-      fe_face.get_function_gradients(evaluation_point,
-                                     scratch_data.gradients_here);
+      scratch_data.reinit_boundary_face(
+        cell,
+        face_no,
+        boundary_index,
+        this->evaluation_point,
+        this->multiphysics->get_immersed_solid_signed_distance_function());
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -468,30 +459,13 @@ Tracer<dim>::assemble_system_rhs_dg()
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-      fe_face_values_fd.reinit(velocity_cell, face_no);
+      scratch_data.reinit_face_velocity(velocity_cell,
+                                        face_no,
+                                        *multiphysics->get_solution(
+                                          PhysicsID::fluid_dynamics));
 
-      scratch_data.face_velocity_values.resize(q_points.size());
-      fe_face_values_fd[scratch_data.velocities].get_function_values(
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        scratch_data.face_velocity_values);
+      scratch_data.calculate_face_physical_properties();
 
-      auto      &properties_manager = scratch_data.properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity_face.resize(q_points.size());
-      if (properties_manager.field_is_required(field::levelset))
-        {
-          scratch_data.sdf_values.resize(q_points.size());
-          this->multiphysics->get_immersed_solid_signed_distance_function()
-            ->value_list(q_points, scratch_data.sdf_values);
-          set_field_vector(field::levelset,
-                           scratch_data.sdf_values,
-                           scratch_data.fields);
-        }
-      diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity_face);
-
-      scratch_data.boundary_index = boundary_index;
       this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
     };
 
