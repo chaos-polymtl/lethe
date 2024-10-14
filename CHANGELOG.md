@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-22
+
+### Changed
+
+- MAJOR Secondary equations (subequation) solved within physics now go through a subequations interface similarly to how auxiliary physics go through the multiphysics interface. At the moment, only the implementation for the L2 projection of the phase fraction gradient in the VOF auxiliary physics has been refactored. Future changes will include the refactor of other secondary equations through this interface. Furthermore, only a linear equation solver has been implemented so far. It is likely that the implementation for non-linear equations will inherit from the PhysicsSolver class to get its mechanism. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
+
 ## [Master] - 2024-10-18
 
 ### Added
@@ -21,7 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR  Tracer physics can now be solved by using a discontinuous Galerkin method instead of a continuous Galerkin method. [#1320](https://github.com/chaos-polymtl/lethe/pull/1320)
+- MAJOR Tracer physics can now be solved by using a discontinuous Galerkin method instead of a continuous Galerkin method. [#1320](https://github.com/chaos-polymtl/lethe/pull/1320)
 
 ## [Master] - 2024-10-15
 
@@ -33,7 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MAJOR Unexpected segmentation faults were occuring when using large simulation with aperiodic boundary condition. The cause of thuis bug was identify and fixed. It was related to the resizing of the force, torque and displacement vectors which was not considering the ghost particles when resized. [#1316](https://github.com/chaos-polymtl/lethe/pull/1316)
+- MAJOR Unexpected segmentation faults were occurring when using large simulation with aperiodic boundary condition. The cause of this bug was identified and fixed. It was related to the resizing of the force, torque and displacement vectors that were not considering the ghost particles when resized. [#1316](https://github.com/chaos-polymtl/lethe/pull/1316)
 
 ## [Master] - 2024-10-09
 
@@ -45,13 +51,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Values outputted on terminal have been uniformized using the log precision parameter. [#1310](https://github.com/chaos-polymtl/lethe/pull/1310)
+- MINOR Values outputted on the terminal have been uniformized using the log precision parameter. [#1310](https://github.com/chaos-polymtl/lethe/pull/1310)
 
 ## [Master] - 2024-10-03
 
 ### Fixed
 
-- MINOR Simulations with time-dependent boundary conditions would not restart corresctly in the matrix-free solver because the initial guess of the solution was reset to zero. This is fixed now and the initial guess of the solution is identical. [#1302](https://github.com/chaos-polymtl/lethe/pull/1302)
+- MINOR Simulations with time-dependent boundary conditions would not restart correctly in the matrix-free solver because the initial guess of the solution was reset to zero. This is fixed now, and the initial guess of the solution is identical. [#1302](https://github.com/chaos-polymtl/lethe/pull/1302)
 
 ### Changed
 
