@@ -165,10 +165,9 @@ Tracer<dim>::assemble_system_matrix_dg()
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
       // Reinit the internal face velocity within the scratch data
-      scratch_data.reinit_face_velocity(velocity_cell,
-                                        face_no,
-                                        *multiphysics->get_solution(
-                                          PhysicsID::fluid_dynamics));
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
 
       scratch_data.calculate_face_physical_properties();
 
@@ -177,20 +176,20 @@ Tracer<dim>::assemble_system_matrix_dg()
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
-        const unsigned int                                   &f,
-        const unsigned int                                   &sf,
+        const unsigned int                                   &face_no,
+        const unsigned int                                   &sub_face_no,
         const typename DoFHandler<dim>::active_cell_iterator &ncell,
-        const unsigned int                                   &nf,
-        const unsigned int                                   &nsf,
+        const unsigned int                                   &neigh_face_no,
+        const unsigned int                                   &neigh_sub_face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
       scratch_data.reinit_internal_face(
         cell,
-        f,
-        sf,
+        face_no,
+        sub_face_no,
         ncell,
-        nf,
-        nsf,
+        neigh_face_no,
+        neigh_sub_face_no,
         this->evaluation_point,
         this->multiphysics->get_immersed_solid_signed_distance_function());
 
@@ -211,10 +210,9 @@ Tracer<dim>::assemble_system_matrix_dg()
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
       // Reinit the internal face velocity within the scratch data
-      scratch_data.reinit_face_velocity(velocity_cell,
-                                        f,
-                                        *multiphysics->get_solution(
-                                          PhysicsID::fluid_dynamics));
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
 
       scratch_data.calculate_face_physical_properties();
 
@@ -458,10 +456,9 @@ Tracer<dim>::assemble_system_rhs_dg()
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-      scratch_data.reinit_face_velocity(velocity_cell,
-                                        face_no,
-                                        *multiphysics->get_solution(
-                                          PhysicsID::fluid_dynamics));
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
 
       scratch_data.calculate_face_physical_properties();
 
@@ -470,22 +467,22 @@ Tracer<dim>::assemble_system_rhs_dg()
 
   const auto face_worker =
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
-        const unsigned int                                   &f,
-        const unsigned int                                   &sf,
+        const unsigned int                                   &face_no,
+        const unsigned int                                   &sub_face_no,
         const typename DoFHandler<dim>::active_cell_iterator &ncell,
-        const unsigned int                                   &nf,
-        const unsigned int                                   &nsf,
+        const unsigned int                                   &neigh_face_no,
+        const unsigned int                                   &neigh_sub_face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data)
 
   {
     scratch_data.reinit_internal_face(
       cell,
-      f,
-      sf,
+      face_no,
+      sub_face_no,
       ncell,
-      nf,
-      nsf,
+      neigh_face_no,
+      neigh_sub_face_no,
       this->evaluation_point,
       this->multiphysics->get_immersed_solid_signed_distance_function());
 
@@ -503,8 +500,9 @@ Tracer<dim>::assemble_system_rhs_dg()
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
       &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-    scratch_data.reinit_face_velocity(
-      velocity_cell, f, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                face_no,
+                                                scratch_data);
 
     scratch_data.calculate_face_physical_properties();
 
