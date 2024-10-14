@@ -157,8 +157,6 @@ Tracer<dim>::assemble_system_matrix_dg()
       scratch_data.penalty_factor =
         get_penalty_factor(fe->degree, extent1, extent1);
 
-
-      scratch_data.fe_interface_values_tracer.reinit(cell, face_no);
       const FEFaceValuesBase<dim> &fe_face =
         scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
 
@@ -208,20 +206,16 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &nsf,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
-      fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
-      const unsigned int n_dofs = fe_iv.n_current_interface_dofs();
+      scratch_data.reinit_internal_face(
+        cell, f, sf, ncell, nf, nsf, this->evaluation_point);
 
-      const double extent1 = cell->measure() / cell->face(f)->measure();
-      const double extent2 = ncell->measure() / ncell->face(nf)->measure();
-
-      scratch_data.penalty_factor =
-        get_penalty_factor(fe->degree, extent1, extent2);
-
+      // Pad copy_data memory for the internal faces elementary matrices
       copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
-      copy_data_face.face_matrix.reinit(n_dofs, n_dofs);
-      copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+      copy_data_face.face_matrix.reinit(scratch_data.n_interface_dofs,
+                                        scratch_data.n_interface_dofs);
+      copy_data_face.joint_dof_indices =
+        scratch_data.fe_interface_values_tracer.get_interface_dof_indices();
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -233,7 +227,8 @@ Tracer<dim>::assemble_system_matrix_dg()
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
       fe_face_values_fd.reinit(velocity_cell, f);
-      const auto &q_points = fe_iv.get_quadrature_points();
+      const auto &q_points =
+        scratch_data.fe_interface_values_tracer.get_quadrature_points();
       scratch_data.face_velocity_values.resize(q_points.size());
       fe_face_values_fd[scratch_data.velocities].get_function_values(
         *multiphysics->get_solution(PhysicsID::fluid_dynamics),

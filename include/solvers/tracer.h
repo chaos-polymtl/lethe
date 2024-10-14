@@ -444,23 +444,6 @@ private:
   write_tracer_statistics();
 
 
-  /**
-   * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes
-   *
-   * @param fe_degree Finite element degree
-   * @param cell_extent_here Distance of the here cell
-   * @param cell_extent_there Distance of the there cell
-   * @return double
-   */
-
-  inline double
-  get_penalty_factor(const unsigned int fe_degree,
-                     const double       cell_extent_here,
-                     const double       cell_extent_there)
-  {
-    return (fe_degree + 1) * (fe_degree + 1.) * 0.5 *
-           (1. / cell_extent_here + 1. / cell_extent_there);
-  }
 
   /**
    * @brief Get the lethe boundary indicator for a given triangulation boundary while carrying the appropriate checks

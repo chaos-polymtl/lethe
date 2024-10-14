@@ -217,6 +217,49 @@ public:
     boundary_index = 0;
   }
 
+
+  /** @brief Reinitializes the content of the scratch.
+   *
+   * Using the FeValues and the content of the solutions and previous solutions,
+   * fills all of the class member of the scratch.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face The face index associated with the cell
+   *
+   * @param[in] sub_face The subface index associated with the face
+   *
+   * @param[in] ncell The neighboring cell
+   *
+   * @param[in] n_face The face index associated with the neighboring cell
+   *
+   * @param[in] n_sub_face The subface index associated with the neighboring
+   * cell
+   *
+   * @param[in] current_solution The present value of the solution.
+   * there are any).
+   */
+  template <typename VectorType>
+  void
+  reinit_internal_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &f,
+    const unsigned int                                   &sf,
+    const typename DoFHandler<dim>::active_cell_iterator &ncell,
+    const unsigned int                                   &nf,
+    const unsigned int                                   &nsf,
+    const VectorType                                     &current_solution)
+  {
+    fe_interface_values_tracer.reinit(cell, f, sf, ncell, nf, nsf);
+    n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
+
+    const double extent1 = cell->measure() / cell->face(f)->measure();
+    const double extent2 = ncell->measure() / ncell->face(nf)->measure();
+
+    penalty_factor =
+      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent2);
+  }
+
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
    *
    * @tparam VectorType The Vector type used for the solvers
@@ -302,6 +345,7 @@ public:
   FEInterfaceValues<dim> fe_interface_values_tracer;
 
   unsigned int n_dofs;
+  unsigned int n_interface_dofs;
   unsigned int n_q_points;
   double       cell_size;
 
