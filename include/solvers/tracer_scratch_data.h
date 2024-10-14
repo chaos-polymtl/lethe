@@ -366,7 +366,16 @@ public:
     const Function<dim>                                  *levelset_function)
   {
     fe_interface_values_tracer.reinit(cell, face);
+    const FEFaceValuesBase<dim> &fe_face =
+      fe_interface_values_tracer.get_fe_face_values(0);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
+
+    // BB TODO: These could be pre-allocated
+    values_here.resize(face_quadrature_points.size());
+    gradients_here.resize(face_quadrature_points.size());
+
+    fe_face.get_function_values(current_solution, values_here);
+    fe_face.get_function_gradients(current_solution, gradients_here);
 
     this->boundary_index = boundary_index;
 
