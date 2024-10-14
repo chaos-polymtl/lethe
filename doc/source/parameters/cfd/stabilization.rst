@@ -16,8 +16,6 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
     set heat transfer dcdd stabilization = false
     set vof dcdd stabilization           = true
 
-    set tracer sipg                 = 1
-
     # Pressure scaling factor
     set pressure scaling factor          = 1
   end
@@ -33,12 +31,10 @@ There are three choices of stabilization strategy:
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div block Navier-Stokes solver (``lethe-fluid-block``).
 
-* ``heat transfer dcdd stabilization``: Applies the dDiscontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
+* ``heat transfer dcdd stabilization`` applies the dDiscontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
-* ``vof dcdd stabilization``: Applies the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
+* ``vof dcdd stabilization`` applies the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
-* ``tracer sipg`` specifies the symmetric interior penalization factor that is applied for the tracer elements interfaces when Discontinuous Galerkin is used.
-
-The ``pressure scaling factor`` parameter is used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
+* ``pressure scaling factor`` used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
 
 
