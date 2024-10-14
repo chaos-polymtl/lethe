@@ -629,9 +629,9 @@ compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
 /**
  * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes
  *
- * @param fe_degree Finite element degree
- * @param cell_extent_here Distance of the here cell
- * @param cell_extent_there Distance of the there cell
+ * @param[in] fe_degree Finite element degree
+ * @param[in] cell_extent_here Distance of the here cell
+ * @param[in] cell_extent_there Distance of the there cell
  * @return double
  */
 
