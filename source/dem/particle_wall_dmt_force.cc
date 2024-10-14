@@ -261,6 +261,15 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
+      // Get translational and rotational velocities and
+      // center of rotation
+      Tensor<1, 3> translational_velocity =
+        solids[solid_counter]->get_translational_velocity();
+      Tensor<1, 3> angular_velocity =
+        solids[solid_counter]->get_angular_velocity();
+      Point<3> center_of_rotation =
+        solids[solid_counter]->get_center_of_rotation();
+
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
@@ -357,6 +366,25 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                             -std::sqrt(effective_hamaker_constant *
                                        effective_radius / (6. * F_po));
 
+                          contact_info.normal_overlap = normal_overlap;
+
+                          contact_info.normal_vector =
+                            normal_vectors[particle_counter];
+
+                          contact_info.point_on_boundary = projection_point;
+
+                          contact_info.boundary_id = solid_counter;
+
+                          this
+                            ->update_particle_floating_wall_contact_information(
+                              contact_info,
+                              particle_properties,
+                              dt,
+                              translational_velocity,
+                              angular_velocity,
+                              center_of_rotation.distance(
+                                particle_location_3d));
+
                           // Cohesive force. This will need to be added to the
                           // first vector inside the tuple.
                           Tensor<1, 3> cohesive_force;
@@ -385,13 +413,6 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                               // j)
                               cohesive_force =
                                 -F_po * -normal_vectors[particle_counter];
-
-                              contact_info.normal_overlap = normal_overlap;
-                              this->update_contact_information(
-                                contact_info,
-                                particle_location_3d,
-                                particle_properties,
-                                dt);
 
                               // This tuple (forces and torques) contains
                               // four elements which are: 1, normal force,
