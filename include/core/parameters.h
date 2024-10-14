@@ -690,10 +690,6 @@ namespace Parameters
     /// fraction should be assembled (@p true) or not (@p false).
     bool vof_dcdd_stabilization;
 
-    // Value of the symmetric interior penalty for the tracer physics when using
-    // discontinuous Galerkin
-    double tracer_sipg;
-
     // Pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
