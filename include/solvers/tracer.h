@@ -310,7 +310,16 @@ private:
   assemble_system_matrix() override;
 
   /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm.
+   */
+  void
+  assemble_system_matrix_cg();
+
+  /**
    *  @brief Assembles the matrix associated with the solver when DG elements are used.
+   * This uses the MeshWorker paradigm instead of the WorkStream paradigm
+   * This is because the DG system matrix is assembled in a different way and
+   * requires face and boundary integrals.
    */
   void
   assemble_system_matrix_dg();
@@ -321,8 +330,18 @@ private:
   void
   assemble_system_rhs() override;
 
+
+  /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm.
+   */
+  void
+  assemble_system_rhs_cg();
+
   /**
    *  @brief Assembles the rhs associated with the solver when DG elements are used.
+   * This uses the MeshWorker paradigm instead of the WorkStream paradigm
+   * This is because the DG system matrix is assembled in a different way and
+   * requires face and boundary integrals.
    */
   void
   assemble_system_rhs_dg();
