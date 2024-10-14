@@ -595,14 +595,13 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
 
                   copy_data.local_matrix(i, j) +=
                     scratch_data.tracer_diffusivity_face[point] *
-                      (-fe_face.shape_value(i, point) *
-                         fe_face.shape_grad(j, point) * normals[point] -
-                       fe_face.shape_value(j, point) *
-                         fe_face.shape_grad(i, point) * normals[point]) *
-                      JxW[point] +
-                    scratch_data.tracer_diffusivity_face[point] * beta *
-                      fe_face.shape_value(i, point) *
-                      fe_face.shape_value(j, point) * JxW[point];
+                    (-fe_face.shape_value(i, point) *
+                       fe_face.shape_grad(j, point) * normals[point] -
+                     fe_face.shape_value(j, point) *
+                       fe_face.shape_grad(i, point) * normals[point] +
+                     beta * fe_face.shape_value(i, point) *
+                       fe_face.shape_value(j, point)) *
+                    JxW[point];
                 }
             }
         }
@@ -672,15 +671,13 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
 
               copy_data.local_rhs(i) -=
                 scratch_data.tracer_diffusivity_face[point] *
-                  (-fe_face.shape_value(i, point) *
-                     scratch_data.gradients_here[point] * normals[point] -
-                   (scratch_data.values_here[point] - function_value[point]) *
-                     fe_face.shape_grad(i, point) * normals[point]) *
-                  JxW[point] +
-                scratch_data.tracer_diffusivity_face[point] * beta *
-                  fe_face.shape_value(i, point) *
-                  (scratch_data.values_here[point] - function_value[point]) *
-                  JxW[point];
+                (-fe_face.shape_value(i, point) *
+                   scratch_data.gradients_here[point] * normals[point] -
+                 (scratch_data.values_here[point] - function_value[point]) *
+                   fe_face.shape_grad(i, point) * normals[point] +
+                 beta * fe_face.shape_value(i, point) *
+                   (scratch_data.values_here[point] - function_value[point])) *
+                JxW[point];
             }
         }
     }
