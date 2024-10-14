@@ -289,15 +289,15 @@ public:
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
-   * @param[in] face The face index associated with the cell
+   * @param[in] face_no The face index associated with the cell
    *
-   * @param[in] sub_face The subface index associated with the face
+   * @param[in] sub_face_no The subface index associated with the face
    *
    * @param[in] ncell The neighboring cell
    *
-   * @param[in] n_face The face index associated with the neighboring cell
+   * @param[in] n_face_no The face index associated with the neighboring cell
    *
-   * @param[in] n_sub_face The subface index associated with the neighboring
+   * @param[in] n_sub_face_no The subface index associated with the neighboring
    * cell
    *
    * @param[in] current_solution The present value of the solution.
@@ -311,7 +311,7 @@ public:
   void
   reinit_internal_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const unsigned int                                   &f,
+    const unsigned int                                   &face_no,
     const unsigned int                                   &sf,
     const typename DoFHandler<dim>::active_cell_iterator &ncell,
     const unsigned int                                   &nf,
@@ -319,16 +319,35 @@ public:
     const VectorType                                     &current_solution,
     const Function<dim>                                  *levelset_function)
   {
-    fe_interface_values_tracer.reinit(cell, f, sf, ncell, nf, nsf);
+    fe_interface_values_tracer.reinit(cell, face_no, sf, ncell, nf, nsf);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
 
     n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
 
-    const double extent1 = cell->measure() / cell->face(f)->measure();
+    const double extent1 = cell->measure() / cell->face(face_no)->measure();
     const double extent2 = ncell->measure() / ncell->face(nf)->measure();
 
     penalty_factor =
       get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent2);
+
+
+    // BB TODO : Preallocate memory here
+    values_here.resize(face_quadrature_points.size());
+    values_there.resize(face_quadrature_points.size());
+    tracer_value_jump.resize(face_quadrature_points.size());
+    tracer_average_gradient.resize(face_quadrature_points.size());
+
+
+    fe_interface_values_tracer.get_fe_face_values(0).get_function_values(
+      current_solution, values_here);
+    fe_interface_values_tracer.get_fe_face_values(1).get_function_values(
+      current_solution, values_there);
+
+    fe_interface_values_tracer.get_jump_in_function_values(current_solution,
+                                                           tracer_value_jump);
+
+    fe_interface_values_tracer.get_average_of_function_gradients(
+      current_solution, tracer_average_gradient);
 
 
     if (properties_manager.field_is_required(field::levelset))
