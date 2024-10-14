@@ -90,7 +90,6 @@ For tracer boundary conditions, the defaults parameters are:
     subsection bc 0
       set id   = 0
       set type = dirichlet
-      set beta = 1
       subsection dirichlet
         set Function expression = 0
       end
@@ -104,8 +103,6 @@ For tracer boundary conditions, the defaults parameters are:
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: This is the type of boundary condition being imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
-
-* ``beta`` is the Nitsche penalization factor that is used when using the Discontinuous Galerkin formulation.
 
 
 VOF
