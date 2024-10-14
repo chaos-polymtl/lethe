@@ -244,8 +244,8 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
-      // Get translational and rotational velocities and center of
-      // rotation
+      // Get translational and rotational velocities and
+      // center of rotation
       Tensor<1, 3> translational_velocity =
         solids[solid_counter]->get_translational_velocity();
       Tensor<1, 3> angular_velocity =
