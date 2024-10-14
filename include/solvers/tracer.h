@@ -110,29 +110,6 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
-
-    /// Verify that we have specified as many tracer boundary conditions as
-    /// there are in the triangulation
-    // const std::vector<types::boundary_id> boundary_ids_in_triangulation =
-    // p_triangulation->get_boundary_ids();
-
-    /// Verify that the tracer boundary conditions are specified for all
-    /// boundary ids
-    // for (unsigned int i_bc = 0;
-    //      i_bc < simulation_parameters.boundary_conditions_tracer.size;
-    //      ++i_bc)
-    //   {
-    //     Assert(std::find(boundary_ids_in_triangulation.begin(),
-    //                      boundary_ids_in_triangulation.end(),
-    //                      simulation_parameters.boundary_conditions_tracer
-    //                        .id[i_bc]) != boundary_ids_in_triangulation.end(),
-    //            ExcMessage(
-    //              "The tracer boundary condition with id " +
-    //              std::to_string(
-    //                simulation_parameters.boundary_conditions_tracer.id[i_bc])
-    //                +
-    //              " is not present in the triangulation."));
-    //   }
   }
 
   /**
@@ -451,7 +428,7 @@ private:
   /**
    * @brief Get the lethe boundary indicator for a given triangulation boundary while carrying the appropriate checks
    *
-   * @param triangulation_boundary_id The boundary id of the triangulation
+   * @param[in] triangulation_boundary_id The boundary id of the triangulation
    *
    * NOTE: This function is a temporary function. It will be deprecated in a
    * future PR once boundary conditions have been refactored using maps.
@@ -485,11 +462,14 @@ private:
    * a regular velocity. Furthermore, it also checks if a time-averaged solution
    * is required. Otherwise the code here would be copied four times.
    *
-   * @param velocity_cell the iterator to the cell where the velocity is to be reinitialized.
+   * @param[in] velocity_cell the iterator to the cell where the velocity is to
+   * be reinitialized.
    *
-   * @param face_no the number of the face where the velocity is to be reinitialized.
+   * @param[in] face_no the number of the face where the velocity is to be
+   * reinitialized.
    *
-   * @param scratch_data the scratch data to be used for the reinitialization.
+   * @param[in,out] scratch_data the scratch data to be used for the
+   * reinitialization.
    */
   inline void
   reinit_face_velocity_with_adequate_solution(
