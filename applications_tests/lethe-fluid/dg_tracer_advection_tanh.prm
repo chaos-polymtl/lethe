@@ -81,7 +81,6 @@ subsection boundary conditions tracer
   subsection bc 0
     set id   = 0
     set type = dirichlet
-    set beta = 10
     subsection dirichlet
       set Function expression = 1
     end

@@ -715,12 +715,6 @@ namespace BoundaryConditions
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
-    prm.declare_entry(
-      "beta",
-      "1",
-      Patterns::Double(),
-      "SIPG (Nitsche) penalization for dirichlet boundary conditions when DG is enabled.");
-
     prm.enter_subsection("dirichlet");
     tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     tracer[i_bc]->declare_parameters(prm);
@@ -785,7 +779,6 @@ namespace BoundaryConditions
     if (op == "dirichlet")
       {
         this->type[i_bc] = BoundaryType::tracer_dirichlet;
-        this->beta[i_bc] = prm.get_double("beta");
         prm.enter_subsection("dirichlet");
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
@@ -793,7 +786,6 @@ namespace BoundaryConditions
     else if (op == "outlet")
       {
         this->type[i_bc] = BoundaryType::outlet;
-        this->beta[i_bc] = prm.get_double("beta");
       }
     else
       {
@@ -821,7 +813,6 @@ namespace BoundaryConditions
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
       this->type.resize(this->size);
-      this->beta.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {
