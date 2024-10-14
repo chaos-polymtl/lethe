@@ -12,6 +12,7 @@
 
 enum SubequationsID : unsigned int
 {
+  /// VOF phase fraction gradient L2 projection
   phase_gradient_projection = 0
 };
 

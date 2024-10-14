@@ -142,9 +142,7 @@ private:
 
   // Subequations stored within a map of shared pointer to ensure proper
   // memory management.
-  std::map<
-    SubequationsID,
-    std::shared_ptr<PhysicsSubequationsSolverBase>>
+  std::map<SubequationsID, std::shared_ptr<PhysicsSubequationsSolverBase>>
     subequations;
 
   std::map<SubequationsID, DoFHandler<dim> *> subequations_dof_handler;

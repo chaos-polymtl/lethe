@@ -32,8 +32,7 @@
 #include "subequations_interface.h"
 
 template <int dim>
-class VOFPhaseGradientProjection
-  : public PhysicsLinearSubequationsSolver
+class VOFPhaseGradientProjection : public PhysicsLinearSubequationsSolver
 {
 public:
   /**
