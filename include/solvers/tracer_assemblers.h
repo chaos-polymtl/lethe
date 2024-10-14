@@ -23,12 +23,12 @@ class TracerAssemblerBase
 {
 public:
   /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
+   * @brief Interface for the call to matrix assembly.
+   * @param[in,out] scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
@@ -37,12 +37,12 @@ public:
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
+   * @brief Interface for the call to rhs assembly.
+   * @param[in,out] scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
@@ -72,9 +72,9 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the matrix
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>    &scratch_data,
@@ -82,9 +82,9 @@ public:
 
 
   /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the rhs
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>    &scratch_data,
@@ -114,9 +114,9 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the matrix
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>    &scratch_data,
@@ -124,14 +124,16 @@ public:
 
 
   /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the rhs
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>    &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
+  // The simulation control must be a part of the core assembler since the
+  // inverse time-step is used within the stabilization
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
@@ -155,9 +157,9 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the matrix
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
 
   virtual void
@@ -165,14 +167,15 @@ public:
                   StabilizedMethodsCopyData &copy_data) override;
 
   /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the rhs
+   * @param[in,out] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>    &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
+  // The simulation control is a necessary part of the transient terms.
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
@@ -193,12 +196,12 @@ class TracerFaceAssembler
 {
 public:
   /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief Interface for the call to matrix assembly
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
@@ -207,12 +210,12 @@ public:
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief Interface for the call to rhs
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
@@ -240,12 +243,12 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief Interface for the call to matrix assembly
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
@@ -253,12 +256,12 @@ public:
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief Interface for the call to rhs
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
@@ -290,12 +293,12 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief Interface for the call to matrix assembly
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
   virtual void
   assemble_matrix(TracerScratchData<dim>      &scratch_data,
@@ -303,12 +306,12 @@ public:
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix should
-   * be copied
+   * @brief  Interface for the call to rhs
+   * @param[in,out]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
   virtual void
   assemble_rhs(TracerScratchData<dim>      &scratch_data,
