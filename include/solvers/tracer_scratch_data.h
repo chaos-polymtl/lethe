@@ -427,7 +427,9 @@ public:
   reinit_face_velocity(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const unsigned int                                   &f,
-    const VectorType                                     &velocity_solution)
+    const VectorType                                     &velocity_solution,
+    const Parameters::ALE<dim>                           &ale,
+    std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
   {
     fe_face_values_fd.reinit(velocity_cell, f);
 
@@ -436,6 +438,43 @@ public:
 
     fe_face_values_fd[velocities].get_function_values(velocity_solution,
                                                       face_velocity_values);
+
+
+    // Add the drift velocity to the velocity to account for tracer drift flux
+    // modeling
+    Tensor<1, dim> drift_velocity_tensor;
+    Vector<double> drift_velocity_vector(dim);
+
+    for (unsigned int q = 0; q < face_quadrature_points.size(); ++q)
+      {
+        drift_velocity->vector_value(face_quadrature_points[q],
+                                     drift_velocity_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          drift_velocity_tensor[d] = drift_velocity_vector[d];
+
+        face_velocity_values[q] += drift_velocity_tensor;
+      }
+
+
+    if (!ale.enabled())
+      return;
+
+    // ALE enabled, so extract the ALE velocity and subtract it from the
+    // velocity obtained from the fluid dynamics
+    Tensor<1, dim>                                  velocity_ale;
+    std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+      ale.velocity;
+    Vector<double> velocity_ale_vector(dim);
+
+    for (unsigned int q = 0; q < face_quadrature_points.size(); ++q)
+      {
+        velocity_ale_function->vector_value(face_quadrature_points[q],
+                                            velocity_ale_vector);
+        for (unsigned int d = 0; d < dim; ++d)
+          velocity_ale[d] = velocity_ale_vector[d];
+
+        face_velocity_values[q] -= velocity_ale;
+      }
   }
 
   /** @brief Calculates the physical properties at the internal faces.

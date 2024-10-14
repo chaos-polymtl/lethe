@@ -447,6 +447,11 @@ private:
 
   /**
    * @brief Get the lethe boundary indicator for a given triangulation boundary while carrying the appropriate checks
+   *
+   * @param triangulation_boundary_id The boundary id of the triangulation
+   *
+   * NOTE: This function is a temporary function. It will be deprecated in a
+   * future PR once boundary conditions have been refactored using maps.
    */
   unsigned int
   get_lethe_boundary_index(const types::boundary_id &triangulation_boundary_id)
@@ -468,6 +473,83 @@ private:
 
     return (lethe_boundary_id -
             this->simulation_parameters.boundary_conditions_tracer.id.begin());
+  }
+
+  /**
+   * @brief Helper function to reinit the face velocity with the adequate solution.
+   * This prevents code duplication throughout the tracer. The function looks at
+   * the multiphysics interface to decide if the velocity is a block velocity or
+   * a regular velocity. Furthermore, it also checks if a time-averaged solution
+   * is required. Otherwise the code here would be copied four times.
+   *
+   * @param velocity_cell the iterator to the cell where the velocity is to be reinitialized.
+   *
+   * @param face_no the number of the face where the velocity is to be reinitialized.
+   *
+   * @param scratch_data the scratch data to be used for the reinitialization.
+   */
+  inline void
+  reinit_face_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &face_no,
+    TracerScratchData<dim>                               &scratch_data)
+  {
+    if (multiphysics->fluid_dynamics_is_block())
+      {
+        // Check if the post processed variable needs to be calculated with the
+        // average velocity profile or the fluid solution.
+        if (this->simulation_parameters.initial_condition->type ==
+              Parameters::InitialConditionType::average_velocity_profile &&
+            !this->simulation_parameters.multiphysics.fluid_dynamics &&
+            simulation_control->get_current_time() >
+              this->simulation_parameters.post_processing.initial_time)
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_block_time_average_solution(
+                PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+        else
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+      }
+    else
+      {
+        // Check if the post processed variable needs to be calculated with the
+        // average velocity profile or the fluid solution.
+        if (this->simulation_parameters.initial_condition->type ==
+              Parameters::InitialConditionType::average_velocity_profile &&
+            !this->simulation_parameters.multiphysics.fluid_dynamics &&
+            simulation_control->get_current_time() >
+              this->simulation_parameters.post_processing.initial_time)
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_time_average_solution(
+                PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+        else
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+      }
   }
 
 
