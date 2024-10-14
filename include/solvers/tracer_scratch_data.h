@@ -218,47 +218,6 @@ public:
   }
 
 
-  /** @brief Reinitializes the content of the scratch.
-   *
-   * Using the FeValues and the content of the solutions and previous solutions,
-   * fills all of the class member of the scratch.
-   *
-   * @param[in] cell The cell over which the assembly is being carried.
-   *
-   * @param[in] face The face index associated with the cell
-   *
-   * @param[in] sub_face The subface index associated with the face
-   *
-   * @param[in] ncell The neighboring cell
-   *
-   * @param[in] n_face The face index associated with the neighboring cell
-   *
-   * @param[in] n_sub_face The subface index associated with the neighboring
-   * cell
-   *
-   * @param[in] current_solution The present value of the solution.
-   * there are any).
-   */
-  template <typename VectorType>
-  void
-  reinit_internal_face(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const unsigned int                                   &f,
-    const unsigned int                                   &sf,
-    const typename DoFHandler<dim>::active_cell_iterator &ncell,
-    const unsigned int                                   &nf,
-    const unsigned int                                   &nsf,
-    const VectorType                                     &current_solution)
-  {
-    fe_interface_values_tracer.reinit(cell, f, sf, ncell, nf, nsf);
-    n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
-
-    const double extent1 = cell->measure() / cell->face(f)->measure();
-    const double extent2 = ncell->measure() / ncell->face(nf)->measure();
-
-    penalty_factor =
-      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent2);
-  }
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
    *
@@ -279,13 +238,13 @@ public:
   void
   reinit_velocity(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType                                     &current_solution,
+    const VectorType                                     &velocity_solution,
     const Parameters::ALE<dim>                           &ale,
     std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
   {
     this->fe_values_fd.reinit(cell);
 
-    this->fe_values_fd[velocities].get_function_values(current_solution,
+    this->fe_values_fd[velocities].get_function_values(velocity_solution,
                                                        velocity_values);
 
     // Add the drift velocity to the velocity to account for tracer drift flux
@@ -325,6 +284,114 @@ public:
       }
   }
 
+
+  /** @brief Reinitializes the content of the scratch for the internal faces. This is only used for the DG assemblers.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face The face index associated with the cell
+   *
+   * @param[in] sub_face The subface index associated with the face
+   *
+   * @param[in] ncell The neighboring cell
+   *
+   * @param[in] n_face The face index associated with the neighboring cell
+   *
+   * @param[in] n_sub_face The subface index associated with the neighboring
+   * cell
+   *
+   * @param[in] current_solution The present value of the solution.
+   * there are any).
+   */
+  template <typename VectorType>
+  void
+  reinit_internal_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &f,
+    const unsigned int                                   &sf,
+    const typename DoFHandler<dim>::active_cell_iterator &ncell,
+    const unsigned int                                   &nf,
+    const unsigned int                                   &nsf,
+    const VectorType                                     &current_solution,
+    const Function<dim>                                  *levelset_function)
+  {
+    fe_interface_values_tracer.reinit(cell, f, sf, ncell, nf, nsf);
+    face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
+
+    n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
+
+    const double extent1 = cell->measure() / cell->face(f)->measure();
+    const double extent2 = ncell->measure() / ncell->face(nf)->measure();
+
+    penalty_factor =
+      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent2);
+
+
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        Assert(
+          levelset_function != nullptr,
+          ExcMessage(
+            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+
+        levelset_function->value_list(face_quadrature_points, sdf_face_values);
+      }
+  }
+
+  /** @brief Reinitializes the content of the scratch for the internal faces for the velocity. The velocity is inherently assumed to have been solved using a CG scheme.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face The face index associated with the cell
+   *
+   * @param[in] sub_face The subface index associated with the face
+   *
+   * @param[in] ncell The neighboring cell
+   *
+   * @param[in] n_face The face index associated with the neighboring cell
+   *
+   * @param[in] n_sub_face The subface index associated with the neighboring
+   * cell
+   *
+   * @param[in] current_solution The present value of the solution.
+   * there are any).
+   */
+  template <typename VectorType>
+  void
+  reinit_face_velocity(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &f,
+    const VectorType                                     &velocity_solution)
+  {
+    fe_face_values_fd.reinit(velocity_cell, f);
+
+    // BB note : Array could be pre-allocated
+    face_velocity_values.resize(face_quadrature_points.size());
+
+    fe_face_values_fd[velocities].get_function_values(velocity_solution,
+                                                      face_velocity_values);
+  }
+
+  /** @brief Calculates the physical properties at the internal faces.
+   *
+   */
+  void
+  calculate_face_physical_properties()
+  {
+    const auto diffusivity_model = properties_manager.get_tracer_diffusivity();
+
+    // BB note : Array could be pre-allocated
+    tracer_diffusivity_face.resize(face_quadrature_points.size());
+
+    // If the trace diffusivity depends on the level set, take this into account
+    if (properties_manager.field_is_required(field::levelset))
+      set_field_vector(field::levelset, sdf_face_values, fields);
+
+
+    diffusivity_model->vector_value(fields, tracer_diffusivity_face);
+  }
+
+
   /** @brief Calculates the physical properties. This function calculates the physical properties
    * that may be required by the tracer. Namely the diffusivity.
    *
@@ -352,6 +419,9 @@ public:
   // Quadrature
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
+  std::vector<Point<dim>> face_quadrature_points;
+
+
 
   // Tracer values
   std::vector<double>              tracer_values;
@@ -377,6 +447,8 @@ public:
 
   // Solid signed distance function
   std::vector<double> sdf_values;
+  std::vector<double> sdf_face_values;
+
 
   // Source term
   std::vector<double> source;

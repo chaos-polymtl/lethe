@@ -207,9 +207,17 @@ Tracer<dim>::assemble_system_matrix_dg()
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
       scratch_data.reinit_internal_face(
-        cell, f, sf, ncell, nf, nsf, this->evaluation_point);
+        cell,
+        f,
+        sf,
+        ncell,
+        nf,
+        nsf,
+        this->evaluation_point,
+        this->multiphysics->get_immersed_solid_signed_distance_function());
 
       // Pad copy_data memory for the internal faces elementary matrices
+      // BB note : Array could be pre-allocated
       copy_data.face_data.emplace_back();
       auto &copy_data_face = copy_data.face_data.back();
       copy_data_face.face_matrix.reinit(scratch_data.n_interface_dofs,
@@ -218,37 +226,19 @@ Tracer<dim>::assemble_system_matrix_dg()
         scratch_data.fe_interface_values_tracer.get_interface_dof_indices();
 
       // Gather velocity information at the face to properly advect
-      // First gather the dof handler for the fluid dynamics
-      FEFaceValues<dim>     &fe_face_values_fd = scratch_data.fe_face_values_fd;
       const DoFHandler<dim> *dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
       // Identify the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-      fe_face_values_fd.reinit(velocity_cell, f);
-      const auto &q_points =
-        scratch_data.fe_interface_values_tracer.get_quadrature_points();
-      scratch_data.face_velocity_values.resize(q_points.size());
-      fe_face_values_fd[scratch_data.velocities].get_function_values(
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        scratch_data.face_velocity_values);
+      // Reinit the internal face velocity within the scratch data
+      scratch_data.reinit_face_velocity(velocity_cell,
+                                        f,
+                                        *multiphysics->get_solution(
+                                          PhysicsID::fluid_dynamics));
 
-      auto      &properties_manager = scratch_data.properties_manager;
-      const auto diffusivity_model =
-        properties_manager.get_tracer_diffusivity();
-      scratch_data.tracer_diffusivity_face.resize(q_points.size());
-      if (properties_manager.field_is_required(field::levelset))
-        {
-          scratch_data.sdf_values.resize(q_points.size());
-          this->multiphysics->get_immersed_solid_signed_distance_function()
-            ->value_list(q_points, scratch_data.sdf_values);
-          set_field_vector(field::levelset,
-                           scratch_data.sdf_values,
-                           scratch_data.fields);
-        }
-      diffusivity_model->vector_value(scratch_data.fields,
-                                      scratch_data.tracer_diffusivity_face);
+      scratch_data.calculate_face_physical_properties();
 
       this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
@@ -1097,10 +1087,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
