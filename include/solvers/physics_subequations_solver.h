@@ -15,33 +15,9 @@ enum SubequationsID : unsigned int
   phase_gradient_projection = 0
 };
 
-/**
- * @brief Linear subequations solved inside a physic (or auxiliary physic) that
- * is not part of the main equations set are solved through the
- * PhysicsLinearSubequationsSolver object. It contains all the common elements
- * of a physic solver. It creates the non-linear solver as specified by the user
- * using the parameters file and provides all the necessary elements needed by
- * the solver to solve a physics problem.
- *
- * @tparam dim Number of dimensions of the problem
- *
- * @tparam VectorType Type of vector container used to store solutions
- */
-
-template <int dim, typename VectorType>
-class PhysicsLinearSubequationsSolver
+class PhysicsSubequationsSolverBase
 {
 public:
-  /**
-   * @brief Constructor for physics subequations that require the use of a
-   * linear solver within the span of the physics resolution.
-   *
-   * @param[in] pcout Parallel cout used to print the information.
-   */
-  PhysicsLinearSubequationsSolver(const ConditionalOStream &pcout)
-    : pcout(pcout)
-  {}
-
   /**
    * @brief Set up the DofHandler and the degrees of freedom associated with
    * the equation to solve.
@@ -62,6 +38,43 @@ public:
   assemble_system_rhs() = 0;
 
   /**
+   * @brief Assemble and solve linear system when the equation to solve is
+   * linear without using the non-linear solver interface.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adapatation() for vebosity
+   */
+  virtual void
+  solve(const bool &is_post_mesh_adaptation) = 0;
+};
+
+/**
+ * @brief Linear subequations solved inside a physic (or auxiliary physic) that
+ * is not part of the main equations set are solved through the
+ * PhysicsLinearSubequationsSolver object. It contains all the common elements
+ * of a physic solver. It creates the non-linear solver as specified by the user
+ * using the parameters file and provides all the necessary elements needed by
+ * the solver to solve a physics problem.
+ *
+ * @tparam dim Number of dimensions of the problem
+ *
+ * @tparam VectorType Type of vector container used to store solutions
+ */
+
+class PhysicsLinearSubequationsSolver : public PhysicsSubequationsSolverBase
+{
+public:
+  /**
+   * @brief Constructor for physics subequations that require the use of a
+   * linear solver within the span of the physics resolution.
+   *
+   * @param[in] pcout Parallel cout used to print the information.
+   */
+  PhysicsLinearSubequationsSolver(const ConditionalOStream &pcout)
+    : pcout(pcout)
+  {}
+
+  /**
    * @brief Solve the linear system associated with the equation to solve, when
    * the equation is already linear.
    *
@@ -71,16 +84,6 @@ public:
   virtual void
   solve_linear_system_and_update_solution(
     const bool &is_post_mesh_adaptation = false) = 0;
-
-  /**
-   * @brief Assemble and solve linear system when the equation to solve is
-   * linear without using the non-linear solver interface.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
-   */
-  virtual void
-  solve(const bool &is_post_mesh_adaptation) = 0;
 
 protected:
   ConditionalOStream pcout;
