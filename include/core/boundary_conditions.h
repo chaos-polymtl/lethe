@@ -254,14 +254,12 @@ namespace BoundaryConditions
     prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
     prm.leave_subsection();
 
-    // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "beta",
       "1",
       Patterns::Double(),
       "Penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
 
-    // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "boundary layer thickness",
       "0",
