@@ -33,7 +33,7 @@
 
 template <int dim>
 class VOFPhaseGradientProjection
-  : public PhysicsLinearSubequationsSolver<dim, GlobalVectorType>
+  : public PhysicsLinearSubequationsSolver
 {
 public:
   /**
@@ -65,7 +65,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        &p_triangulation,
     std::shared_ptr<SimulationControl> &p_simulation_control)
-    : PhysicsLinearSubequationsSolver<dim, GlobalVectorType>(p_pcout)
+    : PhysicsLinearSubequationsSolver(p_pcout)
     , subequations(p_subequations)
     , multiphysics(p_multiphysics)
     , simulation_parameters(p_simulation_parameters)

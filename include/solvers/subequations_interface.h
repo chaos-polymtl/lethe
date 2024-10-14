@@ -144,7 +144,7 @@ private:
   // memory management.
   std::map<
     SubequationsID,
-    std::shared_ptr<PhysicsLinearSubequationsSolver<dim, GlobalVectorType>>>
+    std::shared_ptr<PhysicsSubequationsSolverBase>>
     subequations;
 
   std::map<SubequationsID, DoFHandler<dim> *> subequations_dof_handler;
