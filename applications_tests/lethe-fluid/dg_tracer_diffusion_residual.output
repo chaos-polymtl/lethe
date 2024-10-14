@@ -1,0 +1,20 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       16
+   Number of degrees of freedom: 75
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 25
+
+*****************************
+Steady iteration:        1/1
+*****************************
+-------
+Tracer
+-------
+Newton iteration: 0  - Residual:  2.22636
+	alpha =      1 res = 1.008e-15	||dx||_L2 =  2.106	||dx||_Linfty = 1.053
+L2 error velocity: 0
+L2 error tracer: 0.00065151
+cells error_velocity error_pressure 
+   16 0.000000e+00 - 0.000000e+00 - 
+cells  error_tracer  
+   16 6.515100e-04 - 
