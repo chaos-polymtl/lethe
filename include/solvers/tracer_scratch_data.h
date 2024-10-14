@@ -413,7 +413,8 @@ public:
       }
   }
 
-  /** @brief Reinitializes the content of the scratch for the internal faces for the velocity. The velocity is inherently assumed to have been solved using a CG scheme.
+  /** @brief Reinitializes the content of the scratch regarding the velocity for internal/boundary faces.
+   *  The velocity is inherently assumed to have been solved using a CG scheme.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
@@ -477,8 +478,7 @@ public:
       }
   }
 
-  /** @brief Calculates the physical properties at the internal faces.
-   *
+  /** @brief Calculates the physical properties at a face
    */
   void
   calculate_face_physical_properties()
