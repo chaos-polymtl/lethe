@@ -139,14 +139,6 @@ subsection boundary conditions tracer
   end
 end
 
-
-subsection stabilization
-
-set tracer sipg = 0.01
-
-
-end
-
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------

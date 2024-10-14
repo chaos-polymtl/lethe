@@ -19,10 +19,6 @@ subsection FEM
   set tracer uses dg = true
 end
 
-subsection stabilization
-  set tracer sipg = 0.1
-end
-
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
