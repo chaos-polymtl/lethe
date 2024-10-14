@@ -81,6 +81,9 @@ public:
         else
           fe = std::make_shared<FE_Q<dim>>(
             simulation_parameters.fem_parameters.tracer_order);
+        // The mapping must be a minimum of degree 1. This is necessary in the
+        // DG method since DG_Q(0) elements are adequate but a mapping of degree
+        // 0 does not make sense.
         mapping = std::make_shared<MappingQ<dim>>(std::max(int(fe->degree), 1));
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
