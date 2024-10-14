@@ -302,6 +302,10 @@ public:
    *
    * @param[in] current_solution The present value of the solution.
    * there are any).
+   *
+   * @param[in] levelset_function Function used for the calculation of the
+   * level set. This is used for the calculation of the physical properties.
+   * there are any).
    */
   template <typename VectorType>
   void
@@ -338,22 +342,56 @@ public:
       }
   }
 
+
+  /** @brief Reinitializes the content of the scratch for the internal faces. This is only used for the DG assemblers.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   *
+   * @param[in] face The face index associated with the cell
+   *
+   * @param[in] current_solution The present value of the solution.
+   * there are any).
+   *
+   * @param[in] levelset_function Function used for the calculation of the level
+   * set. This is used for the calculation of the physical properties. there are
+   * any).
+   */
+  template <typename VectorType>
+  void
+  reinit_boundary_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &face,
+    const unsigned int                                   &boundary_index,
+    const VectorType                                     &current_solution,
+    const Function<dim>                                  *levelset_function)
+  {
+    fe_interface_values_tracer.reinit(cell, face);
+    face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
+
+    this->boundary_index = boundary_index;
+
+    const double extent1 = cell->measure() / cell->face(face)->measure();
+    this->penalty_factor =
+      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent1);
+
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        Assert(
+          levelset_function != nullptr,
+          ExcMessage(
+            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+
+        levelset_function->value_list(face_quadrature_points, sdf_face_values);
+      }
+  }
+
   /** @brief Reinitializes the content of the scratch for the internal faces for the velocity. The velocity is inherently assumed to have been solved using a CG scheme.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *
    * @param[in] face The face index associated with the cell
    *
-   * @param[in] sub_face The subface index associated with the face
-   *
-   * @param[in] ncell The neighboring cell
-   *
-   * @param[in] n_face The face index associated with the neighboring cell
-   *
-   * @param[in] n_sub_face The subface index associated with the neighboring
-   * cell
-   *
-   * @param[in] current_solution The present value of the solution.
+   * @param[in] velocity_solution The present value of the solution.
    * there are any).
    */
   template <typename VectorType>
