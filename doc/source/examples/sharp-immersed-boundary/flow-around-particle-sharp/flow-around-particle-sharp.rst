@@ -139,7 +139,7 @@ Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 In order to produce a varying Reynolds number, we vary the kinematic viscosity of the fluid. We define the Reynolds number as :math:`Re = \frac{UD}{\nu}` where :math:`U` and :math:`D` are fixed at 1. Therefore, 
-the kinematic viscosity is defined as :math:`nu = \frac{1}{Re}`. The following block defines the viscosity for a Reynolds number of 1.
+the kinematic viscosity is defined as :math:`\nu = \frac{1}{Re}`. The following block defines the viscosity for a Reynolds number of 1:
 
 .. code-block:: text
 
