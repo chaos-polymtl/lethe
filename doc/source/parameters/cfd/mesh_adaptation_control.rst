@@ -40,6 +40,12 @@ This subsection controls the mesh adaptation method, with default values given b
 
     # Number of initial (pre-solve) refinement steps
     set initial refinement steps = 0
+
+    # Fix the boundary mesh size at the initial refinement level when the kelly mesh refinement estimator is used.
+    set fix boundary refinement = false
+
+    # List of boundaries next to which the mesh refinement level should not be modified. The list must contain the boundary ids separated by commas.
+    set boundaries fixed = 0, 1
   end
 
 
@@ -100,3 +106,4 @@ This subsection controls the mesh adaptation method, with default values given b
 
 * The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
+* The ``fix boundary refinement`` parameter is used to fix the boundary mesh size at the defined initial refinement level. ``boundaries fixed`` can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.

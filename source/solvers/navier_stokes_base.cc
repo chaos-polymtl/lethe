@@ -1003,19 +1003,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
       // Remove the flags if the cell is at the boundary and is set as do not
       // touch in the parameter file
-      if (this->simulation_parameters.mesh.is_boundary_refinement_fixed)
+      if (this->simulation_parameters.mesh_adaptation.is_boundary_refinement_fixed)
         for (const auto &cell : tria.active_cell_iterators())
           if (cell->is_locally_owned())
             {
               if (cell->at_boundary())
                 for (const auto &face : cell->face_iterators())
                   {
-                    if (std::find(this->simulation_parameters.mesh
+                    if (std::find(this->simulation_parameters.mesh_adaptation
                                     .boundaries_to_fix.begin(),
-                                  this->simulation_parameters.mesh
+                                  this->simulation_parameters.mesh_adaptation
                                     .boundaries_to_fix.end(),
                                   face->boundary_id()) !=
-                        this->simulation_parameters.mesh.boundaries_to_fix
+                        this->simulation_parameters.mesh_adaptation.boundaries_to_fix
                           .end())
                       {
                         cell->clear_refine_flag();

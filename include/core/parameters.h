@@ -1348,12 +1348,6 @@ namespace Parameters
     /// conditions
     unsigned int initial_refinement_at_boundaries;
 
-    /// Specifies if mesh adaptation can be used on certain boundaries
-    bool is_boundary_refinement_fixed;
-
-    /// List of boundary ids to fix to their initial refinement state
-    std::vector<int> boundaries_to_fix;
-
     /// List of boundary ids to refine
     std::vector<int> boundaries_to_refine;
 
@@ -1455,6 +1449,12 @@ namespace Parameters
     // Enable the control of the mesh refinement to target a specific number of
     // elements equal to the maximum number of elements.
     bool mesh_controller_is_enabled;
+
+    // Specifies if mesh adaptation can be used on certain boundaries
+    bool is_boundary_refinement_fixed;
+
+    // List of boundary ids to fix to their initial refinement state
+    std::vector<int> boundaries_to_fix;
 
     static void
     declare_parameters(ParameterHandler &prm);
