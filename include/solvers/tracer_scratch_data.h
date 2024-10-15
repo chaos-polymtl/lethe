@@ -301,7 +301,7 @@ public:
    * cell
    *
    * @param[in] current_solution The present value of the solution.
-   * there are any).
+   * (if there are any).
    *
    * @param[in] levelset_function Function used for the calculation of the
    * level set. This is used for the calculation of the physical properties.
