@@ -23,8 +23,8 @@ find_particle_contact_detection_step(
   if (action_manager->check_contact_search())
     return;
 
-  double max_displacement       = 0.;
-  bool   contact_detection_step = false;
+  double max_displacement_square = 0.;
+  bool   contact_detection_step  = false;
 
   // Updating displacement
   for (auto &particle : particle_handler)
@@ -47,13 +47,15 @@ find_particle_contact_detection_step(
 
 
       // Updating maximum displacement of particles
-      max_displacement =
-        std::max(max_displacement, particle_displacement.norm());
+      max_displacement_square =
+        std::max(max_displacement_square, particle_displacement.norm_square());
     }
 
   // If the maximum displacement of particles exceeds criterion, this step
   // is a contact detection step
-  contact_detection_step = max_displacement > smallest_contact_search_criterion;
+  contact_detection_step =
+    max_displacement_square >
+    Utilities::fixed_power<2>(smallest_contact_search_criterion);
 
   // Broadcasting contact detection step value to other processors
   if (parallel_update)
