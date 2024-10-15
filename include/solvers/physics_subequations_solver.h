@@ -16,6 +16,12 @@ enum SubequationsID : unsigned int
   phase_gradient_projection = 0
 };
 
+/**
+ * @brief Base class to solve subequations solved inside a physics (or auxiliary
+ * physics) that is not part of the main equations set. It contains all the
+ * common elements of a subequation solver and provides all the necessary
+ * elements needed by additional subsets of equations.
+ */
 class PhysicsSubequationsSolverBase
 {
 public:
@@ -52,10 +58,7 @@ public:
 /**
  * @brief Linear subequations solved inside a physic (or auxiliary physic) that
  * is not part of the main equations set are solved through the
- * PhysicsLinearSubequationsSolver object. It contains all the common elements
- * of a physic solver. It creates the non-linear solver as specified by the user
- * using the parameters file and provides all the necessary elements needed by
- * the solver to solve a physics problem.
+ * PhysicsLinearSubequationsSolver object.
  *
  * @tparam dim Number of dimensions of the problem
  *
