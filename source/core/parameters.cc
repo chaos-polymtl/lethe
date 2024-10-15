@@ -2941,7 +2941,7 @@ namespace Parameters
                         "",
                         Patterns::List(Patterns::Integer()),
                         "Boundary ids of the boundaries to be fixed");
-      }
+    }
     prm.leave_subsection();
   }
 
@@ -3012,14 +3012,15 @@ namespace Parameters
         fractionType = FractionType::number;
       if (fop == "fraction")
         fractionType = FractionType::fraction;
-      maximum_number_elements    = prm.get_integer("max number elements");
-      maximum_refinement_level   = prm.get_integer("max refinement level");
-      minimum_refinement_level   = prm.get_integer("min refinement level");
-      frequency                  = prm.get_integer("frequency");
-      refinement_at_frequency    = frequency != 0;
-      mesh_controller_is_enabled = prm.get_bool("mesh refinement controller");
+      maximum_number_elements      = prm.get_integer("max number elements");
+      maximum_refinement_level     = prm.get_integer("max refinement level");
+      minimum_refinement_level     = prm.get_integer("min refinement level");
+      frequency                    = prm.get_integer("frequency");
+      refinement_at_frequency      = frequency != 0;
+      mesh_controller_is_enabled   = prm.get_bool("mesh refinement controller");
       is_boundary_refinement_fixed = prm.get_bool("fix boundary refinement");
-      boundaries_to_fix = convert_string_to_vector<int>(prm, "boundaries fixed");
+      boundaries_to_fix =
+        convert_string_to_vector<int>(prm, "boundaries fixed");
     }
     prm.leave_subsection();
   }
