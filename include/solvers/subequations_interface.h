@@ -23,8 +23,8 @@ class SubequationsInterface
 {
 public:
   /**
-   * @brief Constructor of an interface subequations that require the use of a
-   * linear solver within the span of the physics resolution.
+   * @brief Constructor of an interface for subequations that require the use of
+   * a solver within the span of the physics resolution.
    *
    * @param[in] sim_param Simulation parameters.
    *
