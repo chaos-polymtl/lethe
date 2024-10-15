@@ -17,6 +17,8 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_refinement.h>
+#include <deal.II/numerics/error_estimator.h>
+
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -38,6 +40,7 @@
 
 #include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/solution_transfer.h>
 
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/data_out_base.h>
@@ -424,7 +427,7 @@ private:
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration);
   
-  void refine_grid();
+  void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
   void output_results(const int time_iteration) const;
   
   parallel::distributed::Triangulation<dim> triangulation;
@@ -499,12 +502,15 @@ AdvectionProblem<dim>::AdvectionProblem()
   , dt(0.5/300.0)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
-{}
+{
+  fe_collection.push_back(FE_Q<dim>(1));
+  
+}
   
 template <int dim>
 void AdvectionProblem<dim>::setup_system()
 {
-  fe_collection.push_back(FE_Q<dim>(1));
+  // fe_collection.push_back(FE_Q<dim>(1));
       // fe_collection.push_back(FE_Nothing<dim>());
   
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -516,36 +522,29 @@ void AdvectionProblem<dim>::setup_system()
       cell->set_active_fe_index(ActiveFEIndex::lagrange);
     }
         
-  pcout << "boop 0" << std::endl;
   dof_handler.distribute_dofs(fe_collection);
-  
-  pcout << "boop 1" << std::endl;
   
   locally_owned_dofs    = dof_handler.locally_owned_dofs();
   n_locally_owned_dofs    = dof_handler.n_locally_owned_dofs();
-  
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
-  
   locally_active_dofs = DoFTools::extract_locally_active_dofs(dof_handler);
-  
-  
-  pcout << "boop 2" << std::endl;
   
   locally_relevant_solution.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
   previous_solution.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
+  
   level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, mpi_communicator);
+  
   signed_distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
   distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
   distance_with_ghost.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
-  
   
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
                      
   constraints.clear();
   constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
-  // DoFTools::make_hanging_node_constraints(dof_handler,
-                                          // constraints);
+  DoFTools::make_hanging_node_constraints(dof_handler,
+                                          constraints);
   constraints.close();
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -754,6 +753,50 @@ void AdvectionProblem<dim>::solve()
 
 template <int dim>
 void 
+AdvectionProblem<dim>::refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level)
+{
+  Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+  
+  KellyErrorEstimator<dim>::estimate(mapping, dof_handler,
+                                         QGauss<dim-1>(fe.degree+1),
+                                         typename std::map<types::boundary_id, const Function<dim, double> *>(),
+                                         locally_relevant_solution,
+                                         estimated_error_per_cell);
+                                         
+  parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(triangulation,
+                                                        estimated_error_per_cell,
+                                                        0.99,
+                                                        0.01);         
+  if (triangulation.n_levels() > max_grid_level)
+    for (auto &cell :
+         triangulation.active_cell_iterators_on_level(max_grid_level))
+      cell->clear_refine_flag();
+  for (auto &cell :
+       triangulation.active_cell_iterators_on_level(min_grid_level))
+    cell->clear_coarsen_flag();
+    
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_trans(dof_handler);
+  
+  triangulation.prepare_coarsening_and_refinement();
+  
+  solution_trans.prepare_for_coarsening_and_refinement(locally_relevant_solution);
+  
+  triangulation.execute_coarsening_and_refinement();
+  
+  setup_system();
+  
+  VectorType tmp_solution(this->locally_owned_dofs, mpi_communicator);
+  
+  solution_trans.interpolate(tmp_solution);
+  
+  constraints.distribute(tmp_solution);
+  
+  locally_relevant_solution = tmp_solution;
+  
+}
+
+template <int dim>
+void 
 AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
 {
   VectorType level_set_owned(this->locally_owned_dofs,
@@ -939,7 +982,11 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   distance.zero_out_ghost_values();    
 
   // Copy the ghost values back in distance (zero_out_ghost_values() puts zeros in ghost DOFs)
-  distance = distance_with_ghost;
+  // distance = distance_with_ghost;
+  for (auto p : this->locally_active_dofs)
+  {
+    distance(p) = distance_with_ghost(p);
+  }
 
   unsigned int n_opposite_faces_per_dofs = dim;
   
@@ -1103,7 +1150,11 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
     distance.zero_out_ghost_values();  
     
     // Copy the ghost values back in distance (zero_out_ghost_values() puts zeros in ghost DOFs)
-    distance = distance_with_ghost;
+    // distance = distance_with_ghost;
+    for (auto p : this->locally_active_dofs)
+    {
+      distance(p) = distance_with_ghost(p);
+    }
     
     change = Utilities::MPI::logical_or(change, mpi_communicator);
     
@@ -1176,7 +1227,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(8);
+  triangulation.refine_global(6);
             
   pcout << "Setup system" << std::endl;
   setup_system();
@@ -1185,11 +1236,16 @@ void AdvectionProblem<dim>::run()
   unsigned int it = 0;
   double final_time = 2.0;
   
-  compute_level_set_from_phase_fraction();
-  mesh_classifier.reclassify();
-  compute_sign_distance(it);
+  // compute_level_set_from_phase_fraction();
+  // mesh_classifier.reclassify();
+  // compute_sign_distance(it);
 
   output_results(it);
+  
+  refine_grid(8,6);
+  refine_grid(8,6);
+  
+  set_initial_conditions();
   
   pcout << "Solve system" << std::endl;
   while (time < final_time) 
@@ -1203,13 +1259,15 @@ void AdvectionProblem<dim>::run()
 
     solve();
     
-    compute_level_set_from_phase_fraction();
-    mesh_classifier.reclassify();
-    compute_sign_distance(it);
+    // compute_level_set_from_phase_fraction();
+    // mesh_classifier.reclassify();
+    // compute_sign_distance(it);
     
     output_results(it);
     
-    compute_phase_fraction_from_level_set();
+    refine_grid(8,6);
+    
+    // compute_phase_fraction_from_level_set();
     previous_solution = locally_relevant_solution;
   } 
 }
