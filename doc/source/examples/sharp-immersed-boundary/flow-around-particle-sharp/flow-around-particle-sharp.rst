@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid-sharp`` (with Q1-Q1) 
 - Steady-state problem
-- Non-spherical particle in resolved flow
+- Static non-spherical particle
 - Force calculation validation
 
 ---------------------------
