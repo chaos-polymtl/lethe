@@ -9,7 +9,7 @@ Flow around a Finite Cylindrical Particle Using the Sharp Interface Method
 Features
 ----------------------------------
 
-- Solvers: ``lethe-fluid-sharp`` (with Q1-Q1) 
+- Solver: ``lethe-fluid-sharp`` (with Q1-Q1) 
 - Steady-state problem
 - Non-spherical particle in resolved flow
 - Force calculation validation
