@@ -205,7 +205,7 @@ Different parameters for the main components of the two geometric multigrid algo
 .. code-block:: text
 
     # General MG parameters
-    set mg verbosity                   = quiet
+    set mg verbosity                   = verbose
     set mg min level                   = -1
     set mg level min cells             = -1
     set mg int level                   = -1
@@ -220,10 +220,10 @@ Different parameters for the main components of the two geometric multigrid algo
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 10
     set eig estimation cg n iterations = 10
-    set eig estimation verbosity       = quiet
+    set eig estimation verbosity       = verbose
 
     # Coarse-grid solver parameters
-    set mg coarse grid solver          = gmres
+    set mg coarse grid solver          = direct
     set mg coarse grid use fe q iso q1 = false
 
     # Parameters for GMRES as coarse grid solver
