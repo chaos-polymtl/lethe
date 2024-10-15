@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output frequency  = 0
+  set number mesh adapt = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1 : true
+  set initial refinement = 4
+  
+  set fix boundary refinement = true
+  set boundaries fixed        = 0,1,2,3
+
+end
+
+#---------------------------------------------------
+# Mesh adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = velocity
+  set frequency                = 1
+end
+
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  
+  subsection bc 0
+    set id   = 0
+    set type = function
+
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-9
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+end
