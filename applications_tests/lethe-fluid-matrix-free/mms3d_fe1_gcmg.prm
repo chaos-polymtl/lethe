@@ -118,9 +118,7 @@ subsection linear solver
     set verbosity         = quiet
 
     #MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = -1
-    set mg level min cells = -1
+    set mg verbosity = quiet
 
     #smoother
     set mg smoother iterations = 10

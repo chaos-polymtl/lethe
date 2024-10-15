@@ -46,7 +46,7 @@ end
 
 subsection forces
   set verbosity        = quiet # Output force and torques in log <quiet|verbose>
-  set calculate torque = false  # Enable torque calculation
+  set calculate torque = false # Enable torque calculation
 end
 
 #---------------------------------------------------
@@ -140,9 +140,7 @@ subsection linear solver
     set verbosity         = quiet
 
     # MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = 0
-    set mg level min cells = -1
+    set mg verbosity = quiet
 
     # Smoother
     set mg smoother iterations     = 10

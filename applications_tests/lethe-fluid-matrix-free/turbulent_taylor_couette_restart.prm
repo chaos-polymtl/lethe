@@ -150,7 +150,6 @@ subsection linear solver
 
     # MG parameters
     set mg verbosity       = quiet
-    set mg min level       = -1
     set mg level min cells = 16
 
     # Smoother
