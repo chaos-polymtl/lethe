@@ -97,7 +97,7 @@ and oriented perpendicularly to the flow. The ``local mesh refinement`` is set t
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-We define the boundary conditions similarly to :doc:`../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere` although, in our case, we won't need a boundary condition defined on the particle as the sharp immersed boundary method will take care of it.à
+We define the boundary conditions similarly to the :doc:`../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere` example although, in our case, we won't need a boundary condition defined on the particle as the sharp immersed boundary method will take care of it.
 The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and an outlet on the right of the domain. 
 
 .. code-block:: text
