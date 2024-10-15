@@ -183,7 +183,7 @@ Pressure:
     :alt: Pressure field around the particle
     :align: center
 
-The drag coefficient is calculated for each Reynolds number using the following formula:
+The drag coefficient :math:`C_d` is:
 
 .. math::
 
