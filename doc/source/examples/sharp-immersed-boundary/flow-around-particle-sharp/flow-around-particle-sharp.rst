@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 ------------------------
 
-This example showcases the use of sharp immersed boundary conditions to model geometries of non-spherical shapes in flow, in this case a cylindrical particle perpendicular to the flow. 
+This example showcases the use of sharp immersed boundary conditions to simulate flow around non-spherical objects, in this case a cylindrical particle perpendicular to the flow. 
 This example focuses on small cylindrical particles (:math:`Ar = L/D = 2`) at low Reynolds numbers ranging from 0.1 to 1. To validate the simulation results, the derived drag coefficient is 
 compared to the expected results from the literature. 
 
