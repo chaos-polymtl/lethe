@@ -192,7 +192,7 @@ The drag coefficient :math:`C_d` is:
 Where :math:`F_d` is the drag force, :math:`\rho` is the fluid density, :math:`U` is the velocity, and :math:`D` is the diameter of the particle. The drag force is calculated as the force applied 
 on the particle in the flow direction, in this case using :math:`f_x` from the output.
 
-The following graph shows the drag coefficient as a function of the Reynolds number. The results are compared to the litterature values for a perpendicular cylinder with an aspect ratio of 2.
+The following graph shows the drag coefficient as a function of the Reynolds number. The results are compared to the literature values for a perpendicular cylinder with an aspect ratio of 2.
 
 .. image:: images/flow-around-particle-sharp-pressure.png
     :alt: Drag coefficient as a function of Reynolds number
