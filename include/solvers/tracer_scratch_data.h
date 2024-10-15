@@ -262,7 +262,6 @@ public:
         velocity_values[q] += drift_velocity_tensor;
       }
 
-
     if (!ale.enabled())
       return;
 
@@ -301,34 +300,36 @@ public:
    * cell
    *
    * @param[in] current_solution The present value of the solution.
-   * (if there are any).
    *
    * @param[in] levelset_function Function used for the calculation of the
    * level set. This is used for the calculation of the physical properties.
-   * there are any).
+   * (if there are any).
    */
   template <typename VectorType>
   void
   reinit_internal_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
-    const unsigned int                                   &sf,
+    const unsigned int                                   &sub_face_no,
     const typename DoFHandler<dim>::active_cell_iterator &ncell,
-    const unsigned int                                   &nf,
-    const unsigned int                                   &nsf,
+    const unsigned int                                   &neigh_face_no,
+    const unsigned int                                   &neigh_sub_face_no,
     const VectorType                                     &current_solution,
     const Function<dim>                                  *levelset_function)
   {
-    fe_interface_values_tracer.reinit(cell, face_no, sf, ncell, nf, nsf);
+    fe_interface_values_tracer.reinit(
+      cell, face_no, sub_face_no, ncell, neigh_face_no, neigh_sub_face_no);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
 
     n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
 
-    const double extent1 = cell->measure() / cell->face(face_no)->measure();
-    const double extent2 = ncell->measure() / ncell->face(nf)->measure();
+    const double extent_here = cell->measure() / cell->face(face_no)->measure();
+    const double extent_there =
+      ncell->measure() / ncell->face(neigh_face_no)->measure();
 
-    penalty_factor =
-      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent2);
+    penalty_factor = get_penalty_factor(fe_values_tracer.get_fe().degree,
+                                        extent_here,
+                                        extent_there);
 
 
     // BB TODO : Preallocate memory here
@@ -336,7 +337,6 @@ public:
     values_there.resize(face_quadrature_points.size());
     tracer_value_jump.resize(face_quadrature_points.size());
     tracer_average_gradient.resize(face_quadrature_points.size());
-
 
     fe_interface_values_tracer.get_fe_face_values(0).get_function_values(
       current_solution, values_here);
@@ -348,7 +348,6 @@ public:
 
     fe_interface_values_tracer.get_average_of_function_gradients(
       current_solution, tracer_average_gradient);
-
 
     if (properties_manager.field_is_required(field::levelset))
       {
@@ -379,12 +378,12 @@ public:
   void
   reinit_boundary_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const unsigned int                                   &face,
+    const unsigned int                                   &face_no,
     const unsigned int                                   &boundary_index,
     const VectorType                                     &current_solution,
     const Function<dim>                                  *levelset_function)
   {
-    fe_interface_values_tracer.reinit(cell, face);
+    fe_interface_values_tracer.reinit(cell, face_no);
     const FEFaceValuesBase<dim> &fe_face =
       fe_interface_values_tracer.get_fe_face_values(0);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
@@ -398,9 +397,10 @@ public:
 
     this->boundary_index = boundary_index;
 
-    const double extent1 = cell->measure() / cell->face(face)->measure();
-    this->penalty_factor =
-      get_penalty_factor(fe_values_tracer.get_fe().degree, extent1, extent1);
+    const double extent_here = cell->measure() / cell->face(face_no)->measure();
+    this->penalty_factor = get_penalty_factor(fe_values_tracer.get_fe().degree,
+                                              extent_here,
+                                              extent_here);
 
     if (properties_manager.field_is_required(field::levelset))
       {
@@ -427,12 +427,12 @@ public:
   void
   reinit_face_velocity(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const unsigned int                                   &f,
+    const unsigned int                                   &face_no,
     const VectorType                                     &velocity_solution,
     const Parameters::ALE<dim>                           &ale,
     std::shared_ptr<Functions::ParsedFunction<dim>>       drift_velocity)
   {
-    fe_face_values_fd.reinit(velocity_cell, f);
+    fe_face_values_fd.reinit(velocity_cell, face_no);
 
     // BB note : Array could be pre-allocated
     face_velocity_values.resize(face_quadrature_points.size());
