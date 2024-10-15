@@ -163,7 +163,6 @@ With the Reynolds number ranging from 0.1 to 1, the simulation can be solved in 
         set output name       = out
         set output control    = iteration
         set output frequency  = 1
-        set subdivision       = 1
     end
 
 ---------------
