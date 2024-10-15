@@ -152,8 +152,7 @@ the kinematic viscosity is defined as :math:`\nu = \frac{1}{Re}`. The following 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~
 
-With the Reynolds number ranging from 0.1 to 1, the simulation can easily be solved by using a steady-state solver. The mesh is sufficiently refined to capture the flow around the particle and therefore doesn't 
-require any mesh adaptation.
+With the Reynolds number ranging from 0.1 to 1, the simulation can be solved in steady-state. 
 
 .. code-block:: text
 
