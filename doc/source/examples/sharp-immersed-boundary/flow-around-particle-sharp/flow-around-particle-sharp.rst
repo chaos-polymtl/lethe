@@ -169,7 +169,7 @@ With the Reynolds number ranging from 0.1 to 1, the simulation can be solved in 
 Results
 ---------------
 
-The simulation of this case results in the following solution for the velocity and pressure field.
+We obtain the following solution for the velocity and pressure:
 
 Velocity:
  
