@@ -40,7 +40,7 @@ Mesh
 ~~~~
 
 The geometry, as shown in the previous figure, is fully defined by the particle's geometry. The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L` with :math:`L = 2`. 
-We then make use of a ``box refinement`` to refine the mesh around the particle and properly evaluate the flow field and the wake with elements of size :math:`0.25D \times 0.25D \times 0.25D` with :math:`D = 1`.
+We then make use of a ``box refinement`` to refine the mesh around the particle and properly evaluate the velocity field with elements of size :math:`0.25D \times 0.25D \times 0.25D` with :math:`D = 1`.
 
 .. code-block:: text 
 
