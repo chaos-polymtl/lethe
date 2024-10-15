@@ -219,7 +219,6 @@ Tracer<dim>::assemble_system_matrix_dg()
       this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
 
-
   const auto copier = [&](const StabilizedDGMethodsCopyData &c) {
     this->copy_local_matrix_to_global_matrix(c);
 
@@ -350,8 +349,6 @@ Tracer<dim>::copy_local_matrix_to_global_matrix(
                                               copy_data.local_dof_indices,
                                               system_matrix);
 }
-
-
 
 template <int dim>
 void
@@ -624,8 +621,6 @@ Tracer<dim>::assemble_local_system_rhs(
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
-
-
 
 template <int dim>
 void

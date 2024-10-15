@@ -24,7 +24,8 @@ namespace BoundaryConditions
   {
     // common
     none,
-    outlet, // outlet is also used fluid, tracer and eventually other physics
+    outlet, // outlet is used for fluid dynamics, tracer and eventually other
+            // physics
 
     // for fluid
     noslip,

@@ -273,7 +273,7 @@ public:
 /**
  * @brief Assembles Nitsche's method for boundary faces.
  * This assembler is only required when solving the Tracer equation using a
- * discontinuous Galerkin discretization since then the boundary conditions have
+ * discontinuous Galerkin discretization since the boundary conditions have
  * to be weakly imposed.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
