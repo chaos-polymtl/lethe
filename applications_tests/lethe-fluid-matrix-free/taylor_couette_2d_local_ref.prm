@@ -152,15 +152,5 @@ subsection linear solver
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 10
     set eig estimation verbosity       = quiet
-
-    # Coarse-grid solver
-    set mg gmres max iterations         = 50
-    set mg gmres tolerance              = 1e-7
-    set mg gmres reduce                 = 1e-4
-    set mg gmres max krylov vectors     = 50
-    set mg gmres preconditioner         = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
   end
 end

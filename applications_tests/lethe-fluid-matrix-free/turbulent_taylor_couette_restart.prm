@@ -161,8 +161,5 @@ subsection linear solver
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 20
     set eig estimation verbosity       = quiet
-
-    # Coarse-grid solver
-    set mg coarse grid solver = direct
   end
 end
