@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## [Master] - 2024-10-16
+
+### Changed
+
+- MINOR Change default coarse grid solver to a direct solver for the geometric multigrid preconditioner in the matrix application. [#1322](https://github.com/chaos-polymtl/lethe/pull/1322)
+
 ## [Master] - 2024-10-15
 
 ### Added
