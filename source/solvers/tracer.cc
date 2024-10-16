@@ -184,7 +184,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         cell,
         face_no,
         sub_face_no,
-        ncell,
+        neigh_cell,
         neigh_face_no,
         neigh_sub_face_no,
         this->evaluation_point,
@@ -998,10 +998,10 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                            normal_vector_tracer) *
                         fe_face_values_tracer.JxW(q);
                     } // end loop on quadrature points
-                }     // end face is a boundary face
-            }         // end loop on faces
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end face is a boundary face
+            } // end loop on faces
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
