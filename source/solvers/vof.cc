@@ -1,24 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/bdf.h>
-#include <core/time_integration_utilities.h>
-
 #include <solvers/vof.h>
 
-#include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
-
-#include <deal.II/fe/mapping.h>
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_control.h>
-#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 #include <cmath>
 

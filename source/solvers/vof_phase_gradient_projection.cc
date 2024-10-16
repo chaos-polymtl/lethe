@@ -4,6 +4,7 @@
 #include <solvers/vof_phase_gradient_projection.h>
 
 #include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
 template <int dim>
