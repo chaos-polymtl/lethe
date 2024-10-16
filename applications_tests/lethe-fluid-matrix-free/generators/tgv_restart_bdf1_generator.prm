@@ -14,9 +14,9 @@ subsection simulation control
   set method            = bdf1
   set time step         = 0.01 # Time step
   set number mesh adapt = 0    # If steady, nb mesh adaptation
-  set time end          = 1.00 # End time of simulation
+  set time end          = 0.5  # End time of simulation
   set output frequency  = 0    # Frequency of simulation output
-  set output path       = ../
+  set output path       = ./output/
 end
 
 #---------------------------------------------------
@@ -76,10 +76,10 @@ end
 #--------------------------------------------------
 
 subsection restart
-  set checkpoint = false
+  set checkpoint = true
   set filename   = restart
   set frequency  = 1
-  set restart    = true
+  set restart    = false
 end
 
 #---------------------------------------------------
