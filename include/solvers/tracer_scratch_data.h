@@ -292,11 +292,11 @@ public:
    *
    * @param[in] sub_face_no The subface index associated with the face
    *
-   * @param[in] ncell The neighboring cell
+   * @param[in] neigh_cell The neighboring cell
    *
-   * @param[in] n_face_no The face index associated with the neighboring cell
+   * @param[in] neigh_face_no The face index associated with the neighboring cell
    *
-   * @param[in] n_sub_face_no The subface index associated with the neighboring
+   * @param[in] neigh_sub_face_no The subface index associated with the neighboring
    * cell
    *
    * @param[in] current_solution The present value of the solution.
