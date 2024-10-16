@@ -361,7 +361,7 @@ public:
   }
 
 
-  /** @brief Reinitializes the content of the scratch for the internal faces. This is only used for the DG assemblers.
+  /** @brief Reinitializes the content of the scratch for the boundary faces. This is only used for the DG assemblers.
    *
    * @param[in] cell The cell over which the assembly is being carried.
    *

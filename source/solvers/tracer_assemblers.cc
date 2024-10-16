@@ -523,8 +523,8 @@ TracerAssemblerSIPG<dim>::assemble_rhs(
             {
               copy_data_face.face_rhs(i) -=
                 fe_iv.jump_in_shape_values(i, q) // [\phi_i]
-                * scratch_data.values_here[q]    // \phi^{upwind}
-                * velocity_dot_n                 // (\beta .n)
+                * scratch_data.values_here[q]    // \phi_i^{upwind}
+                * velocity_dot_n                 // (\beta . n)
                 * JxW[q];                        // dx
             }
           else
@@ -532,7 +532,7 @@ TracerAssemblerSIPG<dim>::assemble_rhs(
               copy_data_face.face_rhs(i) -=
                 fe_iv.jump_in_shape_values(i, q) // [\phi_i]
                 * scratch_data.values_there[q]   // \phi_i^{upwind}
-                * velocity_dot_n                 // (\beta .n)
+                * velocity_dot_n                 // (\beta . n)
                 * JxW[q];                        // dx
             }
 
