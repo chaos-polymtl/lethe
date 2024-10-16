@@ -2602,7 +2602,7 @@ namespace Parameters
                           "Choices are <quiet|verbose>.");
 
         prm.declare_entry("mg coarse grid solver",
-                          "gmres",
+                          "direct",
                           Patterns::Selection("gmres|amg|ilu|direct"),
                           "The coarse grid solver for lsmg or gcmg"
                           "Choices are <gmres|amg|ilu|direct>.");

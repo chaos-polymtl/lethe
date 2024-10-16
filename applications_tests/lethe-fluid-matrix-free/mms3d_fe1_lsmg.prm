@@ -118,29 +118,6 @@ subsection linear solver
     set verbosity         = quiet
 
     #MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = -1
-    set mg level min cells = -1
-
-    #smoother
-    set mg smoother iterations = 10
-    set mg smoother relaxation = 0.5
-
-    #coarse-grid solver
-    set mg gmres max iterations     = 2000
-    set mg gmres tolerance          = 1e-14
-    set mg gmres reduce             = 1e-4
-    set mg gmres max krylov vectors = 30
-    set mg gmres preconditioner     = amg
-
-    #coarse-grid AMG preconditioner
-    set amg aggregation threshold                 = 1e-14
-    set amg n cycles                              = 1
-    set amg w cycles                              = false
-    set amg smoother sweeps                       = 2
-    set amg smoother overlap                      = 1
-    set amg preconditioner ilu fill               = 1
-    set amg preconditioner ilu absolute tolerance = 1e-10
-    set amg preconditioner ilu relative tolerance = 1.00
+    set mg verbosity = quiet
   end
 end

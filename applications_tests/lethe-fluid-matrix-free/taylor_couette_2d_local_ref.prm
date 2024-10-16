@@ -46,7 +46,7 @@ end
 
 subsection forces
   set verbosity        = quiet # Output force and torques in log <quiet|verbose>
-  set calculate torque = false  # Enable torque calculation
+  set calculate torque = false # Enable torque calculation
 end
 
 #---------------------------------------------------
@@ -140,9 +140,7 @@ subsection linear solver
     set verbosity         = quiet
 
     # MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = 0
-    set mg level min cells = -1
+    set mg verbosity = quiet
 
     # Smoother
     set mg smoother iterations     = 10
@@ -152,15 +150,5 @@ subsection linear solver
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 10
     set eig estimation verbosity       = quiet
-
-    # Coarse-grid solver
-    set mg gmres max iterations         = 50
-    set mg gmres tolerance              = 1e-7
-    set mg gmres reduce                 = 1e-4
-    set mg gmres max krylov vectors     = 50
-    set mg gmres preconditioner         = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
   end
 end
