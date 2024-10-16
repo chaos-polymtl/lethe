@@ -426,7 +426,7 @@ private:
 
 
   /**
-   * @brief Get the Lethe boundary indicator for a given triangulation boundary while 
+   * @brief Get the Lethe boundary indicator for a given triangulation boundary while
    * carrying the appropriate checks.
    *
    * @param[in] triangulation_boundary_id The boundary id of the triangulation
