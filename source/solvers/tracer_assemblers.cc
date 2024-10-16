@@ -584,8 +584,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
                       fe_face.shape_value(j, point) * velocity_dot_n *
                       JxW[point];
                 }
-             else if (boundary_conditions_tracer.type[boundary_index] ==
-                  BoundaryConditions::BoundaryType::tracer_dirichlet)
+              else if (boundary_conditions_tracer.type[boundary_index] ==
+                       BoundaryConditions::BoundaryType::tracer_dirichlet)
                 {
                   if (velocity_dot_n > 0)
                     copy_data.local_matrix(i, j) +=
