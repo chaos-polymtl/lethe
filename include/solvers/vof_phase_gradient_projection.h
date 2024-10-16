@@ -30,9 +30,7 @@ public:
   /**
    * @brief Constructor for the L2 projection of the VOF phase fraction gradient
    * (pfg)
-   *
-   * @param[in] p_pcout Parallel cout used to print the information.
-   *
+   *   *
    * @param[in,out] p_subequations Subequations interface object used to get
    * information from other subequations and store information from the current
    * one.
@@ -47,15 +45,17 @@ public:
    * @param[in] p_simulation_control Object responsible for the control of
    * steady-state and transient simulations. Contains all the information
    * related to time stepping and the stopping criteria.
+   *
+   * @param[in] p_pcout Parallel cout used to print the information.
    */
   VOFPhaseGradientProjection(
-    const ConditionalOStream        &p_pcout,
     SubequationsInterface<dim>      *p_subequations,
     MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        &p_triangulation,
-    std::shared_ptr<SimulationControl> &p_simulation_control)
+    std::shared_ptr<SimulationControl> &p_simulation_control,
+    const ConditionalOStream           &p_pcout)
     : PhysicsLinearSubequationsSolver(p_pcout)
     , subequations(p_subequations)
     , multiphysics(p_multiphysics)

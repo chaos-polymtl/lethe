@@ -316,9 +316,9 @@ public:
  * @brief Store the information required by the assembly procedure
  * for a VOF phase gradient projection in the L2 space.
  * Computes the phase gradient values and gradients and the shape
- * method values and gradients at all the gauss points for all
- * degrees of freedom and stores it into arrays.
- * Serves as a link between the evaluation at the gauss point
+ * function values and gradients at all the quadrature points for all
+ * degrees of freedom of a given cell and stores it into arrays.
+ * Serves as a link between the evaluation at the quadrature point
  * of the variables of interest and their use in the assembly.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
@@ -394,13 +394,11 @@ public:
   allocate();
 
   /**
-   * @brief Reinitialize the content of the
-   * VOFPhaseGradientProjectionScratchData object for a given cell using
-   * FeValues and contents of the current solution array.
+   * @brief Reinitialize the content of the object for a given cell.
    *
    * @tparam VectorType Vector type used for the solvers.
    *
-   * @param[in] cell Cell over which the assembly is carried out.
+   * @param[in] cell Cell over which the reinitialization is carried out.
    *
    * @param[in] current_solution Present value of the solution for the
    * reinitialized phase fraction.
@@ -479,10 +477,10 @@ public:
   double                     cell_size;
   FEValuesExtractors::Vector phase_fraction_gradients;
 
-  // Quadrature
+  // Jacobi determinant times the quadrature weights
   std::vector<double> JxW;
 
-  // Phase gradient projection values
+  // Phase gradient projection values and gradients
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values;
   std::vector<Tensor<2, dim>> present_phase_gradient_projection_gradients;
 
