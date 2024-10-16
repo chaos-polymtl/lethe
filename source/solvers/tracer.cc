@@ -493,7 +493,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     // First gather the dof handler for the fluid dynamics
     const DoFHandler<dim> *dof_handler_fluid =
       multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-    // Identify the cell that corresponds to the fluid dynamics
+    // Get the cell that corresponds to the fluid dynamics
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
       &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
