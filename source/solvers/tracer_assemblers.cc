@@ -633,7 +633,6 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
 
   // If the boundary condition is an outlet, assumes that advection comes
   // out since there is no inflow
-
   if (boundary_conditions_tracer.type[boundary_index] ==
       BoundaryConditions::BoundaryType::outlet)
     {

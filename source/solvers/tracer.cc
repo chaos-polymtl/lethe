@@ -142,9 +142,6 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      // Identify which boundary condition corresponds to the boundary id. If
-      // this boundary condition is not identified, then exit the simulation
-      // instead of assuming an outlet.
       const auto &triangulation_boundary_id =
         cell->face(face_no)->boundary_id();
       const unsigned int boundary_index =
@@ -219,12 +216,12 @@ Tracer<dim>::assemble_system_matrix_dg()
       this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
     };
 
-  const auto copier = [&](const StabilizedDGMethodsCopyData &c) {
-    this->copy_local_matrix_to_global_matrix(c);
+  const auto copier = [&](const StabilizedDGMethodsCopyData &copy_data) {
+    this->copy_local_matrix_to_global_matrix(copy_data);
 
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
-    for (const auto &cdf : c.face_data)
+    for (const auto &cdf : copy_data.face_data)
       {
         constraints_used.distribute_local_to_global(cdf.face_matrix,
                                                     cdf.joint_dof_indices,
