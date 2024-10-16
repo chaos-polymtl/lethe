@@ -32,8 +32,8 @@ public:
    */
 
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) = 0;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) = 0;
 
 
   /**
@@ -46,8 +46,8 @@ public:
    */
 
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) = 0;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) = 0;
 };
 
 
@@ -77,8 +77,8 @@ public:
    * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
@@ -87,8 +87,8 @@ public:
    * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
@@ -119,8 +119,8 @@ public:
    * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
@@ -129,8 +129,8 @@ public:
    * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
 
   // The simulation control must be a part of the core assembler since the
   // inverse time-step is used within the stabilization
@@ -163,8 +163,8 @@ public:
    */
 
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
    * @brief Assembles the rhs
@@ -172,8 +172,8 @@ public:
    * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
 
   // The simulation control is a necessary part of the transient terms.
   std::shared_ptr<SimulationControl> simulation_control;
@@ -205,8 +205,8 @@ public:
    */
 
   virtual void
-  assemble_matrix(TracerScratchData<dim>      &scratch_data,
-                  StabilizedDGMethodsCopyData &copy_data) = 0;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) = 0;
 
 
   /**
@@ -219,8 +219,8 @@ public:
    */
 
   virtual void
-  assemble_rhs(TracerScratchData<dim>      &scratch_data,
-               StabilizedDGMethodsCopyData &copy_data) = 0;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) = 0;
 };
 
 
@@ -251,8 +251,8 @@ public:
    * should be copied
    */
   virtual void
-  assemble_matrix(TracerScratchData<dim>      &scratch_data,
-                  StabilizedDGMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) override;
 
 
   /**
@@ -264,8 +264,8 @@ public:
    * should be copied
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>      &scratch_data,
-               StabilizedDGMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
@@ -301,8 +301,8 @@ public:
    * should be copied
    */
   virtual void
-  assemble_matrix(TracerScratchData<dim>      &scratch_data,
-                  StabilizedDGMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) override;
 
 
   /**
@@ -314,8 +314,8 @@ public:
    * should be copied
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>      &scratch_data,
-               StabilizedDGMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) override;
 
   std::shared_ptr<SimulationControl>                simulation_control;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
