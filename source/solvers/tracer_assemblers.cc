@@ -477,7 +477,7 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
               * fe_iv.shape_value((velocity_dot_n > 0.),
                                   j,
                                   q) // phi_j^{upwind}
-              * velocity_dot_n       // (\beta .n)
+              * velocity_dot_n       // (u . n)
               * JxW[q];              // dx
 
             // Assemble the diffusion term using Nitsche
