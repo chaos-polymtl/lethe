@@ -307,7 +307,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
   // Copy data elements
   auto &local_rhs = copy_data.local_rhs;
 
-  // assembling local matrix and right hand side
+  // Assembling local right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
@@ -584,7 +584,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
                       fe_face.shape_value(j, point) * velocity_dot_n *
                       JxW[point];
                 }
-              if (boundary_conditions_tracer.type[boundary_index] ==
+             else if (boundary_conditions_tracer.type[boundary_index] ==
                   BoundaryConditions::BoundaryType::tracer_dirichlet)
                 {
                   if (velocity_dot_n > 0)
@@ -687,7 +687,7 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
     {
       AssertThrow(false,
                   ExcMessage(
-                    "No valid boundary conditions types were identified"));
+                    "No valid boundary conditions types were identified."));
     }
 }
 

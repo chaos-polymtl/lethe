@@ -297,7 +297,7 @@ private:
 
   /**
    *  @brief Assembles the matrix associated with the solver when DG elements are used.
-   * This uses the MeshWorker paradigm instead of the WorkStream paradigm
+   * This uses the MeshWorker paradigm instead of the WorkStream paradigm.
    * This is because the DG system matrix is assembled in a different way and
    * requires face and boundary integrals.
    */

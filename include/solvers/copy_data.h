@@ -119,19 +119,16 @@ public:
 /**
  * @brief Responsible for storing the information calculated using the discontinuous
  * galerkin (DG) assembly of stabilized scalar equations. Like the
- *StabilizedCopyData class, this class is used to initialize, zero (reset) and
- *store the cell_matrix and the cell_rhs while having support for stabilized
- *terms. However, it also has to support the storage of information at internal
- *faces. This is required for the DG methods.
+ * StabilizedCopyData class, this class is used to initialize, zero (reset) and
+ * store the cell_matrix and the cell_rhs while having support for stabilized
+ * terms. However, it also has to support the storage of information at internal
+ * faces. This is required for the DG methods.
  **/
 class StabilizedDGMethodsCopyData : public StabilizedMethodsCopyData
 {
 public:
   /**
-   * @brief Constructor. Allocates the memory for the cell_matrix, cell_rhs
-   * and dof-indices using the number of dofs and the strong_residual using the
-   * number of quadrature points and, the strong_jacobian using both
-   *
+   * @brief Constructor. Allocates the memory using the base class Constructor.
    * @param[in] n_dofs Number of degrees of freedom per cell in the problem
    *
    * @param[in] n_q_points Number of quadrature points

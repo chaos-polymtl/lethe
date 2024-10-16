@@ -627,7 +627,7 @@ compute_cell_measure_with_JxW(const std::vector<double> &JxW_values)
 
 
 /**
- * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. An harmonic mean is used to calculate an average cell extent.
+ * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.
  *
  * @param[in] fe_degree Finite element degree
  * @param[in] cell_extent_here Distance of the here cell. The ratio between the

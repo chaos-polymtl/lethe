@@ -791,7 +791,7 @@ namespace BoundaryConditions
     else
       {
         AssertThrow(false,
-                    ExcMessage("Unknown boundary condition type for tracers"));
+                    ExcMessage("Unknown boundary condition type for tracers."));
       }
 
 
