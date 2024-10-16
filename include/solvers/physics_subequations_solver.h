@@ -4,8 +4,6 @@
 #ifndef lethe_physics_subequations_solver_h
 #define lethe_physics_subequations_solver_h
 
-#include <core/physics_solver.h>
-
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -49,7 +47,7 @@ public:
    * linear without using the non-linear solver interface.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
   solve(const bool &is_post_mesh_adaptation) = 0;
@@ -57,8 +55,7 @@ public:
 
 /**
  * @brief Linear subequations solved inside a physic (or auxiliary physic) that
- * is not part of the main equations set are solved through the
- * PhysicsLinearSubequationsSolver object.
+ * is not part of the main set of equations.
  *
  * @tparam dim Number of dimensions of the problem
  *
@@ -83,7 +80,7 @@ public:
    * the equation is already linear.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
   solve_linear_system_and_update_solution(

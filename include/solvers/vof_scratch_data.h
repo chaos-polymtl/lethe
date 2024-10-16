@@ -333,7 +333,7 @@ public:
   /**
    * Constructor of the scratch data object.
    * Creates the fe_values that will be used to fill the member variables.
-   * Allocates the the memory necessary for all member variables, but does not
+   * Allocates the memory necessary for all member variables, but does not
    * compute anything since that must be done at the cell level.
    *
    * @param[in] fe_phase_gradient_projection FiniteElement object used for
@@ -400,7 +400,7 @@ public:
    *
    * @tparam VectorType Vector type used for the solvers.
    *
-   * @param[in] cell Cell over which the assembly is carried.
+   * @param[in] cell Cell over which the assembly is carried out.
    *
    * @param[in] current_solution Present value of the solution for the
    * reinitialized phase fraction.
@@ -454,7 +454,7 @@ public:
    *
    * @tparam VectorType Vector type used for the solvers.
    *
-   * @param[in] cell Cell over which the assembly is carried.
+   * @param[in] cell Cell over which the assembly is carried out.
    *
    * @param[in] current_solution Present value of the solution for the
    * VOF phase fraction.

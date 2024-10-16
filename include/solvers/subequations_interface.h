@@ -4,17 +4,8 @@
 #ifndef lethe_subequations_interface_h
 #define lethe_subequations_interface_h
 
-#include <core/vector.h>
-
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
-
-#include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/dofs/dof_handler.h>
-
-#include <deal.II/lac/trilinos_vector.h>
-
 
 using namespace dealii;
 
@@ -70,7 +61,7 @@ public:
    * @brief Call solving method of active subequations.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
   solve(const bool &is_post_mesh_adaptation = false)

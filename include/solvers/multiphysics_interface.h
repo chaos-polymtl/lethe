@@ -19,13 +19,10 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>

@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR Secondary equations (subequations) solved within physics now go through a subequations interface similarly to how auxiliary physics go through the multiphysics interface. At the moment, only the implementation for the L2 projection of the phase fraction gradient in the VOF auxiliary physics has been refactored. Future changes will include the refactor of other secondary equations through this interface. Furthermore, only a linear equation solver has been implemented so far. It is likely that the implementation for non-linear equations will inherit from the PhysicsSolver class to get its mechanism. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
+- MAJOR Secondary equations (subequations) solved within physics now go through a subequations interface similarly to how auxiliary physics go through the multiphysics interface. At the moment, only the implementation for the L2 projection of the phase fraction gradient in the VOF auxiliary physics has been refactored. Furthermore, only a linear equation solver has been implemented so far. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
 
 ## [Master] - 2024-10-18
 

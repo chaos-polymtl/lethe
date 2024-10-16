@@ -4,19 +4,14 @@
 #ifndef lethe_vof_phase_gradient_projection_h
 #define lethe_vof_phase_gradient_projection_h
 
-#include <core/simulation_control.h>
-
-#include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/subequations_interface.h>
 #include <solvers/vof_assemblers.h>
-#include <solvers/vof_filter.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>
 
-#include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -24,12 +19,9 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include "subequations_interface.h"
 
 template <int dim>
 class VOFPhaseGradientProjection : public PhysicsLinearSubequationsSolver
@@ -116,7 +108,7 @@ public:
    * for the partial differential equation.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
   solve_linear_system_and_update_solution(
@@ -127,7 +119,7 @@ public:
    * linear without using the non-linear solver interface.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adapatation() for vebosity
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
   solve(const bool &is_post_mesh_adaptation = false) override;
