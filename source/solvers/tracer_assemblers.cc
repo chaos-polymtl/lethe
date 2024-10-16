@@ -10,8 +10,9 @@
 
 template <int dim>
 void
-TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
-                                          StabilizedMethodsCopyData &copy_data)
+TracerAssemblerCore<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -137,8 +138,9 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
-                                       StabilizedMethodsCopyData &copy_data)
+TracerAssemblerCore<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -244,8 +246,8 @@ template class TracerAssemblerCore<3>;
 template <int dim>
 void
 TracerAssemblerDGCore<dim>::assemble_matrix(
-  TracerScratchData<dim>    &scratch_data,
-  StabilizedMethodsCopyData &copy_data)
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -292,8 +294,9 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-TracerAssemblerDGCore<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
-                                         StabilizedMethodsCopyData &copy_data)
+TracerAssemblerDGCore<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -339,8 +342,9 @@ template class TracerAssemblerDGCore<3>;
 
 template <int dim>
 void
-TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
-                                         StabilizedMethodsCopyData &copy_data)
+TracerAssemblerBDF<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
   const auto        &JxW        = scratch_data.JxW;
@@ -393,8 +397,9 @@ TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
-                                      StabilizedMethodsCopyData &copy_data)
+TracerAssemblerBDF<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
   const auto        &JxW        = scratch_data.JxW;
@@ -447,8 +452,8 @@ template class TracerAssemblerBDF<3>;
 template <int dim>
 void
 TracerAssemblerSIPG<dim>::assemble_matrix(
-  TracerScratchData<dim>      &scratch_data,
-  StabilizedDGMethodsCopyData &copy_data)
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
 {
   const double                  penalty_factor = scratch_data.penalty_factor;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
@@ -493,8 +498,9 @@ TracerAssemblerSIPG<dim>::assemble_matrix(
 
 template <int dim>
 void
-TracerAssemblerSIPG<dim>::assemble_rhs(TracerScratchData<dim> &scratch_data,
-                                       StabilizedDGMethodsCopyData &copy_data)
+TracerAssemblerSIPG<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
 {
   const double                  penalty_factor = scratch_data.penalty_factor;
   const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
@@ -553,8 +559,8 @@ template class TracerAssemblerSIPG<3>;
 template <int dim>
 void
 TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
-  TracerScratchData<dim>      &scratch_data,
-  StabilizedDGMethodsCopyData &copy_data)
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
 {
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
@@ -611,8 +617,8 @@ TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
 template <int dim>
 void
 TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
-  TracerScratchData<dim>      &scratch_data,
-  StabilizedDGMethodsCopyData &copy_data)
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
 {
   const unsigned int           boundary_index = scratch_data.boundary_index;
   const FEFaceValuesBase<dim> &fe_face =
