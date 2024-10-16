@@ -160,7 +160,7 @@ Tracer<dim>::assemble_system_matrix_dg()
       // Gather velocity information at the face to properly advect
       const DoFHandler<dim> *dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-      // Identify the cell that corresponds to the fluid dynamics
+      // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
@@ -178,7 +178,7 @@ Tracer<dim>::assemble_system_matrix_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         const unsigned int                                   &sub_face_no,
-        const typename DoFHandler<dim>::active_cell_iterator &ncell,
+        const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
         const unsigned int                                   &neigh_face_no,
         const unsigned int                                   &neigh_sub_face_no,
         TracerScratchData<dim>                               &scratch_data,
@@ -205,7 +205,7 @@ Tracer<dim>::assemble_system_matrix_dg()
       // Gather velocity information at the face to properly advect
       const DoFHandler<dim> *dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-      // Identify the cell that corresponds to the fluid dynamics
+      // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
@@ -449,7 +449,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       // First gather the dof handler for the fluid dynamics
       const DoFHandler<dim> *dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-      // Identify the cell that corresponds to the fluid dynamics
+      // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
         &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
@@ -466,7 +466,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
         const unsigned int                                   &face_no,
         const unsigned int                                   &sub_face_no,
-        const typename DoFHandler<dim>::active_cell_iterator &ncell,
+        const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
         const unsigned int                                   &neigh_face_no,
         const unsigned int                                   &neigh_sub_face_no,
         TracerScratchData<dim>                               &scratch_data,
@@ -477,7 +477,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       cell,
       face_no,
       sub_face_no,
-      ncell,
+      neigh_cell,
       neigh_face_no,
       neigh_sub_face_no,
       this->evaluation_point,
