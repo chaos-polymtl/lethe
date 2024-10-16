@@ -17,8 +17,7 @@ enum SubequationsID : unsigned int
 /**
  * @brief Base class to solve subequations solved inside a physics (or auxiliary
  * physics) that is not part of the main equations set. It contains all the
- * common elements of a subequation solver and provides all the necessary
- * elements needed by additional subsets of equations.
+ * common elements of a subequation solver.
  */
 class PhysicsSubequationsSolverBase
 {
@@ -43,8 +42,7 @@ public:
   assemble_system_rhs() = 0;
 
   /**
-   * @brief Assemble and solve linear system when the equation to solve is
-   * linear without using the non-linear solver interface.
+   * @brief Assemble and solve the system.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
    * solved during post_mesh_adaptation(), for verbosity.
@@ -56,10 +54,6 @@ public:
 /**
  * @brief Linear subequations solved inside a physic (or auxiliary physic) that
  * is not part of the main set of equations.
- *
- * @tparam dim Number of dimensions of the problem
- *
- * @tparam VectorType Type of vector container used to store solutions
  */
 
 class PhysicsLinearSubequationsSolver : public PhysicsSubequationsSolverBase

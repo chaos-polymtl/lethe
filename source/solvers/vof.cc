@@ -1134,9 +1134,9 @@ VolumeOfFluid<dim>::modify_solution()
     }
   // Apply filter to phase fraction
   apply_phase_filter();
+  this->subequations->solve();
   if (vof_parameters.surface_tension_force.enable)
     {
-      this->subequations->solve();
       find_projected_interface_curvature();
     }
 }
@@ -1774,10 +1774,10 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   apply_phase_filter();
 
   // PFG and curvature
+  this->subequations->solve(true);
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
     {
-      this->subequations->solve(true);
       find_projected_interface_curvature();
     }
 }

@@ -9,6 +9,12 @@
 
 using namespace dealii;
 
+/**
+ * @brief Interface for secondary equations (subequations) solved within
+ * physics and auxiliary physics.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ */
 template <int dim>
 class SubequationsInterface
 {

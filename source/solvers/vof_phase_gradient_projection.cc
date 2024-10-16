@@ -49,7 +49,7 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
 
   // Reinitialize solution vectors
   this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
                                 mpi_communicator);
   this->evaluation_point = this->present_solution;
 

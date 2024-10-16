@@ -14,17 +14,18 @@ SubequationsInterface<dim>::SubequationsInterface(
   : multiphysics(p_multiphysics)
   , pcout(p_pcout)
 {
-  if (simulation_parameters.multiphysics.VOF)
+  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+        .enable)
     {
       // Phase gradient projection
       active_subequations.push_back(SubequationsID::phase_gradient_projection);
       subequations[SubequationsID::phase_gradient_projection] =
-        std::make_shared<VOFPhaseGradientProjection<dim>>(this->pcout,
-                                                          this,
+        std::make_shared<VOFPhaseGradientProjection<dim>>(this,
                                                           this->multiphysics,
                                                           simulation_parameters,
                                                           p_triangulation,
-                                                          p_simulation_control);
+                                                          p_simulation_control,
+                                                          this->pcout);
     }
 }
 
