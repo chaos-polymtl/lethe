@@ -588,7 +588,8 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                                           *this->face_quadrature,
                                           update_values | update_gradients |
                                             update_JxW_values |
-                                            update_normal_vectors);
+                                            update_normal_vectors |
+                                            update_quadrature_points);
 
   // Initialize fluid dynamics information
   const DoFHandler<dim> *dof_handler_fd =
