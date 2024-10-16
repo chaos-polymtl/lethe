@@ -1,0 +1,75 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 256
+
+*****************************
+Steady iteration:        1/6
+*****************************
+L2 error velocity : 4.49692e-17
+L2 error tracer : 0.00354869
+
+*****************************
+Steady iteration:        2/6
+*****************************
+   Number of active cells:       91
+   Number of degrees of freedom: 348
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 364
+L2 error velocity : 4.41162e-17
+L2 error tracer : 0.00150892
+
+*****************************
+Steady iteration:        3/6
+*****************************
+   Number of active cells:       145
+   Number of degrees of freedom: 546
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 580
+L2 error velocity : 4.41812e-17
+L2 error tracer : 0.000261305
+
+*****************************
+Steady iteration:        4/6
+*****************************
+   Number of active cells:       229
+   Number of degrees of freedom: 840
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 916
+L2 error velocity : 4.62618e-17
+L2 error tracer : 7.96567e-05
+
+*****************************
+Steady iteration:        5/6
+*****************************
+   Number of active cells:       427
+   Number of degrees of freedom: 1566
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 1708
+L2 error velocity : 4.73917e-17
+L2 error tracer : 2.06285e-05
+
+*****************************
+Steady iteration:        6/6
+*****************************
+   Number of active cells:       817
+   Number of degrees of freedom: 2820
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 3268
+L2 error velocity : 4.92206e-17
+L2 error tracer : 2.18033e-06
+cells   error_velocity    error_pressure  
+   64 4.496917e-17     - 0.000000e+00   - 
+   91 4.411624e-17  0.03 0.000000e+00 nan 
+  145 4.418121e-17 -0.00 0.000000e+00 nan 
+  229 4.626178e-17 -0.07 0.000000e+00 nan 
+  427 4.739173e-17 -0.03 0.000000e+00 nan 
+  817 4.922065e-17 -0.05 0.000000e+00 nan 
+cells   error_tracer    
+   64 3.548693e-03    - 
+   91 1.508915e-03 1.23 
+  145 2.613049e-04 2.53 
+  229 7.965671e-05 1.71 
+  427 2.062846e-05 1.95 
+  817 2.180326e-06 3.24 

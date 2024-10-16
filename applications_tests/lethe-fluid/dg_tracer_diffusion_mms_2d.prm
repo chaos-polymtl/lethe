@@ -1,0 +1,114 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+
+set dimension = 2
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 3
+  set output frequency  = 0
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+  set tracer uses dg = true
+end
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 1
+  end
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1.0 : false
+  set initial refinement = 1
+end
+
+subsection multiphysics
+  set tracer = true
+end
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection tracer
+    set Function expression = sin(pi*x)*sin(pi*y)
+  end
+end
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+end
+
+subsection boundary conditions tracer
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 0
+    end
+  end
+end
+
+subsection source term
+  subsection tracer
+    set Function expression = 2*pi*pi*sin(pi*x)*sin(pi*y)
+  end
+end
+
+subsection non-linear solver
+  subsection tracer
+    set verbosity      = verbose
+    set tolerance      = 1e-10
+    set max iterations = 1
+  end
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-10
+    set max iterations = 10
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = verbose
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection tracer
+    set verbosity                             = extra verbose
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 100
+    set max iters                             = 200
+  end
+end

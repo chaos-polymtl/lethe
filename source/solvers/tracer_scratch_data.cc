@@ -28,10 +28,11 @@ TracerScratchData<dim>::allocate()
   this->tracer_gradients = std::vector<Tensor<1, dim>>(n_q_points);
   this->previous_tracer_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
-  this->tracer_laplacians    = std::vector<double>(n_q_points);
-  this->tracer_diffusivity   = std::vector<double>(n_q_points);
-  this->tracer_diffusivity_0 = std::vector<double>(n_q_points);
-  this->tracer_diffusivity_1 = std::vector<double>(n_q_points);
+  this->tracer_laplacians       = std::vector<double>(n_q_points);
+  this->tracer_diffusivity      = std::vector<double>(n_q_points);
+  this->tracer_diffusivity_face = std::vector<double>(n_q_points);
+  this->tracer_diffusivity_0    = std::vector<double>(n_q_points);
+  this->tracer_diffusivity_1    = std::vector<double>(n_q_points);
 
   // Solid signed distance function
   if (properties_manager.field_is_required(field::levelset))

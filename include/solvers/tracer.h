@@ -66,13 +66,25 @@ public:
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
+        if (simulation_parameters.fem_parameters.tracer_uses_dg)
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Discontinuous Galerkin elements cannot be simplex in the tracer physics."));
       }
     else
       {
         // Usual case, for quad/hex meshes
-        fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.tracer_order);
-        mapping         = std::make_shared<MappingQ<dim>>(fe->degree);
+        if (simulation_parameters.fem_parameters.tracer_uses_dg)
+          fe = std::make_shared<FE_DGQ<dim>>(
+            simulation_parameters.fem_parameters.tracer_order);
+        else
+          fe = std::make_shared<FE_Q<dim>>(
+            simulation_parameters.fem_parameters.tracer_order);
+        // The mapping must be a minimum of degree 1. This is necessary in the
+        // DG method since DG_Q(0) elements are adequate but a mapping of degree
+        // 0 does not make sense.
+        mapping = std::make_shared<MappingQ<dim>>(std::max(int(fe->degree), 1));
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
@@ -161,10 +173,7 @@ public:
   compute_kelly(
     const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
       & /*ivar*/,
-    dealii::Vector<float> & /*estimated_error_per_cell*/) override
-  {
-    return;
-  }
+    dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares Heat Transfer to write checkpoint
@@ -281,10 +290,41 @@ private:
   assemble_system_matrix() override;
 
   /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm.
+   */
+  void
+  assemble_system_matrix_cg();
+
+  /**
+   *  @brief Assembles the matrix associated with the solver when DG elements are used.
+   * This uses the MeshWorker paradigm instead of the WorkStream paradigm.
+   * This is because the DG system matrix is assembled in a different way and
+   * requires face and boundary integrals.
+   */
+  void
+  assemble_system_matrix_dg();
+
+  /**
    * @brief Assemble the rhs associated with the solver
    */
   void
   assemble_system_rhs() override;
+
+
+  /**
+   *  @brief Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm.
+   */
+  void
+  assemble_system_rhs_cg();
+
+  /**
+   *  @brief Assembles the rhs associated with the solver when DG elements are used.
+   * This uses the MeshWorker paradigm instead of the WorkStream paradigm
+   * This is because the DG system matrix is assembled in a different way and
+   * requires face and boundary integrals.
+   */
+  void
+  assemble_system_rhs_dg();
 
 
   /**
@@ -383,6 +423,121 @@ private:
   void
   write_tracer_statistics();
 
+
+
+  /**
+   * @brief Get the Lethe boundary indicator for a given triangulation boundary while
+   * carrying the appropriate checks.
+   *
+   * @param[in] triangulation_boundary_id The boundary id of the triangulation
+   *
+   * NOTE: This function is a temporary function. It will be deprecated in a
+   * future PR once boundary conditions have been refactored using maps.
+   */
+  unsigned int
+  get_lethe_boundary_index(const types::boundary_id &triangulation_boundary_id)
+  {
+    // Identify which boundary condition corresponds to the boundary id. If
+    // this boundary condition is not identified, then exit the simulation
+    // instead of assuming an outlet.
+    const auto lethe_boundary_id = std::find(
+      this->simulation_parameters.boundary_conditions_tracer.id.begin(),
+      this->simulation_parameters.boundary_conditions_tracer.id.end(),
+      triangulation_boundary_id);
+
+    AssertThrow(
+      lethe_boundary_id !=
+        this->simulation_parameters.boundary_conditions_tracer.id.end(),
+      ExcMessage("The boundary condition with id " +
+                 std::to_string(triangulation_boundary_id) +
+                 " is not present in the tracer boundary conditions."));
+
+    return (lethe_boundary_id -
+            this->simulation_parameters.boundary_conditions_tracer.id.begin());
+  }
+
+  /**
+   * @brief Helper function to reinit the face velocity with the adequate solution.
+   * This prevents code duplication throughout the tracer. The function looks at
+   * the multiphysics interface to decide if the velocity is a block velocity or
+   * a regular velocity. Furthermore, it also checks if a time-averaged solution
+   * is required. Otherwise the code here would be copied four times.
+   *
+   * @param[in] velocity_cell the iterator to the cell where the velocity is to
+   * be reinitialized.
+   *
+   * @param[in] face_no the number of the face where the velocity is to be
+   * reinitialized.
+   *
+   * @param[in,out] scratch_data the scratch data to be used for the
+   * reinitialization.
+   */
+  inline void
+  reinit_face_velocity_with_adequate_solution(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const unsigned int                                   &face_no,
+    TracerScratchData<dim>                               &scratch_data)
+  {
+    if (multiphysics->fluid_dynamics_is_block())
+      {
+        // Check if the post processed variable needs to be calculated with the
+        // average velocity profile or the fluid solution.
+        if (this->simulation_parameters.initial_condition->type ==
+              Parameters::InitialConditionType::average_velocity_profile &&
+            !this->simulation_parameters.multiphysics.fluid_dynamics &&
+            simulation_control->get_current_time() >
+              this->simulation_parameters.post_processing.initial_time)
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_block_time_average_solution(
+                PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+        else
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+      }
+    else
+      {
+        // Check if the post processed variable needs to be calculated with the
+        // average velocity profile or the fluid solution.
+        if (this->simulation_parameters.initial_condition->type ==
+              Parameters::InitialConditionType::average_velocity_profile &&
+            !this->simulation_parameters.multiphysics.fluid_dynamics &&
+            simulation_control->get_current_time() >
+              this->simulation_parameters.post_processing.initial_time)
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_time_average_solution(
+                PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+        else
+          {
+            scratch_data.reinit_face_velocity(
+              velocity_cell,
+              face_no,
+              *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+              this->simulation_parameters.ale,
+              this->simulation_parameters.tracer_drift_velocity.drift_velocity);
+          }
+      }
+  }
+
+
+
   MultiphysicsInterface<dim> *multiphysics;
 
   TimerOutput computing_timer;
@@ -431,6 +586,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<TracerAssemblerBase<dim>>> assemblers;
+  // Face assemblers, used only for DG methods
+  std::shared_ptr<TracerAssemblerSIPG<dim>>            inner_face_assembler;
+  std::shared_ptr<TracerAssemblerBoundaryNitsche<dim>> boundary_face_assembler;
 
   // Tracer post-processing tables
   TableHandler statistics_table;

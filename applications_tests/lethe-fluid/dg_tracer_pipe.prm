@@ -1,0 +1,124 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+
+set dimension = 3
+
+subsection simulation control
+  set method           = bdf1
+  set time step        = 0.1
+  set time end         = 0.4
+  set output name      = out
+  set output frequency = 0
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+  set tracer uses dg = true
+end
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 0.0
+  end
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 3 : 0.1 : 0.15
+  set initial refinement = 1
+end
+
+subsection multiphysics
+  set tracer = true
+end
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 2
+    set type = outlet
+  end
+  subsection bc 1
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 300*(0.1*0.1-y*y-z*z)
+    end
+  end
+end
+
+subsection boundary conditions tracer
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = outlet
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 100*(0.1*0.1-y*y-z*z)
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
+end
+
+subsection post-processing
+  set verbosity                   = verbose
+  set output frequency            = 1
+  set calculate tracer statistics = true
+  set calculate tracer flow rate  = true
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-8
+    set max iterations = 10
+  end
+  subsection tracer
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 10
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection tracer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end
+

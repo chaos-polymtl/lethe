@@ -681,6 +681,7 @@ namespace Parameters
    */
   struct Stabilization
   {
+    // Defines if default stabilization parameters should be used
     bool use_default_stabilization;
 
     bool heat_transfer_dcdd_stabilization;
@@ -689,7 +690,7 @@ namespace Parameters
     /// fraction should be assembled (@p true) or not (@p false).
     bool vof_dcdd_stabilization;
 
-    // pressure scaling factor used to facilitate the linear solving when
+    // Pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
 
@@ -1051,6 +1052,9 @@ namespace Parameters
 
     // Interpolation order tracer
     unsigned int tracer_order;
+
+    // Switch tracer to DG formulation instead of CG
+    bool tracer_uses_dg;
 
     // Interpolation order vof model
     unsigned int VOF_order;
