@@ -13,7 +13,7 @@
 template <int dim>
 void
 VANSAssemblerCoreModelB<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Kinematic viscosity at Gauss points
@@ -216,7 +216,7 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
 template <int dim>
 void
 VANSAssemblerCoreModelB<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
@@ -373,7 +373,7 @@ template class VANSAssemblerCoreModelB<3>;
 template <int dim>
 void
 VANSAssemblerCoreModelA<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
@@ -580,7 +580,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
 template <int dim>
 void
 VANSAssemblerCoreModelA<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Scheme and physical properties
@@ -743,7 +743,7 @@ template class VANSAssemblerCoreModelA<3>;
 template <int dim>
 void
 VANSAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
@@ -803,7 +803,7 @@ VANSAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 VANSAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
@@ -1924,7 +1924,7 @@ template class VANSAssemblerShearForce<3>;
 template <int dim>
 void
 VANSAssemblerFPI<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
@@ -1989,7 +1989,7 @@ VANSAssemblerFPI<dim>::assemble_matrix(
 template <int dim>
 void
 VANSAssemblerFPI<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations

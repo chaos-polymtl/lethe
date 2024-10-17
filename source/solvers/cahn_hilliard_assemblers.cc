@@ -10,8 +10,8 @@
 template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Gather physical properties
   const double epsilon   = this->epsilon;
@@ -93,8 +93,8 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Gather physical properties
   const double epsilon   = this->epsilon;
@@ -169,8 +169,8 @@ template class CahnHilliardAssemblerCore<3>;
 template <int dim>
 void
 CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     {
@@ -234,8 +234,8 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 template <int dim>
 void
 CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -293,8 +293,8 @@ template class CahnHilliardAssemblerAngleOfContact<3>;
 template <int dim>
 void
 CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -352,8 +352,8 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 template <int dim>
 void
 CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -410,8 +410,8 @@ template class CahnHilliardAssemblerFreeAngle<3>;
 template <int dim>
 void
 CahnHilliardAssemblerBDF<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
@@ -452,8 +452,8 @@ CahnHilliardAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 CahnHilliardAssemblerBDF<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const CahnHilliardScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;

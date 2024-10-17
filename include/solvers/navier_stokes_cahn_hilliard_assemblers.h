@@ -30,8 +30,8 @@ class GLSNavierStokesCahnHilliardAssemblerCore
 {
 public:
   GLSNavierStokesCahnHilliardAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const SimulationParameters<dim>   &nsparam)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const SimulationParameters<dim>          &nsparam)
     : simulation_control(simulation_control)
     , cahn_hilliard_parameters(nsparam.multiphysics.cahn_hilliard_parameters)
   {}
@@ -42,7 +42,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -51,12 +51,12 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool                         SUPG = true;
-  std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::CahnHilliard     cahn_hilliard_parameters;
+  const bool                               SUPG = true;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CahnHilliard           cahn_hilliard_parameters;
 };
 
 /**
@@ -76,7 +76,7 @@ class GLSNavierStokesCahnHilliardAssemblerBDF
 {
 public:
   GLSNavierStokesCahnHilliardAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -86,7 +86,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -95,10 +95,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif

@@ -9,7 +9,7 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -116,7 +116,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -209,7 +209,7 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -266,7 +266,7 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -319,7 +319,7 @@ template class VOFAssemblerBDF<3>;
 template <int dim>
 void
 VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
-  VOFScratchData<dim>       &scratch_data,
+  const VOFScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -390,7 +390,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
 template <int dim>
 void
 VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
-  VOFScratchData<dim>       &scratch_data,
+  const VOFScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -459,7 +459,7 @@ template class VOFAssemblerDCDDStabilization<3>;
 template <int dim, typename ScratchDataType>
 void
 VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
-  ScratchDataType           &scratch_data,
+  const ScratchDataType     &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -502,7 +502,7 @@ VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
 template <int dim, typename ScratchDataType>
 void
 VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_rhs(
-  ScratchDataType           &scratch_data,
+  const ScratchDataType     &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information

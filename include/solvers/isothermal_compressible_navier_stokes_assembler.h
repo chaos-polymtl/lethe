@@ -31,7 +31,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerCore
 {
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -41,7 +41,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -50,10 +50,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -73,7 +73,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerBDF
 {
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -83,7 +83,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -92,10 +92,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif
