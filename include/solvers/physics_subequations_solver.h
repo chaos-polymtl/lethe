@@ -9,15 +9,6 @@
 #include <deal.II/numerics/data_out.h>
 
 /**
- * @brief IDs associated to the different subequations solved in Lethe.
- */
-enum SubequationsID : unsigned int
-{
-  /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0
-};
-
-/**
  * @brief Base class to solve subequations solved inside a physics (or auxiliary
  * physics) that is not part of the main equations set. It contains all the
  * common elements of a subequation solver.

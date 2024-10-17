@@ -42,7 +42,7 @@ public:
    * @param[in] p_pcout Parallel cout used to print the information.
    */
   VOFPhaseGradientProjection(
-    SubequationsInterface<dim>      *p_subequations,
+    VOFSubequationsInterface<dim>   *p_subequations,
     MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -50,7 +50,7 @@ public:
     std::shared_ptr<SimulationControl> &p_simulation_control,
     const ConditionalOStream           &p_pcout)
     : VOFLinearSubequationsSolver<dim, ScratchDataType>(
-        SubequationsID::phase_gradient_projection,
+        VOFSubequationsID::phase_gradient_projection,
         p_subequations,
         p_multiphysics,
         p_simulation_parameters,
