@@ -99,7 +99,7 @@ public:
    * @return Shared pointer to the scratch data object of the appropriate
    * subequation.
    */
-  std::shared_ptr<PhysicsSubequationsScratchDataBase>
+  std::shared_ptr<PhysicsScratchDataBase>
   scratch_data_cast(const VOFSubequationsID  &subequation_id,
                     const FiniteElement<dim> &fe_subequation,
                     const Quadrature<dim>    &quadrature,

@@ -8,7 +8,7 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
-#include <solvers/physics_subequations_scratch_data.h>
+#include <solvers/physics_scratch_data.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -40,7 +40,7 @@ using namespace dealii;
  **/
 
 template <int dim>
-class VOFScratchData
+class VOFScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
@@ -115,7 +115,7 @@ public:
    * This method allocates the necessary memory for all members of the scratch
    */
   void
-  allocate();
+  allocate() override;
 
   /** @brief Reinitialize the content of the scratch
    *
@@ -310,7 +310,6 @@ public:
   std::vector<double>                      velocity_divergences;
 };
 
-
 /**
  * @brief Store the information required by the assembly procedure
  * for a VOF phase gradient projection in the L2 space.
@@ -325,8 +324,7 @@ public:
  * @ingroup solvers
  **/
 template <int dim>
-class VOFPhaseGradientProjectionScratchData
-  : public PhysicsSubequationsScratchDataBase
+class VOFPhaseGradientProjectionScratchData : public PhysicsScratchDataBase
 {
 public:
   /**

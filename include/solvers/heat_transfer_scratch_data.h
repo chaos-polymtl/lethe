@@ -12,6 +12,7 @@
 #include <core/vector.h>
 
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_scratch_data.h>
 #include <solvers/vof_filter.h>
 
 #include <deal.II/base/exceptions.h>
@@ -52,7 +53,7 @@ using namespace dealii;
  **/
 
 template <int dim>
-class HeatTransferScratchData
+class HeatTransferScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
@@ -155,7 +156,7 @@ public:
    *
    */
   void
-  allocate();
+  allocate() override;
 
   /** @brief Reinitializes the content of the scratch.
    *

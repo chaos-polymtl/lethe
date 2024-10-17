@@ -34,7 +34,7 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
 }
 
 template <int dim>
-std::shared_ptr<PhysicsSubequationsScratchDataBase>
+std::shared_ptr<PhysicsScratchDataBase>
 VOFSubequationsInterface<dim>::scratch_data_cast(
   const VOFSubequationsID  &subequation_id,
   const FiniteElement<dim> &fe_subequation,
@@ -55,7 +55,6 @@ VOFSubequationsInterface<dim>::scratch_data_cast(
     return std::make_shared<VOFPhaseGradientProjectionScratchData<dim>>(
       fe_subequation, quadrature, mapping, fe_physics);
 }
-
 
 template class VOFSubequationsInterface<2>;
 template class VOFSubequationsInterface<3>;
