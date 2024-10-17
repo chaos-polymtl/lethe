@@ -11,6 +11,7 @@
 #include <solvers/copy_data.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_assemblers.h>
 
 /**
  * @brief A pure virtual class that serves as an interface for all
@@ -24,46 +25,8 @@
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerBase
-{
-public:
-  HeatTransferAssemblerBase(
-    std::shared_ptr<SimulationControl> p_simulation_control)
-    : simulation_control(p_simulation_control)
-  {}
-
-
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the heat transfer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the element for the local_rhs and
-   * local_matrix are copied to
-   */
-
-  virtual void
-  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) = 0;
-
-  /**
-   * @brief assemble_matrix Interface for the call to rhs
-   *
-   * @param scratch_data Scratch data containing the heat transfer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   *
-   * @param copy_data Destination where the element for the local_rhs and
-   * local_matrix are copied to
-   */
-
-  virtual void
-  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) = 0;
-
-protected:
-  std::shared_ptr<SimulationControl> simulation_control;
-};
+using HeatTransferAssemblerBase =
+  PhysicsAssemblerBase<HeatTransferScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
  * @brief Class that assembles the core of the heat transfer equation.
@@ -86,7 +49,7 @@ class HeatTransferAssemblerCore : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -107,6 +70,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -126,7 +91,7 @@ class HeatTransferAssemblerBDF : public HeatTransferAssemblerBase<dim>
 public:
   HeatTransferAssemblerBDF(
     std::shared_ptr<SimulationControl> simulation_control)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -148,7 +113,8 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
-  const bool GGLS = true;
+  std::shared_ptr<SimulationControl> simulation_control;
+  const bool                         GGLS = true;
 };
 
 /**
@@ -172,7 +138,7 @@ public:
     std::shared_ptr<SimulationControl> simulation_control,
     const BoundaryConditions::HTBoundaryConditions<dim>
       &p_boundary_conditions_ht)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , boundary_conditions_ht(p_boundary_conditions_ht)
   {}
 
@@ -195,6 +161,7 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
+  std::shared_ptr<SimulationControl>                   simulation_control;
   const BoundaryConditions::HTBoundaryConditions<dim> &boundary_conditions_ht;
 };
 
@@ -217,7 +184,7 @@ class HeatTransferAssemblerViscousDissipation
 public:
   HeatTransferAssemblerViscousDissipation(
     std::shared_ptr<SimulationControl> simulation_control)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   virtual void
@@ -232,6 +199,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -258,7 +227,7 @@ public:
   HeatTransferAssemblerViscousDissipationVOF(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::FluidIndicator         p_viscous_dissipative_fluid)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , viscous_dissipative_fluid(p_viscous_dissipative_fluid)
   {}
 
@@ -275,6 +244,7 @@ public:
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   Parameters::FluidIndicator viscous_dissipative_fluid;
@@ -303,7 +273,7 @@ class HeatTransferAssemblerDCDDstabilization
 public:
   HeatTransferAssemblerDCDDstabilization(
     std::shared_ptr<SimulationControl> simulation_control)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   virtual void
@@ -318,6 +288,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -343,7 +315,7 @@ public:
   HeatTransferAssemblerLaserExponentialDecay(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , laser_parameters(p_laser_parameters)
   {}
 
@@ -365,6 +337,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -391,7 +365,7 @@ public:
   HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , laser_parameters(p_laser_parameters)
   {}
 
@@ -412,6 +386,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -438,7 +414,7 @@ public:
   HeatTransferAssemblerLaserUniformHeatFluxVOFInterface(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , laser_parameters(p_laser_parameters)
   {}
 
@@ -459,6 +435,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -490,7 +468,7 @@ public:
   HeatTransferAssemblerLaserExponentialDecayVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , laser_parameters(p_laser_parameters)
   {}
 
@@ -511,6 +489,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -543,7 +523,7 @@ public:
   HeatTransferAssemblerFreeSurfaceRadiationVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , laser_parameters(p_laser_parameters)
   {}
 
@@ -564,6 +544,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
@@ -590,7 +572,7 @@ public:
   HeatTransferAssemblerVOFEvaporation(
     std::shared_ptr<SimulationControl> simulation_control,
     const Parameters::Evaporation     &p_evaporation)
-    : HeatTransferAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
   }
@@ -612,6 +594,8 @@ public:
   virtual void
   assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
 
 private:
   // Evaporation model

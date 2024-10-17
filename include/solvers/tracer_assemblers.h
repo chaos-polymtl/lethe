@@ -7,6 +7,7 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/physics_assemblers.h>
 #include <solvers/tracer_scratch_data.h>
 
 /**
@@ -18,35 +19,8 @@
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerBase
-{
-public:
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
-   */
-
-  virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) = 0;
-
-
-  /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
-   */
-
-  virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) = 0;
-};
-
+using TracerAssemblerBase =
+  PhysicsAssemblerBase<TracerScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
  * @brief Class that assembles the core of the Tracer equation.
@@ -58,8 +32,6 @@ public:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class TracerAssemblerCore : public TracerAssemblerBase<dim>
 {
@@ -76,7 +48,6 @@ public:
   virtual void
   assemble_matrix(TracerScratchData<dim>    &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
-
 
   /**
    * @brief assemble_rhs Assembles the rhs

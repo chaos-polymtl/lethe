@@ -11,7 +11,7 @@
 
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_scratch_data.h>
-
+#include <solvers/physics_assemblers.h>
 
 /*
  * Exceptions used to capture incoherent setup of assemblers
@@ -35,36 +35,9 @@ DeclExceptionMsg(
  * @ingroup assemblers
  */
 template <int dim>
-class NavierStokesAssemblerBase
-{
-public:
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Navier-Stokes information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Stores the local_rhs and local_matrix that will be
-   * written into the global_rhs and global_matrix
-   */
-
-  virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
-
-
-  /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Navier-Stokes information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Stores the local_rhs and local_matrix that will be
-   * written into the global_rhs and global_matrix
-   */
-
-  virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
-};
+using NavierStokesAssemblerBase =
+  PhysicsAssemblerBase<NavierStokesScratchData<dim>,
+                       StabilizedMethodsTensorCopyData<dim>>;
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation.

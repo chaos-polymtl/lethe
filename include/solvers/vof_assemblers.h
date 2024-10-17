@@ -7,48 +7,20 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
-#include <solvers/physics_subequations_assemblers.h>
+#include <solvers/physics_assemblers.h>
 #include <solvers/vof_scratch_data.h>
-// #include <solvers/vof_subequations_scratch_data.h>
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the VOF solver
+ * of the assemblers for the VOF solver.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Integer that denotes the number of spatial dimensions.
  *
  * @ingroup assemblers
  */
 template <int dim>
-class VOFAssemblerBase
-{
-public:
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the VOF information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_matrix is copied to.
-   */
-
-  virtual void
-  assemble_matrix(VOFScratchData<dim>       &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) = 0;
-
-
-  /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the VOF information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs is copied to.
-   */
-
-  virtual void
-  assemble_rhs(VOFScratchData<dim>       &scratch_data,
-               StabilizedMethodsCopyData &copy_data) = 0;
-};
-
+using VOFAssemblerBase =
+  PhysicsAssemblerBase<VOFScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
  * @brief Class that assembles the core of the VOF solver.
@@ -208,7 +180,7 @@ public:
  */
 template <int dim, typename ScratchDataType>
 class VOFAssemblerPhaseGradientProjection
-  : public PhysicsSubequationsAssemblerBase<ScratchDataType>
+  : public PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>
 {
 public:
   /**
