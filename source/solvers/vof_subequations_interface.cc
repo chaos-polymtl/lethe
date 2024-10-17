@@ -1,14 +1,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "solvers/vof_subequations_interface.h"
-
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_phase_gradient_projection.h>
+#include <solvers/vof_subequations_interface.h>
 
 template <int dim>
 VOFSubequationsInterface<dim>::VOFSubequationsInterface(
-  const SimulationParameters<dim> &simulation_parameters,
+  const SimulationParameters<dim> &p_simulation_parameters,
   MultiphysicsInterface<dim>      *p_multiphysics,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> &p_triangulation,
   std::shared_ptr<SimulationControl> &p_simulation_control,
@@ -16,18 +15,18 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
   : multiphysics(p_multiphysics)
   , pcout(p_pcout)
 {
-  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+  if (p_simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
       // Phase gradient projection
-      active_subequations.push_back(
+      this->active_subequations.push_back(
         VOFSubequationsID::phase_gradient_projection);
-      subequations[VOFSubequationsID::phase_gradient_projection] =
+      this->subequations[VOFSubequationsID::phase_gradient_projection] =
         std::make_shared<VOFPhaseGradientProjection<
           dim,
           VOFPhaseGradientProjectionScratchData<dim>>>(this,
                                                        this->multiphysics,
-                                                       simulation_parameters,
+                                                       p_simulation_parameters,
                                                        p_triangulation,
                                                        p_simulation_control,
                                                        this->pcout);
