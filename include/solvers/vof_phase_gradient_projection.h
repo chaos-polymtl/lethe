@@ -6,6 +6,14 @@
 
 #include <solvers/vof_linear_subequations_solver.h>
 
+/**
+ * @brief VOF phase fraction gradient L2 projection solver.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ */
 template <int dim, typename ScratchDataType>
 class VOFPhaseGradientProjection
   : public VOFLinearSubequationsSolver<dim, ScratchDataType>
@@ -48,6 +56,8 @@ public:
         p_simulation_parameters,
         p_triangulation,
         p_simulation_control,
+        p_simulation_parameters.multiphysics.vof_parameters
+          .surface_tension_force.verbosity,
         p_pcout)
   {}
 
@@ -61,8 +71,7 @@ public:
    * the physics.
    *
    * @param[in] subequation_id Identifier corresponding to the subequation,
-   for
-   * terminal print.
+   * for terminal print.
    */
   void
   setup_dofs() override
