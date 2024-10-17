@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR All scratch data objects now inherit from a base class, namely PhysicsScratchDataBase. In a similar manner, all assemblers are now specialized types of the base assembler class, namely PhysicsAssemblerBase. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
+- MINOR All scratch data objects now inherit from a base class, namely PhysicsScratchDataBase. In a similar manner, all base assemblers are now specialized types of the PhysicsAssemblerBase. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
 
 ## [Master] - 2024-10-18
 

@@ -22,10 +22,11 @@ public:
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
    *
-   * @param[out] copy_data Destination where the local_matrix is copied to.
+   * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   virtual void
-  assemble_matrix(ScratchDataType &scratch_data, CopyDataType &copy_data) = 0;
+  assemble_matrix(const ScratchDataType &scratch_data,
+                  CopyDataType          &copy_data) = 0;
 
   /**
    * @brief Assemble the right-hand side (rhs).
@@ -35,10 +36,11 @@ public:
    * It is important to note that the scratch data has to have been re-inited
    * before calling for rhs assembly.
    *
-   * @param[out] copy_data Destination where the local_rhs is copied to.
+   * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   virtual void
-  assemble_rhs(ScratchDataType &scratch_data, CopyDataType &copy_data) = 0;
+  assemble_rhs(const ScratchDataType &scratch_data,
+               CopyDataType          &copy_data) = 0;
 };
 
 #endif

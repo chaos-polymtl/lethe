@@ -12,8 +12,8 @@
 template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
@@ -115,8 +115,8 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerCore<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   const auto         method = this->simulation_control->get_assembly_method();
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -206,8 +206,8 @@ template class HeatTransferAssemblerCore<3>;
 template <int dim>
 void
 HeatTransferAssemblerBDF<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW        = scratch_data.JxW;
@@ -294,8 +294,8 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerBDF<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
@@ -376,8 +376,8 @@ template class HeatTransferAssemblerBDF<3>;
 template <int dim>
 void
 HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -437,8 +437,8 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   if (!scratch_data.is_boundary_cell)
     return;
@@ -515,7 +515,7 @@ template class HeatTransferAssemblerRobinBC<3>;
 template <int dim>
 void
 HeatTransferAssemblerViscousDissipation<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData &
   /*copy_data*/)
 {}
@@ -523,8 +523,8 @@ HeatTransferAssemblerViscousDissipation<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerViscousDissipation<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -572,7 +572,7 @@ template class HeatTransferAssemblerViscousDissipation<3>;
 template <int dim>
 void
 HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData &
   /*copy_data*/)
 {}
@@ -580,8 +580,8 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -662,8 +662,8 @@ template class HeatTransferAssemblerViscousDissipationVOF<3>;
 template <int dim>
 void
 HeatTransferAssemblerDCDDstabilization<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Gather physical properties in case of mono fluids simulations (to be
   // modified by cell in case of multiple fluids simulations)
@@ -753,8 +753,8 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerDCDDstabilization<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   const auto         method = this->simulation_control->get_assembly_method();
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -841,15 +841,15 @@ template class HeatTransferAssemblerDCDDstabilization<3>;
 template <int dim>
 void
 HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
 HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Laser parameters
   const double concentration_factor = laser_parameters->concentration_factor;
@@ -989,15 +989,15 @@ template class HeatTransferAssemblerLaserExponentialDecay<3>;
 template <int dim>
 void
 HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
 HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Laser parameters
   const double concentration_factor = laser_parameters->concentration_factor;
@@ -1117,15 +1117,15 @@ template class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<3>;
 template <int dim>
 void
 HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
 HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Laser parameters
   const double concentration_factor = laser_parameters->concentration_factor;
@@ -1272,15 +1272,15 @@ template class HeatTransferAssemblerLaserExponentialDecayVOF<3>;
 template <int dim>
 void
 HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> & /*scratch_data*/,
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
 HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Laser parameters
   const double laser_power      = laser_parameters->laser_power;
@@ -1383,8 +1383,8 @@ template class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<3>;
 template <int dim>
 void
 HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature information
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1436,8 +1436,8 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature information
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1490,8 +1490,8 @@ template class HeatTransferAssemblerFreeSurfaceRadiationVOF<3>;
 template <int dim>
 void
 HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature informations
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1537,8 +1537,8 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
 template <int dim>
 void
 HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
-  HeatTransferScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData    &copy_data)
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
 {
   // Loop and quadrature informations
   const unsigned int n_q_points = scratch_data.n_q_points;

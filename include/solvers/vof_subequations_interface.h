@@ -116,7 +116,8 @@ public:
    * subequation.
    */
   template <typename ScratchDataType>
-  std::shared_ptr<PhysicsSubequationsAssemblerBase<ScratchDataType>>
+  std::shared_ptr<
+    PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>>
   assembler_cast(const VOFSubequationsID &subequation_id,
                  const Parameters::VOF   &vof_parameters)
   {

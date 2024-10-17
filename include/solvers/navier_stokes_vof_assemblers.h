@@ -30,8 +30,8 @@ class GLSNavierStokesVOFAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const SimulationParameters<dim>   &nsparam)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const SimulationParameters<dim>          &nsparam)
     : simulation_control(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
@@ -42,7 +42,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -51,13 +51,13 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF              vof_parameters;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF                    vof_parameters;
 };
 
 /**
@@ -77,7 +77,7 @@ class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -87,7 +87,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -96,10 +96,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -133,7 +133,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -143,7 +143,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 private:
@@ -170,8 +170,8 @@ class GLSNavierStokesVOFAssemblerSTF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerSTF(
-    std::shared_ptr<SimulationControl> p_simulation_control,
-    const SimulationParameters<dim>   &nsparam)
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    const SimulationParameters<dim>          &nsparam)
     : simulation_control(p_simulation_control)
     , STF_parameters(nsparam.multiphysics.vof_parameters.surface_tension_force)
   {}
@@ -182,7 +182,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -191,10 +191,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_parameters;
@@ -220,8 +220,8 @@ class GLSNavierStokesVOFAssemblerMarangoni
 {
 public:
   GLSNavierStokesVOFAssemblerMarangoni(
-    std::shared_ptr<SimulationControl>  p_simulation_control,
-    Parameters::VOF_SurfaceTensionForce p_STF_properties)
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    Parameters::VOF_SurfaceTensionForce       p_STF_properties)
     : simulation_control(p_simulation_control)
     , STF_properties(p_STF_properties)
   {}
@@ -232,7 +232,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -241,10 +241,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_properties;
@@ -269,8 +269,8 @@ class NavierStokesVOFAssemblerEvaporation
 {
 public:
   NavierStokesVOFAssemblerEvaporation(
-    std::shared_ptr<SimulationControl> p_simulation_control,
-    const Parameters::Evaporation     &p_evaporation)
+    const std::shared_ptr<SimulationControl> &p_simulation_control,
+    const Parameters::Evaporation            &p_evaporation)
     : simulation_control(p_simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
@@ -282,7 +282,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -291,10 +291,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 
 private:
   // Evaporation model
@@ -317,8 +317,8 @@ class GLSNavierStokesVOFAssemblerNonNewtonianCore
 {
 public:
   GLSNavierStokesVOFAssemblerNonNewtonianCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const SimulationParameters<dim>   &nsparam)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const SimulationParameters<dim>          &nsparam)
     : simulation_control(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
@@ -380,7 +380,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
@@ -390,7 +390,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -400,7 +400,7 @@ public:
    */
   const bool SUPG = true;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF              vof_parameters;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF                    vof_parameters;
 };
 #endif

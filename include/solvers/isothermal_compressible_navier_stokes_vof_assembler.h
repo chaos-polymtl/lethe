@@ -30,8 +30,8 @@ class GLSIsothermalCompressibleNavierStokesVOFAssemblerCore
 {
 public:
   GLSIsothermalCompressibleNavierStokesVOFAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control,
-    const SimulationParameters<dim>   &nsparam)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const SimulationParameters<dim>          &nsparam)
     : simulation_control(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
@@ -42,7 +42,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -51,11 +51,11 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF              vof_parameters;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF                    vof_parameters;
 };
 
 template <int dim>
@@ -64,7 +64,7 @@ class GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF
 {
 public:
   GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -74,7 +74,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -83,10 +83,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
