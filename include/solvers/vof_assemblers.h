@@ -7,7 +7,9 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/physics_subequations_assemblers.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations_scratch_data.h>
 
 
 /**
@@ -195,8 +197,9 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 class VOFAssemblerPhaseGradientProjection
+  : public PhysicsSubequationsAssemblerBase<ScratchDataType>
 {
 public:
   /**
@@ -205,7 +208,7 @@ public:
    *
    * @param[in] vof_parameters VOF simulation parameters.
    */
-  VOFAssemblerPhaseGradientProjection(const Parameters::VOF vof_parameters)
+  VOFAssemblerPhaseGradientProjection(const Parameters::VOF &vof_parameters)
     : vof_parameters(vof_parameters)
   {}
 
@@ -219,9 +222,9 @@ public:
    *
    * @param[out] copy_data Destination where the local_matrix is copied to.
    */
-  virtual void
-  assemble_matrix(VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData                  &copy_data);
+  void
+  assemble_matrix(ScratchDataType           &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
 
   /**
    * @brief Assemble the right-hand side (rhs).
@@ -233,9 +236,9 @@ public:
    *
    * @param[out] copy_data Destination where the local_rhs is copied to.
    */
-  virtual void
-  assemble_rhs(VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData                  &copy_data);
+  void
+  assemble_rhs(ScratchDataType           &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
 
 private:
   const Parameters::VOF vof_parameters;

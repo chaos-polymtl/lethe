@@ -8,6 +8,7 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_subequations_scratch_data.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -328,6 +329,7 @@ public:
 
 template <int dim>
 class VOFPhaseGradientProjectionScratchData
+  : public PhysicsSubequationsScratchDataBase
 {
 public:
   /**
@@ -391,7 +393,7 @@ public:
    * scratch.
    */
   void
-  allocate();
+  allocate() override;
 
   /**
    * @brief Reinitialize the content of the object for a given cell.
@@ -414,17 +416,17 @@ public:
       this->fe_values_phase_gradient_projection.get_fe();
 
     // Get cell measure
-    this->JxW           = fe_values_phase_gradient_projection.get_JxW_values();
+    this->JxW = this->fe_values_phase_gradient_projection.get_JxW_values();
     double cell_measure = compute_cell_measure_with_JxW(this->JxW);
     this->cell_size =
       compute_cell_diameter<dim>(cell_measure,
                                  fe_phase_gradient_projection.degree);
 
     // Gather present solutions
-    this->fe_values_phase_gradient_projection[phase_fraction_gradients]
+    this->fe_values_phase_gradient_projection[this->phase_fraction_gradients]
       .get_function_values(current_solution,
                            this->present_phase_gradient_projection_values);
-    this->fe_values_phase_gradient_projection[phase_fraction_gradients]
+    this->fe_values_phase_gradient_projection[this->phase_fraction_gradients]
       .get_function_gradients(
         current_solution, this->present_phase_gradient_projection_gradients);
 
@@ -433,14 +435,14 @@ public:
       {
         for (unsigned int k = 0; k < this->n_dofs; ++k)
           {
-            this->phi[q][k] =
-              this
-                ->fe_values_phase_gradient_projection[phase_fraction_gradients]
-                .value(k, q);
-            this->grad_phi[q][k] =
-              this
-                ->fe_values_phase_gradient_projection[phase_fraction_gradients]
-                .gradient(k, q);
+            this->phi[q][k] = this
+                                ->fe_values_phase_gradient_projection
+                                  [this->phase_fraction_gradients]
+                                .value(k, q);
+            this->grad_phi[q][k] = this
+                                     ->fe_values_phase_gradient_projection
+                                       [this->phase_fraction_gradients]
+                                     .gradient(k, q);
           }
       }
   }

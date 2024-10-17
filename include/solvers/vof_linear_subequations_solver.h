@@ -1,8 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_vof_phase_gradient_projection_h
-#define lethe_vof_phase_gradient_projection_h
+#ifndef lethe_vof_linear_subequations_solver_h
+#define lethe_vof_linear_subequations_solver_h
 
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/subequations_interface.h>
@@ -23,14 +23,14 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-template <int dim>
-class VOFPhaseGradientProjection : public PhysicsLinearSubequationsSolver
+template <int dim, typename ScratchDataType>
+class VOFLinearSubequationsSolver : public PhysicsLinearSubequationsSolver
 {
 public:
   /**
-   * @brief Constructor for the L2 projection of the VOF phase fraction gradient
-   * (pfg)
-   *   *
+   * @brief Constructor for linear subequations solvers within the VOF
+   * auxiliary physics
+   *
    * @param[in,out] p_subequations Subequations interface object used to get
    * information from other subequations and store information from the current
    * one.
@@ -48,7 +48,8 @@ public:
    *
    * @param[in] p_pcout Parallel cout used to print the information.
    */
-  VOFPhaseGradientProjection(
+  VOFLinearSubequationsSolver(
+    SubequationsID                   p_subequation_id,
     SubequationsInterface<dim>      *p_subequations,
     MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
@@ -57,12 +58,18 @@ public:
     std::shared_ptr<SimulationControl> &p_simulation_control,
     const ConditionalOStream           &p_pcout)
     : PhysicsLinearSubequationsSolver(p_pcout)
+    , subequation_id(p_subequation_id)
     , subequations(p_subequations)
     , multiphysics(p_multiphysics)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
+    , solver_verbosity(
+        p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
+    , surface_tension_verbosity(
+        p_simulation_parameters.multiphysics.vof_parameters
+          .surface_tension_force.verbosity)
   {
     if (this->simulation_parameters.mesh.simplex)
       {
@@ -86,19 +93,14 @@ public:
         this->cell_quadrature =
           std::make_shared<QGauss<dim>>(this->fe->degree + 1);
       }
-
-    this->verbosity =
-      simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity;
   }
-
-  /**
-   * @brief Default destructor.
-   */
-  ~VOFPhaseGradientProjection() = default;
 
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the physics.
+   *
+   * @param[in] subequation_id Identifier corresponding to the subequation, for
+   * verbosity purpose.
    */
   void
   setup_dofs() override;
@@ -124,7 +126,7 @@ public:
   void
   solve(const bool &is_post_mesh_adaptation = false) override;
 
-private:
+protected:
   /**
    * @brief Assemble the matrix associated with the solver
    */
@@ -150,7 +152,7 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFPhaseGradientProjectionScratchData<dim>           &scratch_data,
+    ScratchDataType                                      &scratch_data,
     StabilizedMethodsCopyData                            &copy_data);
 
 
@@ -167,7 +169,7 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFPhaseGradientProjectionScratchData<dim>           &scratch_data,
+    ScratchDataType                                      &scratch_data,
     StabilizedMethodsCopyData                            &copy_data);
 
   /**
@@ -187,11 +189,11 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+
+  SubequationsID              subequation_id;
   SubequationsInterface<dim> *subequations;
   MultiphysicsInterface<dim>
     *multiphysics; // to get VOF DoFHandler and solution
-
-  Parameters::Verbosity verbosity;
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
@@ -217,7 +219,11 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Assembler for the matrix and rhs
-  std::shared_ptr<VOFAssemblerPhaseGradientProjection<dim>> assembler;
+  std::shared_ptr<PhysicsSubequationsAssemblerBase<ScratchDataType>> assembler;
+
+  // Verbosity
+  const Parameters::Verbosity solver_verbosity;
+  const Parameters::Verbosity surface_tension_verbosity;
 };
 
 #endif

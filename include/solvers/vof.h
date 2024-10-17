@@ -14,7 +14,7 @@
 #include <solvers/subequations_interface.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
-#include <solvers/vof_phase_gradient_projection.h>
+#include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
