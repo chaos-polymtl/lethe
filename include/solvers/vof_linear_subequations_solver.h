@@ -23,6 +23,16 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+/**
+ * @brief Generalized solver for VOF linear subequations.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ * @ingroup solvers
+ */
 template <int dim, typename ScratchDataType>
 class VOFLinearSubequationsSolver : public PhysicsLinearSubequationsSolver
 {
@@ -56,6 +66,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        &p_triangulation,
     std::shared_ptr<SimulationControl> &p_simulation_control,
+    const Parameters::Verbosity        &p_subequation_verbosity,
     const ConditionalOStream           &p_pcout)
     : PhysicsLinearSubequationsSolver(p_pcout)
     , subequation_id(p_subequation_id)
@@ -65,11 +76,9 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , solver_verbosity(
+    , linear_solver_verbosity(
         p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
-    , surface_tension_verbosity(
-        p_simulation_parameters.multiphysics.vof_parameters
-          .surface_tension_force.verbosity)
+    , subequation_verbosity(p_subequation_verbosity)
   {
     if (this->simulation_parameters.mesh.simplex)
       {
@@ -221,8 +230,8 @@ protected:
   std::shared_ptr<PhysicsSubequationsAssemblerBase<ScratchDataType>> assembler;
 
   // Verbosity
-  const Parameters::Verbosity solver_verbosity;
-  const Parameters::Verbosity surface_tension_verbosity;
+  const Parameters::Verbosity linear_solver_verbosity;
+  const Parameters::Verbosity subequation_verbosity;
 };
 
 #endif
