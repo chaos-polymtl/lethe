@@ -38,8 +38,9 @@ add_library(lethe-solvers
   vof.cc
   vof_assemblers.cc
   vof_filter.cc
-  vof_phase_gradient_projection.cc
+  vof_linear_subequations_solver.cc
   vof_scratch_data.cc
+#  vof_subequations_scratch_data.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
@@ -67,6 +68,8 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_scratch_data.h
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h
+  ../../include/solvers/physics_subequations_assemblers.h
+  ../../include/solvers/physics_subequations_scratch_data.h
   ../../include/solvers/physics_subequations_solver.h
   ../../include/solvers/postprocessing_cfd.h
   ../../include/solvers/postprocessing_velocities.h
@@ -83,8 +86,9 @@ add_library(lethe-solvers
   ../../include/solvers/vof.h
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_filter.h
-  ../../include/solvers/vof_phase_gradient_projection.h
+  ../../include/solvers/vof_linear_subequations_solver.h
   ../../include/solvers/vof_scratch_data.h
+#  ../../include/solvers/vof_subequations_scratch_data.h
   )
 
 deal_ii_setup_target(lethe-solvers)

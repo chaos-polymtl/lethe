@@ -1,18 +1,18 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <solvers/vof_phase_gradient_projection.h>
+#include <solvers/vof_linear_subequations_solver.h>
 
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::setup_dofs()
+VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
 {
   // Get MPI communicator
-  auto mpi_communicator = triangulation->get_communicator();
+  auto mpi_communicator = this->triangulation->get_communicator();
 
   // Distribute and renumber DoFs
   this->dof_handler.distribute_dofs(*this->fe);
@@ -54,12 +54,13 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
   this->evaluation_point = this->present_solution;
 
 
-  if (this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
+  if (this->surface_tension_verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout
-        << "   Number of VOF Phase Gradient Projection degrees of freedom: "
-        << this->dof_handler.n_dofs() << std::endl;
+      std::string subequation_string =
+        this->subequations->get_subequation_string(this->subequation_id);
+      this->pcout << "   Number of " << subequation_string
+                  << " degrees of freedom: " << this->dof_handler.n_dofs()
+                  << std::endl;
     }
 
   // Provide DoFHandler and solutions to the subequations interface
@@ -69,41 +70,46 @@ VOFPhaseGradientProjection<dim>::setup_dofs()
                                    &this->present_solution);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::assemble_system_matrix()
+VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_matrix()
 {
   this->system_matrix = 0;
-  this->assembler = std::make_shared<VOFAssemblerPhaseGradientProjection<dim>>(
-    this->simulation_parameters.multiphysics.vof_parameters);
+  this->assembler =
+    this->subequations->template assembler_cast<ScratchDataType>(
+      this->subequation_id,
+      this->simulation_parameters.multiphysics.vof_parameters);
 
   const DoFHandler<dim> *dof_handler_vof =
     this->multiphysics->get_dof_handler(PhysicsID::VOF);
 
-  auto scratch_data =
-    VOFPhaseGradientProjectionScratchData<dim>(*this->fe,
-                                               *this->cell_quadrature,
-                                               *this->mapping,
-                                               dof_handler_vof->get_fe());
+  auto scratch_data_parent = this->subequations->scratch_data_cast(
+    SubequationsID::phase_gradient_projection,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_vof->get_fe());
+  ScratchDataType *scratch_data =
+    dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
 
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
     *this,
-    &VOFPhaseGradientProjection::assemble_local_system_matrix,
-    &VOFPhaseGradientProjection::copy_local_matrix_to_global_matrix,
-    scratch_data,
+    &VOFLinearSubequationsSolver::assemble_local_system_matrix,
+    &VOFLinearSubequationsSolver::copy_local_matrix_to_global_matrix,
+    *scratch_data,
     StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                               this->cell_quadrature->size()));
 
   this->system_matrix.compress(VectorOperation::add);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::assemble_local_system_matrix(
+VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFPhaseGradientProjectionScratchData<dim>           &scratch_data,
+  ScratchDataType                                      &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
@@ -128,10 +134,10 @@ VOFPhaseGradientProjection<dim>::assemble_local_system_matrix(
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::copy_local_matrix_to_global_matrix(
-  const StabilizedMethodsCopyData &copy_data)
+VOFLinearSubequationsSolver<dim, ScratchDataType>::
+  copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
     return;
@@ -142,38 +148,42 @@ VOFPhaseGradientProjection<dim>::copy_local_matrix_to_global_matrix(
                                               this->system_matrix);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::assemble_system_rhs()
+VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_rhs()
 {
   this->system_rhs = 0;
 
   const DoFHandler<dim> *dof_handler_vof =
     this->multiphysics->get_dof_handler(PhysicsID::VOF);
 
-  auto scratch_data =
-    VOFPhaseGradientProjectionScratchData<dim>(*this->fe,
-                                               *this->cell_quadrature,
-                                               *this->mapping,
-                                               dof_handler_vof->get_fe());
+  auto scratch_data_parent = this->subequations->scratch_data_cast(
+    SubequationsID::phase_gradient_projection,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_vof->get_fe());
+
+  ScratchDataType *scratch_data =
+    dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
 
   WorkStream::run(this->dof_handler.begin_active(),
                   this->dof_handler.end(),
                   *this,
-                  &VOFPhaseGradientProjection::assemble_local_system_rhs,
-                  &VOFPhaseGradientProjection::copy_local_rhs_to_global_rhs,
-                  scratch_data,
+                  &VOFLinearSubequationsSolver::assemble_local_system_rhs,
+                  &VOFLinearSubequationsSolver::copy_local_rhs_to_global_rhs,
+                  *scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::assemble_local_system_rhs(
+VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFPhaseGradientProjectionScratchData<dim>           &scratch_data,
+  ScratchDataType                                      &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
@@ -198,9 +208,9 @@ VOFPhaseGradientProjection<dim>::assemble_local_system_rhs(
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::copy_local_rhs_to_global_rhs(
+VOFLinearSubequationsSolver<dim, ScratchDataType>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -212,31 +222,32 @@ VOFPhaseGradientProjection<dim>::copy_local_rhs_to_global_rhs(
                                               this->system_rhs);
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
-  const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim, ScratchDataType>::
+  solve_linear_system_and_update_solution(const bool &is_post_mesh_adaptation)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
   const AffineConstraints<double> &constraints_used = this->constraints;
 
-  const bool verbose(
-    this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force.verbosity != Parameters::Verbosity::quiet &&
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
-      Parameters::Verbosity::quiet &&
-    !is_post_mesh_adaptation);
+  const bool verbose(this->surface_tension_verbosity !=
+                       Parameters::Verbosity::quiet &&
+                     this->solver_verbosity != Parameters::Verbosity::quiet &&
+                     !is_post_mesh_adaptation);
 
   if (verbose)
     {
-      this->pcout << "  -Solving phase fraction gradient (pfg) L2 projection:"
-                  << std::endl;
+      std::string subequation_string =
+        this->subequations->get_subequation_string(this->subequation_id);
+
+      this->pcout << "  -Solving " << subequation_string << ":" << std::endl;
     }
 
   // Set tolerance
   const double linear_solver_tolerance =
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).minimum_residual;
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .minimum_residual;
 
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
@@ -245,17 +256,20 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   if (verbose)
     {
-      this->pcout << "    -Tolerance of iterative solver (pfg) is: "
+      this->pcout << "    -Tolerance of iterative solver is: "
                   << linear_solver_tolerance << std::endl;
     }
 
   // ILU preconditioner
   const double ilu_fill =
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_fill;
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_fill;
   const double ilu_atol =
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_atol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_atol;
   const double ilu_rtol =
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_rtol;
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
+      .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
@@ -267,7 +281,7 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   // CG solver
   SolverControl solver_control(
-    simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
+    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
     linear_solver_tolerance,
     true,
     true);
@@ -281,7 +295,7 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
 
   if (verbose)
     {
-      this->pcout << "    -Iterative solver (pfg) took: "
+      this->pcout << "    -Iterative solver took: "
                   << solver_control.last_step()
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() << std::endl;
@@ -295,15 +309,19 @@ VOFPhaseGradientProjection<dim>::solve_linear_system_and_update_solution(
   this->evaluation_point = this->present_solution;
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFPhaseGradientProjection<dim>::solve(const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim, ScratchDataType>::solve(
+  const bool &is_post_mesh_adaptation)
 {
   assemble_system_matrix();
   assemble_system_rhs();
   solve_linear_system_and_update_solution(is_post_mesh_adaptation);
 }
 
-
-template class VOFPhaseGradientProjection<2>;
-template class VOFPhaseGradientProjection<3>;
+template class VOFLinearSubequationsSolver<
+  2,
+  VOFPhaseGradientProjectionScratchData<2>>;
+template class VOFLinearSubequationsSolver<
+  3,
+  VOFPhaseGradientProjectionScratchData<3>>;
