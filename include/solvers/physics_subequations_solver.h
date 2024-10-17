@@ -46,8 +46,8 @@ public:
 };
 
 /**
- * @brief Linear subequations solved inside a physic (or auxiliary physic) that
- * is not part of the main set of equations.
+ * @brief Linear subequations solved inside a physics (or auxiliary physics)
+ * that is not part of the main set of equations.
  */
 
 class PhysicsLinearSubequationsSolver : public PhysicsSubequationsSolverBase

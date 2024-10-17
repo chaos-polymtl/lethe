@@ -68,8 +68,9 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_scratch_data.h
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h
+  ../../include/solvers/physics_assemblers.h
+  ../../include/solvers/physics_scratch_data.h
   ../../include/solvers/physics_subequations_assemblers.h
-  ../../include/solvers/physics_subequations_scratch_data.h
   ../../include/solvers/physics_subequations_solver.h
   ../../include/solvers/postprocessing_cfd.h
   ../../include/solvers/postprocessing_velocities.h

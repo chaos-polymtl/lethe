@@ -8,6 +8,7 @@
 #include <core/multiphysics.h>
 
 #include <solvers/physical_properties_manager.h>
+#include <solvers/physics_scratch_data.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -46,7 +47,7 @@ using namespace dealii;
  **/
 
 template <int dim>
-class TracerScratchData
+class TracerScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
@@ -113,7 +114,7 @@ public:
    *
    */
   void
-  allocate();
+  allocate() override;
 
   /** @brief Reinitializes the content of the scratch.
    *
