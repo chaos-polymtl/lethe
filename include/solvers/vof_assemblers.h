@@ -7,47 +7,20 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/physics_assemblers.h>
 #include <solvers/vof_scratch_data.h>
-
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the VOF solver
+ * of the assemblers for the VOF solver.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Integer that denotes the number of spatial dimensions.
  *
  * @ingroup assemblers
  */
 template <int dim>
-class VOFAssemblerBase
-{
-public:
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the VOF information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_matrix is copied to.
-   */
-
-  virtual void
-  assemble_matrix(VOFScratchData<dim>       &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) = 0;
-
-
-  /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the VOF information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs is copied to.
-   */
-
-  virtual void
-  assemble_rhs(VOFScratchData<dim>       &scratch_data,
-               StabilizedMethodsCopyData &copy_data) = 0;
-};
-
+using VOFAssemblerBase =
+  PhysicsAssemblerBase<VOFScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
  * @brief Class that assembles the core of the VOF solver.
@@ -59,8 +32,6 @@ public:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
@@ -103,7 +74,7 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the VOF equations. For example, if a BDF1 scheme is
+ * integration for the VOF equation. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * \f$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}}{\Delta t}\f$
  *
@@ -195,6 +166,63 @@ public:
                StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
+};
+
+/**
+ * @brief VOF phase fraction gradient L2 projection assemblers.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ * @ingroup assemblers
+ */
+template <int dim, typename ScratchDataType>
+class VOFAssemblerPhaseGradientProjection
+  : public PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>
+{
+public:
+  /**
+   * @brief Constructor of the assembler for phase fraction gradient (pfg)
+   * L2 projection.
+   *
+   * @param[in] vof_parameters VOF simulation parameters.
+   */
+  VOFAssemblerPhaseGradientProjection(const Parameters::VOF &vof_parameters)
+    : vof_parameters(vof_parameters)
+  {}
+
+  /**
+   * @brief Assemble the matrix.
+   *
+   * @param[in] scratch_data Scratch data containing the VOF phase gradient
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   *
+   * @param[out] copy_data Destination where the local_matrix is copied to.
+   */
+  void
+  assemble_matrix(ScratchDataType           &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+
+  /**
+   * @brief Assemble the right-hand side (rhs).
+   *
+   * @param[in] scratch_data Scratch data containing the VOF phase gradient
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for rhs assembly.
+   *
+   * @param[out] copy_data Destination where the local_rhs is copied to.
+   */
+  void
+  assemble_rhs(ScratchDataType           &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+
+private:
+  const Parameters::VOF vof_parameters;
 };
 
 #endif
