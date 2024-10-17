@@ -3,7 +3,7 @@
 
 #include <solvers/subequations_interface.h>
 #include <solvers/vof_linear_subequations_solver.h>
-// #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_phase_gradient_projection.h>
 
 template <int dim>
 SubequationsInterface<dim>::SubequationsInterface(
@@ -21,16 +21,14 @@ SubequationsInterface<dim>::SubequationsInterface(
       // Phase gradient projection
       active_subequations.push_back(SubequationsID::phase_gradient_projection);
       subequations[SubequationsID::phase_gradient_projection] =
-        std::make_shared<VOFLinearSubequationsSolver<
+        std::make_shared<VOFPhaseGradientProjection<
           dim,
-          VOFPhaseGradientProjectionScratchData<dim>>>(
-          SubequationsID::phase_gradient_projection,
-          this,
-          this->multiphysics,
-          simulation_parameters,
-          p_triangulation,
-          p_simulation_control,
-          this->pcout);
+          VOFPhaseGradientProjectionScratchData<dim>>>(this,
+                                                       this->multiphysics,
+                                                       simulation_parameters,
+                                                       p_triangulation,
+                                                       p_simulation_control,
+                                                       this->pcout);
     }
 }
 

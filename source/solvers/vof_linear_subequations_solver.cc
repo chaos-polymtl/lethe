@@ -25,7 +25,8 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
 
   // Constraints
   this->constraints.clear();
-  this->constraints.reinit(this->locally_relevant_dofs);
+  this->constraints.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler, this->constraints);
   this->constraints.close();
 
@@ -107,35 +108,6 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_matrix()
 
 template <int dim, typename ScratchDataType>
 void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_local_system_matrix(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  ScratchDataType                                      &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
-{
-  copy_data.cell_is_local = cell->is_locally_owned();
-  if (!cell->is_locally_owned())
-    return;
-
-  scratch_data.reinit(cell, this->evaluation_point);
-
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics->get_dof_handler(PhysicsID::VOF);
-
-  typename DoFHandler<dim>::active_cell_iterator vof_cell(
-    &(*this->triangulation), cell->level(), cell->index(), dof_handler_vof);
-
-  scratch_data.reinit_vof(
-    vof_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
-
-  copy_data.reset();
-
-  this->assembler->assemble_matrix(scratch_data, copy_data);
-
-  cell->get_dof_indices(copy_data.local_dof_indices);
-}
-
-template <int dim, typename ScratchDataType>
-void
 VOFLinearSubequationsSolver<dim, ScratchDataType>::
   copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &copy_data)
 {
@@ -177,35 +149,6 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_rhs()
                                             this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
-}
-
-template <int dim, typename ScratchDataType>
-void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_local_system_rhs(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  ScratchDataType                                      &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
-{
-  copy_data.cell_is_local = cell->is_locally_owned();
-  if (!cell->is_locally_owned())
-    return;
-
-  scratch_data.reinit(cell, this->evaluation_point);
-
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics->get_dof_handler(PhysicsID::VOF);
-
-  typename DoFHandler<dim>::active_cell_iterator vof_cell(
-    &(*this->triangulation), cell->level(), cell->index(), dof_handler_vof);
-
-  scratch_data.reinit_vof(
-    vof_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
-
-  copy_data.reset();
-
-  this->assembler->assemble_rhs(scratch_data, copy_data);
-
-  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim, typename ScratchDataType>

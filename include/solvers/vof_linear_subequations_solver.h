@@ -153,8 +153,7 @@ protected:
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     ScratchDataType                                      &scratch_data,
-    StabilizedMethodsCopyData                            &copy_data);
-
+    StabilizedMethodsCopyData                            &copy_data) = 0;
 
   /**
    * @brief Assemble the local right-hand side (rhs) for a given cell.
@@ -170,14 +169,14 @@ protected:
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     ScratchDataType                                      &scratch_data,
-    StabilizedMethodsCopyData                            &copy_data);
+    StabilizedMethodsCopyData                            &copy_data) = 0;
 
   /**
    * @brief Copy local cell matrix information to global matrix.
    *
    * @param[in] copy_data Stores the results of the assembly over a cell.
    */
-  virtual void
+  void
   copy_local_matrix_to_global_matrix(
     const StabilizedMethodsCopyData &copy_data);
 
@@ -186,7 +185,7 @@ protected:
    *
    * @param[in] copy_data Stores the results of the assembly over a cell.
    */
-  virtual void
+  void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
 
