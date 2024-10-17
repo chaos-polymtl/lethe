@@ -61,7 +61,7 @@ We then make use of a ``box refinement`` to refine the mesh around the particle 
         end
     end
 
-IB Particles
+Immersed Boundary Particles
 ~~~~~~~~~~~~~
 
 We define the particle in flow with the use of the sharp immersed boundary method. The particle is defined as a cylinder with a radius of 0.5 and a half-length of 1.0. The particle is centered at (0,0) 
