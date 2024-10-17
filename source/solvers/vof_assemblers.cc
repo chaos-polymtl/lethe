@@ -7,8 +7,6 @@
 #include <solvers/copy_data.h>
 #include <solvers/vof_assemblers.h>
 
-
-
 template <int dim>
 void
 VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,

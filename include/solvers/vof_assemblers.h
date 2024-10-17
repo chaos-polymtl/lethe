@@ -11,7 +11,6 @@
 #include <solvers/vof_scratch_data.h>
 // #include <solvers/vof_subequations_scratch_data.h>
 
-
 /**
  * @brief A pure virtual class that serves as an interface for all
  * of the assemblers for the VOF solver
@@ -197,6 +196,16 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
+/**
+ * @brief VOF phase fraction gradient L2 projection assemblers.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ * @ingroup assemblers
+ */
 template <int dim, typename ScratchDataType>
 class VOFAssemblerPhaseGradientProjection
   : public PhysicsSubequationsAssemblerBase<ScratchDataType>

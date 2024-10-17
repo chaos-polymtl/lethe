@@ -21,9 +21,7 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-
 using namespace dealii;
-
 
 /**
  * @brief Store the information required by the assembly procedure
@@ -326,7 +324,6 @@ public:
  *
  * @ingroup solvers
  **/
-
 template <int dim>
 class VOFPhaseGradientProjectionScratchData
   : public PhysicsSubequationsScratchDataBase
@@ -446,7 +443,6 @@ public:
           }
       }
   }
-
 
   /**
    * @brief Reinitialize the cell with the VOF solution calculated with the VOF

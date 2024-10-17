@@ -51,10 +51,9 @@ public:
    */
   ~SubequationsInterface() = default;
 
-
   /**
    * @brief Setup the DofHandler and the degree of freedom associated with the
-   * physics.
+   * subequations.
    */
   void
   setup_dofs()
@@ -66,9 +65,28 @@ public:
   };
 
   /**
+   * @brief Setup the DofHandler and the degree of freedom associated with the
+   * physics.
+   *
+   * @param[in] subequation_id Identifier associated with the subequation wished
+   * to solve.
+   */
+  void
+  setup_specific_subequation_dofs(const SubequationsID &subequation_id)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+
+    this->subequations.find(subequation_id)->second->setup_dofs();
+  };
+
+  /**
    * @brief Cast the appropriate scratch data object.
    *
-   * @param[in] subequation_id ID associated to the subequation wished to solve.
+   * @param[in] subequation_id Identifier associated with the subequation wished
+   * to solve.
    *
    * @return Shared pointer to the scratch data object of the appropriate
    * subequation.
@@ -83,9 +101,10 @@ public:
   /**
    * @brief Cast the appropriate assembler object.
    *
-   * @param[in] subequation_id ID associated to the subequation wished to solve.
+   * @param[in] subequation_id Identifier associated with the subequation wished
+   * to solve.
    *
-   * @return Shared pointer to the scratch data object of the appropriate
+   * @return Shared pointer to the assembler object of the appropriate
    * subequation.
    */
   template <typename ScratchDataType>
@@ -124,12 +143,47 @@ public:
       }
   }
 
+  /**
+   * @brief Call solving method for a specific subequation.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adaptation(), for verbosity.
+   *
+   * @param[in] subequation_id Identifier associated with the subequation wished
+   * to solve.
+   */
+  void
+  solve_specific_subequation(const SubequationsID &subequation_id,
+                             const bool &is_post_mesh_adaptation = false)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+
+    this->subequations.find(subequation_id)
+      ->second->solve(is_post_mesh_adaptation);
+  }
+
+  /**
+   * @brief Get vector of active subequations.
+   *
+   * @return Vector of active subequations identifiers.
+   */
   std::vector<SubequationsID>
   get_active_subequations()
   {
     return this->active_subequations;
   }
 
+  /**
+   * @brief Get a pointer to the DoFHandler of a specific subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return Pointer to the DoFHandler of the specified subequation.
+   */
   DoFHandler<dim> *
   get_dof_handler(const SubequationsID &subequation_id)
   {
@@ -141,6 +195,14 @@ public:
     return this->subequations_dof_handler[subequation_id];
   }
 
+  /**
+   * @brief Get a pointer to the solution vector of a specific subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return Pointer to the solution vector of the specified subequation.
+   */
   GlobalVectorType *
   get_solution(const SubequationsID &subequation_id)
   {
@@ -151,6 +213,16 @@ public:
     return subequations_solutions[subequation_id];
   }
 
+  /**
+   * @brief Get the string associated with a specific subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return String associated with the specified subequation.
+   *
+   * @note This is used for printing purposes.
+   */
   std::string
   get_subequation_string(const SubequationsID &subequation_id)
   {
@@ -167,6 +239,15 @@ public:
     return subequation_string;
   }
 
+  /**
+   * @brief Set the DoFHandler associated with a specific subequation in the
+   * interface.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @param[in] dof_handler Pointer to the DoFHandler of a specific subequation.
+   */
   void
   set_dof_handler(const SubequationsID &subequation_id,
                   DoFHandler<dim>      *dof_handler)
@@ -178,6 +259,16 @@ public:
     subequations_dof_handler[subequation_id] = dof_handler;
   }
 
+  /**
+   * @brief Set the solution associated with a specific subequation in the
+   * interface.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @param[in] solution_vector Pointer to the solution vector of a specific
+   * subequation.
+   */
   void
   set_solution(const SubequationsID &subequation_id,
                GlobalVectorType     *solution_vector)
@@ -188,8 +279,6 @@ public:
                 ExcInternalError());
     subequations_solutions[subequation_id] = solution_vector;
   }
-
-
 
 private:
   MultiphysicsInterface<dim> *multiphysics;

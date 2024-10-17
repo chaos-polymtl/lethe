@@ -25,8 +25,7 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
 
   // Constraints
   this->constraints.clear();
-  this->constraints.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs);
+  this->constraints.reinit(this->locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(this->dof_handler, this->constraints);
   this->constraints.close();
 
@@ -55,7 +54,7 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
   this->evaluation_point = this->present_solution;
 
 
-  if (this->surface_tension_verbosity != Parameters::Verbosity::quiet)
+  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
     {
       std::string subequation_string =
         this->subequations->get_subequation_string(this->subequation_id);
@@ -174,10 +173,10 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::
 
   const AffineConstraints<double> &constraints_used = this->constraints;
 
-  const bool verbose(this->surface_tension_verbosity !=
-                       Parameters::Verbosity::quiet &&
-                     this->solver_verbosity != Parameters::Verbosity::quiet &&
-                     !is_post_mesh_adaptation);
+  const bool verbose(
+    this->subequation_verbosity != Parameters::Verbosity::quiet &&
+    this->linear_solver_verbosity != Parameters::Verbosity::quiet &&
+    !is_post_mesh_adaptation);
 
   if (verbose)
     {
