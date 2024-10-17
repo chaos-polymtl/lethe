@@ -39,6 +39,7 @@ add_library(lethe-solvers
   vof_assemblers.cc
   vof_filter.cc
   vof_linear_subequations_solver.cc
+  vof_phase_gradient_projection.cc
   vof_scratch_data.cc
 #  vof_subequations_scratch_data.cc
   # Headers
@@ -87,6 +88,7 @@ add_library(lethe-solvers
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_filter.h
   ../../include/solvers/vof_linear_subequations_solver.h
+  ../../include/solvers/vof_phase_gradient_projection.h
   ../../include/solvers/vof_scratch_data.h
 #  ../../include/solvers/vof_subequations_scratch_data.h
   )
