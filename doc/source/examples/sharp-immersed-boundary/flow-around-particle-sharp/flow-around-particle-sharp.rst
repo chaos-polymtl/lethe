@@ -194,7 +194,7 @@ on the particle in the flow direction, in this case using :math:`f_x` from the o
 
 The following graph shows the drag coefficient as a function of the Reynolds number. The results are compared to the literature values for a perpendicular cylinder with an aspect ratio of 2.
 
-.. image:: images/flow-around-particle-sharp-pressure.png
+.. image:: images/flow-around-particle-sharp-CD-Re-study.png
     :alt: Drag coefficient as a function of Reynolds number
     :align: center
 
