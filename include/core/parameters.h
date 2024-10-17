@@ -1450,6 +1450,12 @@ namespace Parameters
     // elements equal to the maximum number of elements.
     bool mesh_controller_is_enabled;
 
+    // Specifies if mesh adaptation can be used on certain boundaries
+    bool is_boundary_refinement_fixed;
+
+    // List of boundary ids to fix to their initial refinement state
+    std::vector<int> boundaries_to_fix;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
