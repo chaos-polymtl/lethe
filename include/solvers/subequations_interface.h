@@ -6,6 +6,8 @@
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 using namespace dealii;
 
@@ -64,6 +66,50 @@ public:
   };
 
   /**
+   * @brief Cast the appropriate scratch data object.
+   *
+   * @param[in] subequation_id ID associated to the subequation wished to solve.
+   *
+   * @return Shared pointer to the scratch data object of the appropriate
+   * subequation.
+   */
+  std::shared_ptr<PhysicsSubequationsScratchDataBase>
+  scratch_data_cast(const SubequationsID     &subequation_id,
+                    const FiniteElement<dim> &fe_subequation,
+                    const Quadrature<dim>    &quadrature,
+                    const Mapping<dim>       &mapping,
+                    const FiniteElement<dim> &fe_physics);
+
+  /**
+   * @brief Cast the appropriate assembler object.
+   *
+   * @param[in] subequation_id ID associated to the subequation wished to solve.
+   *
+   * @return Shared pointer to the scratch data object of the appropriate
+   * subequation.
+   */
+  template <typename ScratchDataType>
+  std::shared_ptr<PhysicsSubequationsAssemblerBase<ScratchDataType>>
+  assembler_cast(const SubequationsID  &subequation_id,
+                 const Parameters::VOF &vof_parameters)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+
+    if (subequation_id == SubequationsID::phase_gradient_projection)
+      return std::make_shared<
+        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
+        vof_parameters);
+    else // At the moment, only one option is possible. This will change with
+         // the addition of other subequations to the interface.
+      return std::make_shared<
+        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
+        vof_parameters);
+  }
+
+  /**
    * @brief Call solving method of active subequations.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
@@ -85,7 +131,7 @@ public:
   }
 
   DoFHandler<dim> *
-  get_dof_handler(const SubequationsID subequation_id)
+  get_dof_handler(const SubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -96,7 +142,7 @@ public:
   }
 
   GlobalVectorType *
-  get_solution(const SubequationsID subequation_id)
+  get_solution(const SubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -105,9 +151,25 @@ public:
     return subequations_solutions[subequation_id];
   }
 
+  std::string
+  get_subequation_string(const SubequationsID &subequation_id)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+
+    std::string subequation_string;
+
+    if (subequation_id == SubequationsID::phase_gradient_projection)
+      subequation_string = "VOF phase fraction gradient L2 projection";
+
+    return subequation_string;
+  }
+
   void
-  set_dof_handler(const SubequationsID subequation_id,
-                  DoFHandler<dim>     *dof_handler)
+  set_dof_handler(const SubequationsID &subequation_id,
+                  DoFHandler<dim>      *dof_handler)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -117,8 +179,8 @@ public:
   }
 
   void
-  set_solution(const SubequationsID subequation_id,
-               GlobalVectorType    *solution_vector)
+  set_solution(const SubequationsID &subequation_id,
+               GlobalVectorType     *solution_vector)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),

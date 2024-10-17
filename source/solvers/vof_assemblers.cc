@@ -458,11 +458,11 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
 template class VOFAssemblerDCDDStabilization<2>;
 template class VOFAssemblerDCDDStabilization<3>;
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFAssemblerPhaseGradientProjection<dim>::assemble_matrix(
-  VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData                  &copy_data)
+VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
+  ScratchDataType           &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -501,11 +501,11 @@ VOFAssemblerPhaseGradientProjection<dim>::assemble_matrix(
     }
 }
 
-template <int dim>
+template <int dim, typename ScratchDataType>
 void
-VOFAssemblerPhaseGradientProjection<dim>::assemble_rhs(
-  VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData                  &copy_data)
+VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_rhs(
+  ScratchDataType           &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -531,5 +531,9 @@ VOFAssemblerPhaseGradientProjection<dim>::assemble_rhs(
     }
 }
 
-template class VOFAssemblerPhaseGradientProjection<2>;
-template class VOFAssemblerPhaseGradientProjection<3>;
+template class VOFAssemblerPhaseGradientProjection<
+  2,
+  VOFPhaseGradientProjectionScratchData<2>>;
+template class VOFAssemblerPhaseGradientProjection<
+  3,
+  VOFPhaseGradientProjectionScratchData<3>>;

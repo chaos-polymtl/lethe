@@ -8,6 +8,9 @@
 
 #include <deal.II/numerics/data_out.h>
 
+/**
+ * @brief IDs associated to the different subequations solved in Lethe.
+ */
 enum SubequationsID : unsigned int
 {
   /// VOF phase fraction gradient L2 projection
