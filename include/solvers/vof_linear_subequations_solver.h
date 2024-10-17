@@ -7,6 +7,7 @@
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations_interface.h>
 
 #include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>
@@ -21,8 +22,6 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include "vof_subequations_interface.h"
 
 /**
  * @brief Generalized solver for VOF linear subequations.

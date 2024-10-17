@@ -10,11 +10,11 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
-// #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations_interface.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -34,8 +34,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
-
-#include "vof_subequations_interface.h"
 
 DeclException1(
   InvalidNumberOfFluid,

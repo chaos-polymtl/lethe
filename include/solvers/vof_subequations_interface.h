@@ -5,7 +5,6 @@
 #define lethe_subequations_interface_h
 
 #include <solvers/multiphysics_interface.h>
-#include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 
@@ -34,7 +33,7 @@ public:
    * @brief Constructor of an interface for subequations that require the use of
    * a solver within the span of the VOF auxiliary physics' resolution.
    *
-   * @param[in] sim_param Simulation parameters.
+   * @param[in] p_simulation_parameters Simulation parameters.
    *
    * @param[in] p_multiphysics Multiphysics interface object used to get
    * information from physics.
@@ -48,7 +47,7 @@ public:
    * @param[in] p_pcout Parallel cout used to print the information.
    */
   VOFSubequationsInterface(
-    const SimulationParameters<dim> &sim_param,
+    const SimulationParameters<dim> &p_simulation_parameters,
     MultiphysicsInterface<dim>      *p_multiphysics,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        &p_triangulation,
@@ -146,7 +145,7 @@ public:
   void
   solve(const bool &is_post_mesh_adaptation = false)
   {
-    for (const auto &subequation : subequations)
+    for (const auto &subequation : this->subequations)
       {
         subequation.second->solve(is_post_mesh_adaptation);
       }
@@ -219,7 +218,7 @@ public:
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
-    return subequations_solutions[subequation_id];
+    return this->subequations_solutions[subequation_id];
   }
 
   /**
@@ -265,7 +264,7 @@ public:
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
-    subequations_dof_handler[subequation_id] = dof_handler;
+    this->subequations_dof_handler[subequation_id] = dof_handler;
   }
 
   /**
@@ -286,7 +285,7 @@ public:
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
-    subequations_solutions[subequation_id] = solution_vector;
+    this->subequations_solutions[subequation_id] = solution_vector;
   }
 
 private:
