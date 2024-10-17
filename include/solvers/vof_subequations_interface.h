@@ -12,18 +12,27 @@
 using namespace dealii;
 
 /**
+ * @brief IDs associated to the different subequations solved in Lethe.
+ */
+enum VOFSubequationsID : unsigned int
+{
+  /// VOF phase fraction gradient L2 projection
+  phase_gradient_projection = 0
+};
+
+/**
  * @brief Interface for secondary equations (subequations) solved within
- * physics and auxiliary physics.
+ * the VOF auxiliary physics.
  *
  * @tparam dim Number of dimensions of the problem.
  */
 template <int dim>
-class SubequationsInterface
+class VOFSubequationsInterface
 {
 public:
   /**
    * @brief Constructor of an interface for subequations that require the use of
-   * a solver within the span of the physics resolution.
+   * a solver within the span of the VOF auxiliary physics' resolution.
    *
    * @param[in] sim_param Simulation parameters.
    *
@@ -38,7 +47,7 @@ public:
    *
    * @param[in] p_pcout Parallel cout used to print the information.
    */
-  SubequationsInterface(
+  VOFSubequationsInterface(
     const SimulationParameters<dim> &sim_param,
     MultiphysicsInterface<dim>      *p_multiphysics,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -49,7 +58,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  ~SubequationsInterface() = default;
+  ~VOFSubequationsInterface() = default;
 
   /**
    * @brief Setup the DofHandler and the degree of freedom associated with the
@@ -72,7 +81,7 @@ public:
    * to solve.
    */
   void
-  setup_specific_subequation_dofs(const SubequationsID &subequation_id)
+  setup_specific_subequation_dofs(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -92,7 +101,7 @@ public:
    * subequation.
    */
   std::shared_ptr<PhysicsSubequationsScratchDataBase>
-  scratch_data_cast(const SubequationsID     &subequation_id,
+  scratch_data_cast(const VOFSubequationsID  &subequation_id,
                     const FiniteElement<dim> &fe_subequation,
                     const Quadrature<dim>    &quadrature,
                     const Mapping<dim>       &mapping,
@@ -109,15 +118,15 @@ public:
    */
   template <typename ScratchDataType>
   std::shared_ptr<PhysicsSubequationsAssemblerBase<ScratchDataType>>
-  assembler_cast(const SubequationsID  &subequation_id,
-                 const Parameters::VOF &vof_parameters)
+  assembler_cast(const VOFSubequationsID &subequation_id,
+                 const Parameters::VOF   &vof_parameters)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
 
-    if (subequation_id == SubequationsID::phase_gradient_projection)
+    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       return std::make_shared<
         VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
         vof_parameters);
@@ -153,7 +162,7 @@ public:
    * to solve.
    */
   void
-  solve_specific_subequation(const SubequationsID &subequation_id,
+  solve_specific_subequation(const VOFSubequationsID &subequation_id,
                              const bool &is_post_mesh_adaptation = false)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
@@ -170,7 +179,7 @@ public:
    *
    * @return Vector of active subequations identifiers.
    */
-  std::vector<SubequationsID>
+  std::vector<VOFSubequationsID>
   get_active_subequations()
   {
     return this->active_subequations;
@@ -185,7 +194,7 @@ public:
    * @return Pointer to the DoFHandler of the specified subequation.
    */
   DoFHandler<dim> *
-  get_dof_handler(const SubequationsID &subequation_id)
+  get_dof_handler(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -204,7 +213,7 @@ public:
    * @return Pointer to the solution vector of the specified subequation.
    */
   GlobalVectorType *
-  get_solution(const SubequationsID &subequation_id)
+  get_solution(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -224,7 +233,7 @@ public:
    * @note This is used for printing purposes.
    */
   std::string
-  get_subequation_string(const SubequationsID &subequation_id)
+  get_subequation_string(const VOFSubequationsID &subequation_id)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -233,7 +242,7 @@ public:
 
     std::string subequation_string;
 
-    if (subequation_id == SubequationsID::phase_gradient_projection)
+    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       subequation_string = "VOF phase fraction gradient L2 projection";
 
     return subequation_string;
@@ -249,8 +258,8 @@ public:
    * @param[in] dof_handler Pointer to the DoFHandler of a specific subequation.
    */
   void
-  set_dof_handler(const SubequationsID &subequation_id,
-                  DoFHandler<dim>      *dof_handler)
+  set_dof_handler(const VOFSubequationsID &subequation_id,
+                  DoFHandler<dim>         *dof_handler)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -270,8 +279,8 @@ public:
    * subequation.
    */
   void
-  set_solution(const SubequationsID &subequation_id,
-               GlobalVectorType     *solution_vector)
+  set_solution(const VOFSubequationsID &subequation_id,
+               GlobalVectorType        *solution_vector)
   {
     AssertThrow((std::find(this->active_subequations.begin(),
                            this->active_subequations.end(),
@@ -286,19 +295,17 @@ private:
   ConditionalOStream pcout;
 
   // Data structure that stores all enabled physics
-  std::vector<SubequationsID> active_subequations;
+  std::vector<VOFSubequationsID> active_subequations;
 
   // Subequations stored within a map of shared pointer to ensure proper
   // memory management.
-  std::map<SubequationsID, std::shared_ptr<PhysicsSubequationsSolverBase>>
+  std::map<VOFSubequationsID, std::shared_ptr<PhysicsSubequationsSolverBase>>
     subequations;
 
-  std::map<SubequationsID, DoFHandler<dim> *> subequations_dof_handler;
+  std::map<VOFSubequationsID, DoFHandler<dim> *> subequations_dof_handler;
 
   // Present solutions
-  std::map<SubequationsID, GlobalVectorType *> subequations_solutions;
+  std::map<VOFSubequationsID, GlobalVectorType *> subequations_solutions;
 };
-
-
 
 #endif
