@@ -338,9 +338,9 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
       data_out.add_data_vector(
         *this->subequations->get_dof_handler(
-          SubequationsID::phase_gradient_projection),
+          VOFSubequationsID::phase_gradient_projection),
         *this->subequations->get_solution(
-          SubequationsID::phase_gradient_projection),
+          VOFSubequationsID::phase_gradient_projection),
         solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
 
@@ -1378,7 +1378,7 @@ void
 VolumeOfFluid<dim>::find_projected_interface_curvature()
 {
   assemble_curvature_matrix_and_rhs(*this->subequations->get_solution(
-    SubequationsID::phase_gradient_projection));
+    VOFSubequationsID::phase_gradient_projection));
   solve_curvature();
 }
 
@@ -1547,7 +1547,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   // Get fe values of phase fraction gradient (pfg) and curvature
   const DoFHandler<dim> *dof_handler_phase_gradient_projection =
     this->subequations->get_dof_handler(
-      SubequationsID::phase_gradient_projection);
+      VOFSubequationsID::phase_gradient_projection);
 
   FEValues<dim> fe_values_projected_phase_fraction_gradient(
     *this->mapping,

@@ -5,7 +5,6 @@
 #define lethe_vof_linear_subequations_solver_h
 
 #include <solvers/physics_subequations_solver.h>
-#include <solvers/subequations_interface.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 
@@ -22,6 +21,8 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include "vof_subequations_interface.h"
 
 /**
  * @brief Generalized solver for VOF linear subequations.
@@ -59,8 +60,8 @@ public:
    * @param[in] p_pcout Parallel cout used to print the information.
    */
   VOFLinearSubequationsSolver(
-    SubequationsID                   p_subequation_id,
-    SubequationsInterface<dim>      *p_subequations,
+    VOFSubequationsID                p_subequation_id,
+    VOFSubequationsInterface<dim>   *p_subequations,
     MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -198,8 +199,8 @@ protected:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
 
-  SubequationsID              subequation_id;
-  SubequationsInterface<dim> *subequations;
+  VOFSubequationsID              subequation_id;
+  VOFSubequationsInterface<dim> *subequations;
   MultiphysicsInterface<dim>
     *multiphysics; // to get VOF DoFHandler and solution
 

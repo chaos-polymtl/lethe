@@ -8,7 +8,7 @@
  * @brief Base class for scratch data objects of physics' subequations.
  *
  * @note It allows to call subequations' scratch data through the
- * SubequationsInterface.
+ * VOFSubequationsInterface.
  */
 class PhysicsSubequationsScratchDataBase
 {

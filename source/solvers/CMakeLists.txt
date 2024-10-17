@@ -30,7 +30,6 @@ add_library(lethe-solvers
   postprocessors_smoothing.cc
   simulation_parameters.cc
   source_terms.cc
-  subequations_interface.cc
   tracer.cc
   tracer_assemblers.cc
   tracer_drift_velocity.cc
@@ -41,6 +40,7 @@ add_library(lethe-solvers
   vof_linear_subequations_solver.cc
   vof_phase_gradient_projection.cc
   vof_scratch_data.cc
+  vof_subequations_interface.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
@@ -77,7 +77,6 @@ add_library(lethe-solvers
   ../../include/solvers/postprocessors.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
-  ../../include/solvers/subequations_interface.h
   ../../include/solvers/stabilization.h
   ../../include/solvers/tracer.h
   ../../include/solvers/tracer_assemblers.h
@@ -89,6 +88,7 @@ add_library(lethe-solvers
   ../../include/solvers/vof_linear_subequations_solver.h
   ../../include/solvers/vof_phase_gradient_projection.h
   ../../include/solvers/vof_scratch_data.h
+  ../../include/solvers/vof_subequations_interface.h
   )
 
 deal_ii_setup_target(lethe-solvers)

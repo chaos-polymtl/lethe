@@ -8,7 +8,7 @@
  * @brief Base class for assembler objects of physics' subequations.
  *
  * @note It allows to call subequations' assembler through the
- * SubequationsInterface.
+ * VOFSubequationsInterface.
  */
 template <typename ScratchDataType>
 class PhysicsSubequationsAssemblerBase

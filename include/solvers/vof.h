@@ -10,8 +10,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
-#include <solvers/physics_subequations_solver.h>
-#include <solvers/subequations_interface.h>
+// #include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
 #include <solvers/vof_linear_subequations_solver.h>
@@ -35,6 +34,8 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/error_estimator.h>
+
+#include "vof_subequations_interface.h"
 
 DeclException1(
   InvalidNumberOfFluid,
@@ -133,12 +134,12 @@ public:
       this->computing_timer.disable_output();
 
     // Initialize objects for subequations to solve
-    this->subequations =
-      std::make_shared<SubequationsInterface<dim>>(this->simulation_parameters,
-                                                   this->multiphysics,
-                                                   this->triangulation,
-                                                   this->simulation_control,
-                                                   this->pcout);
+    this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
+      this->simulation_parameters,
+      this->multiphysics,
+      this->triangulation,
+      this->simulation_control,
+      this->pcout);
   }
 
   /**
@@ -398,7 +399,7 @@ public:
   get_projected_phase_fraction_gradient_dof_handler()
   {
     return this->subequations->get_dof_handler(
-      SubequationsID::phase_gradient_projection);
+      VOFSubequationsID::phase_gradient_projection);
   }
 
   DoFHandler<dim> *
@@ -411,7 +412,7 @@ public:
   get_projected_phase_fraction_gradient_solution()
   {
     return this->subequations->get_solution(
-      SubequationsID::phase_gradient_projection);
+      VOFSubequationsID::phase_gradient_projection);
   }
 
   GlobalVectorType *
@@ -721,7 +722,7 @@ private:
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
   // For projected phase fraction gradient (pfg) and eventually curvature
-  std::shared_ptr<SubequationsInterface<dim>> subequations;
+  std::shared_ptr<VOFSubequationsInterface<dim>> subequations;
 
   // Projected curvature solution
   GlobalVectorType          present_curvature_solution;
