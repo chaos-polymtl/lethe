@@ -7,11 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Secondary equations (subequations) solved within physics now go through a subequations interface similarly to how auxiliary physics go through the multiphysics interface. At the moment, only the implementation for the L2 projection of the phase fraction gradient in the VOF auxiliary physics has been refactored. Furthermore, only a linear equation solver has been implemented so far. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
+- MAJOR Secondary equations (subequations) solved within the VOF auxiliary physics now go through a subequations interface similarly to how auxiliary physics go through the multiphysics interface. At the moment, only the implementation for the L2 projection of the phase fraction gradient has been refactored. Furthermore, only a linear equation solver has been implemented so far. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
 
-### Changed
-
-- MINOR All scratch data objects now inherit from a base class, namely PhysicsScratchDataBase. In a similar manner, all base assemblers are now specialized types of the PhysicsAssemblerBase. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
+- MAJOR All scratch data objects now inherit from a base class, namely PhysicsScratchDataBase. In a similar manner, all base assemblers are now specialized types of the PhysicsAssemblerBase. [#1318](https://github.com/chaos-polymtl/lethe/pull/1318)
 
 ## [Master] - 2024-10-18
 
