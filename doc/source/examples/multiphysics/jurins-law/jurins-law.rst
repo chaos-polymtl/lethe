@@ -21,7 +21,7 @@ Features
 Files Used in This Example
 --------------------------
 
-All files mentioned below are located in the example's folder (``examples/multiphysics/jurins-law``).
+All files mentioned below are located in the example's folder (``examples/multiphysics/jurins-law-2d``).
 
 - Pointwise mesh file: ``jurins-law-2d-axisymmetric-dimensioned.pw``
 - Mesh file: ``jurins-law-2d-mesh-dimensioned.msh``
