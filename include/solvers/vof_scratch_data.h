@@ -384,6 +384,11 @@ public:
   }
 
   /**
+   * @brief Default destructor.
+   */
+  ~VOFPhaseGradientProjectionScratchData() = default;
+
+  /**
    * @brief Allocate the memory necessary memory for all members of the
    * scratch.
    */
