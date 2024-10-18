@@ -101,6 +101,12 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_compile_definitions(LETHE_USE_LDV)
   endif()
 
+  option(GMG_USE_FLOAT "Use float precision for the geometric multigrid preconditioner")
+  mark_as_advanced(GMG_USE_FLOAT)
+  if(GMG_USE_FLOAT)
+    add_compile_definitions(GMG_USE_FLOAT)
+  endif()
+  
   include(GNUInstallDirs)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES

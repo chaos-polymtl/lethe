@@ -39,10 +39,17 @@ class MFNavierStokesPreconditionGMG
 {
   using Number = double;
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-  using MGNumber = float;
-#else
+#ifndef GMG_USE_FLOAT
   using MGNumber = double;
+#else
+#  if DEAL_II_VERSION_GTE(9, 7, 0)
+  using MGNumber = float;
+#  else
+  AssertThrow(
+    false,
+    ExcMessage(
+      "Float precision for the geometric multigrid preconditioner requires a version of deal.II >= 9.7.0."));
+#  endif
 #endif
 
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
