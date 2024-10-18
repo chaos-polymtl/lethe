@@ -7,9 +7,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem.h>
 #include <dem/dem_post_processing.h>
-#include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
@@ -858,7 +856,8 @@ DEMSolver<dim>::solve()
                   triangulation,
                   particle_handler,
                   insertion_object,
-                  solid_surfaces);
+                  solid_surfaces,
+                  checkpoint_controller);
 
   // Set up the various parameters that need the triangulation
   setup_triangulation_dependent_parameters();
@@ -1079,7 +1078,8 @@ DEMSolver<dim>::solve()
                            insertion_object,
                            solid_surfaces,
                            pcout,
-                           mpi_communicator);
+                           mpi_communicator,
+                           checkpoint_controller);
         }
 
       // Reset all trigger flags

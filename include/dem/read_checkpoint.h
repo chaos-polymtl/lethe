@@ -29,6 +29,7 @@
  * @param particle_handler Particle handler
  * @param insertion_object Shared pointer of Insertion type.
  * @param solid_surfaces Vector of solids surfaces used in DEM simulations
+ * @param checkpoint_controller Checkpoint controller
  */
 template <int dim>
 void
@@ -41,6 +42,7 @@ read_checkpoint(
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces);
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
+  CheckpointControl &checkpoint_controller);
 
 #endif

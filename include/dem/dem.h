@@ -4,6 +4,7 @@
 #ifndef lethe_dem_h
 #define lethe_dem_h
 
+#include <core/checkpoint_control.h>
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
@@ -222,6 +223,11 @@ private:
    * @brief The rank of the current MPI process.
    */
   const unsigned int this_mpi_process;
+
+  /*
+   * @brief
+   */
+  CheckpointControl checkpoint_controller;
 
   /**
    * @brief The output stream used for the parallel simulation, only used by
