@@ -104,7 +104,7 @@ public:
                     const FiniteElement<dim> &fe_subequation,
                     const Quadrature<dim>    &quadrature,
                     const Mapping<dim>       &mapping,
-                    const FiniteElement<dim> &fe_physics);
+                    const FiniteElement<dim> &fe_vof);
 
   /**
    * @brief Cast the appropriate assembler object.
