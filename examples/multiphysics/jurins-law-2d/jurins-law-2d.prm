@@ -13,7 +13,7 @@ subsection simulation control
   set method            = bdf1
   set output name       = jurins-law-2d
   set output frequency  = 10
-  set output path       = ./outputs/50-no-slip/
+  set output path       = ./outputs/50/
   set max time step     = 5e-4
   set adapt             = true
   set max cfl           = 0.8
@@ -44,7 +44,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ./jurins-law-2d-mesh-dimensioned.msh
+  set file name          = ./mesh/jurins-law-2d-mesh-dimensioned.msh
   set initial refinement = 2
 end
 
