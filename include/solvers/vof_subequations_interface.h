@@ -5,6 +5,7 @@
 #define lethe_subequations_interface_h
 
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_subequations_solver.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 
