@@ -214,5 +214,5 @@ Possibilities for Extensions
 ----------------------------
 
 - To further validate the simulation results, the drag coefficient could be compared to the literature for a broader range of Reynolds numbers.
-- It would be interesting to investigate the switch from a perpendicular particle to a particle aligned with the flow and the effect on the drag coefficient. This could be done by varying the orientation of the particle in the flow.
+- It would be interesting to investigate the switch from a particle perpendicular to the flow to a particle aligned with the flow and its effect on the drag coefficient. This could be done by varying the orientation of the particle in the flow.
 - It would be interesting to investigate the effect of the aspect ratio of the particle on the drag coefficient. 
