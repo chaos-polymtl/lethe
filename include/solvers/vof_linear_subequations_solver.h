@@ -105,6 +105,11 @@ public:
   }
 
   /**
+   * @brief Default destructor.
+   */
+  ~VOFLinearSubequationsSolver() = default;
+
+  /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the physics.
    *

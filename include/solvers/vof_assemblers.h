@@ -210,6 +210,11 @@ public:
   {}
 
   /**
+   * @brief Default destructor.
+   */
+  ~VOFAssemblerPhaseGradientProjection() = default;
+
+  /**
    * @brief Assemble the matrix.
    *
    * @param[in] scratch_data Scratch data containing the VOF phase gradient
