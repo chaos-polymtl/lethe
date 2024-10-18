@@ -48,6 +48,11 @@ public:
     std::shared_ptr<SimulationControl> p_simulation_control,
     ConditionalOStream                &p_pcout);
 
+  /**
+   *
+   */
+  virtual ~MultiphysicsInterface() = default;
+
   std::vector<PhysicsID>
   get_active_physics()
   {
