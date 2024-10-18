@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-18
+
+### Added
+
+- MINOR Create compiler flag to use float precision for the geometric multigrid preconditioner in the matrix-free application. [#1319](https://github.com/chaos-polymtl/lethe/pull/1319)
+
 ## [Master] - 2024-10-16
 
 ### Changed
