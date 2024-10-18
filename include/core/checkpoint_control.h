@@ -10,16 +10,27 @@
 class CheckpointControl
 {
 public:
+  /**
+   * @brief The CheckpointControl class is responsible for keeping track of the
+   * next checkpoint id needed to be use.
+   */
   CheckpointControl()
     : next_checkpoint_id(0)
     , max_checkpoint_id(2)
   {}
-  
+
+  /**
+   * @brief Increment the next checkpoint id variable by one and apply the modulo.
+   */
   void
   increment_checkpoint_id()
   {
     next_checkpoint_id = (next_checkpoint_id + 1) % max_checkpoint_id;
   }
+
+  /**
+   * @brief Returns the next checkpoint id.
+   */
   unsigned int
   get_next_checkpoint_id()
   {
