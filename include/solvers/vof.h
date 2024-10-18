@@ -12,7 +12,9 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
+#include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_scratch_data.h>
+#include <solvers/vof_subequations_interface.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -63,7 +65,6 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , projected_phase_fraction_gradient_dof_handler(*triangulation)
     , curvature_dof_handler(*triangulation)
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
@@ -90,13 +91,8 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
           simulation_parameters.fem_parameters.VOF_order);
-        mapping = std::make_shared<MappingQ<dim>>(fe->degree);
-        fe_projected_phase_fraction_gradient =
-          std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
+        mapping      = std::make_shared<MappingQ<dim>>(fe->degree);
         fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
-        projected_phase_fraction_gradient_mapping =
-          std::make_shared<MappingQ<dim>>(
-            fe_projected_phase_fraction_gradient->degree);
         curvature_mapping =
           std::make_shared<MappingQ<dim>>(fe_curvature->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
@@ -134,6 +130,14 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
+    // Initialize objects for subequations to solve
+    this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
+      this->simulation_parameters,
+      this->multiphysics,
+      this->triangulation,
+      this->simulation_control,
+      this->pcout);
   }
 
   /**
@@ -316,7 +320,7 @@ public:
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
+   * only support imposing nodal values, but some physics additionally support
    * the use of L2 projection or steady-state solutions.
    */
   void
@@ -346,56 +350,69 @@ public:
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method
    */
+
   const DoFHandler<dim> &
   get_dof_handler() override
   {
     return dof_handler;
   }
+
   GlobalVectorType &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
+
   GlobalVectorType &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
+
   GlobalVectorType &
   get_newton_update() override
   {
     return newton_update;
   }
+
   GlobalVectorType &
   get_present_solution() override
   {
     return present_solution;
   }
+
   GlobalVectorType &
   get_system_rhs() override
   {
     return system_rhs;
   }
+
   AffineConstraints<double> &
   get_nonzero_constraints() override
   {
     return nonzero_constraints;
   }
+
   DoFHandler<dim> *
   get_projected_phase_fraction_gradient_dof_handler()
   {
-    return &projected_phase_fraction_gradient_dof_handler;
+    return this->subequations->get_dof_handler(
+      VOFSubequationsID::phase_gradient_projection);
   }
+
   DoFHandler<dim> *
   get_curvature_dof_handler()
   {
     return &curvature_dof_handler;
   }
+
   GlobalVectorType *
   get_projected_phase_fraction_gradient_solution()
   {
-    return &present_projected_phase_fraction_gradient_solution;
+    return this->subequations->get_solution(
+      VOFSubequationsID::phase_gradient_projection);
   }
+
   GlobalVectorType *
   get_curvature_solution()
   {
@@ -601,14 +618,6 @@ private:
   smooth_phase_fraction();
 
   /**
-   * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
-   * fraction is used in find_projected_interface_curvature to find interface
-   * curvature (k).
-   */
-  void
-  find_projected_phase_fraction_gradient();
-
-  /**
    * @brief Carries out finding the interface curvature.
    */
   void
@@ -628,26 +637,6 @@ private:
    */
   void
   solve_projection_phase_fraction(GlobalVectorType &solution);
-
-  /**
-   * @brief Assembles the matrix and rhs for calculation of projected phase fraction gradient (pfg).
-   *
-   * Solves:
-   * \f$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi \f$
-   * where \f$v$\f$ \f$\psi\f$, \f$\eta\f$, and \f$\phi\f$ are the test
-   * function, filtered pfg, pfg value, and phase fraction.
-   *
-   * @param solution VOF solution (phase fraction)
-   */
-  void
-  assemble_projected_phase_fraction_gradient_matrix_and_rhs(
-    GlobalVectorType &solution);
-
-  /**
-   * @brief Solves phase fraction gradient system.
-   */
-  void
-  solve_projected_phase_fraction_gradient();
 
   /**
    * @brief Assembles the matrix and rhs for calculation of the curvature.
@@ -685,20 +674,17 @@ private:
 
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  std::shared_ptr<SimulationControl> simulation_control;
-  DoFHandler<dim>                    dof_handler;
-  DoFHandler<dim> projected_phase_fraction_gradient_dof_handler;
-  DoFHandler<dim> curvature_dof_handler;
+  std::shared_ptr<SimulationControl>  simulation_control;
+  DoFHandler<dim>                     dof_handler;
+  DoFHandler<dim>                     curvature_dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
-  std::shared_ptr<FESystem<dim>>      fe_projected_phase_fraction_gradient;
   std::shared_ptr<FiniteElement<dim>> fe_curvature;
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>    mapping;
-  std::shared_ptr<Mapping<dim>>    projected_phase_fraction_gradient_mapping;
-  std::shared_ptr<Mapping<dim>>    curvature_mapping;
-  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Mapping<dim>>        curvature_mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Solution storage
@@ -714,7 +700,6 @@ private:
   AffineConstraints<double>      bounding_constraints;
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               solution_pw;
   GlobalVectorType               filtered_solution;
 
   // Previous solutions vectors
@@ -734,17 +719,8 @@ private:
   GlobalVectorType               complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
-  // Projected phase fraction gradient (pfg) solution
-  GlobalVectorType present_projected_phase_fraction_gradient_solution;
-  IndexSet         locally_owned_dofs_projected_phase_fraction_gradient;
-  IndexSet         locally_relevant_dofs_projected_phase_fraction_gradient;
-  AffineConstraints<double> projected_phase_fraction_gradient_constraints;
-  GlobalVectorType          nodal_projected_phase_fraction_gradient_relevant;
-  GlobalVectorType          nodal_projected_phase_fraction_gradient_owned;
-
-  TrilinosWrappers::SparseMatrix
-                   system_matrix_projected_phase_fraction_gradient;
-  GlobalVectorType system_rhs_projected_phase_fraction_gradient;
+  // For projected phase fraction gradient (pfg) and eventually curvature
+  std::shared_ptr<VOFSubequationsInterface<dim>> subequations;
 
   // Projected curvature solution
   GlobalVectorType          present_curvature_solution;

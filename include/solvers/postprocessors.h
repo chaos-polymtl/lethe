@@ -726,7 +726,6 @@ private:
   std::shared_ptr<DensityModel> density_model;
 };
 
-
 /**
  * @brief Compute the local heat flux vector field within a domain.
  *
