@@ -64,6 +64,11 @@ public:
   {}
 
   /**
+   * @brief Default destructor.
+   */
+  ~PhysicsLinearSubequationsSolver() = default;
+
+  /**
    * @brief Solve the linear system associated with the equation to solve, when
    * the equation is already linear.
    *
