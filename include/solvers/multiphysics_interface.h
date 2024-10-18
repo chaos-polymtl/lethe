@@ -49,7 +49,7 @@ public:
     ConditionalOStream                &p_pcout);
 
   /**
-   *
+   * @brief Default destructor.
    */
   virtual ~MultiphysicsInterface() = default;
 
