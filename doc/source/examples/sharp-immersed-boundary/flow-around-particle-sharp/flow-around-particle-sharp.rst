@@ -2,7 +2,7 @@
 Flow around a Finite Cylindrical Particle Using the Sharp Interface Method
 ==============================================================================
 
-This example simulates the flow around a perpendicular (:math:`theta = 90\degree``) cylinder at low Reynolds number and for an aspect ratio (defined as :math:`L/D`) of 2.
+This example simulates the flow around a perpendicular (:math:`\theta = 90^\circ`) cylinder at low Reynolds number (:math:`Re \in [0.01, 5]`) and for an aspect ratio (defined as :math:`Ar = L/D`) of 2.
 
 ----------------------------------
 Features
@@ -24,6 +24,7 @@ Description of the Case
 ------------------------
 
 This example showcases the use of sharp immersed boundary conditions to simulate flow around non-spherical objects, in this case a cylindrical particle perpendicular to the flow. 
+
 This example focuses on cylindrical particles of small aspect ratio :math:`Ar` (:math:`Ar = L/D = 2`) at low Reynolds numbers ranging from 0.01 to 5. To validate the simulation results, the drag coefficient is 
 compared to the expected results from the literature. 
 
@@ -40,6 +41,7 @@ Mesh
 
 As shown in the previous figure, the flow around the partice is modelled using a prismatic channel which size depends on the size of the particle. In this case, we consider a particle with a diameter of :math:`D = 1`, therefore we have :math:`L = 2`. 
 The domain, of size :math:`32 L \times 16 L \times 16 L`, was found to produce results independant of domain sizes with a low computational cost. 
+
 The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positionned at :math:`3/8` of the domain length avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
 We then make use of a ``box refinement`` to refine the mesh around the particle and properly evaluate the velocity field with elements of size :math:`1/4 D \times 1/4 D \times 1/4 D`.
 
@@ -65,8 +67,10 @@ We then make use of a ``box refinement`` to refine the mesh around the particle 
 Immersed Boundary Particles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We define the particle in flow using the sharp immersed boundary method. The particle is defined as a cylinder with a radius of :math:`D/2 = 0.5`` and a half-length of :math:`L/2 = 1.0`. The particle is centered at :math:`(0,0,0)` 
-and the cylider's axis is oriented perpendicularly to direction of the flow. The ``local mesh refinement`` is set to 3 to ensure we resolve the boundary layer flow around the particle with elements of size :math:`1/32 D \times 1/32 D \times 1/32 D`.
+We define the particle in flow using the sharp immersed boundary method. The particle is defined as a cylinder with a radius of :math:`D/2 = 0.5` and a half-length of :math:`L/2 = 1.0`. The particle is centered at :math:`(0,0,0)` 
+and the cylider's axis is oriented perpendicularly to direction of the flow. 
+
+The ``local mesh refinement`` is set to 3 to ensure we resolve the boundary layer flow around the particle with elements of size :math:`1/32 D \times 1/32 D \times 1/32 D`.
 
 .. code-block:: text
 
@@ -99,6 +103,7 @@ Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 We define the boundary conditions similarly to the :doc:`../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere` example although, in our case, we won't need a boundary condition defined on the particle as the sharp immersed boundary method will take care of it.
+
 The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and and an outlet with :math:`p = 0` on the right of the domain. In our case, the outlet boundary condition is the same as the natural boundary condition can therefore be left unchanged as Lethe will apply it by default.
 
 .. code-block:: text
@@ -140,7 +145,9 @@ Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 In order to produce a varying Reynolds number, we vary the kinematic viscosity of the fluid. We define the Reynolds number as :math:`Re = \frac{UD}{\nu}` where :math:`U` and :math:`D` are fixed at 1. Therefore, 
-the kinematic viscosity is defined as :math:`\nu = \frac{1}{Re}`. Note that this definition of the Reynolds number depends only on the particle's diameter, not its length. We select this parameter because it primarily governs the flow regime around the particle.
+the kinematic viscosity is defined as :math:`\nu = \frac{1}{Re}`. 
+
+Note that this definition of the Reynolds number depends only on the particle's diameter, not its length. We select this parameter because it primarily governs the flow regime around the particle.
 The following block defines the viscosity for a Reynolds number of 1:
 
 .. code-block:: text
@@ -198,6 +205,7 @@ The following graph shows the drag coefficient as a function of the Reynolds num
     :align: center
 
 Here we show the drag models of Vakil and Green [1] and Hölzer and Sommerfeld [2] for comparison. Vakil's drag model is specifically made for cylinders in flow of Reynolds from 1 to 40, whereas Hölzer's model is meant to be more general for non-spherical particles defined by their sphericity in all flow regimes.
+
 From the graph, we show good agreements with Vakil's model for Reynolds numbers ranging from 1 to 5. For values not covered by Vakil's model, we can see that the drag follows a similar trend to Hölzer's model.
 The difference with Hölzer's model can be explained by the fact that it is very hard to produce a precise drag model that encompasses all particle geometries in all flow regimes. As such, errors are expected, but it gives a very good ballpark approximation for non-spherical particles.
 
