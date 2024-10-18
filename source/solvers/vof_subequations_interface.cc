@@ -40,7 +40,7 @@ VOFSubequationsInterface<dim>::scratch_data_cast(
   const FiniteElement<dim> &fe_subequation,
   const Quadrature<dim>    &quadrature,
   const Mapping<dim>       &mapping,
-  const FiniteElement<dim> &fe_vof)
+  const FiniteElement<dim> &fe_input)
 {
   AssertThrow((std::find(this->active_subequations.begin(),
                          this->active_subequations.end(),
@@ -49,11 +49,11 @@ VOFSubequationsInterface<dim>::scratch_data_cast(
 
   if (subequation_id == VOFSubequationsID::phase_gradient_projection)
     return std::make_shared<VOFPhaseGradientProjectionScratchData<dim>>(
-      fe_subequation, quadrature, mapping, fe_vof);
+      fe_subequation, quadrature, mapping, fe_input);
   else // At the moment, only one option is possible. This will change with the
        // addition of other subequations to the interface.
     return std::make_shared<VOFPhaseGradientProjectionScratchData<dim>>(
-      fe_subequation, quadrature, mapping, fe_vof);
+      fe_subequation, quadrature, mapping, fe_input);
 }
 
 template class VOFSubequationsInterface<2>;

@@ -328,7 +328,7 @@ class VOFPhaseGradientProjectionScratchData : public PhysicsScratchDataBase
 {
 public:
   /**
-   * Constructor of the scratch data object.
+   * @brief Constructor of the scratch data object.
    * Creates the fe_values that will be used to fill the member variables.
    * Allocates the memory necessary for all member variables, but does not
    * compute anything since that must be done at the cell level.
@@ -402,8 +402,8 @@ public:
    *
    * @param[in] cell Cell over which the reinitialization is carried out.
    *
-   * @param[in] current_solution Present value of the solution for the
-   * reinitialized phase fraction.
+   * @param[in] current_solution Present values of the solution for the
+   * projected phase fraction gradient.
    */
   template <typename VectorType>
   void

@@ -97,6 +97,19 @@ public:
    * @param[in] subequation_id Identifier associated with the subequation wished
    * to solve.
    *
+   * @param[in] fe_subequation FiniteElement object used for solving the wished
+   * subequation.
+   *
+   * @param[in] quadrature Quadrature rule used for the assembly of the matrix
+   * and the right-hand side.
+   *
+   * @param[in] mapping Mapping of the domain used when solving the VOF
+   * equation.
+   *
+   * @param[in] fe_input FiniteElement object from the VOF auxiliary physics or
+   * another subequation that is used as an input for the resolution of the
+   * current subequation.
+   *
    * @return Shared pointer to the scratch data object of the appropriate
    * subequation.
    */
@@ -105,13 +118,15 @@ public:
                     const FiniteElement<dim> &fe_subequation,
                     const Quadrature<dim>    &quadrature,
                     const Mapping<dim>       &mapping,
-                    const FiniteElement<dim> &fe_vof);
+                    const FiniteElement<dim> &fe_input);
 
   /**
    * @brief Cast the appropriate assembler object.
    *
    * @param[in] subequation_id Identifier associated with the subequation wished
    * to solve.
+   *
+   * @param[in] vof_parameters VOF auxiliary physics parameter set.
    *
    * @return Shared pointer to the assembler object of the appropriate
    * subequation.
