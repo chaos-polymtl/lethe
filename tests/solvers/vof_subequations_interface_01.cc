@@ -71,13 +71,18 @@ test()
   // Phase fraction gradient L2 projection enabled (This is the only one
   // implemented at the moment other testing outputs should be added later.)
   {
-    MultiphysicsInterface<dim> *multiphysics_ptr =
-      new MultiphysicsInterface<dim>(solver_parameters,
-                                     tria,
-                                     simulation_control,
-                                     pcout);
-    VOFSubequationsInterface<dim> subequations(
-      solver_parameters, multiphysics_ptr, tria, simulation_control, pcout);
+    std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_ptr =
+      std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,
+                                                   tria,
+                                                   simulation_control,
+                                                   pcout);
+
+    VOFSubequationsInterface<dim> subequations(solver_parameters,
+                                               multiphysics_ptr.get(),
+                                               tria,
+                                               simulation_control,
+                                               pcout);
+
     std::vector<VOFSubequationsID> active_subequations =
       subequations.get_active_subequations();
 
@@ -87,8 +92,6 @@ test()
       {
         deallog << int(subequation_id) << std::endl;
       }
-
-    delete multiphysics_ptr;
   }
 }
 
