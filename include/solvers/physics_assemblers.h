@@ -5,10 +5,13 @@
 #define lethe_physics_assemblers_h
 
 /**
- * @brief Base class for assembler objects of physics' subequations.
+ * @brief Base class for assembler objects of physics and subequations.
  *
- * @note It allows to call subequations' assembler through the
- * VOFSubequationsInterface.
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ * @tparam CopyDataType Type of copy data object used for transferring from
+ * local system assembly to global system.
  */
 template <typename ScratchDataType, typename CopyDataType>
 class PhysicsAssemblerBase
@@ -17,8 +20,8 @@ public:
   /**
    * @brief Assemble the matrix.
    *
-   * @param[in] scratch_data Scratch data containing the VOF phase gradient
-   * projection information.
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
    *
@@ -31,8 +34,8 @@ public:
   /**
    * @brief Assemble the right-hand side (rhs).
    *
-   * @param[in] scratch_data Scratch data containing the VOF phase gradient
-   * projection information.
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for rhs assembly.
    *

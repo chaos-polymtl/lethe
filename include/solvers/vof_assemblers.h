@@ -23,6 +23,22 @@ using VOFAssemblerBase =
   PhysicsAssemblerBase<VOFScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
+ * @brief A pure virtual class that serves as an interface for all
+ * of the assemblers for VOF subequation solvers.
+ *
+ * @tparam dim Integer that denotes the number of spatial dimensions.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ *
+ * @ingroup assemblers
+ */
+template <typename ScratchDataType>
+using VOFSubequationAssemblerBase =
+  PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>;
+
+/**
  * @brief Class that assembles the core of the VOF solver.
  * According to the following weak form:
  * \f$\mathbf{u} \cdot T \cdot \nabla T =0 \f$ with an SUPG
@@ -180,7 +196,7 @@ public:
  */
 template <int dim, typename ScratchDataType>
 class VOFAssemblerPhaseGradientProjection
-  : public PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>
+  : public VOFSubequationAssemblerBase<ScratchDataType>
 {
 public:
   /**
