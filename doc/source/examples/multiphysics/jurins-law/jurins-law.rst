@@ -1,4 +1,4 @@
-===============================
+ ===============================
 Jurin's Law
 ===============================
 
@@ -23,7 +23,7 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/jurins-law-2d``).
 
-- Pointwise mesh file: ``jurins-law-2d-axisymmetric-dimensioned.pw``
+- Pointwise mesh file: ``jurins-law-2d-dimensioned.pw``
 - Mesh file: ``jurins-law-2d-mesh-dimensioned.msh``
 - Parameter file: ``jurins-law-2d.prm``
 - Postprocessing Python script: ``jurins_law_multiple_folders.py`` (using the functions of ``postprocessing_jurins_law_dimensioned.py``)
@@ -48,7 +48,7 @@ The computational domain is described in the following figure (not to scale):
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The quantity of interest of this problem is the difference in height between the tip of the meniscus and the height of the fluid outside of the central part, denoted by :math:`\Delta H` in the previous figure. The Jurin's law [#liu2018]_ gives an asymptotical value of :math:`\Delta H` :
+The quantity of interest of this problem is the difference in height (:math:`\Delta H` in the previous figure) between the tip of the meniscus and the surface of the fluid outside of the central part. The Jurin's law [#liu2018]_ gives an asymptotical value of :math:`\Delta H` :
 
 .. math::
     \Delta H = \frac{\sigma\cos{\alpha_c}}{\rho_1gR}
@@ -94,7 +94,7 @@ Note that the fluid dynamics are solved by default.
 Dimensionality
 ~~~~~~~~~~~~~~
 
-The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \text{m} = 1 \ \text{mm}`. This setting helps the convergence of the solver.
+The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.
 
 .. code-block:: text
 
@@ -105,7 +105,7 @@ The ``dimensionality`` subsection is used to define the unit length as :math:`0.
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Pointwise Fidelity, the source file is ``CHANGE_NAME_OF_FILE.pw``. It was then exported into a readable format : ``CHANGE_NAME_OF_FILE.msh`` . The initial refinement is set to :math:`2`.
+In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Pointwise Fidelity, the source file is ``jurins-law-2d-dimensioned.pw``. It was then exported into a readable format : ``jurins-law-2d-mesh-dimensioned.msh`` . The initial refinement is set to :math:`2`.
 
 .. code-block:: text
 
@@ -181,7 +181,7 @@ In the ``cahn hilliard`` subsection, we set the ``potential smoothing coefficien
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of :math:`\epsilon` that outputed at every iteration.
+In the ``initial conditions`` subsection, we need only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of :math:`\epsilon` that is outputed at every iteration.
 
 .. code-block:: text
 
@@ -249,12 +249,12 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 Running the Simulation
 -----------------------
 
-We call the lethe-fluid by invoking:
+We call lethe-fluid by invoking:
 
 ``mpirun -np $number_of_CPU_cores lethe-fluid jurins-law-2d.prm``
 
 .. warning::
-    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 1-2 minutes for 10 processors.
+    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 3-4 minutes for 10 processors.
 
 .. _Results:
 
@@ -262,7 +262,7 @@ We call the lethe-fluid by invoking:
 Results
 -----------------
 
-The height difference was computed for different values of :math:`\alpha_c` and compared to the Jurin's law in the following figure, which shows an excellent agreement.
+The height difference is computed for different values of :math:`\alpha_c` and compared to the Jurin's law in the following figure, which shows an excellent agreement.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/results_delta_h.png                                                                           |
@@ -296,7 +296,7 @@ Possibilities for Extension
 
 - **Going 3D**: the mesh can be extruded into the third dimension and there is an adaptation of the Jurin's law in three dimensions. Some results are available in the literature for comparison (see Lovrić et al. [#lovric2019]_)
 
-- **Investigate the the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transitory state with this new boundary condition.
+- **Investigate the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transitory state with this new boundary condition.
 
 -----------
 References
