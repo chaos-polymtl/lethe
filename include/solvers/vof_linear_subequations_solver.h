@@ -227,9 +227,7 @@ protected:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Assembler for the matrix and rhs
-  std::shared_ptr<
-    PhysicsAssemblerBase<ScratchDataType, StabilizedMethodsCopyData>>
-    assembler;
+  std::shared_ptr<VOFSubequationAssemblerBase<ScratchDataType>> assembler;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;
