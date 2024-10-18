@@ -1277,6 +1277,8 @@ NavierStokesOperatorBase<dim, number>::get_refinement_edges(
 
 template class NavierStokesOperatorBase<2, double>;
 template class NavierStokesOperatorBase<3, double>;
+template class NavierStokesOperatorBase<2, float>;
+template class NavierStokesOperatorBase<3, float>;
 
 template <int dim, typename number>
 NavierStokesStabilizedOperator<dim, number>::NavierStokesStabilizedOperator() =
@@ -1709,3 +1711,5 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
 template class NavierStokesStabilizedOperator<2, double>;
 template class NavierStokesStabilizedOperator<3, double>;
+template class NavierStokesStabilizedOperator<2, float>;
+template class NavierStokesStabilizedOperator<3, float>;
