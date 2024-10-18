@@ -39,7 +39,7 @@ class MFNavierStokesPreconditionGMG
 {
   using Number = double;
 
-#ifndef GMG_USE_FLOAT
+#ifndef LETHE_GMG_USE_FLOAT
   using MGNumber = double;
 #else
 #  if DEAL_II_VERSION_GTE(9, 7, 0)
@@ -48,7 +48,7 @@ class MFNavierStokesPreconditionGMG
   AssertThrow(
     false,
     ExcMessage(
-      "Float precision for the geometric multigrid preconditioner requires a version of deal.II >= 9.7.0."));
+      "Single precision for the geometric multigrid preconditioner requires a version of deal.II >= 9.7.0."));
 #  endif
 #endif
 
