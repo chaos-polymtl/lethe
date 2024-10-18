@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/checkpoint_control.h>
+
 #include <dem/dem_action_manager.h>
 #include <dem/read_checkpoint.h>
 
@@ -23,13 +25,32 @@ read_checkpoint(
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces)
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
+  CheckpointControl &checkpoint_controller)
 {
   if (!DEMActionManager::get_action_manager()->check_restart_simulation())
     return;
 
   TimerOutput::Scope timer(computing_timer, "Read checkpoint");
   std::string        prefix = parameters.restart.filename;
+
+  // Load checkpoint controller
+  std::string checkpoint_controller_object_filename =
+    prefix + ".checkpoint_controller";
+  std::ifstream iss_checkpoint_controller_obj(
+    checkpoint_controller_object_filename);
+  boost::archive::text_iarchive ia_checkpoint_controller_obj(
+    iss_checkpoint_controller_obj, boost::archive::no_header);
+  checkpoint_controller.deserialize(ia_checkpoint_controller_obj, 0);
+
+  // Update predix with the checkpoint id
+  prefix =
+    prefix + "_" +
+    Utilities::int_to_string(checkpoint_controller.get_next_checkpoint_id());
+
+  // Need to increment the next checkpoint id for the next checkpoint
+  checkpoint_controller.increment_checkpoint_id();
+
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);
 
@@ -91,25 +112,25 @@ read_checkpoint(
 }
 
 template void
-read_checkpoint(
-  TimerOutput                                     &computing_timer,
-  const DEMSolverParameters<2>                    &parameters,
-  std::shared_ptr<SimulationControl>              &simulation_control,
-  PVDHandler                                      &particles_pvdhandler,
-  PVDHandler                                      &grid_pvdhandler,
-  parallel::distributed::Triangulation<2>         &triangulation,
-  Particles::ParticleHandler<2>                   &particle_handler,
-  std::shared_ptr<Insertion<2>>                   &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces);
+read_checkpoint(TimerOutput                             &computing_timer,
+                const DEMSolverParameters<2>            &parameters,
+                std::shared_ptr<SimulationControl>      &simulation_control,
+                PVDHandler                              &particles_pvdhandler,
+                PVDHandler                              &grid_pvdhandler,
+                parallel::distributed::Triangulation<2> &triangulation,
+                Particles::ParticleHandler<2>           &particle_handler,
+                std::shared_ptr<Insertion<2>>           &insertion_object,
+                std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces,
+                CheckpointControl &checkpoint_controller);
 
 template void
-read_checkpoint(
-  TimerOutput                                     &computing_timer,
-  const DEMSolverParameters<3>                    &parameters,
-  std::shared_ptr<SimulationControl>              &simulation_control,
-  PVDHandler                                      &particles_pvdhandler,
-  PVDHandler                                      &grid_pvdhandler,
-  parallel::distributed::Triangulation<3>         &triangulation,
-  Particles::ParticleHandler<3>                   &particle_handler,
-  std::shared_ptr<Insertion<3>>                   &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces);
+read_checkpoint(TimerOutput                             &computing_timer,
+                const DEMSolverParameters<3>            &parameters,
+                std::shared_ptr<SimulationControl>      &simulation_control,
+                PVDHandler                              &particles_pvdhandler,
+                PVDHandler                              &grid_pvdhandler,
+                parallel::distributed::Triangulation<3> &triangulation,
+                Particles::ParticleHandler<3>           &particle_handler,
+                std::shared_ptr<Insertion<3>>           &insertion_object,
+                std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces,
+                CheckpointControl &checkpoint_controller);
