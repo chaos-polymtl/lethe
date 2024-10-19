@@ -38,7 +38,7 @@
  * @brief A base class of preconditioners used by the smoother.
  */
 template <typename VectorType>
-class PreconditionBase
+class PreconditionBase : public Subscriptor
 {
 public:
   /**
@@ -86,6 +86,80 @@ protected:
 
   /// Timer.
   mutable TimerOutput timer;
+};
+
+/**
+ * @brief A wrapper class around a preconditioner to be
+ * able to handle vector types that are not supported
+ * by the preconditioner.
+ */
+template <typename VectorType, typename VectorTypePrecondition>
+class PreconditionAdapter : public PreconditionBase<VectorType>
+{
+public:
+  /**
+   * Constructor.
+   *
+   * @param[in] preconditioner Preconditioner.
+   */
+  template <typename PreconditionType>
+  PreconditionAdapter(const std::shared_ptr<PreconditionType> &preconditioner)
+    : fu_preconditioner([preconditioner](VectorTypePrecondition       &dst,
+                                         const VectorTypePrecondition &src) {
+      preconditioner->vmult(dst, src);
+    })
+  {}
+
+  /**
+   * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  void
+  vmult(VectorType &dst, const VectorType &src) const override
+  {
+    if constexpr (std::is_same_v<VectorType, VectorTypePrecondition>)
+      {
+        // vector is supported: nothing to do
+        fu_preconditioner(dst, src);
+      }
+    else
+      {
+        // vector is not supported: copy vectors
+        src_ = src;
+        dst_ = dst;
+        fu_preconditioner(dst_, src_);
+        dst = dst_;
+      }
+  }
+
+  /**
+   * @brief Apply preconditioner.
+   *
+   * @param[in,out] dst Destination vector holding the result.
+   * @param[in] src Input source vector.
+   */
+  template <
+    typename U = VectorTypePrecondition,
+    std::enable_if_t<!std::is_same_v<VectorType, U>, VectorType> * = nullptr>
+  void
+  vmult(U &dst, const U &src) const
+  {
+    fu_preconditioner(dst, src);
+  }
+
+private:
+  /// Preconditioner.
+  const std::function<void(VectorTypePrecondition &,
+                           const VectorTypePrecondition &)>
+    fu_preconditioner;
+
+  /// Source vector supported by the preconditioner.
+  mutable VectorTypePrecondition src_;
+
+  /// Destination vector supported by the preconditioner.
+  mutable VectorTypePrecondition dst_;
 };
 
 /**
@@ -237,7 +311,7 @@ public:
     for (unsigned int b = 0; b < blocks.size(); ++b)
       {
         this->blocks[b] =
-          LAPACKFullMatrix<double>(blocks[b].m(), blocks[b].n());
+          LAPACKFullMatrix<Number>(blocks[b].m(), blocks[b].n());
         this->blocks[b] = blocks[b];
         this->blocks[b].compute_lu_factorization();
       }
@@ -247,7 +321,7 @@ public:
     if (weighting_type != WeightingType::none)
       {
         this->timer.enter_subsection("asm::weight");
-        Vector<double> vector_weights;
+        Vector<Number> vector_weights;
         weights.reinit(partition);
 
         for (const auto &patch : patches)
@@ -291,7 +365,7 @@ public:
       src_internal.copy_locally_owned_data_from(src);
     src_ptr.update_ghost_values();
 
-    Vector<double> vector_src, vector_dst, vector_weights;
+    Vector<Number> vector_src, vector_dst, vector_weights;
 
     for (unsigned int c = 0; c < patches.size(); ++c)
       {
@@ -467,53 +541,6 @@ namespace dealii
 
 
 
-  namespace internal
-  {
-    namespace MGCoarseGridApplyPreconditioner
-    {
-      template <class VectorType,
-                class PreconditionerType,
-                typename std::enable_if<
-                  std::is_same<typename VectorType::value_type, double>::value,
-                  VectorType>::type * = nullptr>
-      void
-      solve(const PreconditionerType preconditioner,
-            VectorType              &dst,
-            const VectorType        &src)
-      {
-        // to allow the case that the preconditioner was only set up on a
-        // subset of processes
-        if (preconditioner != nullptr)
-          preconditioner->vmult(dst, src);
-      }
-
-      template <class VectorType,
-                class PreconditionerType,
-                typename std::enable_if<
-                  !std::is_same<typename VectorType::value_type, double>::value,
-                  VectorType>::type * = nullptr>
-      void
-      solve(const PreconditionerType preconditioner,
-            VectorType              &dst,
-            const VectorType        &src)
-      {
-        LinearAlgebra::distributed::Vector<double> src_;
-        LinearAlgebra::distributed::Vector<double> dst_;
-
-        src_ = src;
-        dst_ = dst;
-
-        // to allow the case that the preconditioner was only set up on a
-        // subset of processes
-        if (preconditioner != nullptr)
-          preconditioner->vmult(dst_, src_);
-
-        dst = dst_;
-      }
-    } // namespace MGCoarseGridApplyPreconditioner
-  }   // namespace internal
-
-
   template <class VectorType, class PreconditionerType>
   void
   MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>::operator()(
@@ -521,7 +548,7 @@ namespace dealii
     VectorType       &dst,
     const VectorType &src) const
   {
-    internal::MGCoarseGridApplyPreconditioner::solve(preconditioner, dst, src);
+    preconditioner->vmult(dst, src);
   }
 } // namespace dealii
 
@@ -640,7 +667,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
         partitioners(this->dof_handler.get_triangulation().n_global_levels());
 
       // Local object for constraints of the different levels
-      MGLevelObject<AffineConstraints<double>> level_constraints;
+      MGLevelObject<AffineConstraints<MGNumber>> level_constraints;
 
       // Resize all multilevel objects according to level
       this->mg_operators.resize(this->minlevel, this->maxlevel);
@@ -813,7 +840,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             }
 
           this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1000,8 +1027,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       this->intlevel = (mg_int_level == -1) ? this->minlevel : mg_int_level;
 
       // Local object for constraints of the different levels
-      MGLevelObject<AffineConstraints<typename VectorType::value_type>>
-        constraints;
+      MGLevelObject<AffineConstraints<MGNumber>> constraints;
 
       // Resize all multilevel objects according to level
       this->mg_operators.resize(this->minlevel, this->maxlevel);
@@ -1165,7 +1191,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
                     *mapping,
                     level_dof_handler,
                     this->simulation_parameters.boundary_conditions.id[i_bc],
-                    dealii::Functions::ZeroFunction<dim>(dim + 1),
+                    dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
                     level_constraint,
                     fe->component_mask(velocities));
                 }
@@ -1231,7 +1257,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             }
 
           this->mg_operators[level] =
-            std::make_shared<NavierStokesStabilizedOperator<dim, double>>();
+            std::make_shared<NavierStokesStabilizedOperator<dim, MGNumber>>();
 
           this->mg_operators[level]->reinit(
             *mapping,
@@ -1284,8 +1310,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   const VectorType                         &time_derivative_previous_solutions)
 {
   // Local objects for the different levels
-  MGLevelObject<VectorType> mg_solution(this->minlevel, this->maxlevel);
-  MGLevelObject<VectorType> mg_time_derivative_previous_solutions(
+  MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
+  MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
     this->minlevel, this->maxlevel);
 
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
@@ -1314,7 +1340,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           time_derivative_previous_solutions);
 
       this->mg_matrix =
-        std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_operators);
+        std::make_shared<mg::Matrix<MGVectorType>>(this->ls_mg_operators);
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -1332,7 +1358,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           time_derivative_previous_solutions);
 
       this->mg_matrix =
-        std::make_shared<mg::Matrix<VectorType>>(this->mg_operators);
+        std::make_shared<mg::Matrix<MGVectorType>>(this->mg_operators);
     }
 
   this->mg_setup_timer.leave_subsection("Execute relevant transfers");
@@ -1361,7 +1387,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
   this->mg_smoother = std::make_shared<
-    MGSmootherPrecondition<OperatorType, SmootherType, VectorType>>();
+    MGSmootherPrecondition<OperatorType, SmootherType, MGVectorType>>();
 
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(
     this->minlevel, this->maxlevel);
@@ -1374,10 +1400,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           Parameters::LinearSolver::MultigridSmootherPreconditionerType::
             InverseDiagonal)
         {
-          VectorType diagonal_vector;
+          MGVectorType diagonal_vector;
           this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
           mg_smoother_preconditioners[level] =
-            std::make_shared<MyDiagonalMatrix<VectorType>>(diagonal_vector);
+            std::make_shared<MyDiagonalMatrix<MGVectorType>>(diagonal_vector);
         }
       else if (this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
@@ -1387,9 +1413,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           if (mg_smoother_preconditioners[level] == nullptr)
             mg_smoother_preconditioners[level] =
-              std::make_shared<PreconditionASM<VectorType>>();
+              std::make_shared<PreconditionASM<MGVectorType>>();
 
-          dynamic_cast<PreconditionASM<VectorType> *>(
+          dynamic_cast<PreconditionASM<MGVectorType> *>(
             mg_smoother_preconditioners[level].get())
             ->initialize(this->mg_operators[level]
                            ->get_system_matrix_free()
@@ -1456,7 +1482,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
-          VectorType vec;
+          MGVectorType vec;
           this->mg_operators[level]->initialize_dof_vector(vec);
           const auto evs =
             mg_smoother->smoothers[level].estimate_eigenvalues(vec);
@@ -1501,13 +1527,14 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           .mg_gmres_reduce;
       this->coarse_grid_solver_control = std::make_shared<ReductionControl>(
         max_iterations, tolerance, reduce, false, false);
-      SolverGMRES<VectorType>::AdditionalData solver_parameters;
+      SolverGMRES<TrilinosVectorType>::AdditionalData solver_parameters;
       solver_parameters.max_n_tmp_vectors =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_gmres_max_krylov_vectors;
 
-      this->coarse_grid_solver = std::make_shared<SolverGMRES<VectorType>>(
-        *this->coarse_grid_solver_control, solver_parameters);
+      this->coarse_grid_solver =
+        std::make_shared<SolverGMRES<TrilinosVectorType>>(
+          *this->coarse_grid_solver_control, solver_parameters);
 
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
@@ -1516,14 +1543,14 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           setup_AMG();
 
-          this->mg_coarse = std::make_shared<
-            MGCoarseGridIterativeSolver<VectorType,
-                                        SolverGMRES<VectorType>,
-                                        OperatorType,
-                                        TrilinosWrappers::PreconditionAMG>>(
+          this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
+            MGVectorType,
+            SolverGMRES<TrilinosVectorType>,
+            TrilinosWrappers::SparseMatrix,
+            PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            *this->mg_operators[this->minlevel],
-            *this->precondition_amg);
+            this->mg_operators[this->minlevel]->get_system_matrix(),
+            *this->coarse_grid_precondition);
         }
       else if (this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
@@ -1532,14 +1559,14 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           setup_ILU();
 
-          this->mg_coarse = std::make_shared<
-            MGCoarseGridIterativeSolver<VectorType,
-                                        SolverGMRES<VectorType>,
-                                        OperatorType,
-                                        TrilinosWrappers::PreconditionILU>>(
+          this->mg_coarse = std::make_shared<MGCoarseGridIterativeSolver<
+            MGVectorType,
+            SolverGMRES<TrilinosVectorType>,
+            TrilinosWrappers::SparseMatrix,
+            PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
             *this->coarse_grid_solver,
-            *this->mg_operators[this->minlevel],
-            *this->precondition_ilu);
+            this->mg_operators[this->minlevel]->get_system_matrix(),
+            *this->coarse_grid_precondition);
         }
     }
   else if (this->simulation_parameters.linear_solver
@@ -1549,10 +1576,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
     {
       setup_AMG();
 
-      this->mg_coarse = std::make_shared<
-        MGCoarseGridApplyPreconditioner<VectorType,
-                                        TrilinosWrappers::PreconditionAMG>>(
-        *this->precondition_amg);
+      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
+        MGVectorType,
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+        *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -1561,10 +1588,10 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
     {
       setup_ILU();
 
-      this->mg_coarse = std::make_shared<
-        MGCoarseGridApplyPreconditioner<VectorType,
-                                        TrilinosWrappers::PreconditionILU>>(
-        *this->precondition_ilu);
+      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
+        MGVectorType,
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+        *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -1576,17 +1603,21 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->direct_solver_control =
         std::make_shared<SolverControl>(100, 1.e-10);
 
-      this->precondition_direct =
+      auto precondition_direct =
         std::make_shared<TrilinosWrappers::SolverDirect>(
           *this->direct_solver_control, data);
 
-      this->precondition_direct->initialize(
+      precondition_direct->initialize(
         this->mg_operators[this->minlevel]->get_system_matrix());
 
-      this->mg_coarse = std::make_shared<
-        MGCoarseGridApplyPreconditioner<VectorType,
-                                        TrilinosWrappers::SolverDirect>>(
-        *this->precondition_direct);
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_direct);
+
+      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
+        MGVectorType,
+        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+        *this->coarse_grid_precondition);
 #else
       AssertThrow(
         false,
@@ -1619,23 +1650,24 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       // Create interface matrices needed for local smoothing in case of
       // local refinement
       this->mg_interface_matrix_in =
-        std::make_shared<mg::Matrix<VectorType>>(this->ls_mg_interface_in);
+        std::make_shared<mg::Matrix<MGVectorType>>(this->ls_mg_interface_in);
 
       // Create main MG object
-      this->mg = std::make_shared<Multigrid<VectorType>>(*this->mg_matrix,
-                                                         *this->mg_coarse,
-                                                         *this->mg_transfer_ls,
-                                                         *this->mg_smoother,
-                                                         *this->mg_smoother,
-                                                         this->minlevel,
-                                                         this->maxlevel);
+      this->mg =
+        std::make_shared<Multigrid<MGVectorType>>(*this->mg_matrix,
+                                                  *this->mg_coarse,
+                                                  *this->mg_transfer_ls,
+                                                  *this->mg_smoother,
+                                                  *this->mg_smoother,
+                                                  this->minlevel,
+                                                  this->maxlevel);
 
       if (this->dof_handler.get_triangulation().has_hanging_nodes())
         this->mg->set_edge_in_matrix(*this->mg_interface_matrix_in);
 
       // Create MG preconditioner
       this->ls_multigrid_preconditioner =
-        std::make_shared<PreconditionMG<dim, VectorType, LSTransferType>>(
+        std::make_shared<PreconditionMG<dim, MGVectorType, LSTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_ls);
     }
   else if (this->simulation_parameters.linear_solver
@@ -1647,17 +1679,17 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         {
           // Create main MG object
           this->mg_intermediate =
-            std::make_shared<Multigrid<VectorType>>(*this->mg_matrix,
-                                                    *this->mg_coarse,
-                                                    *this->mg_transfer_gc,
-                                                    *this->mg_smoother,
-                                                    *this->mg_smoother,
-                                                    this->minlevel,
-                                                    this->intlevel);
+            std::make_shared<Multigrid<MGVectorType>>(*this->mg_matrix,
+                                                      *this->mg_coarse,
+                                                      *this->mg_transfer_gc,
+                                                      *this->mg_smoother,
+                                                      *this->mg_smoother,
+                                                      this->minlevel,
+                                                      this->intlevel);
 
           // Create MG preconditioner
           this->gc_multigrid_preconditioner_intermediate =
-            std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
+            std::make_shared<PreconditionMG<dim, MGVectorType, GCTransferType>>(
               this->dof_handler, *this->mg_intermediate, *this->mg_transfer_gc);
 
           const int max_iterations = this->simulation_parameters.linear_solver
@@ -1675,22 +1707,22 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
               max_iterations, tolerance, reduce, false, false);
 
           this->coarse_grid_solver_intermediate =
-            std::make_shared<SolverGMRES<VectorType>>(
+            std::make_shared<SolverGMRES<MGVectorType>>(
               *this->coarse_grid_solver_control_intermediate);
 
           this->mg_coarse_intermediate =
             std::make_shared<MGCoarseGridIterativeSolver<
-              VectorType,
-              SolverGMRES<VectorType>,
+              MGVectorType,
+              SolverGMRES<MGVectorType>,
               OperatorType,
-              PreconditionMG<dim, VectorType, GCTransferType>>>(
+              PreconditionMG<dim, MGVectorType, GCTransferType>>>(
               *this->coarse_grid_solver_intermediate,
               *this->mg_operators[this->intlevel],
               *this->gc_multigrid_preconditioner_intermediate);
         }
 
       // Create main MG object
-      this->mg = std::make_shared<Multigrid<VectorType>>(
+      this->mg = std::make_shared<Multigrid<MGVectorType>>(
         *this->mg_matrix,
         (this->minlevel != this->intlevel) ? (*this->mg_coarse_intermediate) :
                                              (*this->mg_coarse),
@@ -1699,11 +1731,11 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         *this->mg_smoother,
         this->intlevel,
         this->maxlevel,
-        Multigrid<VectorType>::Cycle::v_cycle);
+        Multigrid<MGVectorType>::Cycle::v_cycle);
 
       // Create MG preconditioner
       this->gc_multigrid_preconditioner =
-        std::make_shared<PreconditionMG<dim, VectorType, GCTransferType>>(
+        std::make_shared<PreconditionMG<dim, MGVectorType, GCTransferType>>(
           this->dof_handler, *this->mg, *this->mg_transfer_gc);
     }
 
@@ -1829,15 +1861,17 @@ MFNavierStokesPreconditionGMG<dim>::print_relevant_info() const
 }
 
 template <int dim>
-const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<dim, double>>> &
+const MGLevelObject<std::shared_ptr<NavierStokesOperatorBase<
+  dim,
+  typename MFNavierStokesPreconditionGMG<dim>::MGNumber>>> &
 MFNavierStokesPreconditionGMG<dim>::get_mg_operators() const
 {
   return this->mg_operators;
 }
 
 template <int dim>
-const MGLevelObject<std::shared_ptr<
-  PreconditionBase<typename MFNavierStokesPreconditionGMG<dim>::VectorType>>> &
+const MGLevelObject<std::shared_ptr<PreconditionBase<
+  typename MFNavierStokesPreconditionGMG<dim>::MGVectorType>>> &
 MFNavierStokesPreconditionGMG<dim>::get_mg_smoother_preconditioners() const
 {
   return this->mg_smoother_preconditioners;
@@ -1935,17 +1969,23 @@ MFNavierStokesPreconditionGMG<dim>::setup_AMG()
       parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
       parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
 
-      this->precondition_amg =
+      auto precondition_amg =
         std::make_shared<TrilinosWrappers::PreconditionAMG>();
 
-      this->precondition_amg->initialize(min_level_matrix, parameter_ml);
+      precondition_amg->initialize(min_level_matrix, parameter_ml);
+
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_amg);
     }
   else
     {
-      this->precondition_amg =
+      auto precondition_amg =
         std::make_shared<TrilinosWrappers::PreconditionAMG>();
 
-      this->precondition_amg->initialize(min_level_matrix, amg_data);
+      coarse_grid_precondition =
+        std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+          precondition_amg);
     }
 }
 
@@ -1965,12 +2005,15 @@ MFNavierStokesPreconditionGMG<dim>::setup_ILU()
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
 
-  this->precondition_ilu =
-    std::make_shared<TrilinosWrappers::PreconditionILU>();
+  auto precondition_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  this->precondition_ilu->initialize(
+  precondition_ilu->initialize(
     this->mg_operators[this->minlevel]->get_system_matrix(),
     preconditionerOptions);
+
+  coarse_grid_precondition =
+    std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
+      precondition_ilu);
 }
 
 template <int dim>
