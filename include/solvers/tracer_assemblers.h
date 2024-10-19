@@ -109,8 +109,7 @@ template <int dim>
 class TracerAssemblerDGCore : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerDGCore(std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+  TracerAssemblerDGCore()
   {}
 
   /**
@@ -131,10 +130,6 @@ public:
   virtual void
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
-
-  // The simulation control must be a part of the core assembler since the
-  // inverse time-step is used within the stabilization
-  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -238,8 +233,7 @@ template <int dim>
 class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
 {
 public:
-  TracerAssemblerSIPG(std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+  TracerAssemblerSIPG()
   {}
 
   /**
@@ -266,8 +260,6 @@ public:
   virtual void
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedDGMethodsCopyData  &copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -285,11 +277,9 @@ class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
 {
 public:
   TracerAssemblerBoundaryNitsche(
-    std::shared_ptr<SimulationControl> simulation_control,
     const BoundaryConditions::TracerBoundaryConditions<dim>
       &p_boundary_conditions_tracer)
-    : simulation_control(simulation_control)
-    , boundary_conditions_tracer(p_boundary_conditions_tracer)
+    : boundary_conditions_tracer(p_boundary_conditions_tracer)
   {}
 
   /**
@@ -317,7 +307,6 @@ public:
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedDGMethodsCopyData  &copy_data) override;
 
-  std::shared_ptr<SimulationControl>                simulation_control;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
 };
 

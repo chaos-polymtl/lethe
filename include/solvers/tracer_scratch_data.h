@@ -312,21 +312,21 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
     const unsigned int                                   &sub_face_no,
-    const typename DoFHandler<dim>::active_cell_iterator &ncell,
+    const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
     const VectorType                                     &current_solution,
     const Function<dim>                                  *levelset_function)
   {
     fe_interface_values_tracer.reinit(
-      cell, face_no, sub_face_no, ncell, neigh_face_no, neigh_sub_face_no);
+      cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
     face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
 
     n_interface_dofs = fe_interface_values_tracer.n_current_interface_dofs();
 
     const double extent_here = cell->measure() / cell->face(face_no)->measure();
     const double extent_there =
-      ncell->measure() / ncell->face(neigh_face_no)->measure();
+      neigh_cell->measure() / neigh_cell->face(neigh_face_no)->measure();
 
     penalty_factor = get_penalty_factor(fe_values_tracer.get_fe().degree,
                                         extent_here,

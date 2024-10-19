@@ -96,7 +96,6 @@ subsection analytical solution
     set Function expression = 1 ; 0 ; 0
   end
   subsection tracer
-    set Function constants  = Pe=100
     set Function expression = -tanh(20*(sqrt(x*x+y*y)-0.5))
   end
 end

@@ -44,16 +44,15 @@ Tracer<dim>::setup_assemblers()
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
-  // Core assembler are different between DG and CG versions.
+  // Core assemblers are different between DG and CG versions.
   if (simulation_parameters.fem_parameters.tracer_uses_dg)
     {
       this->assemblers.emplace_back(
-        std::make_shared<TracerAssemblerDGCore<dim>>(this->simulation_control));
-      this->inner_face_assembler =
-        std::make_shared<TracerAssemblerSIPG<dim>>(simulation_control);
+        std::make_shared<TracerAssemblerDGCore<dim>>());
+      this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>();
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
-          simulation_control, simulation_parameters.boundary_conditions_tracer);
+          simulation_parameters.boundary_conditions_tracer);
     }
   else
     {
