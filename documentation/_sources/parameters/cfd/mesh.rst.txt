@@ -22,7 +22,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Initial refinement of the mesh near user-specified boundaries
     set initial boundary refinement = 0
 
-    # Lists of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
+    # List of boundaries next to which the mesh should be refined. The list must contain integers separated by commas.
     set boundaries refined = 0, 1
 
     # Enable initial refinement until target size is reached

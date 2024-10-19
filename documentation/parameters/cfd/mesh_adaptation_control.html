@@ -463,6 +463,12 @@
 
   # Number of initial (pre-solve) refinement steps
   set initial refinement steps = 0
+
+  # Fix the boundary mesh size at the initial refinement level when the kelly mesh refinement estimator is used.
+  set fix boundary refinement = false
+
+  # List of boundaries next to which the mesh refinement level should not be modified. The list must contain the boundary ids separated by commas.
+  set boundaries fixed = 0, 1
 end
 </pre></div>
 </div>
@@ -560,6 +566,7 @@ end
 </div>
 <ul class="simple">
 <li><p>The number of initial (before solving) adaptive refinement steps is controlled by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> parameter. With an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> times.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">boundary</span> <span class="pre">refinement</span></code> parameter is used to fix the boundary mesh size at the defined initial refinement level. <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">fixed</span></code> can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.</p></li>
 </ul>
 </section>
 
