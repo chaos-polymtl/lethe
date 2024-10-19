@@ -26,7 +26,11 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/meshworker/mesh_loop.h>
+
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
 
 template <int dim>
 void
@@ -40,9 +44,21 @@ Tracer<dim>::setup_assemblers()
       this->assemblers.emplace_back(
         std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
-  // Core assembler
-  this->assemblers.emplace_back(
-    std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
+  // Core assemblers are different between DG and CG versions.
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<TracerAssemblerDGCore<dim>>());
+      this->inner_face_assembler = std::make_shared<TracerAssemblerSIPG<dim>>();
+      this->boundary_face_assembler =
+        std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
+          simulation_parameters.boundary_conditions_tracer);
+    }
+  else
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<TracerAssemblerCore<dim>>(this->simulation_control));
+    }
 }
 
 template <int dim>
@@ -58,6 +74,16 @@ Tracer<dim>::assemble_system_matrix()
   simulation_parameters.source_term.tracer_source->set_time(
     simulation_control->get_current_time());
 
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    assemble_system_matrix_dg();
+  else
+    assemble_system_matrix_cg();
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_matrix_cg()
+{
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -65,6 +91,7 @@ Tracer<dim>::assemble_system_matrix()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
+    *this->face_quadrature,
     *this->mapping,
     dof_handler_fluid->get_fe());
 
@@ -79,6 +106,143 @@ Tracer<dim>::assemble_system_matrix()
 
   system_matrix.compress(VectorOperation::add);
 }
+
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_matrix_dg()
+{
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->face_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
+
+  StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                        this->cell_quadrature->size());
+
+  // We first wrap the assembly of the matrix within a cell_worker lambda
+  // function. This is only done for compatibility reasons with the MeshWorker
+  // paradigm and does not have any functional purpose.
+  const auto cell_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      this->assemble_local_system_matrix(cell, scratch_data, copy_data);
+    };
+
+  const auto boundary_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      const auto &triangulation_boundary_id =
+        cell->face(face_no)->boundary_id();
+      const unsigned int boundary_index =
+        get_lethe_boundary_index(triangulation_boundary_id);
+
+      scratch_data.reinit_boundary_face(
+        cell,
+        face_no,
+        boundary_index,
+        this->evaluation_point,
+        this->multiphysics->get_immersed_solid_signed_distance_function());
+
+      // Gather velocity information at the face to properly advect
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      // Reinit the internal face velocity within the scratch data
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      scratch_data.calculate_face_physical_properties();
+
+      this->boundary_face_assembler->assemble_matrix(scratch_data, copy_data);
+    };
+
+  const auto face_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        const unsigned int                                   &sub_face_no,
+        const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
+        const unsigned int                                   &neigh_face_no,
+        const unsigned int                                   &neigh_sub_face_no,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      scratch_data.reinit_internal_face(
+        cell,
+        face_no,
+        sub_face_no,
+        neigh_cell,
+        neigh_face_no,
+        neigh_sub_face_no,
+        this->evaluation_point,
+        this->multiphysics->get_immersed_solid_signed_distance_function());
+
+      // Pad copy_data memory for the internal faces elementary matrices
+      // BB note : Array could be pre-allocated
+      copy_data.face_data.emplace_back();
+      auto &copy_data_face = copy_data.face_data.back();
+      copy_data_face.face_matrix.reinit(scratch_data.n_interface_dofs,
+                                        scratch_data.n_interface_dofs);
+      copy_data_face.joint_dof_indices =
+        scratch_data.fe_interface_values_tracer.get_interface_dof_indices();
+
+      // Gather velocity information at the face to properly advect
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      // Reinit the internal face velocity within the scratch data
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      scratch_data.calculate_face_physical_properties();
+
+      this->inner_face_assembler->assemble_matrix(scratch_data, copy_data);
+    };
+
+  const auto copier = [&](const StabilizedDGMethodsCopyData &copy_data) {
+    this->copy_local_matrix_to_global_matrix(copy_data);
+
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+
+    for (const auto &cdf : copy_data.face_data)
+      {
+        constraints_used.distribute_local_to_global(cdf.face_matrix,
+                                                    cdf.joint_dof_indices,
+                                                    system_matrix);
+      }
+  };
+
+  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
+                        this->dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
+                        boundary_worker,
+                        face_worker);
+}
+
+
 
 template <int dim>
 void
@@ -182,7 +346,6 @@ Tracer<dim>::copy_local_matrix_to_global_matrix(
                                               system_matrix);
 }
 
-
 template <int dim>
 void
 Tracer<dim>::assemble_system_rhs()
@@ -197,6 +360,19 @@ Tracer<dim>::assemble_system_rhs()
   simulation_parameters.source_term.tracer_source->set_time(
     simulation_control->get_current_time());
 
+
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    assemble_system_rhs_dg();
+
+  else
+    assemble_system_rhs_cg();
+}
+
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_rhs_cg()
+{
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
@@ -204,6 +380,7 @@ Tracer<dim>::assemble_system_rhs()
     this->simulation_parameters.physical_properties_manager,
     *this->fe,
     *this->cell_quadrature,
+    *this->face_quadrature,
     *this->mapping,
     dof_handler_fluid->get_fe());
 
@@ -217,6 +394,138 @@ Tracer<dim>::assemble_system_rhs()
                                             this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_rhs_dg()
+{
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->face_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
+
+  StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
+                                        this->cell_quadrature->size());
+
+  const auto cell_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      this->assemble_local_system_rhs(cell, scratch_data, copy_data);
+    };
+
+  const auto boundary_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data) {
+      // Identify which boundary condition corresponds to the boundary id. If
+      // this boundary condition is not identified, then exit the simulation
+      // instead of assuming an outlet.
+      const auto &triangulation_boundary_id =
+        cell->face(face_no)->boundary_id();
+      const unsigned int boundary_index =
+        get_lethe_boundary_index(triangulation_boundary_id);
+
+      scratch_data.reinit_boundary_face(
+        cell,
+        face_no,
+        boundary_index,
+        this->evaluation_point,
+        this->multiphysics->get_immersed_solid_signed_distance_function());
+
+      // Gather velocity information at the face to properly advect
+      // First gather the dof handler for the fluid dynamics
+      const DoFHandler<dim> *dof_handler_fluid =
+        multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      // Get the cell that corresponds to the fluid dynamics
+      typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+      reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                  face_no,
+                                                  scratch_data);
+
+      scratch_data.calculate_face_physical_properties();
+
+      this->boundary_face_assembler->assemble_rhs(scratch_data, copy_data);
+    };
+
+  const auto face_worker =
+    [&](const typename DoFHandler<dim>::active_cell_iterator &cell,
+        const unsigned int                                   &face_no,
+        const unsigned int                                   &sub_face_no,
+        const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
+        const unsigned int                                   &neigh_face_no,
+        const unsigned int                                   &neigh_sub_face_no,
+        TracerScratchData<dim>                               &scratch_data,
+        StabilizedDGMethodsCopyData                          &copy_data)
+
+  {
+    scratch_data.reinit_internal_face(
+      cell,
+      face_no,
+      sub_face_no,
+      neigh_cell,
+      neigh_face_no,
+      neigh_sub_face_no,
+      this->evaluation_point,
+      this->multiphysics->get_immersed_solid_signed_distance_function());
+
+    copy_data.face_data.emplace_back();
+    auto &copy_data_face = copy_data.face_data.back();
+    copy_data_face.joint_dof_indices =
+      scratch_data.fe_interface_values_tracer.get_interface_dof_indices();
+    copy_data_face.face_rhs.reinit(scratch_data.n_interface_dofs);
+
+    // Gather velocity information at the face to properly advect
+    // First gather the dof handler for the fluid dynamics
+    const DoFHandler<dim> *dof_handler_fluid =
+      multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+    // Get the cell that corresponds to the fluid dynamics
+    typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+      &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+    reinit_face_velocity_with_adequate_solution(velocity_cell,
+                                                face_no,
+                                                scratch_data);
+
+    scratch_data.calculate_face_physical_properties();
+
+    this->inner_face_assembler->assemble_rhs(scratch_data, copy_data);
+  };
+
+
+  const auto copier = [&](const StabilizedDGMethodsCopyData &c) {
+    this->copy_local_rhs_to_global_rhs(c);
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+    for (const auto &cdf : c.face_data)
+      {
+        constraints_used.distribute_local_to_global(cdf.face_rhs,
+                                                    cdf.joint_dof_indices,
+                                                    system_rhs);
+      }
+  };
+
+  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
+                        this->dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once |
+                          MeshWorker::assemble_ghost_faces_both,
+                        boundary_worker,
+                        face_worker);
 }
 
 template <int dim>
@@ -973,10 +1282,24 @@ Tracer<dim>::setup_dofs()
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
-                                  dsp,
-                                  nonzero_constraints,
-                                  /*keep_constrained_dofs = */ true);
+
+
+  if (simulation_parameters.fem_parameters.tracer_uses_dg)
+    {
+      DoFTools::make_flux_sparsity_pattern(this->dof_handler,
+                                           dsp,
+                                           nonzero_constraints,
+                                           /*keep_constrained_dofs = */ true);
+    }
+  else
+    {
+      DoFTools::make_sparsity_pattern(this->dof_handler,
+                                      dsp,
+                                      nonzero_constraints,
+                                      /*keep_constrained_dofs = */ true);
+    }
+
+
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -1045,6 +1368,29 @@ Tracer<dim>::set_initial_conditions()
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
   percolate_time_vectors();
+}
+
+
+template <int dim>
+void
+Tracer<dim>::compute_kelly(
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
+  dealii::Vector<float> &estimated_error_per_cell)
+{
+  if (ivar.first == Variable::tracer)
+    {
+      const FEValuesExtractors::Scalar tracer(0);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        this->present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(tracer));
+    }
 }
 
 template <int dim>

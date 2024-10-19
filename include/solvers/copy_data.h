@@ -114,6 +114,42 @@ public:
   bool cell_is_local;
 };
 
+
+
+/**
+ * @brief Responsible for storing the information calculated using the discontinuous
+ * galerkin (DG) assembly of stabilized scalar equations. Like the
+ * StabilizedCopyData class, this class is used to initialize, zero (reset) and
+ * store the cell_matrix and the cell_rhs while having support for stabilized
+ * terms. However, it also has to support the storage of information at internal
+ * faces. This is required for the DG methods.
+ **/
+class StabilizedDGMethodsCopyData : public StabilizedMethodsCopyData
+{
+public:
+  /**
+   * @brief Constructor. Allocates the memory using the base class Constructor.
+   * @param[in] n_dofs Number of degrees of freedom per cell in the problem
+   *
+   * @param[in] n_q_points Number of quadrature points
+   */
+  StabilizedDGMethodsCopyData(const unsigned int n_dofs,
+                              const unsigned int n_q_points)
+    : StabilizedMethodsCopyData(n_dofs, n_q_points){};
+
+
+  // Data structure for internal face contributions
+  struct CopyDataFace
+  {
+    FullMatrix<double> face_matrix;
+    Vector<double>     face_rhs;
+
+    std::vector<types::global_dof_index> joint_dof_indices;
+  };
+
+  std::vector<CopyDataFace> face_data;
+};
+
 /**
  * @brief Class responsible for storing the information calculated using the assembly of stabilized
  * Tensor<1,dim> equations. Like the CopyData class, this class is used to

@@ -30,7 +30,9 @@ enum class Variable : unsigned int
   /// Phase order scalar field from Cahn Hilliard
   phase_cahn_hilliard = 4,
   /// Chemical potential scalar field from Cahn Hilliard
-  chemical_potential_cahn_hilliard = 5
+  chemical_potential_cahn_hilliard = 5,
+  /// Tracer scalar field
+  tracer = 6
 };
 
 /**

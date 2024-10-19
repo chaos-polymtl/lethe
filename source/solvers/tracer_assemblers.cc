@@ -10,8 +10,9 @@
 
 template <int dim>
 void
-TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
-                                          StabilizedMethodsCopyData &copy_data)
+TracerAssemblerCore<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -137,8 +138,9 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
-                                       StabilizedMethodsCopyData &copy_data)
+TracerAssemblerCore<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Scheme and physical properties
   const std::vector<double> &diffusivity_vector =
@@ -243,8 +245,106 @@ template class TracerAssemblerCore<3>;
 
 template <int dim>
 void
-TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
-                                         StabilizedMethodsCopyData &copy_data)
+TracerAssemblerDGCore<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // assembling local matrix and right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double         diffusivity = diffusivity_vector[q];
+      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+              const auto           phi_T_j      = scratch_data.phi[q][j];
+
+              // Weak form : - D * laplacian T +  u * gradT - f=0
+              // Note that the advection term has been weakened for it to appear
+              // explicitly in the weak form as a boundary term.
+              local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
+                                     grad_phi_T_i * velocity * phi_T_j) *
+                                    JxW;
+            }
+        }
+    } // end loop on quadrature points
+}
+
+
+template <int dim>
+void
+TracerAssemblerDGCore<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
+{
+  // Scheme and physical properties
+  const std::vector<double> &diffusivity_vector =
+    scratch_data.tracer_diffusivity;
+
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Assembling local right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const double         diffusivity     = diffusivity_vector[q];
+      const double         tracer_value    = scratch_data.tracer_values[q];
+      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
+      const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_T_i      = scratch_data.phi[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+
+          // rhs for : - D * laplacian T +  u * grad T - f=0
+          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
+                           grad_phi_T_i * velocity * tracer_value -
+                           scratch_data.source[q] * phi_T_i) *
+                          JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class TracerAssemblerDGCore<2>;
+template class TracerAssemblerDGCore<3>;
+
+
+template <int dim>
+void
+TracerAssemblerBDF<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
   const auto        &JxW        = scratch_data.JxW;
@@ -297,8 +397,9 @@ TracerAssemblerBDF<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
 template <int dim>
 void
-TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
-                                      StabilizedMethodsCopyData &copy_data)
+TracerAssemblerBDF<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData    &copy_data)
 {
   // Loop and quadrature informations
   const auto        &JxW        = scratch_data.JxW;
@@ -345,3 +446,255 @@ TracerAssemblerBDF<dim>::assemble_rhs(TracerScratchData<dim>    &scratch_data,
 
 template class TracerAssemblerBDF<2>;
 template class TracerAssemblerBDF<3>;
+
+
+
+template <int dim>
+void
+TracerAssemblerSIPG<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
+{
+  const double                  penalty_factor = scratch_data.penalty_factor;
+  const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
+  const auto                   &q_points       = fe_iv.get_quadrature_points();
+  auto                         &copy_data_face = copy_data.face_data.back();
+  const unsigned int            n_dofs = fe_iv.n_current_interface_dofs();
+
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        for (unsigned int j = 0; j < n_dofs; ++j)
+          {
+            copy_data_face.face_matrix(i, j) +=
+              fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+              * fe_iv.shape_value((velocity_dot_n > 0.),
+                                  j,
+                                  q) // phi_j^{upwind}
+              * velocity_dot_n       // (u . n)
+              * JxW[q];              // dx
+
+            // Assemble the diffusion term using Nitsche
+            // symmetric interior penalty method. See Larson Chap. 14. P.362
+            copy_data_face.face_matrix(i, j) +=
+              (scratch_data.tracer_diffusivity_face[q] *
+                 (-fe_iv.average_of_shape_gradients(j, q) * normals[q] *
+                    fe_iv.jump_in_shape_values(i, q) -
+                  fe_iv.average_of_shape_gradients(i, q) * normals[q] *
+                    fe_iv.jump_in_shape_values(j, q)) +
+               (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
+                 fe_iv.jump_in_shape_values(j, q) *
+                 fe_iv.jump_in_shape_values(i, q)) *
+              JxW[q];
+          }
+    }
+}
+
+template <int dim>
+void
+TracerAssemblerSIPG<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
+{
+  const double                  penalty_factor = scratch_data.penalty_factor;
+  const FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values_tracer;
+  const auto                   &q_points = fe_iv.get_quadrature_points();
+  const unsigned int            n_dofs   = fe_iv.n_current_interface_dofs();
+
+  auto &copy_data_face = copy_data.face_data.back();
+
+  const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+  for (unsigned int q = 0; q < q_points.size(); ++q)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[q] * normals[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          // Assemble advection terms with upwinding
+          if (velocity_dot_n > 0)
+            {
+              copy_data_face.face_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_here[q]    // \phi_i^{upwind}
+                * velocity_dot_n                 // (u . n)
+                * JxW[q];                        // dx
+            }
+          else
+            {
+              copy_data_face.face_rhs(i) -=
+                fe_iv.jump_in_shape_values(i, q) // [\phi_i]
+                * scratch_data.values_there[q]   // \phi_i^{upwind}
+                * velocity_dot_n                 // (u . n)
+                * JxW[q];                        // dx
+            }
+
+          // Assemble the diffusion term using Nitsche symmetric interior
+          // penalty method. See Larson Chap. 14. P.362
+          copy_data_face.face_rhs(i) -=
+            (scratch_data.tracer_diffusivity_face[q] *
+               (-scratch_data.tracer_average_gradient[q] * normals[q] *
+                  fe_iv.jump_in_shape_values(i, q) -
+                scratch_data.tracer_value_jump[q] * normals[q] *
+                  fe_iv.average_of_shape_gradients(i, q)) +
+             (scratch_data.tracer_diffusivity_face[q]) * penalty_factor *
+               scratch_data.tracer_value_jump[q] *
+               fe_iv.jump_in_shape_values(i, q)) *
+            JxW[q];
+        }
+    }
+}
+
+template class TracerAssemblerSIPG<2>;
+template class TracerAssemblerSIPG<3>;
+
+
+template <int dim>
+void
+TracerAssemblerBoundaryNitsche<dim>::assemble_matrix(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
+{
+  const unsigned int           boundary_index = scratch_data.boundary_index;
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+  const auto &q_points = fe_face.get_quadrature_points();
+
+  const double beta = scratch_data.penalty_factor;
+
+  const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+  const std::vector<double> &JxW          = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  for (unsigned int point = 0; point < q_points.size(); ++point)
+    {
+      const double velocity_dot_n =
+        scratch_data.face_velocity_values[point] * normals[point];
+      for (unsigned int i = 0; i < n_facet_dofs; ++i)
+        {
+          for (unsigned int j = 0; j < n_facet_dofs; ++j)
+            {
+              if (boundary_conditions_tracer.type[boundary_index] ==
+                  BoundaryConditions::BoundaryType::outlet)
+                {
+                  if (velocity_dot_n > 0)
+                    copy_data.local_matrix(i, j) +=
+                      fe_face.shape_value(i, point) *
+                      fe_face.shape_value(j, point) * velocity_dot_n *
+                      JxW[point];
+                }
+              else if (boundary_conditions_tracer.type[boundary_index] ==
+                       BoundaryConditions::BoundaryType::tracer_dirichlet)
+                {
+                  if (velocity_dot_n > 0)
+                    copy_data.local_matrix(i, j) +=
+                      fe_face.shape_value(i, point) *
+                      fe_face.shape_value(j, point) * velocity_dot_n *
+                      JxW[point];
+
+                  copy_data.local_matrix(i, j) +=
+                    scratch_data.tracer_diffusivity_face[point] *
+                    (-fe_face.shape_value(i, point) *
+                       fe_face.shape_grad(j, point) * normals[point] -
+                     fe_face.shape_value(j, point) *
+                       fe_face.shape_grad(i, point) * normals[point] +
+                     beta * fe_face.shape_value(i, point) *
+                       fe_face.shape_value(j, point)) *
+                    JxW[point];
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+TracerAssemblerBoundaryNitsche<dim>::assemble_rhs(
+  const TracerScratchData<dim> &scratch_data,
+  StabilizedDGMethodsCopyData  &copy_data)
+{
+  const unsigned int           boundary_index = scratch_data.boundary_index;
+  const FEFaceValuesBase<dim> &fe_face =
+    scratch_data.fe_interface_values_tracer.get_fe_face_values(0);
+  const auto &q_points = fe_face.get_quadrature_points();
+
+  const double beta = scratch_data.penalty_factor;
+
+  const unsigned int         n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+  const std::vector<double> &JxW          = fe_face.get_JxW_values();
+  const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+  // If the boundary condition is an outlet, assumes that advection comes
+  // out since there is no inflow
+  if (boundary_conditions_tracer.type[boundary_index] ==
+      BoundaryConditions::BoundaryType::outlet)
+    {
+      for (unsigned int point = 0; point < q_points.size(); ++point)
+        {
+          const double velocity_dot_n =
+            scratch_data.face_velocity_values[point] * normals[point];
+
+          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+            copy_data.local_rhs(i) -= fe_face.shape_value(i, point) // \phi_i
+                                      * scratch_data.values_here[point] *
+                                      velocity_dot_n // u . n
+                                      * JxW[point];  // dx
+        }
+    }
+  // Else the boundary condition is a dirichlet. Evaluate the function and
+  // process it accordingly
+  else if (boundary_conditions_tracer.type[boundary_index] ==
+           BoundaryConditions::BoundaryType::tracer_dirichlet)
+    {
+      std::vector<double> function_value(q_points.size());
+      boundary_conditions_tracer.tracer[boundary_index]->value_list(
+        q_points, function_value);
+
+      for (unsigned int point = 0; point < q_points.size(); ++point)
+        {
+          const double velocity_dot_n =
+            scratch_data.face_velocity_values[point] * normals[point];
+
+          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+            {
+              if (velocity_dot_n < 0)
+                copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
+                                          function_value[point] *
+                                          velocity_dot_n * JxW[point];
+
+              if (velocity_dot_n > 0)
+                copy_data.local_rhs(i) -= fe_face.shape_value(i, point) *
+                                          scratch_data.values_here[point] *
+                                          velocity_dot_n * JxW[point];
+
+              copy_data.local_rhs(i) -=
+                scratch_data.tracer_diffusivity_face[point] *
+                (-fe_face.shape_value(i, point) *
+                   scratch_data.gradients_here[point] * normals[point] -
+                 (scratch_data.values_here[point] - function_value[point]) *
+                   fe_face.shape_grad(i, point) * normals[point] +
+                 beta * fe_face.shape_value(i, point) *
+                   (scratch_data.values_here[point] - function_value[point])) *
+                JxW[point];
+            }
+        }
+    }
+  // If it is an unknown boundary condition, throw an exception. This case
+  // should never occur.
+  else
+    {
+      AssertThrow(false,
+                  ExcMessage(
+                    "No valid boundary conditions types were identified."));
+    }
+}
+
+template class TracerAssemblerBoundaryNitsche<2>;
+template class TracerAssemblerBoundaryNitsche<3>;

@@ -1,0 +1,115 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4
+   Number of degrees of freedom: 27
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 16
+
+*****************************
+Steady iteration:        1/4
+*****************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-14
+  -Iterative solver took : 0 steps to reach a residual norm of 0
+	alpha =      1 res =      0
+	||du||_L2 =      0	||du||_Linfty = 0
+	||dp||_L2 =      0	||dp||_Linfty = 0
+-------
+Tracer
+-------
+Newton iteration: 0  - Residual:  2.152
+  -Tolerance of iterative solver is : 2.152e-13
+  -Iterative solver took : 5 steps to reach a residual norm of 1.506e-15
+	alpha =      1 res = 2.004e-15	||dx||_L2 =  2.329	||dx||_Linfty = 1.133
+L2 error velocity : 0
+L2 error tracer : 0.00416192
+
+*****************************
+Steady iteration:        2/4
+*****************************
+   Number of active cells:       16
+   Number of degrees of freedom: 75
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 64
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-14
+  -Iterative solver took : 0 steps to reach a residual norm of 0
+	alpha =      1 res =      0
+	||du||_L2 =      0	||du||_Linfty = 0
+	||dp||_L2 =      0	||dp||_Linfty = 0
+-------
+Tracer
+-------
+Newton iteration: 0  - Residual:  1.099
+  -Tolerance of iterative solver is : 1.099e-13
+  -Iterative solver took : 13 steps to reach a residual norm of 5.464e-14
+	alpha =      1 res = 5.429e-14	||dx||_L2 = 0.8796	||dx||_Linfty = 0.1604
+L2 error velocity : 0
+L2 error tracer : 0.000529372
+
+*****************************
+Steady iteration:        3/4
+*****************************
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 256
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-14
+  -Iterative solver took : 0 steps to reach a residual norm of 0
+	alpha =      1 res =      0
+	||du||_L2 =      0	||du||_Linfty = 0
+	||dp||_L2 =      0	||dp||_Linfty = 0
+-------
+Tracer
+-------
+Newton iteration: 0  - Residual:  0.5142
+  -Tolerance of iterative solver is : 5.142e-14
+  -Iterative solver took : 23 steps to reach a residual norm of 1.063e-14
+	alpha =      1 res = 1.087e-14	||dx||_L2 = 0.5096	||dx||_Linfty = 0.09359
+L2 error velocity : 0
+L2 error tracer : 3.91616e-05
+
+*****************************
+Steady iteration:        4/4
+*****************************
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 1024
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-14
+  -Iterative solver took : 0 steps to reach a residual norm of 0
+	alpha =      1 res =      0
+	||du||_L2 =      0	||du||_Linfty = 0
+	||dp||_L2 =      0	||dp||_Linfty = 0
+-------
+Tracer
+-------
+Newton iteration: 0  - Residual:  0.2298
+  -Tolerance of iterative solver is : 2.298e-14
+  -Iterative solver took : 36 steps to reach a residual norm of 1.74e-14
+	alpha =      1 res = 1.784e-14	||dx||_L2 =  0.264	||dx||_Linfty = 0.02743
+L2 error velocity : 0
+L2 error tracer : 2.54754e-06
+cells  error_velocity   error_pressure  
+    4 0.000000e+00   - 0.000000e+00   - 
+   16 0.000000e+00 nan 0.000000e+00 nan 
+   64 0.000000e+00 nan 0.000000e+00 nan 
+  256 0.000000e+00 nan 0.000000e+00 nan 
+cells   error_tracer    
+    4 4.161920e-03    - 
+   16 5.293724e-04 2.97 
+   64 3.916158e-05 3.76 
+  256 2.547542e-06 3.94 

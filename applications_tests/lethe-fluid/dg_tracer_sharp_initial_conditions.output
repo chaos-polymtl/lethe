@@ -1,0 +1,56 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 2304
+Tracer statistics : 
+	     Min : 0
+	     Max : 2.22507e-308
+	 Average : 0
+	 Std-Dev : 0
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0
+	 boundary 2: 0
+	 boundary 3: 0
+
+*****************************
+Steady iteration:        1/2
+*****************************
+Tracer statistics : 
+	     Min : -9.38909e-10
+	     Max : 1
+	 Average : 0.5
+	 Std-Dev : 0.5
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0.5
+	 boundary 1: -0.5
+	 boundary 2: 0
+	 boundary 3: 0
+
+*****************************
+Steady iteration:        2/2
+*****************************
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      1
+   Number of tracer degrees of freedom: 9216
+Tracer statistics : 
+	     Min : -1.15898e-09
+	     Max : 1
+	 Average : 0.5
+	 Std-Dev : 0.5
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0.5
+	 boundary 1: -0.5
+	 boundary 2: 0
+	 boundary 3: 0

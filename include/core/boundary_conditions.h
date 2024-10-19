@@ -24,6 +24,9 @@ namespace BoundaryConditions
   {
     // common
     none,
+    outlet, // outlet is used for fluid dynamics, tracer and eventually other
+            // physics
+
     // for fluid
     noslip,
     slip,
@@ -32,8 +35,7 @@ namespace BoundaryConditions
     partial_slip,
     periodic,
     pressure,
-    outlet,
-    // for heat transfer
+    //  for heat transfer
     noflux,
     temperature,
     convection_radiation,
@@ -45,7 +47,7 @@ namespace BoundaryConditions
     cahn_hilliard_noflux,
     cahn_hilliard_dirichlet_phase_order,
     cahn_hilliard_angle_of_contact,
-    cahn_hilliard_free_angle,
+    cahn_hilliard_free_angle
   };
 
   /**
@@ -253,19 +255,17 @@ namespace BoundaryConditions
     prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
     prm.leave_subsection();
 
-    // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "beta",
-      "0",
+      "1",
       Patterns::Double(),
-      "penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
+      "Penalty parameter for weak boundary condition imposed through Nitsche's method or outlets");
 
-    // Penalization parameter for weakly imposed dirichlet BCs and outlets
     prm.declare_entry(
       "boundary layer thickness",
       "0",
       Patterns::Double(),
-      "thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
+      "Thickness of the boundary layer used to calculate the penalty parameter for partial slip boundary condition in tangent direction imposed through Nitsche's method or outlets");
   }
 
 
@@ -707,9 +707,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "dirichlet",
-                      Patterns::Selection("dirichlet"),
+                      Patterns::Selection("dirichlet|outlet"),
                       "Type of boundary condition for tracer"
-                      "Choices are <function>.");
+                      "Choices are <dirichlet|outlet>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -784,6 +784,16 @@ namespace BoundaryConditions
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }
+    else if (op == "outlet")
+      {
+        this->type[i_bc] = BoundaryType::outlet;
+      }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage("Unknown boundary condition type for tracers."));
+      }
+
 
     this->id[i_bc] = prm.get_integer("id");
   }

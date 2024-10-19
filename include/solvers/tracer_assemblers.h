@@ -7,6 +7,7 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/tracer_scratch_data.h>
 
 /**
@@ -22,29 +23,31 @@ class TracerAssemblerBase
 {
 public:
   /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the Tracer information.
+   * @brief Interface for the call to matrix assembly.
+   * @param[in] scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) = 0;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) = 0;
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
-   * @param scratch_data Scratch data containing the Tracer information.
+   * @brief Interface for the call to rhs assembly.
+   * @param[in] scratch_data Scratch data containing the Tracer information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
    */
 
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) = 0;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) = 0;
 };
 
 
@@ -69,26 +72,66 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the matrix
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
 
 
   /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the rhs
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
+
+
+
+/**
+ * @brief Class that assembles the core (cells) of the Tracer equation for DG elements.
+ * This class assembles the weak form of:
+ * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
+class TracerAssemblerDGCore : public TracerAssemblerBase<dim>
+{
+public:
+  TracerAssemblerDGCore()
+  {}
+
+  /**
+   * @brief Assembles the matrix
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
+
+
+  /**
+   * @brief Assembles the rhs
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
+};
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
@@ -109,26 +152,164 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the matrix
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
 
   virtual void
-  assemble_matrix(TracerScratchData<dim>    &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData    &copy_data) override;
 
   /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @brief Assembles the rhs
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
-  assemble_rhs(TracerScratchData<dim>    &scratch_data,
-               StabilizedMethodsCopyData &copy_data) override;
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData    &copy_data) override;
 
+  // The simulation control is a necessary part of the transient terms.
   std::shared_ptr<SimulationControl> simulation_control;
 };
+
+
+/**
+ * @brief A pure virtual class that serves as an interface for boundary and
+ * internal faces that occur when using a discontinuous Galerkin discretization.
+ * The main difference between the TracerFaceAssembler and the TracerAssembler
+ * is that the TracerFaceAssembler assembles the matrix and rhs for internal
+ * faces and thus requires the StabilizedDGMethodsCopyData class.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerFaceAssembler
+{
+public:
+  /**
+   * @brief Interface for the call to matrix assembly
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+
+  virtual void
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) = 0;
+
+
+  /**
+   * @brief Interface for the call to rhs
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+
+  virtual void
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) = 0;
+};
+
+
+/**
+ * @brief Assembles the symmetric interior penalty (SIPG) method (or
+ * Nitsche's method) for internal faces. This assembler is only required
+ * when solving the Tracer equation using a discontinuous Galerkin
+ * discretization.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
+{
+public:
+  TracerAssemblerSIPG()
+  {}
+
+  /**
+   * @brief Interface for the call to matrix assembly
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+  virtual void
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) override;
+
+
+  /**
+   * @brief Interface for the call to rhs
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+  virtual void
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) override;
+};
+
+/**
+ * @brief Assembles Nitsche's method for boundary faces.
+ * This assembler is only required when solving the Tracer equation using a
+ * discontinuous Galerkin discretization since the boundary conditions have
+ * to be weakly imposed.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
+{
+public:
+  TracerAssemblerBoundaryNitsche(
+    const BoundaryConditions::TracerBoundaryConditions<dim>
+      &p_boundary_conditions_tracer)
+    : boundary_conditions_tracer(p_boundary_conditions_tracer)
+  {}
+
+  /**
+   * @brief Interface for the call to matrix assembly
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+  virtual void
+  assemble_matrix(const TracerScratchData<dim> &scratch_data,
+                  StabilizedDGMethodsCopyData  &copy_data) override;
+
+
+  /**
+   * @brief  Interface for the call to rhs
+   * @param[in]  scratch_data Scratch data containing the Tracer
+   * information. It is important to note that the scratch data has to have been
+   * re-inited before calling for matrix assembly.
+   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
+   * should be copied
+   */
+  virtual void
+  assemble_rhs(const TracerScratchData<dim> &scratch_data,
+               StabilizedDGMethodsCopyData  &copy_data) override;
+
+  BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
+};
+
 
 
 #endif
