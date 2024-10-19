@@ -85,18 +85,19 @@ Inheritance diagram for TracerAssemblerBase&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classTracerAssemblerBase__inherit__graph.png" border="0" usemap="#aTracerAssemblerBase_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aTracerAssemblerBase_3_01dim_01_4_inherit__map" id="aTracerAssemblerBase_3_01dim_01_4_inherit__map">
-<area shape="rect" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="93,5,256,47"/>
+<area shape="rect" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="185,5,348,47"/>
 <area shape="rect" href="classTracerAssemblerBDF.html" title="Class that assembles the transient time arising from BDF time integration for the Tracer equations...." alt="" coords="5,95,163,136"/>
 <area shape="rect" href="classTracerAssemblerCore.html" title="Class that assembles the core of the Tracer equation. This class assembles the weak form of: &#160;with an..." alt="" coords="187,95,347,136"/>
+<area shape="rect" href="classTracerAssemblerDGCore.html" title="Class that assembles the core (cells) of the Tracer equation for DG elements. This class assembles th..." alt="" coords="371,95,551,136"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0e42efcb2771db6c684e82c164f6e558"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBase.html#a0e42efcb2771db6c684e82c164f6e558">assemble_matrix</a> (<a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)=0</td></tr>
-<tr class="separator:a0e42efcb2771db6c684e82c164f6e558"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3887acc3eada0197563f686e36c74fbf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBase.html#a3887acc3eada0197563f686e36c74fbf">assemble_rhs</a> (<a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)=0</td></tr>
-<tr class="separator:a3887acc3eada0197563f686e36c74fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1d2413b16d14aae43702ef4c7000d89"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBase.html#ae1d2413b16d14aae43702ef4c7000d89">assemble_matrix</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)=0</td></tr>
+<tr class="separator:ae1d2413b16d14aae43702ef4c7000d89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0207abdca7055bf6a3490265bf63ad51"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBase.html#a0207abdca7055bf6a3490265bf63ad51">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)=0</td></tr>
+<tr class="separator:a0207abdca7055bf6a3490265bf63ad51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -110,10 +111,10 @@ class TracerAssemblerBase&lt; dim &gt;</h3>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00021">21</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00022">22</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0e42efcb2771db6c684e82c164f6e558"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e42efcb2771db6c684e82c164f6e558">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
+<a id="ae1d2413b16d14aae43702ef4c7000d89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1d2413b16d14aae43702ef4c7000d89">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,7 +127,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classTracerAssemblerBase.html">TracerAssemblerBase</a>&lt; dim &gt;::assemble_matrix </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -148,21 +149,21 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Interface for the call to matrix assembly </p>
+<p>Interface for the call to matrix assembly. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scratch_data</td><td>Scratch data containing the <a class="el" href="classTracer.html">Tracer</a> information. It is important to note that the scratch data has to have been re-inited before calling for matrix assembly. </td></tr>
-    <tr><td class="paramname">copy_data</td><td>Destination where the local_rhs and loc </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>Scratch data containing the <a class="el" href="classTracer.html">Tracer</a> information. It is important to note that the scratch data has to have been re-inited before calling for matrix assembly. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>Destination where the local_rhs and local_matrix should be copied </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classTracerAssemblerBDF.html#a081cecb481bc5d2673032db17503f0b1">TracerAssemblerBDF&lt; dim &gt;</a>, and <a class="el" href="classTracerAssemblerCore.html#ad4a1d66fd7a6b909f29d92400a94b57d">TracerAssemblerCore&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classTracerAssemblerBDF.html#ae90b4c0adab091aff187a7518d2510a6">TracerAssemblerBDF&lt; dim &gt;</a>, <a class="el" href="classTracerAssemblerDGCore.html#a9d39b9cedb5816a5117d623634733d49">TracerAssemblerDGCore&lt; dim &gt;</a>, and <a class="el" href="classTracerAssemblerCore.html#af7cbbf15bb110879bd8ddf865364f1a7">TracerAssemblerCore&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a3887acc3eada0197563f686e36c74fbf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3887acc3eada0197563f686e36c74fbf">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
+<a id="a0207abdca7055bf6a3490265bf63ad51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0207abdca7055bf6a3490265bf63ad51">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -175,7 +176,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classTracerAssemblerBase.html">TracerAssemblerBase</a>&lt; dim &gt;::assemble_rhs </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -197,16 +198,16 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Interface for the call to rhs </p>
+<p>Interface for the call to rhs assembly. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scratch_data</td><td>Scratch data containing the <a class="el" href="classTracer.html">Tracer</a> information. It is important to note that the scratch data has to have been re-inited before calling for matrix assembly. </td></tr>
-    <tr><td class="paramname">copy_data</td><td>Destination where the local_rhs and loc </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>Scratch data containing the <a class="el" href="classTracer.html">Tracer</a> information. It is important to note that the scratch data has to have been re-inited before calling for matrix assembly. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>Destination where the local_rhs and local_matrix should be copied </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classTracerAssemblerBDF.html#abf3b0c5663db2179f97149d89f32eebe">TracerAssemblerBDF&lt; dim &gt;</a>, and <a class="el" href="classTracerAssemblerCore.html#aa2360a305ff08f21fc403b0d9a142c69">TracerAssemblerCore&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classTracerAssemblerBDF.html#a83604e02279a70b9606a2eddb20e9136">TracerAssemblerBDF&lt; dim &gt;</a>, <a class="el" href="classTracerAssemblerDGCore.html#a39031c686ee4a6487ade2a582a6afd1f">TracerAssemblerDGCore&lt; dim &gt;</a>, and <a class="el" href="classTracerAssemblerCore.html#ad75070f778c9296b9de844d7d23fda17">TracerAssemblerCore&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

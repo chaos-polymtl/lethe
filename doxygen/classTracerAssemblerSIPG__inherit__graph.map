@@ -1,0 +1,4 @@
+<map id="TracerAssemblerSIPG&lt; dim &gt;" name="TracerAssemblerSIPG&lt; dim &gt;">
+<area shape="rect" id="node1" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="5,95,165,136"/>
+<area shape="rect" id="node2" href="$classTracerFaceAssembler.html" title="A pure virtual class that serves as an interface for boundary and internal faces that occur when usin..." alt="" coords="6,5,165,47"/>
+</map>

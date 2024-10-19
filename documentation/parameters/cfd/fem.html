@@ -441,6 +441,7 @@
 
   # interpolation order tracer
   set tracer order       = 1
+  set tracer uses dg     = false
 
   # interpolation order vof
   set VOF order          = 1
@@ -456,6 +457,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">order</span></code> specifies the interpolation order for pressure. For the <strong>lethe-fluid</strong> family of solvers, the interpolation order for pressure can be equal or lower than that of velocity. For the <strong>lethe-fluid-block</strong> family of solvers, the interpolation order for pressure has to be one degree lower than that of velocity.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">order</span></code> specifies the interpolation order for temperature for the heat transfer physics.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">order</span></code> specifies the interpolation order for the tracer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">uses</span> <span class="pre">dg</span></code> specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the tracer physics. This formulation allows discontinuities between elements and at boundaries, and only penalizes them; this prevents oscillations and enforces local conservation of mass, at the cost of more numerous degrees of freedom.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">VOF</span> <span class="pre">order</span></code> specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">order</span></code> and <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">order</span></code> specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.</p></li>
 </ul>

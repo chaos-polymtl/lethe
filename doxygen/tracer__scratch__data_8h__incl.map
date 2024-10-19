@@ -1,15 +1,16 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/tracer_scratch_data.h" name="/home/runner/work/lethe/lethe/include/solvers/tracer_scratch_data.h">
-<area shape="rect" id="node1" title=" " alt="" coords="1865,5,2048,61"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1976,5,2159,61"/>
 <area shape="rect" id="node2" href="$ale_8h.html" title=" " alt="" coords="173,541,260,568"/>
 <area shape="rect" id="node7" href="$multiphysics_8h.html" title=" " alt="" coords="1298,698,1447,725"/>
 <area shape="rect" id="node8" href="$physical__properties__manager_8h.html" title=" " alt="" coords="837,109,1037,151"/>
 <area shape="rect" id="node28" title=" " alt="" coords="1529,117,1713,143"/>
 <area shape="rect" id="node29" title=" " alt="" coords="1737,117,1958,143"/>
 <area shape="rect" id="node30" title=" " alt="" coords="1982,117,2153,143"/>
-<area shape="rect" id="node31" title=" " alt="" coords="2177,117,2299,143"/>
-<area shape="rect" id="node32" title=" " alt="" coords="2323,117,2486,143"/>
-<area shape="rect" id="node33" title=" " alt="" coords="2510,117,2662,143"/>
-<area shape="rect" id="node34" title=" " alt="" coords="2686,109,2857,151"/>
+<area shape="rect" id="node31" title=" " alt="" coords="2177,109,2339,151"/>
+<area shape="rect" id="node32" title=" " alt="" coords="2363,117,2486,143"/>
+<area shape="rect" id="node33" title=" " alt="" coords="2510,117,2673,143"/>
+<area shape="rect" id="node34" title=" " alt="" coords="2697,117,2849,143"/>
+<area shape="rect" id="node35" title=" " alt="" coords="2873,109,3043,151"/>
 <area shape="rect" id="node3" title=" " alt="" coords="5,616,172,643"/>
 <area shape="rect" id="node4" title=" " alt="" coords="869,780,1039,821"/>
 <area shape="rect" id="node5" title=" " alt="" coords="243,780,388,821"/>

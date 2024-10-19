@@ -95,10 +95,10 @@ Inheritance diagram for TracerAssemblerBDF&lt; dim &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2d3e3d38599b0b7b07c9793cc72a5215"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html#a2d3e3d38599b0b7b07c9793cc72a5215">TracerAssemblerBDF</a> (std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; <a class="el" href="classTracerAssemblerBDF.html#ae2fcdd045dfae00d9b2acd9db75eb5d8">simulation_control</a>)</td></tr>
 <tr class="separator:a2d3e3d38599b0b7b07c9793cc72a5215"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a081cecb481bc5d2673032db17503f0b1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html#a081cecb481bc5d2673032db17503f0b1">assemble_matrix</a> (<a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:a081cecb481bc5d2673032db17503f0b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf3b0c5663db2179f97149d89f32eebe"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html#abf3b0c5663db2179f97149d89f32eebe">assemble_rhs</a> (<a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:abf3b0c5663db2179f97149d89f32eebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae90b4c0adab091aff187a7518d2510a6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html#ae90b4c0adab091aff187a7518d2510a6">assemble_matrix</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
+<tr class="separator:ae90b4c0adab091aff187a7518d2510a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83604e02279a70b9606a2eddb20e9136"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html#a83604e02279a70b9606a2eddb20e9136">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
+<tr class="separator:a83604e02279a70b9606a2eddb20e9136"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -117,7 +117,7 @@ class TracerAssemblerBDF&lt; dim &gt;</h3>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00104">104</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00147">147</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2d3e3d38599b0b7b07c9793cc72a5215"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2d3e3d38599b0b7b07c9793cc72a5215">&#9670;&nbsp;</a></span>TracerAssemblerBDF()</h2>
@@ -145,13 +145,13 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00107">107</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00150">150</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a081cecb481bc5d2673032db17503f0b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a081cecb481bc5d2673032db17503f0b1">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
+<a id="ae90b4c0adab091aff187a7518d2510a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae90b4c0adab091aff187a7518d2510a6">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,7 +164,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classTracerAssemblerBDF.html">TracerAssemblerBDF</a>&lt; dim &gt;::assemble_matrix </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -186,25 +186,25 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Assembles the matrix </p>
+<p>Assembles the matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
-    <tr><td class="paramname">copy_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classTracerAssemblerBase.html#a0e42efcb2771db6c684e82c164f6e558">TracerAssemblerBase&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classTracerAssemblerBase.html#ae1d2413b16d14aae43702ef4c7000d89">TracerAssemblerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00246">246</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00345">345</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00284">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00279">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00280">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00099">number_of_previous_solutions()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00301">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00291">TracerScratchData&lt; dim &gt;::previous_tracer_values</a>, <a class="el" href="copy__data_8h_source.html#l00109">StabilizedMethodsCopyData::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00108">StabilizedMethodsCopyData::strong_residual</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00288">TracerScratchData&lt; dim &gt;::tracer_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00526">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00520">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00522">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00099">number_of_previous_solutions()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00563">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00536">TracerScratchData&lt; dim &gt;::previous_tracer_values</a>, <a class="el" href="copy__data_8h_source.html#l00109">StabilizedMethodsCopyData::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00108">StabilizedMethodsCopyData::strong_residual</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00533">TracerScratchData&lt; dim &gt;::tracer_values</a>.</p>
 
 </div>
 </div>
-<a id="abf3b0c5663db2179f97149d89f32eebe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf3b0c5663db2179f97149d89f32eebe">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
+<a id="a83604e02279a70b9606a2eddb20e9136"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83604e02279a70b9606a2eddb20e9136">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +217,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classTracerAssemblerBDF.html">TracerAssemblerBDF</a>&lt; dim &gt;::assemble_rhs </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -239,20 +239,20 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_rhs Assembles the rhs </p>
+<p>Assembles the rhs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
-    <tr><td class="paramname">copy_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classTracerAssemblerBase.html#a3887acc3eada0197563f686e36c74fbf">TracerAssemblerBase&lt; dim &gt;</a>.</p>
+<p>Implements <a class="el" href="classTracerAssemblerBase.html#a0207abdca7055bf6a3490265bf63ad51">TracerAssemblerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00300">300</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00400">400</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00284">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00279">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00280">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00099">number_of_previous_solutions()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00301">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00291">TracerScratchData&lt; dim &gt;::previous_tracer_values</a>, <a class="el" href="copy__data_8h_source.html#l00108">StabilizedMethodsCopyData::strong_residual</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00288">TracerScratchData&lt; dim &gt;::tracer_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00526">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00520">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00522">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="bdf_8h_source.html#l00099">number_of_previous_solutions()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00563">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00536">TracerScratchData&lt; dim &gt;::previous_tracer_values</a>, <a class="el" href="copy__data_8h_source.html#l00108">StabilizedMethodsCopyData::strong_residual</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00533">TracerScratchData&lt; dim &gt;::tracer_values</a>.</p>
 
 </div>
 </div>
@@ -271,7 +271,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00130">130</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00174">174</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>

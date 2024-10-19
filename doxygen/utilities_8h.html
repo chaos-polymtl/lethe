@@ -229,6 +229,8 @@ Functions</h2></td></tr>
 <tr class="separator:a9b1c8b293984f450067058ee53084afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d02cb065c32b672c94bb862ecff4431"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a> (const std::vector&lt; double &gt; &amp;JxW_values)</td></tr>
 <tr class="separator:a3d02cb065c32b672c94bb862ecff4431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb087a954bd6464fa862ca5974bebeaf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a> (const unsigned int fe_degree, const double cell_extent_here, const double cell_extent_there)</td></tr>
+<tr class="separator:adb087a954bd6464fa862ca5974bebeaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a28e3647b49b871d119c8e19d390d6d66"></a>
@@ -914,6 +916,61 @@ template&lt;int dim&gt; </div>
 <p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00687">687</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8cc_source.html#l00577">get_max_value_of_parameter()</a>.</p>
+
+</div>
+</div>
+<a id="adb087a954bd6464fa862ca5974bebeaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb087a954bd6464fa862ca5974bebeaf">&#9670;&nbsp;</a></span>get_penalty_factor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double get_penalty_factor </td>
+          <td>(</td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>fe_degree</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>cell_extent_here</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>cell_extent_there</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">fe_degree</td><td>Finite element degree </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_extent_here</td><td>Distance of the here cell. The ratio between the volume of the cell and the area of the face is generally used as a metric for this distance. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell_extent_there</td><td>Distance of the there cell. The ratio between the volume of the cell and the area of the face is generally used as a metric for this distance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00643">643</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
