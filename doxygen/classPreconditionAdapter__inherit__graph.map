@@ -1,0 +1,5 @@
+<map id="PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;" name="PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;">
+<area shape="rect" id="node1" title="A wrapper class around a preconditioner to be able to handle vector types that are not supported by t..." alt="" coords="5,169,288,211"/>
+<area shape="rect" id="node2" href="$classPreconditionBase.html" title="A base class of preconditioners used by the smoother." alt="" coords="51,80,242,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="99,5,194,32"/>
+</map>

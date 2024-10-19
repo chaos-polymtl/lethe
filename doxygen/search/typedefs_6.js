@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['number_7204',['Number',['../classPreconditionASM.html#a6a4a0386b137b1419b8d0430ae21706f',1,'PreconditionASM']]]
+  ['mgnumber_7205',['MGNumber',['../classMFNavierStokesPreconditionGMG.html#a51abc7bcf955d395d274256fef57f053',1,'MFNavierStokesPreconditionGMG']]],
+  ['mgvectortype_7206',['MGVectorType',['../classMFNavierStokesPreconditionGMG.html#ab4e05af916c638ddf7bf340190cb006b',1,'MFNavierStokesPreconditionGMG']]]
 ];

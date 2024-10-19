@@ -1,9 +1,20 @@
 var searchData=
 [
-  ['size_5ftype_7223',['size_type',['../classNavierStokesOperatorBase.html#aa0d0fe7fb5be752191599bb308f52df0',1,'NavierStokesOperatorBase']]],
-  ['smootherpreconditionertype_7224',['SmootherPreconditionerType',['../classMFNavierStokesPreconditionGMG.html#a70567f9142483124c2dc30807c2e22a1',1,'MFNavierStokesPreconditionGMG']]],
-  ['smoothertype_7225',['SmootherType',['../classMFNavierStokesPreconditionGMG.html#a3efbfecec83714a46bbb229ff8beddef',1,'MFNavierStokesPreconditionGMG']]],
-  ['solid_5fsurfaces_5fmesh_5finformation_7226',['solid_surfaces_mesh_information',['../structDEM_1_1dem__data__structures.html#ac0e5f4a3e12f7e96a0cf8d36824a89c8',1,'DEM::dem_data_structures']]],
-  ['solid_5fvolumes_5fmesh_5finfo_7227',['solid_volumes_mesh_info',['../structDEM_1_1dem__data__structures.html#ace3b7a91352a2ee5ba5281193647a245',1,'DEM::dem_data_structures']]],
-  ['stabilizationtype_7228',['StabilizationType',['../classNavierStokesOperatorBase.html#a94d7db964d971e7232fb70d6fbf0c8b9',1,'NavierStokesOperatorBase']]]
+  ['particle_5fcontact_5finfo_7209',['particle_contact_info',['../structDEM_1_1dem__data__structures.html#a8410f89e19e0746b627be7168759e098',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fmesh_5fcandidates_7210',['particle_floating_mesh_candidates',['../structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fmesh_5fin_5fcontact_7211',['particle_floating_mesh_in_contact',['../structDEM_1_1dem__data__structures.html#a9dec7c120aedd772d8a124b989a2df9e',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fwall_5fcandidates_7212',['particle_floating_wall_candidates',['../structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fwall_5ffrom_5fmesh_5fcandidates_7213',['particle_floating_wall_from_mesh_candidates',['../structDEM_1_1dem__data__structures.html#aef2684a971ef5a14e91c2c4bd28e2261',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fwall_5ffrom_5fmesh_5fin_5fcontact_7214',['particle_floating_wall_from_mesh_in_contact',['../structDEM_1_1dem__data__structures.html#a54577eb2ae06bf56659031f921e02d3f',1,'DEM::dem_data_structures']]],
+  ['particle_5findex_5fiterator_5fmap_7215',['particle_index_iterator_map',['../structDEM_1_1dem__data__structures.html#aabe47013c692c38e2901a7aeca47aa43',1,'DEM::dem_data_structures']]],
+  ['particle_5fline_5fcandidates_7216',['particle_line_candidates',['../structDEM_1_1dem__data__structures.html#ad06a4c2faa5184c1779b7589d78604a9',1,'DEM::dem_data_structures']]],
+  ['particle_5fline_5fin_5fcontact_7217',['particle_line_in_contact',['../structDEM_1_1dem__data__structures.html#a0f82e8ce820f779b060311067e77e9b3',1,'DEM::dem_data_structures']]],
+  ['particle_5fparticle_5fcandidates_7218',['particle_particle_candidates',['../structDEM_1_1dem__data__structures.html#a719904c6b3202732c1ba0d40b949b7ab',1,'DEM::dem_data_structures']]],
+  ['particle_5fpoint_5fcandidates_7219',['particle_point_candidates',['../structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5',1,'DEM::dem_data_structures']]],
+  ['particle_5fpoint_5fin_5fcontact_7220',['particle_point_in_contact',['../structDEM_1_1dem__data__structures.html#a4ce727ced98c9d77bb92949cd6b8bfdd',1,'DEM::dem_data_structures']]],
+  ['particle_5fwall_5fcandidates_7221',['particle_wall_candidates',['../structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc',1,'DEM::dem_data_structures']]],
+  ['particle_5fwall_5fin_5fcontact_7222',['particle_wall_in_contact',['../structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b',1,'DEM::dem_data_structures']]],
+  ['periodic_5fboundaries_5fcells_5finfo_7223',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41',1,'DEM::dem_data_structures']]],
+  ['preconditionertypegc_7224',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMG.html#abb00fea4a252508f256ea8373dd89b6c',1,'MFNavierStokesPreconditionGMG']]],
+  ['preconditionertypels_7225',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMG.html#acb54bcabf038669afcb1dfb87ed78e5b',1,'MFNavierStokesPreconditionGMG']]]
 ];

@@ -172,6 +172,8 @@ Include dependency graph for fluid_dynamics_matrix_free.cc:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionBase.html">PreconditionBase&lt; VectorType &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionAdapter.html">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMyDiagonalMatrix.html">MyDiagonalMatrix&lt; VectorType &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionASM.html">PreconditionASM&lt; VectorType &gt;</a></td></tr>
@@ -183,19 +185,12 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacedealii"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedealii.html">dealii</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacedealii_1_1internal"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedealii_1_1internal.html">dealii::internal</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html">dealii::internal::MGCoarseGridApplyPreconditioner</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ab7074f258602a91ee3f283fa98a07cdf"><td class="memTemplParams" colspan="2">template&lt;typename number &gt; </td></tr>
 <tr class="memitem:ab7074f258602a91ee3f283fa98a07cdf"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free_8cc.html#ab7074f258602a91ee3f283fa98a07cdf">convert_vector_dealii_to_trilinos</a> (TrilinosWrappers::MPI::Vector &amp;out, const LinearAlgebra::distributed::Vector&lt; number &gt; &amp;in)</td></tr>
 <tr class="separator:ab7074f258602a91ee3f283fa98a07cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e018053872a10cc20f642cc067b7b66"><td class="memTemplParams" colspan="2">template&lt;class VectorType , class PreconditionerType , typename std::enable_if&lt; std::is_same&lt; typename VectorType::value_type, double &gt;::value, VectorType &gt;::type *  = nullptr&gt; </td></tr>
-<tr class="memitem:a7e018053872a10cc20f642cc067b7b66"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacedealii_1_1internal_1_1MGCoarseGridApplyPreconditioner.html#a7e018053872a10cc20f642cc067b7b66">dealii::internal::MGCoarseGridApplyPreconditioner::solve</a> (const PreconditionerType preconditioner, VectorType &amp;dst, const VectorType &amp;src)</td></tr>
-<tr class="separator:a7e018053872a10cc20f642cc067b7b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ab7074f258602a91ee3f283fa98a07cdf"></a>
@@ -241,7 +236,7 @@ template&lt;typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00367">367</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00441">441</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>

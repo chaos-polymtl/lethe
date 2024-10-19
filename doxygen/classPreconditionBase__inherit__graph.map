@@ -1,5 +1,7 @@
 <map id="PreconditionBase&lt; VectorType &gt;" name="PreconditionBase&lt; VectorType &gt;">
-<area shape="rect" id="node1" title="A base class of preconditioners used by the smoother." alt="" coords="129,5,320,47"/>
-<area shape="rect" id="node2" href="$classMyDiagonalMatrix.html" title="A wrapper class around DiagonalMatrix class from deal.II." alt="" coords="5,95,204,136"/>
-<area shape="rect" id="node3" href="$classPreconditionASM.html" title="An Additive Schwarz preconditioner." alt="" coords="228,102,461,129"/>
+<area shape="rect" id="node1" title="A base class of preconditioners used by the smoother." alt="" coords="148,64,339,105"/>
+<area shape="rect" id="node3" href="$classMyDiagonalMatrix.html" title="A wrapper class around DiagonalMatrix class from deal.II." alt="" coords="429,5,627,47"/>
+<area shape="rect" id="node4" href="$classPreconditionASM.html" title="An Additive Schwarz preconditioner." alt="" coords="411,71,645,98"/>
+<area shape="rect" id="node5" href="$classPreconditionAdapter.html" title="A wrapper class around a preconditioner to be able to handle vector types that are not supported by t..." alt="" coords="387,123,669,164"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,71,100,98"/>
 </map>
