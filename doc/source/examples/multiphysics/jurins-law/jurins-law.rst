@@ -35,6 +35,9 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
+Have you ever wondered why does your coffee goes up the sugar cube when it touches the surface of your drink? Or how the sap goes up the tree? Or how the wax that keeps the flame of a candle alive is brought to the flame? These phenomena are all consequences of capillary action, a force that appears in narrow spaces and that seemingly opposes the gravitational forces...
+A simple case of capillary rise is described in this example, and compared to an analytical solution to check the implementation of our model. It consists of a 2D case, in which a dense fluid climbs the narrow space between two walls because of capillary actions.
+
 Thanks to the symmetry of the problem, only one side is considered in the example. At :math:`t = 0`, a denser fluid (fluid 1) occupies the lower half of the domain with a lighter fluid (fluid 0) on the top. Because of the boundary condition imposing an angle of contact between the wall and the denser fluid, the surface is curved and a pressure gradient appears. Depending on the value of the angle, the height of the fluid will increase (or decrease) and reach an equilibrium height. The parameter file is ``jurins-law-2d.prm``
 The computational domain is described in the following figure (not to scale):
 
