@@ -29,8 +29,6 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Postprocessing Python script: ``jurins_law_multiple_folders.py`` (using the functions of ``postprocessing_jurins_law_dimensioned.py``)
 
 
-.. _Description of the case:
-
 -------------------------
 Description of the Case
 -------------------------
@@ -258,8 +256,6 @@ We call lethe-fluid by invoking:
 
 .. warning::
     Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 3-4 minutes for 10 processors.
-
-.. _Results:
 
 -----------------
 Results
