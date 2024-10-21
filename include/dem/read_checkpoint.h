@@ -41,6 +41,7 @@ read_checkpoint(
   parallel::distributed::Triangulation<dim>               &triangulation,
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces);
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
+  CheckpointControl &checkpoint_controller);
 
 #endif

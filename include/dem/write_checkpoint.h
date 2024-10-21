@@ -31,6 +31,7 @@
  * @param solid_objects Vector of solids objects used in DEM simulations
  * @param pcout Printing in parallel
  * @param mpi_communicator
+ * @param checkpoint_controller Checkpoint controller
  */
 template <int dim>
 void
@@ -45,6 +46,7 @@ write_checkpoint(
   std::shared_ptr<Insertion<dim>>                         &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
-  MPI_Comm                                                &mpi_communicator);
+  MPI_Comm                                                &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 #endif
