@@ -70,15 +70,15 @@ Time integration is handled by a 1st order backward differentiation scheme (`bdf
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set output name      = jurins-law-2d
-      set output frequency = 10
-      set output path      = ./
-      set max time step = 5e-4
-      set adapt = true
-      set max cfl = 0.8
-      set time end = 0.5
-      set time step = 5e-4
+      set method            = bdf1
+      set output name       = jurins-law-2d
+      set output frequency  = 10
+      set output path       = ./
+      set max time step     = 5e-4
+      set adapt             = true
+      set max cfl           = 0.8
+      set time end          = 0.5
+      set time step         = 5e-4
       set output boundaries = true
     end
 
@@ -113,9 +113,9 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The struct
 .. code-block:: text
 
     subsection mesh
-        set type                 = gmsh
-        set file name            = ./jurins-law-2d-mesh-dimensioned.msh
-        set initial refinement   = 2
+        set type               = gmsh
+        set file name          = ./jurins-law-2d-mesh-dimensioned.msh
+        set initial refinement = 2
     end
 
 Mesh Adaptation
@@ -157,9 +157,9 @@ The ``physical properties`` subsection defines the physical properties of the fl
       set number of material interactions = 1
       subsection material interaction 0
         subsection fluid-fluid interaction
-          set surface tension coefficient = 7.3e-2
-          set cahn hilliard mobility model = constant
-          set cahn hilliard mobility constant  = 1e-7
+          set surface tension coefficient     = 7.3e-2
+          set cahn hilliard mobility model    = constant
+          set cahn hilliard mobility constant = 1e-7
         end
       end
     end
@@ -175,7 +175,7 @@ In the ``cahn hilliard`` subsection, we set the ``potential smoothing coefficien
       set potential smoothing coefficient = 0
 
       subsection epsilon
-        set method = automatic
+        set method    = automatic
         set verbosity = verbose
       end
     end
@@ -205,8 +205,8 @@ We need to set boundary conditions both for the fluid solver and the Cahn-Hillia
 
     set number = 1
     	subsection bc 0
-    		set id = 2 # angle of contact
-    		set type = angle_of_contact
+    		set id          = 2 
+    		set type        = angle_of_contact
     		set angle value = 50
     	end
     end
@@ -218,7 +218,7 @@ Then, a ``slip`` boundary condition is applied everywhere, except for the upper 
     subsection boundary conditions
       set number = 4
       subsection bc 0
-        set id   = 2 # angle of contact
+        set id   = 2 
         set type = slip
       end
       subsection bc 1
@@ -226,7 +226,7 @@ Then, a ``slip`` boundary condition is applied everywhere, except for the upper 
         set type = slip
       end
       subsection bc 2
-        set id = 4 #upper surface
+        set id = 4 # upper surface
         set type = none
       end
       subsection bc 3
@@ -244,7 +244,7 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 
     subsection source term
       subsection fluid dynamics
-        set Function expression = 0;0;-9810;0
+        set Function expression = 0; 0; -9810; 0
       end
     end
 
