@@ -32,7 +32,7 @@ public:
   GLSNavierStokesVOFAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
@@ -54,11 +54,10 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool SUPG = true;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF                    vof_parameters;
+  const bool            SUPG = true;
+  const Parameters::VOF vof_parameters;
 };
+
 
 /**
  * @brief Assembles the transient time arising from BDF time
@@ -71,14 +70,13 @@ public:
  *
  * @ingroup assemblers
  */
-
 template <int dim>
 class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesVOFAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -98,9 +96,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
 };
+
 
 /**
  * @brief Assembles a phase change Darcy forcing term for a VOF two-fluid
@@ -117,7 +114,6 @@ public:
  *
  * @ingroup assemblers
  */
-
 template <int dim>
 class PhaseChangeDarcyVOFAssembler : public NavierStokesAssemblerBase<dim>
 {
@@ -172,7 +168,7 @@ public:
   GLSNavierStokesVOFAssemblerSTF(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : simulation_control(p_simulation_control)
+    : NavierStokesAssemblerBase<dim>(p_simulation_control)
     , STF_parameters(nsparam.multiphysics.vof_parameters.surface_tension_force)
   {}
 
@@ -193,8 +189,6 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_parameters;
@@ -222,7 +216,7 @@ public:
   GLSNavierStokesVOFAssemblerMarangoni(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     Parameters::VOF_SurfaceTensionForce       p_STF_properties)
-    : simulation_control(p_simulation_control)
+    : NavierStokesAssemblerBase<dim>(p_simulation_control)
     , STF_properties(p_STF_properties)
   {}
 
@@ -244,11 +238,10 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_properties;
 };
+
 
 /**
  * @brief Assembles the momentum source due to evaporation for the
@@ -271,7 +264,7 @@ public:
   NavierStokesVOFAssemblerEvaporation(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     const Parameters::Evaporation            &p_evaporation)
-    : simulation_control(p_simulation_control)
+    : NavierStokesAssemblerBase<dim>(p_simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
   }
@@ -294,12 +287,11 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-
 private:
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
+
 
 /**
  * @brief Assembles the core of the Navier-Stokes equation
@@ -309,8 +301,6 @@ private:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class GLSNavierStokesVOFAssemblerNonNewtonianCore
   : public NavierStokesAssemblerBase<dim>
@@ -319,7 +309,7 @@ public:
   GLSNavierStokesVOFAssemblerNonNewtonianCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
@@ -383,7 +373,6 @@ public:
   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-
   /**
    * @brief assemble_rhs Assembles the rhs
    * @param scratch_data (see base class)
@@ -400,7 +389,6 @@ public:
    */
   const bool SUPG = true;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF                    vof_parameters;
+  const Parameters::VOF vof_parameters;
 };
 #endif

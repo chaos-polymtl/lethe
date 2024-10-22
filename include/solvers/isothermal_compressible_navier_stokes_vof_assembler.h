@@ -32,7 +32,7 @@ public:
   GLSIsothermalCompressibleNavierStokesVOFAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
@@ -54,9 +54,9 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::VOF                    vof_parameters;
+  const Parameters::VOF vof_parameters;
 };
+
 
 template <int dim>
 class GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF
@@ -65,7 +65,7 @@ class GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF
 public:
   GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -85,8 +85,6 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
