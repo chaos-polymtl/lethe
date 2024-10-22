@@ -39,7 +39,7 @@ Parameter File
 Mesh
 ~~~~
 
-As shown in the previous figure, the flow around the partice is modelled using a prismatic channel which size depends on the size of the particle. In this case, we consider a particle with a diameter of :math:`D = 1`, therefore we have :math:`L = 2`. 
+As shown in the previous figure, the flow around the particle is modelled using a prismatic channel which size depends on the size of the particle. In this case, we consider a particle with a diameter of :math:`D = 1`, therefore we have :math:`L = 2`. 
 The domain, of size :math:`32 L \times 16 L \times 16 L`, was found to produce results independant of domain sizes with a low computational cost. 
 
 The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positionned at :math:`3/8` of the domain length avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
