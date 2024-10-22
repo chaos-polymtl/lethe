@@ -121,6 +121,31 @@ public:
                     const FiniteElement<dim> &fe_input);
 
   /**
+   * @brief Get a pointer to the DoFHandler of another solved variable that is
+   * required in the linear system assembly of a specific subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return Pointer to the DoFHandler of another solved variable that is
+   * required for the specified subequation.
+   */
+  const DoFHandler<dim> *
+  get_input_dof_handler(const VOFSubequationsID &subequation_id)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+
+    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
+      return this->multiphysics->get_dof_handler(PhysicsID::VOF);
+    else // At the moment, only one option is possible. This will change with
+         // the addition of other subequations to the interface.
+      return this->multiphysics->get_dof_handler(PhysicsID::VOF);
+  }
+
+  /**
    * @brief Cast the appropriate assembler object.
    *
    * @param[in] subequation_id Identifier associated with the subequation wished
