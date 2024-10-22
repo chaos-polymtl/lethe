@@ -41,6 +41,8 @@ public:
    * @brief Constructor for linear subequations solvers within the VOF
    * auxiliary physics
    *
+   * @param[in] p_subequation_id Identifier corresponding to the subequation.
+   *
    * @param[in,out] p_subequations Subequations interface object used to get
    * information from other subequations and store information from the current
    * one.
@@ -56,10 +58,13 @@ public:
    * steady-state and transient simulations. Contains all the information
    * related to time stepping and the stopping criteria.
    *
+   * @param[in] p_subequation_verbosity Parameter indicating the verbosity level
+   * of the solver.
+   *
    * @param[in] p_pcout Parallel cout used to print the information.
    */
   VOFLinearSubequationsSolver(
-    VOFSubequationsID                p_subequation_id,
+    const VOFSubequationsID         &p_subequation_id,
     VOFSubequationsInterface<dim>   *p_subequations,
     MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
@@ -83,9 +88,9 @@ public:
     if (this->simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        const FE_SimplexP<dim> phase_gradient_fe(
+        const FE_SimplexP<dim> subequation_fe(
           this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(phase_gradient_fe, dim);
+        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);
 
         this->cell_quadrature =
@@ -94,9 +99,9 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        const FE_Q<dim> phase_gradient_fe(
+        const FE_Q<dim> subequation_fe(
           this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(phase_gradient_fe, dim);
+        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingQ<dim>>(this->fe->degree);
 
         this->cell_quadrature =
@@ -112,9 +117,6 @@ public:
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the physics.
-   *
-   * @param[in] subequation_id Identifier corresponding to the subequation, for
-   * verbosity purpose.
    */
   void
   setup_dofs() override;
@@ -203,7 +205,7 @@ protected:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
 
-  VOFSubequationsID              subequation_id;
+  const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> *subequations;
   MultiphysicsInterface<dim>
     *multiphysics; // to get VOF DoFHandler and solution

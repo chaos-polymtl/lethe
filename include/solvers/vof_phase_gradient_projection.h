@@ -69,9 +69,6 @@ public:
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the physics.
-   *
-   * @param[in] subequation_id Identifier corresponding to the subequation,
-   * for terminal print.
    */
   void
   setup_dofs() override

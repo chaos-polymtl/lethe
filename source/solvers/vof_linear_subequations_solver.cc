@@ -64,9 +64,8 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
     }
 
   // Provide DoFHandler and solutions to the subequations interface
-  this->subequations->set_dof_handler(
-    VOFSubequationsID::phase_gradient_projection, &this->dof_handler);
-  this->subequations->set_solution(VOFSubequationsID::phase_gradient_projection,
+  this->subequations->set_dof_handler(this->subequation_id, &this->dof_handler);
+  this->subequations->set_solution(this->subequation_id,
                                    &this->present_solution);
 }
 
@@ -80,15 +79,15 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_matrix()
       this->subequation_id,
       this->simulation_parameters.multiphysics.vof_parameters);
 
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics->get_dof_handler(PhysicsID::VOF);
+  const DoFHandler<dim> *dof_handler_input_variable =
+    this->subequations->get_input_dof_handler(this->subequation_id);
 
-  auto scratch_data_parent = this->subequations->scratch_data_cast(
-    VOFSubequationsID::phase_gradient_projection,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->mapping,
-    dof_handler_vof->get_fe());
+  auto scratch_data_parent =
+    this->subequations->scratch_data_cast(this->subequation_id,
+                                          *this->fe,
+                                          *this->cell_quadrature,
+                                          *this->mapping,
+                                          dof_handler_input_variable->get_fe());
   ScratchDataType *scratch_data =
     dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
 
@@ -125,15 +124,15 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_rhs()
 {
   this->system_rhs = 0;
 
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics->get_dof_handler(PhysicsID::VOF);
+  const DoFHandler<dim> *dof_handler_input_variable =
+    this->subequations->get_input_dof_handler(this->subequation_id);
 
-  auto scratch_data_parent = this->subequations->scratch_data_cast(
-    VOFSubequationsID::phase_gradient_projection,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->mapping,
-    dof_handler_vof->get_fe());
+  auto scratch_data_parent =
+    this->subequations->scratch_data_cast(this->subequation_id,
+                                          *this->fe,
+                                          *this->cell_quadrature,
+                                          *this->mapping,
+                                          dof_handler_input_variable->get_fe());
 
   ScratchDataType *scratch_data =
     dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
