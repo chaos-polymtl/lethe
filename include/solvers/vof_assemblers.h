@@ -22,6 +22,7 @@ template <int dim>
 using VOFAssemblerBase =
   PhysicsAssemblerBase<VOFScratchData<dim>, StabilizedMethodsCopyData>;
 
+
 /**
  * @brief A pure virtual class that serves as an interface for all
  * of the assemblers for VOF subequation solvers.
@@ -87,6 +88,7 @@ public:
   // Controls if the compressibility term is assembled in the VOF equation
   const bool compressible;
 };
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
@@ -184,6 +186,7 @@ public:
   const std::shared_ptr<SimulationControl> simulation_control;
 };
 
+
 /**
  * @brief VOF phase fraction gradient L2 projection assemblers.
  *
@@ -232,6 +235,65 @@ public:
    * @brief Assemble the right-hand side (rhs).
    *
    * @param[in] scratch_data Scratch data containing the VOF phase gradient
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for rhs assembly.
+   *
+   * @param[in,out] copy_data Destination where the local_rhs is copied to.
+   */
+  void
+  assemble_rhs(const ScratchDataType     &scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
+
+private:
+  const Parameters::VOF vof_parameters;
+};
+
+
+/**
+ * @brief VOF curvature L2 projection assemblers.
+ *
+ * @tparam dim Number of dimensions of the problem.
+ *
+ * @tparam ScratchDataType Type of scratch data object used for linear system
+ * assembly.
+ *
+ * @ingroup assemblers
+ */
+template <int dim, typename ScratchDataType>
+class VOFAssemblerCurvatureProjection
+  : public VOFSubequationAssemblerBase<ScratchDataType>
+{
+public:
+  /**
+   * @brief Constructor of the assembler for curvature L2 projection.
+   *
+   * @param[in] vof_parameters VOF simulation parameters.
+   */
+  VOFAssemblerCurvatureProjection(const Parameters::VOF &vof_parameters)
+    : vof_parameters(vof_parameters)
+  {}
+  /**
+   * @brief Default destructor.
+   */
+  ~VOFAssemblerCurvatureProjection() = default;
+  /**
+   * @brief Assemble the matrix.
+   *
+   * @param[in] scratch_data Scratch data containing the VOF curvature
+   * projection information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   *
+   * @param[in,out] copy_data Destination where the local_matrix is copied to.
+   */
+  void
+  assemble_matrix(const ScratchDataType     &scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
+  /**
+   * @brief Assemble the right-hand side (rhs).
+   *
+   * @param[in] scratch_data Scratch data containing the VOF curvature
    * projection information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for rhs assembly.
