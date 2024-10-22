@@ -42,7 +42,7 @@ Mesh
 As shown in the previous figure, the flow around the particle is modelled using a prismatic channel which size depends on the size of the particle. In this case, we consider a particle with a diameter of :math:`D = 1`, therefore we have :math:`L = 2`. 
 The domain, of size :math:`32 L \times 16 L \times 16 L`, was found to produce results independant of domain sizes with a low computational cost. 
 
-The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positionned at :math:`3/8` of the domain length avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
+The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positionned at :math:`3/8` of the domain length to avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
 We then make use of a ``box refinement`` to refine the mesh around the particle and properly evaluate the velocity field with elements of size :math:`1/4 D \times 1/4 D \times 1/4 D`.
 
 .. code-block:: text 
@@ -104,7 +104,7 @@ Boundary Conditions
 
 We define the boundary conditions similarly to the :doc:`../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere` example although, in our case, we won't need a boundary condition defined on the particle as the sharp immersed boundary method will take care of it.
 
-The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and and an outlet with :math:`p = 0` on the right of the domain. In our case, the outlet boundary condition is the same as the natural boundary condition can therefore be left unchanged as Lethe will apply it by default.
+The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and an outlet with :math:`p = 0` on the right of the domain. In our case, the outlet boundary condition is the same as the natural boundary condition can therefore be left unchanged as Lethe will apply it by default.
 
 .. code-block:: text
 
