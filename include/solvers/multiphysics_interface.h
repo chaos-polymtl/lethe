@@ -901,7 +901,6 @@ private:
   std::map<PhysicsID, std::vector<GlobalBlockVectorType> *>
     block_physics_previous_solutions;
 
-
   // average solution
   std::map<PhysicsID, GlobalVectorType *> physics_time_average_solutions;
 

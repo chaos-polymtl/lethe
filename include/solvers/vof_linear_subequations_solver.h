@@ -83,9 +83,9 @@ public:
     if (this->simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        const FE_SimplexP<dim> phase_gradient_fe(
+        const FE_SimplexP<dim> subequation_fe(
           this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(phase_gradient_fe, dim);
+        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);
 
         this->cell_quadrature =
@@ -94,9 +94,9 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        const FE_Q<dim> phase_gradient_fe(
+        const FE_Q<dim> subequation_fe(
           this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(phase_gradient_fe, dim);
+        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingQ<dim>>(this->fe->degree);
 
         this->cell_quadrature =

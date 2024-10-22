@@ -65,8 +65,8 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
 
   // Provide DoFHandler and solutions to the subequations interface
   this->subequations->set_dof_handler(
-    VOFSubequationsID::phase_gradient_projection, &this->dof_handler);
-  this->subequations->set_solution(VOFSubequationsID::phase_gradient_projection,
+    this->subequation_id, &this->dof_handler);
+  this->subequations->set_solution(this->subequation_id,
                                    &this->present_solution);
 }
 
@@ -84,7 +84,7 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_matrix()
     this->multiphysics->get_dof_handler(PhysicsID::VOF);
 
   auto scratch_data_parent = this->subequations->scratch_data_cast(
-    VOFSubequationsID::phase_gradient_projection,
+    this->subequation_id,
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,

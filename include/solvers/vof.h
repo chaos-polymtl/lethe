@@ -403,7 +403,9 @@ public:
   DoFHandler<dim> *
   get_curvature_dof_handler()
   {
-    return &curvature_dof_handler;
+    //    return &curvature_dof_handler;
+    return this->subequations->get_dof_handler(
+      VOFSubequationsID::curvature_projection);
   }
 
   GlobalVectorType *
@@ -416,7 +418,9 @@ public:
   GlobalVectorType *
   get_curvature_solution()
   {
-    return &present_curvature_solution;
+    //    return &present_curvature_solution;
+    return this->subequations->get_solution(
+      VOFSubequationsID::curvature_projection);
   }
 
   /**

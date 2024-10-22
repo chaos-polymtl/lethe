@@ -17,7 +17,9 @@ using namespace dealii;
 enum VOFSubequationsID : unsigned int
 {
   /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0
+  phase_gradient_projection = 0,
+  /// VOF curvature L2 projection
+  curvature_projection = 0
 };
 
 /**
@@ -145,11 +147,9 @@ public:
       return std::make_shared<
         VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
         vof_parameters);
-    else // At the moment, only one option is possible. This will change with
-         // the addition of other subequations to the interface.
+    else // if (subequation_id == VOFSubequationsID::curvature_projection)
       return std::make_shared<
-        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
-        vof_parameters);
+        VOFAssemblerCurvatureProjection<dim, ScratchDataType>>(vof_parameters);
   }
 
   /**
@@ -259,6 +259,8 @@ public:
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       subequation_string = "VOF phase fraction gradient L2 projection";
+    else if (subequation_id == VOFSubequationsID::curvature_projection)
+      subequation_string = "VOF curvature L2 projection";
 
     return subequation_string;
   }
