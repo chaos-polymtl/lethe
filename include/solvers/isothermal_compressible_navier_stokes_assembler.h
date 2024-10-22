@@ -32,7 +32,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerCore
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -52,9 +52,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
 };
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
@@ -74,7 +73,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerBDF
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
+    : NavierStokesAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -94,8 +93,6 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif

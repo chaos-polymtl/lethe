@@ -52,10 +52,10 @@ template <int dim>
 class VOFAssemblerCore : public VOFAssemblerBase<dim>
 {
 public:
-  VOFAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                   const Parameters::FEM              fem_parameters,
-                   const Parameters::VOF              vof_parameters)
-    : simulation_control(simulation_control)
+  VOFAssemblerCore(const std::shared_ptr<SimulationControl> &simulation_control,
+                   const Parameters::FEM                     fem_parameters,
+                   const Parameters::VOF                     vof_parameters)
+    : VOFAssemblerBase<dim>(simulation_control)
     , fem_parameters(fem_parameters)
     , vof_parameters(vof_parameters)
     , compressible(vof_parameters.compressible)
@@ -80,9 +80,8 @@ public:
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::FEM              fem_parameters;
-  const Parameters::VOF              vof_parameters;
+  const Parameters::FEM fem_parameters;
+  const Parameters::VOF vof_parameters;
 
   // Controls if the compressibility term is assembled in the VOF equation
   const bool compressible;
@@ -102,8 +101,8 @@ template <int dim>
 class VOFAssemblerBDF : public VOFAssemblerBase<dim>
 {
 public:
-  VOFAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+  VOFAssemblerBDF(const std::shared_ptr<SimulationControl> &simulation_control)
+    : VOFAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -124,8 +123,6 @@ public:
   virtual void
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -155,8 +152,8 @@ public:
    * transient simulations.
    */
   VOFAssemblerDCDDStabilization(
-    std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control)
+    : VOFAssemblerBase<dim>(simulation_control)
   {}
 
   /**
@@ -164,7 +161,7 @@ public:
    *
    * @param[in] scratch_data (see base class).
    *
-   * @param[out] copy_data (see base class).
+   * @param[in,out] copy_data (see base class).
    */
   virtual void
   assemble_matrix(const VOFScratchData<dim> &scratch_data,
@@ -175,13 +172,11 @@ public:
    *
    * @param[in] scratch_data (see base class)
    *
-   * @param[out] copy_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
@@ -222,7 +217,7 @@ public:
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
    *
-   * @param[out] copy_data Destination where the local_matrix is copied to.
+   * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   void
   assemble_matrix(const ScratchDataType     &scratch_data,
@@ -236,7 +231,7 @@ public:
    * It is important to note that the scratch data has to have been re-inited
    * before calling for rhs assembly.
    *
-   * @param[out] copy_data Destination where the local_rhs is copied to.
+   * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   void
   assemble_rhs(const ScratchDataType     &scratch_data,

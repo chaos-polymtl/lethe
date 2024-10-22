@@ -21,11 +21,10 @@ class VOFPhaseGradientProjection
 public:
   /**
    * @brief Constructor for the L2 projection of the VOF phase fraction gradient
-   * (pfg)
-   *   *
+   * (pfg).
+   *
    * @param[in,out] p_subequations Subequations interface object used to get
-   * information from other subequations and store information from the
-   current
+   * information from other subequations and store information from the current
    * one.
    *
    * @param[in] p_multiphysics Multiphysics interface object used to get
@@ -66,45 +65,6 @@ public:
    */
   ~VOFPhaseGradientProjection() = default;
 
-  /**
-   * @brief Set up the DofHandler and the degree of freedom associated with
-   * the physics.
-   */
-  void
-  setup_dofs() override
-  {
-    VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs();
-  }
-
-  /**
-   * @brief Solve linear system of equation using a strategy appropriate
-   * for the partial differential equation.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
-   */
-  void
-  solve_linear_system_and_update_solution(
-    const bool &is_post_mesh_adaptation = false) override
-  {
-    VOFLinearSubequationsSolver<dim, ScratchDataType>::
-      solve_linear_system_and_update_solution(is_post_mesh_adaptation);
-  }
-
-  /**
-   * @brief Assemble and solve linear system when the equation to solve is
-   * linear without using the non-linear solver interface.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
-   */
-  void
-  solve(const bool &is_post_mesh_adaptation = false) override
-  {
-    VOFLinearSubequationsSolver<dim, ScratchDataType>::solve(
-      is_post_mesh_adaptation);
-  }
-
 private:
   /**
    * @brief Assemble the local matrix for a given cell.
@@ -114,7 +74,7 @@ private:
    * @param[in] scratch_data Stores the calculated finite element information at
    * Gauss points.
    *
-   * @param[out] copy_data Stores the results of the assembly over a cell.
+   * @param[in,out] copy_data Stores the results of the assembly over a cell.
    */
   void
   assemble_local_system_matrix(
@@ -130,7 +90,7 @@ private:
    * @param[in] scratch_data Stores the calculated finite element information at
    * Gauss points.
    *
-   * @param[out] copy_data Stores the results of the assembly over a cell.
+   * @param[in,out] copy_data Stores the results of the assembly over a cell.
    */
   void
   assemble_local_system_rhs(

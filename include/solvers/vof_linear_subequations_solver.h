@@ -163,7 +163,7 @@ protected:
    * @param[in] scratch_data Stores the calculated finite element information at
    * Gauss points.
    *
-   * @param[out] copy_data Stores the results of the assembly over a cell.
+   * @param[in,out] copy_data Stores the results of the assembly over a cell.
    */
   virtual void
   assemble_local_system_matrix(
@@ -179,7 +179,7 @@ protected:
    * @param[in] scratch_data Stores the calculated finite element information at
    * Gauss points.
    *
-   * @param[out] copy_data Stores the results of the assembly over a cell.
+   * @param[in,out] copy_data Stores the results of the assembly over a cell.
    */
   virtual void
   assemble_local_system_rhs(
