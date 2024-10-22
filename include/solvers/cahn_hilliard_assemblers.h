@@ -13,7 +13,7 @@
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the Cahn-Hilliard equation.
+ * of the assemblers for the Cahn-Hilliard equations.
  *
  * @tparam dim Integer that denotes the number of spatial dimensions.
  *
