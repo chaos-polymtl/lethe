@@ -30,6 +30,12 @@ class PreconditionBase;
 template <typename VectorType, typename VectorTypePrecondition>
 class PreconditionAdapter;
 
+namespace dealii
+{
+  template <class VectorType, class PreconditionerType>
+  class MGCoarseGridApplyPreconditioner;
+}
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
