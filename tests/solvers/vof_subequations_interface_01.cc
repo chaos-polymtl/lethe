@@ -69,7 +69,7 @@ test()
                              0);
 
   // Phase fraction gradient L2 projection enabled (This is the only one
-  // implemented at the moment other testing outputs should be added later.)
+  // implemented at the moment; other testing outputs should be added later.)
   {
     std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_ptr =
       std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,

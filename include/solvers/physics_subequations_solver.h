@@ -10,7 +10,7 @@
 
 /**
  * @brief Base class to solve subequations solved inside a physics (or auxiliary
- * physics) that is not part of the main equations set. It contains all the
+ * physics) that are not part of the main equations set. It contains all the
  * common elements of a subequation solver.
  */
 class PhysicsSubequationsSolverBase
@@ -47,7 +47,7 @@ public:
 
 /**
  * @brief Linear subequations solved inside a physics (or auxiliary physics)
- * that is not part of the main set of equations.
+ * that are not part of the main set of equations.
  */
 
 class PhysicsLinearSubequationsSolver : public PhysicsSubequationsSolverBase
