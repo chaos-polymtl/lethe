@@ -26,14 +26,14 @@ write_checkpoint(
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator,
-  CheckpointControl &checkpoint_controller)
+  const CheckpointControl &checkpoint_controller)
 {
   TimerOutput::Scope timer(computing_timer, "Write checkpoint");
 
   pcout << "Writing restart file" << std::endl;
 
   std::string prefix =
-    parameters.restart.filename + "_" +
+    checkpoint_controller.get_filename() + "_" +
     Utilities::int_to_string(checkpoint_controller.get_next_checkpoint_id());
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
@@ -79,15 +79,12 @@ write_checkpoint(
   // regardless of the checkpoint id being use. This file is giving the
   // information of which checkpoint id to use when restarting
   std::string checkpoint_controller_object_filename =
-    parameters.restart.filename + ".checkpoint_controller";
+    checkpoint_controller.get_filename() + ".checkpoint_controller";
   std::ofstream oss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
   boost::archive::text_oarchive oa_checkpoint_controller_obj(
     oss_checkpoint_controller_obj, boost::archive::no_header);
   checkpoint_controller.serialize(oa_checkpoint_controller_obj, 0);
-
-  // Increment for the next checkpoint
-  checkpoint_controller.increment_checkpoint_id();
 }
 
 template void
@@ -101,8 +98,8 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  std::shared_ptr<Insertion<2>>           &insertion_object,
                  std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_objects,
                  const ConditionalOStream                        &pcout,
-                 MPI_Comm          &mpi_communicator,
-                 CheckpointControl &checkpoint_controller);
+                 MPI_Comm                &mpi_communicator,
+                 const CheckpointControl &checkpoint_controller);
 
 template void
 write_checkpoint(TimerOutput                             &computing_timer,
@@ -115,5 +112,5 @@ write_checkpoint(TimerOutput                             &computing_timer,
                  std::shared_ptr<Insertion<3>>           &insertion_object,
                  std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_objects,
                  const ConditionalOStream                        &pcout,
-                 MPI_Comm          &mpi_communicator,
-                 CheckpointControl &checkpoint_controller);
+                 MPI_Comm                &mpi_communicator,
+                 const CheckpointControl &checkpoint_controller);

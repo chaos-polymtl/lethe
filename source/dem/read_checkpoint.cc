@@ -32,7 +32,7 @@ read_checkpoint(
     return;
 
   TimerOutput::Scope timer(computing_timer, "Read checkpoint");
-  std::string        prefix = parameters.restart.filename;
+  std::string        prefix = checkpoint_controller.get_filename();
 
   // Load checkpoint controller
   std::string checkpoint_controller_object_filename =
@@ -47,9 +47,6 @@ read_checkpoint(
   prefix =
     prefix + "_" +
     Utilities::int_to_string(checkpoint_controller.get_next_checkpoint_id());
-
-  // Need to increment the next checkpoint id for the next checkpoint
-  checkpoint_controller.increment_checkpoint_id();
 
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);
