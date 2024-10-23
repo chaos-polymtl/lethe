@@ -30,6 +30,12 @@ class PreconditionBase;
 template <typename VectorType, typename VectorTypePrecondition>
 class PreconditionAdapter;
 
+namespace dealii
+{
+  template <class VectorType, class PreconditionerType>
+  class MGCoarseGridApplyPreconditioner;
+}
+
 /**
  * @brief A geometric multigrid preconditioner compatible with the
  * matrix-free solver.
@@ -43,7 +49,7 @@ class MFNavierStokesPreconditionGMG
   using MGNumber = double;
 #else
 #  if DEAL_II_VERSION_GTE(9, 7, 0)
-  using MGNumber = float;
+  using MGNumber              = float;
 #  else
   AssertThrow(
     false,
@@ -65,6 +71,16 @@ class MFNavierStokesPreconditionGMG
     PreconditionMG<dim, MGVectorType, LSTransferType>;
   using PreconditionerTypeGC =
     PreconditionMG<dim, MGVectorType, GCTransferType>;
+
+#if DEAL_II_VERSION_GTE(9, 7, 0)
+  using CoarseGridSolverApply = MGCoarseGridApplyOperator<
+    MGVectorType,
+    PreconditionAdapter<MGVectorType, TrilinosVectorType>>;
+#else
+  using CoarseGridSolverApply = MGCoarseGridApplyPreconditioner<
+    MGVectorType,
+    PreconditionAdapter<MGVectorType, TrilinosVectorType>>;
+#endif
 
 public:
   /**

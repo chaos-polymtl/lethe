@@ -491,17 +491,10 @@ namespace dealii
     /**
      * Reference to the preconditioner.
      */
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-    ObserverPointer<
-      const PreconditionerType,
-      MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
-      preconditioner;
-#else
     SmartPointer<
       const PreconditionerType,
       MGCoarseGridApplyPreconditioner<VectorType, PreconditionerType>>
       preconditioner;
-#endif
   };
 
 
@@ -1576,9 +1569,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
     {
       setup_AMG();
 
-      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
-        MGVectorType,
-        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+      this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
@@ -1588,9 +1579,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
     {
       setup_ILU();
 
-      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
-        MGVectorType,
-        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+      this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
     }
   else if (this->simulation_parameters.linear_solver
@@ -1614,9 +1603,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
         std::make_shared<PreconditionAdapter<MGVectorType, TrilinosVectorType>>(
           precondition_direct);
 
-      this->mg_coarse = std::make_shared<MGCoarseGridApplyPreconditioner<
-        MGVectorType,
-        PreconditionAdapter<MGVectorType, TrilinosVectorType>>>(
+      this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
 #else
       AssertThrow(
