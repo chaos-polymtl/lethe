@@ -204,7 +204,7 @@ The following graph shows the drag coefficient as a function of the Reynolds num
     :alt: Drag coefficient as a function of Reynolds number
     :align: center
 
-Here we show the drag models of Vakil and Green [#vakil2009] and Hölzer and Sommerfeld [#holzer2008] for comparison. Vakil's drag model is specifically made for cylinders in flow of Reynolds from 1 to 40, whereas Hölzer's model is meant to be more general for non-spherical particles defined by their sphericity in all flow regimes.
+Here we show the drag models of Vakil and Green [#vakil2009]_ and Hölzer and Sommerfeld [#holzer2008]_ for comparison. Vakil's drag model is specifically made for cylinders in flow of Reynolds from 1 to 40, whereas Hölzer's model is meant to be more general for non-spherical particles defined by their sphericity in all flow regimes.
 
 From the graph, we show good agreements with Vakil's model for Reynolds numbers ranging from 1 to 5. For values not covered by Vakil's model, we can see that the drag follows a similar trend to Hölzer's model.
 The difference with Hölzer's model can be explained by the fact that it is very hard to produce a precise drag model that encompasses all particle geometries in all flow regimes. As such, errors are expected, but it gives a very good ballpark approximation for non-spherical particles.
