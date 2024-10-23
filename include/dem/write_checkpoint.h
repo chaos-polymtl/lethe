@@ -47,6 +47,6 @@ write_checkpoint(
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_objects,
   const ConditionalOStream                                &pcout,
   MPI_Comm                                                &mpi_communicator,
-  CheckpointControl &checkpoint_controller);
+  const CheckpointControl &checkpoint_controller);
 
 #endif

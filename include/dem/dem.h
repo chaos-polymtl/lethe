@@ -224,11 +224,6 @@ private:
    */
   const unsigned int this_mpi_process;
 
-  /*
-   * @brief
-   */
-  CheckpointControl checkpoint_controller;
-
   /**
    * @brief The output stream used for the parallel simulation, only used by
    * the process 0.
@@ -239,6 +234,11 @@ private:
    * @brief The parameters of the DEM simulation.
    */
   DEMSolverParameters<dim> parameters;
+
+  /*
+   * @brief
+   */
+  CheckpointControl checkpoint_controller;
 
   /**
    * @brief The distributed triangulation used for the DEM simulation.

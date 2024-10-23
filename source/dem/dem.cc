@@ -37,6 +37,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , parameters(dem_parameters)
+  , checkpoint_controller(CheckpointControl(parameters.restart.frequency,
+                                            parameters.restart.filename))
   , triangulation(this->mpi_communicator)
   , mapping(1)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
@@ -1064,10 +1066,11 @@ DEMSolver<dim>::solve()
 
       // Write checkpoint if needed
       if (parameters.restart.checkpoint &&
-          simulation_control->get_step_number() %
-              parameters.restart.frequency ==
-            0)
+          checkpoint_controller.is_checkpoint_time_step(
+            simulation_control->get_step_number()))
         {
+          checkpoint_controller.increment_checkpoint_id();
+
           write_checkpoint(computing_timer,
                            parameters,
                            simulation_control,
