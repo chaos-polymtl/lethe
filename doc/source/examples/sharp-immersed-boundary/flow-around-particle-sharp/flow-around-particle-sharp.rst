@@ -204,7 +204,7 @@ The following graph shows the drag coefficient as a function of the Reynolds num
     :alt: Drag coefficient as a function of Reynolds number
     :align: center
 
-Here we show the drag models of Vakil and Green [1] and Hölzer and Sommerfeld [2] for comparison. Vakil's drag model is specifically made for cylinders in flow of Reynolds from 1 to 40, whereas Hölzer's model is meant to be more general for non-spherical particles defined by their sphericity in all flow regimes.
+Here we show the drag models of Vakil and Green [#vakil2009] and Hölzer and Sommerfeld [#holzer2008] for comparison. Vakil's drag model is specifically made for cylinders in flow of Reynolds from 1 to 40, whereas Hölzer's model is meant to be more general for non-spherical particles defined by their sphericity in all flow regimes.
 
 From the graph, we show good agreements with Vakil's model for Reynolds numbers ranging from 1 to 5. For values not covered by Vakil's model, we can see that the drag follows a similar trend to Hölzer's model.
 The difference with Hölzer's model can be explained by the fact that it is very hard to produce a precise drag model that encompasses all particle geometries in all flow regimes. As such, errors are expected, but it gives a very good ballpark approximation for non-spherical particles.
@@ -216,3 +216,10 @@ Possibilities for Extensions
 - To further validate the simulation results, the drag coefficient could be compared to the literature for a broader range of Reynolds numbers.
 - It would be interesting to investigate the switch from a particle perpendicular to the flow to a particle aligned with the flow and its effect on the drag coefficient. This could be done by varying the orientation of the particle in the flow.
 - It would be interesting to investigate the effect of the aspect ratio of the particle on the drag coefficient. 
+
+---------------
+Reference
+---------------
+
+.. [#vakil2009] \A. Vakil, S. I. Green, “Drag and lift coefficients of inclined finite circular cylinders at moderate Reynolds numbers,” *Computers & Fluids*, vol. 38, no. 9, pp. 1771-1781, Oct. 2009, doi: `10.1016/j.compfluid.2009.03.006 <https://doi.org/10.1016/j.compfluid.2009.03.006>`_\.
+.. [#holzer2008] \A. Hölzer, M. Sommerfeld, “New simple correlation formula for the drag coefficient of non-spherical particles,” *Powder Technology*, vol. 184, no. 3, pp. 361-365, Jun. 2008, doi: `10.1016/j.powtec.2007.08.021 <https://doi.org/10.1016/j.powtec.2007.08.021>`_\.
