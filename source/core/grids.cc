@@ -297,10 +297,9 @@ setup_periodic_boundary_conditions(
 
 {
   // Setup periodic boundary conditions
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::BoundaryType::periodic)
         {
           auto triangulation_ptr = &triangulation;
 
@@ -309,9 +308,9 @@ setup_periodic_boundary_conditions(
             periodicity_vector;
           GridTools::collect_periodic_faces(
             *dynamic_cast<Triangulation<dim, spacedim> *>(triangulation_ptr),
-            boundary_conditions.id[i_bc],
-            boundary_conditions.periodic_id[i_bc],
-            boundary_conditions.periodic_direction[i_bc],
+            id,
+            boundary_conditions.periodic_neighbor_id.at(id),
+            boundary_conditions.periodic_direction.at(id),
             periodicity_vector);
           triangulation.add_periodicity(periodicity_vector);
         }

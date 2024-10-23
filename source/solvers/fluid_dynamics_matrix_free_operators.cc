@@ -185,18 +185,16 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // Loop over all boundary conditions to establish if one of them has face
   // terms, if yes, enable them and add appropriate flags in the matrix-free
   // additional data
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::function_weak)
+      if (type == BoundaryConditions::BoundaryType::function_weak)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
             update_values | update_gradients | update_quadrature_points |
             update_JxW_values | update_normal_vectors;
         }
-      else if (boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::outlet)
+      else if (type == BoundaryConditions::BoundaryType::outlet)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
@@ -862,33 +860,20 @@ NavierStokesOperatorBase<dim, number>::
         {
           face_integrator.reinit(face);
 
-          // Identify the boundary id that corresponds to the face
-          const auto boundary_id =
-            std::find(this->boundary_conditions.id.begin(),
-                      this->boundary_conditions.id.end(),
-                      face_integrator.boundary_id());
-
-          // If the face is not a boundary condition and, we will not
-          // store values that will be derived from the boundary condition
-          // object
-          if (boundary_id == this->boundary_conditions.id.end())
-            continue;
-
-          // Calculate the index from the boundary condition vector
-          const auto boundary_index =
-            boundary_id - this->boundary_conditions.id.begin();
-
           // Check if the boundary condition is a weak Dirichlet boundary
           // condition or an outlet boundary condition, otherwise, no terms
           // need to be precomputed for faces
-          if (this->boundary_conditions.type[boundary_index] !=
+          if (this->boundary_conditions.type.at(
+                face_integrator.boundary_id()) !=
                 BoundaryConditions::BoundaryType::function_weak &&
-              this->boundary_conditions.type[boundary_index] !=
+              this->boundary_conditions.type.at(
+                face_integrator.boundary_id()) !=
                 BoundaryConditions::BoundaryType::outlet)
             continue;
 
           // We need to read the values for the outlet boundary condition
-          if (this->boundary_conditions.type[boundary_index] ==
+          if (this->boundary_conditions.type.at(
+                face_integrator.boundary_id()) ==
               BoundaryConditions::BoundaryType::outlet)
             {
               face_integrator.read_dof_values_plain(newton_step);
@@ -898,7 +883,8 @@ NavierStokesOperatorBase<dim, number>::
 
           for (const auto q : face_integrator.quadrature_point_indices())
             {
-              if (this->boundary_conditions.type[boundary_index] ==
+              if (this->boundary_conditions.type.at(
+                    face_integrator.boundary_id()) ==
                   BoundaryConditions::BoundaryType::function_weak)
                 {
                   Point<dim, VectorizedArray<number>> point_batch =
@@ -907,22 +893,29 @@ NavierStokesOperatorBase<dim, number>::
                   Tensor<1, dim, VectorizedArray<number>> target_velocity_value;
 
                   target_velocity_value[0] = evaluate_function<dim, number>(
-                    boundary_conditions.bcFunctions[boundary_index].u,
+                    boundary_conditions.navier_stokes_functions
+                      .at(face_integrator.boundary_id())
+                      ->u,
                     point_batch);
 
                   target_velocity_value[1] = evaluate_function<dim, number>(
-                    boundary_conditions.bcFunctions[boundary_index].v,
+                    boundary_conditions.navier_stokes_functions
+                      .at(face_integrator.boundary_id())
+                      ->v,
                     point_batch);
 
                   if constexpr (dim == 3)
                     target_velocity_value[2] = evaluate_function<dim, number>(
-                      boundary_conditions.bcFunctions[boundary_index].w,
+                      boundary_conditions.navier_stokes_functions
+                        .at(face_integrator.boundary_id())
+                        ->w,
                       point_batch);
 
                   face_target_velocity(face - n_inner_faces, q) =
                     target_velocity_value;
                 }
-              else if (this->boundary_conditions.type[boundary_index] ==
+              else if (this->boundary_conditions.type.at(
+                         face_integrator.boundary_id()) ==
                        BoundaryConditions::BoundaryType::outlet)
                 {
                   face_nonlinear_previous_values[face - n_inner_faces][q] =
@@ -938,7 +931,8 @@ NavierStokesOperatorBase<dim, number>::
 
           cell_size = compute_cell_diameter<dim>(cell_it->measure(), fe_degree);
 
-          const double beta = this->boundary_conditions.beta[boundary_index];
+          const double beta =
+            this->boundary_conditions.beta.at(face_integrator.boundary_id());
 
           effective_beta_face(face - n_inner_faces) =
             beta / std::pow(cell_size, static_cast<number>(fe_degree + 1));
@@ -1134,22 +1128,14 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   if (!enable_face_terms)
     return;
 
-  const auto boundary_id = std::find(this->boundary_conditions.id.begin(),
-                                     this->boundary_conditions.id.end(),
-                                     integrator.boundary_id());
-
-  const auto boundary_index =
-    boundary_id - this->boundary_conditions.id.begin();
-
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
   // not a weak function or outlet BC, there is nothing to do, so we set the
   // values to zero and return
-  if (boundary_id == this->boundary_conditions.id.end() ||
-      (this->boundary_conditions.type[boundary_index] !=
-         BoundaryConditions::BoundaryType::function_weak &&
-       this->boundary_conditions.type[boundary_index] !=
-         BoundaryConditions::BoundaryType::outlet))
+  if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
+        BoundaryConditions::BoundaryType::function_weak &&
+      this->boundary_conditions.type.at(integrator.boundary_id()) !=
+        BoundaryConditions::BoundaryType::outlet)
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1163,7 +1149,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   const auto penalty_parameter = this->effective_beta_face[face_index];
 
-  if (this->boundary_conditions.type[boundary_index] ==
+  if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
       BoundaryConditions::BoundaryType::function_weak)
     {
       integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
