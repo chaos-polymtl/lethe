@@ -424,38 +424,6 @@ private:
   write_tracer_statistics();
 
 
-
-  /**
-   * @brief Get the Lethe boundary indicator for a given triangulation boundary while
-   * carrying the appropriate checks.
-   *
-   * @param[in] triangulation_boundary_id The boundary id of the triangulation
-   *
-   * NOTE: This function is a temporary function. It will be deprecated in a
-   * future PR once boundary conditions have been refactored using maps.
-   */
-  unsigned int
-  get_lethe_boundary_index(const types::boundary_id &triangulation_boundary_id)
-  {
-    // Identify which boundary condition corresponds to the boundary id. If
-    // this boundary condition is not identified, then exit the simulation
-    // instead of assuming an outlet.
-    const auto lethe_boundary_id = std::find(
-      this->simulation_parameters.boundary_conditions_tracer.id.begin(),
-      this->simulation_parameters.boundary_conditions_tracer.id.end(),
-      triangulation_boundary_id);
-
-    AssertThrow(
-      lethe_boundary_id !=
-        this->simulation_parameters.boundary_conditions_tracer.id.end(),
-      ExcMessage("The boundary condition with id " +
-                 std::to_string(triangulation_boundary_id) +
-                 " is not present in the tracer boundary conditions."));
-
-    return (lethe_boundary_id -
-            this->simulation_parameters.boundary_conditions_tracer.id.begin());
-  }
-
   /**
    * @brief Helper function to reinit the face velocity with the adequate solution.
    * This prevents code duplication throughout the tracer. The function looks at

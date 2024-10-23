@@ -9,6 +9,8 @@
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/patterns.h>
 
+#include <map>
+
 using namespace dealii;
 
 DeclException1(
@@ -16,6 +18,11 @@ DeclException1(
   double,
   << "Emissivity : " << arg1
   << " cannot be larger than 1.0 (black body) or smaller than 0.0");
+
+DeclException1(NavierStokesBoundaryDuplicated,
+               types::boundary_id,
+               << "Fluid dynamics boundary id : " << arg1
+               << " has already been declared as a boundary condition");
 
 namespace BoundaryConditions
 {
@@ -34,6 +41,8 @@ namespace BoundaryConditions
     function_weak,
     partial_slip,
     periodic,
+    periodic_neighbor, // The periodic neighbour is used to indicate a boundary
+                       // which matches with a main periodic boundary
     pressure,
     //  for heat transfer
     noflux,
@@ -61,18 +70,15 @@ namespace BoundaryConditions
   class BoundaryConditions
   {
   public:
-    // ID of boundary condition
-    std::vector<unsigned int> id;
-
     // List of boundary type for each number
-    std::vector<BoundaryType> type;
+    std::map<types::boundary_id, BoundaryType> type;
 
     // Penalization parameter for weak dirichlet BCs and outlets
-    std::vector<double> beta;
+    std::map<types::boundary_id, double> beta;
 
     // Boundary layer size tangent component parameter for partial slip
     // dirichlet BCs
-    std::vector<double> boundary_layer_thickness;
+    std::map<types::boundary_id, double> boundary_layer_thickness;
 
     // Number of boundary conditions
     unsigned int size;
@@ -82,8 +88,9 @@ namespace BoundaryConditions
 
 
     // Periodic boundary condition matching
-    std::vector<unsigned int> periodic_id;
-    std::vector<unsigned int> periodic_direction;
+    std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
+
+    std::map<types::boundary_id, unsigned int> periodic_direction;
   };
 
 
@@ -145,13 +152,16 @@ namespace BoundaryConditions
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    NSBoundaryFunctions<dim>         *bcFunctions;
-    NSPressureBoundaryFunctions<dim> *bcPressureFunction;
+    std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
+      navier_stokes_functions;
+    std::map<types::boundary_id,
+             std::shared_ptr<NSPressureBoundaryFunctions<dim>>>
+      pressure_functions;
 
     void
-    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    parse_boundary(ParameterHandler &prm);
     void
-    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    declareDefaultEntry(ParameterHandler &prm);
 
     /**
      * @brief Declares the Navier-Stokes boundary conditions
@@ -187,8 +197,7 @@ namespace BoundaryConditions
   NSBoundaryConditions<dim>::createNoSlip()
   {
     this->id.resize(1);
-    this->id[0] = 0;
-    this->type.resize(1);
+    this->id[0]   = 0;
     this->type[0] = BoundaryType::noslip;
     this->size    = 1;
     this->beta.resize(1);
@@ -205,8 +214,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler  &prm,
-                                                 const unsigned int i_bc)
+  NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
@@ -217,35 +225,44 @@ namespace BoundaryConditions
       "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
 
-    prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
-                      Patterns::Integer(),
-                      "Mesh id for boundary conditions");
+    prm.declare_entry(
+      "id",
+      Utilities::int_to_string(-1, 2),
+      Patterns::Integer(),
+      "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
 
-    prm.declare_entry("periodic_id",
-                      "0",
-                      Patterns::Integer(),
-                      "Mesh id for periodic face matching");
+    prm.declare_entry(
+      "periodic_id",
+      "-1",
+      Patterns::Integer(),
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the id is set by the user");
 
     prm.declare_entry("periodic_direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
 
+
+    // Create a dummy NSBoundaryFunctions object to declare the appropriate
+    // parameters for this boundary condition.
+    NSBoundaryFunctions<dim>         temporary_velocity_function;
+    NSPressureBoundaryFunctions<dim> temporary_pressure_function;
+
+
     prm.enter_subsection("u");
-    bcFunctions[i_bc].u.declare_parameters(prm);
+    temporary_velocity_function.u.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("v");
-    bcFunctions[i_bc].v.declare_parameters(prm);
+    temporary_velocity_function.v.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("w");
-    bcFunctions[i_bc].w.declare_parameters(prm);
+    temporary_velocity_function.w.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("p");
-    bcPressureFunction[i_bc].p.declare_parameters(prm);
+    temporary_pressure_function.p.declare_parameters(prm);
     prm.leave_subsection();
 
     // Center of rotation of the boundary condition for torque calculation
@@ -278,72 +295,101 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::parse_boundary(ParameterHandler  &prm,
-                                            const unsigned int i_bc)
+  NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    types::boundary_id boundary_id = prm.get_integer("id");
+
+    Assert(this->type.find(boundary_id) == this->type.end(),
+           NavierStokesBoundaryDuplicated(boundary_id));
+
     const std::string op = prm.get("type");
     if (op == "none")
-      this->type[i_bc] = BoundaryType::none;
+      this->type[boundary_id] = BoundaryType::none;
     if (op == "noslip")
-      this->type[i_bc] = BoundaryType::noslip;
+      this->type[boundary_id] = BoundaryType::noslip;
     if (op == "slip")
-      this->type[i_bc] = BoundaryType::slip;
+      this->type[boundary_id] = BoundaryType::slip;
     if (op == "function" || op == "function weak" || op == "partial slip")
       {
         if (op == "function")
-          this->type[i_bc] = BoundaryType::function;
+          this->type[boundary_id] = BoundaryType::function;
         else if (op == "partial slip")
-          this->type[i_bc] = BoundaryType::partial_slip;
+          this->type[boundary_id] = BoundaryType::partial_slip;
         else
-          this->type[i_bc] = BoundaryType::function_weak;
+          this->type[boundary_id] = BoundaryType::function_weak;
+
+
+        // Allocate the NSBoundaryFunctions object
+        navier_stokes_functions[boundary_id] =
+          std::make_shared<NSBoundaryFunctions<dim>>();
+
         prm.enter_subsection("u");
-        bcFunctions[i_bc].u.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("v");
-        bcFunctions[i_bc].v.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->v.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("w");
-        bcFunctions[i_bc].w.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("center of rotation");
-        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
-        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
+        navier_stokes_functions[boundary_id]->center_of_rotation[0] =
+          prm.get_double("x");
+        navier_stokes_functions[boundary_id]->center_of_rotation[1] =
+          prm.get_double("y");
 
         if (dim == 3)
-          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
+          navier_stokes_functions[boundary_id]->center_of_rotation[2] =
+            prm.get_double("z");
         prm.leave_subsection();
       }
     if (op == "pressure")
       {
-        this->type[i_bc] = BoundaryType::pressure;
+        // Allocate the pressure boundary condition object
+        pressure_functions[boundary_id] =
+          std::make_shared<NSPressureBoundaryFunctions<dim>>();
+
+        this->type[boundary_id] = BoundaryType::pressure;
         prm.enter_subsection("p");
-        bcPressureFunction[i_bc].p.parse_parameters(prm);
+        pressure_functions[boundary_id]->p.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("center of rotation");
-        bcPressureFunction[i_bc].center_of_rotation[0] = prm.get_double("x");
-        bcPressureFunction[i_bc].center_of_rotation[1] = prm.get_double("y");
+        pressure_functions[boundary_id]->center_of_rotation[0] =
+          prm.get_double("x");
+        pressure_functions[boundary_id]->center_of_rotation[1] =
+          prm.get_double("y");
         if (dim == 3)
-          bcPressureFunction[i_bc].center_of_rotation[2] = prm.get_double("z");
+          pressure_functions[boundary_id]->center_of_rotation[2] =
+            prm.get_double("z");
         prm.leave_subsection();
       }
     if (op == "periodic")
       {
-        this->type[i_bc]               = BoundaryType::periodic;
-        this->periodic_id[i_bc]        = prm.get_integer("periodic_id");
-        this->periodic_direction[i_bc] = prm.get_integer("periodic_direction");
+        types::boundary_id periodic_boundary_id =
+          prm.get_integer("periodic_id");
+
+        this->type[boundary_id] = BoundaryType::periodic;
+
+        // We attribute a periodic neighbor boundary type to the neighbor
+        // boundaryto ensure that all boundaries have a defined type
+        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+        // We store the periodic id and direction
+        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+        this->periodic_direction[boundary_id] =
+          prm.get_integer("periodic_direction");
       }
     if (op == "outlet")
       {
-        this->type[i_bc] = BoundaryType::outlet;
+        this->type[boundary_id] = BoundaryType::outlet;
       }
 
-    this->id[i_bc]   = prm.get_integer("id");
-    this->beta[i_bc] = prm.get_double("beta");
-    this->boundary_layer_thickness[i_bc] =
+    this->beta[boundary_id] = prm.get_double("beta");
+    this->boundary_layer_thickness[boundary_id] =
       prm.get_double("boundary layer thickness");
   }
 
@@ -372,20 +418,11 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if zero pressure is used as a constraint one node");
 
-      this->id.resize(number_of_boundary_conditions);
-      this->beta.resize(number_of_boundary_conditions);
-      this->boundary_layer_thickness.resize(number_of_boundary_conditions);
-      this->periodic_id.resize(number_of_boundary_conditions);
-      this->periodic_direction.resize(number_of_boundary_conditions);
-      this->type.resize(number_of_boundary_conditions);
-      bcFunctions = new NSBoundaryFunctions<dim>[number_of_boundary_conditions];
-      bcPressureFunction =
-        new NSPressureBoundaryFunctions<dim>[number_of_boundary_conditions];
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm, n);
+            declareDefaultEntry(prm);
           }
           prm.leave_subsection();
         }
@@ -408,16 +445,12 @@ namespace BoundaryConditions
       this->size                  = prm.get_integer("number");
       this->time_dependent        = prm.get_bool("time dependent");
       this->fix_pressure_constant = prm.get_bool("fix pressure constant");
-      this->type.resize(this->size);
-      this->id.resize(this->size);
-      this->periodic_direction.resize(this->size);
-      this->periodic_id.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, n);
+            parse_boundary(prm);
           }
           prm.leave_subsection();
         }
@@ -449,24 +482,35 @@ namespace BoundaryConditions
   class HTBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>>
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
       dirichlet_value;
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> h;
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> Tinf;
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> emissivity;
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> heat_flux_bc;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      h;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      Tinf;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      emissivity;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+           heat_flux_bc;
     double Stefan_Boltzmann_constant;
 
     void
-    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    declareDefaultEntry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
     void
-    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    parse_boundary(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
 
+
+    // TODO REMOVE THIS FLAG IT IS NOT USEFUL
     bool has_convection_radiation_bc = false;
   };
 
@@ -479,8 +523,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler  &prm,
-                                                 const unsigned int i_bc)
+  HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
@@ -490,38 +533,35 @@ namespace BoundaryConditions
       "Choices are <noflux|temperature|convection-radiation-flux>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
+                      Utilities::int_to_string(-1, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
+    Functions::ParsedFunction<dim> temporary_function;
+
     // Expression for the temperature for an imposed temperature at bc
     prm.enter_subsection("value");
-    dirichlet_value[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    dirichlet_value[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
     // Expression for the h coefficient of convection-radiation-flux bc
     prm.enter_subsection("h");
-    h[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    h[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
     // Temperature of environment for convection-radiation-flux bc
     prm.enter_subsection("Tinf");
-    Tinf[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    Tinf[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
     // Emissivity of the boundary for convection-radiation-flux bc
     prm.enter_subsection("emissivity");
-    emissivity[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    emissivity[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
     // Heat flux (Neumann) at the boundary for convection-radiation-flux bc
     prm.enter_subsection("heat_flux");
-    heat_flux_bc[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    heat_flux_bc[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
   }
 
@@ -550,19 +590,11 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if the boundary condition is time-dependent");
 
-      this->id.resize(number_of_boundary_conditions);
-      this->type.resize(number_of_boundary_conditions);
-      dirichlet_value.resize(number_of_boundary_conditions);
-      h.resize(number_of_boundary_conditions);
-      Tinf.resize(number_of_boundary_conditions);
-      emissivity.resize(number_of_boundary_conditions);
-      heat_flux_bc.resize(number_of_boundary_conditions);
-
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm, n);
+            declareDefaultEntry(prm);
           }
           prm.leave_subsection();
         }
@@ -584,21 +616,22 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  HTBoundaryConditions<dim>::parse_boundary(ParameterHandler  &prm,
-                                            const unsigned int i_bc)
+  HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    types::boundary_id boundary_id = prm.get_integer("id");
+
     const std::string op = prm.get("type");
     if (op == "noflux")
       {
-        this->type[i_bc] = BoundaryType::noflux;
+        this->type[boundary_id] = BoundaryType::noflux;
       }
     if (op == "temperature")
       {
-        this->type[i_bc] = BoundaryType::temperature;
+        this->type[boundary_id] = BoundaryType::temperature;
       }
     else if (op == "convection-radiation-flux")
       {
-        this->type[i_bc]                  = BoundaryType::convection_radiation;
+        this->type[boundary_id]           = BoundaryType::convection_radiation;
         this->has_convection_radiation_bc = true;
 
         // Emissivity validity (0 <= emissivity <= 1) will be checked at
@@ -607,22 +640,29 @@ namespace BoundaryConditions
 
     // All the functions are parsed since they might be used for post-processing
     prm.enter_subsection("value");
-    this->dirichlet_value[i_bc]->parse_parameters(prm);
+    this->dirichlet_value[boundary_id] =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+    this->dirichlet_value[boundary_id]->parse_parameters(prm);
     prm.leave_subsection();
     prm.enter_subsection("h");
-    this->h[i_bc]->parse_parameters(prm);
+    this->h[boundary_id] = std::make_shared<Functions::ParsedFunction<dim>>();
+    this->h[boundary_id]->parse_parameters(prm);
     prm.leave_subsection();
     prm.enter_subsection("Tinf");
-    this->Tinf[i_bc]->parse_parameters(prm);
+    this->Tinf[boundary_id] =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+    this->Tinf[boundary_id]->parse_parameters(prm);
     prm.leave_subsection();
     prm.enter_subsection("emissivity");
-    this->emissivity[i_bc]->parse_parameters(prm);
+    this->emissivity[boundary_id] =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+    this->emissivity[boundary_id]->parse_parameters(prm);
     prm.leave_subsection();
     prm.enter_subsection("heat_flux");
-    this->heat_flux_bc[i_bc]->parse_parameters(prm);
+    this->heat_flux_bc[boundary_id] =
+      std::make_shared<Functions::ParsedFunction<dim>>();
+    this->heat_flux_bc[boundary_id]->parse_parameters(prm);
     prm.leave_subsection();
-
-    this->id[i_bc] = prm.get_integer("id");
   }
 
   /**
@@ -640,21 +680,11 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-
-      this->type.resize(this->size);
-      this->id.resize(this->size);
-      this->dirichlet_value.resize(this->size);
-      this->h.resize(this->size);
-
-      this->Tinf.resize(this->size);
-      this->emissivity.resize(this->size);
-      this->heat_flux_bc.resize(this->size);
-
       for (unsigned int n = 0; n < this->size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, n);
+            parse_boundary(prm);
           }
           prm.leave_subsection();
         }
@@ -678,16 +708,18 @@ namespace BoundaryConditions
   class TracerBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> tracer;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      tracer;
 
 
     void
-    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    declareDefaultEntry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
     void
-    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    parse_boundary(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -702,8 +734,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  TracerBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
-                                                     unsigned int      i_bc)
+  TracerBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
   {
     prm.declare_entry("type",
                       "dirichlet",
@@ -712,13 +743,14 @@ namespace BoundaryConditions
                       "Choices are <dirichlet|outlet>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
+                      Utilities::int_to_string(-1, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
+    Functions::ParsedFunction<dim> temporary_function;
+
     prm.enter_subsection("dirichlet");
-    tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    tracer[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
   }
 
@@ -747,15 +779,11 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if the boundary condition is time-dependent");
 
-      this->id.resize(number_of_boundary_conditions);
-      this->type.resize(number_of_boundary_conditions);
-      tracer.resize(number_of_boundary_conditions);
-
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm, n);
+            declareDefaultEntry(prm);
           }
           prm.leave_subsection();
         }
@@ -768,34 +796,32 @@ namespace BoundaryConditions
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
    *
-   * @param i_bc The boundary condition number (and not necessarily it's id).
    */
 
   template <int dim>
   void
-  TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
-                                                unsigned int      i_bc)
+  TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    const std::string op = prm.get("type");
+    types::boundary_id boundary_id = prm.get_integer("id");
+    const std::string  op          = prm.get("type");
     if (op == "dirichlet")
       {
-        this->type[i_bc] = BoundaryType::tracer_dirichlet;
+        this->type[boundary_id] = BoundaryType::tracer_dirichlet;
         prm.enter_subsection("dirichlet");
-        tracer[i_bc]->parse_parameters(prm);
+        tracer[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        tracer[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
       }
     else if (op == "outlet")
       {
-        this->type[i_bc] = BoundaryType::outlet;
+        this->type[boundary_id] = BoundaryType::outlet;
       }
     else
       {
         AssertThrow(false,
                     ExcMessage("Unknown boundary condition type for tracers."));
       }
-
-
-    this->id[i_bc] = prm.get_integer("id");
   }
 
   /**
@@ -813,13 +839,12 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-      this->type.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, n);
+            parse_boundary(prm);
           }
           prm.leave_subsection();
         }
@@ -839,17 +864,19 @@ namespace BoundaryConditions
   class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<double>                 angle_of_contact;
-    std::vector<double>                 phase_dirichlet_value;
-    CahnHilliardBoundaryFunctions<dim> *bcFunctions;
+    std::map<types::boundary_id, double> angle_of_contact;
+    std::map<types::boundary_id, double> phase_dirichlet_value;
+    std::map<types::boundary_id,
+             std::shared_ptr<CahnHilliardBoundaryFunctions<dim>>>
+      bcFunctions;
 
     void
-    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    declareDefaultEntry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
     void
-    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    parse_boundary(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -865,8 +892,7 @@ namespace BoundaryConditions
   template <int dim>
   void
   CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(
-    ParameterHandler  &prm,
-    const unsigned int i_bc)
+    ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
@@ -876,7 +902,7 @@ namespace BoundaryConditions
       "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
+                      Utilities::int_to_string(-1, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -886,8 +912,9 @@ namespace BoundaryConditions
       Patterns::Double(),
       "Inner angle of contact between the fluid 1 and the boundary (in degrees)");
 
+    Functions::ParsedFunction<dim> temporary_function;
     prm.enter_subsection("phi");
-    bcFunctions[i_bc].phi.declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
     return;
@@ -917,16 +944,11 @@ namespace BoundaryConditions
         Patterns::Bool(),
         "Bool to define if the boundary condition is time dependent");
 
-      this->id.resize(number_of_boundary_conditions);
-      this->type.resize(number_of_boundary_conditions);
-      bcFunctions =
-        new CahnHilliardBoundaryFunctions<dim>[number_of_boundary_conditions];
-
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm, n);
+            declareDefaultEntry(prm);
           }
           prm.leave_subsection();
         }
@@ -944,32 +966,33 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler  &prm,
-                                                      const unsigned int i_bc)
+  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    const std::string op = prm.get("type");
+    types::boundary_id boundary_id = prm.get_integer("id");
+    const std::string  op          = prm.get("type");
     if (op == "noflux")
       {
-        this->type[i_bc] = BoundaryType::cahn_hilliard_noflux;
+        this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
       }
     if (op == "dirichlet")
       {
-        this->type[i_bc] = BoundaryType::cahn_hilliard_dirichlet_phase_order;
+        this->type[boundary_id] =
+          BoundaryType::cahn_hilliard_dirichlet_phase_order;
         prm.enter_subsection("phi");
-        bcFunctions[i_bc].phi.parse_parameters(prm);
+        this->bcFunctions[boundary_id] =
+          std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
+        bcFunctions[boundary_id]->phi.parse_parameters(prm);
         prm.leave_subsection();
       }
     if (op == "angle_of_contact")
       {
-        this->type[i_bc] = BoundaryType::cahn_hilliard_angle_of_contact;
-        this->angle_of_contact[i_bc] = prm.get_double("angle value");
+        this->type[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;
+        this->angle_of_contact[boundary_id] = prm.get_double("angle value");
       }
     if (op == "free_angle")
       {
-        this->type[i_bc] = BoundaryType::cahn_hilliard_free_angle;
+        this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
       }
-
-    this->id[i_bc] = prm.get_integer("id");
   }
 
   /**
@@ -987,16 +1010,12 @@ namespace BoundaryConditions
     {
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
-      this->type.resize(this->size);
-      this->id.resize(this->size);
-      this->phase_dirichlet_value.resize(this->size);
-      this->angle_of_contact.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, n);
+            parse_boundary(prm);
           }
           prm.leave_subsection();
         }
@@ -1022,12 +1041,12 @@ namespace BoundaryConditions
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> phase_fraction;
 
     void
-    declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc);
+    declareDefaultEntry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
     void
-    parse_boundary(ParameterHandler &prm, const unsigned int i_bc);
+    parse_boundary(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -1041,8 +1060,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler  &prm,
-                                                  const unsigned int i_bc)
+  VOFBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
   {
     prm.declare_entry("type",
                       "none",
@@ -1051,13 +1069,13 @@ namespace BoundaryConditions
                       "Choices are <none|dirichlet>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(i_bc, 2),
+                      Utilities::int_to_string(-1, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
+    Functions::ParsedFunction<dim> temporary_function;
     prm.enter_subsection("dirichlet");
-    phase_fraction[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
-    phase_fraction[i_bc]->declare_parameters(prm);
+    temporary_function.declare_parameters(prm);
     prm.leave_subsection();
   }
 
@@ -1084,15 +1102,12 @@ namespace BoundaryConditions
         "false",
         Patterns::Bool(),
         "Bool to define if the boundary condition is time-dependent");
-      this->id.resize(number_of_boundary_conditions);
-      this->type.resize(number_of_boundary_conditions);
-      phase_fraction.resize(number_of_boundary_conditions);
 
       for (unsigned int n = 0; n < number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm, n);
+            declareDefaultEntry(prm);
           }
           prm.leave_subsection();
         }
@@ -1110,23 +1125,25 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler  &prm,
-                                             const unsigned int i_bc)
+  VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    const std::string op = prm.get("type");
+    types::boundary_id boundary_id = prm.get_integer("id");
+    const std::string  op          = prm.get("type");
     if (op == "none")
       {
-        this->type[i_bc] = BoundaryType::none;
+        this->type[boundary_id] = BoundaryType::none;
       }
     else if (op == "dirichlet")
       {
-        this->type[i_bc] = BoundaryType::vof_dirichlet;
+        this->type[boundary_id] = BoundaryType::vof_dirichlet;
         prm.enter_subsection("dirichlet");
-        phase_fraction[i_bc]->parse_parameters(prm);
-        prm.leave_subsection();
+        phase_fraction[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        phase_fraction[boundary_id]->parse_parameters(prm);
       }
-    this->id[i_bc] = prm.get_integer("id");
+    prm.leave_subsection();
   }
+
 
   /**
    * @brief Parse the boundary conditions
@@ -1144,14 +1161,11 @@ namespace BoundaryConditions
       this->size           = prm.get_integer("number");
       this->time_dependent = prm.get_bool("time dependent");
 
-      this->type.resize(this->size);
-      this->id.resize(this->size);
-
       for (unsigned int n = 0; n < this->size; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, n);
+            parse_boundary(prm);
           }
           prm.leave_subsection();
         }

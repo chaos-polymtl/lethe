@@ -677,16 +677,14 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
       FEValuesExtractors::Vector velocities(0);
       FEValuesExtractors::Scalar pressure(dim);
 
-      for (unsigned int i_bc = 0;
-           i_bc < this->simulation_parameters.boundary_conditions.size;
-           ++i_bc)
+      for (auto const &[id, type] :
+           this->simulation_parameters.boundary_conditions.type)
         {
           if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
               BoundaryConditions::BoundaryType::slip)
             {
               std::set<types::boundary_id> no_normal_flux_boundaries;
-              no_normal_flux_boundaries.insert(
-                this->simulation_parameters.boundary_conditions.id[i_bc]);
+              no_normal_flux_boundaries.insert(id);
               for (unsigned int level = this->minlevel; level <= this->maxlevel;
                    ++level)
                 {
@@ -746,8 +744,7 @@ MFNavierStokesPreconditionGMG<dim>::MFNavierStokesPreconditionGMG(
             }
           else
             {
-              std::set<types::boundary_id> dirichlet_boundary_id = {
-                this->simulation_parameters.boundary_conditions.id[i_bc]};
+              std::set<types::boundary_id> dirichlet_boundary_id = {id};
               this->mg_constrained_dofs.make_zero_boundary_constraints(
                 this->dof_handler,
                 dirichlet_boundary_id,

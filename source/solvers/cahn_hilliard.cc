@@ -1050,10 +1050,8 @@ CahnHilliard<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc <
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
       {
         ComponentMask mask(2, true);
         mask.set(1, false);
@@ -1061,18 +1059,16 @@ CahnHilliard<dim>::setup_dofs()
         // Dirichlet condition: imposed phase_order at i_bc
         // To impose the boundary condition only on the phase order, a component
         // mask is used at the end of the interpolate_boundary_values function
-        if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .type[i_bc] == BoundaryConditions::BoundaryType::
-                               cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::BoundaryType::
+                      cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
-                .id[i_bc],
+              id,
               CahnHilliardFunctionDefined<dim>(
                 &this->simulation_parameters.boundary_conditions_cahn_hilliard
-                   .bcFunctions[i_bc]
-                   .phi),
+                   .bcFunctions.at(id)
+                   ->phi),
               nonzero_constraints,
               mask);
           }
@@ -1086,19 +1082,15 @@ CahnHilliard<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc <
-         this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
       {
-        if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .type[i_bc] == BoundaryConditions::BoundaryType::
-                               cahn_hilliard_dirichlet_phase_order)
+        if (type == BoundaryConditions::BoundaryType::
+                      cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_cahn_hilliard
-                .id[i_bc],
+              id,
               Functions::ZeroFunction<dim>(2),
               zero_constraints);
           }
@@ -1149,10 +1141,8 @@ CahnHilliard<dim>::update_boundary_conditions()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
 
-  for (unsigned int i_bc = 0;
-       i_bc <
-       this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_cahn_hilliard.type)
     {
       ComponentMask mask(2, true);
       mask.set(1, false);
@@ -1160,21 +1150,20 @@ CahnHilliard<dim>::update_boundary_conditions()
       // Dirichlet condition: imposed phase_order at i_bc
       // To impose the boundary condition only on the phase order, a component
       // mask is used at the end of the interpolate_boundary_values function
-      if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-            .type[i_bc] ==
+      if (type ==
           BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order)
         {
           this->simulation_parameters.boundary_conditions_cahn_hilliard
-            .bcFunctions[i_bc]
-            .phi.set_time(time);
+            .bcFunctions.at(id)
+            ->phi.set_time(time);
+
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .id[i_bc],
+            id,
             CahnHilliardFunctionDefined<dim>(
               &this->simulation_parameters.boundary_conditions_cahn_hilliard
-                 .bcFunctions[i_bc]
-                 .phi),
+                 .bcFunctions.at(id)
+                 ->phi),
             nonzero_constraints,
             mask);
         }
