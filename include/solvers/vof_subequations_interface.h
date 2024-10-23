@@ -17,7 +17,9 @@ using namespace dealii;
 enum VOFSubequationsID : unsigned int
 {
   /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0
+  phase_gradient_projection = 0,
+  /// VOF curvature L2 projection
+  curvature_projection = 0
 };
 
 /**
@@ -140,9 +142,9 @@ public:
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       return this->multiphysics->get_dof_handler(PhysicsID::VOF);
-    else // At the moment, only one option is possible. This will change with
-         // the addition of other subequations to the interface.
-      return this->multiphysics->get_dof_handler(PhysicsID::VOF);
+    else // if (subequation_id == VOFSubequationsID::curvature_projection)
+      return this->get_dof_handler(
+        VOFSubequationsID::phase_gradient_projection);
   }
 
   /**
@@ -166,15 +168,16 @@ public:
                            subequation_id) != this->active_subequations.end()),
                 ExcInternalError());
 
-    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
+//    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
+    if (std::is_same<ScratchDataType, VOFPhaseGradientProjectionScratchData<dim>>::value)
       return std::make_shared<
-        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
+        VOFAssemblerPhaseGradientProjection<dim>>(
         vof_parameters);
-    else // At the moment, only one option is possible. This will change with
-         // the addition of other subequations to the interface.
+//    else if (subequation_id == VOFSubequationsID::curvature_projection)
+    else if (std::is_same<ScratchDataType, VOFCurvatureProjectionScratchData<dim>>::value)
       return std::make_shared<
-        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
-        vof_parameters);
+        VOFAssemblerCurvatureProjection<dim>>(vof_parameters);
+    throw std::runtime_error("Incorrect ScratchDataType");
   }
 
   /**
@@ -284,6 +287,8 @@ public:
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       subequation_string = "VOF phase fraction gradient L2 projection";
+    else if (subequation_id == VOFSubequationsID::curvature_projection)
+      subequation_string = "VOF curvature L2 projection";
 
     return subequation_string;
   }

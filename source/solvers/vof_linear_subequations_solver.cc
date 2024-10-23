@@ -266,3 +266,10 @@ template class VOFLinearSubequationsSolver<
 template class VOFLinearSubequationsSolver<
   3,
   VOFPhaseGradientProjectionScratchData<3>>;
+
+template class VOFLinearSubequationsSolver<
+  2,
+  VOFCurvatureProjectionScratchData<2>>;
+template class VOFLinearSubequationsSolver<
+  3,
+  VOFCurvatureProjectionScratchData<3>>;

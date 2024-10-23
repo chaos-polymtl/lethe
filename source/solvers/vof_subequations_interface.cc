@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <solvers/vof_curvature_projection.h>
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_phase_gradient_projection.h>
 #include <solvers/vof_subequations_interface.h>
@@ -30,6 +31,18 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
                                                        p_triangulation,
                                                        p_simulation_control,
                                                        this->pcout);
+      // Phase curvature projection
+      this->active_subequations.push_back(
+        VOFSubequationsID::curvature_projection);
+      this->subequations[VOFSubequationsID::curvature_projection] =
+        std::make_shared<
+          VOFCurvatureProjection<dim>>(
+          this,
+          this->multiphysics,
+          p_simulation_parameters,
+          p_triangulation,
+          p_simulation_control,
+          this->pcout);
     }
 }
 
@@ -50,11 +63,11 @@ VOFSubequationsInterface<dim>::scratch_data_cast(
   if (subequation_id == VOFSubequationsID::phase_gradient_projection)
     return std::make_shared<VOFPhaseGradientProjectionScratchData<dim>>(
       fe_subequation, quadrature, mapping, fe_input);
-  else // At the moment, only one option is possible. This will change with the
-       // addition of other subequations to the interface.
-    return std::make_shared<VOFPhaseGradientProjectionScratchData<dim>>(
+  else // if (subequation_id == VOFSubequationsID::curvature_projection)
+    return std::make_shared<VOFCurvatureProjectionScratchData<dim>>(
       fe_subequation, quadrature, mapping, fe_input);
 }
 
 template class VOFSubequationsInterface<2>;
 template class VOFSubequationsInterface<3>;
+

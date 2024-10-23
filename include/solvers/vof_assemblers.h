@@ -192,9 +192,9 @@ public:
  *
  * @ingroup assemblers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFAssemblerPhaseGradientProjection
-  : public VOFSubequationAssemblerBase<ScratchDataType>
+  : public VOFSubequationAssemblerBase<VOFPhaseGradientProjectionScratchData<dim>>
 {
 public:
   /**
@@ -204,7 +204,7 @@ public:
    * @param[in] vof_parameters VOF simulation parameters.
    */
   VOFAssemblerPhaseGradientProjection(const Parameters::VOF &vof_parameters)
-    : vof_parameters(vof_parameters)
+    : VOFSubequationAssemblerBase<VOFPhaseGradientProjectionScratchData<dim>>(), vof_parameters(vof_parameters)
   {}
 
   /**
@@ -223,7 +223,7 @@ public:
    * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   void
-  assemble_matrix(const ScratchDataType     &scratch_data,
+  assemble_matrix(const VOFPhaseGradientProjectionScratchData<dim>     &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
 
   /**
@@ -237,7 +237,7 @@ public:
    * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   void
-  assemble_rhs(const ScratchDataType     &scratch_data,
+  assemble_rhs(const VOFPhaseGradientProjectionScratchData<dim>     &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
 private:
@@ -255,9 +255,9 @@ private:
  *
  * @ingroup assemblers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFAssemblerCurvatureProjection
-  : public VOFSubequationAssemblerBase<ScratchDataType>
+  : public VOFSubequationAssemblerBase<VOFCurvatureProjectionScratchData<dim>>
 {
 public:
   /**
@@ -266,7 +266,7 @@ public:
    * @param[in] vof_parameters VOF simulation parameters.
    */
   VOFAssemblerCurvatureProjection(const Parameters::VOF &vof_parameters)
-    : vof_parameters(vof_parameters)
+    : VOFSubequationAssemblerBase<VOFCurvatureProjectionScratchData<dim>>(),vof_parameters(vof_parameters)
   {}
   /**
    * @brief Default destructor.
@@ -283,7 +283,7 @@ public:
    * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   void
-  assemble_matrix(const ScratchDataType     &scratch_data,
+  assemble_matrix(const VOFCurvatureProjectionScratchData<dim>     &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
   /**
    * @brief Assemble the right-hand side (rhs).
@@ -296,7 +296,7 @@ public:
    * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   void
-  assemble_rhs(const ScratchDataType     &scratch_data,
+  assemble_rhs(const VOFCurvatureProjectionScratchData<dim>     &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
 private:
