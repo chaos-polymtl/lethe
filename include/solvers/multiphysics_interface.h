@@ -558,7 +558,7 @@ public:
   /**
    * @brief Request immersed solid signed distance function
    */
-  Function<dim> *
+  Shape<dim> *
   get_immersed_solid_signed_distance_function();
 
   /**
@@ -567,7 +567,7 @@ public:
    * @param function The immersed solid signed distance function
    */
   void
-  set_immersed_solid_signed_distance_function(Function<dim> *function);
+  set_immersed_solid_signed_distance_function(Shape<dim> *function);
 
   /**
    * @brief Request the previous solutions of a given physics
@@ -914,7 +914,7 @@ private:
   GlobalVectorType *reynolds_stress_solutions;
 
   // Immersed solid signed distance function to be used by auxiliary physics
-  Function<dim> *immersed_solid_signed_distance_function;
+  Shape<dim> *immersed_solid_signed_distance_function;
 
   // past (minus 1) solution
   std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;

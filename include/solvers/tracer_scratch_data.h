@@ -159,7 +159,7 @@ public:
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const Function<dim>           *source_function,
-         const Function<dim>           *levelset_function)
+         Shape<dim>                    *levelset_function)
   {
     this->fe_values_tracer.reinit(cell);
 
@@ -176,6 +176,10 @@ public:
             "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
 
         levelset_function->value_list(quadrature_points, sdf_values);
+        for (unsigned int q = 0; q < n_q_points; q++)
+          sdf_values[q] =
+            levelset_function->value_with_cell_guess(quadrature_points[q],
+                                                     cell);
       }
 
     // Compute cell diameter
