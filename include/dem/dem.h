@@ -235,8 +235,8 @@ private:
    */
   DEMSolverParameters<dim> parameters;
 
-  /*
-   * @brief
+  /**
+   * @brief The checkpoint controller of the DEM simulation.
    */
   CheckpointControl checkpoint_controller;
 
