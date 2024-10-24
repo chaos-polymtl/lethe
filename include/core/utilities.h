@@ -648,5 +648,24 @@ get_penalty_factor(const unsigned int fe_degree,
          (1. / cell_extent_here + 1. / cell_extent_there);
 }
 
+/**
+ * @brief Extract the keys from map object
+ *
+ * @tparam key Key of the map
+ * @tparam val Value of the map. This template parameter is not used
+ * @param map Map object from which the keys are extracted
+ * @return keys Vector of keys from the map
+ */
+
+template <typename key, typename val>
+std::vector<key>
+extract_keys_from_map(const std::map<key, val> &map)
+{
+  std::vector<key> keys;
+  for (const auto &pair : map)
+    keys.push_back(pair.first);
+  return keys;
+}
+
 
 #endif

@@ -381,52 +381,46 @@ HeatTransferAssemblerRobinBC<dim>::assemble_matrix(
 {
   if (!scratch_data.is_boundary_cell)
     return;
+
   auto        &local_matrix = copy_data.local_matrix;
   const double Stefan_Boltzmann_constant =
     this->boundary_conditions_ht.Stefan_Boltzmann_constant;
 
-  // Robin boundary condition, loop on faces (Newton's cooling law +
-  // Stefan-Boltzmann law) implementation similar to deal.ii step-7
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {
-      if (this->boundary_conditions_ht.type[i_bc] ==
+      if (this->boundary_conditions_ht.type.at(
+            scratch_data.boundary_face_id[f]) ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-          Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
+          // Robin boundary condition, loop on faces (Newton's cooling law +
+          // Stefan-Boltzmann law) implementation similar to deal.ii step-7
+          Function<dim> &h_function = *(this->boundary_conditions_ht.h.at(
+            scratch_data.boundary_face_id[f]));
           Function<dim> &emissivity_function =
-            *(this->boundary_conditions_ht.emissivity[i_bc]);
-          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            *(this->boundary_conditions_ht.emissivity.at(
+              scratch_data.boundary_face_id[f]));
+          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
             {
-              if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ht.id[i_bc])
+              const double T_face = scratch_data.temperature_face_value[f][q];
+              const double JxW    = scratch_data.face_JxW[f][q];
+              const double h =
+                h_function.value(scratch_data.quadrature_points[q]);
+              const double emissivity =
+                emissivity_function.value(scratch_data.quadrature_points[q]);
+              AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
+                          EmissivityError(emissivity));
+              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                 {
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
-                    {
-                      const double T_face =
-                        scratch_data.temperature_face_value[f][q];
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      const double h =
-                        h_function.value(scratch_data.quadrature_points[q]);
-                      const double emissivity = emissivity_function.value(
-                        scratch_data.quadrature_points[q]);
-                      AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
-                                  EmissivityError(emissivity));
-                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
-                        {
-                          const double phi_face_T_i =
-                            scratch_data.phi_face_T[f][q][i];
+                  const double phi_face_T_i = scratch_data.phi_face_T[f][q][i];
 
-                          for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
-                            {
-                              const double phi_face_T_j =
-                                scratch_data.phi_face_T[f][q][j];
-                              local_matrix(i, j) +=
-                                (h + 4.0 * Stefan_Boltzmann_constant *
-                                       emissivity * T_face * T_face * T_face) *
-                                phi_face_T_i * phi_face_T_j * JxW;
-                            }
-                        }
+                  for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                    {
+                      const double phi_face_T_j =
+                        scratch_data.phi_face_T[f][q][j];
+                      local_matrix(i, j) +=
+                        (h + 4.0 * Stefan_Boltzmann_constant * emissivity *
+                               T_face * T_face * T_face) *
+                        phi_face_T_i * phi_face_T_j * JxW;
                     }
                 }
             }
@@ -455,53 +449,47 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
   // to 0, only the radiation component is considered. Otherwise, both the
   // convection and radiation are significant on the boundary implementation
   // similar to deal.ii step-7
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ht.size; ++i_bc)
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {
-      if (this->boundary_conditions_ht.type[i_bc] ==
+      if (this->boundary_conditions_ht.type.at(
+            scratch_data.boundary_face_id[f]) ==
           BoundaryConditions::BoundaryType::convection_radiation)
         {
-          Function<dim> &h_function = *(this->boundary_conditions_ht.h[i_bc]);
+          Function<dim> &h_function = *(this->boundary_conditions_ht.h.at(
+            scratch_data.boundary_face_id[f]));
           Function<dim> &T_inf_function =
-            *(this->boundary_conditions_ht.Tinf[i_bc]);
+            *(this->boundary_conditions_ht.Tinf.at(
+              scratch_data.boundary_face_id[f]));
           Function<dim> &emissivity_function =
-            *(this->boundary_conditions_ht.emissivity[i_bc]);
+            *(this->boundary_conditions_ht.emissivity.at(
+              scratch_data.boundary_face_id[f]));
           Function<dim> &heat_flux_bc_function =
-            *(this->boundary_conditions_ht.heat_flux_bc[i_bc]);
-          for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+            *(this->boundary_conditions_ht.heat_flux_bc.at(
+              scratch_data.boundary_face_id[f]));
+          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
             {
-              if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ht.id[i_bc])
+              const double T_face = scratch_data.temperature_face_value[f][q];
+              const double JxW    = scratch_data.face_JxW[f][q];
+              const double h =
+                h_function.value(scratch_data.quadrature_points[q]);
+              const double T_inf =
+                T_inf_function.value(scratch_data.quadrature_points[q]);
+              const double emissivity =
+                emissivity_function.value(scratch_data.quadrature_points[q]);
+              AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
+                          EmissivityError(emissivity));
+              const double heat_flux_bc =
+                heat_flux_bc_function.value(scratch_data.quadrature_points[q]);
+              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                 {
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
-                    {
-                      const double T_face =
-                        scratch_data.temperature_face_value[f][q];
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      const double h =
-                        h_function.value(scratch_data.quadrature_points[q]);
-                      const double T_inf =
-                        T_inf_function.value(scratch_data.quadrature_points[q]);
-                      const double emissivity = emissivity_function.value(
-                        scratch_data.quadrature_points[q]);
-                      AssertThrow(emissivity <= 1.0 && emissivity >= 0.0,
-                                  EmissivityError(emissivity));
-                      const double heat_flux_bc = heat_flux_bc_function.value(
-                        scratch_data.quadrature_points[q]);
-                      for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
-                        {
-                          const double phi_face_T_i =
-                            scratch_data.phi_face_T[f][q][i];
-                          local_rhs(i) -=
-                            phi_face_T_i *
-                            (h * (T_face - T_inf) +
-                             Stefan_Boltzmann_constant * emissivity *
-                               (T_face * T_face * T_face * T_face -
-                                T_inf * T_inf * T_inf * T_inf) +
-                             heat_flux_bc) *
-                            JxW;
-                        }
-                    }
+                  const double phi_face_T_i = scratch_data.phi_face_T[f][q][i];
+                  local_rhs(i) -= phi_face_T_i *
+                                  (h * (T_face - T_inf) +
+                                   Stefan_Boltzmann_constant * emissivity *
+                                     (T_face * T_face * T_face * T_face -
+                                      T_inf * T_inf * T_inf * T_inf) +
+                                   heat_flux_bc) *
+                                  JxW;
                 }
             }
         }

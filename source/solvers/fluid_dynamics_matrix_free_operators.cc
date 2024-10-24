@@ -1194,7 +1194,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
                            EvaluationFlags::EvaluationFlags::gradients);
     }
 
-  else if (this->boundary_conditions.type[boundary_index] ==
+  else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
            BoundaryConditions::BoundaryType::outlet)
     {
       integrator.evaluate(EvaluationFlags::values);
