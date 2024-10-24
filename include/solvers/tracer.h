@@ -35,6 +35,8 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <map>
+
 
 template <int dim>
 class Tracer : public AuxiliaryPhysics<dim, GlobalVectorType>
@@ -408,7 +410,7 @@ private:
    * @tparam GlobalVectorType The type of the global vector used for the tracer physic
    */
   template <typename GlobalVectorType>
-  std::vector<double>
+  std::map<types::boundary_id, double>
   postprocess_tracer_flow_rate(const GlobalVectorType &current_solution_fd);
 
   /**

@@ -1230,19 +1230,17 @@ HeatTransfer<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_ht.type)
       {
         // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::BoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+              id,
               *this->simulation_parameters.boundary_conditions_ht
-                 .dirichlet_value[i_bc],
+                 .dirichlet_value.at(id),
               nonzero_constraints);
           }
       }
@@ -1256,16 +1254,14 @@ HeatTransfer<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_ht.type)
       {
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
+        if (type == BoundaryConditions::BoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+              id,
               Functions::ZeroFunction<dim>(),
               zero_constraints);
           }
@@ -1311,19 +1307,18 @@ HeatTransfer<dim>::update_boundary_conditions()
   // We begin by setting the new time for all expressions, although the change
   // for the convection-radiation-flux boundary conditions won't be applied in
   // this function
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_ht.type)
     {
-      this->simulation_parameters.boundary_conditions_ht.dirichlet_value[i_bc]
+      this->simulation_parameters.boundary_conditions_ht.dirichlet_value.at(id)
         ->set_time(time);
-      this->simulation_parameters.boundary_conditions_ht.h[i_bc]->set_time(
+      this->simulation_parameters.boundary_conditions_ht.h.at(id)->set_time(
         time);
-      this->simulation_parameters.boundary_conditions_ht.Tinf[i_bc]->set_time(
+      this->simulation_parameters.boundary_conditions_ht.Tinf.at(id)->set_time(
         time);
-      this->simulation_parameters.boundary_conditions_ht.emissivity[i_bc]
+      this->simulation_parameters.boundary_conditions_ht.emissivity.at(id)
         ->set_time(time);
-      this->simulation_parameters.boundary_conditions_ht.heat_flux_bc[i_bc]
+      this->simulation_parameters.boundary_conditions_ht.heat_flux_bc.at(id)
         ->set_time(time);
     }
 
@@ -1332,19 +1327,17 @@ HeatTransfer<dim>::update_boundary_conditions()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
 
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_ht.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-          BoundaryConditions::BoundaryType::temperature)
+      if (type == BoundaryConditions::BoundaryType::temperature)
         {
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-            *this->simulation_parameters.boundary_conditions_ht
-               .dirichlet_value[i_bc],
+            id,
+            *this->simulation_parameters.boundary_conditions_ht.dirichlet_value
+               .at(id),
             nonzero_constraints);
         }
     }
@@ -1893,17 +1886,10 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
         }
     } // end switch on number of fluids
 
-  std::vector<double> heat_flux_vector(
-    this->simulation_parameters.boundary_conditions_ht.size, 0);
-
-  std::vector<double> convective_flux_vector(
-    this->simulation_parameters.boundary_conditions_ht.size, 0);
-
+  std::map<types::boundary_id, double> heat_flux;
+  std::map<types::boundary_id, double> convective_flux;
 
   // Get vector of heat transfer boundary conditions
-  const auto boundary_conditions_ht_ids =
-    this->simulation_parameters.boundary_conditions_ht.id;
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
@@ -1912,120 +1898,108 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
             {
               if (cell->face(face)->at_boundary())
                 {
-                  const auto boundary_id =
-                    std::find(begin(boundary_conditions_ht_ids),
-                              end(boundary_conditions_ht_ids),
-                              cell->face(face)->boundary_id());
+                  types::boundary_id boundary_index =
+                    cell->face(face)->boundary_id();
 
-                  if (boundary_id != end(boundary_conditions_ht_ids))
+                  // Gather h coefficient and T_inf
+                  const double h_coefficient =
+                    this->simulation_parameters.boundary_conditions_ht.h
+                      .at(boundary_index)
+                      ->value(Point<dim>());
+                  const double T_inf =
+                    this->simulation_parameters.boundary_conditions_ht.Tinf
+                      .at(boundary_index)
+                      ->value(Point<dim>());
+
+
+                  // Gather heat transfer information
+                  fe_face_values_ht.reinit(cell, face);
+                  fe_face_values_ht.get_function_values(
+                    this->present_solution, local_temperature_values);
+                  fe_face_values_ht.get_function_gradients(
+                    this->present_solution, temperature_gradient);
+
+                  // Get fluid dynamics active cell iterator
+                  typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                    &(*(this->triangulation)),
+                    cell->level(),
+                    cell->index(),
+                    dof_handler_fd);
+
+                  // Gather fluid dynamics information
+                  fe_face_values_fd.reinit(cell_fd, face);
+                  fe_face_values_fd[velocities].get_function_values(
+                    current_solution_fd, local_velocity_values);
+
+                  if (gather_vof)
                     {
-                      unsigned int vector_index =
-                        boundary_id - boundary_conditions_ht_ids.begin();
-
-                      // Gather h coefficient and T_inf
-                      const double h_coefficient =
-                        this->simulation_parameters.boundary_conditions_ht
-                          .h[vector_index]
-                          ->value(Point<dim>());
-                      const double T_inf =
-                        this->simulation_parameters.boundary_conditions_ht
-                          .Tinf[vector_index]
-                          ->value(Point<dim>());
-
-
-                      // Gather heat transfer information
-                      fe_face_values_ht.reinit(cell, face);
-                      fe_face_values_ht.get_function_values(
-                        this->present_solution, local_temperature_values);
-                      fe_face_values_ht.get_function_gradients(
-                        this->present_solution, temperature_gradient);
-
-                      // Get fluid dynamics active cell iterator
-                      typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                      // Get VOF active cell iterator
+                      typename DoFHandler<dim>::active_cell_iterator cell_vof(
                         &(*(this->triangulation)),
                         cell->level(),
                         cell->index(),
-                        dof_handler_fd);
+                        dof_handler_vof);
 
-                      // Gather fluid dynamics information
-                      fe_face_values_fd.reinit(cell_fd, face);
-                      fe_face_values_fd[velocities].get_function_values(
-                        current_solution_fd, local_velocity_values);
+                      // Gather VOF information
+                      fe_face_values_vof->reinit(cell_vof, face);
+                      fe_face_values_vof->get_function_values(
+                        *this->multiphysics->get_filtered_solution(
+                          PhysicsID::VOF),
+                        filtered_phase_values);
+                    }
 
-                      if (gather_vof)
+                  // Loop on the quadrature points
+                  for (unsigned int q = 0; q < n_q_points_face; q++)
+                    {
+                      if (properties_manager.get_number_of_fluids() == 2)
                         {
-                          // Get VOF active cell iterator
-                          typename DoFHandler<dim>::active_cell_iterator
-                            cell_vof(&(*(this->triangulation)),
-                                     cell->level(),
-                                     cell->index(),
-                                     dof_handler_vof);
+                          // Blend the physical properties using the VOF
+                          // field
+                          thermal_conductivity =
+                            calculate_point_property(filtered_phase_values[q],
+                                                     thermal_conductivity_0[q],
+                                                     thermal_conductivity_1[q]);
 
-                          // Gather VOF information
-                          fe_face_values_vof->reinit(cell_vof, face);
-                          fe_face_values_vof->get_function_values(
-                            *this->multiphysics->get_filtered_solution(
-                              PhysicsID::VOF),
-                            filtered_phase_values);
+                          density =
+                            calculate_point_property(filtered_phase_values[q],
+                                                     density_0[q],
+                                                     density_1[q]);
+
+                          specific_heat =
+                            calculate_point_property(filtered_phase_values[q],
+                                                     specific_heat_0[q],
+                                                     specific_heat_1[q]);
                         }
 
-                      // Loop on the quadrature points
-                      for (unsigned int q = 0; q < n_q_points_face; q++)
-                        {
-                          if (properties_manager.get_number_of_fluids() == 2)
-                            {
-                              // Blend the physical properties using the VOF
-                              // field
-                              thermal_conductivity = calculate_point_property(
-                                filtered_phase_values[q],
-                                thermal_conductivity_0[q],
-                                thermal_conductivity_1[q]);
+                      Tensor<1, dim> normal_vector_ht =
+                        -fe_face_values_ht.normal_vector(q);
 
-                              density = calculate_point_property(
-                                filtered_phase_values[q],
-                                density_0[q],
-                                density_1[q]);
+                      heat_flux[boundary_index] +=
+                        (-thermal_conductivity * temperature_gradient[q] *
+                           normal_vector_ht +
+                         local_temperature_values[q] * density * specific_heat *
+                           local_velocity_values[q] * normal_vector_ht) *
+                        fe_face_values_ht.JxW(q);
 
-                              specific_heat = calculate_point_property(
-                                filtered_phase_values[q],
-                                specific_heat_0[q],
-                                specific_heat_1[q]);
-                            }
+                      convective_flux[boundary_index] +=
+                        h_coefficient * (local_temperature_values[q] - T_inf) *
+                        fe_face_values_ht.JxW(q);
 
-                          Tensor<1, dim> normal_vector_ht =
-                            -fe_face_values_ht.normal_vector(q);
-
-                          heat_flux_vector[vector_index] +=
-                            (-thermal_conductivity * temperature_gradient[q] *
-                               normal_vector_ht +
-                             local_temperature_values[q] * density *
-                               specific_heat * local_velocity_values[q] *
-                               normal_vector_ht) *
-                            fe_face_values_ht.JxW(q);
-
-                          convective_flux_vector[vector_index] +=
-                            h_coefficient *
-                            (local_temperature_values[q] - T_inf) *
-                            fe_face_values_ht.JxW(q);
-
-                        } // end loop on quadrature points
-                    }     // end condition face at heat transfer boundary
-                }         // end loop on faces
-            }             // End face is a boundary face
-        }                 // end condition cell at boundary
-    }                     // end loop on cells
+                    } // end loop on quadrature points
+                }     // end loop on faces
+            }         // End face is a boundary face
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_ht.type)
     {
-      heat_flux_vector[i_bc] =
-        Utilities::MPI::sum(heat_flux_vector[i_bc], mpi_communicator);
+      heat_flux[id] = Utilities::MPI::sum(heat_flux[id], mpi_communicator);
 
-      convective_flux_vector[i_bc] =
-        Utilities::MPI::sum(convective_flux_vector[i_bc], mpi_communicator);
+      convective_flux[id] =
+        Utilities::MPI::sum(convective_flux[id], mpi_communicator);
     }
 
   // Console output
@@ -2035,36 +2009,33 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
       this->pcout
         << "Total heat flux at the heat transfer boundary conditions : "
         << std::endl;
-      for (unsigned int i_bc = 0;
-           i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-           ++i_bc)
-        this->pcout << "\t boundary " << i_bc << " : " << heat_flux_vector[i_bc]
+      for (auto const &[id, type] :
+           this->simulation_parameters.boundary_conditions_ht.type)
+        this->pcout << "\t boundary " << id << " : " << heat_flux.at(id)
                     << std::endl;
 
 
       this->pcout
         << "Convective heat flux at the heat transfer boundary conditions : "
         << std::endl;
-      for (unsigned int i_bc = 0;
-           i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-           ++i_bc)
-        this->pcout << "\t boundary " << i_bc << " : "
-                    << convective_flux_vector[i_bc] << std::endl;
+      for (auto const &[id, type] :
+           this->simulation_parameters.boundary_conditions_ht.type)
+        this->pcout << "\t boundary " << id << " : " << convective_flux.at(id)
+                    << std::endl;
     }
 
   // Filling table
   this->heat_flux_table.add_value("time",
                                   this->simulation_control->get_current_time());
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_ht.type)
     {
       this->heat_flux_table.add_value("total_flux_bc_" +
-                                        Utilities::int_to_string(i_bc, 1),
-                                      heat_flux_vector[i_bc]);
+                                        Utilities::int_to_string(id, 1),
+                                      heat_flux.at(id));
       this->heat_flux_table.add_value("convective_flux_bc_" +
-                                        Utilities::int_to_string(i_bc, 1),
-                                      convective_flux_vector[i_bc]);
+                                        Utilities::int_to_string(id, 1),
+                                      convective_flux.at(id));
     }
 }
 

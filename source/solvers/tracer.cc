@@ -31,6 +31,8 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <map>
+
 
 template <int dim>
 void
@@ -141,10 +143,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      const auto &triangulation_boundary_id =
-        cell->face(face_no)->boundary_id();
-      const unsigned int boundary_index =
-        get_lethe_boundary_index(triangulation_boundary_id);
+      const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
         cell,
@@ -429,10 +428,7 @@ Tracer<dim>::assemble_system_rhs_dg()
       // Identify which boundary condition corresponds to the boundary id. If
       // this boundary condition is not identified, then exit the simulation
       // instead of assuming an outlet.
-      const auto &triangulation_boundary_id =
-        cell->face(face_no)->boundary_id();
-      const unsigned int boundary_index =
-        get_lethe_boundary_index(triangulation_boundary_id);
+      const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
         cell,
@@ -883,7 +879,7 @@ Tracer<dim>::calculate_tracer_statistics()
 
 template <int dim>
 template <typename VectorType>
-std::vector<double>
+std::map<types::boundary_id, double>
 Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face  = this->face_quadrature->size();
@@ -920,13 +916,9 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   std::vector<double>     tracer_diffusivity(n_q_points_face);
   std::vector<Point<dim>> face_quadrature_points;
 
-  std::vector<double> tracer_flow_rate_vector(
-    this->simulation_parameters.boundary_conditions.size, 0);
+  std::map<types::boundary_index, double> tracer_flow_rate;
 
   // Get vector of all boundary conditions
-  const auto boundary_conditions_ids =
-    this->simulation_parameters.boundary_conditions.id;
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
@@ -935,14 +927,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
             {
               if (cell->face(face)->at_boundary())
                 {
-                  const auto boundary_id =
-                    std::find(begin(boundary_conditions_ids),
-                              end(boundary_conditions_ids),
-                              cell->face(face)->boundary_id());
-
-
-                  unsigned int vector_index =
-                    boundary_id - boundary_conditions_ids.begin();
+                  const auto boundary_id = cell->face(face)->boundary_id();
 
                   // Gather tracer information
                   fe_face_values_tracer.reinit(cell, face);
@@ -990,7 +975,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       Tensor<1, dim> normal_vector_tracer =
                         -fe_face_values_tracer.normal_vector(q);
 
-                      tracer_flow_rate_vector[vector_index] +=
+                      tracer_flow_rate[boundary_id] +=
                         (-tracer_diffusivity[q] * tracer_gradient[q] *
                            normal_vector_tracer +
                          tracer_values[q] * velocity_values[q] *
@@ -1004,13 +989,12 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 
 
   // Sum across all cores
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    tracer_flow_rate_vector[i_bc] =
-      Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
+    tracer_flow_rate[id] =
+      Utilities::MPI::sum(tracer_flow_rate[id], mpi_communicator);
 
-  return tracer_flow_rate_vector;
+  return tracer_flow_rate;
 }
 
 template <int dim>

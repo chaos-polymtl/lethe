@@ -2095,15 +2095,13 @@ VolumeOfFluid<dim>::update_boundary_conditions()
     return;
 
   double time = this->simulation_control->get_current_time();
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_vof.type)
     {
-      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-          BoundaryConditions::BoundaryType::vof_dirichlet)
+      if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_vof
-            .phase_fraction[i_bc]
+          this->simulation_parameters.boundary_conditions_vof.phase_fraction
+            .at(id)
             ->set_time(time);
         }
     }
@@ -2121,32 +2119,29 @@ VolumeOfFluid<dim>::define_zero_constraints()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           this->zero_constraints);
 
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-            this->simulation_parameters.boundary_conditions
-              .periodic_direction[i_bc],
+            id,
+            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
+              .at(id),
+            this->simulation_parameters.boundary_conditions.periodic_direction
+              .at(id),
             this->zero_constraints);
         }
     }
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_vof.type)
     {
-      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-          BoundaryConditions::BoundaryType::vof_dirichlet)
+      if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
         {
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions_vof.id[i_bc],
+            id,
             Functions::ZeroFunction<dim>(),
             this->zero_constraints);
         }
@@ -2165,34 +2160,31 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions.type)
       {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::periodic)
+        if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions.id[i_bc],
-              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              id,
               this->simulation_parameters.boundary_conditions
-                .periodic_direction[i_bc],
+                .periodic_neighbor_id.at(id),
+              this->simulation_parameters.boundary_conditions.periodic_direction
+                .at(id),
               nonzero_constraints);
           }
       }
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_vof.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_vof.type)
       {
-        if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
-            BoundaryConditions::BoundaryType::vof_dirichlet)
+        if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_vof.id[i_bc],
+              id,
               *this->simulation_parameters.boundary_conditions_vof
-                 .phase_fraction[i_bc],
+                 .phase_fraction.at(id),
               nonzero_constraints);
           }
       }
