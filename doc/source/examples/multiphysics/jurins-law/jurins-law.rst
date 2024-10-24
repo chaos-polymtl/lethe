@@ -13,8 +13,8 @@ Features
 - Two phase flow handled by the Cahn-Hilliard-Navier-Stokes (CHNS) approach
 - Angle of contact boundary condition
 - Dimensionality of the length
-- Parametric sweep generation on the value of the angle of contact
-- Post-processing of height difference between the outside fluid and the meniscus
+- Parametric sweep on the value of the angle of contact
+- Post-processing of the height difference between the outside fluid and the meniscus
 
 
 --------------------------
@@ -33,10 +33,10 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-Have you ever wondered why does your coffee goes up the sugar cube when it touches the surface of your drink? Or how the sap goes up the tree? Or how the wax that keeps the flame of a candle alive is brought to the flame? These phenomena are all consequences of capillary action, a force that appears in narrow spaces and that seemingly opposes the gravitational forces...
+Have you ever wondered why does your coffee goes up the sugar cube when it touches the surface of your drink? Or how the sap goes up the tree? Or how the wax that keeps the flame of a candle alive is brought to the flame? These phenomena are all consequences of capillary action, a force that appears in narrow spaces and that seemingly opposes the gravitational forces.
 A simple case of capillary rise is described in this example, and compared to an analytical solution to check the implementation of our model. It consists of a 2D case, in which a dense fluid climbs the narrow space between two walls because of capillary actions.
 
-Thanks to the symmetry of the problem, only one side is considered in the example. At :math:`t = 0`, a denser fluid (fluid 1) occupies the lower half of the domain with a lighter fluid (fluid 0) on the top. Because of the boundary condition imposing an angle of contact between the wall and the denser fluid, the surface is curved and a pressure gradient appears. Depending on the value of the angle, the height of the fluid will increase (or decrease) and reach an equilibrium height. The parameter file is ``jurins-law-2d.prm``
+Thanks to the symmetry of the problem, only one side is considered in the example. At :math:`t = 0`, a denser fluid (fluid 1) occupies the lower half of the domain with a lighter fluid (fluid 0) on the top. Because of the boundary condition imposing an angle of contact between the wall and the denser fluid, the surface is curved and a pressure gradient appears. Depending on the value of the angle, the height of the fluid will increase (or decrease) and reach an equilibrium height.
 The computational domain is described in the following figure (not to scale):
 
 +-------------------------------------------------------------------------------------------------------------------+
@@ -49,12 +49,12 @@ The computational domain is described in the following figure (not to scale):
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The quantity of interest of this problem is the difference in height (:math:`\Delta H` in the previous figure) between the tip of the meniscus and the surface of the fluid outside of the central part. The Jurin's law [#liu2018]_ gives an asymptotical value of :math:`\Delta H` :
+The quantity of interest of this problem is the difference in height (:math:`\Delta H` in the figure above) between the tip of the meniscus and the surface of the fluid outside of the central part. The Jurin's law [#liu2018]_ gives an asymptotic value of :math:`\Delta H`:
 
 .. math::
     \Delta H = \frac{\sigma\cos{\alpha_c}}{\rho_1gR}
 
-with :math:`\sigma` the surface tension coefficient, :math:`\alpha_c` the angle of contact imposed on the wall, :math:`\rho_1` the density of the denser fluid, :math:`g` the gravitational acceleration and :math:`R` the radius of the central part.
+with :math:`\sigma` the surface tension coefficient, :math:`\alpha_c` the angle of contact imposed on the wall, :math:`\rho_1` the density of the denser fluid, :math:`g` the gravitational acceleration and :math:`R` the half-distance between the walls.
 
 -----------------
 Parameter File
@@ -97,6 +97,9 @@ Dimensionality
 
 The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.
 
+.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. One exception to this is the source terms, which need to be specified in rescaled units.
+
+
 .. code-block:: text
 
     subsection dimensionality
@@ -106,7 +109,7 @@ The ``dimensionality`` subsection is used to define the unit length as :math:`0.
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Pointwise Fidelity, the source file is ``jurins-law-2d-dimensioned.pw``. It was then exported into a readable format : ``jurins-law-2d-mesh-dimensioned.msh`` . The initial refinement is set to :math:`2`.
+In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Fidelity Pointwise, the source file is ``jurins-law-2d-dimensioned.pw``. It was then exported into a readable format: ``jurins-law-2d-mesh-dimensioned.msh``. The initial refinement is set to :math:`2`.
 
 .. code-block:: text
 
@@ -138,7 +141,9 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need first to define the properties of the fluid rising due to the capillary effects. We set :math:`\rho_1 = 2000 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\mu_1 = 10^{-4} \ \text{m}^2\cdot\text{s}^{-1}`. The upper fluid should be much lighter, hence the choice of :math:`\rho_0 = 1 \ \text{kg}\cdot\text{m}^{-3}`. The surface tension coefficient was chosen equal to that of the water-air interface : :math:`\sigma = 0.073 \ \text{N}\cdot\text{m}^{-1}`. When using the Cahn-Hilliard solver, the mobility constant (:math:`D`) is usually set proportionnal to :math:`\epsilon^2`, with :math:`\epsilon` the interface thickness. This example does not follow this rule of thumb, and :math:`D` had to be fine-tuned to get results coherent with the theory.
+The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need first to define the properties of the fluid rising due to the capillary effects. We set :math:`\rho_1 = 2000 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\nu_1 = 10^{-4} \ \text{m}^2\cdot\text{s}^{-1}`. The upper fluid should be much lighter, hence the choice of :math:`\rho_0 = 1 \ \text{kg}\cdot\text{m}^{-3}`. The surface tension coefficient was chosen equal to that of the water-air interface : :math:`\sigma = 0.073 \ \text{N}\cdot\text{m}^{-1}`. 
+
+.. Note:: When using the Cahn-Hilliard solver, the mobility constant (:math:`D`) is usually set proportionnal to :math:`\epsilon^2`, with :math:`\epsilon` the interface thickness. This example does not follow this rule of thumb, and :math:`D` had to be fine-tuned to get results coherent with the theory.
 
 .. code-block:: text
 
@@ -182,7 +187,7 @@ In the ``cahn hilliard`` subsection, we set the ``potential smoothing coefficien
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of :math:`\epsilon` that is outputed at every iteration.
+In the ``initial conditions`` subsection, we need only need to initialize the phase field in the ``cahn hilliard`` subsection. The chemical potential field is set to :math:`0` uniformly. The interface is initialized with the equilibrium interface thickness, which requires to know the value of :math:`\epsilon` that is outputted at every iteration. Here, :math:`\epsilon = 0.04419`.
 
 .. code-block:: text
 
@@ -195,7 +200,7 @@ In the ``initial conditions`` subsection, we need only need to initialize the ph
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-We need to set boundary conditions both for the fluid solver and the Cahn-Hilliard solver. For the latter, we constraint the angle of contact between the left side of the plate and the fluid using the ``angle_of_contact`` boundary condition of the Cahn-Hilliard solver.
+We need to set boundary conditions both for the fluid dynamics solver and the Cahn-Hilliard solver. For the latter, we constraint the angle of contact between the left side of the plate and the fluid using the ``angle_of_contact`` boundary condition of the Cahn-Hilliard solver.
 
 .. code-block:: text
 
@@ -216,11 +221,11 @@ Then, a ``slip`` boundary condition is applied everywhere, except for the upper 
     subsection boundary conditions
       set number = 4
       subsection bc 0
-        set id   = 2 
-        set type = slip
+        set id   = 2 # inner wall
+        set type = slip 
       end
       subsection bc 1
-        set id   = 5 # walls
+        set id   = 5 # remaining walls
         set type = slip
       end
       subsection bc 2
@@ -250,9 +255,14 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 Running the Simulation
 -----------------------
 
-We call lethe-fluid by invoking:
+We call ``lethe-fluid`` by invoking:
 
-``mpirun -np $number_of_CPU_cores lethe-fluid jurins-law-2d.prm``
+.. code-block:: text
+  :class: copy-button
+  
+   mpirun -np 10 lethe-fluid jurins-law-2d.prm
+   
+to run the simulation using ten CPU cores. Feel free to use more CPU cores.
 
 .. warning::
     Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 3-4 minutes for 10 processors.
@@ -274,7 +284,7 @@ The height difference is computed for different values of :math:`\alpha_c` and c
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-Furthermore, by visualizing the pressure fields in the vicinity of the meniscus at the end of the simulation, we observe in the following figure that they correspond well qualitatively to the overpressures or depressions predicted by Young-Laplace's law. We conclude that the contact angle condition is adequately coupled with the Navier-Stokes equations.
+Furthermore, by visualizing the pressure fields in the vicinity of the meniscus at the end of the simulation, we observe in the following figure that they correspond well qualitatively to the pressure jumps predicted by Young-Laplace's law. We conclude that the contact angle boundary condition is adequately coupled with the Navier-Stokes equations.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/pressure_difference.png                                                                       |
@@ -293,9 +303,9 @@ Furthermore, by visualizing the pressure fields in the vicinity of the meniscus 
 Possibilities for Extension
 ---------------------------
 
-- **Going 3D**: the mesh can be extruded into the third dimension and there is an adaptation of the Jurin's law in three dimensions. Some results are available in the literature for comparison (see Lovrić et al. [#lovric2019]_)
+- **Going 3D**: the mesh can be extruded into the third dimension and there is an adaptation of the Jurin's law in three dimensions. Some results are available in the literature for comparison (see Lovrić *et al.* [#lovric2019]_)
 
-- **Investigate the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transitory state with this new boundary condition.
+- **Investigate the effect of a no-slip boundary condition**: instead of the slip boundary condition imposed on the inner face of the wall, we could try to use a no-slip boundary condition. This situation would be closer to a real capillary rise experiment. We expect to observe a different transient state with this new boundary condition.
 
 -----------
 References
