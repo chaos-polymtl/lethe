@@ -43,7 +43,7 @@ read_checkpoint(
     iss_checkpoint_controller_obj, boost::archive::no_header);
   checkpoint_controller.deserialize(ia_checkpoint_controller_obj, 0);
 
-  // Update predix with the checkpoint id
+  // Update prefix with the checkpoint id
   prefix =
     prefix + "_" +
     Utilities::int_to_string(checkpoint_controller.get_next_checkpoint_id());

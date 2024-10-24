@@ -29,7 +29,7 @@
  * @param particle_handler Particle handler
  * @param insertion_object Shared pointer of Insertion type.
  * @param solid_surfaces Vector of solids surfaces used in DEM simulations
- * @param
+ * @param checkpoint_controller Checkpoint controller
  */
 template <int dim>
 void

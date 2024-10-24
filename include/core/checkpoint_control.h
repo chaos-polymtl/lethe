@@ -11,11 +11,11 @@ class CheckpointControl
 {
 public:
   /**
-   * @brief The CheckpointControl class is responsible for keeping track of the
-   * next checkpoint id needed to be use.
+   * @brief The CheckpointControl is responsible for keeping track of the
+   * next checkpoint id to use.
    *
-   * @param
-   * @param
+   * @param checkpoint_freq Checkpoint frequency.
+   * @param restart_filename Filename used for the prefix during checkpointing.
    */
   CheckpointControl(const unsigned int checkpoint_freq,
                     const std::string &restart_filename)
@@ -26,16 +26,17 @@ public:
   {}
 
   /**
-   * @brief
+   * @brief Return true if a checkpoint should be made at the current time step.
+   * @param time_step_number Current time step.
    */
   bool
-  is_checkpoint_time_step(unsigned int time_step_number)
+  is_checkpoint_time_step(const unsigned int time_step_number)
   {
     return (time_step_number % checkpointing_frequency) == 0;
   }
 
   /**
-   * @brief Increment the next checkpoint id variable by one and apply the modulo.
+   * @brief Calculate the next checkpoint id.
    */
   void
   increment_checkpoint_id()
@@ -44,7 +45,7 @@ public:
   }
 
   /**
-   * @brief Returns the next checkpoint id.
+   * @brief Return the next checkpoint id.
    */
   unsigned int
   get_next_checkpoint_id() const
@@ -53,7 +54,7 @@ public:
   }
 
   /**
-   * @brief
+   * @brief Return de prefix for the restart files.
    */
   std::string
   get_filename() const
