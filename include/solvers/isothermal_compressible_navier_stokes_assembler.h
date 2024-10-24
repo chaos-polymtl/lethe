@@ -32,7 +32,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerCore
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -52,6 +52,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -73,7 +75,7 @@ class GLSIsothermalCompressibleNavierStokesAssemblerBDF
 public:
   GLSIsothermalCompressibleNavierStokesAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -93,6 +95,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif

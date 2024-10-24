@@ -56,7 +56,7 @@ class PSPGSUPGNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 public:
   PSPGSUPGNavierStokesAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -76,6 +76,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -96,7 +98,7 @@ class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
 public:
   GLSNavierStokesAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -116,6 +118,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -180,7 +184,7 @@ class GLSNavierStokesAssemblerNonNewtonianCore
 public:
   GLSNavierStokesAssemblerNonNewtonianCore(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -258,6 +262,8 @@ public:
    * stabilization yet.
    */
   const bool SUPG = true;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -277,7 +283,7 @@ class GLSNavierStokesAssemblerBDF : public NavierStokesAssemblerBase<dim>
 public:
   GLSNavierStokesAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -298,6 +304,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -318,7 +326,7 @@ public:
   BlockNavierStokesAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const double                              gamma)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , gamma(gamma)
   {}
 
@@ -340,7 +348,8 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  double gamma;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const double                             gamma;
 };
 
 
@@ -352,7 +361,7 @@ public:
   BlockNavierStokesAssemblerNonNewtonianCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const double                              gamma)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , gamma(gamma)
   {}
 
@@ -374,7 +383,8 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  double gamma;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const double                             gamma;
 };
 
 
@@ -391,7 +401,7 @@ class LaplaceAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
   LaplaceAssembly(const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -411,6 +421,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -430,7 +442,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &pressure_boundary_conditions_input)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , pressure_boundary_conditions(pressure_boundary_conditions_input)
   {}
 
@@ -452,6 +464,7 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
+  const std::shared_ptr<SimulationControl> simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim>
     &pressure_boundary_conditions;
 };
@@ -473,7 +486,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
   {}
 
@@ -495,6 +508,7 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
+  const std::shared_ptr<SimulationControl>             simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
 };
 
@@ -517,7 +531,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
   {}
 
@@ -539,6 +553,7 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
+  const std::shared_ptr<SimulationControl>             simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
 };
 
@@ -561,7 +576,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
       &boundary_conditions_input)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , boundary_conditions(boundary_conditions_input)
   {}
 
@@ -583,6 +598,7 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
+  const std::shared_ptr<SimulationControl>             simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions;
 };
 
@@ -602,7 +618,7 @@ class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 public:
   BuoyancyAssembly(const std::shared_ptr<SimulationControl> &simulation_control,
                    const double reference_temperature)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , reference_temperature(reference_temperature)
   {}
 
@@ -626,7 +642,8 @@ public:
 
 
 private:
-  const double reference_temperature;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const double                             reference_temperature;
 };
 
 
@@ -689,7 +706,7 @@ public:
   NavierStokesAssemblerALE(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const Parameters::ALE<dim>               &ale)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , ale(ale)
   {}
 
@@ -711,7 +728,8 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const Parameters::ALE<dim> &ale;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::ALE<dim>              &ale;
 };
 
 

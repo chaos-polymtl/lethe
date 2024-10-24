@@ -32,7 +32,7 @@ public:
   GLSNavierStokesVOFAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
@@ -54,8 +54,10 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool            SUPG = true;
-  const Parameters::VOF vof_parameters;
+  const bool SUPG = true;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF                    vof_parameters;
 };
 
 
@@ -76,7 +78,7 @@ class GLSNavierStokesVOFAssemblerBDF : public NavierStokesAssemblerBase<dim>
 public:
   GLSNavierStokesVOFAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -96,6 +98,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -168,7 +172,7 @@ public:
   GLSNavierStokesVOFAssemblerSTF(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : NavierStokesAssemblerBase<dim>(p_simulation_control)
+    : simulation_control(p_simulation_control)
     , STF_parameters(nsparam.multiphysics.vof_parameters.surface_tension_force)
   {}
 
@@ -189,6 +193,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_parameters;
@@ -216,7 +222,7 @@ public:
   GLSNavierStokesVOFAssemblerMarangoni(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     Parameters::VOF_SurfaceTensionForce       p_STF_properties)
-    : NavierStokesAssemblerBase<dim>(p_simulation_control)
+    : simulation_control(p_simulation_control)
     , STF_properties(p_STF_properties)
   {}
 
@@ -237,6 +243,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 
   // Surface tension force (STF)
   const Parameters::VOF_SurfaceTensionForce STF_properties;
@@ -264,7 +272,7 @@ public:
   NavierStokesVOFAssemblerEvaporation(
     const std::shared_ptr<SimulationControl> &p_simulation_control,
     const Parameters::Evaporation            &p_evaporation)
-    : NavierStokesAssemblerBase<dim>(p_simulation_control)
+    : simulation_control(p_simulation_control)
   {
     this->evaporation_model = EvaporationModel::model_cast(p_evaporation);
   }
@@ -288,6 +296,8 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 private:
+  const std::shared_ptr<SimulationControl> simulation_control;
+
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
@@ -309,7 +319,7 @@ public:
   GLSNavierStokesVOFAssemblerNonNewtonianCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , vof_parameters(nsparam.multiphysics.vof_parameters)
   {}
 
@@ -389,6 +399,7 @@ public:
    */
   const bool SUPG = true;
 
-  const Parameters::VOF vof_parameters;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::VOF                    vof_parameters;
 };
 #endif

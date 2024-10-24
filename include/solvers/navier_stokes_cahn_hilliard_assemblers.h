@@ -32,7 +32,7 @@ public:
   GLSNavierStokesCahnHilliardAssemblerCore(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const SimulationParameters<dim>          &nsparam)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , cahn_hilliard_parameters(nsparam.multiphysics.cahn_hilliard_parameters)
   {}
 
@@ -54,8 +54,10 @@ public:
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool                     SUPG = true;
-  const Parameters::CahnHilliard cahn_hilliard_parameters;
+  const bool SUPG = true;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CahnHilliard           cahn_hilliard_parameters;
 };
 
 
@@ -77,7 +79,7 @@ class GLSNavierStokesCahnHilliardAssemblerBDF
 public:
   GLSNavierStokesCahnHilliardAssemblerBDF(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : NavierStokesAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -97,6 +99,8 @@ public:
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif

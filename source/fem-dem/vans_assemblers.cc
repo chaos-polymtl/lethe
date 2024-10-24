@@ -68,8 +68,8 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
         u_mag = std::max(velocity.norm(), 1e-12);
       else
         {
-          if (simulation_control->get_current_time() ==
-              simulation_control->get_time_step())
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
             u_mag = std::max(velocity.norm(), 1e-12);
           else
             u_mag = std::max(previous_velocity.norm(), 1e-12);
@@ -276,8 +276,8 @@ VANSAssemblerCoreModelB<dim>::assemble_rhs(
         u_mag = std::max(velocity.norm(), 1e-12);
       else
         {
-          if (simulation_control->get_current_time() ==
-              simulation_control->get_time_step())
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
             u_mag = std::max(velocity.norm(), 1e-12);
           else
             u_mag = std::max(previous_velocity.norm(), 1e-12);
@@ -433,8 +433,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
         u_mag = std::max(velocity.norm(), 1e-12);
       else
         {
-          if (simulation_control->get_current_time() ==
-              simulation_control->get_time_step())
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
             u_mag = std::max(velocity.norm(), 1e-12);
           else
             u_mag = std::max(previous_velocity.norm(), 1e-12);
@@ -640,8 +640,8 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
         u_mag = std::max(velocity.norm(), 1e-12);
       else
         {
-          if (simulation_control->get_current_time() ==
-              simulation_control->get_time_step())
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
             u_mag = std::max(velocity.norm(), 1e-12);
           else
             u_mag = std::max(previous_velocity.norm(), 1e-12);
@@ -852,8 +852,8 @@ VANSAssemblerBDF<dim>::assemble_rhs(
       else
         {
           // Grad-div weight factor used to be constant 0.1
-          if (simulation_control->get_current_time() ==
-              simulation_control->get_time_step())
+          if (this->simulation_control->get_current_time() ==
+              this->simulation_control->get_time_step())
             u_mag = std::max(velocity[0].norm(), 1e-12);
           else
             u_mag = std::max(velocity[1].norm(), 1e-12);

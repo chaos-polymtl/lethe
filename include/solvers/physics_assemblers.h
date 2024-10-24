@@ -18,25 +18,6 @@ class PhysicsAssemblerBase
 {
 public:
   /**
-   * @brief Constructor of the base assembler for physics and subequations.
-   *
-   * @param[in] simulation_control The SimulationControl object that holds
-   * information related to the control of the steady-state or transient
-   * simulation.
-   */
-  PhysicsAssemblerBase(
-    const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
-  {}
-
-  /**
-   * @brief Constructor for assemblers that do not require the SimulationControl
-   * shared pointer.
-   */
-  PhysicsAssemblerBase()
-  {}
-
-  /**
    * @brief Assemble the matrix.
    *
    * @param[in] scratch_data Scratch data containing the information required
@@ -63,9 +44,6 @@ public:
   virtual void
   assemble_rhs(const ScratchDataType &scratch_data,
                CopyDataType          &copy_data) = 0;
-
-protected:
-  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 #endif

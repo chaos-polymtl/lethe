@@ -55,7 +55,7 @@ public:
   VOFAssemblerCore(const std::shared_ptr<SimulationControl> &simulation_control,
                    const Parameters::FEM                     fem_parameters,
                    const Parameters::VOF                     vof_parameters)
-    : VOFAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , fem_parameters(fem_parameters)
     , vof_parameters(vof_parameters)
     , compressible(vof_parameters.compressible)
@@ -80,8 +80,9 @@ public:
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
-  const Parameters::FEM fem_parameters;
-  const Parameters::VOF vof_parameters;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::FEM                    fem_parameters;
+  const Parameters::VOF                    vof_parameters;
 
   // Controls if the compressibility term is assembled in the VOF equation
   const bool compressible;
@@ -102,7 +103,7 @@ class VOFAssemblerBDF : public VOFAssemblerBase<dim>
 {
 public:
   VOFAssemblerBDF(const std::shared_ptr<SimulationControl> &simulation_control)
-    : VOFAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -123,6 +124,8 @@ public:
   virtual void
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 
@@ -153,7 +156,7 @@ public:
    */
   VOFAssemblerDCDDStabilization(
     const std::shared_ptr<SimulationControl> &simulation_control)
-    : VOFAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -177,6 +180,8 @@ public:
   virtual void
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 /**
