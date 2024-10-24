@@ -12,7 +12,7 @@
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
@@ -190,7 +190,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
@@ -335,7 +335,7 @@ template class GLSNavierStokesCahnHilliardAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -394,7 +394,7 @@ GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
