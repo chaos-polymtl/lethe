@@ -336,6 +336,24 @@ namespace BoundaryConditions
         prm.get_double("z");
     prm.leave_subsection();
 
+    // Allocate the pressure boundary condition object
+    pressure_functions[boundary_id] =
+      std::make_shared<NSPressureBoundaryFunctions<dim>>();
+
+    prm.enter_subsection("p");
+    pressure_functions[boundary_id]->p.parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("center of rotation");
+    pressure_functions[boundary_id]->center_of_rotation[0] =
+      prm.get_double("x");
+    pressure_functions[boundary_id]->center_of_rotation[1] =
+      prm.get_double("y");
+    if (dim == 3)
+      pressure_functions[boundary_id]->center_of_rotation[2] =
+        prm.get_double("z");
+    prm.leave_subsection();
+
     // Establish the type of boundary condition
 
     const std::string op = prm.get("type");
@@ -356,24 +374,7 @@ namespace BoundaryConditions
       }
     if (op == "pressure")
       {
-        // Allocate the pressure boundary condition object
-        pressure_functions[boundary_id] =
-          std::make_shared<NSPressureBoundaryFunctions<dim>>();
-
         this->type[boundary_id] = BoundaryType::pressure;
-        prm.enter_subsection("p");
-        pressure_functions[boundary_id]->p.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("center of rotation");
-        pressure_functions[boundary_id]->center_of_rotation[0] =
-          prm.get_double("x");
-        pressure_functions[boundary_id]->center_of_rotation[1] =
-          prm.get_double("y");
-        if (dim == 3)
-          pressure_functions[boundary_id]->center_of_rotation[2] =
-            prm.get_double("z");
-        prm.leave_subsection();
       }
     if (op == "periodic")
       {
@@ -819,14 +820,16 @@ namespace BoundaryConditions
       ExcMessage(
         "A boundary id has not been set for one of the tracer boundary condition. Please ensure that the id is set for every boundary condition."));
 
+
     types::boundary_id boundary_id = prm.get_integer("id");
-    const std::string  op          = prm.get("type");
+    // Allocate function for tracer even if it is not necessary.
+    tracer[boundary_id]  = std::make_shared<Functions::ParsedFunction<dim>>();
+    const std::string op = prm.get("type");
     if (op == "dirichlet")
       {
         this->type[boundary_id] = BoundaryType::tracer_dirichlet;
         prm.enter_subsection("dirichlet");
-        tracer[boundary_id] =
-          std::make_shared<Functions::ParsedFunction<dim>>();
+
         tracer[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
       }
