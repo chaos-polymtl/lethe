@@ -68,6 +68,14 @@ subsection boundary conditions
   end
 end
 
+subsection boundary conditions cahn hilliard
+  set number = 1
+  subsection bc 0
+    set id          = 0
+    set type        = noflux
+  end
+end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
@@ -75,7 +83,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
-  set grid arguments     = -0.5 : 0.5 : true
+  set grid arguments     = -0.5 : 0.5 : false
   set initial refinement = 3
 end
 

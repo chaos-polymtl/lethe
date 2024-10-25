@@ -1059,7 +1059,9 @@ namespace BoundaryConditions
   class VOFBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> phase_fraction;
+    std::map<types::boundary_id,
+             std::shared_ptr<Functions::ParsedFunction<dim>>>
+      phase_fraction;
 
     void
     declare_default_entry(ParameterHandler &prm);
@@ -1148,6 +1150,11 @@ namespace BoundaryConditions
   void
   VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    Assert(
+      prm.get_integer("id") >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the VOF boundary condition. Please ensure that the id is set for every boundary condition."));
+
     types::boundary_id boundary_id = prm.get_integer("id");
     const std::string  op          = prm.get("type");
     if (op == "none")
