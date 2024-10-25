@@ -32,7 +32,7 @@ end
 subsection initial conditions
   set type = nodal
   subsection uvwp
-    set Function expression = 0; 0; 0
+    set Function expression = 0.1; 0; 0
   end
   subsection temperature
     set Function expression = 30
@@ -92,8 +92,9 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions 
-  set number = 2
+  set number = 4
   subsection bc 0
+    set id   = 0
     set type = function
     subsection u
       set Function expression = 0.1
@@ -106,6 +107,33 @@ subsection boundary conditions
     end
   end
   subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 0.1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = 0.1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 3
+    set id   = 3
     set type = function
     subsection u
       set Function expression = 0.1
@@ -120,7 +148,7 @@ subsection boundary conditions
 end
 
 subsection boundary conditions heat transfer
-  set number = 2
+  set number = 4
   subsection bc 0
     set id    = 0
     set type  = temperature
@@ -134,6 +162,14 @@ subsection boundary conditions heat transfer
     subsection value
       set Function expression = 10
     end
+  end
+  subsection bc 2
+    set id    = 2
+    set type  = noflux
+  end
+  subsection bc 3
+    set id    = 3
+    set type  = noflux
   end
 end
 
@@ -168,12 +204,12 @@ end
 subsection non-linear solver
   subsection heat transfer
     set tolerance      = 1e-8
-    set max iterations = 100
+    set max iterations = 10
     set verbosity      = quiet
   end
   subsection fluid dynamics
     set tolerance      = 1e-8
-    set max iterations = 100
+    set max iterations = 10
     set verbosity      = quiet
   end
 end
@@ -186,8 +222,8 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = quiet
     set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-8
+    set relative residual                     = 1e-10
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
@@ -197,8 +233,8 @@ subsection linear solver
   subsection heat transfer
     set verbosity                             = quiet
     set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-8
+    set relative residual                     = 1e-10
+    set minimum residual                      = 1e-11
     set preconditioner                        = ilu
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12

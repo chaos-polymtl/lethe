@@ -308,6 +308,35 @@ namespace BoundaryConditions
            NavierStokesBoundaryDuplicated(boundary_id));
 
 
+    // Allocate the navier_stokes_functions object for every boundary condition
+    // to ensure that they have a defined function and a center of rotation.
+    navier_stokes_functions[boundary_id] =
+      std::make_shared<NSBoundaryFunctions<dim>>();
+
+    prm.enter_subsection("u");
+    navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("v");
+    navier_stokes_functions[boundary_id]->v.parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("w");
+    navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("center of rotation");
+    navier_stokes_functions[boundary_id]->center_of_rotation[0] =
+      prm.get_double("x");
+    navier_stokes_functions[boundary_id]->center_of_rotation[1] =
+      prm.get_double("y");
+
+    if (dim == 3)
+      navier_stokes_functions[boundary_id]->center_of_rotation[2] =
+        prm.get_double("z");
+    prm.leave_subsection();
+
+    // Establish the type of boundary condition
 
     const std::string op = prm.get("type");
     if (op == "none")
@@ -324,34 +353,6 @@ namespace BoundaryConditions
           this->type[boundary_id] = BoundaryType::partial_slip;
         else
           this->type[boundary_id] = BoundaryType::function_weak;
-
-
-        // Allocate the NSBoundaryFunctions object
-        navier_stokes_functions[boundary_id] =
-          std::make_shared<NSBoundaryFunctions<dim>>();
-
-        prm.enter_subsection("u");
-        navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("v");
-        navier_stokes_functions[boundary_id]->v.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("w");
-        navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("center of rotation");
-        navier_stokes_functions[boundary_id]->center_of_rotation[0] =
-          prm.get_double("x");
-        navier_stokes_functions[boundary_id]->center_of_rotation[1] =
-          prm.get_double("y");
-
-        if (dim == 3)
-          navier_stokes_functions[boundary_id]->center_of_rotation[2] =
-            prm.get_double("z");
-        prm.leave_subsection();
       }
     if (op == "pressure")
       {
