@@ -1913,72 +1913,52 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
               this->check_existance_of_bc(
                 BoundaryConditions::BoundaryType::function_weak))
             {
-              for (unsigned int i_bc = 0;
-                   i_bc < this->simulation_parameters.boundary_conditions.size;
-                   ++i_bc)
+              for (const auto face : cell->face_indices())
                 {
-                  if (this->simulation_parameters.boundary_conditions
-                        .type[i_bc] ==
-                      BoundaryConditions::BoundaryType::function_weak)
+                  if (cell->face(face)->at_boundary())
                     {
-                      for (const auto face : cell->face_indices())
+                      unsigned int boundary_id =
+                        cell->face(face)->boundary_id();
+                      if (this->simulation_parameters.boundary_conditions.type
+                            .at(boundary_id) ==
+                          BoundaryConditions::BoundaryType::function_weak)
                         {
-                          if (cell->face(face)->at_boundary())
+                          NavierStokesFunctionDefined<dim> function_v(
+                            &this->simulation_parameters.boundary_conditions
+                               .navier_stokes_functions.at(boundary_id)
+                               ->u,
+                            &this->simulation_parameters.boundary_conditions
+                               .navier_stokes_functions.at(boundary_id)
+                               ->v,
+                            &this->simulation_parameters.boundary_conditions
+                               .navier_stokes_functions.at(boundary_id)
+                               ->w);
+
+                          fe_face_values.reinit(cell, face);
+                          fe_face_values[velocities].get_function_values(
+                            this->present_solution, local_face_velocity_values);
+                          for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
-                              unsigned int boundary_id =
-                                cell->face(face)->boundary_id();
-                              if (boundary_id ==
-                                  this->simulation_parameters
-                                    .boundary_conditions.id[i_bc])
+                              double u_x = local_face_velocity_values[q][0];
+                              double u_y = local_face_velocity_values[q][1];
+
+                              double u_x_a = function_v.value(
+                                fe_face_values.quadrature_point(q), 0);
+                              double u_y_a = function_v.value(
+                                fe_face_values.quadrature_point(q), 1);
+
+                              l2errorU_boundary +=
+                                ((u_x - u_x_a) * (u_x - u_x_a) +
+                                 (u_y - u_y_a) * (u_y - u_y_a)) *
+                                fe_face_values.JxW(q);
+                              if constexpr (dim == 3)
                                 {
-                                  NavierStokesFunctionDefined<dim> function_v(
-                                    &this->simulation_parameters
-                                       .boundary_conditions
-                                       .bcFunctions[boundary_id]
-                                       .u,
-                                    &this->simulation_parameters
-                                       .boundary_conditions
-                                       .bcFunctions[boundary_id]
-                                       .v,
-                                    &this->simulation_parameters
-                                       .boundary_conditions
-                                       .bcFunctions[boundary_id]
-                                       .w);
-
-                                  fe_face_values.reinit(cell, face);
-                                  fe_face_values[velocities]
-                                    .get_function_values(
-                                      this->present_solution,
-                                      local_face_velocity_values);
-                                  for (unsigned int q = 0; q < n_q_points_face;
-                                       q++)
-                                    {
-                                      double u_x =
-                                        local_face_velocity_values[q][0];
-                                      double u_y =
-                                        local_face_velocity_values[q][1];
-
-                                      double u_x_a = function_v.value(
-                                        fe_face_values.quadrature_point(q), 0);
-                                      double u_y_a = function_v.value(
-                                        fe_face_values.quadrature_point(q), 1);
-
-                                      l2errorU_boundary +=
-                                        ((u_x - u_x_a) * (u_x - u_x_a) +
-                                         (u_y - u_y_a) * (u_y - u_y_a)) *
-                                        fe_face_values.JxW(q);
-                                      if constexpr (dim == 3)
-                                        {
-                                          double u_z =
-                                            local_face_velocity_values[q][2];
-                                          double u_z_a = function_v.value(
-                                            fe_face_values.quadrature_point(q),
-                                            2);
-                                          l2errorU_boundary +=
-                                            (u_z - u_z_a) * (u_z - u_z_a) *
-                                            fe_face_values.JxW(q);
-                                        }
-                                    }
+                                  double u_z = local_face_velocity_values[q][2];
+                                  double u_z_a = function_v.value(
+                                    fe_face_values.quadrature_point(q), 2);
+                                  l2errorU_boundary += (u_z - u_z_a) *
+                                                       (u_z - u_z_a) *
+                                                       fe_face_values.JxW(q);
                                 }
                             }
                         }

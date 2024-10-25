@@ -878,7 +878,7 @@ calculate_apparent_viscosity<3, LinearAlgebra::distributed::Vector<double>>(
 #endif
 
 template <int dim, typename VectorType>
-std::vector<std::vector<Tensor<1, dim>>>
+std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
@@ -905,10 +905,9 @@ calculate_forces(
   Tensor<2, dim>                   fluid_viscous_stress;
   Tensor<2, dim>                   fluid_pressure;
 
-  std::vector<Tensor<1, dim>> viscous_force_vector(boundary_conditions.size);
-  std::vector<Tensor<1, dim>> pressure_force_vector(boundary_conditions.size);
-  std::vector<Tensor<1, dim>> force_vector(boundary_conditions.size);
-
+  std::map<types::boundary_id, Tensor<1, dim>> viscous_force_map;
+  std::map<types::boundary_id, Tensor<1, dim>> pressure_force_map;
+  std::map<types::boundary_id, Tensor<1, dim>> force_map;
 
   FEFaceValues<dim> fe_face_values(mapping,
                                    fe,
@@ -928,58 +927,48 @@ calculate_forces(
                 {
                   if (cell->face(face)->at_boundary())
                     {
-                      const auto boundary_id =
-                        std::find(begin(boundary_conditions.id),
-                                  end(boundary_conditions.id),
-                                  cell->face(face)->boundary_id());
+                      const auto boundary_id = cell->face(face)->boundary_id();
 
+                      fe_face_values.reinit(cell, face);
 
-                      if (boundary_id != end(boundary_conditions.id))
+                      std::vector<Point<dim>> q_points =
+                        fe_face_values.get_quadrature_points();
+                      fe_face_values[velocities].get_function_gradients(
+                        evaluation_point, velocity_gradients);
+                      fe_face_values[pressure].get_function_values(
+                        evaluation_point, pressure_values);
+                      for (unsigned int q = 0; q < n_q_points; q++)
                         {
-                          unsigned int vector_index =
-                            boundary_id - begin(boundary_conditions.id);
-                          fe_face_values.reinit(cell, face);
-
-                          std::vector<Point<dim>> q_points =
-                            fe_face_values.get_quadrature_points();
-                          fe_face_values[velocities].get_function_gradients(
-                            evaluation_point, velocity_gradients);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          for (unsigned int q = 0; q < n_q_points; q++)
+                          normal_vector = -fe_face_values.normal_vector(q);
+                          for (int d = 0; d < dim; ++d)
                             {
-                              normal_vector = -fe_face_values.normal_vector(q);
-                              for (int d = 0; d < dim; ++d)
-                                {
-                                  fluid_pressure[d][d] = pressure_values[q];
-                                }
-                              shear_rate = velocity_gradients[q] +
-                                           transpose(velocity_gradients[q]);
-
-                              const double shear_rate_magnitude =
-                                calculate_shear_rate_magnitude(shear_rate);
-
-                              std::map<field, double> field_values;
-                              field_values[field::shear_rate] =
-                                shear_rate_magnitude;
-
-                              kinematic_viscosity =
-                                rheological_model->value(field_values);
-                              fluid_viscous_stress =
-                                -kinematic_viscosity * shear_rate;
-                              fluid_stress =
-                                -fluid_viscous_stress - fluid_pressure;
-
-                              viscous_force_vector[vector_index] -=
-                                fluid_viscous_stress * normal_vector *
-                                fe_face_values.JxW(q);
-                              pressure_force_vector[vector_index] -=
-                                fluid_pressure * normal_vector *
-                                fe_face_values.JxW(q);
-                              force_vector[vector_index] +=
-                                fluid_stress * normal_vector *
-                                fe_face_values.JxW(q);
+                              fluid_pressure[d][d] = pressure_values[q];
                             }
+                          shear_rate = velocity_gradients[q] +
+                                       transpose(velocity_gradients[q]);
+
+                          const double shear_rate_magnitude =
+                            calculate_shear_rate_magnitude(shear_rate);
+
+                          std::map<field, double> field_values;
+                          field_values[field::shear_rate] =
+                            shear_rate_magnitude;
+
+                          kinematic_viscosity =
+                            rheological_model->value(field_values);
+                          fluid_viscous_stress =
+                            -kinematic_viscosity * shear_rate;
+                          fluid_stress = -fluid_viscous_stress - fluid_pressure;
+
+                          viscous_force_map[boundary_id] -=
+                            fluid_viscous_stress * normal_vector *
+                            fe_face_values.JxW(q);
+                          pressure_force_map[boundary_id] -=
+                            fluid_pressure * normal_vector *
+                            fe_face_values.JxW(q);
+                          force_map[boundary_id] += fluid_stress *
+                                                    normal_vector *
+                                                    fe_face_values.JxW(q);
                         }
                     }
                 }
@@ -987,22 +976,20 @@ calculate_forces(
         }
     }
 
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (auto const &[id, type] : boundary_conditions.type)
     {
-      viscous_force_vector[i_bc] =
-        Utilities::MPI::sum(viscous_force_vector[i_bc], mpi_communicator);
-      pressure_force_vector[i_bc] =
-        Utilities::MPI::sum(pressure_force_vector[i_bc], mpi_communicator);
-      force_vector[i_bc] =
-        Utilities::MPI::sum(force_vector[i_bc], mpi_communicator);
+      viscous_force_map[id] =
+        Utilities::MPI::sum(viscous_force_map[id], mpi_communicator);
+      pressure_force_map[id] =
+        Utilities::MPI::sum(pressure_force_map[id], mpi_communicator);
+      force_map[id] = Utilities::MPI::sum(force_map[id], mpi_communicator);
     }
-  std::vector<std::vector<Tensor<1, dim>>> forces{force_vector,
-                                                  viscous_force_vector,
-                                                  pressure_force_vector};
+  std::vector<std::map<types::boundary_id, Tensor<1, dim>>> forces{
+    force_map, viscous_force_map, pressure_force_map};
   return forces;
 }
 
-template std::vector<std::vector<Tensor<1, 2>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, GlobalVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
@@ -1010,7 +997,7 @@ calculate_forces<2, GlobalVectorType>(
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
-template std::vector<std::vector<Tensor<1, 3>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, GlobalVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
@@ -1019,7 +1006,7 @@ calculate_forces<3, GlobalVectorType>(
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
 
-template std::vector<std::vector<Tensor<1, 2>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, GlobalBlockVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
@@ -1028,7 +1015,7 @@ calculate_forces<2, GlobalBlockVectorType>(
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
 
-template std::vector<std::vector<Tensor<1, 3>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, GlobalBlockVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
@@ -1038,7 +1025,7 @@ calculate_forces<3, GlobalBlockVectorType>(
   const Mapping<3>                                  &mapping);
 
 #ifndef LETHE_USE_LDV
-template std::vector<std::vector<Tensor<1, 2>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 2>>>
 calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
@@ -1047,7 +1034,7 @@ calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
 
-template std::vector<std::vector<Tensor<1, 3>>>
+template std::vector<std::map<types::boundary_id, Tensor<1, 3>>>
 calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
@@ -1058,7 +1045,7 @@ calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
 #endif
 
 template <int dim, typename VectorType>
-std::vector<Tensor<1, 3>>
+std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
@@ -1086,7 +1073,7 @@ calculate_torques(
   // torque tensor had to be considered in 3D at all time...
   Tensor<1, 3> torque;
 
-  std::vector<Tensor<1, 3>> torque_vector(boundary_conditions.size);
+  std::map<types::boundary_id, Tensor<1, 3>> torque_map;
 
   FEFaceValues<dim> fe_face_values(mapping,
                                    fe,
@@ -1095,82 +1082,83 @@ calculate_torques(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
   const MPI_Comm    mpi_communicator = dof_handler.get_communicator();
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      unsigned int boundary_id = boundary_conditions.id[i_bc];
-      torque                   = 0;
-      Point<dim> center_of_rotation =
-        boundary_conditions.bcFunctions[boundary_id].center_of_rotation;
-      for (const auto &cell : dof_handler.active_cell_iterators())
+      if (cell->is_locally_owned())
         {
-          if (cell->is_locally_owned())
+          for (const auto face : cell->face_indices())
             {
-              for (const auto face : cell->face_indices())
+              if (cell->face(face)->at_boundary())
                 {
-                  if (cell->face(face)->at_boundary())
+                  fe_face_values.reinit(cell, face);
+                  unsigned int boundary_id = cell->face(face)->boundary_id();
+
+                  Point<dim> center_of_rotation =
+                    boundary_conditions.navier_stokes_functions.at(boundary_id)
+                      ->center_of_rotation;
+
+                  std::vector<Point<dim>> q_points =
+                    fe_face_values.get_quadrature_points();
+                  fe_face_values[velocities].get_function_gradients(
+                    evaluation_point, velocity_gradients);
+                  fe_face_values[pressure].get_function_values(evaluation_point,
+                                                               pressure_values);
+
+                  for (unsigned int q = 0; q < n_q_points; q++)
                     {
-                      fe_face_values.reinit(cell, face);
-                      if (cell->face(face)->boundary_id() == boundary_id)
+                      normal_vector = -fe_face_values.normal_vector(q);
+                      for (int d = 0; d < dim; ++d)
                         {
-                          std::vector<Point<dim>> q_points =
-                            fe_face_values.get_quadrature_points();
-                          fe_face_values[velocities].get_function_gradients(
-                            evaluation_point, velocity_gradients);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          for (unsigned int q = 0; q < n_q_points; q++)
-                            {
-                              normal_vector = -fe_face_values.normal_vector(q);
-                              for (int d = 0; d < dim; ++d)
-                                {
-                                  fluid_pressure[d][d] = pressure_values[q];
-                                }
-                              shear_rate = velocity_gradients[q] +
-                                           transpose(velocity_gradients[q]);
-                              const double shear_rate_magnitude =
-                                calculate_shear_rate_magnitude(shear_rate);
+                          fluid_pressure[d][d] = pressure_values[q];
+                        }
+                      shear_rate = velocity_gradients[q] +
+                                   transpose(velocity_gradients[q]);
+                      const double shear_rate_magnitude =
+                        calculate_shear_rate_magnitude(shear_rate);
 
-                              std::map<field, double> field_values;
-                              field_values[field::shear_rate] =
-                                shear_rate_magnitude;
+                      std::map<field, double> field_values;
+                      field_values[field::shear_rate] = shear_rate_magnitude;
 
-                              kinematic_viscosity =
-                                rheological_model->value(field_values);
+                      kinematic_viscosity =
+                        rheological_model->value(field_values);
 
-                              fluid_stress = kinematic_viscosity * shear_rate -
-                                             fluid_pressure;
-                              auto force = fluid_stress * normal_vector *
-                                           fe_face_values.JxW(q);
+                      fluid_stress =
+                        kinematic_viscosity * shear_rate - fluid_pressure;
+                      auto force =
+                        fluid_stress * normal_vector * fe_face_values.JxW(q);
 
-                              auto distance = q_points[q] - center_of_rotation;
-                              if (dim == 2)
-                                {
-                                  torque[0] = 0.;
-                                  torque[1] = 0.;
-                                  torque[2] += distance[0] * force[1] -
-                                               distance[1] * force[0];
-                                }
-                              else if (dim == 3)
-                                {
-                                  torque[0] += distance[1] * force[2] -
-                                               distance[2] * force[1];
-                                  torque[1] += distance[2] * force[0] -
-                                               distance[0] * force[2];
-                                  torque[2] += distance[0] * force[1] -
-                                               distance[1] * force[0];
-                                }
-                            }
+                      auto distance = q_points[q] - center_of_rotation;
+                      if (dim == 2)
+                        {
+                          torque_map[boundary_id][0] = 0.;
+                          torque_map[boundary_id][1] = 0.;
+                          torque_map[boundary_id][2] +=
+                            distance[0] * force[1] - distance[1] * force[0];
+                        }
+                      else if (dim == 3)
+                        {
+                          torque_map[boundary_id][0] +=
+                            distance[1] * force[2] - distance[2] * force[1];
+                          torque_map[boundary_id][1] +=
+                            distance[2] * force[0] - distance[0] * force[2];
+                          torque_map[boundary_id][2] +=
+                            distance[0] * force[1] - distance[1] * force[0];
                         }
                     }
                 }
             }
         }
-      torque_vector[i_bc] = Utilities::MPI::sum(torque, mpi_communicator);
     }
-  return torque_vector;
+  for (auto const &[id, type] : boundary_conditions.type)
+    {
+      torque_map[id] = Utilities::MPI::sum(torque_map[id], mpi_communicator);
+    }
+
+  return torque_map;
 }
 
-template std::vector<Tensor<1, 3>>
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, GlobalVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
@@ -1178,7 +1166,8 @@ calculate_torques<2, GlobalVectorType>(
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
-template std::vector<Tensor<1, 3>>
+
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, GlobalVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalVectorType                            &evaluation_point,
@@ -1187,7 +1176,7 @@ calculate_torques<3, GlobalVectorType>(
   const Quadrature<2>                               &face_quadrature_formula,
   const Mapping<3>                                  &mapping);
 
-template std::vector<Tensor<1, 3>>
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, GlobalBlockVectorType>(
   const DoFHandler<2>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
@@ -1196,7 +1185,7 @@ calculate_torques<2, GlobalBlockVectorType>(
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
 
-template std::vector<Tensor<1, 3>>
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, GlobalBlockVectorType>(
   const DoFHandler<3>                               &dof_handler,
   const GlobalBlockVectorType                       &evaluation_point,
@@ -1206,7 +1195,7 @@ calculate_torques<3, GlobalBlockVectorType>(
   const Mapping<3>                                  &mapping);
 
 #ifndef LETHE_USE_LDV
-template std::vector<Tensor<1, 3>>
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<2>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,
@@ -1215,7 +1204,7 @@ calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
   const Quadrature<1>                               &face_quadrature_formula,
   const Mapping<2>                                  &mapping);
 
-template std::vector<Tensor<1, 3>>
+template std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques<3, LinearAlgebra::distributed::Vector<double>>(
   const DoFHandler<3>                               &dof_handler,
   const LinearAlgebra::distributed::Vector<double>  &evaluation_point,

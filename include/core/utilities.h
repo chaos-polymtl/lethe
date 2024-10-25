@@ -667,5 +667,24 @@ extract_keys_from_map(const std::map<key, val> &map)
   return keys;
 }
 
+/**
+ * @brief Extract the values from map object
+ *
+ * @tparam key Key of the map
+ * @tparam val Value of the map. This template parameter is not used
+ * @param map Map object from which the keys are extracted
+ * @return values Vector of values from the map
+ */
+
+template <typename key, typename val>
+std::vector<val>
+extract_values_from_map(const std::map<key, val> &map)
+{
+  std::vector<val> values;
+  for (const auto &pair : map)
+    values.push_back(pair.second);
+  return values;
+}
+
 
 #endif

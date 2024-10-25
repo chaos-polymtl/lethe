@@ -160,12 +160,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
     this->computing_timer.disable_output();
 
-  // Pre-allocate the force tables to match the number of boundary conditions
-  forces_on_boundaries.resize(simulation_parameters.boundary_conditions.size);
-  torques_on_boundaries.resize(simulation_parameters.boundary_conditions.size);
-  forces_tables.resize(simulation_parameters.boundary_conditions.size);
-  torques_tables.resize(simulation_parameters.boundary_conditions.size);
-
   // Get the exact solution from the parser
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
@@ -233,11 +227,10 @@ NavierStokesBase<dim, VectorType, DofsType>::check_existance_of_bc(
 {
   bool bc_exist = false;
   // Loop over the boundary to check if they need assembler on their face.
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] == bc)
+      if (type == bc)
         bc_exist = true;
     }
   return bc_exist;
@@ -282,10 +275,26 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       if (dim == 3)
         dependent_column_names.emplace_back("f_zp");
 
+      std::vector<unsigned int> boundary_ids =
+        extract_keys_from_map(simulation_parameters.boundary_conditions.type);
+
+      std::vector<Tensor<1, dim>> total_forces =
+        extract_values_from_map(this->forces_on_boundaries[0]);
+
+      std::vector<Tensor<1, dim>> viscous_forces =
+        extract_values_from_map(this->forces_on_boundaries[1]);
+
+      std::vector<Tensor<1, dim>> pressure_forces =
+        extract_values_from_map(this->forces_on_boundaries[2]);
+
+      std::vector<std::vector<Tensor<1, dim>>> all_forces{total_forces,
+                                                          viscous_forces,
+                                                          pressure_forces};
+
       TableHandler table = make_table_scalars_tensors(
-        simulation_parameters.boundary_conditions.id,
+        boundary_ids,
         independent_column_names,
-        this->forces_on_boundaries,
+        all_forces,
         dependent_column_names,
         this->simulation_parameters.simulation_control.log_precision,
         true);
@@ -375,7 +384,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate torques");
 
-  this->torques_on_boundaries =
+  std::map<types::boundary_id, Tensor<1, 3>> torques_on_boundaries =
     calculate_torques(this->dof_handler,
                       evaluation_point,
                       simulation_parameters.physical_properties_manager,
@@ -395,10 +404,15 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       dependent_column_names.emplace_back("T_y");
       dependent_column_names.emplace_back("T_z");
 
+      std::vector<unsigned int> boundary_ids =
+        extract_keys_from_map(simulation_parameters.boundary_conditions.type);
+      std::vector<Tensor<1, 3>> torques =
+        extract_values_from_map(torques_on_boundaries);
+
       TableHandler table = make_table_scalars_tensors(
-        simulation_parameters.boundary_conditions.id,
+        boundary_ids,
         independent_column_names,
-        this->torques_on_boundaries,
+        torques,
         dependent_column_names,
         this->simulation_parameters.simulation_control.log_precision,
         true);
@@ -426,11 +440,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
             "time", simulation_parameters.forces_parameters.output_precision);
         }
       this->torques_tables[boundary_id].add_value(
-        "T_x", this->torques_on_boundaries[boundary_id][0]);
+        "T_x", torques_on_boundaries[boundary_id][0]);
       this->torques_tables[boundary_id].add_value(
-        "T_y", this->torques_on_boundaries[boundary_id][1]);
+        "T_y", torques_on_boundaries[boundary_id][1]);
       this->torques_tables[boundary_id].add_value(
-        "T_z", this->torques_on_boundaries[boundary_id][2]);
+        "T_z", torques_on_boundaries[boundary_id][2]);
 
       // Precision
       this->torques_tables[boundary_id].set_precision(
@@ -1782,27 +1796,23 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
 
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::noslip)
+      if (type == BoundaryConditions::BoundaryType::noslip)
         {
           VectorTools::interpolate_boundary_values(
             *this->mapping,
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
+            id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::slip)
+      else if (type == BoundaryConditions::BoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
-          no_normal_flux_boundaries.insert(
-            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          no_normal_flux_boundaries.insert(id);
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
@@ -1810,38 +1820,43 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             nonzero_constraints,
             *this->mapping);
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::function)
+      else if (type == BoundaryConditions::BoundaryType::function)
         {
-          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-            .u.set_time(time);
-          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-            .v.set_time(time);
-          this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-            .w.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->u.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->v.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->w.set_time(time);
           VectorTools::interpolate_boundary_values(
             *this->mapping,
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
+            id,
             NavierStokesFunctionDefined<dim>(
-              &this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-                 .u,
-              &this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-                 .v,
-              &this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-                 .w),
+              &this->simulation_parameters.boundary_conditions
+                 .navier_stokes_functions.at(id)
+                 ->u,
+              &this->simulation_parameters.boundary_conditions
+                 .navier_stokes_functions.at(id)
+                 ->v,
+              &this->simulation_parameters.boundary_conditions
+                 .navier_stokes_functions.at(id)
+                 ->w),
             nonzero_constraints,
             this->fe->component_mask(velocities));
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-            this->simulation_parameters.boundary_conditions
-              .periodic_direction[i_bc],
+            id,
+            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
+              .at(id),
+            this->simulation_parameters.boundary_conditions.periodic_direction
+              .at(id),
             nonzero_constraints);
         }
     }
@@ -1890,16 +1905,13 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           this->zero_constraints);
 
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::slip)
+      if (type == BoundaryConditions::BoundaryType::slip)
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
-          no_normal_flux_boundaries.insert(
-            this->simulation_parameters.boundary_conditions.id[i_bc]);
+          no_normal_flux_boundaries.insert(id);
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
@@ -1907,37 +1919,33 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             this->zero_constraints,
             *this->mapping);
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::periodic)
+      else if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
-            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-            this->simulation_parameters.boundary_conditions
-              .periodic_direction[i_bc],
+            id,
+            this->simulation_parameters.boundary_conditions.periodic_neighbor_id
+              .at(id),
+            this->simulation_parameters.boundary_conditions.periodic_direction
+              .at(id),
             this->zero_constraints);
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::pressure)
+      else if (type == BoundaryConditions::BoundaryType::pressure)
         {
           /*The pressure boundary condition is implemented in the matrix-based
            * assemblers*/
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::function_weak)
+      else if (type == BoundaryConditions::BoundaryType::function_weak)
         {
           /*The function weak boundary condition is implemented in the
            * matrix-based assemblers and the matrix-free operators*/
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::partial_slip)
+      else if (type == BoundaryConditions::BoundaryType::partial_slip)
         {
           /*The partial slip boundary condition is implemented in the
            * matrix-based assemblers*/
         }
-      else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-               BoundaryConditions::BoundaryType::outlet)
+      else if (type == BoundaryConditions::BoundaryType::outlet)
         {
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
@@ -1947,7 +1955,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           VectorTools::interpolate_boundary_values(
             *this->mapping,
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions.id[i_bc],
+            id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
             this->zero_constraints,
             this->fe->component_mask(velocities));
@@ -1973,18 +1981,21 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   this->local_evaluation_point = this->present_solution;
 
   double time = this->simulation_control->get_current_time();
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .u.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .v.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcFunctions[i_bc]
-        .w.set_time(time);
-      this->simulation_parameters.boundary_conditions.bcPressureFunction[i_bc]
-        .p.set_time(time);
+      this->simulation_parameters.boundary_conditions.navier_stokes_functions
+        .at(id)
+        ->u.set_time(time);
+      this->simulation_parameters.boundary_conditions.navier_stokes_functions
+        .at(id)
+        ->v.set_time(time);
+      this->simulation_parameters.boundary_conditions.navier_stokes_functions
+        .at(id)
+        ->w.set_time(time);
+      this->simulation_parameters.boundary_conditions.pressure_functions.at(id)
+        ->p.set_time(time);
     }
   this->define_non_zero_constraints();
   // Distribute constraints
