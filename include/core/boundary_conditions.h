@@ -297,15 +297,17 @@ namespace BoundaryConditions
   void
   NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    Assert(
+      prm.get_integer("id") >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
+
     types::boundary_id boundary_id = prm.get_integer("id");
 
     Assert(this->type.find(boundary_id) == this->type.end(),
            NavierStokesBoundaryDuplicated(boundary_id));
 
-    Assert(
-      boundary_id >= 0,
-      ExcMessage(
-        "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
+
 
     const std::string op = prm.get("type");
     if (op == "none")
@@ -623,14 +625,13 @@ namespace BoundaryConditions
   void
   HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    types::boundary_id boundary_id = prm.get_integer("id");
-
     Assert(
-      boundary_id >= 0,
+      prm.get_integer("id") >= 0,
       ExcMessage(
         "A boundary id has not been set for one of the heat transfer boundary condition. Please ensure that the id is set for every boundary condition."));
 
-    const std::string op = prm.get("type");
+    types::boundary_id boundary_id = prm.get_integer("id");
+    const std::string  op          = prm.get("type");
     if (op == "noflux")
       {
         this->type[boundary_id] = BoundaryType::noflux;
@@ -812,6 +813,11 @@ namespace BoundaryConditions
   void
   TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    Assert(
+      prm.get_integer("id") >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the tracer boundary condition. Please ensure that the id is set for every boundary condition."));
+
     types::boundary_id boundary_id = prm.get_integer("id");
     const std::string  op          = prm.get("type");
     if (op == "dirichlet")
@@ -978,6 +984,11 @@ namespace BoundaryConditions
   void
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    Assert(
+      prm.get_integer("id") >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the Cahn-Hilliard boundary condition. Please ensure that the id is set for every boundary condition."));
+
     types::boundary_id boundary_id = prm.get_integer("id");
     const std::string  op          = prm.get("type");
     if (op == "noflux")
