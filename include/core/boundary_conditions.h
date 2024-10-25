@@ -302,6 +302,11 @@ namespace BoundaryConditions
     Assert(this->type.find(boundary_id) == this->type.end(),
            NavierStokesBoundaryDuplicated(boundary_id));
 
+    Assert(
+      boundary_id >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
+
     const std::string op = prm.get("type");
     if (op == "none")
       this->type[boundary_id] = BoundaryType::none;
@@ -500,7 +505,7 @@ namespace BoundaryConditions
     double Stefan_Boltzmann_constant;
 
     void
-    declareDefaultEntry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -523,7 +528,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
+  HTBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
@@ -594,7 +599,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm);
+            declare_default_entry(prm);
           }
           prm.leave_subsection();
         }
@@ -619,6 +624,11 @@ namespace BoundaryConditions
   HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     types::boundary_id boundary_id = prm.get_integer("id");
+
+    Assert(
+      boundary_id >= 0,
+      ExcMessage(
+        "A boundary id has not been set for one of the heat transfer boundary condition. Please ensure that the id is set for every boundary condition."));
 
     const std::string op = prm.get("type");
     if (op == "noflux")
