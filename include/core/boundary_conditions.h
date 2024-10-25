@@ -161,7 +161,7 @@ namespace BoundaryConditions
     void
     parse_boundary(ParameterHandler &prm);
     void
-    declareDefaultEntry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler &prm);
 
     /**
      * @brief Declares the Navier-Stokes boundary conditions
@@ -214,7 +214,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
+  NSBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry(
       "type",
@@ -227,7 +227,7 @@ namespace BoundaryConditions
 
     prm.declare_entry(
       "id",
-      Utilities::int_to_string(-1, 2),
+      "-1",
       Patterns::Integer(),
       "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
 
@@ -235,7 +235,7 @@ namespace BoundaryConditions
       "periodic_id",
       "-1",
       Patterns::Integer(),
-      "Mesh id for periodic face matching. Default entry is -1 to ensure that the id is set by the user");
+      "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
     prm.declare_entry("periodic_direction",
                       "0",
@@ -422,7 +422,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm);
+            declare_default_entry(prm);
           }
           prm.leave_subsection();
         }
@@ -533,7 +533,7 @@ namespace BoundaryConditions
       "Choices are <noflux|temperature|convection-radiation-flux>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(-1, 2),
+                      "-1",
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -714,7 +714,7 @@ namespace BoundaryConditions
 
 
     void
-    declareDefaultEntry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -734,7 +734,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  TracerBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
+  TracerBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry("type",
                       "dirichlet",
@@ -743,7 +743,7 @@ namespace BoundaryConditions
                       "Choices are <dirichlet|outlet>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(-1, 2),
+                      "-1",
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -783,7 +783,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm);
+            declare_default_entry(prm);
           }
           prm.leave_subsection();
         }
@@ -871,7 +871,7 @@ namespace BoundaryConditions
       bcFunctions;
 
     void
-    declareDefaultEntry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -891,7 +891,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(
+  CahnHilliardBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler &prm)
   {
     prm.declare_entry(
@@ -902,7 +902,7 @@ namespace BoundaryConditions
       "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(-1, 2),
+                      "-1",
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -948,7 +948,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm);
+            declare_default_entry(prm);
           }
           prm.leave_subsection();
         }
@@ -1041,7 +1041,7 @@ namespace BoundaryConditions
     std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> phase_fraction;
 
     void
-    declareDefaultEntry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler &prm);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -1060,7 +1060,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm)
+  VOFBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry("type",
                       "none",
@@ -1069,7 +1069,7 @@ namespace BoundaryConditions
                       "Choices are <none|dirichlet>.");
 
     prm.declare_entry("id",
-                      Utilities::int_to_string(-1, 2),
+                      "-1",
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -1107,7 +1107,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declareDefaultEntry(prm);
+            declare_default_entry(prm);
           }
           prm.leave_subsection();
         }
