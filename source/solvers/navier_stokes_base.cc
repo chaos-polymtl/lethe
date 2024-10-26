@@ -1985,17 +1985,32 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      this->simulation_parameters.boundary_conditions.navier_stokes_functions
-        .at(id)
-        ->u.set_time(time);
-      this->simulation_parameters.boundary_conditions.navier_stokes_functions
-        .at(id)
-        ->v.set_time(time);
-      this->simulation_parameters.boundary_conditions.navier_stokes_functions
-        .at(id)
-        ->w.set_time(time);
-      this->simulation_parameters.boundary_conditions.pressure_functions.at(id)
-        ->p.set_time(time);
+      // Only set the time if it actually makes sense to set the time.
+      if (type == BoundaryConditions::BoundaryType::function ||
+          type == BoundaryConditions::BoundaryType::function_weak ||
+          type == BoundaryConditions::BoundaryType::pressure ||
+          type == BoundaryConditions::BoundaryType::partial_slip)
+        {
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->u.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->v.set_time(time);
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
+            ->w.set_time(time);
+          this->simulation_parameters.boundary_conditions.pressure_functions
+            .at(id)
+            ->p.set_time(time);
+        }
+
+      if (type == BoundaryConditions::BoundaryType::pressure)
+        {
+          this->simulation_parameters.boundary_conditions.pressure_functions
+            .at(id)
+            ->p.set_time(time);
+        }
     }
   this->define_non_zero_constraints();
   // Distribute constraints

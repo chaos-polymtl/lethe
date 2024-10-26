@@ -123,7 +123,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 6
   subsection bc 0
     set id   = 2
     set type = noslip
@@ -137,6 +137,26 @@ subsection boundary conditions
     subsection v
       set Function expression = 0
     end
+  end
+  subsection bc 2
+    set id   = 0
+    set type = outlet
+    set beta = 0
+  end
+    subsection bc 3
+    set id   = 1
+    set type = outlet
+    set beta = 0
+  end
+    subsection bc 4
+    set id   = 4
+    set type = outlet
+    set beta = 0
+  end
+    subsection bc 5
+    set id   = 5
+    set type = outlet
+    set beta = 0
   end
 end
 
