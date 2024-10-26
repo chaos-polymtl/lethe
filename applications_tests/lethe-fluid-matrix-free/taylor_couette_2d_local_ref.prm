@@ -66,6 +66,7 @@ subsection boundary conditions
   set fix pressure constant = true
   set number                = 2
   subsection bc 0 # inner cylinder
+    set   id  = 0
     set type = function
     subsection u
       set Function expression = -y
@@ -78,6 +79,7 @@ subsection boundary conditions
     end
   end
   subsection bc 1 #outer cylinder
+    set   id = 1
     set type = noslip
   end
 end

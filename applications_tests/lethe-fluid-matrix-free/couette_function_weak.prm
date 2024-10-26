@@ -92,6 +92,7 @@ end
 subsection boundary conditions
   set number = 2
   subsection bc 1
+    set id   = 1
     set type = function weak
     set beta = 10
     subsection u
@@ -105,6 +106,7 @@ subsection boundary conditions
     end
   end
   subsection bc 0
+    set id   = 0
     set type = function
     set beta = 10
     subsection u

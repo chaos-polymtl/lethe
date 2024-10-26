@@ -76,12 +76,12 @@ namespace BoundaryConditions
     // Penalization parameter for weak dirichlet BCs and outlets
     std::map<types::boundary_id, double> beta;
 
-    // Boundary layer size tangent component parameter for partial slip
+    // Boundary layer thickness tangent component parameter for partial slip
     // dirichlet BCs
     std::map<types::boundary_id, double> boundary_layer_thickness;
 
     // Number of boundary conditions
-    unsigned int size;
+    unsigned int number_of_boundary_conditions;
 
     /// indicator for transient BCs
     bool time_dependent;
@@ -161,7 +161,8 @@ namespace BoundaryConditions
     void
     parse_boundary(ParameterHandler &prm);
     void
-    declare_default_entry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
 
     /**
      * @brief Declares the Navier-Stokes boundary conditions
@@ -196,12 +197,9 @@ namespace BoundaryConditions
   void
   NSBoundaryConditions<dim>::createNoSlip()
   {
-    this->id.resize(1);
-    this->id[0]   = 0;
-    this->type[0] = BoundaryType::noslip;
-    this->size    = 1;
-    this->beta.resize(1);
-    this->beta[0] = 0;
+    this->type[0]                       = BoundaryType::noslip;
+    this->number_of_boundary_conditions = 1;
+    this->beta[0]                       = 0;
   }
 
 
@@ -214,7 +212,9 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  NSBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
+  NSBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
   {
     prm.declare_entry(
       "type",
@@ -227,7 +227,7 @@ namespace BoundaryConditions
 
     prm.declare_entry(
       "id",
-      "-1",
+      Utilities::to_string(default_boundary_id, 2),
       Patterns::Integer(),
       "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
 
@@ -431,7 +431,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declare_default_entry(prm);
+            declare_default_entry(prm, n);
           }
           prm.leave_subsection();
         }
@@ -451,11 +451,11 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions");
     {
-      this->size                  = prm.get_integer("number");
-      this->time_dependent        = prm.get_bool("time dependent");
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
       this->fix_pressure_constant = prm.get_bool("fix pressure constant");
 
-      for (unsigned int n = 0; n < this->size; n++)
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
@@ -509,7 +509,8 @@ namespace BoundaryConditions
     double Stefan_Boltzmann_constant;
 
     void
-    declare_default_entry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -532,7 +533,9 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  HTBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
+  HTBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
   {
     prm.declare_entry(
       "type",
@@ -542,7 +545,7 @@ namespace BoundaryConditions
       "Choices are <noflux|temperature|convection-radiation-flux>.");
 
     prm.declare_entry("id",
-                      "-1",
+                      Utilities::to_string(default_boundary_id, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -603,7 +606,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declare_default_entry(prm);
+            declare_default_entry(prm, n);
           }
           prm.leave_subsection();
         }
@@ -691,9 +694,9 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions heat transfer");
     {
-      this->size           = prm.get_integer("number");
-      this->time_dependent = prm.get_bool("time dependent");
-      for (unsigned int n = 0; n < this->size; n++)
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
@@ -727,7 +730,8 @@ namespace BoundaryConditions
 
 
     void
-    declare_default_entry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -747,7 +751,9 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  TracerBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
+  TracerBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
   {
     prm.declare_entry("type",
                       "dirichlet",
@@ -756,7 +762,7 @@ namespace BoundaryConditions
                       "Choices are <dirichlet|outlet>.");
 
     prm.declare_entry("id",
-                      "-1",
+                      Utilities::int_to_string(default_boundary_id, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -796,7 +802,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declare_default_entry(prm);
+            declare_default_entry(prm, n);
           }
           prm.leave_subsection();
         }
@@ -857,10 +863,10 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions tracer");
     {
-      this->size           = prm.get_integer("number");
-      this->time_dependent = prm.get_bool("time dependent");
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
 
-      for (unsigned int n = 0; n < this->size; n++)
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
@@ -891,7 +897,8 @@ namespace BoundaryConditions
       bcFunctions;
 
     void
-    declare_default_entry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -912,7 +919,8 @@ namespace BoundaryConditions
   template <int dim>
   void
   CahnHilliardBoundaryConditions<dim>::declare_default_entry(
-    ParameterHandler &prm)
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
   {
     prm.declare_entry(
       "type",
@@ -922,7 +930,7 @@ namespace BoundaryConditions
       "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
 
     prm.declare_entry("id",
-                      "-1",
+                      Utilities::int_to_string(default_boundary_id, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -968,7 +976,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declare_default_entry(prm);
+            declare_default_entry(prm, n);
           }
           prm.leave_subsection();
         }
@@ -1033,10 +1041,10 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions cahn hilliard");
     {
-      this->size           = prm.get_integer("number");
-      this->time_dependent = prm.get_bool("time dependent");
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
 
-      for (unsigned int n = 0; n < this->size; n++)
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
@@ -1068,7 +1076,8 @@ namespace BoundaryConditions
       phase_fraction;
 
     void
-    declare_default_entry(ParameterHandler &prm);
+    declare_default_entry(ParameterHandler        &prm,
+                          const types::boundary_id default_boundary_id);
     void
     declare_parameters(ParameterHandler  &prm,
                        const unsigned int number_of_boundary_conditions);
@@ -1087,7 +1096,9 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::declare_default_entry(ParameterHandler &prm)
+  VOFBoundaryConditions<dim>::declare_default_entry(
+    ParameterHandler        &prm,
+    const types::boundary_id default_boundary_id)
   {
     prm.declare_entry("type",
                       "none",
@@ -1096,7 +1107,7 @@ namespace BoundaryConditions
                       "Choices are <none|dirichlet>.");
 
     prm.declare_entry("id",
-                      "-1",
+                      Utilities::int_to_string(default_boundary_id, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
@@ -1134,7 +1145,7 @@ namespace BoundaryConditions
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {
-            declare_default_entry(prm);
+            declare_default_entry(prm, n);
           }
           prm.leave_subsection();
         }
@@ -1190,10 +1201,10 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions VOF");
     {
-      this->size           = prm.get_integer("number");
-      this->time_dependent = prm.get_bool("time dependent");
+      this->number_of_boundary_conditions = prm.get_integer("number");
+      this->time_dependent                = prm.get_bool("time dependent");
 
-      for (unsigned int n = 0; n < this->size; n++)
+      for (unsigned int n = 0; n < this->number_of_boundary_conditions; n++)
         {
           prm.enter_subsection("bc " + std::to_string(n));
           {

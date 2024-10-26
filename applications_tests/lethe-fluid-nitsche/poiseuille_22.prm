@@ -126,7 +126,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 4
   subsection bc 0
     set id   = 2
     set type = noslip

@@ -305,73 +305,71 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       table.write_text(std::cout);
     }
 
-  for (unsigned int i_boundary = 0;
-       i_boundary < simulation_parameters.boundary_conditions.size;
-       ++i_boundary)
+  for (auto const &[id, type] : simulation_parameters.boundary_conditions.type)
     {
       if (simulation_control->is_steady())
         {
-          this->forces_tables[i_boundary].add_value(
+          this->forces_tables[id].add_value(
             "cells", this->triangulation->n_global_active_cells());
         }
       else
         {
-          this->forces_tables[i_boundary].add_value(
+          this->forces_tables[id].add_value(
             "time", simulation_control->get_current_time());
-          this->forces_tables[i_boundary].set_precision(
+          this->forces_tables[id].set_precision(
             "time", simulation_parameters.forces_parameters.output_precision);
         }
 
-      this->forces_tables[i_boundary].add_value(
-        "f_x", this->forces_on_boundaries[0][i_boundary][0]);
-      this->forces_tables[i_boundary].add_value(
-        "f_y", this->forces_on_boundaries[0][i_boundary][1]);
+      this->forces_tables[id].add_value("f_x",
+                                        this->forces_on_boundaries[0][id][0]);
+      this->forces_tables[id].add_value("f_y",
+                                        this->forces_on_boundaries[0][id][1]);
       if (dim == 3)
-        this->forces_tables[i_boundary].add_value(
-          "f_z", this->forces_on_boundaries[0][i_boundary][2]);
+        this->forces_tables[id].add_value("f_z",
+                                          this->forces_on_boundaries[0][id][2]);
       else
-        this->forces_tables[i_boundary].add_value("f_z", 0.);
+        this->forces_tables[id].add_value("f_z", 0.);
 
-      this->forces_tables[i_boundary].add_value(
-        "f_xv", this->forces_on_boundaries[1][i_boundary][0]);
-      this->forces_tables[i_boundary].add_value(
-        "f_yv", this->forces_on_boundaries[1][i_boundary][1]);
+      this->forces_tables[id].add_value("f_xv",
+                                        this->forces_on_boundaries[1][id][0]);
+      this->forces_tables[id].add_value("f_yv",
+                                        this->forces_on_boundaries[1][id][1]);
       if (dim == 3)
-        this->forces_tables[i_boundary].add_value(
-          "f_zv", this->forces_on_boundaries[1][i_boundary][2]);
+        this->forces_tables[id].add_value("f_zv",
+                                          this->forces_on_boundaries[1][id][2]);
       else
-        this->forces_tables[i_boundary].add_value("f_zv", 0.);
+        this->forces_tables[id].add_value("f_zv", 0.);
 
-      this->forces_tables[i_boundary].add_value(
-        "f_xp", this->forces_on_boundaries[2][i_boundary][0]);
-      this->forces_tables[i_boundary].add_value(
-        "f_yp", this->forces_on_boundaries[2][i_boundary][1]);
+      this->forces_tables[id].add_value("f_xp",
+                                        this->forces_on_boundaries[2][id][0]);
+      this->forces_tables[id].add_value("f_yp",
+                                        this->forces_on_boundaries[2][id][1]);
       if (dim == 3)
-        this->forces_tables[i_boundary].add_value(
-          "f_zp", this->forces_on_boundaries[2][i_boundary][2]);
+        this->forces_tables[id].add_value("f_zp",
+                                          this->forces_on_boundaries[2][id][2]);
       else
-        this->forces_tables[i_boundary].add_value("f_zp", 0.);
+        this->forces_tables[id].add_value("f_zp", 0.);
 
       // Precision
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_x", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_y", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_z", simulation_parameters.forces_parameters.output_precision);
 
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_xv", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_yv", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_zv", simulation_parameters.forces_parameters.output_precision);
 
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_xp", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_yp", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
+      this->forces_tables[id].set_precision(
         "f_zp", simulation_parameters.forces_parameters.output_precision);
     }
 }
@@ -423,9 +421,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       table.write_text(std::cout);
     }
 
-  for (unsigned int boundary_id = 0;
-       boundary_id < simulation_parameters.boundary_conditions.size;
-       ++boundary_id)
+  for (auto const &[boundary_id, type] :
+       simulation_parameters.boundary_conditions.type)
     {
       if (simulation_control->is_steady())
         {
@@ -1546,9 +1543,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           announce_string(this->pcout, "Flow rates");
         }
 
-      for (unsigned int boundary_id = 0;
-           boundary_id < simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[boundary_id, type] :
+           simulation_parameters.boundary_conditions.type)
         {
           std::pair<double, double> boundary_flow_rate =
             calculate_flow_rate(this->dof_handler,
@@ -1585,9 +1581,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             ".dat";
           std::ofstream output(filename.c_str());
           flow_rate_table.set_precision("time", 12);
-          for (unsigned int boundary_id = 0;
-               boundary_id < simulation_parameters.boundary_conditions.size;
-               ++boundary_id)
+          for (auto const &[boundary_id, type] :
+               simulation_parameters.boundary_conditions.type)
             flow_rate_table.set_precision(
               "flow-rate-" + Utilities::int_to_string(boundary_id, 2), 12);
           this->flow_rate_table.write_text(output);
@@ -2087,26 +2082,24 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                         prefix + post_processing.pressure_drop_output_name +
                           suffix);
     if (this->simulation_parameters.forces_parameters.calculate_force)
-      for (unsigned int boundary_id = 0;
-           boundary_id < this->simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[id, type] :
+           this->simulation_parameters.boundary_conditions.type)
         {
           deserialize_table(
-            this->forces_tables[boundary_id],
+            this->forces_tables[id],
             prefix +
               this->simulation_parameters.forces_parameters.force_output_name +
-              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+              "_" + Utilities::int_to_string(id, 2) + suffix);
         }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
-      for (unsigned int boundary_id = 0;
-           boundary_id < this->simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[id, type] :
+           this->simulation_parameters.boundary_conditions.type)
         {
           deserialize_table(
-            this->torques_tables[boundary_id],
+            this->torques_tables[id],
             prefix +
               this->simulation_parameters.forces_parameters.torque_output_name +
-              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+              "_" + Utilities::int_to_string(id, 2) + suffix);
         }
     if (this->simulation_parameters.analytical_solution->calculate_error())
       deserialize_table(
@@ -2749,9 +2742,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
   TimerOutput::Scope t(this->computing_timer, "Output forces");
   if (this->this_mpi_process == 0)
     {
-      for (unsigned int boundary_id = 0;
-           boundary_id < simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[boundary_id, type] :
+           simulation_parameters.boundary_conditions.type)
         {
           std::string filename =
             simulation_parameters.simulation_control.output_folder +
@@ -2771,9 +2763,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
   TimerOutput::Scope t(this->computing_timer, "Output torques");
   if (this->this_mpi_process == 0)
     {
-      for (unsigned int boundary_id = 0;
-           boundary_id < simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[boundary_id, type] :
+           simulation_parameters.boundary_conditions.type)
         {
           std::string filename =
             simulation_parameters.simulation_control.output_folder +
@@ -2870,9 +2861,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                       prefix + post_processing.pressure_drop_output_name +
                         suffix);
     if (this->simulation_parameters.forces_parameters.calculate_force)
-      for (unsigned int boundary_id = 0;
-           boundary_id < this->simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[boundary_id, type] :
+           this->simulation_parameters.boundary_conditions.type)
         {
           serialize_table(
             this->forces_tables[boundary_id],
@@ -2881,9 +2871,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
               "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
         }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
-      for (unsigned int boundary_id = 0;
-           boundary_id < this->simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
+      for (auto const &[boundary_id, type] :
+           this->simulation_parameters.boundary_conditions.type)
         {
           serialize_table(
             this->torques_tables[boundary_id],

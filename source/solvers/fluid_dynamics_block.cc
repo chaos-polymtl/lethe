@@ -585,18 +585,12 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
 
   // Check whether the boundary conditions specified in the parameter file are
   // available for this solver
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::pressure ||
-          this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::function_weak ||
-          this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::partial_slip ||
-          this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::outlet)
+      if (type == BoundaryConditions::BoundaryType::pressure ||
+          type == BoundaryConditions::BoundaryType::function_weak ||
+          type == BoundaryConditions::BoundaryType::partial_slip)
         {
           Assert(
             false,

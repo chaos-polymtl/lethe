@@ -5,8 +5,14 @@ Running on 1 MPI rank(s)...
    Number of thermal degrees of freedom: 1089
 Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
+	 boundary 1 : 0
+	 boundary 2 : 0
+	 boundary 3 : 0
 Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
+	 boundary 1 : 0
+	 boundary 2 : 0
+	 boundary 3 : 0
 Thermal energy in fluid : 0
 Heat flux at the nitsche immersed boundary : 
 	 Nitsche boundary 0 : 1000
@@ -14,12 +20,18 @@ Heat flux at the nitsche immersed boundary :
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity : 0
+L2 error velocity: 0
 L2 error temperature : 0.000255471
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : -0.973213
+	 boundary 0 : 0.00235245
+	 boundary 1 : 0.00235245
+	 boundary 2 : -7.74437e-11
+	 boundary 3 : -0.973213
 Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
+	 boundary 1 : 0
+	 boundary 2 : 0
+	 boundary 3 : 0
 Thermal energy in fluid : 1.48563
 Heat flux at the nitsche immersed boundary : 
 	 Nitsche boundary 0 : 0.973213
