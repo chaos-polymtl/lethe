@@ -9,54 +9,19 @@
 #include <solvers/cahn_hilliard_scratch_data.h>
 #include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_assemblers.h>
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the Cahn-Hilliard equation
+ * of the assemblers for the Cahn-Hilliard equations.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim Integer that denotes the number of spatial dimensions.
  *
  * @ingroup assemblers
  */
 template <int dim>
-class CahnHilliardAssemblerBase
-{
-public:
-  CahnHilliardAssemblerBase(
-    const std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
-  {}
-
-  /**
-   * @brief assemble_matrix Interface for the call to matrix assembly
-   * @param scratch_data Scratch data containing the information for Cahn-Hilliard
-   * equations.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix are copied to.
-   */
-
-  virtual void
-  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) = 0;
-
-
-  /**
-   * @brief assemble_rhs Interface for the call to rhs assembly
-   * @param scratch_data Scratch data containing the information for the Cahn-Hilliard
-   * equations.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for rhs assembly.
-   * @param copy_data Destination where the local_rhs and local_matrix are copied to.
-   */
-
-  virtual void
-  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) = 0;
-
-protected:
-  const std::shared_ptr<SimulationControl> simulation_control;
-};
+using CahnHilliardAssemblerBase =
+  PhysicsAssemblerBase<CahnHilliardScratchData<dim>, StabilizedMethodsCopyData>;
 
 
 /**
@@ -69,17 +34,15 @@ protected:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerCore(
-    const std::shared_ptr<SimulationControl> simulation_control,
-    const Parameters::CahnHilliard           cahn_hilliard_parameters,
-    const double                             epsilon)
-    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const Parameters::CahnHilliard            cahn_hilliard_parameters,
+    const double                              epsilon)
+    : simulation_control(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , epsilon(epsilon)
   {}
@@ -90,9 +53,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
+  assemble_matrix(const CahnHilliardScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData          &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -100,12 +62,13 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
+  assemble_rhs(const CahnHilliardScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData          &copy_data) override;
 
-  const Parameters::CahnHilliard cahn_hilliard_parameters;
-  // Epsilon is a coefficient which depends on the mesh size. The thickness of
-  // the interface between the two phases is proportionnal to espilon
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CahnHilliard           cahn_hilliard_parameters;
+  // Epsilon is a coefficient that depends on the mesh size. The thickness of
+  // the interface between the two phases is proportional to epsilon
   const double epsilon;
 };
 
@@ -129,7 +92,7 @@ public:
     const double                             epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
-    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , epsilon(epsilon)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
@@ -141,9 +104,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
+  assemble_matrix(const CahnHilliardScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData          &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -151,16 +113,19 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
+  assemble_rhs(const CahnHilliardScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData          &copy_data) override;
 
-  const Parameters::CahnHilliard cahn_hilliard_parameters;
-  // Epsilon is a coefficient which depends on the mesh size. The thickness of
-  // the interface between the two phases is proportionnal to espilon
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CahnHilliard           cahn_hilliard_parameters;
+
+  // Epsilon is a coefficient that depends on the mesh size. The thickness of
+  // the interface between the two phases is proportional to epsilon
   const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
+
 
 /**
  * @brief Class that assembles the boundary condition that allows a free angle of
@@ -180,7 +145,7 @@ public:
     const double                             epsilon,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_cahn_hilliard)
-    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
     , cahn_hilliard_parameters(cahn_hilliard_parameters)
     , epsilon(epsilon)
     , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
@@ -192,9 +157,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
-
+  assemble_matrix(const CahnHilliardScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData          &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -202,17 +166,19 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
+  assemble_rhs(const CahnHilliardScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData          &copy_data) override;
 
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CahnHilliard           cahn_hilliard_parameters;
 
-  const Parameters::CahnHilliard cahn_hilliard_parameters;
-  // Epsilon is a coefficient which depends on the mesh size. The thickness of
-  // the interface between the two phases is proportionnal to espilon
+  // Epsilon is a coefficient that depends on the mesh size. The thickness of
+  // the interface between the two phases is proportional to espilon
   const double epsilon;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_cahn_hilliard;
 };
+
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
@@ -230,7 +196,7 @@ class CahnHilliardAssemblerBDF : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerBDF(
     const std::shared_ptr<SimulationControl> simulation_control)
-    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    : simulation_control(simulation_control)
   {}
 
   /**
@@ -240,8 +206,8 @@ public:
    */
 
   virtual void
-  assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) override;
+  assemble_matrix(const CahnHilliardScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData          &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -249,8 +215,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) override;
+  assemble_rhs(const CahnHilliardScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData          &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 

@@ -2,23 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This code tests the multiphysics interface.
+ * @brief This code tests the VOF subequations interface.
  */
 
-// Deal.II includes
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/grid/tria.h>
-// Lethe
-#include <core/multiphysics.h>
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physical_properties_manager.h>
 #include <solvers/simulation_parameters.h>
+#include <solvers/vof_subequations_interface.h>
 
+#include <deal.II/distributed/tria.h>
 
-// Tests
+#include <deal.II/grid/tria.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
@@ -29,7 +27,7 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  std::shared_ptr<parallel::distributed::Triangulation<dim>> tria =
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> tria =
     std::make_shared<parallel::distributed::Triangulation<dim>>(
       mpi_communicator,
       typename Triangulation<dim>::MeshSmoothing(
@@ -45,8 +43,22 @@ test()
   solver_parameters.declare(dummy_handler, size_of_subsections);
   solver_parameters.parse(dummy_handler);
 
-  solver_parameters.multiphysics.fluid_dynamics = true;
-  solver_parameters.multiphysics.heat_transfer  = true;
+  // For VOF, since the number of fluids must be set to 2, but
+  // physical_properties is a private member of SimulationParameters
+  Parameters::PhysicalProperties physical_properties;
+  physical_properties.declare_parameters(dummy_handler);
+  physical_properties.parse_parameters(dummy_handler,
+                                       solver_parameters.dimensionality);
+  physical_properties.number_of_fluids = 2;
+  solver_parameters.physical_properties_manager.initialize(physical_properties);
+
+  // VOF is required when enabling surface_tension_force
+  solver_parameters.multiphysics.VOF = true;
+
+  // To test with the phase fraction gradient L2 projection and eventually
+  // the curvature
+  solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
+    true;
 
   std::shared_ptr<SimulationControl> simulation_control =
     std::make_shared<SimulationControlTransient>(
@@ -56,48 +68,29 @@ test()
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
+  // Phase fraction gradient L2 projection enabled (This is the only one
+  // implemented at the moment; other testing outputs should be added later.)
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
-    std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
+    std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_ptr =
+      std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,
+                                                   tria,
+                                                   simulation_control,
+                                                   pcout);
 
-    deallog << "Active physics (expected: fluid, heat)" << std::endl;
-    for (const auto &iphys : active_physics)
-      {
-        deallog << int(iphys) << std::endl;
-      }
-  }
+    VOFSubequationsInterface<dim> subequations(solver_parameters,
+                                               multiphysics_ptr.get(),
+                                               tria,
+                                               simulation_control,
+                                               pcout);
 
-  solver_parameters.multiphysics.heat_transfer = false;
-  {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
-    std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
+    std::vector<VOFSubequationsID> active_subequations =
+      subequations.get_active_subequations();
 
-    deallog << "Active physics (expected: fluid)" << std::endl;
-    for (const auto &iphys : active_physics)
-      {
-        deallog << int(iphys) << std::endl;
-      }
-  }
-
-  solver_parameters.multiphysics.fluid_dynamics = false;
-  {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
-    std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
-
-    deallog << "Active physics (expected: fluid, which should always be on)"
+    deallog << "Active subequations [expected: phase_gradient_projection (0)]"
             << std::endl;
-    for (const auto &iphys : active_physics)
+    for (const auto &subequation_id : active_subequations)
       {
-        deallog << int(iphys) << std::endl;
+        deallog << int(subequation_id) << std::endl;
       }
   }
 }

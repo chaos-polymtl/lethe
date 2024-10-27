@@ -1,31 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/bdf.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
 #include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_filter.h>
-#include <solvers/vof_scratch_data.h>
 
-#include <deal.II/base/work_stream.h>
-
-#include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
-
-#include <deal.II/fe/mapping.h>
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
-#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 #include <cmath>
 
@@ -152,7 +132,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
     }
   else
     {
-      // Check if the post processed variable needs to be calculated with the
+      // Check if the postprocessed variable needs to be calculated with the
       // average velocity profile or the fluid solution.
       if (this->simulation_parameters.initial_condition->type ==
             Parameters::InitialConditionType::average_velocity_profile &&
@@ -353,12 +333,15 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
         projected_phase_fraction_gradient_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
-      std::vector<std::string> solution_names(dim, "phase_fraction_gradient");
+      std::vector<std::string> solution_names_new(dim,
+                                                  "phase_fraction_gradient");
 
       data_out.add_data_vector(
-        projected_phase_fraction_gradient_dof_handler,
-        present_projected_phase_fraction_gradient_solution,
-        solution_names,
+        *this->subequations->get_dof_handler(
+          VOFSubequationsID::phase_gradient_projection),
+        *this->subequations->get_solution(
+          VOFSubequationsID::phase_gradient_projection),
+        solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
 
       data_out.add_data_vector(curvature_dof_handler,
@@ -1134,6 +1117,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
+  TimerOutput::Scope t(this->computing_timer, "Modify solution");
+
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Interface sharpening
   if (vof_parameters.sharpening.enable)
@@ -1149,9 +1134,9 @@ VolumeOfFluid<dim>::modify_solution()
     }
   // Apply filter to phase fraction
   apply_phase_filter();
+  this->subequations->solve();
   if (vof_parameters.surface_tension_force.enable)
     {
-      find_projected_phase_fraction_gradient();
       find_projected_interface_curvature();
     }
 }
@@ -1390,18 +1375,10 @@ VolumeOfFluid<dim>::smooth_phase_fraction()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::find_projected_phase_fraction_gradient()
-{
-  assemble_projected_phase_fraction_gradient_matrix_and_rhs(filtered_solution);
-  solve_projected_phase_fraction_gradient();
-}
-
-template <int dim>
-void
 VolumeOfFluid<dim>::find_projected_interface_curvature()
 {
-  assemble_curvature_matrix_and_rhs(
-    present_projected_phase_fraction_gradient_solution);
+  assemble_curvature_matrix_and_rhs(*this->subequations->get_solution(
+    VOFSubequationsID::phase_gradient_projection));
   solve_curvature();
 }
 
@@ -1553,7 +1530,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver (phase fraction gradient) took : "
+      this->pcout << "  -Iterative solver (phase fraction) took : "
                   << solver_control.last_step() << " steps " << std::endl;
     }
 
@@ -1564,226 +1541,25 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
-  GlobalVectorType &solution)
-{
-  // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
-  FEValues<dim> fe_values_phase_fraction(*this->mapping,
-                                         *this->fe,
-                                         *this->cell_quadrature,
-                                         update_values | update_gradients);
-
-  FEValues<dim> fe_values_projected_phase_fraction_gradient(
-    *this->mapping,
-    *this->fe_projected_phase_fraction_gradient,
-    *this->cell_quadrature,
-    update_values | update_JxW_values | update_gradients);
-
-
-  // const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int dofs_per_cell =
-    this->fe_projected_phase_fraction_gradient->dofs_per_cell;
-
-  const unsigned int n_q_points = this->cell_quadrature->size();
-  FullMatrix<double> local_matrix_projected_phase_fraction_gradient(
-    dofs_per_cell, dofs_per_cell);
-  Vector<double> local_rhs_projected_phase_fraction_gradient(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  std::vector<Tensor<1, dim>> phi_projected_phase_fraction_gradient(
-    dofs_per_cell);
-  std::vector<Tensor<2, dim>> phi_projected_phase_fraction_gradient_gradient(
-    dofs_per_cell);
-
-  const FEValuesExtractors::Vector pfg(0);
-
-  std::vector<Tensor<1, dim>> phase_gradient_values(n_q_points);
-  std::vector<Tensor<1, dim>> projected_phase_fraction_gradient_values(
-    n_q_points);
-  std::vector<Tensor<2, dim>> projected_phase_fraction_gradient_gradient_values(
-    n_q_points);
-
-  // Reinitialize system matrix and rhs for the pfg
-  system_rhs_projected_phase_fraction_gradient    = 0;
-  system_matrix_projected_phase_fraction_gradient = 0;
-
-  double h;
-
-  const double phase_fraction_gradient_diffusion_factor =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
-
-  for (const auto &projected_phase_fraction_gradient_cell :
-       this->projected_phase_fraction_gradient_dof_handler
-         .active_cell_iterators())
-    {
-      if (projected_phase_fraction_gradient_cell->is_locally_owned())
-        {
-          // Gather the active cell iterator related to the VOF phase fraction
-          typename DoFHandler<dim>::active_cell_iterator cell(
-            &(*this->triangulation),
-            projected_phase_fraction_gradient_cell->level(),
-            projected_phase_fraction_gradient_cell->index(),
-            &this->dof_handler);
-
-          fe_values_phase_fraction.reinit(cell);
-          fe_values_projected_phase_fraction_gradient.reinit(
-            projected_phase_fraction_gradient_cell);
-
-          auto &fe_filtered_phase_fraction =
-            fe_values_projected_phase_fraction_gradient.get_fe();
-
-          // Compute cell diameter
-          double cell_measure = compute_cell_measure_with_JxW(
-            fe_values_projected_phase_fraction_gradient.get_JxW_values());
-          h = compute_cell_diameter<dim>(cell_measure,
-                                         fe_filtered_phase_fraction.degree);
-
-          local_matrix_projected_phase_fraction_gradient = 0;
-          local_rhs_projected_phase_fraction_gradient    = 0;
-
-          // Get phase fraction values, pfg values and gradients
-          fe_values_phase_fraction.get_function_gradients(
-            solution, phase_gradient_values);
-
-          fe_values_projected_phase_fraction_gradient[pfg].get_function_values(
-            present_projected_phase_fraction_gradient_solution,
-            projected_phase_fraction_gradient_values);
-
-          fe_values_projected_phase_fraction_gradient[pfg]
-            .get_function_gradients(
-              present_projected_phase_fraction_gradient_solution,
-              projected_phase_fraction_gradient_gradient_values);
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  phi_projected_phase_fraction_gradient[k] =
-                    fe_values_projected_phase_fraction_gradient[pfg].value(k,
-                                                                           q);
-                  phi_projected_phase_fraction_gradient_gradient[k] =
-                    fe_values_projected_phase_fraction_gradient[pfg].gradient(
-                      k, q);
-                }
-
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      local_matrix_projected_phase_fraction_gradient(i, j) +=
-                        (phi_projected_phase_fraction_gradient[j] *
-                           phi_projected_phase_fraction_gradient[i] +
-                         h * h * phase_fraction_gradient_diffusion_factor *
-                           scalar_product(
-                             phi_projected_phase_fraction_gradient_gradient[i],
-                             phi_projected_phase_fraction_gradient_gradient
-                               [j])) *
-                        fe_values_projected_phase_fraction_gradient.JxW(q);
-                    }
-
-                  // rhs
-                  local_rhs_projected_phase_fraction_gradient(i) +=
-                    phi_projected_phase_fraction_gradient[i] *
-                    phase_gradient_values[q] *
-                    fe_values_projected_phase_fraction_gradient.JxW(q);
-                }
-            }
-
-          projected_phase_fraction_gradient_cell->get_dof_indices(
-            local_dof_indices);
-          projected_phase_fraction_gradient_constraints
-            .distribute_local_to_global(
-              local_matrix_projected_phase_fraction_gradient,
-              local_rhs_projected_phase_fraction_gradient,
-              local_dof_indices,
-              system_matrix_projected_phase_fraction_gradient,
-              system_rhs_projected_phase_fraction_gradient);
-        }
-    }
-  system_matrix_projected_phase_fraction_gradient.compress(
-    VectorOperation::add);
-  system_rhs_projected_phase_fraction_gradient.compress(VectorOperation::add);
-}
-
-
-template <int dim>
-void
-VolumeOfFluid<dim>::solve_projected_phase_fraction_gradient()
-{
-  // Solve the L2 projection system
-  const double linear_solver_tolerance = 1e-13;
-
-  GlobalVectorType
-    completely_distributed_projected_phase_fraction_gradient_solution(
-      this->locally_owned_dofs_projected_phase_fraction_gradient,
-      triangulation->get_communicator());
-
-  completely_distributed_projected_phase_fraction_gradient_solution =
-    present_projected_phase_fraction_gradient_solution;
-
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-
-  TrilinosWrappers::SolverCG solver(solver_control);
-
-  const double ilu_fill =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
-      .ilu_precond_fill;
-  const double ilu_atol =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
-      .ilu_precond_atol;
-  const double ilu_rtol =
-    this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
-      .ilu_precond_rtol;
-
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
-
-  ilu_preconditioner->initialize(
-    system_matrix_projected_phase_fraction_gradient, preconditionerOptions);
-  solver.solve(
-    system_matrix_projected_phase_fraction_gradient,
-    completely_distributed_projected_phase_fraction_gradient_solution,
-    system_rhs_projected_phase_fraction_gradient,
-    *ilu_preconditioner);
-
-  if (this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Iterative solver (phase fraction gradient) took : "
-                  << solver_control.last_step() << " steps " << std::endl;
-    }
-
-  projected_phase_fraction_gradient_constraints.distribute(
-    completely_distributed_projected_phase_fraction_gradient_solution);
-  present_projected_phase_fraction_gradient_solution =
-    completely_distributed_projected_phase_fraction_gradient_solution;
-}
-
-template <int dim>
-void
 VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   GlobalVectorType &present_projected_phase_fraction_gradient_solution)
 {
   // Get fe values of phase fraction gradient (pfg) and curvature
+  const DoFHandler<dim> *dof_handler_phase_gradient_projection =
+    this->subequations->get_dof_handler(
+      VOFSubequationsID::phase_gradient_projection);
+
+  FEValues<dim> fe_values_projected_phase_fraction_gradient(
+    *this->mapping,
+    dof_handler_phase_gradient_projection->get_fe(),
+    *this->cell_quadrature,
+    update_values);
+
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
                                     *this->cell_quadrature,
                                     update_values | update_JxW_values |
                                       update_gradients);
-
-  FEValues<dim> fe_values_projected_phase_fraction_gradient(
-    *this->mapping,
-    *this->fe_projected_phase_fraction_gradient,
-    *this->cell_quadrature,
-    update_values);
 
   const unsigned int dofs_per_cell = this->fe_curvature->dofs_per_cell;
 
@@ -1823,7 +1599,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
               &(*this->triangulation),
               curvature_cell->level(),
               curvature_cell->index(),
-              &this->projected_phase_fraction_gradient_dof_handler);
+              dof_handler_phase_gradient_projection);
 
           fe_values_projected_phase_fraction_gradient.reinit(
             projected_phase_fraction_gradient_cell);
@@ -1998,10 +1774,10 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   apply_phase_filter();
 
   // PFG and curvature
+  this->subequations->solve(true);
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
     {
-      find_projected_phase_fraction_gradient();
       find_projected_interface_curvature();
     }
 }
@@ -2152,64 +1928,8 @@ VolumeOfFluid<dim>::setup_dofs()
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
     {
-      projected_phase_fraction_gradient_dof_handler.distribute_dofs(
-        *fe_projected_phase_fraction_gradient);
-
-      locally_owned_dofs_projected_phase_fraction_gradient =
-        projected_phase_fraction_gradient_dof_handler.locally_owned_dofs();
-
-      locally_relevant_dofs_projected_phase_fraction_gradient =
-        DoFTools::extract_locally_relevant_dofs(
-          projected_phase_fraction_gradient_dof_handler);
-
-      projected_phase_fraction_gradient_constraints.clear();
-      projected_phase_fraction_gradient_constraints.reinit(
-        locally_relevant_dofs_projected_phase_fraction_gradient);
-      DoFTools::make_hanging_node_constraints(
-        projected_phase_fraction_gradient_dof_handler,
-        projected_phase_fraction_gradient_constraints);
-      projected_phase_fraction_gradient_constraints.close();
-
-      nodal_projected_phase_fraction_gradient_relevant.reinit(
-        locally_owned_dofs_projected_phase_fraction_gradient,
-        locally_relevant_dofs_projected_phase_fraction_gradient,
-        mpi_communicator);
-
-      nodal_projected_phase_fraction_gradient_owned.reinit(
-        locally_owned_dofs_projected_phase_fraction_gradient, mpi_communicator);
-
-
-
-      DynamicSparsityPattern dsp_projected_phase_fraction_gradient(
-        locally_relevant_dofs_projected_phase_fraction_gradient);
-      DoFTools::make_sparsity_pattern(
-        projected_phase_fraction_gradient_dof_handler,
-        dsp_projected_phase_fraction_gradient,
-        projected_phase_fraction_gradient_constraints,
-        false);
-
-      SparsityTools::distribute_sparsity_pattern(
-        dsp_projected_phase_fraction_gradient,
-        locally_owned_dofs_projected_phase_fraction_gradient,
-        mpi_communicator,
-        locally_relevant_dofs_projected_phase_fraction_gradient);
-
-
-      // Initialization of phase fraction gradient matrix and rhs for the
-      // calculation surface tension force
-      system_matrix_projected_phase_fraction_gradient.reinit(
-        locally_owned_dofs_projected_phase_fraction_gradient,
-        locally_owned_dofs_projected_phase_fraction_gradient,
-        dsp_projected_phase_fraction_gradient,
-        mpi_communicator);
-
-      system_rhs_projected_phase_fraction_gradient.reinit(
-        locally_owned_dofs_projected_phase_fraction_gradient, mpi_communicator);
-
-      present_projected_phase_fraction_gradient_solution.reinit(
-        locally_owned_dofs_projected_phase_fraction_gradient,
-        locally_relevant_dofs_projected_phase_fraction_gradient,
-        mpi_communicator);
+      // Setup dofs for phase gradient projection
+      this->subequations->setup_dofs();
 
       // Curvature
       curvature_dof_handler.distribute_dofs(*fe_curvature);
@@ -2316,7 +2036,7 @@ VolumeOfFluid<dim>::setup_dofs()
   // assemble_L2_projection_interface_sharpening for assembling the system for
   // sharpening the interface, while complete_system_matrix_phase_fraction is
   // used in update_solution_and_constraints to limit the phase fraction
-  // values between 0 and 1. Accoring to step-41, to limit the phase fractions
+  // values between 0 and 1. According to step-41, to limit the phase fractions
   // we compute the Lagrange multiplier as the residual of the original linear
   // system, given via the variables complete_system_matrix_phase_fraction and
   // complete_system_rhs_phase_fraction
@@ -2564,9 +2284,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     false,
     simulation_parameters.linear_solver.at(PhysicsID::VOF).max_krylov_vectors);
 
-
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
-
 
   solver.solve(this->system_matrix,
                completely_distributed_solution,
@@ -2593,7 +2311,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 {
   // This is a penalty parameter for limiting the phase fraction
   // in the range of [0,1]. According to step 41, this parameter depends
-  // on the problem itself and needs to be chosen large enough (for example
+  // on the problem itself and needs to be chosen large enough (for example,
   // there is no convergence using the penalty_parameter = 1)
   const double penalty_parameter = 100;
 

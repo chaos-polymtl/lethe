@@ -7,11 +7,9 @@
 #include <solvers/copy_data.h>
 #include <solvers/vof_assemblers.h>
 
-
-
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -43,7 +41,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
 
-      // Store JxW in local variable for faster access;
+      // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
       // Define tolerance to avoid division by zero
@@ -118,7 +116,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -211,7 +209,7 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -268,7 +266,7 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -321,7 +319,7 @@ template class VOFAssemblerBDF<3>;
 template <int dim>
 void
 VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
-  VOFScratchData<dim>       &scratch_data,
+  const VOFScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -392,7 +390,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
 template <int dim>
 void
 VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
-  VOFScratchData<dim>       &scratch_data,
+  const VOFScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature information
@@ -457,3 +455,83 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
 
 template class VOFAssemblerDCDDStabilization<2>;
 template class VOFAssemblerDCDDStabilization<3>;
+
+template <int dim, typename ScratchDataType>
+void
+VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
+  const ScratchDataType     &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  const double diffusion_factor = this->vof_parameters.surface_tension_force
+                                    .phase_fraction_gradient_diffusion_factor;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // Assemble local matrix
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields for faster access
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_i      = scratch_data.phi[q][i];
+          const auto grad_phi_i = scratch_data.grad_phi[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto phi_j      = scratch_data.phi[q][j];
+              const auto grad_phi_j = scratch_data.grad_phi[q][j];
+
+              local_matrix(i, j) +=
+                (phi_i * phi_j + h * h * diffusion_factor *
+                                   scalar_product(grad_phi_i, grad_phi_j)) *
+                JxW;
+            }
+        }
+    }
+}
+
+template <int dim, typename ScratchDataType>
+void
+VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_rhs(
+  const ScratchDataType     &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Assemble local matrix
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields for faster access
+      const Tensor<1, dim> filtered_vof_phase_gradient =
+        scratch_data.present_filtered_vof_phase_gradients[q];
+      const double JxW = JxW_vec[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_i = scratch_data.phi[q][i];
+          local_rhs(i) += phi_i * filtered_vof_phase_gradient * JxW;
+        }
+    }
+}
+
+template class VOFAssemblerPhaseGradientProjection<
+  2,
+  VOFPhaseGradientProjectionScratchData<2>>;
+template class VOFAssemblerPhaseGradientProjection<
+  3,
+  VOFPhaseGradientProjectionScratchData<3>>;

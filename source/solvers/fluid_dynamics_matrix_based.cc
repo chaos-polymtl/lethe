@@ -594,6 +594,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
               cell->level(),
               cell->index(),
               projected_phase_fraction_gradient_dof_handler);
+
           scratch_data.reinit_projected_phase_fraction_gradient(
             projected_phase_fraction_gradient_cell,
             *this->multiphysics

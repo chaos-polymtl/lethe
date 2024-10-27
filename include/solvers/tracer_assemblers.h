@@ -8,6 +8,7 @@
 
 #include <solvers/copy_data.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/physics_assemblers.h>
 #include <solvers/tracer_scratch_data.h>
 
 /**
@@ -19,36 +20,8 @@
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerBase
-{
-public:
-  /**
-   * @brief Interface for the call to matrix assembly.
-   * @param[in] scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
-   * should be copied
-   */
-
-  virtual void
-  assemble_matrix(const TracerScratchData<dim> &scratch_data,
-                  StabilizedMethodsCopyData    &copy_data) = 0;
-
-
-  /**
-   * @brief Interface for the call to rhs assembly.
-   * @param[in] scratch_data Scratch data containing the Tracer information.
-   * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
-   * should be copied
-   */
-
-  virtual void
-  assemble_rhs(const TracerScratchData<dim> &scratch_data,
-               StabilizedMethodsCopyData    &copy_data) = 0;
-};
+using TracerAssemblerBase =
+  PhysicsAssemblerBase<TracerScratchData<dim>, StabilizedMethodsCopyData>;
 
 
 /**
@@ -61,13 +34,12 @@ public:
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class TracerAssemblerCore : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerCore(std::shared_ptr<SimulationControl> simulation_control)
+  TracerAssemblerCore(
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -80,7 +52,6 @@ public:
   assemble_matrix(const TracerScratchData<dim> &scratch_data,
                   StabilizedMethodsCopyData    &copy_data) override;
 
-
   /**
    * @brief Assembles the rhs
    * @param[in] scratch_data (see base class)
@@ -90,9 +61,8 @@ public:
   assemble_rhs(const TracerScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData    &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
-
 
 
 /**
@@ -101,10 +71,9 @@ public:
  * \f$\mathbf{u} \cdot \nabla T - D \nabla^2 =0 \f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
+ *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class TracerAssemblerDGCore : public TracerAssemblerBase<dim>
 {
@@ -147,7 +116,8 @@ template <int dim>
 class TracerAssemblerBDF : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control)
+  TracerAssemblerBDF(
+    const std::shared_ptr<SimulationControl> &simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -171,7 +141,7 @@ public:
                StabilizedMethodsCopyData    &copy_data) override;
 
   // The simulation control is a necessary part of the transient terms.
-  std::shared_ptr<SimulationControl> simulation_control;
+  const std::shared_ptr<SimulationControl> simulation_control;
 };
 
 

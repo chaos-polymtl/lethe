@@ -53,8 +53,9 @@ template <int dim>
 class VANSAssemblerCoreModelB : public NavierStokesAssemblerBase<dim>
 {
 public:
-  VANSAssemblerCoreModelB(std::shared_ptr<SimulationControl> simulation_control,
-                          Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerCoreModelB(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const Parameters::CFDDEM                 &cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -65,7 +66,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -74,13 +75,13 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::CFDDEM                 cfd_dem;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CFDDEM                 cfd_dem;
 };
 
 /**
@@ -94,8 +95,9 @@ template <int dim>
 class VANSAssemblerCoreModelA : public NavierStokesAssemblerBase<dim>
 {
 public:
-  VANSAssemblerCoreModelA(std::shared_ptr<SimulationControl> simulation_control,
-                          Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerCoreModelA(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const Parameters::CFDDEM                 &cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -106,7 +108,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -115,13 +117,13 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-  Parameters::CFDDEM                 cfd_dem;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CFDDEM                 cfd_dem;
 };
 
 /**
@@ -140,8 +142,8 @@ template <int dim>
 class VANSAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  VANSAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
-                   Parameters::CFDDEM                 cfd_dem)
+  VANSAssemblerBDF(const std::shared_ptr<SimulationControl> &simulation_control,
+                   const Parameters::CFDDEM                 &cfd_dem)
     : simulation_control(simulation_control)
     , cfd_dem(cfd_dem)
   {}
@@ -152,7 +154,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -161,12 +163,11 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
-
-  Parameters::CFDDEM cfd_dem;
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const Parameters::CFDDEM                 cfd_dem;
 };
 
 
@@ -188,7 +189,7 @@ template <int dim>
 class VANSAssemblerDiFelice : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerDiFelice(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerDiFelice(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -200,7 +201,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -224,7 +226,7 @@ template <int dim>
 class VANSAssemblerRong : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerRong(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerRong(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -236,7 +238,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -256,7 +259,7 @@ template <int dim>
 class VANSAssemblerDallavalle : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerDallavalle(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerDallavalle(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -268,7 +271,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -304,7 +308,7 @@ template <int dim>
 class VANSAssemblerKochHill : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerKochHill(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerKochHill(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -316,7 +320,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::CFDDEM cfd_dem;
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -345,7 +349,7 @@ template <int dim>
 class VANSAssemblerBeetstra : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerBeetstra(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerBeetstra(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -357,7 +361,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -394,7 +399,7 @@ template <int dim>
 class VANSAssemblerGidaspow : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerGidaspow(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerGidaspow(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -406,7 +411,8 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-  Parameters::CFDDEM cfd_dem;
+
+  const Parameters::CFDDEM cfd_dem;
 };
 
 
@@ -605,7 +611,7 @@ template <int dim>
 class VANSAssemblerPressureForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerPressureForce(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerPressureForce(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -618,7 +624,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::CFDDEM cfd_dem;
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -634,7 +640,7 @@ template <int dim>
 class VANSAssemblerShearForce : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerShearForce(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerShearForce(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
   {}
 
@@ -647,7 +653,7 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::CFDDEM cfd_dem;
+  const Parameters::CFDDEM cfd_dem;
 };
 
 /**
@@ -663,7 +669,7 @@ template <int dim>
 class VANSAssemblerFPI : public NavierStokesAssemblerBase<dim>
 {
 public:
-  VANSAssemblerFPI(Parameters::CFDDEM cfd_dem)
+  VANSAssemblerFPI(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
 
   {}
@@ -674,7 +680,7 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
@@ -683,10 +689,10 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs(NavierStokesScratchData<dim>         &scratch_data,
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  Parameters::CFDDEM cfd_dem;
+  const Parameters::CFDDEM cfd_dem;
 };
 
 inline double

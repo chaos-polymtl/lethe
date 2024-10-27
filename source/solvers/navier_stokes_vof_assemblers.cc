@@ -12,7 +12,7 @@
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
@@ -207,7 +207,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
@@ -354,7 +354,7 @@ template class GLSNavierStokesVOFAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -414,7 +414,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -471,7 +471,7 @@ template class GLSNavierStokesVOFAssemblerBDF<3>;
 template <int dim>
 void
 PhaseChangeDarcyVOFAssembler<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -548,7 +548,7 @@ PhaseChangeDarcyVOFAssembler<dim>::assemble_matrix(
 template <int dim>
 void
 PhaseChangeDarcyVOFAssembler<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -620,14 +620,14 @@ template class PhaseChangeDarcyVOFAssembler<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerSTF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> & /*scratch_data*/,
+  const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
 
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -690,14 +690,14 @@ template class GLSNavierStokesVOFAssemblerSTF<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> & /*scratch_data*/,
+  const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
 
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Densities of phases
@@ -779,14 +779,14 @@ template class GLSNavierStokesVOFAssemblerMarangoni<3>;
 template <int dim>
 void
 NavierStokesVOFAssemblerEvaporation<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> & /*scratch_data*/,
+  const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
 
 template <int dim>
 void
 NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature information
@@ -855,7 +855,7 @@ template class NavierStokesVOFAssemblerEvaporation<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
@@ -1058,7 +1058,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim>         &scratch_data,
+  const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   const std::vector<double> &viscosity_for_stabilization_vector =
