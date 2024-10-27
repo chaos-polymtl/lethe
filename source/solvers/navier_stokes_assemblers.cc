@@ -1954,7 +1954,8 @@ PressureBoundaryCondition<dim>::assemble_rhs(
           types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
 
           NavierStokesPressureFunctionDefined<dim> function_p(
-            &pressure_boundary_conditions.pressure_functions.at(boundary_id)
+            &pressure_boundary_conditions.navier_stokes_functions
+               .at(boundary_id)
                ->p);
           // Check if the face is part of the boundary that as a
           // pressure BC.

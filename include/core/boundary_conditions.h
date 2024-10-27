@@ -24,6 +24,28 @@ DeclException1(NavierStokesBoundaryDuplicated,
                << "Fluid dynamics boundary id : " << arg1
                << " has already been declared as a boundary condition");
 
+DeclException1(HeatTransferBoundaryDuplicated,
+               types::boundary_id,
+               << "Heat transfer boundary id : " << arg1
+               << " has already been declared as a boundary condition");
+
+DeclException1(TracerBoundaryDuplicated,
+               types::boundary_id,
+               << "Tracer boundary id : " << arg1
+               << " has already been declared as a boundary condition");
+
+DeclException1(CahnHilliardBoundaryDuplicated,
+               types::boundary_id,
+               << "Cahn Hilliard boundary id : " << arg1
+               << " has already been declared as a boundary condition");
+
+
+DeclException1(VOFBoundaryDuplicated,
+               types::boundary_id,
+               << "VOF boundary id : " << arg1
+               << " has already been declared as a boundary condition");
+
+
 namespace BoundaryConditions
 {
 
@@ -108,6 +130,9 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
 
+    // Pressure
+    Functions::ParsedFunction<dim> p;
+
     // Point for the center of rotation
     Point<dim> center_of_rotation;
   };
@@ -127,22 +152,6 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief This class manages the functions associated with function-type  pressure boundary conditions
-   * for the Navier-Stokes equations
-   *
-   */
-  template <int dim>
-  class NSPressureBoundaryFunctions
-  {
-  public:
-    // Velocity components
-    Functions::ParsedFunction<dim> p;
-
-    // Point for the center of rotation
-    Point<dim> center_of_rotation;
-  };
-
-  /**
    * @brief This class manages the boundary conditions for Navier-Stokes solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
@@ -151,12 +160,9 @@ namespace BoundaryConditions
   class NSBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    // Functions for (u,v,w) for all boundaries
+    // Functions for (u,v,w,p) for all boundaries
     std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
       navier_stokes_functions;
-    std::map<types::boundary_id,
-             std::shared_ptr<NSPressureBoundaryFunctions<dim>>>
-      pressure_functions;
 
     void
     parse_boundary(ParameterHandler &prm);
@@ -245,24 +251,23 @@ namespace BoundaryConditions
 
     // Create a dummy NSBoundaryFunctions object to declare the appropriate
     // parameters for this boundary condition.
-    NSBoundaryFunctions<dim>         temporary_velocity_function;
-    NSPressureBoundaryFunctions<dim> temporary_pressure_function;
+    NSBoundaryFunctions<dim> temporary_fluid_dynamics_functions;
 
 
     prm.enter_subsection("u");
-    temporary_velocity_function.u.declare_parameters(prm);
+    temporary_fluid_dynamics_functions.u.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("v");
-    temporary_velocity_function.v.declare_parameters(prm);
+    temporary_fluid_dynamics_functions.v.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("w");
-    temporary_velocity_function.w.declare_parameters(prm);
+    temporary_fluid_dynamics_functions.w.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("p");
-    temporary_pressure_function.p.declare_parameters(prm);
+    temporary_fluid_dynamics_functions.p.declare_parameters(prm);
     prm.leave_subsection();
 
     // Center of rotation of the boundary condition for torque calculation
@@ -325,6 +330,10 @@ namespace BoundaryConditions
     navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
     prm.leave_subsection();
 
+    prm.enter_subsection("p");
+    navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
+    prm.leave_subsection();
+
     prm.enter_subsection("center of rotation");
     navier_stokes_functions[boundary_id]->center_of_rotation[0] =
       prm.get_double("x");
@@ -336,26 +345,7 @@ namespace BoundaryConditions
         prm.get_double("z");
     prm.leave_subsection();
 
-    // Allocate the pressure boundary condition object
-    pressure_functions[boundary_id] =
-      std::make_shared<NSPressureBoundaryFunctions<dim>>();
-
-    prm.enter_subsection("p");
-    pressure_functions[boundary_id]->p.parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("center of rotation");
-    pressure_functions[boundary_id]->center_of_rotation[0] =
-      prm.get_double("x");
-    pressure_functions[boundary_id]->center_of_rotation[1] =
-      prm.get_double("y");
-    if (dim == 3)
-      pressure_functions[boundary_id]->center_of_rotation[2] =
-        prm.get_double("z");
-    prm.leave_subsection();
-
     // Establish the type of boundary condition
-
     const std::string op = prm.get("type");
     if (op == "none")
       this->type[boundary_id] = BoundaryType::none;
@@ -633,10 +623,14 @@ namespace BoundaryConditions
     Assert(
       prm.get_integer("id") >= 0,
       ExcMessage(
-        "A boundary id has not been set for one of the heat transfer boundary condition. Please ensure that the id is set for every boundary condition."));
+        "An invalid boundary id has been given for a heat transfer boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
-    const std::string  op          = prm.get("type");
+
+    Assert(this->type.find(boundary_id) == this->type.end(),
+           HeatTransferBoundaryDuplicated(boundary_id));
+
+    const std::string op = prm.get("type");
     if (op == "noflux")
       {
         this->type[boundary_id] = BoundaryType::noflux;
@@ -824,11 +818,14 @@ namespace BoundaryConditions
     Assert(
       prm.get_integer("id") >= 0,
       ExcMessage(
-        "A boundary id has not been set for one of the tracer boundary condition. Please ensure that the id is set for every boundary condition."));
-
+        "An invalid boundary id has been given for a tracer boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
-    // Allocate function for tracer even if it is not necessary.
+
+    Assert(this->type.find(boundary_id) == this->type.end(),
+           TracerBoundaryDuplicated(boundary_id));
+
+    // Allocate function for tracer
     tracer[boundary_id]  = std::make_shared<Functions::ParsedFunction<dim>>();
     const std::string op = prm.get("type");
     if (op == "dirichlet")
@@ -999,10 +996,14 @@ namespace BoundaryConditions
     Assert(
       prm.get_integer("id") >= 0,
       ExcMessage(
-        "A boundary id has not been set for one of the Cahn-Hilliard boundary condition. Please ensure that the id is set for every boundary condition."));
+        "An invalid boundary id has been given for a Cahn Hilliard boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
-    const std::string  op          = prm.get("type");
+
+    Assert(this->type.find(boundary_id) == this->type.end(),
+           CahnHilliardBoundaryDuplicated(boundary_id));
+
+    const std::string op = prm.get("type");
     if (op == "noflux")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
@@ -1168,10 +1169,14 @@ namespace BoundaryConditions
     Assert(
       prm.get_integer("id") >= 0,
       ExcMessage(
-        "A boundary id has not been set for one of the VOF boundary condition. Please ensure that the id is set for every boundary condition."));
+        "An invalid boundary id has been given for a VOF boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
-    const std::string  op          = prm.get("type");
+
+    Assert(this->type.find(boundary_id) == this->type.end(),
+           VOFBoundaryDuplicated(boundary_id));
+
+    const std::string op = prm.get("type");
     if (op == "none")
       {
         this->type[boundary_id] = BoundaryType::none;

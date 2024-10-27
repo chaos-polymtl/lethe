@@ -1995,15 +1995,8 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
             ->w.set_time(time);
-          this->simulation_parameters.boundary_conditions.pressure_functions
-            .at(id)
-            ->p.set_time(time);
-        }
-
-      if (type == BoundaryConditions::BoundaryType::pressure)
-        {
-          this->simulation_parameters.boundary_conditions.pressure_functions
-            .at(id)
+          this->simulation_parameters.boundary_conditions
+            .navier_stokes_functions.at(id)
             ->p.set_time(time);
         }
     }
