@@ -86,7 +86,7 @@ Inheritance diagram for TracerAssemblerDGCore&lt; dim &gt;:</div>
 <div class="center"><img src="classTracerAssemblerDGCore__inherit__graph.png" border="0" usemap="#aTracerAssemblerDGCore_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aTracerAssemblerDGCore_3_01dim_01_4_inherit__map" id="aTracerAssemblerDGCore_3_01dim_01_4_inherit__map">
 <area shape="rect" title="Class that assembles the core (cells) of the Tracer equation for DG elements. This class assembles th..." alt="" coords="5,95,185,136"/>
-<area shape="rect" href="classTracerAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="14,5,177,47"/>
+<area shape="rect" href="classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="14,5,177,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -98,6 +98,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9d39b9cedb5816a5117d623634733d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39031c686ee4a6487ade2a582a6afd1f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerDGCore.html#a39031c686ee4a6487ade2a582a6afd1f">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
 <tr class="separator:a39031c686ee4a6487ade2a582a6afd1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classPhysicsAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</a></td></tr>
+<tr class="memitem:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#a93134cecb4a4408c88b596b99c18886d">assemble_matrix</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -111,7 +116,7 @@ class TracerAssemblerDGCore&lt; dim &gt;</h3>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00109">109</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00078">78</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6a26b1e01b7120d9264a436ad4ceb35c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6a26b1e01b7120d9264a436ad4ceb35c">&#9670;&nbsp;</a></span>TracerAssemblerDGCore()</h2>
@@ -138,7 +143,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00112">112</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00081">81</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -188,11 +193,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classTracerAssemblerBase.html#ae1d2413b16d14aae43702ef4c7000d89">TracerAssemblerBase&lt; dim &gt;</a>.</p>
-
 <p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00248">248</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00566">TracerScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00526">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00520">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00522">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00563">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00511">TracerScratchData&lt; dim &gt;::tracer_diffusivity</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00576">TracerScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00567">TracerScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00527">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00521">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00523">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00564">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00512">TracerScratchData&lt; dim &gt;::tracer_diffusivity</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00577">TracerScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -241,11 +244,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classTracerAssemblerBase.html#a0207abdca7055bf6a3490265bf63ad51">TracerAssemblerBase&lt; dim &gt;</a>.</p>
-
 <p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00297">297</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00566">TracerScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00526">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00520">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00522">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00563">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00560">TracerScratchData&lt; dim &gt;::source</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00511">TracerScratchData&lt; dim &gt;::tracer_diffusivity</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00534">TracerScratchData&lt; dim &gt;::tracer_gradients</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00533">TracerScratchData&lt; dim &gt;::tracer_values</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00576">TracerScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="tracer__scratch__data_8h_source.html#l00567">TracerScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00527">TracerScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00521">TracerScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00523">TracerScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00564">TracerScratchData&lt; dim &gt;::phi</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00561">TracerScratchData&lt; dim &gt;::source</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00512">TracerScratchData&lt; dim &gt;::tracer_diffusivity</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00535">TracerScratchData&lt; dim &gt;::tracer_gradients</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00534">TracerScratchData&lt; dim &gt;::tracer_values</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="tracer__scratch__data_8h_source.html#l00577">TracerScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>

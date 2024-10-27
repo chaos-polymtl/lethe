@@ -88,7 +88,7 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classVOFScratchData.html#a01178f2337f8e0e13884942c8d93731b">   10</a></span>&#160;<a class="code" href="classVOFScratchData.html#a01178f2337f8e0e13884942c8d93731b">VOFScratchData&lt;dim&gt;::allocate</a>()</div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classVOFScratchData.html#adb4ae0739b0cfb8127a487d2af926ef1">   10</a></span>&#160;<a class="code" href="classVOFScratchData.html#adb4ae0739b0cfb8127a487d2af926ef1">VOFScratchData&lt;dim&gt;::allocate</a>()</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="comment">// Initialize size of arrays</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  this-&gt;n_q_points = fe_values_vof.get_quadrature().size();</div>
@@ -135,10 +135,48 @@ $(function() {
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFScratchData.html">VOFScratchData&lt;2&gt;</a>;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFScratchData.html">VOFScratchData&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classVOFPhaseGradientProjectionScratchData.html#a6dd7cd9fea4d5e088b8a305de57a39e7">   61</a></span>&#160;<a class="code" href="classVOFPhaseGradientProjectionScratchData.html#a6dd7cd9fea4d5e088b8a305de57a39e7">VOFPhaseGradientProjectionScratchData&lt;dim&gt;::allocate</a>()</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="comment">// Initialize size of arrays</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  this-&gt;n_q_points =</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    fe_values_phase_gradient_projection.get_quadrature().size();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  this-&gt;n_dofs = fe_values_phase_gradient_projection.get_fe().n_dofs_per_cell();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="comment">// Initialize solution arrays</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  this-&gt;present_phase_gradient_projection_values =</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  this-&gt;present_phase_gradient_projection_gradients =</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    std::vector&lt;Tensor&lt;2, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="comment">// Initialize extractor</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  this-&gt;phase_fraction_gradients.first_vector_component = 0;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Initialize VOF solution</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  this-&gt;present_filtered_vof_phase_gradients =</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="comment">// Initialize arrays related to quadrature</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  this-&gt;JxW = std::vector&lt;double&gt;(this-&gt;n_q_points);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="comment">// Initialize arrays related to shape functions</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  this-&gt;phi = std::vector&lt;std::vector&lt;Tensor&lt;1, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    this-&gt;n_q_points, std::vector&lt;Tensor&lt;1, dim&gt;&gt;(this-&gt;n_dofs));</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  this-&gt;grad_phi = std::vector&lt;std::vector&lt;Tensor&lt;2, dim&gt;&gt;&gt;(</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    this-&gt;n_q_points, std::vector&lt;Tensor&lt;2, dim&gt;&gt;(this-&gt;n_dofs));</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFPhaseGradientProjectionScratchData.html">VOFPhaseGradientProjectionScratchData&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classVOFPhaseGradientProjectionScratchData.html">VOFPhaseGradientProjectionScratchData&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="abdf_8h_html_a20abc47ca7441007f8923c529000ace5"><div class="ttname"><a href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a></div><div class="ttdeci">unsigned int maximum_number_of_previous_solutions()</div><div class="ttdoc">Get the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00086">bdf.h:86</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html"><div class="ttname"><a href="classVOFScratchData.html">VOFScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a VOF free surface equation....</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00044">vof_scratch_data.h:45</a></div></div>
-<div class="ttc" id="aclassVOFScratchData_html_a01178f2337f8e0e13884942c8d93731b"><div class="ttname"><a href="classVOFScratchData.html#a01178f2337f8e0e13884942c8d93731b">VOFScratchData::allocate</a></div><div class="ttdeci">void allocate()</div><div class="ttdoc">Allocates the memory for the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8cc_source.html#l00010">vof_scratch_data.cc:10</a></div></div>
+<div class="ttc" id="aclassVOFPhaseGradientProjectionScratchData_html"><div class="ttname"><a href="classVOFPhaseGradientProjectionScratchData.html">VOFPhaseGradientProjectionScratchData</a></div><div class="ttdoc">Store the information required by the assembly procedure for a VOF phase gradient projection in the L...</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00327">vof_scratch_data.h:328</a></div></div>
+<div class="ttc" id="aclassVOFPhaseGradientProjectionScratchData_html_a6dd7cd9fea4d5e088b8a305de57a39e7"><div class="ttname"><a href="classVOFPhaseGradientProjectionScratchData.html#a6dd7cd9fea4d5e088b8a305de57a39e7">VOFPhaseGradientProjectionScratchData::allocate</a></div><div class="ttdeci">void allocate() override</div><div class="ttdoc">Allocate the memory necessary memory for all members of the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8cc_source.html#l00061">vof_scratch_data.cc:61</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html"><div class="ttname"><a href="classVOFScratchData.html">VOFScratchData</a></div><div class="ttdoc">Store the information required by the assembly procedure for a VOF free surface equation....</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8h_source.html#l00043">vof_scratch_data.h:44</a></div></div>
+<div class="ttc" id="aclassVOFScratchData_html_adb4ae0739b0cfb8127a487d2af926ef1"><div class="ttname"><a href="classVOFScratchData.html#adb4ae0739b0cfb8127a487d2af926ef1">VOFScratchData::allocate</a></div><div class="ttdeci">void allocate() override</div><div class="ttdoc">Allocates the memory for the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="vof__scratch__data_8cc_source.html#l00010">vof_scratch_data.cc:10</a></div></div>
 <div class="ttc" id="avof__scratch__data_8h_html"><div class="ttname"><a href="vof__scratch__data_8h.html">vof_scratch_data.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -1,4 +1,4 @@
 <map id="PhaseChangeDarcyVOFAssembler&lt; dim &gt;" name="PhaseChangeDarcyVOFAssembler&lt; dim &gt;">
 <area shape="rect" id="node1" title="Assembles a phase change Darcy forcing term for a VOF two&#45;fluid simulation. The term &#160;is added to the..." alt="" coords="5,95,248,136"/>
-<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="22,5,231,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="22,5,231,47"/>
 </map>

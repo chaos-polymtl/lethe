@@ -1,0 +1,4 @@
+<map id="VOFAssemblerPhaseGradientProjection&lt; dim, ScratchDataType &gt;" name="VOFAssemblerPhaseGradientProjection&lt; dim, ScratchDataType &gt;">
+<area shape="rect" id="node1" title="VOF phase fraction gradient L2 projection assemblers." alt="" coords="5,95,264,136"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="19,5,250,47"/>
+</map>

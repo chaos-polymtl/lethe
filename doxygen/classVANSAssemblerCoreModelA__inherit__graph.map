@@ -1,4 +1,4 @@
 <map id="VANSAssemblerCoreModelA&lt; dim &gt;" name="VANSAssemblerCoreModelA&lt; dim &gt;">
 <area shape="rect" id="node1" title="Class that assembles the core of Model A of the Volume Averaged Navier&#45;Stokes equations." alt="" coords="7,95,213,136"/>
-<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="5,5,215,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,215,47"/>
 </map>

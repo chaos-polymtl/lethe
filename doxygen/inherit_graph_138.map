@@ -1,7 +1,24 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classParticleWallContactForce.html" title="Base interface for classes that carry out the calculation of particle&#45;wall contact force." alt="" coords="5,71,188,112"/>
-<area shape="rect" id="node2" href="$classParticleWallJKRForce.html" title="Calculation of the JKR particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="258,5,413,47"/>
-<area shape="rect" id="node3" href="$classParticleWallLinearForce.html" title="Calculate particle&#45;wall contact force using the information obtained from the fine search and physica..." alt="" coords="249,71,422,112"/>
-<area shape="rect" id="node4" href="$classParticleWallNonLinearForce.html" title="Calculate the non&#45;linear particle&#45;wall contact force using the information obtained from the fine sea..." alt="" coords="236,136,435,177"/>
-<area shape="rect" id="node5" href="$classParticleWallDMTForce.html" title="Calculation of the DMT particle&#45;wall contact force using the information obtained from the fine searc..." alt="" coords="483,136,645,177"/>
+<area shape="rect" id="node1" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,385,176,412"/>
+<area shape="rect" id="node2" href="$classDensityModel.html" title="Abstract class for calculating the density of materials." alt="" coords="267,56,379,83"/>
+<area shape="rect" id="node5" href="$classRheologicalModel.html" title="Abstract class that allows to calculate the non&#45;newtonian viscosity on each quadrature point and the ..." alt="" coords="254,208,393,235"/>
+<area shape="rect" id="node10" href="$classSpecificHeatModel.html" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="252,360,395,387"/>
+<area shape="rect" id="node13" href="$classThermalConductivityModel.html" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="224,436,423,463"/>
+<area shape="rect" id="node17" href="$classThermalExpansionModel.html" title="Abstract class that allows to calculate the thermal expansion coefficient (with unit of inverse tempe..." alt="" coords="232,579,415,605"/>
+<area shape="rect" id="node20" href="$classTracerDiffusivityModel.html" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="239,680,407,707"/>
+<area shape="rect" id="node3" href="$classDensityConstant.html" title="Constant density model." alt="" coords="521,5,651,32"/>
+<area shape="rect" id="node4" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="487,56,685,83"/>
+<area shape="rect" id="node6" href="$classCarreau.html" title=" " alt="" coords="549,107,623,133"/>
+<area shape="rect" id="node7" href="$classNewtonian.html" title=" " alt="" coords="540,157,632,184"/>
+<area shape="rect" id="node8" href="$classPhaseChangeRheology.html" title=" " alt="" coords="501,208,671,235"/>
+<area shape="rect" id="node9" href="$classPowerLaw.html" title=" " alt="" coords="542,259,630,285"/>
+<area shape="rect" id="node11" href="$classConstantSpecificHeat.html" title="Constant specific heat model." alt="" coords="505,309,667,336"/>
+<area shape="rect" id="node12" href="$classPhaseChangeSpecificHeat.html" title="Phase change specific heat model." alt="" coords="491,360,681,387"/>
+<area shape="rect" id="node14" href="$classConstantThermalConductivity.html" title="Constant thermal conductivity." alt="" coords="478,411,694,437"/>
+<area shape="rect" id="node15" href="$classThermalConductivityLinear.html" title="Implements a linear temperature&#45;dependent thermal conductivity of the form k = A + BT." alt="" coords="487,461,685,488"/>
+<area shape="rect" id="node16" href="$classThermalConductivityPhaseChange.html" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="487,513,685,554"/>
+<area shape="rect" id="node18" href="$classConstantThermalExpansion.html" title="Constant thermal expansion coefficient." alt="" coords="485,579,687,605"/>
+<area shape="rect" id="node19" href="$classThermalExpansionPhaseChange.html" title="Implements a phase&#45;dependent thermal expansion coefficient." alt="" coords="471,629,701,656"/>
+<area shape="rect" id="node21" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="493,680,679,707"/>
+<area shape="rect" id="node22" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the levelset." alt="" coords="479,731,693,757"/>
 </map>

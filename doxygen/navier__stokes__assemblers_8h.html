@@ -77,6 +77,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">navier_stokes_assemblers.h File Reference</div>  </div>
@@ -88,61 +89,62 @@ $(function() {
 <code>#include &lt;<a class="el" href="simulation__control_8h_source.html">core/simulation_control.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="copy__data_8h_source.html">solvers/copy_data.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="navier__stokes__scratch__data_8h_source.html">solvers/navier_stokes_scratch_data.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="physics__assemblers_8h_source.html">solvers/physics_assemblers.h</a>&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for navier_stokes_assemblers.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="navier__stokes__assemblers_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2navier__stokes__assemblers_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2navier__stokes__assemblers_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2navier__stokes__assemblers_8h">
-<area shape="rect" title=" " alt="" coords="419,5,630,61"/>
-<area shape="rect" href="ale_8h.html" title=" " alt="" coords="625,698,712,725"/>
-<area shape="rect" href="boundary__conditions_8h.html" title=" " alt="" coords="348,698,549,725"/>
-<area shape="rect" href="rheological__model_8h.html" title=" " alt="" coords="2414,295,2600,322"/>
-<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="688,467,875,493"/>
-<area shape="rect" href="copy__data_8h.html" title=" " alt="" coords="164,698,316,725"/>
-<area shape="rect" href="navier__stokes__scratch__data_8h.html" title=" " alt="" coords="1230,109,1392,151"/>
-<area shape="rect" title=" " alt="" coords="616,869,782,896"/>
-<area shape="rect" title=" " alt="" coords="788,780,957,821"/>
-<area shape="rect" title=" " alt="" coords="981,780,1126,821"/>
-<area shape="rect" title=" " alt="" coords="520,787,662,814"/>
-<area shape="rect" title=" " alt="" coords="278,787,445,814"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="1251,616,1392,643"/>
-<area shape="rect" href="physical__property__model_8h.html" title=" " alt="" coords="1295,377,1466,419"/>
-<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="966,698,1128,725"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1254,698,1389,725"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="1419,869,1534,896"/>
-<area shape="rect" title=" " alt="" coords="2075,944,2248,985"/>
-<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="1414,698,1563,725"/>
-<area shape="rect" title=" " alt="" coords="1588,691,1805,732"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="1943,787,2111,814"/>
-<area shape="rect" title=" " alt="" coords="994,869,1057,896"/>
-<area shape="rect" href="shape_8h.html" title=" " alt="" coords="1424,787,1529,814"/>
-<area shape="rect" title=" " alt="" coords="1558,869,1792,896"/>
-<area shape="rect" title=" " alt="" coords="1552,780,1707,821"/>
-<area shape="rect" title=" " alt="" coords="1252,787,1399,814"/>
-<area shape="rect" title=" " alt="" coords="2011,869,2070,896"/>
-<area shape="rect" title=" " alt="" coords="1288,951,1475,978"/>
-<area shape="rect" title=" " alt="" coords="1816,869,1987,896"/>
-<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="650,541,737,568"/>
-<area shape="rect" title=" " alt="" coords="30,787,202,814"/>
-<area shape="rect" href="density__model_8h.html" title=" " alt="" coords="1104,295,1267,322"/>
-<area shape="rect" href="time__integration__utilities_8h.html" title=" " alt="" coords="1062,377,1224,419"/>
-<area shape="rect" href="cahn__hilliard__filter_8h.html" title=" " alt="" coords="588,377,744,419"/>
-<area shape="rect" href="physical__properties__manager_8h.html" title=" " alt="" coords="2350,199,2550,240"/>
-<area shape="rect" href="vof__filter_8h.html" title=" " alt="" coords="900,467,1042,493"/>
-<area shape="rect" title=" " alt="" coords="992,206,1176,233"/>
-<area shape="rect" title=" " alt="" coords="1200,206,1422,233"/>
-<area shape="rect" title=" " alt="" coords="1446,206,1568,233"/>
-<area shape="rect" title=" " alt="" coords="1592,206,1755,233"/>
-<area shape="rect" title=" " alt="" coords="1779,206,1931,233"/>
-<area shape="rect" title=" " alt="" coords="1955,199,2126,240"/>
-<area shape="rect" title=" " alt="" coords="2150,199,2325,240"/>
-<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="761,541,992,568"/>
-<area shape="rect" href="mobility__cahn__hilliard__model_8h.html" title=" " alt="" coords="1864,288,2011,329"/>
-<area shape="rect" href="specific__heat__model_8h.html" title=" " alt="" coords="2035,288,2174,329"/>
-<area shape="rect" href="surface__tension__model_8h.html" title=" " alt="" coords="1494,288,1651,329"/>
-<area shape="rect" href="thermal__conductivity__model_8h.html" title=" " alt="" coords="2198,288,2390,329"/>
-<area shape="rect" href="thermal__expansion__model_8h.html" title=" " alt="" coords="1291,288,1470,329"/>
-<area shape="rect" href="tracer__diffusivity__model_8h.html" title=" " alt="" coords="1676,288,1840,329"/>
+<area shape="rect" title=" " alt="" coords="1025,5,1236,61"/>
+<area shape="rect" href="ale_8h.html" title=" " alt="" coords="547,698,634,725"/>
+<area shape="rect" href="boundary__conditions_8h.html" title=" " alt="" coords="33,698,234,725"/>
+<area shape="rect" href="rheological__model_8h.html" title=" " alt="" coords="296,295,483,322"/>
+<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="2327,467,2513,493"/>
+<area shape="rect" href="copy__data_8h.html" title=" " alt="" coords="2536,698,2688,725"/>
+<area shape="rect" href="navier__stokes__scratch__data_8h.html" title=" " alt="" coords="1049,109,1212,151"/>
+<area shape="rect" href="physics__assemblers_8h.html" title=" " alt="" coords="2649,117,2865,143"/>
+<area shape="rect" title=" " alt="" coords="418,869,585,896"/>
+<area shape="rect" title=" " alt="" coords="294,780,463,821"/>
+<area shape="rect" title=" " alt="" coords="539,780,685,821"/>
+<area shape="rect" title=" " alt="" coords="2320,787,2461,814"/>
+<area shape="rect" title=" " alt="" coords="103,787,270,814"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="752,616,893,643"/>
+<area shape="rect" href="physical__property__model_8h.html" title=" " alt="" coords="933,377,1104,419"/>
+<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="310,698,471,725"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1365,698,1499,725"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="1183,869,1297,896"/>
+<area shape="rect" title=" " alt="" coords="920,944,1093,985"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="811,698,960,725"/>
+<area shape="rect" title=" " alt="" coords="985,691,1202,732"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="2077,787,2245,814"/>
+<area shape="rect" title=" " alt="" coords="2359,869,2422,896"/>
+<area shape="rect" href="shape_8h.html" title=" " alt="" coords="1457,787,1562,814"/>
+<area shape="rect" title=" " alt="" coords="1277,780,1432,821"/>
+<area shape="rect" title=" " alt="" coords="2132,869,2191,896"/>
+<area shape="rect" title=" " alt="" coords="1416,951,1603,978"/>
+<area shape="rect" title=" " alt="" coords="1731,869,1901,896"/>
+<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="2377,541,2463,568"/>
+<area shape="rect" title=" " alt="" coords="2638,787,2810,814"/>
+<area shape="rect" href="density__model_8h.html" title=" " alt="" coords="1680,295,1843,322"/>
+<area shape="rect" href="time__integration__utilities_8h.html" title=" " alt="" coords="376,377,539,419"/>
+<area shape="rect" href="cahn__hilliard__filter_8h.html" title=" " alt="" coords="195,377,351,419"/>
+<area shape="rect" href="physical__properties__manager_8h.html" title=" " alt="" coords="513,199,713,240"/>
+<area shape="rect" href="physics__scratch__data_8h.html" title=" " alt="" coords="839,199,1015,240"/>
+<area shape="rect" href="vof__filter_8h.html" title=" " alt="" coords="94,467,237,493"/>
+<area shape="rect" title=" " alt="" coords="1039,206,1223,233"/>
+<area shape="rect" title=" " alt="" coords="1247,206,1468,233"/>
+<area shape="rect" title=" " alt="" coords="1492,206,1615,233"/>
+<area shape="rect" title=" " alt="" coords="1639,206,1801,233"/>
+<area shape="rect" title=" " alt="" coords="1825,206,1977,233"/>
+<area shape="rect" title=" " alt="" coords="2001,199,2172,240"/>
+<area shape="rect" title=" " alt="" coords="2197,199,2371,240"/>
+<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="159,541,390,568"/>
+<area shape="rect" href="mobility__cahn__hilliard__model_8h.html" title=" " alt="" coords="1125,288,1272,329"/>
+<area shape="rect" href="specific__heat__model_8h.html" title=" " alt="" coords="557,288,696,329"/>
+<area shape="rect" href="surface__tension__model_8h.html" title=" " alt="" coords="1296,288,1453,329"/>
+<area shape="rect" href="thermal__conductivity__model_8h.html" title=" " alt="" coords="720,288,912,329"/>
+<area shape="rect" href="thermal__expansion__model_8h.html" title=" " alt="" coords="1477,288,1656,329"/>
+<area shape="rect" href="tracer__diffusivity__model_8h.html" title=" " alt="" coords="937,288,1101,329"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -185,8 +187,6 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesAssemblerBase.html">NavierStokesAssemblerBase&lt; dim &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPSPGSUPGNavierStokesAssemblerCore.html">PSPGSUPGNavierStokesAssemblerCore&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGLSNavierStokesAssemblerCore.html">GLSNavierStokesAssemblerCore&lt; dim &gt;</a></td></tr>
@@ -196,6 +196,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGLSNavierStokesAssemblerNonNewtonianCore.html">GLSNavierStokesAssemblerNonNewtonianCore&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a26641e967456860ca3880098d2769ce5"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a26641e967456860ca3880098d2769ce5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="navier__stokes__assemblers_8h.html#a26641e967456860ca3880098d2769ce5">NavierStokesAssemblerBase</a> = <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase</a>&lt; <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &gt;</td></tr>
+<tr class="separator:a26641e967456860ca3880098d2769ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:af9dee96c801839c3fb4373d9c716ee79"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="navier__stokes__assemblers_8h.html#af9dee96c801839c3fb4373d9c716ee79">DeclExceptionMsg</a> (PhaseChangeDarcyModelRequiresTemperature, &quot;Using the phase change Darcy model requires to run a multiphysics simulation with the heat transfer solver enabled.&quot;)</td></tr>
@@ -203,6 +209,33 @@ Functions</h2></td></tr>
 <tr class="memitem:aaf227f185844172ecc32f0b055bb84bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="navier__stokes__assemblers_8h.html#aaf227f185844172ecc32f0b055bb84bf">DeclExceptionMsg</a> (PhaseChangeDarcyModelDoesNotSupportCHN, &quot;The phase change Darcy model does not currently have a Cahn-Hilliard implementation.&quot;)</td></tr>
 <tr class="separator:aaf227f185844172ecc32f0b055bb84bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a26641e967456860ca3880098d2769ce5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26641e967456860ca3880098d2769ce5">&#9670;&nbsp;</a></span>NavierStokesAssemblerBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="navier__stokes__assemblers_8h.html#a26641e967456860ca3880098d2769ce5">NavierStokesAssemblerBase</a> =  <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase</a>&lt;<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt;dim&gt;, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt;dim&gt; &gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A pure virtual class that serves as an interface for all of the assemblers for the Navier-Stokes Equations. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00038">38</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aaf227f185844172ecc32f0b055bb84bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaf227f185844172ecc32f0b055bb84bf">&#9670;&nbsp;</a></span>DeclExceptionMsg() <span class="overload">[1/2]</span></h2>

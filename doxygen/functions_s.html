@@ -104,6 +104,9 @@ $(function() {
 <li>scale
 : <a class="el" href="structParameters_1_1Mesh.html#acd25438d604fe2e03ed116c9d19f3493">Parameters::Mesh</a>
 </li>
+<li>scratch_data_cast()
+: <a class="el" href="classVOFSubequationsInterface.html#a95151a16defdcf510e4208478e0ed525">VOFSubequationsInterface&lt; dim &gt;</a>
+</li>
 <li>sdf_face_values
 : <a class="el" href="classTracerScratchData.html#a5f023517e82af1893e1297e2be6f9ba7">TracerScratchData&lt; dim &gt;</a>
 </li>
@@ -168,6 +171,7 @@ $(function() {
 </li>
 <li>set_dof_handler()
 : <a class="el" href="classMultiphysicsInterface.html#aa1c6b6666b773be05fe6027c5dcbe353">MultiphysicsInterface&lt; dim &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#ad5de1d0c7e6d371fdb64735c1abdbfe0">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>set_dynamic_viscosity()
 : <a class="el" href="classNewtonian.html#a692a984e7cd5e0b92949e7dacd58da4f">Newtonian</a>
@@ -285,6 +289,7 @@ $(function() {
 </li>
 <li>set_solution()
 : <a class="el" href="classMultiphysicsInterface.html#a24c4630b62ccf275391781c0138d2ff5">MultiphysicsInterface&lt; dim &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#a1aabf67c1baee323200c0840ed44a6eb">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>set_solution_from_checkpoint()
 : <a class="el" href="classNavierStokesBase.html#a7a64d8857a628657805e1dda3508865c">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
@@ -342,7 +347,10 @@ $(function() {
 , <a class="el" href="classHeatTransfer.html#aca8c8523ca5b4d9df7c1ed977ed7d113">HeatTransfer&lt; dim &gt;</a>
 , <a class="el" href="classMultiphysicsInterface.html#a672f12b72244d326a8c07109e105468a">MultiphysicsInterface&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#adf2f852055a04e76674325e408807a74">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
+, <a class="el" href="classPhysicsSubequationsSolverBase.html#abb7e722d51428100ef3e642309f6ff6c">PhysicsSubequationsSolverBase</a>
 , <a class="el" href="classTracer.html#af8dfb40376adc77b7bc9236fa7de3689">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#aedddd3595102e570f601571331110261">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#ae39a997e444814f0bbc27c0d04a69fc5">VOFSubequationsInterface&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#a2f6f5ee7b4e9fcdd1fcdaacd0c4bc17d">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>setup_dofs_fd()
@@ -381,6 +389,9 @@ $(function() {
 </li>
 <li>setup_solid_objects()
 : <a class="el" href="classDEMSolver.html#a46460ab641c53332c1030976e657507d">DEMSolver&lt; dim &gt;</a>
+</li>
+<li>setup_specific_subequation_dofs()
+: <a class="el" href="classVOFSubequationsInterface.html#a6d615ada6ba0bc52f4eef8dbe0a03d46">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>setup_system()
 : <a class="el" href="classRPTL2Projection.html#a66232600a29707d4b81a13b84c70af73">RPTL2Projection&lt; dim &gt;</a>
@@ -447,41 +458,56 @@ $(function() {
 </li>
 <li>simulation_control
 : <a class="el" href="classCahnHilliard.html#a69e5392abafa510ed860a999dca2909d">CahnHilliard&lt; dim &gt;</a>
-, <a class="el" href="classCahnHilliardAssemblerBase.html#a4f7e1fe2d9841ec7587df8593079daae">CahnHilliardAssemblerBase&lt; dim &gt;</a>
+, <a class="el" href="classCahnHilliardAssemblerAngleOfContact.html#a839376f8111e47da30cbba5ef789ef16">CahnHilliardAssemblerAngleOfContact&lt; dim &gt;</a>
+, <a class="el" href="classCahnHilliardAssemblerBDF.html#a366cf921bc8848879596ecbf5de67e91">CahnHilliardAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classCahnHilliardAssemblerCore.html#a0328ee784bc20a6e088e9e2fb25deb3d">CahnHilliardAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classCahnHilliardAssemblerFreeAngle.html#a149846af1f944af445f8de965b163c8c">CahnHilliardAssemblerFreeAngle&lt; dim &gt;</a>
 , <a class="el" href="classDEMSolver.html#ac836168708f527e44cc562de07f4ffae">DEMSolver&lt; dim &gt;</a>
 , <a class="el" href="classDEMSolverParameters.html#abe03b7dc0f361ad437aa5a4bca2ed7f2">DEMSolverParameters&lt; dim &gt;</a>
-, <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerBDF.html#a1fe689c5a119a90bf9056d0223322fa7">GLSIsothermalCompressibleNavierStokesAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerCore.html#a41f3003c74a245917151551cd1b36515">GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerBDF.html#a9f525f7aad19dee291bf676b45dac03a">GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerCore.html#aba12233f78a90dadfdcf7455a49e42a7">GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesAssemblerCore.html#a9205ffe1f9c79dffb6799bf0c65d00fd">GLSNavierStokesAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesAssemblerNonNewtonianCore.html#a57c6f468c840f0dd5e874d64db381cdc">GLSNavierStokesAssemblerNonNewtonianCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerBDF.html#ad37dff9318528e0fb8fa840fa642118d">GLSNavierStokesCahnHilliardAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerCore.html#a6c8af0ad40cf7e08fdbc609c02ea830a">GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesVOFAssemblerBDF.html#a44432026b5138facacf7d5199dfbbea0">GLSNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesVOFAssemblerCore.html#a4d0481bcc3720db8b33be579b118dc18">GLSNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesVOFAssemblerMarangoni.html#a43f96a0956df522c247c0cfd1c9879ce">GLSNavierStokesVOFAssemblerMarangoni&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html#a0a3b554529c3049a6636fca38ed92ba0">GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;</a>
-, <a class="el" href="classGLSNavierStokesVOFAssemblerSTF.html#a7b1c619d68de2eb3d5c79036af52b063">GLSNavierStokesVOFAssemblerSTF&lt; dim &gt;</a>
+, <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerBDF.html#a95b87011b684c82d6a097b018c2553a5">GLSIsothermalCompressibleNavierStokesAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerCore.html#a5f68aa5c60c52d640ddfee5911275f5e">GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerBDF.html#a91ead0b17f88c08e03f94954f65806fb">GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerCore.html#a8ef4425d414071706b163f7cbe0e429e">GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesAssemblerCore.html#a63385f42a21e669498572ebacb755178">GLSNavierStokesAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesAssemblerNonNewtonianCore.html#a2f1c7f1d0c5049c0e0ffedda5af4bcbc">GLSNavierStokesAssemblerNonNewtonianCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerBDF.html#abf28dcd1ace85fe0c634a7aee3b3a740">GLSNavierStokesCahnHilliardAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerCore.html#a1fe88e04f890e182487108cf0cac64cb">GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesVOFAssemblerBDF.html#acc59867c0abdeeb4fb8ca150f61173b3">GLSNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesVOFAssemblerCore.html#a13ff4b8b5cb286ad9e6991eb2410b012">GLSNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesVOFAssemblerMarangoni.html#aa854d03bf5ba92d2668ce66033034b35">GLSNavierStokesVOFAssemblerMarangoni&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html#a86bf7090058f87d97a4121dab46fad2e">GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;</a>
+, <a class="el" href="classGLSNavierStokesVOFAssemblerSTF.html#a8bd4690860cc353fa50ef62942a82397">GLSNavierStokesVOFAssemblerSTF&lt; dim &gt;</a>
 , <a class="el" href="classHeatTransfer.html#a1cc7af514e861ec4b79c8b2fe94ca877">HeatTransfer&lt; dim &gt;</a>
-, <a class="el" href="classHeatTransferAssemblerBase.html#a45b9b1596df94830638abaebd296d719">HeatTransferAssemblerBase&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerBDF.html#a01c596545f81e8a5db353dc5a4581f46">HeatTransferAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerCore.html#a55005d473e00972c8386833c2ce7953d">HeatTransferAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerDCDDstabilization.html#a8068f651e245fbbe9096fd6543b2b868">HeatTransferAssemblerDCDDstabilization&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerFreeSurfaceRadiationVOF.html#add67eae8f9894879aa7f7b86f2317b14">HeatTransferAssemblerFreeSurfaceRadiationVOF&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerLaserExponentialDecay.html#a4e8a13d351d8753fdd9244e175e3446a">HeatTransferAssemblerLaserExponentialDecay&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerLaserExponentialDecayVOF.html#acf28b4a463787af4b7cf9270a7e443d8">HeatTransferAssemblerLaserExponentialDecayVOF&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerLaserGaussianHeatFluxVOFInterface.html#a3931875bb2282a62605bcdaf0d5dc238">HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerLaserUniformHeatFluxVOFInterface.html#a2384d7907e2e89029251dc8f653ece40">HeatTransferAssemblerLaserUniformHeatFluxVOFInterface&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerRobinBC.html#a1d0da058800a1095923f4d6349bdf0c2">HeatTransferAssemblerRobinBC&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerViscousDissipation.html#abba514320aa4cb653a6cf80e4955715a">HeatTransferAssemblerViscousDissipation&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerViscousDissipationVOF.html#aaeb1da96bcf3115ea4531cf867e57623">HeatTransferAssemblerViscousDissipationVOF&lt; dim &gt;</a>
+, <a class="el" href="classHeatTransferAssemblerVOFEvaporation.html#af031babdb258fc1138bbc421c7ecb463">HeatTransferAssemblerVOFEvaporation&lt; dim &gt;</a>
 , <a class="el" href="classLagrangianLoadBalancing.html#a65f0757ace17cf18d8e38c841a704910">LagrangianLoadBalancing&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#ab038a3890e972dcf3fbcd8b57f4b06a1">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classNavierStokesOperatorBase.html#abb73a9c670b5a5bd743d29d77b5e8b48">NavierStokesOperatorBase&lt; dim, number &gt;</a>
 , <a class="el" href="classNavierStokesScratchData.html#ad1fc7d24a864a2e16f6e116cf1e9753d">NavierStokesScratchData&lt; dim &gt;</a>
-, <a class="el" href="classNavierStokesVOFAssemblerEvaporation.html#a074bacf606f9782972aae1b71e45078d">NavierStokesVOFAssemblerEvaporation&lt; dim &gt;</a>
+, <a class="el" href="classNavierStokesVOFAssemblerEvaporation.html#a702eeec2946bff651a73ee45df0d54ad">NavierStokesVOFAssemblerEvaporation&lt; dim &gt;</a>
 , <a class="el" href="classPhysicalPropertyModel.html#a1af766ed5b3d57c7caa9cb7bfa701a49">PhysicalPropertyModel</a>
-, <a class="el" href="classPSPGSUPGNavierStokesAssemblerCore.html#a32a6b7514c63ccb31898bd494ba52001">PSPGSUPGNavierStokesAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classPSPGSUPGNavierStokesAssemblerCore.html#a48cfd7d8f56f8f5772086cc2c040dd27">PSPGSUPGNavierStokesAssemblerCore&lt; dim &gt;</a>
 , <a class="el" href="classSimulationParameters.html#a8ee4d6ba5df1148bcae87b4a31ff4b94">SimulationParameters&lt; dim &gt;</a>
 , <a class="el" href="classTracer.html#ac4eefd6011f97338ae6a16f6b3387ebe">Tracer&lt; dim &gt;</a>
-, <a class="el" href="classTracerAssemblerBDF.html#ae2fcdd045dfae00d9b2acd9db75eb5d8">TracerAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classTracerAssemblerCore.html#abf4e97d9a85dfe4e85561a60863902db">TracerAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerBDF.html#aae483c83b22a7908faa722982e0a0cd4">VANSAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerCoreModelA.html#a9d3b001ead87918fe119c1283759dadc">VANSAssemblerCoreModelA&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerCoreModelB.html#a96abf9a7838622f535f1421190c2e8b0">VANSAssemblerCoreModelB&lt; dim &gt;</a>
-, <a class="el" href="classVOFAssemblerBDF.html#a517691a4d41071ddd4f1de2617d1526a">VOFAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classVOFAssemblerCore.html#aeca9036def974a458197a8283361a039">VOFAssemblerCore&lt; dim &gt;</a>
-, <a class="el" href="classVOFAssemblerDCDDStabilization.html#a4df24a7d49f70d7e006e963ff3794867">VOFAssemblerDCDDStabilization&lt; dim &gt;</a>
+, <a class="el" href="classTracerAssemblerBDF.html#a1b1aea9d4ec924465b28a926dda9de36">TracerAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classTracerAssemblerCore.html#a8b68079cedb5ba273e9ca5c04d3cd915">TracerAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerBDF.html#afbaf582a28a82b1472911e66fae7981b">VANSAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerCoreModelA.html#a715bfff0a75867c4310212be898fd5af">VANSAssemblerCoreModelA&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerCoreModelB.html#a237351c869a82e68a419b19546840de5">VANSAssemblerCoreModelB&lt; dim &gt;</a>
+, <a class="el" href="classVOFAssemblerBDF.html#aba3269a41c37b025aec34a5b8199812c">VOFAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classVOFAssemblerCore.html#a035ced5bf22b7ee67ca918080631decb">VOFAssemblerCore&lt; dim &gt;</a>
+, <a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">VOFAssemblerDCDDStabilization&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#aa3a1fe162bb6c974cd77982fbdde5136">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 , <a class="el" href="classVOFScratchData.html#a6aeaed7557d30524cd6abe6de54477f8">VOFScratchData&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#acfbd88311e761163dc61284c700a545e">VolumeOfFluid&lt; dim &gt;</a>
 </li>
@@ -492,6 +518,7 @@ $(function() {
 , <a class="el" href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classPostProcessorSmoothing.html#ac1c3216aeaea6f74ebe28960f2ec2725">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classTracer.html#ae9abe79a880750e8b93394f1ee01c7bb">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#a603b1f384910f5899ec170c8ca060300">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#aaa1e41cbe0028e8cfda3fb26ce933635">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>SimulationControl()
@@ -624,9 +651,6 @@ $(function() {
 <li>solution
 : <a class="el" href="classRPTL2Projection.html#a41a78e250247d6ca36ac3370f267f565">RPTL2Projection&lt; dim &gt;</a>
 </li>
-<li>solution_pw
-: <a class="el" href="classVolumeOfFluid.html#acb35d5198ab5a51c56ce474d78a0a539">VolumeOfFluid&lt; dim &gt;</a>
-</li>
 <li>solution_transfer
 : <a class="el" href="classCahnHilliard.html#a804ea4b0af726e98b5f73e8ba7280ab2">CahnHilliard&lt; dim &gt;</a>
 , <a class="el" href="classHeatTransfer.html#a7b1e554759228af06cd50a6a57829ac2">HeatTransfer&lt; dim &gt;</a>
@@ -656,6 +680,9 @@ $(function() {
 , <a class="el" href="classMultiphysicsInterface.html#a426a10cb2fe1a841c8cf792ec1072586">MultiphysicsInterface&lt; dim &gt;</a>
 , <a class="el" href="classNewtonNonLinearSolver.html#a55484f9456e1ea16e9b5c2f0c0e0ea56">NewtonNonLinearSolver&lt; VectorType &gt;</a>
 , <a class="el" href="classNonLinearSolver.html#abb030d08140fe6f2ecd6d8b73491bac7">NonLinearSolver&lt; VectorType &gt;</a>
+, <a class="el" href="classPhysicsSubequationsSolverBase.html#acd4ed509215128b76e4610c1c5c4fc15">PhysicsSubequationsSolverBase</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#af8cb760f5ae58ca5a43e6e6f62c7ad6b">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#a509509b33450cedfe9f02741c39cd4b0">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>solve_block_physics()
 : <a class="el" href="classMultiphysicsInterface.html#a2f4664ff3f3fbdc962bb761368731e91">MultiphysicsInterface&lt; dim &gt;</a>
@@ -687,6 +714,10 @@ $(function() {
 , <a class="el" href="classTracer.html#afc61c177c601ede39a7466c526c43ae0">Tracer&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#a0867e3d09041eed3921aa10838f7e00e">VolumeOfFluid&lt; dim &gt;</a>
 </li>
+<li>solve_linear_system_and_update_solution()
+: <a class="el" href="classPhysicsLinearSubequationsSolver.html#a7a379d697f5617b22773049dfda60c99">PhysicsLinearSubequationsSolver</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#a3c616727e23de621346d617faa6592e5">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+</li>
 <li>solve_non_linear_system()
 : <a class="el" href="classPhysicsSolver.html#ae98422d82284b2d4d55d42ca454a300a">PhysicsSolver&lt; VectorType &gt;</a>
 </li>
@@ -696,11 +727,11 @@ $(function() {
 <li>solve_pre_fluid
 : <a class="el" href="classMultiphysicsInterface.html#a934fb9ccf395cdee8aece6c89f0477d3">MultiphysicsInterface&lt; dim &gt;</a>
 </li>
-<li>solve_projected_phase_fraction_gradient()
-: <a class="el" href="classVolumeOfFluid.html#a3c21a1f7b66779a500f49eb30d3117a2">VolumeOfFluid&lt; dim &gt;</a>
-</li>
 <li>solve_projection_phase_fraction()
 : <a class="el" href="classVolumeOfFluid.html#abe866945dc1c812517efe8058b7923a9">VolumeOfFluid&lt; dim &gt;</a>
+</li>
+<li>solve_specific_subequation()
+: <a class="el" href="classVOFSubequationsInterface.html#a59fd098fe2e268d1242e4a3e47303b97">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>solve_system_BiCGStab()
 : <a class="el" href="classFluidDynamicsMatrixBased.html#a9087151e1f1ec0d29b67d88ddcda7887">FluidDynamicsMatrixBased&lt; dim &gt;</a>
@@ -916,6 +947,23 @@ $(function() {
 : <a class="el" href="structParameters_1_1SimulationControl.html#a04eadddfd611183e1765c1d0cdeb7443">Parameters::SimulationControl</a>
 , <a class="el" href="classSimulationControl.html#ad7098511e5da6c4dafcae9c2fd7ce734">SimulationControl</a>
 </li>
+<li>subequation_id
+: <a class="el" href="classVOFLinearSubequationsSolver.html#a74791d631cd49a62fd9a3769a5dfa80f">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+</li>
+<li>subequation_verbosity
+: <a class="el" href="classVOFLinearSubequationsSolver.html#aa871b4edad1ce41f478b865c0243cc29">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+</li>
+<li>subequations
+: <a class="el" href="classVOFLinearSubequationsSolver.html#a1c32d0aefcd8a593b050a5f9fed51202">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#ae36a029557de05691e967611f4b1a460">VOFSubequationsInterface&lt; dim &gt;</a>
+, <a class="el" href="classVolumeOfFluid.html#af524caae1fb1cde8fbfc4f1fde451090">VolumeOfFluid&lt; dim &gt;</a>
+</li>
+<li>subequations_dof_handler
+: <a class="el" href="classVOFSubequationsInterface.html#a77518e479e41e5bba8e6a0889f2c429b">VOFSubequationsInterface&lt; dim &gt;</a>
+</li>
+<li>subequations_solutions
+: <a class="el" href="classVOFSubequationsInterface.html#a62dfa95a7989b5ad5fd160d80c196dc4">VOFSubequationsInterface&lt; dim &gt;</a>
+</li>
 <li>sum_reynolds_normal_stress_dt
 : <a class="el" href="classAverageVelocities.html#af5c999080816b4da875449d65c7bd27c">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a>
 </li>
@@ -1031,6 +1079,7 @@ $(function() {
 , <a class="el" href="classPostProcessorSmoothing.html#a19394a56563bf065c3496ef06e02a647">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#a2a189985aad3f95de488c049c2d7a6f6">RPTL2Projection&lt; dim &gt;</a>
 , <a class="el" href="classTracer.html#a508f7bb1a7e946d30c2e2928defb1f16">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#ad5927d272be97ccca650ca108fbb7326">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#aca9411410bdc63433ccde237da2a82a9">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>system_matrix_curvature
@@ -1038,9 +1087,6 @@ $(function() {
 </li>
 <li>system_matrix_phase_fraction
 : <a class="el" href="classVolumeOfFluid.html#aa43eb196eb8caab9d538db3a46b433c7">VolumeOfFluid&lt; dim &gt;</a>
-</li>
-<li>system_matrix_projected_phase_fraction_gradient
-: <a class="el" href="classVolumeOfFluid.html#a12b3848599881d187a5467ec2e5f1901">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>system_matrix_void_fraction
 : <a class="el" href="classFluidDynamicsVANS.html#a9e8bed6a90d3b00bde4ee1d7dea4d472">FluidDynamicsVANS&lt; dim &gt;</a>
@@ -1055,6 +1101,7 @@ $(function() {
 , <a class="el" href="classPostProcessorSmoothing.html#afe4e8bdc02c1096e6670506236d84b28">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#a3187dd00ab4ee1ddd8ad58db12e8625e">RPTL2Projection&lt; dim &gt;</a>
 , <a class="el" href="classTracer.html#a18360e3f93bb043f5e82720fdc6a5212">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#a860b129132d847101913bf85065b21ad">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#ad2e963b7c5ef2f8d5af493e9e2fd4ffa">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>system_rhs_curvature
@@ -1062,9 +1109,6 @@ $(function() {
 </li>
 <li>system_rhs_phase_fraction
 : <a class="el" href="classVolumeOfFluid.html#adc7861e4b7d433ba5c50d3748c4509e1">VolumeOfFluid&lt; dim &gt;</a>
-</li>
-<li>system_rhs_projected_phase_fraction_gradient
-: <a class="el" href="classVolumeOfFluid.html#a6bde71216bc420b5b240eab5745c7a50">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>system_rhs_void_fraction
 : <a class="el" href="classFluidDynamicsVANS.html#ad63698698dc19076aa4874deefc453ad">FluidDynamicsVANS&lt; dim &gt;</a>

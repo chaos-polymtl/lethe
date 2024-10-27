@@ -1,4 +1,4 @@
 <map id="GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;" name="GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;">
 <area shape="rect" id="node1" title=" " alt="" coords="5,95,289,136"/>
-<area shape="rect" id="node2" href="$classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="43,5,252,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="43,5,252,47"/>
 </map>

@@ -806,136 +806,135 @@ $(function() {
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="comment">  /// Model describing the material&#39;s density.</span></div>
 <div class="line"><a name="l00726"></a><span class="lineno"><a class="line" href="classDensityPostprocessor.html#a9870b95f491f4184d1dc57a2f058a153">  726</a></span>&#160;<span class="comment"></span>  std::shared_ptr&lt;DensityModel&gt; <a class="code" href="classDensityPostprocessor.html#a9870b95f491f4184d1dc57a2f058a153">density_model</a>;</div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;};</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;<span class="comment"> * @brief Compute the local heat flux vector field within a domain.</span></div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="comment"> * The local heat flux is defined as \f$\mathbf{q} = -k \nabla T\f$ where</span></div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;<span class="comment"> * \f$k\f$ is the thermal conductivity of the material and \f$\nabla T\f$ the</span></div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;<span class="comment"> * temperature gradient.</span></div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00738"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html">  738</a></span>&#160;<span class="keyword">class </span><a class="code" href="classHeatFluxPostprocessor.html">HeatFluxPostprocessor</a> : <span class="keyword">public</span> DataPostprocessorVector&lt;dim&gt;</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;{</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;<span class="comment">   * @brief Constructor of the heat flux postprocessor.</span></div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="comment">   * @param[in] p_thermal_conductivity_model Thermal conductivity model of the</span></div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="comment">   * material</span></div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<span class="comment">   * @param[in] p_material_string Type of material: &quot;f&quot; (fluid) or &quot;s&quot; (solid)</span></div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;<span class="comment">   * @param[in] p_id Either fluid ID or solid ID (as initialized in the physical</span></div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;<span class="comment">   * properties). It is used to name the postprocessed variable vector.</span></div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;<span class="comment">   * @param[in] p_mesh_material_id Identifier corresponding to the material as</span></div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;<span class="comment">   * identified in the mesh. By convention, fluids are given the material_id 0</span></div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;<span class="comment">   * and solids follow with ids 1, 2, etc. This is used to identify which cell</span></div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;<span class="comment">   * lies in which material.</span></div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;<span class="comment">   * @param[in] p_solid_phase_present Boolean indicating if the simulation has</span></div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="comment">   * solids. If there is no solid, the @p material_id of cells is not checked.</span></div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00760"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">  760</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">HeatFluxPostprocessor</a>(<span class="keyword">const</span> std::shared_ptr&lt;ThermalConductivityModel&gt;</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                                           &amp;p_thermal_conductivity_model,</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                        <span class="keyword">const</span> std::string  &amp;p_material_string     = <span class="stringliteral">&quot;f&quot;</span>,</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;p_id                  = 0,</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;p_mesh_material_id    = 0,</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">bool</span>         &amp;p_solid_phase_present = <span class="keyword">false</span>)</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    : DataPostprocessorVector&lt;dim&gt;(<span class="stringliteral">&quot;heat_flux_&quot;</span> + p_material_string +</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;                                     Utilities::to_string(p_id, 2),</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;                                   update_values | update_gradients)</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    , thermal_conductivity_model(p_thermal_conductivity_model)</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    , mesh_material_id(p_mesh_material_id)</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;    , solid_phase_present(p_solid_phase_present)</div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;  {}</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;<span class="comment">   * @brief Compute local heat fluxes from temperature gradient vector field and</span></div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="comment">   * thermal conductivity at given evaluation points.</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;<span class="comment">   * @param[in] inputs Temperature information.</span></div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;<span class="comment">   * @param[out] computed_quantities Computed local heat flux vectors at</span></div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;<span class="comment">   * evaluation points.</span></div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00784"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">  784</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">evaluate_scalar_field</a>(</div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    <span class="keyword">const</span> DataPostprocessorInputs::Scalar&lt;dim&gt; &amp;inputs,</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;    std::vector&lt;Vector&lt;double&gt;&gt; &amp;computed_quantities)<span class="keyword"> const override</span></div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_evaluation_points = computed_quantities.size();</div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    AssertDimension(inputs.solution_gradients.size(), n_evaluation_points);</div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160; </div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="comment">//  If solid materials are present, identify each material&#39;s subdomain.</span></div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    <span class="keywordflow">if</span> (solid_phase_present)</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;      {</div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;        <span class="comment">// Get Cell</span></div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span> cell = inputs.template get_cell&lt;dim&gt;();</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160; </div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;        <span class="comment">// Check if the cell lies in the material of interest</span></div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;        <span class="keywordflow">if</span> (cell-&gt;material_id() == mesh_material_id)</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;          {</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;            compute_quantities(inputs, computed_quantities);</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;          }</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        <span class="comment">// Apply null values to irrelevant subdomain</span></div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;          {</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            Vector&lt;double&gt;              null_vector(dim);</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;            std::vector&lt;Vector&lt;double&gt;&gt; null_computed_quantities(</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;              n_evaluation_points, null_vector);</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;            computed_quantities = null_computed_quantities;</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;          }</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;      }</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;    <span class="comment">// Only fluids are present</span></div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      {</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;        compute_quantities(inputs, computed_quantities);</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;      }</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;  }</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160; </div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;<span class="comment">   * @brief Computes local heat flux vectors.</span></div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;<span class="comment">   * @note The function is used to improve readability of the</span></div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;<span class="comment">   * HeatFluxPostprocessor::evaluate_scalar_field function and avoid repeated</span></div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;<span class="comment">   * lines.</span></div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;<span class="comment">   * @param[in] inputs Temperature information.</span></div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;<span class="comment">   * @param[out] computed_quantities Computed local heat flux vectors at</span></div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;<span class="comment">   * evaluation points.</span></div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00832"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">  832</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">compute_quantities</a>(<span class="keyword">const</span> DataPostprocessorInputs::Scalar&lt;dim&gt; &amp;inputs,</div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                     std::vector&lt;Vector&lt;double&gt;&gt; &amp;computed_quantities)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;    std::map&lt;field, double&gt; field_values;</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; computed_quantities.size(); ++p)</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;      {</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;        AssertDimension(computed_quantities[p].size(), dim);</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;        field_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>] = inputs.solution_values[p];</div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160; </div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;          {</div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;            computed_quantities[p][i] =</div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;              -thermal_conductivity_model-&gt;value(field_values) *</div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;              inputs.solution_gradients[p][i];</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;          }</div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;      }</div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;  }</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;<span class="comment">  /// Model describing of thermal conductivity of the material.</span></div>
-<div class="line"><a name="l00851"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">  851</a></span>&#160;<span class="comment"></span>  std::shared_ptr&lt;ThermalConductivityModel&gt; <a class="code" href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">thermal_conductivity_model</a>;<span class="comment"></span></div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;<span class="comment">  /// Identifier corresponding to the material as identified in the mesh.</span></div>
-<div class="line"><a name="l00853"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">  853</a></span>&#160;<span class="comment"></span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">mesh_material_id</a>;<span class="comment"></span></div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;<span class="comment">  /// Boolean indicating if the simulation has solids.</span></div>
-<div class="line"><a name="l00855"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">  855</a></span>&#160;<span class="comment"></span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">solid_phase_present</a>;</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;};</div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="comment"> * @brief Compute the local heat flux vector field within a domain.</span></div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<span class="comment"> * The local heat flux is defined as \f$\mathbf{q} = -k \nabla T\f$ where</span></div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="comment"> * \f$k\f$ is the thermal conductivity of the material and \f$\nabla T\f$ the</span></div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;<span class="comment"> * temperature gradient.</span></div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00737"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html">  737</a></span>&#160;<span class="keyword">class </span><a class="code" href="classHeatFluxPostprocessor.html">HeatFluxPostprocessor</a> : <span class="keyword">public</span> DataPostprocessorVector&lt;dim&gt;</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;{</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;<span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;<span class="comment">   * @brief Constructor of the heat flux postprocessor.</span></div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;<span class="comment">   * @param[in] p_thermal_conductivity_model Thermal conductivity model of the</span></div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="comment">   * material</span></div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;<span class="comment">   * @param[in] p_material_string Type of material: &quot;f&quot; (fluid) or &quot;s&quot; (solid)</span></div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;<span class="comment">   * @param[in] p_id Either fluid ID or solid ID (as initialized in the physical</span></div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;<span class="comment">   * properties). It is used to name the postprocessed variable vector.</span></div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;<span class="comment">   * @param[in] p_mesh_material_id Identifier corresponding to the material as</span></div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;<span class="comment">   * identified in the mesh. By convention, fluids are given the material_id 0</span></div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;<span class="comment">   * and solids follow with ids 1, 2, etc. This is used to identify which cell</span></div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;<span class="comment">   * lies in which material.</span></div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;<span class="comment">   * @param[in] p_solid_phase_present Boolean indicating if the simulation has</span></div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;<span class="comment">   * solids. If there is no solid, the @p material_id of cells is not checked.</span></div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00759"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">  759</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">HeatFluxPostprocessor</a>(<span class="keyword">const</span> std::shared_ptr&lt;ThermalConductivityModel&gt;</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;                                           &amp;p_thermal_conductivity_model,</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                        <span class="keyword">const</span> std::string  &amp;p_material_string     = <span class="stringliteral">&quot;f&quot;</span>,</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;p_id                  = 0,</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> &amp;p_mesh_material_id    = 0,</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                        <span class="keyword">const</span> <span class="keywordtype">bool</span>         &amp;p_solid_phase_present = <span class="keyword">false</span>)</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    : DataPostprocessorVector&lt;dim&gt;(<span class="stringliteral">&quot;heat_flux_&quot;</span> + p_material_string +</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;                                     Utilities::to_string(p_id, 2),</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;                                   update_values | update_gradients)</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    , thermal_conductivity_model(p_thermal_conductivity_model)</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    , mesh_material_id(p_mesh_material_id)</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    , solid_phase_present(p_solid_phase_present)</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;  {}</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;<span class="comment">   * @brief Compute local heat fluxes from temperature gradient vector field and</span></div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;<span class="comment">   * thermal conductivity at given evaluation points.</span></div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;<span class="comment">   * @param[in] inputs Temperature information.</span></div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;<span class="comment">   * @param[out] computed_quantities Computed local heat flux vectors at</span></div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;<span class="comment">   * evaluation points.</span></div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00783"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">  783</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">evaluate_scalar_field</a>(</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    <span class="keyword">const</span> DataPostprocessorInputs::Scalar&lt;dim&gt; &amp;inputs,</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    std::vector&lt;Vector&lt;double&gt;&gt; &amp;computed_quantities)<span class="keyword"> const override</span></div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_evaluation_points = computed_quantities.size();</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    AssertDimension(inputs.solution_gradients.size(), n_evaluation_points);</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160; </div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;    <span class="comment">//  If solid materials are present, identify each material&#39;s subdomain.</span></div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="keywordflow">if</span> (solid_phase_present)</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;      {</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;        <span class="comment">// Get Cell</span></div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span> cell = inputs.template get_cell&lt;dim&gt;();</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160; </div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;        <span class="comment">// Check if the cell lies in the material of interest</span></div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;        <span class="keywordflow">if</span> (cell-&gt;material_id() == mesh_material_id)</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;          {</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;            compute_quantities(inputs, computed_quantities);</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;          }</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;        <span class="comment">// Apply null values to irrelevant subdomain</span></div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;          {</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;            Vector&lt;double&gt;              null_vector(dim);</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            std::vector&lt;Vector&lt;double&gt;&gt; null_computed_quantities(</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;              n_evaluation_points, null_vector);</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;            computed_quantities = null_computed_quantities;</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;          }</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;      }</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;    <span class="comment">// Only fluids are present</span></div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;      {</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;        compute_quantities(inputs, computed_quantities);</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      }</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;  }</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160; </div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;<span class="keyword">private</span>:<span class="comment"></span></div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;<span class="comment">   * @brief Computes local heat flux vectors.</span></div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;<span class="comment">   * @note The function is used to improve readability of the</span></div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;<span class="comment">   * HeatFluxPostprocessor::evaluate_scalar_field function and avoid repeated</span></div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;<span class="comment">   * lines.</span></div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;<span class="comment">   * @param[in] inputs Temperature information.</span></div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;<span class="comment">   * @param[out] computed_quantities Computed local heat flux vectors at</span></div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;<span class="comment">   * evaluation points.</span></div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00831"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">  831</a></span>&#160;  <a class="code" href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">compute_quantities</a>(<span class="keyword">const</span> DataPostprocessorInputs::Scalar&lt;dim&gt; &amp;inputs,</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;                     std::vector&lt;Vector&lt;double&gt;&gt; &amp;computed_quantities)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;    std::map&lt;field, double&gt; field_values;</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; computed_quantities.size(); ++p)</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;      {</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;        AssertDimension(computed_quantities[p].size(), dim);</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;        field_values[<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>] = inputs.solution_values[p];</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160; </div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;          {</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;            computed_quantities[p][i] =</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;              -thermal_conductivity_model-&gt;value(field_values) *</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;              inputs.solution_gradients[p][i];</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;          }</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;      }</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;  }</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="comment">  /// Model describing of thermal conductivity of the material.</span></div>
+<div class="line"><a name="l00850"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">  850</a></span>&#160;<span class="comment"></span>  std::shared_ptr&lt;ThermalConductivityModel&gt; <a class="code" href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">thermal_conductivity_model</a>;<span class="comment"></span></div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;<span class="comment">  /// Identifier corresponding to the material as identified in the mesh.</span></div>
+<div class="line"><a name="l00852"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">  852</a></span>&#160;<span class="comment"></span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">mesh_material_id</a>;<span class="comment"></span></div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;<span class="comment">  /// Boolean indicating if the simulation has solids.</span></div>
+<div class="line"><a name="l00854"></a><span class="lineno"><a class="line" href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">  854</a></span>&#160;<span class="comment"></span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">solid_phase_present</a>;</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;};</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassDensityPostprocessor_html"><div class="ttname"><a href="classDensityPostprocessor.html">DensityPostprocessor</a></div><div class="ttdoc">Compute the density scalar field of a material within a domain.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00680">postprocessors.h:681</a></div></div>
 <div class="ttc" id="aclassDensityPostprocessor_html_a81a2f7495e0a3c94caa240d0bdc42b42"><div class="ttname"><a href="classDensityPostprocessor.html#a81a2f7495e0a3c94caa240d0bdc42b42">DensityPostprocessor::DensityPostprocessor</a></div><div class="ttdeci">DensityPostprocessor(std::shared_ptr&lt; DensityModel &gt; p_density_model, const unsigned int material_id=0)</div><div class="ttdoc">Constructor for the density postprocessor.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00691">postprocessors.h:691</a></div></div>
 <div class="ttc" id="aclassDensityPostprocessor_html_a9870b95f491f4184d1dc57a2f058a153"><div class="ttname"><a href="classDensityPostprocessor.html#a9870b95f491f4184d1dc57a2f058a153">DensityPostprocessor::density_model</a></div><div class="ttdeci">std::shared_ptr&lt; DensityModel &gt; density_model</div><div class="ttdoc">Model describing the material's density.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00726">postprocessors.h:726</a></div></div>
@@ -948,13 +947,13 @@ $(function() {
 <div class="ttc" id="aclassDynamicViscosityPostprocessor_html_ab069798147a74460fef7c374829ad33e"><div class="ttname"><a href="classDynamicViscosityPostprocessor.html#ab069798147a74460fef7c374829ad33e">DynamicViscosityPostprocessor::density_ref</a></div><div class="ttdeci">double density_ref</div><div class="ttdoc">Density of the fluid at reference state.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00446">postprocessors.h:446</a></div></div>
 <div class="ttc" id="aclassDynamicViscosityPostprocessor_html_ab833a98320b0b017077c89cc391d8cf3"><div class="ttname"><a href="classDynamicViscosityPostprocessor.html#ab833a98320b0b017077c89cc391d8cf3">DynamicViscosityPostprocessor::evaluate_vector_field</a></div><div class="ttdeci">virtual void evaluate_vector_field(const DataPostprocessorInputs::Vector&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const override</div><div class="ttdoc">Compute the dynamic viscosity of a fluid at given evaluation points.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00414">postprocessors.h:414</a></div></div>
 <div class="ttc" id="aclassDynamicViscosityPostprocessor_html_acd8ad59c89a4a686977c7f328f659030"><div class="ttname"><a href="classDynamicViscosityPostprocessor.html#acd8ad59c89a4a686977c7f328f659030">DynamicViscosityPostprocessor::rheological_model</a></div><div class="ttdeci">std::shared_ptr&lt; RheologicalModel &gt; rheological_model</div><div class="ttdoc">Model describing the fluid's rheology.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00444">postprocessors.h:444</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html"><div class="ttname"><a href="classHeatFluxPostprocessor.html">HeatFluxPostprocessor</a></div><div class="ttdoc">Compute the local heat flux vector field within a domain.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00738">postprocessors.h:739</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_a00d46bef064bafbb502d690c1d2f2b3b"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">HeatFluxPostprocessor::solid_phase_present</a></div><div class="ttdeci">const bool solid_phase_present</div><div class="ttdoc">Boolean indicating if the simulation has solids.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00855">postprocessors.h:855</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_a303c6024a7361aea60cc47cc59828302"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">HeatFluxPostprocessor::compute_quantities</a></div><div class="ttdeci">void compute_quantities(const DataPostprocessorInputs::Scalar&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const</div><div class="ttdoc">Computes local heat flux vectors.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00832">postprocessors.h:832</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_a741e8d98fa8231e8d79eebc4581f4c31"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">HeatFluxPostprocessor::HeatFluxPostprocessor</a></div><div class="ttdeci">HeatFluxPostprocessor(const std::shared_ptr&lt; ThermalConductivityModel &gt; &amp;p_thermal_conductivity_model, const std::string &amp;p_material_string=&quot;f&quot;, const unsigned int &amp;p_id=0, const unsigned int &amp;p_mesh_material_id=0, const bool &amp;p_solid_phase_present=false)</div><div class="ttdoc">Constructor of the heat flux postprocessor.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00760">postprocessors.h:760</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_ab47c3119c6975435d21ccf7063707d02"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">HeatFluxPostprocessor::mesh_material_id</a></div><div class="ttdeci">const unsigned int mesh_material_id</div><div class="ttdoc">Identifier corresponding to the material as identified in the mesh.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00853">postprocessors.h:853</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_ae29b6962379c41ebb10df750c8c510e6"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">HeatFluxPostprocessor::thermal_conductivity_model</a></div><div class="ttdeci">std::shared_ptr&lt; ThermalConductivityModel &gt; thermal_conductivity_model</div><div class="ttdoc">Model describing of thermal conductivity of the material.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00851">postprocessors.h:851</a></div></div>
-<div class="ttc" id="aclassHeatFluxPostprocessor_html_ae3bd282a4c79280533a3ab9b298d514b"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">HeatFluxPostprocessor::evaluate_scalar_field</a></div><div class="ttdeci">virtual void evaluate_scalar_field(const DataPostprocessorInputs::Scalar&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const override</div><div class="ttdoc">Compute local heat fluxes from temperature gradient vector field and thermal conductivity at given ev...</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00784">postprocessors.h:784</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html"><div class="ttname"><a href="classHeatFluxPostprocessor.html">HeatFluxPostprocessor</a></div><div class="ttdoc">Compute the local heat flux vector field within a domain.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00737">postprocessors.h:738</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_a00d46bef064bafbb502d690c1d2f2b3b"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a00d46bef064bafbb502d690c1d2f2b3b">HeatFluxPostprocessor::solid_phase_present</a></div><div class="ttdeci">const bool solid_phase_present</div><div class="ttdoc">Boolean indicating if the simulation has solids.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00854">postprocessors.h:854</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_a303c6024a7361aea60cc47cc59828302"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a303c6024a7361aea60cc47cc59828302">HeatFluxPostprocessor::compute_quantities</a></div><div class="ttdeci">void compute_quantities(const DataPostprocessorInputs::Scalar&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const</div><div class="ttdoc">Computes local heat flux vectors.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00831">postprocessors.h:831</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_a741e8d98fa8231e8d79eebc4581f4c31"><div class="ttname"><a href="classHeatFluxPostprocessor.html#a741e8d98fa8231e8d79eebc4581f4c31">HeatFluxPostprocessor::HeatFluxPostprocessor</a></div><div class="ttdeci">HeatFluxPostprocessor(const std::shared_ptr&lt; ThermalConductivityModel &gt; &amp;p_thermal_conductivity_model, const std::string &amp;p_material_string=&quot;f&quot;, const unsigned int &amp;p_id=0, const unsigned int &amp;p_mesh_material_id=0, const bool &amp;p_solid_phase_present=false)</div><div class="ttdoc">Constructor of the heat flux postprocessor.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00759">postprocessors.h:759</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_ab47c3119c6975435d21ccf7063707d02"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ab47c3119c6975435d21ccf7063707d02">HeatFluxPostprocessor::mesh_material_id</a></div><div class="ttdeci">const unsigned int mesh_material_id</div><div class="ttdoc">Identifier corresponding to the material as identified in the mesh.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00852">postprocessors.h:852</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_ae29b6962379c41ebb10df750c8c510e6"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ae29b6962379c41ebb10df750c8c510e6">HeatFluxPostprocessor::thermal_conductivity_model</a></div><div class="ttdeci">std::shared_ptr&lt; ThermalConductivityModel &gt; thermal_conductivity_model</div><div class="ttdoc">Model describing of thermal conductivity of the material.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00850">postprocessors.h:850</a></div></div>
+<div class="ttc" id="aclassHeatFluxPostprocessor_html_ae3bd282a4c79280533a3ab9b298d514b"><div class="ttname"><a href="classHeatFluxPostprocessor.html#ae3bd282a4c79280533a3ab9b298d514b">HeatFluxPostprocessor::evaluate_scalar_field</a></div><div class="ttdeci">virtual void evaluate_scalar_field(const DataPostprocessorInputs::Scalar&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const override</div><div class="ttdoc">Compute local heat fluxes from temperature gradient vector field and thermal conductivity at given ev...</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00783">postprocessors.h:783</a></div></div>
 <div class="ttc" id="aclassKinematicViscosityPostprocessor_html"><div class="ttname"><a href="classKinematicViscosityPostprocessor.html">KinematicViscosityPostprocessor</a></div><div class="ttdoc">Compute the kinematic viscosity scalar field of a fluid within a domain.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00295">postprocessors.h:296</a></div></div>
 <div class="ttc" id="aclassKinematicViscosityPostprocessor_html_a0824b53a941e0953dd0b1c7904de2fb7"><div class="ttname"><a href="classKinematicViscosityPostprocessor.html#a0824b53a941e0953dd0b1c7904de2fb7">KinematicViscosityPostprocessor::KinematicViscosityPostprocessor</a></div><div class="ttdeci">KinematicViscosityPostprocessor(std::shared_ptr&lt; RheologicalModel &gt; rheological_model, const unsigned int fluid_id=0)</div><div class="ttdoc">Constructor of the kinematic viscosity postprocessor.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00305">postprocessors.h:305</a></div></div>
 <div class="ttc" id="aclassKinematicViscosityPostprocessor_html_a46574045967c456a5bfe92b924d77374"><div class="ttname"><a href="classKinematicViscosityPostprocessor.html#a46574045967c456a5bfe92b924d77374">KinematicViscosityPostprocessor::evaluate_vector_field</a></div><div class="ttdeci">virtual void evaluate_vector_field(const DataPostprocessorInputs::Vector&lt; dim &gt; &amp;inputs, std::vector&lt; Vector&lt; double &gt;&gt; &amp;computed_quantities) const override</div><div class="ttdoc">Compute the kinematic viscosity of a fluid at given evaluation points.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessors_8h_source.html#l00329">postprocessors.h:329</a></div></div>

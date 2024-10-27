@@ -87,23 +87,28 @@ Inheritance diagram for VOFAssemblerDCDDStabilization&lt; dim &gt;:</div>
 <div class="center"><img src="classVOFAssemblerDCDDStabilization__inherit__graph.png" border="0" usemap="#aVOFAssemblerDCDDStabilization_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aVOFAssemblerDCDDStabilization_3_01dim_01_4_inherit__map" id="aVOFAssemblerDCDDStabilization_3_01dim_01_4_inherit__map">
 <area shape="rect" title="Assemble the Discontinuity&#45;Capturing Directional Dissipation (DCDD) stabilization term for the VOF ph..." alt="" coords="5,80,241,121"/>
-<area shape="rect" href="classVOFAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the VOF solver." alt="" coords="22,5,225,32"/>
+<area shape="rect" href="classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="22,5,225,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:accc0417b3a5d2b71f2c7ca88bd7b80c6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#accc0417b3a5d2b71f2c7ca88bd7b80c6">VOFAssemblerDCDDStabilization</a> (std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; <a class="el" href="classVOFAssemblerDCDDStabilization.html#a4df24a7d49f70d7e006e963ff3794867">simulation_control</a>)</td></tr>
-<tr class="separator:accc0417b3a5d2b71f2c7ca88bd7b80c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcacc2c1b5d927eef044772693b52eda"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#afcacc2c1b5d927eef044772693b52eda">assemble_matrix</a> (<a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:afcacc2c1b5d927eef044772693b52eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae090d503229af2642d217a5214c2394e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#ae090d503229af2642d217a5214c2394e">assemble_rhs</a> (<a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:ae090d503229af2642d217a5214c2394e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec4a28ddde5147c5c202711035b6692a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aec4a28ddde5147c5c202711035b6692a">VOFAssemblerDCDDStabilization</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>)</td></tr>
+<tr class="separator:aec4a28ddde5147c5c202711035b6692a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b3b1d0e1cc48593b3176640bf3b6c73"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#a9b3b1d0e1cc48593b3176640bf3b6c73">assemble_matrix</a> (const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
+<tr class="separator:a9b3b1d0e1cc48593b3176640bf3b6c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa67bb33a4017df068a9ef1a6f2b8c6e9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aa67bb33a4017df068a9ef1a6f2b8c6e9">assemble_rhs</a> (const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
+<tr class="separator:aa67bb33a4017df068a9ef1a6f2b8c6e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classPhysicsAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</a></td></tr>
+<tr class="memitem:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#a93134cecb4a4408c88b596b99c18886d">assemble_matrix</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a4df24a7d49f70d7e006e963ff3794867"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#a4df24a7d49f70d7e006e963ff3794867">simulation_control</a></td></tr>
-<tr class="separator:a4df24a7d49f70d7e006e963ff3794867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec5f08e7df568b2af00f16be528862e3"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a></td></tr>
+<tr class="separator:aec5f08e7df568b2af00f16be528862e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -118,10 +123,10 @@ class VOFAssemblerDCDDStabilization&lt; dim &gt;</h3>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00159">159</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00146">146</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="accc0417b3a5d2b71f2c7ca88bd7b80c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#accc0417b3a5d2b71f2c7ca88bd7b80c6">&#9670;&nbsp;</a></span>VOFAssemblerDCDDStabilization()</h2>
+<a id="aec4a28ddde5147c5c202711035b6692a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec4a28ddde5147c5c202711035b6692a">&#9670;&nbsp;</a></span>VOFAssemblerDCDDStabilization()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,7 +139,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::<a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a> </td>
           <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>simulation_control</em></td><td>)</td>
           <td></td>
         </tr>
@@ -154,13 +159,13 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00170">170</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00157">157</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="afcacc2c1b5d927eef044772693b52eda"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcacc2c1b5d927eef044772693b52eda">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
+<a id="a9b3b1d0e1cc48593b3176640bf3b6c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b3b1d0e1cc48593b3176640bf3b6c73">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -173,7 +178,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::assemble_matrix </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -199,21 +204,19 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class).</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">copy_data</td><td>(see base class). </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>(see base class). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classVOFAssemblerBase.html#a2e4f8664dc1e78389f475ad69ddcd54f">VOFAssemblerBase&lt; dim &gt;</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8cc_source.html#l00321">321</a> of file <a class="el" href="vof__assemblers_8cc_source.html">vof_assemblers.cc</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8cc_source.html#l00323">323</a> of file <a class="el" href="vof__assemblers_8cc_source.html">vof_assemblers.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="vof__scratch__data_8h_source.html#l00281">VOFScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00297">VOFScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00284">VOFScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00279">VOFScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00280">VOFScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00290">VOFScratchData&lt; dim &gt;::previous_phase_gradients</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00309">VOFScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="vof__scratch__data_8h_source.html#l00279">VOFScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00295">VOFScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00282">VOFScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00277">VOFScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00278">VOFScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00288">VOFScratchData&lt; dim &gt;::previous_phase_gradients</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00307">VOFScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
-<a id="ae090d503229af2642d217a5214c2394e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae090d503229af2642d217a5214c2394e">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
+<a id="aa67bb33a4017df068a9ef1a6f2b8c6e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa67bb33a4017df068a9ef1a6f2b8c6e9">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,7 +229,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::assemble_rhs </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -252,22 +255,20 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class)</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">copy_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classVOFAssemblerBase.html#aa6216f5521fedba88a0b43859c71a56c">VOFAssemblerBase&lt; dim &gt;</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8cc_source.html#l00392">392</a> of file <a class="el" href="vof__assemblers_8cc_source.html">vof_assemblers.cc</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8cc_source.html#l00394">394</a> of file <a class="el" href="vof__assemblers_8cc_source.html">vof_assemblers.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="vof__scratch__data_8h_source.html#l00281">VOFScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00297">VOFScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00284">VOFScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00279">VOFScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00280">VOFScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00289">VOFScratchData&lt; dim &gt;::phase_gradients</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00290">VOFScratchData&lt; dim &gt;::previous_phase_gradients</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00309">VOFScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="vof__scratch__data_8h_source.html#l00279">VOFScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00295">VOFScratchData&lt; dim &gt;::grad_phi</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00282">VOFScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00277">VOFScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00278">VOFScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00287">VOFScratchData&lt; dim &gt;::phase_gradients</a>, <a class="el" href="vof__scratch__data_8h_source.html#l00288">VOFScratchData&lt; dim &gt;::previous_phase_gradients</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00307">VOFScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4df24a7d49f70d7e006e963ff3794867"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4df24a7d49f70d7e006e963ff3794867">&#9670;&nbsp;</a></span>simulation_control</h2>
+<a id="aec5f08e7df568b2af00f16be528862e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec5f08e7df568b2af00f16be528862e3">&#9670;&nbsp;</a></span>simulation_control</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -275,12 +276,12 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::simulation_control</td>
+          <td class="memname">const std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::simulation_control</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00197">197</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00184">184</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 <map id="FluidDynamicsBlock&lt; dim &gt;" name="FluidDynamicsBlock&lt; dim &gt;">
 <area shape="rect" id="node1" title=" " alt="" coords="35,184,189,225"/>
 <area shape="rect" id="node2" href="$classNavierStokesBase.html" title=" " alt="" coords="13,80,211,136"/>
-<area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,5,219,32"/>
+<area shape="rect" id="node3" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,5,219,32"/>
 </map>

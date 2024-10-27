@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classstatistics.html" title="Small class that is used to store statistics (min,max,total,average) of variables that are used in si..." alt="" coords="5,5,87,32"/>
+<area shape="rect" id="node1" href="$classVolumeOfFluidFilterBase.html" title="Abstract class for filtering phase fraction in volume of fluid (VOF) simulations." alt="" coords="5,31,188,57"/>
+<area shape="rect" id="node2" href="$classVolumeOfFluidNoFilter.html" title="Default filter applied to phase fraction. The VolumeOfFluidNoFilter filter does not modify the phase ..." alt="" coords="242,5,411,32"/>
+<area shape="rect" id="node3" href="$classVolumeOfFluidTanhFilter.html" title="Filter phase fraction with a hyperbolic tangent function for VOF simulations." alt="" coords="236,56,417,83"/>
 </map>

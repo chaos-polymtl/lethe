@@ -112,6 +112,9 @@ $(function() {
 <li>get_active_physics()
 : <a class="el" href="classMultiphysicsInterface.html#a8528c2b871d3abd1a4060968fdcb29c1">MultiphysicsInterface&lt; dim &gt;</a>
 </li>
+<li>get_active_subequations()
+: <a class="el" href="classVOFSubequationsInterface.html#a58ab457ad43416043202ae7dd1501512">VOFSubequationsInterface&lt; dim &gt;</a>
+</li>
 <li>get_activity()
 : <a class="el" href="classDetector.html#a4d656bbc0a8ad99abfa78ea324155ad6">Detector&lt; dim &gt;</a>
 </li>
@@ -239,6 +242,7 @@ $(function() {
 , <a class="el" href="classPostProcessorSmoothing.html#aa14eb3b82900d49dcad89de88c0b58d3">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classSerialSolid.html#aa8442bda162e551585b8f1e921b46d41">SerialSolid&lt; dim, spacedim &gt;</a>
 , <a class="el" href="classTracer.html#a6cf9aa7a97659e14002578a0bb491300">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#a9973112947d19b9972aa294eedd8bece">VOFSubequationsInterface&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#ac6e0e074461bd324d0024c7b8893c577">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>get_dynamic_viscosity()
@@ -310,6 +314,9 @@ $(function() {
 </li>
 <li>get_immersed_solid_signed_distance_function()
 : <a class="el" href="classMultiphysicsInterface.html#aa821d532e7531c3db10829cc06973872">MultiphysicsInterface&lt; dim &gt;</a>
+</li>
+<li>get_input_dof_handler()
+: <a class="el" href="classVOFSubequationsInterface.html#a0ae03966af8c55b01528409aed87b659">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>get_kinematic_viscosity()
 : <a class="el" href="classCarreau.html#a748fe7d4f6b25061a85f5d43d814734d">Carreau</a>
@@ -601,6 +608,7 @@ $(function() {
 </li>
 <li>get_solution()
 : <a class="el" href="classMultiphysicsInterface.html#acb03dff74acb44e563eb53a7fae14327">MultiphysicsInterface&lt; dim &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#a40e5a7232ffb24ab148714fe55743fef">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>get_sparsity_pattern()
 : <a class="el" href="classNavierStokesOperatorBase.html#a22ccab315aecbbb361d04428b4099885">NavierStokesOperatorBase&lt; dim, number &gt;</a>
@@ -613,6 +621,9 @@ $(function() {
 </li>
 <li>get_step_number()
 : <a class="el" href="classSimulationControl.html#a62b6eb797cd39c75989300f8af3070f0">SimulationControl</a>
+</li>
+<li>get_subequation_string()
+: <a class="el" href="classVOFSubequationsInterface.html#aaed664829784d08911fd574c67ffc496">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>get_surface_tension()
 : <a class="el" href="classPhysicalPropertiesManager.html#a6608caed1fe22361f1deb82fca4e3bf3">PhysicalPropertiesManager</a>
@@ -680,46 +691,46 @@ $(function() {
 : <a class="el" href="classAdaptiveSparseContacts.html#a02c643f5537d0fb6b1cae251ce1f58a7">AdaptiveSparseContacts&lt; dim &gt;</a>
 </li>
 <li>GLSIsothermalCompressibleNavierStokesAssemblerBDF()
-: <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerBDF.html#ac4c18b039f3c8504e94e736d78dc47e9">GLSIsothermalCompressibleNavierStokesAssemblerBDF&lt; dim &gt;</a>
+: <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerBDF.html#a29b5cd738ef745b1ad936f6a187770d7">GLSIsothermalCompressibleNavierStokesAssemblerBDF&lt; dim &gt;</a>
 </li>
 <li>GLSIsothermalCompressibleNavierStokesAssemblerCore()
-: <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerCore.html#a910874545261d249acbb2cfe6eaa5be2">GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSIsothermalCompressibleNavierStokesAssemblerCore.html#aa3813e612d6563e17ff4d74db2701e2e">GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;</a>
 </li>
 <li>GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF()
-: <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerBDF.html#a7d0c2b5985a36ff66882f5ed6756ba31">GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
+: <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerBDF.html#af9dc8a17e76adff7ee3a53005a8a04e1">GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
 </li>
 <li>GLSIsothermalCompressibleNavierStokesVOFAssemblerCore()
-: <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerCore.html#a0abdc9b6d66ba66b2fecf812a8be8b16">GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSIsothermalCompressibleNavierStokesVOFAssemblerCore.html#a33488e816d05472e8ec07d1ea2038aed">GLSIsothermalCompressibleNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesAssemblerCore()
-: <a class="el" href="classGLSNavierStokesAssemblerCore.html#a09d780788d1738f69a8bd145c6795240">GLSNavierStokesAssemblerCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesAssemblerCore.html#a269c1b50c60732d9c465ea78e1ca958d">GLSNavierStokesAssemblerCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesAssemblerNonNewtonianCore()
-: <a class="el" href="classGLSNavierStokesAssemblerNonNewtonianCore.html#ad7ff969306b97b1087e6c69a1597e9fd">GLSNavierStokesAssemblerNonNewtonianCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesAssemblerNonNewtonianCore.html#a95a0facfa28e50547f0f65421e714e82">GLSNavierStokesAssemblerNonNewtonianCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesAssemblerSRF()
 : <a class="el" href="classGLSNavierStokesAssemblerSRF.html#a097038b646d7dc4ae6dbb810fdc0064b">GLSNavierStokesAssemblerSRF&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesCahnHilliardAssemblerBDF()
-: <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerBDF.html#a4a07cb359073d7867f6c57dbae08e98b">GLSNavierStokesCahnHilliardAssemblerBDF&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerBDF.html#a913fe4973b51879cb204b66731e0566f">GLSNavierStokesCahnHilliardAssemblerBDF&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesCahnHilliardAssemblerCore()
-: <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerCore.html#aad5aa7796e7c9ff70623d0562739cd02">GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesCahnHilliardAssemblerCore.html#ae736f1260b91bcfc5f3af834fda2107d">GLSNavierStokesCahnHilliardAssemblerCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesVOFAssemblerBDF()
-: <a class="el" href="classGLSNavierStokesVOFAssemblerBDF.html#a78665fe7345bd1a4e70f5bc18d8226c1">GLSNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesVOFAssemblerBDF.html#af37d04f6516a2d4bb2c585db9ee8baad">GLSNavierStokesVOFAssemblerBDF&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesVOFAssemblerCore()
-: <a class="el" href="classGLSNavierStokesVOFAssemblerCore.html#ab158c57291156968962d30fecad32ac2">GLSNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesVOFAssemblerCore.html#a2a0029ba7199849a9be8b62e1bc3231f">GLSNavierStokesVOFAssemblerCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesVOFAssemblerMarangoni()
-: <a class="el" href="classGLSNavierStokesVOFAssemblerMarangoni.html#a36d9345c58e843f3543cc457725dba92">GLSNavierStokesVOFAssemblerMarangoni&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesVOFAssemblerMarangoni.html#ac57dff3c0e65574411ca77efce99e3a8">GLSNavierStokesVOFAssemblerMarangoni&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesVOFAssemblerNonNewtonianCore()
-: <a class="el" href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html#abf7e0d35eb953b7e2fdf29779c6af1aa">GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesVOFAssemblerNonNewtonianCore.html#a58afdd7ae76cb36147c9f2e88152b895">GLSNavierStokesVOFAssemblerNonNewtonianCore&lt; dim &gt;</a>
 </li>
 <li>GLSNavierStokesVOFAssemblerSTF()
-: <a class="el" href="classGLSNavierStokesVOFAssemblerSTF.html#a1c5830bc1a3e90ec41b2e89e4c86fa33">GLSNavierStokesVOFAssemblerSTF&lt; dim &gt;</a>
+: <a class="el" href="classGLSNavierStokesVOFAssemblerSTF.html#afba9a9946b106c8b547d225f62baffd6">GLSNavierStokesVOFAssemblerSTF&lt; dim &gt;</a>
 </li>
 <li>gradient()
 : <a class="el" href="classCompositeShape.html#a51eba9508c6e25da9f27a4546f226f9b">CompositeShape&lt; dim &gt;</a>

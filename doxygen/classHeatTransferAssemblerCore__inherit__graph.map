@@ -1,4 +1,4 @@
 <map id="HeatTransferAssemblerCore&lt; dim &gt;" name="HeatTransferAssemblerCore&lt; dim &gt;">
 <area shape="rect" id="node1" title="Class that assembles the core of the heat transfer equation. This class assembles the weak form of: ." alt="" coords="7,95,211,136"/>
-<area shape="rect" id="node2" href="$classHeatTransferAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for heat transfer." alt="" coords="5,5,212,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,212,47"/>
 </map>

@@ -1,0 +1,9 @@
+<map id="PhysicsScratchDataBase" name="PhysicsScratchDataBase">
+<area shape="rect" id="node1" title="Base class for scratch data objects of physics and subequations." alt="" coords="5,177,188,203"/>
+<area shape="rect" id="node2" href="$classCahnHilliardScratchData.html" title="Class that stores the information required by the assembly procedure for the Cahn&#45;Hilliard equations...." alt="" coords="250,5,431,47"/>
+<area shape="rect" id="node3" href="$classHeatTransferScratchData.html" title="Class that stores the information required by the assembly procedure for a heat transfer advection&#45;di..." alt="" coords="249,71,433,112"/>
+<area shape="rect" id="node4" href="$classNavierStokesScratchData.html" title="Class that stores the information required by the assembly procedure for a Navier&#45;Stokes equation...." alt="" coords="247,136,434,177"/>
+<area shape="rect" id="node5" href="$classTracerScratchData.html" title="Class that stores the information required by the assembly procedure for a Tracer advection&#45;diffusion..." alt="" coords="265,201,416,243"/>
+<area shape="rect" id="node6" href="$classVOFPhaseGradientProjectionScratchData.html" title="Store the information required by the assembly procedure for a VOF phase gradient projection in the L..." alt="" coords="236,267,445,308"/>
+<area shape="rect" id="node7" href="$classVOFScratchData.html" title="Store the information required by the assembly procedure for a VOF free surface equation...." alt="" coords="249,333,432,359"/>
+</map>

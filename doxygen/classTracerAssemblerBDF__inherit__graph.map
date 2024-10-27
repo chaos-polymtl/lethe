@@ -1,4 +1,4 @@
 <map id="TracerAssemblerBDF&lt; dim &gt;" name="TracerAssemblerBDF&lt; dim &gt;">
 <area shape="rect" id="node1" title="Class that assembles the transient time arising from BDF time integration for the Tracer equations...." alt="" coords="8,95,165,136"/>
-<area shape="rect" id="node2" href="$classTracerAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Tracer equation." alt="" coords="5,5,168,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,168,47"/>
 </map>

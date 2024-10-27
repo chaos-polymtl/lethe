@@ -1,4 +1,4 @@
 <map id="VOFAssemblerCore&lt; dim &gt;" name="VOFAssemblerCore&lt; dim &gt;">
 <area shape="rect" id="node1" title="Class that assembles the core of the VOF solver. According to the following weak form: &#160;with an SUPG ..." alt="" coords="6,80,207,107"/>
-<area shape="rect" id="node2" href="$classVOFAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the VOF solver." alt="" coords="5,5,208,32"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,208,32"/>
 </map>

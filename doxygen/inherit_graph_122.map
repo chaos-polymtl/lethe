@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structParameters_1_1VelocitySource.html" title="VelocitySource &#45; Adds velocity&#45;dependent source term to the Navier&#45;Stokes equations with the appropri..." alt="" coords="5,5,205,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="59,5,169,32"/>
+<area shape="rect" id="node2" href="$classParsedFunctionCustom.html" title="Wrapper based on muParser to deal with arbitrary expressions." alt="" coords="271,31,441,73"/>
+<area shape="rect" id="node3" href="$classinternalFunctionParserCustom_1_1ParserImplementation.html" title="Class that interfaces with muParser." alt="" coords="5,56,223,112"/>
 </map>

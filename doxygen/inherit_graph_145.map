@@ -1,20 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,325,219,352"/>
-<area shape="rect" id="node2" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="293,99,466,141"/>
-<area shape="rect" id="node7" href="$classNavierStokesBase.html" title=" " alt="" coords="270,205,489,246"/>
-<area shape="rect" id="node13" href="$classNavierStokesBase.html" title=" " alt="" coords="281,271,478,327"/>
-<area shape="rect" id="node15" href="$classNavierStokesBase.html" title=" " alt="" coords="267,351,492,407"/>
-<area shape="rect" id="node17" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="293,431,466,473"/>
-<area shape="rect" id="node18" href="$classNavierStokesBase.html" title=" " alt="" coords="287,497,471,538"/>
-<area shape="rect" id="node3" href="$classCahnHilliard.html" title=" " alt="" coords="562,5,719,32"/>
-<area shape="rect" id="node4" href="$classHeatTransfer.html" title="Implementation of heat transfer as an auxiliary physics. The heat equation is weakly coupled to the v..." alt="" coords="561,56,721,83"/>
-<area shape="rect" id="node5" href="$classTracer.html" title=" " alt="" coords="583,107,699,133"/>
-<area shape="rect" id="node6" href="$classVolumeOfFluid.html" title=" " alt="" coords="554,157,727,184"/>
-<area shape="rect" id="node8" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="540,209,741,250"/>
-<area shape="rect" id="node9" href="$classFluidDynamicsNitsche.html" title=" " alt="" coords="789,143,957,185"/>
-<area shape="rect" id="node10" href="$classFluidDynamicsSharp.html" title=" " alt="" coords="795,209,951,250"/>
-<area shape="rect" id="node11" href="$classFluidDynamicsVANS.html" title=" " alt="" coords="791,274,956,315"/>
-<area shape="rect" id="node12" href="$classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1005,281,1180,308"/>
-<area shape="rect" id="node14" href="$classFluidDynamicsBlock.html" title=" " alt="" coords="563,278,718,319"/>
-<area shape="rect" id="node16" href="$classFluidDynamicsMatrixFree.html" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="546,358,735,399"/>
+<area shape="rect" id="node1" href="$classRadioParticle.html" title=" " alt="" coords="5,5,168,32"/>
 </map>

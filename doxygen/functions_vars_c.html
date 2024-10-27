@@ -217,6 +217,7 @@ $(function() {
 , <a class="el" href="classHeatTransfer.html#a6f1437a4678dd2436775b59e35e3a8a1">HeatTransfer&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#a1733bf24b0ca53cd549f88e6b773c3a6">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classTracer.html#a155749e5654dba8efc5dff8efc58cc63">Tracer&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#afa1a25ba1f5938cff6dc52580f7e7809">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#ab50ddc323a7c830a0873e3bffea227ba">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>cell_size
@@ -224,6 +225,7 @@ $(function() {
 , <a class="el" href="classHeatTransferScratchData.html#a8ac27a44f7db6d8fa65b82ef94d7e073">HeatTransferScratchData&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesScratchData.html#a9b57679638ab4f0b90a3d7e2c7c2c32c">NavierStokesScratchData&lt; dim &gt;</a>
 , <a class="el" href="classTracerScratchData.html#a3c1c08f714c24be0938f12362509d076">TracerScratchData&lt; dim &gt;</a>
+, <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#a750c997b16dcc715962eb3dfa5b878db">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
 , <a class="el" href="classVOFScratchData.html#a7bb10776227d847b3bd78187a3b20b78">VOFScratchData&lt; dim &gt;</a>
 </li>
 <li>cell_status
@@ -277,18 +279,18 @@ $(function() {
 </li>
 <li>cfd_dem
 : <a class="el" href="classCFDDEMSimulationParameters.html#a098cc299261db290403403ac79aef769">CFDDEMSimulationParameters&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerBDF.html#a8c151efc58a4a1c8b7bfd509556eb3a1">VANSAssemblerBDF&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerBeetstra.html#a3c69cf6bc38f23f6c1dfaddc90d27e5e">VANSAssemblerBeetstra&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerCoreModelA.html#ad18601ae457aee806f49345af212b7c5">VANSAssemblerCoreModelA&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerCoreModelB.html#af24f7922b3c2052bbe4cb28557e20005">VANSAssemblerCoreModelB&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerDallavalle.html#a2ca8bbcde34275efde03d8b0ef258541">VANSAssemblerDallavalle&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerDiFelice.html#acd4cbc57edd545ed6618597a60f03b60">VANSAssemblerDiFelice&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerFPI.html#a68e6b3036400c5cf099a989d14bdddcb">VANSAssemblerFPI&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerGidaspow.html#a0797681bcb88e4216257d3ec3f9e743a">VANSAssemblerGidaspow&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerKochHill.html#ab2f5efc550abdac455ab513ed56ec306">VANSAssemblerKochHill&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerPressureForce.html#a967d447610b5b9705b00fcf07e04feea">VANSAssemblerPressureForce&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerRong.html#a1bde92da3e7830faec8112121de674e3">VANSAssemblerRong&lt; dim &gt;</a>
-, <a class="el" href="classVANSAssemblerShearForce.html#ad3655e105cfa8000d043b395e6f8b24e">VANSAssemblerShearForce&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerBDF.html#a19da4a1a7f8af8cb2f51b2eeec42fb20">VANSAssemblerBDF&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerBeetstra.html#a4825aefb3c20e5770b0cae5c288019b5">VANSAssemblerBeetstra&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerCoreModelA.html#ae9ebafe63a48e283b2ce6a9ec0c11d59">VANSAssemblerCoreModelA&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerCoreModelB.html#a0e58cc95089402cc547ecea99e58ec75">VANSAssemblerCoreModelB&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerDallavalle.html#a55a791e574157f23718cec4299d70d53">VANSAssemblerDallavalle&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerDiFelice.html#aef82fefb5972c2543a3bc073e5ad20c9">VANSAssemblerDiFelice&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerFPI.html#a2030d570f7def281687de747e71b8248">VANSAssemblerFPI&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerGidaspow.html#a18164d67696a2432388b0b4227cde745">VANSAssemblerGidaspow&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerKochHill.html#a7f90d60cdfca414d04aaaaeaa571924f">VANSAssemblerKochHill&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerPressureForce.html#a4c54b11cbdf293ecd24b1e0d258a9a13">VANSAssemblerPressureForce&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerRong.html#af191ece29aef8ef83418b7ba23f5e31b">VANSAssemblerRong&lt; dim &gt;</a>
+, <a class="el" href="classVANSAssemblerShearForce.html#a7dc5985527bf598bad8d71d244d57c8a">VANSAssemblerShearForce&lt; dim &gt;</a>
 </li>
 <li>cfd_dem_parameters
 : <a class="el" href="classFluidDynamicsSharp.html#a2f47254ebf56171b875dc11318ce8924">FluidDynamicsSharp&lt; dim &gt;</a>
@@ -448,6 +450,7 @@ $(function() {
 : <a class="el" href="classNavierStokesOperatorBase.html#a4e23aa3b87f060442c860397c6bfad00">NavierStokesOperatorBase&lt; dim, number &gt;</a>
 , <a class="el" href="classPostProcessorSmoothing.html#a5a63c28198fd4985677d01e7f4d18433">PostProcessorSmoothing&lt; dim, VectorType &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#a82d64ad0a43f2af2b0050319e1bf872a">RPTL2Projection&lt; dim &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#a8595e0527f803972679192216aaec84b">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
 </li>
 <li>contact_build_number
 : <a class="el" href="classDEMSolver.html#a82695324054983cd2277870eadc5543a">DEMSolver&lt; dim &gt;</a>

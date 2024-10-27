@@ -1,5 +1,5 @@
 <map id="PhysicsSolver&lt; VectorType &gt;" name="PhysicsSolver&lt; VectorType &gt;">
-<area shape="rect" id="node1" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,325,219,352"/>
+<area shape="rect" id="node1" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,325,219,352"/>
 <area shape="rect" id="node2" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="293,99,466,141"/>
 <area shape="rect" id="node7" href="$classNavierStokesBase.html" title=" " alt="" coords="270,205,489,246"/>
 <area shape="rect" id="node13" href="$classNavierStokesBase.html" title=" " alt="" coords="281,271,478,327"/>

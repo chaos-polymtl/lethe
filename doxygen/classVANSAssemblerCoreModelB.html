@@ -87,27 +87,32 @@ Inheritance diagram for VANSAssemblerCoreModelB&lt; dim &gt;:</div>
 <div class="center"><img src="classVANSAssemblerCoreModelB__inherit__graph.png" border="0" usemap="#aVANSAssemblerCoreModelB_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aVANSAssemblerCoreModelB_3_01dim_01_4_inherit__map" id="aVANSAssemblerCoreModelB_3_01dim_01_4_inherit__map">
 <area shape="rect" title="Class that assembles the core of Model B of the Volume Averaged Navier&#45;Stokes equations." alt="" coords="7,95,213,136"/>
-<area shape="rect" href="classNavierStokesAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Navier&#45;Stokes Equa..." alt="" coords="5,5,215,47"/>
+<area shape="rect" href="classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,215,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5fffaf9ebb5d35f01dac10801ee174c1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a5fffaf9ebb5d35f01dac10801ee174c1">VANSAssemblerCoreModelB</a> (std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; <a class="el" href="classVANSAssemblerCoreModelB.html#a96abf9a7838622f535f1421190c2e8b0">simulation_control</a>, <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="el" href="classVANSAssemblerCoreModelB.html#af24f7922b3c2052bbe4cb28557e20005">cfd_dem</a>)</td></tr>
-<tr class="separator:a5fffaf9ebb5d35f01dac10801ee174c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8accc57935455bbbd098ad3258c7cc0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#af8accc57935455bbbd098ad3258c7cc0">assemble_matrix</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
-<tr class="separator:af8accc57935455bbbd098ad3258c7cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bef1ac9d1d923fe3cebc261079438cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a6bef1ac9d1d923fe3cebc261079438cf">assemble_rhs</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
-<tr class="separator:a6bef1ac9d1d923fe3cebc261079438cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6ec852adcf8c5ba980c0da9c3d6f096"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#ad6ec852adcf8c5ba980c0da9c3d6f096">VANSAssemblerCoreModelB</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classVANSAssemblerCoreModelB.html#a237351c869a82e68a419b19546840de5">simulation_control</a>, const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="el" href="classVANSAssemblerCoreModelB.html#a0e58cc95089402cc547ecea99e58ec75">cfd_dem</a>)</td></tr>
+<tr class="separator:ad6ec852adcf8c5ba980c0da9c3d6f096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e79e39dff59db074c973af9d9a0d0ab"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a8e79e39dff59db074c973af9d9a0d0ab">assemble_matrix</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
+<tr class="separator:a8e79e39dff59db074c973af9d9a0d0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef847c3c2a134720854861126a8bfdb2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#aef847c3c2a134720854861126a8bfdb2">assemble_rhs</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
+<tr class="separator:aef847c3c2a134720854861126a8bfdb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classPhysicsAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</a></td></tr>
+<tr class="memitem:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#a93134cecb4a4408c88b596b99c18886d">assemble_matrix</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:adee3500293413e7d44d9d9a15f6c3158"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#adee3500293413e7d44d9d9a15f6c3158">SUPG</a> = true</td></tr>
 <tr class="separator:adee3500293413e7d44d9d9a15f6c3158"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96abf9a7838622f535f1421190c2e8b0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a96abf9a7838622f535f1421190c2e8b0">simulation_control</a></td></tr>
-<tr class="separator:a96abf9a7838622f535f1421190c2e8b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af24f7922b3c2052bbe4cb28557e20005"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#af24f7922b3c2052bbe4cb28557e20005">cfd_dem</a></td></tr>
-<tr class="separator:af24f7922b3c2052bbe4cb28557e20005"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a237351c869a82e68a419b19546840de5"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a237351c869a82e68a419b19546840de5">simulation_control</a></td></tr>
+<tr class="separator:a237351c869a82e68a419b19546840de5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e58cc95089402cc547ecea99e58ec75"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerCoreModelB.html#a0e58cc95089402cc547ecea99e58ec75">cfd_dem</a></td></tr>
+<tr class="separator:a0e58cc95089402cc547ecea99e58ec75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -123,8 +128,8 @@ class VANSAssemblerCoreModelB&lt; dim &gt;</h3>
 
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00053">53</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5fffaf9ebb5d35f01dac10801ee174c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fffaf9ebb5d35f01dac10801ee174c1">&#9670;&nbsp;</a></span>VANSAssemblerCoreModelB()</h2>
+<a id="ad6ec852adcf8c5ba980c0da9c3d6f096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6ec852adcf8c5ba980c0da9c3d6f096">&#9670;&nbsp;</a></span>VANSAssemblerCoreModelB()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -137,13 +142,13 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::<a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a> </td>
           <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>simulation_control</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;&#160;</td>
           <td class="paramname"><em>cfd_dem</em>&#160;</td>
         </tr>
         <tr>
@@ -164,8 +169,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af8accc57935455bbbd098ad3258c7cc0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8accc57935455bbbd098ad3258c7cc0">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
+<a id="a8e79e39dff59db074c973af9d9a0d0ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e79e39dff59db074c973af9d9a0d0ab">&#9670;&nbsp;</a></span>assemble_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +183,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::assemble_matrix </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -209,16 +214,14 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classNavierStokesAssemblerBase.html#a88cbacdab81e74ab04da8b952b01019f">NavierStokesAssemblerBase&lt; dim &gt;</a>.</p>
-
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l00015">15</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00693">calculate_gamma()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01056">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01070">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01085">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01062">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01091">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01089">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01066">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01010">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01088">NavierStokesScratchData&lt; dim &gt;::laplacian_phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01063">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01054">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01055">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01090">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01086">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01080">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01023">NavierStokesScratchData&lt; dim &gt;::pressure_scaling_factor</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01082">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00209">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01075">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01076">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01073">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01121">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01119">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
+<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00699">calculate_gamma()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01057">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01071">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01086">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01063">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01092">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01090">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01067">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01011">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01089">NavierStokesScratchData&lt; dim &gt;::laplacian_phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01064">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01055">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01056">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01091">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01087">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01081">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01024">NavierStokesScratchData&lt; dim &gt;::pressure_scaling_factor</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01083">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00209">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01076">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01077">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01074">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01122">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01120">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
 
 </div>
 </div>
-<a id="a6bef1ac9d1d923fe3cebc261079438cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bef1ac9d1d923fe3cebc261079438cf">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
+<a id="aef847c3c2a134720854861126a8bfdb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef847c3c2a134720854861126a8bfdb2">&#9670;&nbsp;</a></span>assemble_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -231,7 +234,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::assemble_rhs </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
         </tr>
         <tr>
@@ -262,17 +265,15 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classNavierStokesAssemblerBase.html#a2d002c4ba3767e53e38f5b1a76686d23">NavierStokesAssemblerBase&lt; dim &gt;</a>.</p>
-
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l00218">218</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00693">calculate_gamma()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01056">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01070">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01085">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01062">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01091">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01089">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01066">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01010">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01063">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01054">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01055">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01090">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01086">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01080">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01079">NavierStokesScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01082">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01074">NavierStokesScratchData&lt; dim &gt;::velocity_divergences</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01075">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01076">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01073">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01121">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01119">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
+<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00699">calculate_gamma()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01057">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01071">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01086">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01063">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01092">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01090">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01067">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01011">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01064">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01055">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01056">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01091">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01087">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01081">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01080">NavierStokesScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01083">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01075">NavierStokesScratchData&lt; dim &gt;::velocity_divergences</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01076">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01077">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01074">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01122">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01120">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="af24f7922b3c2052bbe4cb28557e20005"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af24f7922b3c2052bbe4cb28557e20005">&#9670;&nbsp;</a></span>cfd_dem</h2>
+<a id="a0e58cc95089402cc547ecea99e58ec75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e58cc95089402cc547ecea99e58ec75">&#9670;&nbsp;</a></span>cfd_dem</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,30 +281,30 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::cfd_dem</td>
+          <td class="memname">const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::cfd_dem</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00084">84</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+
+</div>
+</div>
+<a id="a237351c869a82e68a419b19546840de5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a237351c869a82e68a419b19546840de5">&#9670;&nbsp;</a></span>simulation_control</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::simulation_control</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00083">83</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
-
-</div>
-</div>
-<a id="a96abf9a7838622f535f1421190c2e8b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96abf9a7838622f535f1421190c2e8b0">&#9670;&nbsp;</a></span>simulation_control</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classVANSAssemblerCoreModelB.html">VANSAssemblerCoreModelB</a>&lt; dim &gt;::simulation_control</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00082">82</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -321,7 +322,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00080">80</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00081">81</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

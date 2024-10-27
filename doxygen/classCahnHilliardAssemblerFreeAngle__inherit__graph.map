@@ -1,4 +1,4 @@
 <map id="CahnHilliardAssemblerFreeAngle&lt; dim &gt;" name="CahnHilliardAssemblerFreeAngle&lt; dim &gt;">
 <area shape="rect" id="node1" title="Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree..." alt="" coords="7,95,206,136"/>
-<area shape="rect" id="node2" href="$classCahnHilliardAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the Cahn&#45;Hilliard equa..." alt="" coords="5,5,208,47"/>
+<area shape="rect" id="node2" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,208,47"/>
 </map>

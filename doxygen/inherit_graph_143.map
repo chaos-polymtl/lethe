@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classPhysicalPropertiesManager.html" title="Class that manages the physical properties model which are required to calculate the various physical..." alt="" coords="5,5,204,32"/>
+<area shape="rect" id="node1" href="$classPostProcessorSmoothing.html" title=" " alt="" coords="5,39,188,80"/>
+<area shape="rect" id="node2" href="$classContinuityPostProcessorSmoothing.html" title=" " alt="" coords="236,5,487,47"/>
+<area shape="rect" id="node3" href="$classQcriterionPostProcessorSmoothing.html" title=" " alt="" coords="238,71,485,112"/>
 </map>

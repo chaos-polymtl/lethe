@@ -1,7 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/vof_assemblers.h" name="/home/runner/work/lethe/lethe/include/solvers/vof_assemblers.h">
-<area shape="rect" id="node1" title=" " alt="" coords="222,5,405,61"/>
-<area shape="rect" id="node2" href="$vof_8h.html" title=" " alt="" coords="79,117,276,158"/>
-<area shape="rect" id="node4" href="$vof_8cc.html" title=" " alt="" coords="222,213,405,269"/>
-<area shape="rect" id="node5" href="$vof__assemblers_8cc.html" title=" " alt="" coords="351,109,534,165"/>
-<area shape="rect" id="node3" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,213,197,269"/>
+<area shape="rect" id="node1" title=" " alt="" coords="527,5,709,61"/>
+<area shape="rect" id="node2" href="$vof_8h.html" title=" " alt="" coords="587,347,785,388"/>
+<area shape="rect" id="node5" href="$vof__linear__subequations__solver_8h.html" title=" " alt="" coords="313,213,499,284"/>
+<area shape="rect" id="node10" href="$vof__subequations__interface_8h.html" title=" " alt="" coords="435,109,654,165"/>
+<area shape="rect" id="node11" href="$vof__assemblers_8cc.html" title=" " alt="" coords="729,109,912,165"/>
+<area shape="rect" id="node3" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="590,451,782,507"/>
+<area shape="rect" id="node4" href="$vof_8cc.html" title=" " alt="" coords="807,451,989,507"/>
+<area shape="rect" id="node6" href="$vof__phase__gradient__projection_8h.html" title=" " alt="" coords="8,339,247,395"/>
+<area shape="rect" id="node8" href="$vof__subequations__interface_8cc.html" title=" " alt="" coords="342,451,566,507"/>
+<area shape="rect" id="node9" href="$vof__linear__subequations__solver_8cc.html" title=" " alt="" coords="271,332,456,403"/>
+<area shape="rect" id="node7" href="$vof__phase__gradient__projection_8cc.html" title=" " alt="" coords="5,451,249,507"/>
 </map>

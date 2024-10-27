@@ -89,7 +89,7 @@ Inheritance diagram for CahnHilliard&lt; dim &gt;:</div>
 <map name="aCahnHilliard_3_01dim_01_4_inherit__map" id="aCahnHilliard_3_01dim_01_4_inherit__map">
 <area shape="rect" title=" " alt="" coords="33,169,191,196"/>
 <area shape="rect" href="classAuxiliaryPhysics.html" title=" " alt="" coords="25,80,199,121"/>
-<area shape="rect" href="classPhysicsSolver.html" title="Class that has all the common elements of a physics solver. It creates the nonlinear solver as specif..." alt="" coords="5,5,219,32"/>
+<area shape="rect" href="classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,5,219,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -246,7 +246,7 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a804ea4b0af726e98b5f73e8ba7280ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a7d587c0c53ee66a8405a1b617ee5b7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; parallel::distributed::SolutionTransfer&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCahnHilliard.html#a0a7d587c0c53ee66a8405a1b617ee5b7">previous_solutions_transfer</a></td></tr>
 <tr class="separator:a0a7d587c0c53ee66a8405a1b617ee5b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f10bd232c9b5997e7fbe4c7c04a2daa"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classCahnHilliardAssemblerBase.html">CahnHilliardAssemblerBase</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCahnHilliard.html#a3f10bd232c9b5997e7fbe4c7c04a2daa">assemblers</a></td></tr>
+<tr class="memitem:a3f10bd232c9b5997e7fbe4c7c04a2daa"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="cahn__hilliard__assemblers_8h.html#a22cf22249a917b9855019beacc236013">CahnHilliardAssemblerBase</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCahnHilliard.html#a3f10bd232c9b5997e7fbe4c7c04a2daa">assemblers</a></td></tr>
 <tr class="separator:a3f10bd232c9b5997e7fbe4c7c04a2daa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22290e925b93fbad53f233929a8c49a8"><td class="memItemLeft" align="right" valign="top">TableHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCahnHilliard.html#a22290e925b93fbad53f233929a8c49a8">barycenter_table</a></td></tr>
 <tr class="separator:a22290e925b93fbad53f233929a8c49a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -412,7 +412,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cahn__hilliard_8cc_source.html#l00122">122</a> of file <a class="el" href="cahn__hilliard_8cc_source.html">cahn_hilliard.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00087">CahnHilliardScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00159">CahnHilliardScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00300">CahnHilliardScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
+<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00087">CahnHilliardScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00160">CahnHilliardScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00301">CahnHilliardScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
 
 </div>
 </div>
@@ -470,7 +470,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cahn__hilliard_8cc_source.html#l00219">219</a> of file <a class="el" href="cahn__hilliard_8cc_source.html">cahn_hilliard.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00087">CahnHilliardScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00159">CahnHilliardScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00300">CahnHilliardScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
+<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00087">CahnHilliardScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00160">CahnHilliardScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00301">CahnHilliardScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
 
 </div>
 </div>
@@ -1597,7 +1597,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classCahnHilliardAssemblerBase.html">CahnHilliardAssemblerBase</a>&lt;dim&gt; &gt; &gt; <a class="el" href="classCahnHilliard.html">CahnHilliard</a>&lt; dim &gt;::assemblers</td>
+          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="cahn__hilliard__assemblers_8h.html#a22cf22249a917b9855019beacc236013">CahnHilliardAssemblerBase</a>&lt;dim&gt; &gt; &gt; <a class="el" href="classCahnHilliard.html">CahnHilliard</a>&lt; dim &gt;::assemblers</td>
         </tr>
       </table>
   </td>

@@ -1,3 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classDEMActionManager.html" title="Manage the actions to be performed in the DEM solver and on the DEM part of the coupling CFD&#45;DEM solv..." alt="" coords="5,5,156,32"/>
+<area shape="rect" id="node1" href="$classDEMSolver.html" title="Solver using the soft&#45;sphere model of the discrete element method (DEM) to simulate granular systems." alt="" coords="5,5,153,32"/>
 </map>
