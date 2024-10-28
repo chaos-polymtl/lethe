@@ -1197,6 +1197,7 @@ template <int dim>
 void
 HeatTransfer<dim>::setup_dofs()
 {
+  // Proceed with setting up the DoFs
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 

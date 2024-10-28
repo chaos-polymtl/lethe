@@ -108,7 +108,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = slip
@@ -123,6 +123,11 @@ subsection boundary conditions
     subsection v
       set Function expression = -1
     end
+  end
+  subsection bc 3
+    set id   = 2
+    set type = outlet 
+    set beta = 0
   end
 end
 
