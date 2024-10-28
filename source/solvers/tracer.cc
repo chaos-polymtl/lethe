@@ -425,7 +425,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      // Identify which boundary condition corresponds to the boundary id. 
+      // Identify which boundary condition corresponds to the boundary id.
       const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
