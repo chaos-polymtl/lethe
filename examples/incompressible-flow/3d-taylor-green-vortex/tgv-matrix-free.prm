@@ -61,6 +61,16 @@ subsection physical properties
 end
 
 #---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable              = false
+  end
+end
+
+#---------------------------------------------------
 # Post-Processing
 #---------------------------------------------------
 

@@ -381,6 +381,39 @@ namespace BoundaryConditions
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
           prm.get_integer("periodic_direction");
+
+        // Allocate the navier_stokes_functions object for the periodic neighbor
+        // condition to ensure that they have a defined function and a center of
+        // rotation. Parse the information of the boundary id to duplicate it.
+        navier_stokes_functions[periodic_boundary_id] =
+          std::make_shared<NSBoundaryFunctions<dim>>();
+
+        prm.enter_subsection("u");
+        navier_stokes_functions[periodic_boundary_id]->u.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("v");
+        navier_stokes_functions[periodic_boundary_id]->v.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("w");
+        navier_stokes_functions[periodic_boundary_id]->w.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("p");
+        navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("center of rotation");
+        navier_stokes_functions[periodic_boundary_id]->center_of_rotation[0] =
+          prm.get_double("x");
+        navier_stokes_functions[periodic_boundary_id]->center_of_rotation[1] =
+          prm.get_double("y");
+
+        if (dim == 3)
+          navier_stokes_functions[periodic_boundary_id]->center_of_rotation[2] =
+            prm.get_double("z");
+        prm.leave_subsection();
       }
     if (op == "outlet")
       {
