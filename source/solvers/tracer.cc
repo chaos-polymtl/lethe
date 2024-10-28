@@ -425,9 +425,7 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      // Identify which boundary condition corresponds to the boundary id. If
-      // this boundary condition is not identified, then exit the simulation
-      // instead of assuming an outlet.
+      // Identify which boundary condition corresponds to the boundary id. 
       const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
