@@ -1064,12 +1064,9 @@ DEMSolver<dim>::solve()
       post_process_results();
 
       // Write checkpoint if needed
-      if (parameters.restart.checkpoint &&
-          checkpoint_controller.is_checkpoint_time_step(
+      if (checkpoint_controller.is_checkpoint_time_step(
             simulation_control->get_step_number()))
         {
-          checkpoint_controller.increment_checkpoint_id();
-
           write_checkpoint(computing_timer,
                            parameters,
                            simulation_control,
