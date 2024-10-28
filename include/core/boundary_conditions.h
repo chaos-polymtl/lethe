@@ -21,28 +21,28 @@ DeclException1(
 
 DeclException1(NavierStokesBoundaryDuplicated,
                types::boundary_id,
-               << "Fluid dynamics boundary id : " << arg1
+               << "Fluid dynamics boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 DeclException1(HeatTransferBoundaryDuplicated,
                types::boundary_id,
-               << "Heat transfer boundary id : " << arg1
+               << "Heat transfer boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 DeclException1(TracerBoundaryDuplicated,
                types::boundary_id,
-               << "Tracer boundary id : " << arg1
+               << "Tracer boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 DeclException1(CahnHilliardBoundaryDuplicated,
                types::boundary_id,
-               << "Cahn Hilliard boundary id : " << arg1
+               << "Cahn Hilliard boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 
 DeclException1(VOFBoundaryDuplicated,
                types::boundary_id,
-               << "VOF boundary id : " << arg1
+               << "VOF boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 
