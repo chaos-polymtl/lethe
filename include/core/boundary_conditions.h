@@ -92,26 +92,26 @@ namespace BoundaryConditions
   class BoundaryConditions
   {
   public:
-    // List of boundary type for each number
+    /// Map containing the boundary id and the boundary type
     std::map<types::boundary_id, BoundaryType> type;
 
-    // Penalization parameter for weak dirichlet BCs and outlets
+    ///  Map containing the penalization parameter for weak dirichlet BCs and outlets for a corresponding id
     std::map<types::boundary_id, double> beta;
 
-    // Boundary layer thickness tangent component parameter for partial slip
-    // dirichlet BCs
+    /// Map containing the boundary layer thickness tangent component parameter for partial slip for a corresponding id
+    /// Map containing Dirichlet BCs for a corresponding boundary id
     std::map<types::boundary_id, double> boundary_layer_thickness;
 
-    // Number of boundary conditions
+    /// Number of boundary conditions
     unsigned int number_of_boundary_conditions;
 
     /// indicator for transient BCs
     bool time_dependent;
 
-
-    // Periodic boundary condition matching
+    /// Map containing the boundary id and its corresponding periodic boundary condition match
     std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
 
+    /// Map containing the boundary id and its periodic direction
     std::map<types::boundary_id, unsigned int> periodic_direction;
   };
 
@@ -130,10 +130,10 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
 
-    // Pressure
+    /// Pressure
     Functions::ParsedFunction<dim> p;
 
-    // Point for the center of rotation
+    /// Point for the center of rotation
     Point<dim> center_of_rotation;
   };
 
@@ -160,7 +160,7 @@ namespace BoundaryConditions
   class NSBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    // Functions for (u,v,w,p) for all boundaries
+    /// Functions for (u, v, w, p) for all boundaries
     std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
       navier_stokes_functions;
 

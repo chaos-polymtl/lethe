@@ -36,7 +36,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <map>
-
 DeclException1(
   TracerBoundaryConditionMissing,
   types::boundary_id,
