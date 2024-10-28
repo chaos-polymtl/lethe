@@ -95,11 +95,13 @@ namespace BoundaryConditions
     /// Map containing the boundary id and the boundary type
     std::map<types::boundary_id, BoundaryType> type;
 
-    ///  Map containing the penalization parameter for weak dirichlet BCs and outlets for a corresponding id
+    ///  Map containing the penalization parameter for weak dirichlet BCs and
+    ///  outlets for a corresponding id
     std::map<types::boundary_id, double> beta;
 
-    /// Map containing the boundary layer thickness tangent component parameter for partial slip for a corresponding id
-    /// Map containing Dirichlet BCs for a corresponding boundary id
+    /// Map containing the boundary layer thickness tangent component parameter
+    /// for partial slip for a corresponding id Map containing Dirichlet BCs for
+    /// a corresponding boundary id
     std::map<types::boundary_id, double> boundary_layer_thickness;
 
     /// Number of boundary conditions
@@ -108,7 +110,8 @@ namespace BoundaryConditions
     /// indicator for transient BCs
     bool time_dependent;
 
-    /// Map containing the boundary id and its corresponding periodic boundary condition match
+    /// Map containing the boundary id and its corresponding periodic boundary
+    /// condition match
     std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
 
     /// Map containing the boundary id and its periodic direction
