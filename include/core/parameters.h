@@ -148,6 +148,9 @@ namespace Parameters
     // Enable output of the boundaries
     bool output_boundaries;
 
+    // Enable output of slices for the cylinder shell case
+    bool output_slices;
+
     // Frequency of the log output to the terminal
     unsigned int log_frequency;
 

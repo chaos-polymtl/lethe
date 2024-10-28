@@ -147,6 +147,11 @@ namespace Parameters
         Patterns::Bool(),
         "Output the boundaries of the domain along with their ID");
 
+      prm.declare_entry("output slices",
+                        "false",
+                        Patterns::Bool(),
+                        "Output the slices of the cylinder shell domain");
+
       prm.declare_entry("log frequency",
                         "1",
                         Patterns::Integer(),
@@ -247,6 +252,7 @@ namespace Parameters
       output_time_interval =
         convert_string_to_vector<double>(prm, "output time interval");
       output_boundaries = prm.get_bool("output boundaries");
+      output_slices     = prm.get_bool("output slices");
 
       subdivision   = prm.get_integer("subdivision");
       group_files   = prm.get_integer("group files");

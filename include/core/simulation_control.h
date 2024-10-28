@@ -116,6 +116,9 @@ protected:
   //
   bool output_boundaries;
 
+  // Output slices for cylinder shell case
+  bool output_slices;
+
   // Indicator to tell if this is the first assembly of a step
   bool first_assembly;
 
@@ -265,6 +268,16 @@ public:
   get_output_boundaries()
   {
     return output_boundaries;
+  }
+
+  /**
+   * @brief Check if only he slices of the domain should be outputted
+   * when writing results
+   */
+  bool
+  get_output_slices()
+  {
+    return output_slices;
   }
 
   /**

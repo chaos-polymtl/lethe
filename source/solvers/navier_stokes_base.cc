@@ -28,6 +28,7 @@
 #include <deal.II/grid/tria_iterator.h>
 
 #include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/data_out_resample.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/solution_transfer.h>
@@ -2713,6 +2714,236 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
+    }
+
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    {
+      if constexpr (dim == 3)
+        {
+          if (simulation_control->get_output_slices() == true)
+            {
+              const int patch_dim = 2;
+              const int spacedim  = 3;
+
+              parallel::distributed::Triangulation<patch_dim, spacedim>
+                tria_slice(this->mpi_communicator);
+              parallel::distributed::Triangulation<patch_dim, spacedim>
+                tria_slice_right(this->mpi_communicator);
+              parallel::distributed::Triangulation<patch_dim, spacedim>
+                tria_slice_left(this->mpi_communicator);
+
+              GridGenerator::subdivided_hyper_rectangle(
+                tria_slice_right,
+                {1, 4},
+                Point<patch_dim>(0.5, 0.),
+                Point<patch_dim>(1, 3.14159265359));
+
+              GridGenerator::subdivided_hyper_rectangle(
+                tria_slice_left,
+                {1, 4},
+                Point<patch_dim>(-0.5, 0.),
+                Point<patch_dim>(-1, 3.14159265359));
+
+
+              GridTools::rotate(Tensor<1, spacedim>({1., 0., 0.}),
+                                numbers::PI_2,
+                                tria_slice_right);
+
+              GridTools::rotate(Tensor<1, spacedim>({0., 0., 1.}),
+                                numbers::PI_2,
+                                tria_slice_right);
+
+              GridTools::rotate(Tensor<1, spacedim>({1., 0., 0.}),
+                                numbers::PI_2,
+                                tria_slice_left);
+
+              GridTools::rotate(Tensor<1, spacedim>({0., 0., 1.}),
+                                numbers::PI_2,
+                                tria_slice_left);
+
+              GridGenerator::merge_triangulations({&tria_slice_left,
+                                                   &tria_slice_right},
+                                                  tria_slice,
+                                                  1.e-12,
+                                                  true);
+
+              tria_slice.refine_global(
+                simulation_parameters.mesh.initial_refinement);
+
+              MappingQ<patch_dim, spacedim> mapping_slice(
+                simulation_parameters.fem_parameters.velocity_order);
+              DataOutResample<dim, patch_dim, spacedim> data_out_slice(
+                tria_slice, mapping_slice);
+
+              data_out_slice.set_flags(flags);
+
+              data_out_slice.add_data_vector(dof_handler,
+                                             solution,
+                                             solution_names,
+                                             data_component_interpretation);
+
+              if (this->simulation_parameters.post_processing
+                    .calculate_average_velocities ||
+                  this->simulation_parameters.initial_condition->type ==
+                    Parameters::InitialConditionType::average_velocity_profile)
+                {
+                  // Add the interpretation of the average solution. The dim
+                  // first components are the average velocity vectors and the
+                  // following one is the average pressure. (<u>, <v>, <w>, <p>)
+                  std::vector<std::string> average_solution_names(
+                    dim, "average_velocity");
+                  average_solution_names.emplace_back("average_pressure");
+
+                  std::vector<
+                    DataComponentInterpretation::DataComponentInterpretation>
+                    average_data_component_interpretation(
+                      dim,
+                      DataComponentInterpretation::component_is_part_of_vector);
+                  average_data_component_interpretation.emplace_back(
+                    DataComponentInterpretation::component_is_scalar);
+
+                  data_out_slice.add_data_vector(
+                    dof_handler,
+                    this->average_velocities->get_average_velocities(),
+                    average_solution_names,
+                    average_data_component_interpretation);
+
+                  // Add the interpretation of the reynolds stresses of
+                  // solution. The dim first components are the normal reynolds
+                  // stress vectors and the following ones are others resolved
+                  // reynolds stresses.
+                  std::vector<std::string> reynolds_normal_stress_names(
+                    dim, "reynolds_normal_stress");
+                  reynolds_normal_stress_names.emplace_back(
+                    "turbulent_kinetic_energy");
+                  std::vector<
+                    DataComponentInterpretation::DataComponentInterpretation>
+                    reynolds_normal_stress_data_component_interpretation(
+                      dim,
+                      DataComponentInterpretation::component_is_part_of_vector);
+                  reynolds_normal_stress_data_component_interpretation
+                    .emplace_back(
+                      DataComponentInterpretation::component_is_scalar);
+
+
+                  std::vector<std::string> reynolds_shear_stress_names = {
+                    "reynolds_shear_stress_uv"};
+                  if (dim == 2)
+                    {
+                      reynolds_shear_stress_names.emplace_back("dummy_rss_2d");
+                    }
+                  if (dim == 3)
+                    {
+                      reynolds_shear_stress_names.emplace_back(
+                        "reynolds_shear_stress_vw");
+                      reynolds_shear_stress_names.emplace_back(
+                        "reynolds_shear_stress_uw");
+                    }
+                  reynolds_shear_stress_names.emplace_back("dummy_rss");
+
+                  std::vector<
+                    DataComponentInterpretation::DataComponentInterpretation>
+                    reynolds_shear_stress_data_component_interpretation(
+                      dim, DataComponentInterpretation::component_is_scalar);
+                  reynolds_shear_stress_data_component_interpretation
+                    .emplace_back(
+                      DataComponentInterpretation::component_is_scalar);
+
+                  data_out_slice.add_data_vector(
+                    dof_handler,
+                    this->average_velocities->get_reynolds_normal_stresses(),
+                    reynolds_normal_stress_names,
+                    reynolds_normal_stress_data_component_interpretation);
+
+                  data_out_slice.add_data_vector(
+                    dof_handler,
+                    this->average_velocities->get_reynolds_shear_stresses(),
+                    reynolds_shear_stress_names,
+                    reynolds_shear_stress_data_component_interpretation);
+                }
+
+
+              // Vector<float> subdomain(tria_slice.n_active_cells());
+              // for (unsigned int i = 0; i < subdomain.size(); ++i)
+              //   subdomain(i) = tria_slice.locally_owned_subdomain();
+              // data_out_slice.add_data_vector(subdomain, "subdomain");
+
+              // Create the post-processors to have derived information about
+              // the velocity They are generated outside the if condition for
+              // smoothing to ensure that the objects still exist when the write
+              // output of DataOut is called Regular discontinuous
+              // postprocessors
+              QCriterionPostprocessor<dim> qcriterion;
+              DivergencePostprocessor<dim> divergence;
+              VorticityPostprocessor<dim>  vorticity;
+              data_out_slice.add_data_vector(dof_handler, solution, qcriterion);
+              data_out_slice.add_data_vector(dof_handler, solution, divergence);
+              data_out_slice.add_data_vector(dof_handler, solution, vorticity);
+
+              // Build patches
+              data_out_slice.build_patches(
+                *this->mapping,
+                subdivision,
+                DataOut<patch_dim, spacedim>::curved_inner_cells);
+
+              // Write files
+              const unsigned int digits = 5;
+              const int          my_id =
+                Utilities::MPI::this_mpi_process(mpi_communicator);
+
+              // Write master files (.pvtu,.pvd,.visit) on the master process
+              if (my_id == 0)
+                {
+                  std::vector<std::string> filenames;
+                  const unsigned int       n_processes =
+                    Utilities::MPI::n_mpi_processes(mpi_communicator);
+                  const unsigned int n_files =
+                    (group_files == 0) ? n_processes :
+                                         std::min(group_files, n_processes);
+
+                  for (unsigned int i = 0; i < n_files; ++i)
+                    filenames.push_back(
+                      solution_name + "_slices" + "." +
+                      Utilities::int_to_string(iter, digits) + "." +
+                      Utilities::int_to_string(i, digits) + ".vtu");
+
+                  std::string pvtu_filename =
+                    (solution_name + "_slices" + "." +
+                     Utilities::int_to_string(iter, digits) + ".pvtu");
+
+                  std::string pvtu_filename_with_folder =
+                    folder + pvtu_filename;
+                  std::ofstream master_output(
+                    pvtu_filename_with_folder.c_str());
+
+                  data_out_slice.write_pvtu_record(master_output, filenames);
+
+                  std::string pvdPrefix =
+                    (folder + solution_name + "_slices" + ".pvd");
+                  this->pvdhandler.append(time, pvtu_filename);
+                  std::ofstream pvd_output(pvdPrefix.c_str());
+                  DataOutBase::write_pvd_record(
+                    pvd_output, this->pvdhandler.times_and_names);
+                }
+
+              const unsigned int my_file_id =
+                (group_files == 0 ? my_id : my_id % group_files);
+              int color = my_id % group_files;
+
+              {
+                MPI_Comm comm;
+                MPI_Comm_split(mpi_communicator, color, my_id, &comm);
+                const std::string filename =
+                  (folder + solution_name + "_slices" + "." +
+                   Utilities::int_to_string(iter, digits) + "." +
+                   Utilities::int_to_string(my_file_id, digits) + ".vtu");
+                data_out_slice.write_vtu_in_parallel(filename.c_str(), comm);
+
+                MPI_Comm_free(&comm);
+              }
+            }
+        }
     }
 }
 
