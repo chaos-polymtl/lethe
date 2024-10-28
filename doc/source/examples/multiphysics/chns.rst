@@ -8,4 +8,5 @@ CHNS
     :titlesonly:
 
     jurins-law/jurins-law
+    shear-bubble-detachment/shear-bubble-detachment
 
