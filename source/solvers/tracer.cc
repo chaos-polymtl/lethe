@@ -1181,6 +1181,8 @@ template <int dim>
 void
 Tracer<dim>::setup_dofs()
 {
+  verify_consistency_of_boundary_conditions();
+
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 

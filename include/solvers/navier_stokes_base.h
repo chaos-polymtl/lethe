@@ -49,7 +49,7 @@ DeclException1(
   FluidDynamicsBoundaryConditionMissing,
   types::boundary_id,
   << "The boundary id: " << arg1
-  << " is defined in the triangulation, but not as a boundary condition for the fluid dynamics physics has been defined for it. Lethe does not assign a    default boundary condition to boundary ids. Every boundary id defined    within the triangulation must have a corresponding boundary condition    defined in the input file.");
+  << " is defined in the triangulation, but not as a boundary condition for the fluid dynamics physics. Lethe does not assign a    default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 /**
  * @brief Struct containing fluid id, temperature and phase fraction range
