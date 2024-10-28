@@ -11,10 +11,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output name       = output
-  set output frequency  = 0
-  set log precision     = 3
+  set method           = steady
+  set output name      = output
+  set output frequency = 0
+  set log precision    = 3
 end
 
 #---------------------------------------------------
@@ -79,11 +79,11 @@ end
 #---------------------------------------------------
 
 subsection manifolds
-    set number = 1
-    subsection manifold 0
-        set id = 2
-        set type = cylindrical
-    end
+  set number = 1
+  subsection manifold 0
+    set id   = 2
+    set type = cylindrical
+  end
 end
 
 #---------------------------------------------------
@@ -91,12 +91,12 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = verbose
-  set output frequency                 = 1
+  set verbosity        = verbose
+  set output frequency = 1
 
   # Pressure drop calculation
-  set calculate pressure drop          = true
-  set pressure drop name               = cylinder_manifold_pressure_drop
-  set inlet boundary id                = 3
-  set outlet boundary id               = 4
+  set calculate pressure drop = true
+  set pressure drop name      = cylinder_manifold_pressure_drop
+  set inlet boundary id       = 3
+  set outlet boundary id      = 4
 end

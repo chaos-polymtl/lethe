@@ -4,11 +4,11 @@
 set dimension = 2
 
 subsection simulation control
-  set method            = bdf1
-  set time end          = 0.2
-  set time step         = 0.02
-  set output name       = stab_tracer
-  set output frequency  = 0
+  set method           = bdf1
+  set time end         = 0.2
+  set time step        = 0.02
+  set output name      = stab_tracer
+  set output frequency = 0
 end
 
 subsection FEM
@@ -76,7 +76,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 1
-    set type = outlet 
+    set type = outlet
     set beta = 0
   end
 end

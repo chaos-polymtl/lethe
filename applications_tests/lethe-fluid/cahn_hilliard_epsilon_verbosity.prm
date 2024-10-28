@@ -69,11 +69,11 @@ subsection boundary conditions
 end
 
 subsection boundary conditions cahn hilliard
-  set number         = 1
+  set number = 1
   subsection bc 0
-      set id            = 0
-      set type          = noflux
-   end
+    set id   = 0
+    set type = noflux
+  end
 end
 
 #---------------------------------------------------

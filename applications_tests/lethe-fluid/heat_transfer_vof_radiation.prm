@@ -62,28 +62,28 @@ end
 subsection boundary conditions
   set number = 4
   subsection bc 0
-    set id    = 0
-    set type  = noslip
+    set id   = 0
+    set type = noslip
   end
   subsection bc 1
-    set id    = 1
-    set type  = noslip
+    set id   = 1
+    set type = noslip
   end
   subsection bc 2
-    set id    = 2
-    set type  = noslip
+    set id   = 2
+    set type = noslip
   end
   subsection bc 3
-    set id    = 3
-    set type  = noslip
+    set id   = 3
+    set type = noslip
   end
 end
 
 subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
-    set id    = 2
-    set type  = temperature
+    set id   = 2
+    set type = temperature
     subsection value
       set Function expression = 700
     end

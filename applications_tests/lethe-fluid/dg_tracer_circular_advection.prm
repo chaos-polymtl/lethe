@@ -24,7 +24,7 @@ subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
-  set tracer uses dg  = true
+  set tracer uses dg = true
 end
 
 #---------------------------------------------------
@@ -74,7 +74,7 @@ end
 
 subsection multiphysics
   set fluid dynamics = false
-  set tracer = true
+  set tracer         = true
 end
 
 #---------------------------------------------------
@@ -159,7 +159,6 @@ subsection boundary conditions
     end
   end
 end
-
 
 subsection boundary conditions tracer
   set number = 4

@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 set dimension = 2
 
 subsection simulation control
@@ -77,7 +76,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 1
-    set type = outlet 
+    set type = outlet
     set beta = 0
   end
 end

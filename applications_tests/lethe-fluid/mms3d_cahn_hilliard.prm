@@ -75,7 +75,7 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids = 2
+  set number of fluids                = 2
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
@@ -99,7 +99,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-set number = 1
+  set number = 1
   subsection bc 0
     set id   = 0
     set type = noslip

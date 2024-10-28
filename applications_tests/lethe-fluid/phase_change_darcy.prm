@@ -87,14 +87,13 @@ subsection analytical solution
   end
 end
 
-
 #---------------------------------------------------
 # Velocity Source
 #---------------------------------------------------
 
 subsection velocity source
   # Darcy-like permeability term. Choices are <none|phase_change>.
-  set Darcy type          = phase_change
+  set Darcy type = phase_change
 end
 
 #---------------------------------------------------

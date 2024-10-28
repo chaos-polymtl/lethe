@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 # Listing of Parameters
 #----------------------
 
@@ -25,7 +24,7 @@ subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
-  set tracer uses dg  = true
+  set tracer uses dg = true
 end
 
 #---------------------------------------------------
@@ -75,7 +74,7 @@ end
 
 subsection multiphysics
   set fluid dynamics = false
-  set tracer = true
+  set tracer         = true
 end
 
 #---------------------------------------------------
@@ -83,9 +82,9 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type = kelly
-  set variable = tracer
-  set fraction type = fraction 
+  set type                = kelly
+  set variable            = tracer
+  set fraction type       = fraction
   set fraction coarsening = 0
   set fraction refinement = 0.5
 end

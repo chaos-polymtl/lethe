@@ -50,7 +50,7 @@ subsection physical properties
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set first fluid id  = 0
+      set first fluid id                  = 0
       set cahn hilliard mobility constant = 0
     end
   end
@@ -71,8 +71,8 @@ end
 subsection boundary conditions cahn hilliard
   set number = 1
   subsection bc 0
-    set id          = 0
-    set type        = noflux
+    set id   = 0
+    set type = noflux
   end
 end
 

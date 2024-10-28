@@ -127,7 +127,7 @@ subsection boundary conditions
   end
   subsection bc 3
     set id   = 1
-    set type = outlet 
+    set type = outlet
     set beta = 0
   end
 end

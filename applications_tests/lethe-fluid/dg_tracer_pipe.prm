@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 set dimension = 3
 
 subsection simulation control
@@ -121,4 +120,3 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
   end
 end
-

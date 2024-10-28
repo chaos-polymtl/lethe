@@ -11,12 +11,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set adapt = true
-  set max cfl = 1
-  set time step         = 0.01 # Time step
-  set time end          = 0.60 # End time of simulation
-  set output frequency  = 0    # Frequency of simulation output
+  set method           = bdf1
+  set adapt            = true
+  set max cfl          = 1
+  set time step        = 0.01 # Time step
+  set time end         = 0.60 # End time of simulation
+  set output frequency = 0    # Frequency of simulation output
 end
 
 #---------------------------------------------------
@@ -55,7 +55,7 @@ end
 #---------------------------------------------------
 
 subsection analytical solution
-  set verbosity =   quiet
+  set verbosity = quiet
   set enable    = true
   subsection uvwp
     set Function constants  = viscosity=1

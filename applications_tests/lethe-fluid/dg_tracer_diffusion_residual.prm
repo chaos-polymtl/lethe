@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 # Listing of Parameters
 #----------------------
 
@@ -144,7 +143,7 @@ subsection non-linear solver
     set max iterations = 1
   end
   subsection fluid dynamics
-    set verbosity      = quiet
+    set verbosity = quiet
   end
 end
 
@@ -154,13 +153,13 @@ end
 
 subsection linear solver
   subsection tracer
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-13
-    set minimum residual                      = 1e-14
-    set preconditioner                        = ilu
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-13
+    set minimum residual  = 1e-14
+    set preconditioner    = ilu
   end
   subsection fluid dynamics
-    set verbosity                             = quiet
+    set verbosity = quiet
   end
 end

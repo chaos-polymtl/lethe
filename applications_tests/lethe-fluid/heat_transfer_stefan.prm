@@ -150,8 +150,8 @@ end
 subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
-    set id    = 0
-    set type  = temperature
+    set id   = 0
+    set type = temperature
     subsection value
       set Function expression = 1
     end
