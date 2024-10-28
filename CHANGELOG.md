@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-28
+
+### Added
+
+- MINOR The DEM solver generates two versions of checkpoint files alternately, so that at least one version is not corrupted when the simulation stops during a checkpoint procedure. [#1327](https://github.com/chaos-polymtl/lethe/pull/1327)
+
+
 ## [Master] - 2024-10-22
 
 ### Changed
