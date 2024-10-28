@@ -13,7 +13,7 @@ set dimension = 3
 subsection simulation control
   set time step        = 0.000005
   set time end         = 2.5
-  set log frequency    = 20000
+  set log frequency    = 1000
   set output frequency = 20000
   set output path      = ./output_dem/
 end

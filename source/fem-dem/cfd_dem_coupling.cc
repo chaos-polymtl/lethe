@@ -429,7 +429,7 @@ CFDDEMSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
-  std::string prefix_grid      = prefix + "_postprocess_data";
+  std::string prefix_grid      = prefix + "_lagrangian_postprocessing";
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
