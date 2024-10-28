@@ -67,7 +67,7 @@ Multiphysics
       
       multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
 
-      multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/shear-bubble-detachment/shear-bubble-detachment.html"];
+      multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html"];
 
       multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
 
