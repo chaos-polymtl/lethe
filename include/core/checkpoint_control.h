@@ -4,6 +4,8 @@
 #ifndef lethe_checkpoint_control_h
 #define lethe_checkpoint_control_h
 
+#include <core/parameters.h>
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
@@ -17,12 +19,11 @@ public:
    * @param checkpoint_freq Checkpoint frequency.
    * @param restart_filename Filename used for the prefix during checkpointing.
    */
-  CheckpointControl(const unsigned int checkpoint_freq,
-                    const std::string &restart_filename)
+  CheckpointControl(Parameters::Restart &restart)
     : max_checkpoint_id(2)
     , next_checkpoint_id(max_checkpoint_id)
-    , checkpointing_frequency(checkpoint_freq)
-    , filename(restart_filename)
+    , checkpointing_frequency(restart.frequency)
+    , filename(restart.filename)
   {}
 
   /**
@@ -30,7 +31,7 @@ public:
    * @param time_step_number Current time step.
    */
   bool
-  is_checkpoint_time_step(const unsigned int time_step_number)
+  is_checkpoint_time_step(const unsigned int time_step_number) const
   {
     return (time_step_number % checkpointing_frequency) == 0;
   }
@@ -54,7 +55,7 @@ public:
   }
 
   /**
-   * @brief Return de prefix for the restart files.
+   * @brief Return the prefix for the restart files.
    */
   std::string
   get_filename() const
@@ -69,7 +70,7 @@ public:
   void
   serialize(boost::archive::text_oarchive &ar, const unsigned int) const
   {
-    ar &next_checkpoint_id;
+    ar << next_checkpoint_id;
   }
 
   /**
@@ -79,7 +80,7 @@ public:
   void
   deserialize(boost::archive::text_iarchive &ar, const unsigned int)
   {
-    ar &next_checkpoint_id;
+    ar >> next_checkpoint_id;
   }
 
 private:

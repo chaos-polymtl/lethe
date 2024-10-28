@@ -77,7 +77,7 @@ write_checkpoint(
   // Prepare the checkpoint controller for checkpointing
   // We don't use the same prefix, since this file needs to have the same name
   // regardless of the checkpoint id being used. This file is giving the
-  // information of which checkpoint id to use when restarting
+  // information of which checkpoint id to use when restarting.
   std::string checkpoint_controller_object_filename =
     checkpoint_controller.get_filename() + ".checkpoint_controller";
   std::ofstream oss_checkpoint_controller_obj(
