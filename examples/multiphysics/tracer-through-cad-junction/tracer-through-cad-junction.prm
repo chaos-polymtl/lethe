@@ -64,7 +64,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
     set id   = 1
     set type = function
@@ -95,6 +95,10 @@ subsection boundary conditions
   subsection bc 2
     set id   = 3
     set type = noslip
+  end
+  subsection bc 3
+    set id   = 4
+    set type = outlet
   end
 end
 
