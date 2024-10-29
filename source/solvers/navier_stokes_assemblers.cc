@@ -2319,110 +2319,93 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_rhs = copy_data.local_rhs;
-  // Loop over the BCs
-  {
+  // Loop over the faces of the cell.
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {
-      // Loop over the faces of the cell.
-      for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
         {
-          // Check if the face is on a boundary
-          if (scratch_data.is_boundary_face[f])
+          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
+
+          // Check if the face is part of the boundary that has a
+          // weakly imposed Dirichlet BC.
+          if (this->boundary_conditions.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::partial_slip)
             {
-              types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
-
-              // Check if the face is part of the boundary that has a
-              // weakly imposed Dirichlet BC.
-              if (this->boundary_conditions.type.at(boundary_id) ==
-                  BoundaryConditions::BoundaryType::partial_slip)
+              const double beta = boundary_conditions.beta.at(boundary_id);
+              const double boundary_layer_thickness =
+                boundary_conditions.boundary_layer_thickness.at(boundary_id);
+              const double beta_tangent =
+                kinematic_viscosity / boundary_layer_thickness;
+              NavierStokesFunctionDefined<dim> function_v(
+                &boundary_conditions.navier_stokes_functions.at(boundary_id)->u,
+                &boundary_conditions.navier_stokes_functions.at(boundary_id)->v,
+                &boundary_conditions.navier_stokes_functions.at(boundary_id)
+                   ->w);
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
-                  const double beta = boundary_conditions.beta.at(boundary_id);
-                  const double boundary_layer_thickness =
-                    boundary_conditions.boundary_layer_thickness.at(
-                      boundary_id);
-                  const double beta_tangent =
-                    kinematic_viscosity / boundary_layer_thickness;
-                  NavierStokesFunctionDefined<dim> function_v(
-                    &boundary_conditions.navier_stokes_functions
-                       .at(boundary_id)
-                       ->u,
-                    &boundary_conditions.navier_stokes_functions
-                       .at(boundary_id)
-                       ->v,
-                    &boundary_conditions.navier_stokes_functions
-                       .at(boundary_id)
-                       ->w);
-                  for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
-                       ++q)
+                  const double JxW = scratch_data.face_JxW[f][q];
+                  for (unsigned int d = 0; d < dim; ++d)
                     {
-                      const double JxW = scratch_data.face_JxW[f][q];
-                      for (unsigned int d = 0; d < dim; ++d)
+                      prescribed_velocity_values[f][q][d] = function_v.value(
+                        scratch_data.face_quadrature_points[f][q], d);
+                    }
+                  for (const unsigned int i :
+                       scratch_data.fe_face_values.dof_indices())
+                    {
+                      const auto comp_i = fe.system_to_component_index(i).first;
+                      if (comp_i < dim)
                         {
-                          prescribed_velocity_values[f][q][d] =
-                            function_v.value(
-                              scratch_data.face_quadrature_points[f][q], d);
-                        }
-                      for (const unsigned int i :
-                           scratch_data.fe_face_values.dof_indices())
-                        {
-                          const auto comp_i =
-                            fe.system_to_component_index(i).first;
-                          if (comp_i < dim)
-                            {
-                              double beta_terms_normal =
-                                scratch_data.face_normal[f][q][comp_i] *
-                                penalty_parameter * beta *
+                          double beta_terms_normal =
+                            scratch_data.face_normal[f][q][comp_i] *
+                            penalty_parameter * beta *
+                            (scratch_data.face_normal[f][q][comp_i] *
+                               scratch_data.face_velocity_values[f][q][comp_i] -
+                             scratch_data.face_normal[f][q][comp_i] *
+                               prescribed_velocity_values[f][q][comp_i]) *
+                            scratch_data.face_phi_u[f][q][i][comp_i] * JxW;
+                          double beta_terms_tangent =
+                            beta_tangent *
+                            (scratch_data.face_velocity_values[f][q][comp_i] -
+                             scratch_data.face_normal[f][q][comp_i] *
+                               (scratch_data.face_normal[f][q][comp_i] *
+                                scratch_data
+                                  .face_velocity_values[f][q][comp_i]) -
+                             (prescribed_velocity_values[f][q][comp_i] -
+                              scratch_data.face_normal[f][q][comp_i] *
                                 (scratch_data.face_normal[f][q][comp_i] *
-                                   scratch_data
-                                     .face_velocity_values[f][q][comp_i] -
-                                 scratch_data.face_normal[f][q][comp_i] *
-                                   prescribed_velocity_values[f][q][comp_i]) *
-                                scratch_data.face_phi_u[f][q][i][comp_i] * JxW;
-                              double beta_terms_tangent =
-                                beta_tangent *
-                                (scratch_data
-                                   .face_velocity_values[f][q][comp_i] -
-                                 scratch_data.face_normal[f][q][comp_i] *
-                                   (scratch_data.face_normal[f][q][comp_i] *
-                                    scratch_data
-                                      .face_velocity_values[f][q][comp_i]) -
-                                 (prescribed_velocity_values[f][q][comp_i] -
-                                  scratch_data.face_normal[f][q][comp_i] *
-                                    (scratch_data.face_normal[f][q][comp_i] *
-                                     prescribed_velocity_values[f][q]
-                                                               [comp_i]))) *
-                                scratch_data.face_phi_u[f][q][i][comp_i] * JxW;
-                              /* We don't use these terms has its seems they
-                               * don't affect the solution for the normal
-                               * component */
-                              /*
-                              double grad_phi_terms =
-                                scratch_data.face_normal[f][q][comp_i]*((kinematic_viscosity
-                              * (scratch_data.face_velocity_values[f][q] -
-                                   prescribed_velocity_values[f][q])) *
-                                 (scratch_data.face_grad_phi_u[f][q][i] *
-                                  scratch_data.face_normal[f][q])) *
-                                JxW;
-                              double surface_stress_term =
-                                scratch_data.face_normal[f][q][comp_i]*(kinematic_viscosity
-                              * scratch_data .face_velocity_gradients[f][q]
-                              * scratch_data.face_normal[f][q] *
-                                 scratch_data.face_phi_u[f][q][i]) *
-                                JxW;*/
+                                 prescribed_velocity_values[f][q][comp_i]))) *
+                            scratch_data.face_phi_u[f][q][i][comp_i] * JxW;
+                          /* We don't use these terms has its seems they
+                           * don't affect the solution for the normal
+                           * component */
+                          /*
+                          double grad_phi_terms =
+                            scratch_data.face_normal[f][q][comp_i]*((kinematic_viscosity
+                          * (scratch_data.face_velocity_values[f][q] -
+                               prescribed_velocity_values[f][q])) *
+                             (scratch_data.face_grad_phi_u[f][q][i] *
+                              scratch_data.face_normal[f][q])) *
+                            JxW;
+                          double surface_stress_term =
+                            scratch_data.face_normal[f][q][comp_i]*(kinematic_viscosity
+                          * scratch_data .face_velocity_gradients[f][q]
+                          * scratch_data.face_normal[f][q] *
+                             scratch_data.face_phi_u[f][q][i]) *
+                            JxW;*/
 
 
 
-                              local_rhs(i) +=
-                                -beta_terms_normal -
-                                beta_terms_tangent; //+ grad_phi_terms +
-                                                    // surface_stress_term;
-                            }
+                          local_rhs(i) +=
+                            -beta_terms_normal -
+                            beta_terms_tangent; //+ grad_phi_terms +
+                                                // surface_stress_term;
                         }
                     }
                 }
             }
         }
     }
-  }
 }
 
 template class PartialSlipDirichletBoundaryCondition<2>;
@@ -2510,7 +2493,7 @@ OutletBoundaryCondition<dim>::assemble_rhs(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_rhs = copy_data.local_rhs;
-  // Loop over the BCs
+
   // Loop over the faces of the cell.
   for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {
