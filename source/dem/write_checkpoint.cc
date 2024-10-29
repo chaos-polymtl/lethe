@@ -84,7 +84,7 @@ write_checkpoint(
     checkpoint_controller_object_filename);
   boost::archive::text_oarchive oa_checkpoint_controller_obj(
     oss_checkpoint_controller_obj, boost::archive::no_header);
-  checkpoint_controller.serialize(oa_checkpoint_controller_obj, 0);
+  checkpoint_controller.serialize(oa_checkpoint_controller_obj);
 }
 
 template void

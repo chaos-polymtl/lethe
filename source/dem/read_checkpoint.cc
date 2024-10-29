@@ -41,7 +41,7 @@ read_checkpoint(
     checkpoint_controller_object_filename);
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
-  checkpoint_controller.deserialize(ia_checkpoint_controller_obj, 0);
+  checkpoint_controller.deserialize(ia_checkpoint_controller_obj);
 
   // Update prefix with the checkpoint id
   prefix =

@@ -16,8 +16,8 @@ public:
    * @brief The CheckpointControl is responsible for keeping track of the
    * next checkpoint id to use.
    *
-   * @param checkpoint_freq Checkpoint frequency.
-   * @param restart_filename Filename used for the prefix during checkpointing.
+   * @param param Restart struct - Controls writing and reading
+   * simulation checkpoints.
    */
   CheckpointControl(Parameters::Restart &param)
     : max_checkpoint_id(2)
@@ -65,7 +65,7 @@ public:
    * @param ar Output archive where the attributes are stored.
    */
   void
-  serialize(boost::archive::text_oarchive &ar, const unsigned int) const
+  serialize(boost::archive::text_oarchive &ar) const
   {
     ar &next_checkpoint_id;
   }
@@ -75,7 +75,7 @@ public:
    * @param ar Input archive where the attributes are stored.
    */
   void
-  deserialize(boost::archive::text_iarchive &ar, const unsigned int)
+  deserialize(boost::archive::text_iarchive &ar)
   {
     ar &next_checkpoint_id;
   }
