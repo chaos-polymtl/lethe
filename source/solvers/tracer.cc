@@ -33,7 +33,6 @@
 
 #include <map>
 
-
 template <int dim>
 void
 Tracer<dim>::setup_assemblers()
