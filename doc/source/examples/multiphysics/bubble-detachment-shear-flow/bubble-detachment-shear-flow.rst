@@ -32,7 +32,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-**INSERT A LITTLE INTRODUCTION ON THE SUBJECT HERE**
+Bubble detachment in shear flow plays a key role in multiphase flows, where shear forces influence the separation of air bubbles from surfaces. This process is important in industries like petroleum engineering, where bubble behavior affects oil extraction, and chemical processing, where it impacts mixing and mass transfer. In this example, we simulate an air bubble in water under shear flow, highlighting how shear forces drive detachment from the interface.
 
 The problem consists of a rectangular box of length :math:`L = 12 \ \text{mm}`, height :math:`H = 5 \ \text{mm}` and thickness :math:`l = 5 \ \text{mm}`. The liquid phase flows from left to right following a Couette profile, that is determined with a given **shear rate**. At the bottom wall is a circular air inlet of radius :math:`R_0 = 0.5 \ \text{mm}`. Air is injected from this inlet following a Poiseuille profile. As the time passes, the bubble, which is initialized as a semi-sphere of radius :math:`R_0`, grows, until the shear force from the surrounding liquid and the buoyancy force detach it.
 
