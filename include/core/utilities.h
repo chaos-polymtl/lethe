@@ -653,7 +653,7 @@ get_penalty_factor(const unsigned int fe_degree,
  *
  * @tparam key Key of the map
  * @tparam val Value of the map. This template parameter is not used
- * @param map Map object from which the keys are extracted
+ * @param[in] map Map object from which the keys are extracted
  * @return keys Vector of keys from the map
  */
 
