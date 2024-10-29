@@ -377,7 +377,7 @@ namespace BoundaryConditions
         this->type[boundary_id] = BoundaryType::periodic;
 
         // We attribute a periodic neighbor boundary type to the neighbor
-        // boundaryto ensure that all boundaries have a defined type
+        // boundary to ensure that all boundaries have a defined type
         this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
 
         // We store the periodic id and direction
