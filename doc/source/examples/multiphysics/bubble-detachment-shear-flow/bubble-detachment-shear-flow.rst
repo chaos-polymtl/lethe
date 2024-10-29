@@ -355,6 +355,8 @@ Once the directories are copied on Narval, launch the simulations with ``launch_
 
 For more information, you may visit `How to Automatically Create and Launch Lethe Simulations <../../../tools/automatic_launch/automatic_launch.html>`_.
 
+Then, to post-process the results, you may use the provided ``multiple_folders_bubble_detachment_post_processing.py`` python script. It contains all the instructions inside to run it.
+
 
 -----------------
 Results
