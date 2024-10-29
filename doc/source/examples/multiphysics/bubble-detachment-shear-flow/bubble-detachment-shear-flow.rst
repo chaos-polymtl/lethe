@@ -12,7 +12,7 @@ Features
 - Solver: ``lethe-fluid`` (Q1-Q1)
 - Two phase flow handled by the Cahn-Hilliard-Navier-Stokes (CHNS) approach
 - Dimensionality of the length
-- Setting the mobility coefficient in problems where the lenghthscale of interest is below the critical radius in CHNS simulations
+- Mobility coefficient setting for advective problems with CHNS solver
 - Parametric sweep on the shear rate of the fluid
 - Post-processing of the quantities of interest (detachment time and volume) and plots of the contour of the bubble at detachment
 
@@ -33,7 +33,7 @@ Description of the Case
 
 **INSERT A LITTLE INTRODUCTION ON THE SUBJECT HERE**
 
-The problem consists of a rectangular box of length :math:`L = 12 \ \text{mm}`, height :math:`H = 5 \ \text{mm}` and thickness :math:`l = 5 \ \text{mm}`. The liquid phase flows from left to right following a Couette profile, that is determined with a given **shear rate**, which varies between two simulations. At the bottom wall is a circular air inlet of radius :math:`R_0 = 0.5 \ \text{mm}`. Air is injected from this inlet following a Poiseuille profile. As the time passes, the bubble, which is initialized as a semi-sphere of radius :math:`R_0`, grows, until the shear force from the surrounding liquid and the buoyancy force detach it.
+The problem consists of a rectangular box of length :math:`L = 12 \ \text{mm}`, height :math:`H = 5 \ \text{mm}` and thickness :math:`l = 5 \ \text{mm}`. The liquid phase flows from left to right following a Couette profile, that is determined with a given **shear rate**. At the bottom wall is a circular air inlet of radius :math:`R_0 = 0.5 \ \text{mm}`. Air is injected from this inlet following a Poiseuille profile. As the time passes, the bubble, which is initialized as a semi-sphere of radius :math:`R_0`, grows, until the shear force from the surrounding liquid and the buoyancy force detach it.
 
 The computational domain with relevant boundary conditions is described in the following figure (not to scale):
 
@@ -47,7 +47,7 @@ The computational domain with relevant boundary conditions is described in the f
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this we derive the detachment volume :math:`V_\text{det}` which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
+The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
 
 -----------------
 Parameter File
@@ -56,7 +56,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`0.0005 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true`` and the max CFL is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
+Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`5 \times 10^{-7} \ \text{s}`. Time-step adaptation is enabled using ``adapt = true`` and the max CFL is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
 
 .. math::
     \Delta t < \Delta t_\sigma = \sqrt{\frac{(\rho_a+\rho_l)\Delta x^3}{4\pi\sigma}}
@@ -122,7 +122,7 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The grid a
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase_cahn_hilliard`` as the refinement ``variable``. The maximum and minimum refinement levels are respectively set to :math:`6` and :math:`3` with the number of ``initial refinement steps`` set to :math:`4`. This ensures the physics close to the interface to be well resolved, while keeping a coearse cell size far from the interface.
+The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase_cahn_hilliard`` as the refinement ``variable``. The maximum and minimum refinement levels are respectively set to :math:`6` and :math:`3` with the number of ``initial refinement steps`` set to :math:`4` to adequately capture the interface at the beginning. This ensures the physics close to the interface to be well resolved, while keeping a coearse cell size far from the interface. The mesh refinement ``frequency`` is set to :math:`3` because the refinement operation is expensive on 3D meshes. The ``fraction refinement`` and ``fraction coarsening`` are set to keep a high level of refinement close to the interface.
 
 .. code-block:: text
 
@@ -138,44 +138,6 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
       set initial refinement steps = 4
     end
     
-Physical Properties
-~~~~~~~~~~~~~~~~~~~
-
-The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need first to define the properties of the surrounding liquid as that of water, hence the choice of :math:`\rho_0 = 1000 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\nu_0 = 1.0016 \times 10^{-6} \ \text{m}^2\cdot\text{s}^{-1}`. The gas in the bubble is air, whose physical properties are :math:`\rho_1 = 1.23 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\nu_1 = 1.455\times 10^{-5} \ \text{m}^2\cdot\text{s}^{-1}` . Since we have a water-air interface, the surface tension coefficient is: :math:`\sigma = 0.073 \ \text{N}\cdot\text{m}^{-1}`. 
-
-In this problem, the radius of the bubble is below the critical radius (see Yue *et al.* [#yue2007]_), which means the air bubble will diffuse in the liquid phase over the timescale of the problem if the mobility coefficient is not set adequately. Yue *et al.* derive a criterion for setting the mobility coefficient :math:`D` that depends on the parameters of the problem. It is given below:
-
-.. math::
-    D = \frac{(S + S_a)R_0\epsilon}{\sigma}
-    
-where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the shear rate related to the air flow, :math:`\varepsilon` is the interface thickness and :math:`\sigma` is the surface tension coefficient. :math:`S_a` is the only unknown, it is estimated as follows:
-
-.. math::
-    S_a = \frac{v_\text{max,a}}{2R_0}
-    
-
-
-.. code-block:: text
-
-    subsection physical properties
-      set number of fluids = 2
-      subsection fluid 0 # Water (phase = 1)
-        set kinematic viscosity = 1.0016e-06
-        set density             = 1000
-      end
-      subsection fluid 1 # Air (phase = -1)
-        set kinematic viscosity = 14.55e-6
-        set density             = 1.23
-      end
-      set number of material interactions = 1
-      subsection material interaction 0
-        subsection fluid-fluid interaction
-          set surface tension coefficient     = 0.073
-          set cahn hilliard mobility model    = constant
-          set cahn hilliard mobility constant = 2.8177e-08 # Non-diffusion on problem time-scale condition
-        end
-      end
-    end
     
 Cahn-Hilliard
 ~~~~~~~~~~~~~
@@ -242,14 +204,14 @@ We need to set boundary conditions both for the fluid dynamics solver and the Ca
     end
     
 For the Navier-Stokes equations, we constraint the velocity to correspond to that of a Couette flow at the inlet (``subsection bc 0``)  and the upper wall (``subsection bc 1``). 
-Then, the velocity profile on the bottom wall needs to be :math:`0` outside of the air inlet and must correspond to a Poiseuille profile in the air inlet. We remind the expression of the Poiseuille velocity profile below:
+Then, the velocity profile on the bottom wall (``subsection bc 2``) needs to be :math:`0` outside of the air inlet and must correspond to a Poiseuille profile in the air inlet. We remind the expression of the Poiseuille velocity profile below:
 
 .. math::
    \mathbf{u}_{\text{in,a}} = u_\text{max,a}\left(1-\frac{x^2+z^2}{R_0^2}\right)\mathbf{e}_y
    
 This profile corresponds to a volumetric air flux :math:`Q = 500 \ \text{mm}^3\text{s}^{-1}` so that :math:`u_\text{max,a} = \frac{2Q}{\pi R_0^2} = 1.2732 \ \text{m} \text{s}^{-1}`. Once again, we multiply by because the length unit is the millimeter.
 
-The lateral walls are endowed with ``slip`` boundary conditions and the last boundary is defined as an ``outlet``, with a penalization constant :math:`\beta = 100`
+The lateral walls (``subsection bc 4`` and ``subsection bc 3``) are endowed with ``slip`` boundary conditions and the last boundary (``subsection bc 5``) is defined as an ``outlet``, with a penalization constant :math:`\beta = 100`
 
 .. code-block:: text
 
@@ -297,6 +259,45 @@ The lateral walls are endowed with ``slip`` boundary conditions and the last bou
       end
     end
     
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
+
+The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need first to define the properties of the surrounding liquid as that of water, hence the choice of :math:`\rho_0 = 1000 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\nu_0 = 1.0016 \times 10^{-6} \ \text{m}^2\cdot\text{s}^{-1}`. The gas in the bubble is air, whose physical properties are :math:`\rho_1 = 1.23 \ \text{kg}\cdot\text{m}^{-3}` and :math:`\nu_1 = 1.455\times 10^{-5} \ \text{m}^2\cdot\text{s}^{-1}` . Since we have a water-air interface, the surface tension coefficient is: :math:`\sigma = 0.073 \ \text{N}\cdot\text{m}^{-1}`. 
+
+In this problem, the radius of the bubble is below the critical radius (see Yue *et al.* [#yue2007]_), which means the air bubble will diffuse in the liquid phase over the timescale of the problem if the mobility coefficient is not set adequately. Yue *et al.* derive a criterion for setting the mobility coefficient :math:`D` that depends on the parameters of the problem. It is given below:
+
+.. math::
+    D = \frac{(S + S_a)R_0\epsilon}{\sigma}
+    
+where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the shear rate related to the air flow, :math:`\varepsilon` is the interface thickness and :math:`\sigma` is the surface tension coefficient. :math:`S_a` is the only unknown, it is estimated as follows:
+
+.. math::
+    S_a = \frac{v_\text{max,a}}{2R_0}
+    
+
+
+.. code-block:: text
+
+    subsection physical properties
+      set number of fluids = 2
+      subsection fluid 0 # Water (phase = 1)
+        set kinematic viscosity = 1.0016e-06
+        set density             = 1000
+      end
+      subsection fluid 1 # Air (phase = -1)
+        set kinematic viscosity = 14.55e-6
+        set density             = 1.23
+      end
+      set number of material interactions = 1
+      subsection material interaction 0
+        subsection fluid-fluid interaction
+          set surface tension coefficient     = 0.073
+          set cahn hilliard mobility model    = constant
+          set cahn hilliard mobility constant = 2.8177e-08 # Non-diffusion on problem time-scale condition
+        end
+      end
+    end
+    
 Source Term
 ~~~~~~~~~~~
 
@@ -313,7 +314,19 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 Post-processing
 ~~~~~~~~~~~~~~~
 
-In order to compute the quantities of interest of the problem, we enable Lethe to post-process the phase field at every iteration (``set output frequency = 1``). The phase statistics and the flow rates are necessary to compute the 
+In order to compute the quantities of interest of the problem, we enable Lethe to post-process the phase field at every iteration (``set output frequency = 1``). The phase statistics and the flow rates are necessary to compute derived quantities that serve to analyze the problem more in-depth.
+
+.. code-block:: text
+
+    subsection post-processing
+      set verbosity        = quiet
+      set output frequency = 1
+
+      set calculate barycenter       = true
+      set calculate phase statistics = true
+
+      set calculate flow rate = true
+    end
     
 -----------------------
 Running the Simulation
