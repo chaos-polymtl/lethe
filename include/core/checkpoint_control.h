@@ -43,15 +43,6 @@ public:
   }
 
   /**
-   * @brief Calculate the next checkpoint id.
-   */
-  void
-  increment_checkpoint_id()
-  {
-    next_checkpoint_id = (next_checkpoint_id + 1) % max_checkpoint_id;
-  }
-
-  /**
    * @brief Return the next checkpoint id.
    */
   unsigned int
@@ -90,6 +81,15 @@ public:
   }
 
 private:
+  /**
+   * @brief Calculate the next checkpoint id.
+   */
+  void
+  increment_checkpoint_id()
+  {
+    next_checkpoint_id = (next_checkpoint_id + 1) % max_checkpoint_id;
+  }
+
   const unsigned int max_checkpoint_id;
   unsigned int       next_checkpoint_id;
   const unsigned int checkpointing_frequency;
