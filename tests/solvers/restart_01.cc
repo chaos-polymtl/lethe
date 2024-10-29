@@ -167,6 +167,8 @@ test()
   SimulationParameters<2>       NSparam;
   Parameters::SizeOfSubsections size_of_subsections;
   size_of_subsections.boundary_conditions = 1;
+  size_of_subsections.manifolds           = 0;
+
   NSparam.declare(prm, size_of_subsections);
   NSparam.parse(prm);
 
