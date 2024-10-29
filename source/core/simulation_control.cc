@@ -16,6 +16,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.timeEnd)
+  , intermediate_time(param.intermediate_time)
   , iteration_number(0)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
@@ -44,6 +45,10 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
 
   // Resize the bdf_coefficients to ensure they have a default size;
   bdf_coefs.reinit(n_previous_time_steps + 1);
+
+  // If there is an intermediate time, we change the end_time of the simulation
+  if (intermediate_time != -1)
+    end_time = intermediate_time;
 }
 
 void
@@ -178,6 +183,10 @@ SimulationControl::read(const std::string &prefix)
 
   // Fix time step to be the last time_step that was used
   time_step = time_step_vector[0];
+
+  // Verify that the output time specified is valid after a restart
+  AssertThrow(output_time_frequency > current_time,
+              ExcMessage("The specified time for output is not valid."));
 }
 
 std::vector<double>
@@ -285,8 +294,13 @@ SimulationControlTransient::calculate_time_step()
 
       new_time_step = std::min(new_time_step, max_dt);
     }
-  if (current_time + new_time_step > end_time)
-    new_time_step = end_time - current_time;
+
+  // If there is a control restart, I do not want to change the time step
+  // to avoid issues with post-processing and more iterations in case of
+  // adaptive time step when restartting
+  if (intermediate_time == -1)
+    if (current_time + new_time_step > end_time)
+      new_time_step = end_time - current_time;
 
   return new_time_step;
 }
@@ -343,13 +357,21 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
       new_time_step = std::min(new_time_step, max_dt);
     }
 
-  if (current_time + new_time_step > end_time)
-    new_time_step = end_time - current_time;
-
-  if (current_time + new_time_step > last_output_time + output_time_frequency)
+  // If there is a control restart, I do not want to change the time step
+  // to avoid issues with post-processing and more iterations in case of
+  // adaptive time step when restartting
+  if (intermediate_time == -1)
     {
-      new_time_step = last_output_time + output_time_frequency - current_time;
-      time_step_forced_output = true;
+      if (current_time + new_time_step > end_time)
+        new_time_step = end_time - current_time;
+
+      if (current_time + new_time_step >
+          last_output_time + output_time_frequency)
+        {
+          new_time_step =
+            last_output_time + output_time_frequency - current_time;
+          time_step_forced_output = true;
+        }
     }
 
   return new_time_step;
@@ -358,15 +380,32 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
 bool
 SimulationControlTransientDynamicOutput::is_output_iteration()
 {
+  bool is_output_time = false;
+
   // Check if the current step number matches the output time frequency and
   // falls within the user-specified time window.
-  bool is_output_time =
-    ((current_time - last_output_time) - output_time_frequency >
-       -1e-12 * output_time_frequency &&
-     get_current_time() >= output_time_interval[0] &&
-     get_current_time() <= output_time_interval[1]);
-  if (is_output_time)
-    last_output_time = current_time;
+  if (intermediate_time == -1)
+    {
+      is_output_time =
+        ((current_time - last_output_time) - output_time_frequency >
+           -1e-12 * output_time_frequency &&
+         get_current_time() >= output_time_interval[0] &&
+         get_current_time() <= output_time_interval[1]);
+      if (is_output_time)
+        last_output_time = current_time;
+    }
+  else
+    {
+      // Output the previous time step
+      if (current_time < intermediate_time &&
+          (current_time + calculate_time_step() >= intermediate_time))
+        is_output_time = true;
+
+      // Output the next time step
+      if (current_time >= intermediate_time &&
+          (current_time - time_step_vector[1] < intermediate_time))
+        is_output_time = true;
+    }
 
   return is_output_time;
 }

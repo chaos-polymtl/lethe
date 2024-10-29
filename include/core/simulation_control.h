@@ -40,6 +40,9 @@ protected:
   // Simulation end time
   double end_time;
 
+  // Simulation intermediate time in case of controlled restarts
+  double intermediate_time;
+
   // Time step vector. This vector accumulates the time steps of the previous
   // iterations. This is required for multiple steps methods such as the bdfs.
   std::vector<double> time_step_vector;

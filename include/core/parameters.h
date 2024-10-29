@@ -96,6 +96,9 @@ namespace Parameters
     // End time
     double timeEnd;
 
+    // Intermediate time
+    double intermediate_time;
+
     // Adaptative time stepping
     bool adapt;
 

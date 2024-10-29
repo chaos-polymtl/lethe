@@ -96,6 +96,10 @@ namespace Parameters
                         Patterns::Double(),
                         "Time step value");
       prm.declare_entry("time end", "1", Patterns::Double(), "Time step value");
+      prm.declare_entry("time intermediate",
+                        "-1",
+                        Patterns::Double(),
+                        "Intermediate time for control restarts");
       prm.declare_entry("startup time scaling",
                         "0.4",
                         Patterns::Double(),
@@ -225,12 +229,13 @@ namespace Parameters
         {
           std::runtime_error("Invalid output control scheme");
         }
-      dt             = prm.get_double("time step");
-      timeEnd        = prm.get_double("time end");
-      adapt          = prm.get_bool("adapt");
-      maxCFL         = prm.get_double("max cfl");
-      max_dt         = prm.get_double("max time step");
-      stop_tolerance = prm.get_double("stop tolerance");
+      dt                = prm.get_double("time step");
+      timeEnd           = prm.get_double("time end");
+      intermediate_time = prm.get_double("time intermediate");
+      adapt             = prm.get_bool("adapt");
+      maxCFL            = prm.get_double("max cfl");
+      max_dt            = prm.get_double("max time step");
+      stop_tolerance    = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");
