@@ -25,7 +25,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 
 - Parameter file: ``bubble-detachment-shear-flow.prm``
 - Postprocessing Python script: ``multiple_folders_bubble_detachment_post_processing.py`` (using the functions of ``functions_bubble_detachment_post_processing.py``)
-- Parametric sweep generation files
+- Parametric sweep generation files : ``generate_cases_locally.py``, ``launch_lethe.sh`` and ``launch_lethe_cluster.py``
 
 
 -------------------------
@@ -341,10 +341,20 @@ The simulation may be run locally by calling ``lethe-fluid`` by invoking:
    
 to run the simulation using ten CPU cores. 
 
-Though we highly advise you to run the simulation on a computationnal cluster (such as Narval, Béluga, etc.). 
+Though we highly advise you to run the simulation on a computationnal cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included to generate automatically the cases with the correct parameters and physical properties locally. The script works with a ``.prm`` template (``bubble-detachment-shear-flow.prm``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on the Narval cluster. 
+To use the python script, invoke:
 
-.. warning::
-    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 3-4 minutes for 10 processors.
+.. code-block:: text
+  :class: copy-button
+  
+   python3 generate_cases_locally.py
+   
+This will generate all the directories corresponding to the different shear rates cases. The directories' names contain important information on the parameters of the simulation, hence the obscure naming. It will also generate ``summary_sweep.dat`` which sums up the parameters of the different cases in one file.
+
+Once the directories are copied on Narval, launch the simulations with ``launch_lethe_cluster.py``.
+
+For more information, you may visit `How to Automatically Create and Launch Lethe Simulations <../../../tools/automatic_launch/automatic_launch.html>`_.
+
 
 -----------------
 Results
@@ -386,15 +396,13 @@ Below are the plots of the contour of the bubble in the plane :math:`z = 0` when
 +-------------------------------------------------------------------------------------------------------------------+
 
 
-**make the comments on the figure better based on the content of the article and the memoire**
+The higher the shear rate, the more important the viscous drag as it can be observed above. The bubble is dragged in the direction of the movement of the fluid which flattens it, and brings it closer to the bottom wall. The volume enclosed by the contour is smaller, which is coherent with the values of detachment time and volumes computed before.
 
 ---------------------------
 Possibilities for Extension
 ---------------------------
 
-- **Non-newtonian case**: extend the case to a non-newtonian liquid. This should yield fairly different results because of all the shear around the bubble surface. 
-
-- **FIND ANOTHER POSSIBLITY FOR EXTENSION** : blablablablabla
+- **Non-newtonian case**: extend the case to a non-newtonian liquid. This should yield fairly different results because of the high gradients of shear rate close to the bubble's interface.
 
 -----------
 References

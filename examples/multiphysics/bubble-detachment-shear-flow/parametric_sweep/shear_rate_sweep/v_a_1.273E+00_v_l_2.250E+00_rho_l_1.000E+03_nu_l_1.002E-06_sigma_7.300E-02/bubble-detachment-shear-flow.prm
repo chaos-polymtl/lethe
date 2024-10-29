@@ -1,0 +1,287 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set output name      = article-3d
+  set output frequency = 15
+  set output path      = ./
+  set time end = 0.5
+  set adapt = true
+  set max cfl = 0.9
+  set time step = 5e-7
+  set max time step = 7.978399173317454e-06
+  set output boundaries = true
+  set subdivision = 1
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set cahn hilliard  = true
+end
+
+#---------------------------------------------------
+# Dimensionality
+#---------------------------------------------------
+
+subsection dimensionality
+  set length      = 0.001 #meter
+  set mass        = 1 #kilogramm
+  set time        = 1 #second
+  set temperature = 1 #Kelvin
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set phase cahn hilliard order     = 1
+  set potential cahn hilliard order = 1
+  set velocity order                = 1
+  set pressure order                = 1
+end
+
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type = subdivided_hyper_rectangle
+  set grid arguments = 9,3,3 : -2,0,-2.5 : 10,5,2.5 : true
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase_cahn_hilliard
+  set fraction type            = fraction
+  set max refinement level     = 6
+  set min refinement level     = 3
+  set frequency                = 3
+  set fraction refinement      = 0.995
+  set fraction coarsening      = 0.005
+  set initial refinement steps = 4
+end
+
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0 # Water (phase = 1)
+    set kinematic viscosity        = 1.0016e-06
+    set density                    = 1000
+  end
+  subsection fluid 1 # Air (phase = -1)
+     set kinematic viscosity        = 14.55e-6 
+     set density                    = 1.23
+  end
+  set number of material interactions = 1
+  subsection material interaction 0
+    subsection fluid-fluid interaction
+      set surface tension coefficient = 0.073
+      set cahn hilliard mobility model = constant
+      set cahn hilliard mobility constant  = 2.8177322437331758e-08
+    end
+  end
+end
+
+#---------------------------------------------------
+# Cahn Hilliard
+#---------------------------------------------------
+
+subsection cahn hilliard
+  set potential smoothing coefficient = 0
+  subsection epsilon
+    set method = automatic
+    set verbosity = verbose
+  end
+end
+
+
+#---------------------------------------------------
+# Boundary conditions Cahn-Hilliard
+#---------------------------------------------------
+
+subsection boundary conditions cahn hilliard
+
+set number = 1
+  subsection bc 0 #lower-walls
+    set id = 2
+    set type = dirichlet
+    subsection phi
+      set Function expression = -tanh((5e-1 - sqrt(x*x + z*z))/(1.41*0.0346))
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0 # fluid-inlet
+    set id   = 0
+    set type               = function
+    subsection u
+      set Function expression = 1000*2.25*(y/5)
+    end
+  end
+  subsection bc 1 # upper-walls
+    set id   = 3
+    #set type = none
+    set type               = function
+    subsection u
+      set Function expression = 1000*2.25
+    end
+  end
+  subsection bc 2 # lower-walls : gas-inlet + no-slip
+    set id   = 2
+    set type               = function
+    subsection v
+      set Function expression = if(x*x + z*z < 5e-1*5e-1,1000*1.2732395447351625*(1-(x*x+z*z)/(0.5*0.5)),0)
+    end
+    subsection u
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 3 # side-walls
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 4 # side-walls
+    set id   = 5
+    set type = slip
+  end
+  subsection bc 5 # fluid-outlet 
+    set id = 1
+    set type = outlet 
+    set beta = 100
+  end
+end
+
+
+#---------------------------------------------------
+# Initial conditions
+#---------------------------------------------------
+
+subsection initial conditions
+
+  subsection uvwp
+    set Function expression =  1000*2.25*(y/5);0;0;0
+  end
+  
+  subsection cahn hilliard
+    set Function expression = -tanh((5e-1 - sqrt(y*y + x*x + z*z))/(1.41*0.0418546));0
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = 0; -9810; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity        = quiet
+  set output frequency = 1
+  
+  set calculate barycenter = true
+  set calculate phase statistics = true
+  
+  set calculate flow rate = true
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-1
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+  subsection cahn hilliard
+    set tolerance      = 1e-3
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+end
+
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+
+  subsection fluid dynamics
+    set verbosity                             = verbose
+    set max iters                             = 1000
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-2
+    set max krylov vectors                    = 200
+  end
+  subsection cahn hilliard
+    set verbosity                             = verbose
+    set max iters                             = 1000
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-4
+    set max krylov vectors                    = 200
+  end
+end
+
+# --------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  # Checkpointing parameters
+  set checkpoint = true
+  set frequency  = 100
+
+  # Output/input files
+  set filename   = restart
+
+  # Restarting parameter
+  set restart    = false
+end
