@@ -1923,6 +1923,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::setup_dofs()
 {
+  verify_consistency_of_boundary_conditions();
+
   auto mpi_communicator = triangulation->get_communicator();
 
   if (this->simulation_parameters.multiphysics.vof_parameters

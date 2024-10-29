@@ -41,6 +41,13 @@ DeclException1(
   << "The VOF physics is enabled, but the number of fluids is set to " << arg1
   << ". The VOF solver only supports 2 fluids.");
 
+#include <map>
+DeclException1(
+  VOFBoundaryConditionMissing,
+  types::boundary_id,
+  << "The boundary id: " << arg1
+  << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+
 
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
@@ -435,6 +442,28 @@ public:
   }
 
 private:
+  /**
+   * @brief Verify consistency of the input parameters for boundary
+   * conditions to ensure that for every boundary condition within the
+   * triangulation, a boundary condition has been specified in the input file.
+   */
+  void
+  verify_consistency_of_boundary_conditions()
+  {
+    // Sanity check all of the boundary conditions of the triangulation to
+    // ensure
+    // that they have a type.
+    std::vector<types::boundary_id> boundary_ids_in_triangulation =
+      this->triangulation->get_boundary_ids();
+    for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
+      {
+        AssertThrow(simulation_parameters.boundary_conditions_tracer.type.find(
+                      boundary_id_in_tria) !=
+                      simulation_parameters.boundary_conditions.type.end(),
+                    VOFBoundaryConditionMissing(boundary_id_in_tria));
+      }
+  }
+
   /**
    *  @brief Assembles the matrix associated with the solver
    */
