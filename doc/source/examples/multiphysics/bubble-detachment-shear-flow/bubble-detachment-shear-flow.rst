@@ -25,6 +25,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 
 - Parameter file: ``bubble-detachment-shear-flow.prm``
 - Postprocessing Python script: ``multiple_folders_bubble_detachment_post_processing.py`` (using the functions of ``functions_bubble_detachment_post_processing.py``)
+- Parametric sweep generation files
 
 
 -------------------------
@@ -48,6 +49,7 @@ The computational domain with relevant boundary conditions is described in the f
 +-------------------------------------------------------------------------------------------------------------------+
 
 The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
+Below, all the parameters are set for a simulation whose shear rate :math:`S = 500 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the "Running the Simulation" section of this example.
 
 -----------------
 Parameter File
@@ -274,8 +276,6 @@ where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the
 .. math::
     S_a = \frac{v_\text{max,a}}{2R_0}
     
-
-
 .. code-block:: text
 
     subsection physical properties
@@ -332,14 +332,16 @@ In order to compute the quantities of interest of the problem, we enable Lethe t
 Running the Simulation
 -----------------------
 
-We call ``lethe-fluid`` by invoking:
+The simulation may be run locally by calling ``lethe-fluid`` by invoking:
 
 .. code-block:: text
   :class: copy-button
   
    mpirun -np 10 lethe-fluid jurins-law-2d.prm
    
-to run the simulation using ten CPU cores. Feel free to use more CPU cores.
+to run the simulation using ten CPU cores. 
+
+Though we highly advise you to run the simulation on a computationnal cluster (such as Narval, Béluga, etc.). 
 
 .. warning::
     Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. The simulation should take 3-4 minutes for 10 processors.
@@ -348,7 +350,7 @@ to run the simulation using ten CPU cores. Feel free to use more CPU cores.
 Results
 -----------------
 
-The detachment time and volume are computed and compared to the results of Mirsandi *et al.* in the following figure, which shows an excellent agreement.
+In order to analyze the influence of the surrounding liquid on the detachment of the bubble, we run the simulations for different values of the shear rate: :math:`S \in [100,200,300,450]`. The detachment time and volume are then computed and compared to the results of Mirsandi *et al.* in the following figure, which shows an excellent agreement. The result for no-shear simulation was added to the plot for completion.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/bubble-detachment_volume.png                                                                  |
