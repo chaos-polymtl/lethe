@@ -1990,7 +1990,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 
                     } // end loop on quadrature points
                 }     // end loop on faces
-            }         // End face is a boundary face
+            }         // end face is a boundary face
         }             // end condition cell at boundary
     }                 // end loop on cells
 
