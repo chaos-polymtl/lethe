@@ -135,6 +135,10 @@ subsection boundary conditions
   end
 end
 
+subsection boundary conditions VOF
+  set number = 4
+end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------

@@ -35,13 +35,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 
+#include <map>
+
+
 DeclException1(
   InvalidNumberOfFluid,
   int,
   << "The VOF physics is enabled, but the number of fluids is set to " << arg1
   << ". The VOF solver only supports 2 fluids.");
 
-#include <map>
 DeclException1(
   VOFBoundaryConditionMissing,
   types::boundary_id,
@@ -456,9 +458,9 @@ private:
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
-        AssertThrow(simulation_parameters.boundary_conditions_tracer.type.find(
+        AssertThrow(simulation_parameters.boundary_conditions_vof.type.find(
                       boundary_id_in_tria) !=
-                      simulation_parameters.boundary_conditions.type.end(),
+                      simulation_parameters.boundary_conditions_vof.type.end(),
                     VOFBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

@@ -403,7 +403,7 @@ private:
       {
         AssertThrow(simulation_parameters.boundary_conditions_ht.type.find(
                       boundary_id_in_tria) !=
-                      simulation_parameters.boundary_conditions.type.end(),
+                      simulation_parameters.boundary_conditions_ht.type.end(),
                     HeatTransferBoundaryConditionMissing(boundary_id_in_tria));
       }
   }

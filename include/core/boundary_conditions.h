@@ -305,15 +305,15 @@ namespace BoundaryConditions
   void
   NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    Assert(
+    AssertThrow(
       prm.get_integer("id") >= 0,
       ExcMessage(
         "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
 
-    Assert(this->type.find(boundary_id) == this->type.end(),
-           NavierStokesBoundaryDuplicated(boundary_id));
+    AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                NavierStokesBoundaryDuplicated(boundary_id));
 
 
     // Allocate the navier_stokes_functions object for every boundary condition
@@ -656,15 +656,15 @@ namespace BoundaryConditions
   void
   HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    Assert(
+    AssertThrow(
       prm.get_integer("id") >= 0,
       ExcMessage(
         "An invalid boundary id has been given for a heat transfer boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
 
-    Assert(this->type.find(boundary_id) == this->type.end(),
-           HeatTransferBoundaryDuplicated(boundary_id));
+    AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                HeatTransferBoundaryDuplicated(boundary_id));
 
     const std::string op = prm.get("type");
     if (op == "noflux")
@@ -786,7 +786,7 @@ namespace BoundaryConditions
     const types::boundary_id default_boundary_id)
   {
     prm.declare_entry("type",
-                      "dirichlet",
+                      "outlet",
                       Patterns::Selection("dirichlet|outlet"),
                       "Type of boundary condition for tracer"
                       "Choices are <dirichlet|outlet>.");
@@ -851,15 +851,15 @@ namespace BoundaryConditions
   void
   TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    Assert(
+    AssertThrow(
       prm.get_integer("id") >= 0,
       ExcMessage(
         "An invalid boundary id has been given for a tracer boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
 
-    Assert(this->type.find(boundary_id) == this->type.end(),
-           TracerBoundaryDuplicated(boundary_id));
+    AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                TracerBoundaryDuplicated(boundary_id));
 
     // Allocate function for tracer
     tracer[boundary_id]  = std::make_shared<Functions::ParsedFunction<dim>>();
@@ -1029,15 +1029,15 @@ namespace BoundaryConditions
   void
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    Assert(
+    AssertThrow(
       prm.get_integer("id") >= 0,
       ExcMessage(
         "An invalid boundary id has been given for a Cahn Hilliard boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
 
-    Assert(this->type.find(boundary_id) == this->type.end(),
-           CahnHilliardBoundaryDuplicated(boundary_id));
+    AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                CahnHilliardBoundaryDuplicated(boundary_id));
 
     const std::string op = prm.get("type");
     if (op == "noflux")
@@ -1202,15 +1202,15 @@ namespace BoundaryConditions
   void
   VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
-    Assert(
+    AssertThrow(
       prm.get_integer("id") >= 0,
       ExcMessage(
         "An invalid boundary id has been given for a VOF boundary condition."));
 
     types::boundary_id boundary_id = prm.get_integer("id");
 
-    Assert(this->type.find(boundary_id) == this->type.end(),
-           VOFBoundaryDuplicated(boundary_id));
+    AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                VOFBoundaryDuplicated(boundary_id));
 
     const std::string op = prm.get("type");
     if (op == "none")
@@ -1224,8 +1224,8 @@ namespace BoundaryConditions
         phase_fraction[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         phase_fraction[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
       }
-    prm.leave_subsection();
   }
 
 

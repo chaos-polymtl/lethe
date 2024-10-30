@@ -77,6 +77,13 @@ subsection boundary conditions
   end
 end
 
+subsection boundary conditions heat transfer
+  set number = 1
+  subsection bc 0
+    set type = noflux
+  end
+end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------

@@ -304,10 +304,11 @@ private:
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
       {
-        AssertThrow(simulation_parameters.boundary_conditions_tracer.type.find(
-                      boundary_id_in_tria) !=
-                      simulation_parameters.boundary_conditions.type.end(),
-                    TracerBoundaryConditionMissing(boundary_id_in_tria));
+        AssertThrow(
+          simulation_parameters.boundary_conditions_tracer.type.find(
+            boundary_id_in_tria) !=
+            simulation_parameters.boundary_conditions_tracer.type.end(),
+          TracerBoundaryConditionMissing(boundary_id_in_tria));
       }
   }
 

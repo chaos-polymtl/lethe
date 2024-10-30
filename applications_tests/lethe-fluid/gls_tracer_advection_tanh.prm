@@ -132,6 +132,10 @@ subsection boundary conditions
   end
 end
 
+subsection boundary conditions tracer
+  set number = 4
+end
+
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------

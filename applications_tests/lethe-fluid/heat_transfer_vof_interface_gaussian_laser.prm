@@ -137,6 +137,10 @@ subsection boundary conditions heat transfer
   end
 end
 
+subsection boundary conditions VOF
+  set number = 1
+end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
