@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-04
+
+### Changed
+
+- MINOR Curvature L2 projection within the VOF auxiliary physics now go through the VOF subequations interface. [#13XX](https://github.com/chaos-polymtl/lethe/pull/13XX)
+
 ## [Master] - 2024-11-03
 
 ### Fix
