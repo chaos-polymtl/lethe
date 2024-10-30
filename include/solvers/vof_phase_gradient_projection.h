@@ -51,7 +51,7 @@ public:
   {
     if (this->simulation_parameters.mesh.simplex)
       {
-        // for simplex meshes
+        // For simplex meshes
         const FE_SimplexP<dim> subequation_fe(
           this->simulation_parameters.fem_parameters.VOF_order);
         this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);

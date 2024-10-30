@@ -50,7 +50,7 @@ public:
   {
     if (this->simulation_parameters.mesh.simplex)
       {
-        // for simplex meshes
+        // For simplex meshes
         this->fe = std::make_shared<FE_SimplexP<dim>>(
           this->simulation_parameters.fem_parameters.VOF_order);
         this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);

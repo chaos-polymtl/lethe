@@ -7,6 +7,7 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+
 template <int dim>
 void
 VOFLinearSubequationsSolver<dim>::setup_dofs()
@@ -70,6 +71,7 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   this->subequations_interface->set_solution(this->subequation_id,
                                              &this->present_solution);
 }
+
 
 template <int dim>
 void
@@ -158,6 +160,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
   this->evaluation_point = this->present_solution;
 }
 
+
 template <int dim>
 void
 VOFLinearSubequationsSolver<dim>::solve(const bool &is_post_mesh_adaptation)
@@ -165,6 +168,7 @@ VOFLinearSubequationsSolver<dim>::solve(const bool &is_post_mesh_adaptation)
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution(is_post_mesh_adaptation);
 }
+
 
 template class VOFLinearSubequationsSolver<2>;
 template class VOFLinearSubequationsSolver<3>;

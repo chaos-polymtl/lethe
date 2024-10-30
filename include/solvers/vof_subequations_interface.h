@@ -9,10 +9,8 @@
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
-
 using namespace dealii;
+
 
 /**
  * @brief IDs associated to the different subequations solved in Lethe.
@@ -24,6 +22,7 @@ enum VOFSubequationsID : unsigned int
   /// VOF curvature L2 projection
   curvature_projection = 1
 };
+
 
 /**
  * @brief Interface for secondary equations (subequations) solved within

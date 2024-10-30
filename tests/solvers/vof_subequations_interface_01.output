@@ -3,4 +3,4 @@ DEAL::Active subequations [expected: phase_gradient_projection (0), curvature_pr
 DEAL::0
 DEAL::1
 DEAL::Active subequations [expected: no active subequation]
-DEAL::No active subequations
+DEAL::No active subequation

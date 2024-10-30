@@ -20,8 +20,8 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                                                     *this->fe,
                                                     *this->cell_quadrature,
                                                     update_values |
-                                                      update_JxW_values |
-                                                      update_gradients);
+                                                      update_gradients |
+                                                      update_JxW_values);
   FEValues<dim> fe_values_vof(*this->mapping,
                               dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
@@ -151,13 +151,6 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs.compress(VectorOperation::add);
 }
 
-// template <int dim>
-// void
-// VOFPhaseGradientProjection<dim>::solve(const bool &is_post_mesh_adaptation)
-//{
-//   this->assemble_system_matrix_and_rhs();
-//   this->solve_linear_system_and_update_solution(is_post_mesh_adaptation);
-// }
 
 template class VOFPhaseGradientProjection<2>;
 template class VOFPhaseGradientProjection<3>;

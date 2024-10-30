@@ -411,7 +411,6 @@ public:
   DoFHandler<dim> *
   get_curvature_dof_handler()
   {
-    //    return &curvature_dof_handler;
     return this->subequations->get_dof_handler(
       VOFSubequationsID::curvature_projection);
   }
@@ -426,7 +425,6 @@ public:
   GlobalVectorType *
   get_curvature_solution()
   {
-    //    return &present_curvature_solution;
     return this->subequations->get_solution(
       VOFSubequationsID::curvature_projection);
   }
@@ -755,19 +753,19 @@ private:
   // For projected phase fraction gradient (pfg) and curvature
   std::shared_ptr<VOFSubequationsInterface<dim>> subequations;
 
-  // Projected curvature solution
-  GlobalVectorType          present_curvature_solution;
-  IndexSet                  locally_owned_dofs_curvature;
-  IndexSet                  locally_relevant_dofs_curvature;
-  AffineConstraints<double> curvature_constraints;
-  GlobalVectorType          nodal_curvature_relevant;
-  GlobalVectorType          nodal_curvature_owned;
-
-  std::vector<Tensor<1, dim>> projected_phase_fraction_gradient_values;
-  std::vector<double>         curvature_values;
-
-  TrilinosWrappers::SparseMatrix                     system_matrix_curvature;
-  GlobalVectorType                                   system_rhs_curvature;
+  //  // Projected curvature solution
+  //  GlobalVectorType          present_curvature_solution;
+  //  IndexSet                  locally_owned_dofs_curvature;
+  //  IndexSet                  locally_relevant_dofs_curvature;
+  //  AffineConstraints<double> curvature_constraints;
+  //  GlobalVectorType          nodal_curvature_relevant;
+  //  GlobalVectorType          nodal_curvature_owned;
+  //
+  //  std::vector<Tensor<1, dim>> projected_phase_fraction_gradient_values;
+  //  std::vector<double>         curvature_values;
+  //
+  //  TrilinosWrappers::SparseMatrix system_matrix_curvature; GlobalVectorType
+  //  system_rhs_curvature;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Lower and upper bounds of phase fraction

@@ -16,13 +16,13 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
     this->subequations_interface->get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
 
-  // Initialize FEValues for phase fraction gradient projection and VOF
+  // Initialize FEValues for curvature and phase fraction gradient projection
   FEValues<dim> fe_values_curvature_projection(*this->mapping,
                                                *this->fe,
                                                *this->cell_quadrature,
                                                update_values |
-                                                 update_JxW_values |
-                                                 update_gradients);
+                                                 update_gradients |
+                                                 update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
     dof_handler_phase_fraction_gradient->get_fe(),
@@ -72,7 +72,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
           local_matrix = 0;
           local_rhs    = 0;
 
-          // Get VOF cell iterator
+          // Get phase gradient projection cell iterator
           typename DoFHandler<dim>::active_cell_iterator
             phase_gradient_projection_cell(&(*this->triangulation),
                                            cell->level(),
@@ -94,8 +94,8 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
           h = compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                          fe_curvature_projection.degree);
 
-          // Get projected phase fraction gradient values, gradients and VOF
-          // phase fraction gradients
+          // Get projected curvature values, gradients and projected phase
+          // fraction gradient values
           fe_values_curvature_projection.get_function_values(
             this->present_solution, present_curvature_projection_values);
           fe_values_curvature_projection.get_function_gradients(
@@ -157,6 +157,7 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
 }
+
 
 template class VOFCurvatureProjection<2>;
 template class VOFCurvatureProjection<3>;

@@ -96,7 +96,7 @@ public:
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
    * solved during post_mesh_adaptation(), for verbosity.
    */
-  virtual void
+  void
   solve(const bool &is_post_mesh_adaptation = false) override;
 
 protected:
