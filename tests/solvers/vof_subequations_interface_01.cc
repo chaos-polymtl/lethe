@@ -55,8 +55,7 @@ test()
   // VOF is required when enabling surface_tension_force
   solver_parameters.multiphysics.VOF = true;
 
-  // To test with the phase fraction gradient L2 projection and eventually
-  // the curvature
+  // To test with the phase fraction gradient and the curvature L2 projection
   solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
     true;
 
@@ -68,8 +67,7 @@ test()
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  // Phase fraction gradient L2 projection enabled (This is the only one
-  // implemented at the moment; other testing outputs should be added later.)
+  // Phase fraction gradient and curvature L2 projection enabled
   {
     std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_interface =
       std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,
@@ -90,6 +88,33 @@ test()
       {
         deallog << int(subequation_id) << std::endl;
       }
+  }
+
+  // Disable phase fraction gradient and curvature L2 projection
+  solver_parameters.multiphysics.vof_parameters.surface_tension_force.enable =
+    false;
+  {
+    std::unique_ptr<MultiphysicsInterface<dim>> multiphysics_interface =
+      std::make_unique<MultiphysicsInterface<dim>>(solver_parameters,
+                                                   tria,
+                                                   simulation_control,
+                                                   pcout);
+
+    VOFSubequationsInterface<dim> subequations_interface(
+      solver_parameters, pcout, tria, multiphysics_interface.get());
+
+    std::vector<VOFSubequationsID> active_subequations =
+      subequations_interface.get_active_subequations();
+
+    deallog << "Active subequations [expected: no active subequation]"
+            << std::endl;
+    if (active_subequations.size() == 0)
+      deallog << "No active subequations" << std::endl;
+    else
+      for (const auto &subequation_id : active_subequations)
+        {
+          deallog << int(subequation_id) << std::endl;
+        }
   }
 }
 

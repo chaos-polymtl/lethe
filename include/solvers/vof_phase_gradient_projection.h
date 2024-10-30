@@ -12,9 +12,7 @@
  * @tparam dim Number of dimensions of the problem.
  */
 template <int dim>
-class VOFPhaseGradientProjection : public VOFLinearSubequationsSolver<
-                                     dim,
-                                     VOFPhaseGradientProjectionScratchData<dim>>
+class VOFPhaseGradientProjection : public VOFLinearSubequationsSolver<dim>
 {
 public:
   /**
@@ -41,8 +39,7 @@ public:
                                   &p_triangulation,
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
-    : VOFLinearSubequationsSolver<dim,
-                                  VOFPhaseGradientProjectionScratchData<dim>>(
+    : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::phase_gradient_projection,
         p_simulation_parameters,
         p_simulation_parameters.multiphysics.vof_parameters

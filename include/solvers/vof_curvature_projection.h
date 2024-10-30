@@ -12,9 +12,7 @@
  * @tparam dim Number of dimensions of the problem.
  */
 template <int dim>
-class VOFCurvatureProjection
-  : public VOFLinearSubequationsSolver<dim,
-                                       VOFCurvatureProjectionScratchData<dim>>
+class VOFCurvatureProjection : public VOFLinearSubequationsSolver<dim>
 {
 public:
   /**
@@ -40,7 +38,7 @@ public:
                                   &p_triangulation,
     MultiphysicsInterface<dim>    *p_multiphysics_interface,
     VOFSubequationsInterface<dim> *p_subequations_interface)
-    : VOFLinearSubequationsSolver<dim, VOFCurvatureProjectionScratchData<dim>>(
+    : VOFLinearSubequationsSolver<dim>(
         VOFSubequationsID::curvature_projection,
         p_simulation_parameters,
         p_simulation_parameters.multiphysics.vof_parameters

@@ -45,15 +45,15 @@ public:
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_multiphysics Multiphysics interface object pointer used to get
-   * information from physics.
+   * @param[in] p_multiphysics_interface Multiphysics interface object pointer
+   * used to get information from physics.
    */
   VOFSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                &p_triangulation,
-    MultiphysicsInterface<dim> *p_multiphysics);
+    MultiphysicsInterface<dim> *p_multiphysics_interface);
 
   /**
    * @brief Default destructor.
@@ -246,11 +246,11 @@ public:
   }
 
 private:
-  MultiphysicsInterface<dim> *multiphysics;
+  MultiphysicsInterface<dim> *multiphysics_interface;
 
   const ConditionalOStream pcout;
 
-  // Data structure that stores all enabled physics
+  // Data structure that stores all enabled subequations
   std::vector<VOFSubequationsID> active_subequations;
 
   // Subequations stored within a map of shared pointer to ensure proper

@@ -28,12 +28,9 @@
  *
  * @tparam dim Number of dimensions of the problem.
  *
- * @tparam ScratchDataType Type of scratch data object used for linear system
- * assembly.
- *
  * @ingroup solvers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFLinearSubequationsSolver : public PhysicsLinearSubequationsSolver
 {
 public:
@@ -148,9 +145,6 @@ protected:
   AffineConstraints<double>                          constraints;
   TrilinosWrappers::SparseMatrix                     system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-
-  // Assembler for the matrix and rhs
-  std::shared_ptr<VOFSubequationAssemblerBase<ScratchDataType>> assembler;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;

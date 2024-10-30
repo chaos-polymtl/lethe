@@ -7,9 +7,9 @@
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
+VOFLinearSubequationsSolver<dim>::setup_dofs()
 {
   // Get MPI communicator
   auto mpi_communicator = this->triangulation->get_communicator();
@@ -71,10 +71,10 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
                                              &this->present_solution);
 }
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::
-  solve_linear_system_and_update_solution(const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
+  const bool &is_post_mesh_adaptation)
 {
   auto mpi_communicator = this->triangulation->get_communicator();
 
@@ -158,25 +158,13 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::
   this->evaluation_point = this->present_solution;
 }
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::solve(
-  const bool &is_post_mesh_adaptation)
+VOFLinearSubequationsSolver<dim>::solve(const bool &is_post_mesh_adaptation)
 {
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution(is_post_mesh_adaptation);
 }
 
-template class VOFLinearSubequationsSolver<
-  2,
-  VOFPhaseGradientProjectionScratchData<2>>;
-template class VOFLinearSubequationsSolver<
-  3,
-  VOFPhaseGradientProjectionScratchData<3>>;
-
-template class VOFLinearSubequationsSolver<
-  2,
-  VOFCurvatureProjectionScratchData<2>>;
-template class VOFLinearSubequationsSolver<
-  3,
-  VOFCurvatureProjectionScratchData<3>>;
+template class VOFLinearSubequationsSolver<2>;
+template class VOFLinearSubequationsSolver<3>;
