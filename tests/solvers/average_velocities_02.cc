@@ -94,7 +94,7 @@ test()
                              mpi_communicator);
 
   // Time loop
-  while (time < (time_end + epsilon)) // Until time reached end time
+  while (time < (time_end + dt)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
