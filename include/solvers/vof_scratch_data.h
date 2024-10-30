@@ -605,16 +605,19 @@ public:
     this->fe_values_curvature_projection.reinit(cell);
     auto &fe_curvature_projection =
       this->fe_values_curvature_projection.get_fe();
+
     // Get cell measure
     this->JxW           = this->fe_values_curvature_projection.get_JxW_values();
     double cell_measure = compute_cell_measure_with_JxW(this->JxW);
     this->cell_size =
       compute_cell_diameter<dim>(cell_measure, fe_curvature_projection.degree);
+
     // Gather present solutions
     this->fe_values_curvature_projection.get_function_values(
       current_solution, this->present_curvature_projection_values);
     this->fe_values_curvature_projection.get_function_gradients(
       current_solution, this->present_curvature_projection_gradients);
+
     // Shape functions
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
@@ -622,6 +625,7 @@ public:
           {
             this->phi[q][k] =
               this->fe_values_curvature_projection.shape_value(k, q);
+
             this->grad_phi[q][k] =
               this->fe_values_curvature_projection.shape_grad(k, q);
           }
@@ -647,7 +651,7 @@ public:
   {
     // Reinitialize FEValues to cell
     this->fe_values_phase_gradient_projection.reinit(cell);
-    // Gather present VOF phase fraction gradients
+    // Gather present projected phase fraction gradients
     this->fe_values_phase_gradient_projection[this->phase_fraction_gradients]
       .get_function_values(current_solution,
                            present_phase_gradient_projection_values);

@@ -140,13 +140,12 @@ public:
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
 
-    // Initialize objects for subequations to solve
+    // Initialize the interface object for subequations to solve
     this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
       this->simulation_parameters,
-      this->multiphysics,
+      this->pcout,
       this->triangulation,
-      this->simulation_control,
-      this->pcout);
+      this->multiphysics);
   }
 
   /**
@@ -412,7 +411,9 @@ public:
   DoFHandler<dim> *
   get_curvature_dof_handler()
   {
-    return &curvature_dof_handler;
+    //    return &curvature_dof_handler;
+    return this->subequations->get_dof_handler(
+      VOFSubequationsID::curvature_projection);
   }
 
   GlobalVectorType *
@@ -425,7 +426,9 @@ public:
   GlobalVectorType *
   get_curvature_solution()
   {
-    return &present_curvature_solution;
+    //    return &present_curvature_solution;
+    return this->subequations->get_solution(
+      VOFSubequationsID::curvature_projection);
   }
 
   /**
@@ -749,7 +752,7 @@ private:
   GlobalVectorType               complete_system_rhs_phase_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
 
-  // For projected phase fraction gradient (pfg) and eventually curvature
+  // For projected phase fraction gradient (pfg) and curvature
   std::shared_ptr<VOFSubequationsInterface<dim>> subequations;
 
   // Projected curvature solution

@@ -197,9 +197,10 @@ public:
  *
  * @ingroup assemblers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFAssemblerPhaseGradientProjection
-  : public VOFSubequationAssemblerBase<ScratchDataType>
+  : public VOFSubequationAssemblerBase<
+      VOFPhaseGradientProjectionScratchData<dim>>
 {
 public:
   /**
@@ -209,7 +210,8 @@ public:
    * @param[in] vof_parameters VOF simulation parameters.
    */
   VOFAssemblerPhaseGradientProjection(const Parameters::VOF &vof_parameters)
-    : vof_parameters(vof_parameters)
+    : VOFSubequationAssemblerBase<VOFPhaseGradientProjectionScratchData<dim>>()
+    , vof_parameters(vof_parameters)
   {}
 
   /**
@@ -228,8 +230,9 @@ public:
    * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   void
-  assemble_matrix(const ScratchDataType     &scratch_data,
-                  StabilizedMethodsCopyData &copy_data) override;
+  assemble_matrix(
+    const VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
+    StabilizedMethodsCopyData                        &copy_data) override;
 
   /**
    * @brief Assemble the right-hand side (rhs).
@@ -242,7 +245,7 @@ public:
    * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   void
-  assemble_rhs(const ScratchDataType     &scratch_data,
+  assemble_rhs(const VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
 private:
@@ -260,9 +263,9 @@ private:
  *
  * @ingroup assemblers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFAssemblerCurvatureProjection
-  : public VOFSubequationAssemblerBase<ScratchDataType>
+  : public VOFSubequationAssemblerBase<VOFCurvatureProjectionScratchData<dim>>
 {
 public:
   /**
@@ -271,12 +274,15 @@ public:
    * @param[in] vof_parameters VOF simulation parameters.
    */
   VOFAssemblerCurvatureProjection(const Parameters::VOF &vof_parameters)
-    : vof_parameters(vof_parameters)
+    : VOFSubequationAssemblerBase<VOFCurvatureProjectionScratchData<dim>>()
+    , vof_parameters(vof_parameters)
   {}
+
   /**
    * @brief Default destructor.
    */
   ~VOFAssemblerCurvatureProjection() = default;
+
   /**
    * @brief Assemble the matrix.
    *
@@ -288,8 +294,9 @@ public:
    * @param[in,out] copy_data Destination where the local_matrix is copied to.
    */
   void
-  assemble_matrix(const ScratchDataType     &scratch_data,
+  assemble_matrix(const VOFCurvatureProjectionScratchData<dim> &scratch_data,
                   StabilizedMethodsCopyData &copy_data) override;
+
   /**
    * @brief Assemble the right-hand side (rhs).
    *
@@ -301,11 +308,74 @@ public:
    * @param[in,out] copy_data Destination where the local_rhs is copied to.
    */
   void
-  assemble_rhs(const ScratchDataType     &scratch_data,
+  assemble_rhs(const VOFCurvatureProjectionScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
 
 private:
   const Parameters::VOF vof_parameters;
+};
+
+
+/**
+ * @brief TODO AMISHGA
+ */
+template <typename ScratchDataType>
+class VOFSubequationAssemblerFactory
+{
+public:
+  /**
+   * @ brief TODO AMISHGA
+   * @param[in] vof_parameters
+   * @return
+   */
+  static std::shared_ptr<VOFSubequationAssemblerBase<ScratchDataType>>
+  initialize_assembler(const Parameters::VOF & /*vof_parameters*/)
+  {
+    throw std::runtime_error("Unsupported ScratchDataType");
+  }
+};
+
+
+/**
+ * @brief TODO AMISHGA
+ */
+template <int dim>
+class VOFSubequationAssemblerFactory<VOFPhaseGradientProjectionScratchData<dim>>
+{
+public:
+  /**
+   * @ brief TODO AMISHGA
+   * @param[in] vof_parameters
+   * @return
+   */
+  static std::shared_ptr<
+    VOFSubequationAssemblerBase<VOFPhaseGradientProjectionScratchData<dim>>>
+  initialize_assembler(const Parameters::VOF &vof_parameters)
+  {
+    return std::make_shared<VOFAssemblerPhaseGradientProjection<dim>>(
+      vof_parameters);
+  }
+};
+
+/**
+ * @brief TODO AMISHGA
+ */
+template <int dim>
+class VOFSubequationAssemblerFactory<VOFCurvatureProjectionScratchData<dim>>
+{
+public:
+  /**
+   * @ brief TODO AMISHGA
+   * @param[in] vof_parameters
+   * @return
+   */
+  static std::shared_ptr<
+    VOFSubequationAssemblerBase<VOFCurvatureProjectionScratchData<dim>>>
+  initialize_assembler(const Parameters::VOF &vof_parameters)
+  {
+    return std::make_shared<VOFAssemblerCurvatureProjection<dim>>(
+      vof_parameters);
+  }
 };
 
 #endif

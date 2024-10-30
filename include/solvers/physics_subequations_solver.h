@@ -24,18 +24,6 @@ public:
   setup_dofs() = 0;
 
   /**
-   * @brief Assemble the matrix.
-   */
-  virtual void
-  assemble_system_matrix() = 0;
-
-  /**
-   * @brief Assemble the right-hand side (rhs).
-   */
-  virtual void
-  assemble_system_rhs() = 0;
-
-  /**
    * @brief Assemble and solve the system.
    *
    * @param[in] is_post_mesh_adaptation Indicates if the equation is being
@@ -49,7 +37,6 @@ public:
  * @brief Linear subequations solved inside a physics (or auxiliary physics)
  * that are not part of the main set of equations.
  */
-
 class PhysicsLinearSubequationsSolver : public PhysicsSubequationsSolverBase
 {
 public:
@@ -68,6 +55,7 @@ public:
    */
   ~PhysicsLinearSubequationsSolver() = default;
 
+protected:
   /**
    * @brief Solve the linear system associated with the equation to solve, when
    * the equation is already linear.
@@ -79,8 +67,8 @@ public:
   solve_linear_system_and_update_solution(
     const bool &is_post_mesh_adaptation = false) = 0;
 
-protected:
-  ConditionalOStream pcout;
+
+  const ConditionalOStream pcout;
 };
 
 #endif

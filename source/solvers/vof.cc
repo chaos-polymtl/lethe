@@ -1137,7 +1137,7 @@ VolumeOfFluid<dim>::modify_solution()
   this->subequations->solve();
   if (vof_parameters.surface_tension_force.enable)
     {
-      find_projected_interface_curvature();
+      //      find_projected_interface_curvature();
     }
 }
 
@@ -1778,7 +1778,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable)
     {
-      find_projected_interface_curvature();
+      //      find_projected_interface_curvature();
     }
 }
 

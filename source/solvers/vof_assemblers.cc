@@ -459,11 +459,11 @@ template class VOFAssemblerDCDDStabilization<2>;
 template class VOFAssemblerDCDDStabilization<3>;
 
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
-  const ScratchDataType     &scratch_data,
-  StabilizedMethodsCopyData &copy_data)
+VOFAssemblerPhaseGradientProjection<dim>::assemble_matrix(
+  const VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData                        &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -502,11 +502,11 @@ VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_matrix(
     }
 }
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_rhs(
-  const ScratchDataType     &scratch_data,
-  StabilizedMethodsCopyData &copy_data)
+VOFAssemblerPhaseGradientProjection<dim>::assemble_rhs(
+  const VOFPhaseGradientProjectionScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData                        &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -532,19 +532,15 @@ VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>::assemble_rhs(
     }
 }
 
-template class VOFAssemblerPhaseGradientProjection<
-  2,
-  VOFPhaseGradientProjectionScratchData<2>>;
-template class VOFAssemblerPhaseGradientProjection<
-  3,
-  VOFPhaseGradientProjectionScratchData<3>>;
+template class VOFAssemblerPhaseGradientProjection<2>;
+template class VOFAssemblerPhaseGradientProjection<3>;
 
 
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFAssemblerCurvatureProjection<dim, ScratchDataType>::assemble_matrix(
-  const ScratchDataType     &scratch_data,
-  StabilizedMethodsCopyData &copy_data)
+VOFAssemblerCurvatureProjection<dim>::assemble_matrix(
+  const VOFCurvatureProjectionScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData                    &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -576,11 +572,11 @@ VOFAssemblerCurvatureProjection<dim, ScratchDataType>::assemble_matrix(
         }
     }
 }
-template <int dim, typename ScratchDataType>
+template <int dim>
 void
-VOFAssemblerCurvatureProjection<dim, ScratchDataType>::assemble_rhs(
-  const ScratchDataType     &scratch_data,
-  StabilizedMethodsCopyData &copy_data)
+VOFAssemblerCurvatureProjection<dim>::assemble_rhs(
+  const VOFCurvatureProjectionScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData                    &copy_data)
 {
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
@@ -610,9 +606,5 @@ VOFAssemblerCurvatureProjection<dim, ScratchDataType>::assemble_rhs(
     }
 }
 
-template class VOFAssemblerCurvatureProjection<
-  2,
-  VOFCurvatureProjectionScratchData<2>>;
-template class VOFAssemblerCurvatureProjection<
-  3,
-  VOFCurvatureProjectionScratchData<3>>;
+template class VOFAssemblerCurvatureProjection<2>;
+template class VOFAssemblerCurvatureProjection<3>;

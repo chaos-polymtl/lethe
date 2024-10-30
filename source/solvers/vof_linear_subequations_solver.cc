@@ -57,110 +57,18 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::setup_dofs()
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
     {
       std::string subequation_string =
-        this->subequations->get_subequation_string(this->subequation_id);
+        this->subequations_interface->get_subequation_string(
+          this->subequation_id);
       this->pcout << "   Number of " << subequation_string
                   << " degrees of freedom: " << this->dof_handler.n_dofs()
                   << std::endl;
     }
 
   // Provide DoFHandler and solutions to the subequations interface
-  this->subequations->set_dof_handler(this->subequation_id, &this->dof_handler);
-  this->subequations->set_solution(this->subequation_id,
-                                   &this->present_solution);
-}
-
-template <int dim, typename ScratchDataType>
-void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_matrix()
-{
-  this->system_matrix = 0;
-  this->assembler =
-    this->subequations->template assembler_cast<ScratchDataType>(
-      this->subequation_id,
-      this->simulation_parameters.multiphysics.vof_parameters);
-
-  const DoFHandler<dim> *dof_handler_input_variable =
-    this->subequations->get_input_dof_handler(this->subequation_id);
-
-  auto scratch_data_parent =
-    this->subequations->scratch_data_cast(this->subequation_id,
-                                          *this->fe,
-                                          *this->cell_quadrature,
-                                          *this->mapping,
-                                          dof_handler_input_variable->get_fe());
-  ScratchDataType *scratch_data =
-    dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
-
-  WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
-    *this,
-    &VOFLinearSubequationsSolver::assemble_local_system_matrix,
-    &VOFLinearSubequationsSolver::copy_local_matrix_to_global_matrix,
-    *scratch_data,
-    StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
-                              this->cell_quadrature->size()));
-
-  this->system_matrix.compress(VectorOperation::add);
-}
-
-template <int dim, typename ScratchDataType>
-void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::
-  copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &copy_data)
-{
-  if (!copy_data.cell_is_local)
-    return;
-
-  const AffineConstraints<double> &constraints_used = this->constraints;
-  constraints_used.distribute_local_to_global(copy_data.local_matrix,
-                                              copy_data.local_dof_indices,
-                                              this->system_matrix);
-}
-
-template <int dim, typename ScratchDataType>
-void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::assemble_system_rhs()
-{
-  this->system_rhs = 0;
-
-  const DoFHandler<dim> *dof_handler_input_variable =
-    this->subequations->get_input_dof_handler(this->subequation_id);
-
-  auto scratch_data_parent =
-    this->subequations->scratch_data_cast(this->subequation_id,
-                                          *this->fe,
-                                          *this->cell_quadrature,
-                                          *this->mapping,
-                                          dof_handler_input_variable->get_fe());
-
-  ScratchDataType *scratch_data =
-    dynamic_cast<ScratchDataType *>(scratch_data_parent.get());
-
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
-                  *this,
-                  &VOFLinearSubequationsSolver::assemble_local_system_rhs,
-                  &VOFLinearSubequationsSolver::copy_local_rhs_to_global_rhs,
-                  *scratch_data,
-                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
-                                            this->cell_quadrature->size()));
-
-  this->system_rhs.compress(VectorOperation::add);
-}
-
-template <int dim, typename ScratchDataType>
-void
-VOFLinearSubequationsSolver<dim, ScratchDataType>::copy_local_rhs_to_global_rhs(
-  const StabilizedMethodsCopyData &copy_data)
-{
-  if (!copy_data.cell_is_local)
-    return;
-
-  const AffineConstraints<double> &constraints_used = this->constraints;
-  constraints_used.distribute_local_to_global(copy_data.local_rhs,
-                                              copy_data.local_dof_indices,
-                                              this->system_rhs);
+  this->subequations_interface->set_dof_handler(this->subequation_id,
+                                                &this->dof_handler);
+  this->subequations_interface->set_solution(this->subequation_id,
+                                             &this->present_solution);
 }
 
 template <int dim, typename ScratchDataType>
@@ -180,7 +88,8 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::
   if (verbose)
     {
       std::string subequation_string =
-        this->subequations->get_subequation_string(this->subequation_id);
+        this->subequations_interface->get_subequation_string(
+          this->subequation_id);
 
       this->pcout << "  -Solving " << subequation_string << ":" << std::endl;
     }
@@ -236,8 +145,7 @@ VOFLinearSubequationsSolver<dim, ScratchDataType>::
 
   if (verbose)
     {
-      this->pcout << "    -Iterative solver took: "
-                  << solver_control.last_step()
+      this->pcout << "    -Iterative solver took " << solver_control.last_step()
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() << std::endl;
     }
@@ -255,8 +163,7 @@ void
 VOFLinearSubequationsSolver<dim, ScratchDataType>::solve(
   const bool &is_post_mesh_adaptation)
 {
-  assemble_system_matrix();
-  assemble_system_rhs();
+  assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution(is_post_mesh_adaptation);
 }
 
@@ -266,3 +173,10 @@ template class VOFLinearSubequationsSolver<
 template class VOFLinearSubequationsSolver<
   3,
   VOFPhaseGradientProjectionScratchData<3>>;
+
+template class VOFLinearSubequationsSolver<
+  2,
+  VOFCurvatureProjectionScratchData<2>>;
+template class VOFLinearSubequationsSolver<
+  3,
+  VOFCurvatureProjectionScratchData<3>>;
