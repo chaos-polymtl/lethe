@@ -40,8 +40,9 @@ protected:
   // Simulation end time
   double end_time;
 
-  // Simulation intermediate time in case of controlled restarts
-  double intermediate_time;
+  // Boolean to keep the time step for the last iteration regardless of the end
+  // time specify. Both for fixed time step and adaptive time step.
+  bool time_step_independent_of_end_time;
 
   // Time step vector. This vector accumulates the time steps of the previous
   // iterations. This is required for multiple steps methods such as the bdfs.
@@ -85,7 +86,7 @@ protected:
   // Output time frequency
   // Controls the output of the simulation results when the output is controlled
   // by the time
-  double output_time_frequency;
+  double output_time;
 
   // Adds a condition to the generation of .vtu and .pvd files in addition to
   // the output generation frequency. If specified in the parameter file, only

@@ -16,7 +16,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , time_step(param.dt)
   , initial_time_step(param.dt)
   , end_time(param.timeEnd)
-  , intermediate_time(param.intermediate_time)
+  , time_step_independent_of_end_time(param.time_step_independent_of_end_time)
   , iteration_number(0)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
@@ -24,7 +24,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , residual(DBL_MAX)
   , stop_tolerance(param.stop_tolerance)
   , output_frequency(param.output_frequency)
-  , output_time_frequency(param.output_time)
+  , output_time(param.output_time)
   , output_time_interval(param.output_time_interval)
   , log_frequency(param.log_frequency)
   , log_precision(param.log_precision)
@@ -45,10 +45,6 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
 
   // Resize the bdf_coefficients to ensure they have a default size;
   bdf_coefs.reinit(n_previous_time_steps + 1);
-
-  // If there is an intermediate time, we change the end_time of the simulation
-  if (intermediate_time != -1)
-    end_time = intermediate_time;
 }
 
 void
@@ -72,9 +68,7 @@ SimulationControl::is_output_iteration()
     {
       // Check if the current step number matches the output frequency and falls
       // within the user-specified time window.
-      return (get_step_number() % output_frequency == 0 &&
-              get_current_time() >= output_time_interval[0] &&
-              get_current_time() <= output_time_interval[1]);
+      return (get_step_number() % output_frequency == 0);
     }
 }
 
@@ -183,10 +177,6 @@ SimulationControl::read(const std::string &prefix)
 
   // Fix time step to be the last time_step that was used
   time_step = time_step_vector[0];
-
-  // Verify that the output time specified is valid after a restart
-  AssertThrow(output_time_frequency > current_time,
-              ExcMessage("The specified time for output is not valid."));
 }
 
 std::vector<double>
@@ -295,12 +285,15 @@ SimulationControlTransient::calculate_time_step()
       new_time_step = std::min(new_time_step, max_dt);
     }
 
-  // If there is a control restart, I do not want to change the time step
-  // to avoid issues with post-processing and more iterations in case of
-  // adaptive time step when restartting
-  if (intermediate_time == -1)
-    if (current_time + new_time_step > end_time)
-      new_time_step = end_time - current_time;
+  // Ensure that the time step for the last iteration is kept regardless of the
+  // end time set
+  if (time_step_independent_of_end_time)
+    return new_time_step;
+
+  // If we want to ensure that the last iteration is exactly the end time
+  // regardless of the time step
+  if (current_time + new_time_step > end_time)
+    new_time_step = end_time - current_time;
 
   return new_time_step;
 }
@@ -343,12 +336,8 @@ double
 SimulationControlTransientDynamicOutput::calculate_time_step()
 {
   double new_time_step = time_step;
-  if (time_step_forced_output)
-    {
-      new_time_step           = time_step_vector[1];
-      time_step_forced_output = false;
-    }
-  else if (iteration_number > 1)
+
+  if (iteration_number > 1)
     {
       new_time_step = time_step * adaptative_time_step_scaling;
       if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
@@ -357,22 +346,16 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
       new_time_step = std::min(new_time_step, max_dt);
     }
 
-  // If there is a control restart, I do not want to change the time step
-  // to avoid issues with post-processing and more iterations in case of
-  // adaptive time step when restartting
-  if (intermediate_time == -1)
-    {
-      if (current_time + new_time_step > end_time)
-        new_time_step = end_time - current_time;
+  // Ensure that the time step for the last iteration is kept regardless of the
+  // end time set
+  if (time_step_independent_of_end_time)
+    return new_time_step;
 
-      if (current_time + new_time_step >
-          last_output_time + output_time_frequency)
-        {
-          new_time_step =
-            last_output_time + output_time_frequency - current_time;
-          time_step_forced_output = true;
-        }
-    }
+  // If we want to ensure that the last iteration is exactly the end time
+  // regardless of the time step
+  if (current_time + new_time_step > end_time)
+    new_time_step = end_time - current_time;
+
 
   return new_time_step;
 }
@@ -380,32 +363,35 @@ SimulationControlTransientDynamicOutput::calculate_time_step()
 bool
 SimulationControlTransientDynamicOutput::is_output_iteration()
 {
-  bool is_output_time = false;
+  bool   is_output_time = false;
+  double upper_bound, lower_bound;
 
-  // Check if the current step number matches the output time frequency and
-  // falls within the user-specified time window.
-  if (intermediate_time == -1)
+  // If a specific time is given
+  if (output_time != -1)
     {
-      is_output_time =
-        ((current_time - last_output_time) - output_time_frequency >
-           -1e-12 * output_time_frequency &&
-         get_current_time() >= output_time_interval[0] &&
-         get_current_time() <= output_time_interval[1]);
-      if (is_output_time)
-        last_output_time = current_time;
+      upper_bound = output_time;
+      lower_bound = output_time;
     }
-  else
+  else // If an interval is specified
     {
-      // Output the previous time step
-      if (current_time < intermediate_time &&
-          (current_time + calculate_time_step() >= intermediate_time))
-        is_output_time = true;
+      upper_bound = output_time_interval[1];
+      lower_bound = output_time_interval[0];
+    }
 
-      // Output the next time step
-      if (current_time >= intermediate_time &&
-          (current_time - time_step_vector[1] < intermediate_time))
-        is_output_time = true;
-    }
+  // Case 1. If it is within the interval write only according to output
+  // frequency
+  is_output_time =
+    (current_time >= lower_bound && current_time <= upper_bound &&
+     get_step_number() % output_frequency == 0);
+
+  // Case 2. One time step before the interval
+  double next_time = current_time + calculate_time_step();
+  if (current_time < lower_bound && (next_time >= lower_bound))
+    is_output_time = true;
+
+  // Case 3. One time step after the interval
+  if (current_time >= upper_bound && (previous_time < upper_bound))
+    is_output_time = true;
 
   return is_output_time;
 }
