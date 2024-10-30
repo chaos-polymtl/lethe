@@ -96,10 +96,6 @@ namespace Parameters
                         Patterns::Double(),
                         "Time step value");
       prm.declare_entry("time end", "1", Patterns::Double(), "Time step value");
-      prm.declare_entry("time intermediate",
-                        "-1",
-                        Patterns::Double(),
-                        "Intermediate time for control restarts");
       prm.declare_entry("startup time scaling",
                         "0.4",
                         Patterns::Double(),
@@ -109,6 +105,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
+      prm.declare_entry(
+        "time step independent of end time",
+        "true",
+        Patterns::Bool(),
+        "Ensures that the correct time step is kept when using adaptive time step simulations");
       prm.declare_entry("number mesh adapt",
                         "0",
                         Patterns::Integer(),
@@ -163,7 +164,10 @@ namespace Parameters
                         "This setting percolates to all output to the log");
 
 
-      prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
+      prm.declare_entry("output time",
+                        "-1",
+                        Patterns::Double(),
+                        "Specific output time for simulation results");
 
       prm.declare_entry(
         "output control",
@@ -229,13 +233,14 @@ namespace Parameters
         {
           std::runtime_error("Invalid output control scheme");
         }
-      dt                = prm.get_double("time step");
-      timeEnd           = prm.get_double("time end");
-      intermediate_time = prm.get_double("time intermediate");
-      adapt             = prm.get_bool("adapt");
-      maxCFL            = prm.get_double("max cfl");
-      max_dt            = prm.get_double("max time step");
-      stop_tolerance    = prm.get_double("stop tolerance");
+      dt      = prm.get_double("time step");
+      timeEnd = prm.get_double("time end");
+      adapt   = prm.get_bool("adapt");
+      time_step_independent_of_end_time =
+        prm.get_bool("time step independent of end time");
+      maxCFL         = prm.get_double("max cfl");
+      max_dt         = prm.get_double("max time step");
+      stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");

@@ -96,8 +96,9 @@ namespace Parameters
     // End time
     double timeEnd;
 
-    // Intermediate time
-    double intermediate_time;
+    // Boolean to keep the time step for the last iteration regardless of the
+    // end time specify. Both for fixed time step and adaptive time step.
+    bool time_step_independent_of_end_time;
 
     // Adaptative time stepping
     bool adapt;
@@ -138,11 +139,10 @@ namespace Parameters
       multiple_step_bdf,
     } bdf_startup_method;
 
-
-    // Frequency of the output
+    // Frequency of the output (for both time and iteration output)
     unsigned int output_frequency;
 
-    // Frequency of the output
+    // Output at a specific time
     double output_time;
 
     // Time window for file output
