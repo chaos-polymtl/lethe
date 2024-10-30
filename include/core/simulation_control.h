@@ -508,7 +508,7 @@ protected:
    * is enabled, the time step is calculated in order to ensure
    * that the CFL condition is bound by the maximal CFL value.
    * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step. If the time_step_independet_of_end_time is set to false, the
+   * time step. If the time_step_independent_of_end_time is set to false, the
    * time step is asjusted to meet exactly the end time; the default is to not
    * modify the time step.
    */
