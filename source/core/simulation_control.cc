@@ -66,8 +66,7 @@ SimulationControl::is_output_iteration()
     return false;
   else
     {
-      // Check if the current step number matches the output frequency and falls
-      // within the user-specified time window.
+      // Check if the current step number matches the output frequency
       return (get_step_number() % output_frequency == 0);
     }
 }
@@ -262,8 +261,6 @@ SimulationControlTransient::integrate()
     return false;
 }
 
-
-
 bool
 SimulationControlTransient::is_at_end()
 {
@@ -290,8 +287,8 @@ SimulationControlTransient::calculate_time_step()
   if (time_step_independent_of_end_time)
     return new_time_step;
 
-  // If we want to ensure that the last iteration is exactly the end time
-  // regardless of the time step
+  // Modify last time step to ensure that the last iteration is exactly the end
+  // time specified in the parameter file
   if (current_time + new_time_step > end_time)
     new_time_step = end_time - current_time;
 
@@ -327,38 +324,7 @@ SimulationControlTransientDynamicOutput::
   SimulationControlTransientDynamicOutput(
     const Parameters::SimulationControl &param)
   : SimulationControlTransient(param)
-  , time_step_forced_output(false)
-  // To be fixed for restarts
-  , last_output_time(0.)
 {}
-
-double
-SimulationControlTransientDynamicOutput::calculate_time_step()
-{
-  double new_time_step = time_step;
-
-  if (iteration_number > 1)
-    {
-      new_time_step = time_step * adaptative_time_step_scaling;
-      if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
-        new_time_step = time_step * max_CFL / CFL;
-
-      new_time_step = std::min(new_time_step, max_dt);
-    }
-
-  // Ensure that the time step for the last iteration is kept regardless of the
-  // end time set
-  if (time_step_independent_of_end_time)
-    return new_time_step;
-
-  // If we want to ensure that the last iteration is exactly the end time
-  // regardless of the time step
-  if (current_time + new_time_step > end_time)
-    new_time_step = end_time - current_time;
-
-
-  return new_time_step;
-}
 
 bool
 SimulationControlTransientDynamicOutput::is_output_iteration()
@@ -378,18 +344,18 @@ SimulationControlTransientDynamicOutput::is_output_iteration()
       lower_bound = output_time_interval[0];
     }
 
-  // Case 1. If it is within the interval write only according to output
+  // Case 1. If it is within the interval, write only according to output
   // frequency
   is_output_time =
     (current_time >= lower_bound && current_time <= upper_bound &&
      get_step_number() % output_frequency == 0);
 
-  // Case 2. One time step before the interval
+  // Case 2. Always write one time step before the interval
   double next_time = current_time + calculate_time_step();
   if (current_time < lower_bound && (next_time >= lower_bound))
     is_output_time = true;
 
-  // Case 3. One time step after the interval
+  // Case 3. Always write one time step after the interval
   if (current_time >= upper_bound && (previous_time < upper_bound))
     is_output_time = true;
 
@@ -442,6 +408,11 @@ SimulationControlSteady::is_at_end()
   return iteration_number >= (number_mesh_adapt + 1);
 }
 
+SimulationControlAdjointSteady::SimulationControlAdjointSteady(
+  const Parameters::SimulationControl &param)
+  : SimulationControlTransient(param)
+{}
+
 void
 SimulationControlAdjointSteady::print_progression(
   const ConditionalOStream &pcout)
@@ -468,26 +439,4 @@ bool
 SimulationControlAdjointSteady::is_at_end()
 {
   return residual <= stop_tolerance;
-}
-
-SimulationControlAdjointSteady::SimulationControlAdjointSteady(
-  const Parameters::SimulationControl &param)
-  : SimulationControlTransient(param)
-{}
-
-double
-SimulationControlAdjointSteady::calculate_time_step()
-{
-  double new_time_step = time_step;
-
-  if (adapt && iteration_number > 1)
-    {
-      new_time_step = time_step * adaptative_time_step_scaling;
-      if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
-        new_time_step = time_step * max_CFL / CFL;
-
-      new_time_step = std::min(new_time_step, max_dt);
-    }
-
-  return new_time_step;
 }

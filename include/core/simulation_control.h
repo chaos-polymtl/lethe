@@ -508,13 +508,12 @@ protected:
    * is enabled, the time step is calculated in order to ensure
    * that the CFL condition is bound by the maximal CFL value.
    * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step. If this surpasses the simulation time or if it surpasses the
-   * maximal CFL value, the time step is scaled down to ensure that this is
-   * respected.
+   * time step. If the time_step_independet_of_end_time is set to false, the
+   * time step is asjusted to meet exactly the end time; the default is to not
+   * modify the time step.
    */
   virtual double
   calculate_time_step() override;
-
 
 public:
   SimulationControlTransient(const Parameters::SimulationControl &param);
@@ -552,31 +551,13 @@ class SimulationControlTransientDynamicOutput
   : public SimulationControlTransient
 {
 protected:
-  // Time step has been forced
-  bool time_step_forced_output;
-
-  // Time at which there was a last output
-  double last_output_time;
-
-  /**
-   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
-   * that the CFL condition is bound by the maximal CFL value.
-   * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step. If this surpasses the simulation time, the output_time or if it
-   * surpasses the maximal CFL value, the time step is scaled down to ensure
-   * that these elements are respected.
-   */
-  virtual double
-  calculate_time_step() override;
-
 public:
   SimulationControlTransientDynamicOutput(
     const Parameters::SimulationControl &param);
 
-
   /**
-   * @brief Output iterations are calculated based on the value of the time
-   * and the time frequency of the output
+   * @brief Output iterations are calculated based on the value of the output time
+   * or the output interval and the output frequency within the interval.
    */
   virtual bool
   is_output_iteration() override;
@@ -610,15 +591,6 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
-
-  /**
-   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
-   * that the CFL condition is bound by the maximal CFL value.
-   * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step.
-   */
-  virtual double
-  calculate_time_step() override;
 
   /**
    * @brief Ends the simulation when the desired residual is reached
