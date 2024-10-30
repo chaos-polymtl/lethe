@@ -503,6 +503,9 @@ protected:
   // Max time step
   double max_dt;
 
+  // Output control type: iteration or type
+  Parameters::SimulationControl::OutputControl output_control;
+
   /**
    * @brief Calculates the next value of the time step. If adaptation
    * is enabled, the time step is calculated in order to ensure
@@ -527,12 +530,18 @@ public:
   virtual bool
   integrate() override;
 
-
   /**
    * @brief Ends the simulation when the end time is reached
    */
   virtual bool
   is_at_end() override;
+
+  /**
+   * @brief Output iterations are calculated based on the value of the output time
+   * or the output interval and the output frequency within the interval.
+   */
+  virtual bool
+  is_output_iteration() override;
 };
 
 /**
@@ -545,22 +554,6 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
-};
-
-class SimulationControlTransientDynamicOutput
-  : public SimulationControlTransient
-{
-protected:
-public:
-  SimulationControlTransientDynamicOutput(
-    const Parameters::SimulationControl &param);
-
-  /**
-   * @brief Output iterations are calculated based on the value of the output time
-   * or the output interval and the output frequency within the interval.
-   */
-  virtual bool
-  is_output_iteration() override;
 };
 
 class SimulationControlSteady : public SimulationControl

@@ -217,6 +217,7 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
+  , output_control(param.output_control)
 {}
 
 void
@@ -295,40 +296,22 @@ SimulationControlTransient::calculate_time_step()
   return new_time_step;
 }
 
-SimulationControlTransientDEM::SimulationControlTransientDEM(
-  const Parameters::SimulationControl &param)
-  : SimulationControlTransient(param)
-{}
-
-void
-SimulationControlTransientDEM::print_progression(
-  const ConditionalOStream &pcout)
-{
-  if (!is_verbose_iteration())
-    return;
-
-  pcout << std::endl;
-  std::stringstream ss;
-
-  // Copy information into a string stream
-  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
-     << " Time: " << std::setw(8) << std::left << current_time
-     << " Time step: " << std::setw(8) << std::left << time_step;
-
-  // Announce string
-  announce_string(pcout, ss.str(), '*');
-}
-
-
-SimulationControlTransientDynamicOutput::
-  SimulationControlTransientDynamicOutput(
-    const Parameters::SimulationControl &param)
-  : SimulationControlTransient(param)
-{}
-
 bool
-SimulationControlTransientDynamicOutput::is_output_iteration()
+SimulationControlTransient::is_output_iteration()
 {
+  // If iteration control
+  if (output_control == Parameters::SimulationControl::OutputControl::iteration)
+    {
+      if (output_frequency == 0)
+        return false;
+      else
+        {
+          // Check if the current step number matches the output frequency
+          return (get_step_number() % output_frequency == 0);
+        }
+    }
+
+  // If time control
   bool   is_output_time = false;
   double upper_bound, lower_bound;
 
@@ -360,6 +343,30 @@ SimulationControlTransientDynamicOutput::is_output_iteration()
     is_output_time = true;
 
   return is_output_time;
+}
+
+SimulationControlTransientDEM::SimulationControlTransientDEM(
+  const Parameters::SimulationControl &param)
+  : SimulationControlTransient(param)
+{}
+
+void
+SimulationControlTransientDEM::print_progression(
+  const ConditionalOStream &pcout)
+{
+  if (!is_verbose_iteration())
+    return;
+
+  pcout << std::endl;
+  std::stringstream ss;
+
+  // Copy information into a string stream
+  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
+     << " Time: " << std::setw(8) << std::left << current_time
+     << " Time step: " << std::setw(8) << std::left << time_step;
+
+  // Announce string
+  announce_string(pcout, ss.str(), '*');
 }
 
 
