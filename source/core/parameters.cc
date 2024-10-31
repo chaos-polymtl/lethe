@@ -142,7 +142,7 @@ namespace Parameters
                         "File output prefix");
 
 
-      prm.declare_entry("output iteration frequency",
+      prm.declare_entry("output frequency",
                         "1",
                         Patterns::Integer(),
                         "Output iteration frequency");
