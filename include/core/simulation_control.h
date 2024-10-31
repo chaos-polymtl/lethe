@@ -83,17 +83,6 @@ protected:
   // by the iteration number.
   unsigned int output_iteration_frequency;
 
-  // Output time frequency
-  // Controls the output of the simulation results when the output is controlled
-  // by the time
-  double output_time;
-
-  // Adds a condition to the generation of .vtu and .pvd files in addition to
-  // the output generation frequency. If specified in the parameter file, only
-  // the results within the specified simulation time interval will be
-  // generated.
-  std::vector<double> output_time_interval;
-
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
   // the terminal
@@ -506,7 +495,15 @@ protected:
   // Time last output
   double time_last_output;
 
+  // Specific output frequency for time output control
   double output_time_frequency;
+
+  // Specific output time for time output control
+  double output_time;
+
+  // Time interval for output of transient iterations either with time output
+  // control or iterations control
+  std::vector<double> output_time_interval;
 
   // Output control type: iteration or type
   Parameters::SimulationControl::OutputControl output_control;

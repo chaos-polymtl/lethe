@@ -24,8 +24,6 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , residual(DBL_MAX)
   , stop_tolerance(param.stop_tolerance)
   , output_iteration_frequency(param.output_iteration_frequency)
-  , output_time(param.output_time)
-  , output_time_interval(param.output_time_interval)
   , log_frequency(param.log_frequency)
   , log_precision(param.log_precision)
   , subdivision(param.subdivision)
@@ -218,6 +216,8 @@ SimulationControlTransient::SimulationControlTransient(
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
   , output_time_frequency(param.output_time_frequency)
+  , output_time(param.output_time)
+  , output_time_interval(param.output_time_interval)
   , output_control(param.output_control)
 {}
 
