@@ -141,10 +141,16 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output prefix");
 
-      prm.declare_entry("output frequency",
+
+      prm.declare_entry("output iteration frequency",
                         "1",
                         Patterns::Integer(),
-                        "Output frequency");
+                        "Output iteration frequency");
+
+      prm.declare_entry("output time frequency",
+                        "-1",
+                        Patterns::Double(),
+                        "Output time frequency");
 
       prm.declare_entry(
         "output boundaries",
@@ -252,8 +258,9 @@ namespace Parameters
                                     output_name.end(),
                                     '/'),
                         output_name.end());
-      output_frequency = prm.get_integer("output frequency");
-      output_time      = prm.get_double("output time");
+      output_iteration_frequency = prm.get_integer("output frequency");
+      output_time_frequency      = prm.get_double("output time frequency");
+      output_time                = prm.get_double("output time");
       output_time_interval =
         convert_string_to_vector<double>(prm, "output time interval");
       output_boundaries = prm.get_bool("output boundaries");

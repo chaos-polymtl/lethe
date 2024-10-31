@@ -81,7 +81,7 @@ protected:
   // Output iteration frequency
   // Controls the output of the simulation results when the output is controlled
   // by the iteration number.
-  unsigned int output_frequency;
+  unsigned int output_iteration_frequency;
 
   // Output time frequency
   // Controls the output of the simulation results when the output is controlled
@@ -251,7 +251,7 @@ public:
   bool
   output_enabled() const
   {
-    return output_frequency != 0;
+    return output_iteration_frequency != 0;
   }
 
   /**
@@ -502,6 +502,11 @@ protected:
 
   // Max time step
   double max_dt;
+
+  // Time last output
+  double time_last_output;
+
+  double output_time_frequency;
 
   // Output control type: iteration or type
   Parameters::SimulationControl::OutputControl output_control;

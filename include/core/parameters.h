@@ -139,13 +139,16 @@ namespace Parameters
       multiple_step_bdf,
     } bdf_startup_method;
 
-    // Frequency of the output (for both time and iteration output)
-    unsigned int output_frequency;
+    // Frequency of the output (for iteration output control)
+    unsigned int output_iteration_frequency;
 
-    // Output at a specific time
+    // Time frequency of the output (for time output control)
+    double output_time_frequency;
+
+    // Output at a specific time (for time output control)
     double output_time;
 
-    // Time window for file output
+    // Time window for file output (for both iteration and time output control)
     std::vector<double> output_time_interval;
 
     // Enable output of the boundaries
