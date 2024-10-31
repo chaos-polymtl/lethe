@@ -81,7 +81,8 @@ $(function() {
 <div class="title">read_checkpoint.cc File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="dem__action__manager_8h_source.html">dem/dem_action_manager.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="checkpoint__control_8h_source.html">core/checkpoint_control.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="dem__action__manager_8h_source.html">dem/dem_action_manager.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="read__checkpoint_8h_source.html">dem/read_checkpoint.h</a>&gt;</code><br />
 <code>#include &lt;boost/archive/text_iarchive.hpp&gt;</code><br />
 <code>#include &lt;boost/archive/text_oarchive.hpp&gt;</code><br />
@@ -92,56 +93,56 @@ Include dependency graph for read_checkpoint.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="read__checkpoint_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2read__checkpoint_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2read__checkpoint_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2read__checkpoint_8cc">
-<area shape="rect" title=" " alt="" coords="1529,5,1712,61"/>
-<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="5,109,212,136"/>
-<area shape="rect" href="read__checkpoint_8h.html" title=" " alt="" coords="2985,109,3160,136"/>
-<area shape="rect" title=" " alt="" coords="2329,601,2469,643"/>
-<area shape="rect" title=" " alt="" coords="2493,601,2633,643"/>
-<area shape="rect" title=" " alt="" coords="264,355,337,382"/>
-<area shape="rect" title=" " alt="" coords="597,355,677,382"/>
-<area shape="rect" href="pvd__handler_8h.html" title=" " alt="" coords="3407,355,3552,382"/>
-<area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="4080,266,4220,293"/>
-<area shape="rect" title=" " alt="" coords="3208,348,3383,389"/>
-<area shape="rect" href="dem__solver__parameters_8h.html" title=" " alt="" coords="2920,266,3145,293"/>
-<area shape="rect" href="insertion_8h.html" title=" " alt="" coords="1713,184,1837,211"/>
-<area shape="rect" title=" " alt="" coords="2653,259,2789,300"/>
-<area shape="rect" title=" " alt="" coords="2863,184,3010,211"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="3267,437,3409,464"/>
-<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="3571,519,3732,546"/>
-<area shape="rect" title=" " alt="" coords="3625,601,3795,643"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="3171,519,3305,546"/>
-<area shape="rect" title=" " alt="" coords="4667,601,4812,643"/>
-<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="2997,519,3146,546"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="2706,519,2821,546"/>
-<area shape="rect" title=" " alt="" coords="2709,601,2882,643"/>
-<area shape="rect" title=" " alt="" coords="3329,512,3547,553"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="3117,609,3285,635"/>
-<area shape="rect" title=" " alt="" coords="1538,691,1597,717"/>
-<area shape="rect" title=" " alt="" coords="2906,609,3093,635"/>
-<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="2997,355,3183,382"/>
-<area shape="rect" href="solid__objects__parameters_8h.html" title=" " alt="" coords="3627,348,3766,389"/>
-<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="5075,348,5278,389"/>
-<area shape="rect" title=" " alt="" coords="5303,355,5469,382"/>
-<area shape="rect" title=" " alt="" coords="3791,348,3963,389"/>
-<area shape="rect" title=" " alt="" coords="3987,348,4123,389"/>
-<area shape="rect" title=" " alt="" coords="4147,355,4342,382"/>
-<area shape="rect" title=" " alt="" coords="4366,355,4489,382"/>
-<area shape="rect" title=" " alt="" coords="4513,355,4696,382"/>
-<area shape="rect" title=" " alt="" coords="4720,355,4892,382"/>
-<area shape="rect" title=" " alt="" coords="4916,348,5051,389"/>
-<area shape="rect" href="parameters__lagrangian_8h.html" title=" " alt="" coords="2704,355,2921,382"/>
-<area shape="rect" href="distributions_8h.html" title=" " alt="" coords="389,266,537,293"/>
-<area shape="rect" title=" " alt="" coords="363,355,425,382"/>
-<area shape="rect" title=" " alt="" coords="501,355,573,382"/>
-<area shape="rect" title=" " alt="" coords="664,259,799,300"/>
-<area shape="rect" title=" " alt="" coords="823,259,981,300"/>
-<area shape="rect" title=" " alt="" coords="1005,266,1172,293"/>
-<area shape="rect" title=" " alt="" coords="1197,259,1338,300"/>
-<area shape="rect" title=" " alt="" coords="1363,266,1564,293"/>
-<area shape="rect" title=" " alt="" coords="1589,266,1759,293"/>
-<area shape="rect" title=" " alt="" coords="1783,266,1970,293"/>
-<area shape="rect" title=" " alt="" coords="1995,259,2169,300"/>
-<area shape="rect" title=" " alt="" coords="2194,259,2375,300"/>
+<area shape="rect" title=" " alt="" coords="117,5,299,61"/>
+<area shape="rect" href="checkpoint__control_8h.html" title=" " alt="" coords="144,355,333,382"/>
+<area shape="rect" title=" " alt="" coords="11,601,151,643"/>
+<area shape="rect" title=" " alt="" coords="329,601,469,643"/>
+<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="2817,109,3023,136"/>
+<area shape="rect" href="read__checkpoint_8h.html" title=" " alt="" coords="2618,109,2793,136"/>
+<area shape="rect" title=" " alt="" coords="358,355,431,382"/>
+<area shape="rect" title=" " alt="" coords="595,355,675,382"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="2809,437,2951,464"/>
+<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="3178,519,3339,546"/>
+<area shape="rect" title=" " alt="" coords="3369,601,3538,643"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="2553,519,2687,546"/>
+<area shape="rect" title=" " alt="" coords="2715,601,2861,643"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="2763,519,2912,546"/>
+<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="2260,519,2375,546"/>
+<area shape="rect" title=" " alt="" coords="2325,601,2499,643"/>
+<area shape="rect" title=" " alt="" coords="2937,512,3154,553"/>
+<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="2523,609,2691,635"/>
+<area shape="rect" title=" " alt="" coords="2115,609,2301,635"/>
+<area shape="rect" href="pvd__handler_8h.html" title=" " alt="" coords="3239,355,3385,382"/>
+<area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="3715,266,3855,293"/>
+<area shape="rect" title=" " alt="" coords="2486,348,2661,389"/>
+<area shape="rect" href="dem__solver__parameters_8h.html" title=" " alt="" coords="2821,266,3046,293"/>
+<area shape="rect" href="insertion_8h.html" title=" " alt="" coords="1315,184,1439,211"/>
+<area shape="rect" title=" " alt="" coords="2611,259,2747,300"/>
+<area shape="rect" title=" " alt="" coords="2521,184,2668,211"/>
+<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="2787,355,2973,382"/>
+<area shape="rect" href="solid__objects__parameters_8h.html" title=" " alt="" coords="3460,348,3599,389"/>
+<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="4711,348,4913,389"/>
+<area shape="rect" title=" " alt="" coords="4938,355,5105,382"/>
+<area shape="rect" title=" " alt="" coords="5129,348,5301,389"/>
+<area shape="rect" title=" " alt="" coords="3623,348,3759,389"/>
+<area shape="rect" title=" " alt="" coords="3783,355,3977,382"/>
+<area shape="rect" title=" " alt="" coords="4001,355,4124,382"/>
+<area shape="rect" title=" " alt="" coords="4149,355,4331,382"/>
+<area shape="rect" title=" " alt="" coords="4355,355,4527,382"/>
+<area shape="rect" title=" " alt="" coords="4551,348,4686,389"/>
+<area shape="rect" href="parameters__lagrangian_8h.html" title=" " alt="" coords="2998,355,3215,382"/>
+<area shape="rect" href="distributions_8h.html" title=" " alt="" coords="499,266,647,293"/>
+<area shape="rect" title=" " alt="" coords="507,355,570,382"/>
+<area shape="rect" title=" " alt="" coords="699,355,771,382"/>
+<area shape="rect" title=" " alt="" coords="774,259,909,300"/>
+<area shape="rect" title=" " alt="" coords="933,259,1091,300"/>
+<area shape="rect" title=" " alt="" coords="1115,266,1282,293"/>
+<area shape="rect" title=" " alt="" coords="1307,259,1448,300"/>
+<area shape="rect" title=" " alt="" coords="1473,266,1674,293"/>
+<area shape="rect" title=" " alt="" coords="1699,266,1869,293"/>
+<area shape="rect" title=" " alt="" coords="1893,266,2080,293"/>
+<area shape="rect" title=" " alt="" coords="2105,259,2279,300"/>
+<area shape="rect" title=" " alt="" coords="2304,259,2485,300"/>
 </map>
 </div>
 </div>
@@ -149,17 +150,17 @@ Include dependency graph for read_checkpoint.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9054e133f1e31c5036f6e6aa3daeb23f"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a9054e133f1e31c5036f6e6aa3daeb23f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a9054e133f1e31c5036f6e6aa3daeb23f">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_surfaces)</td></tr>
-<tr class="separator:a9054e133f1e31c5036f6e6aa3daeb23f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a360e7e0aaebc8a80a88daf881ca0d516"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a360e7e0aaebc8a80a88daf881ca0d516">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2 &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt;&gt;&gt; &amp;solid_surfaces)</td></tr>
-<tr class="separator:a360e7e0aaebc8a80a88daf881ca0d516"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93ab0373469f63c085907520a8ad294"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#ae93ab0373469f63c085907520a8ad294">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3 &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt;&gt;&gt; &amp;solid_surfaces)</td></tr>
-<tr class="separator:ae93ab0373469f63c085907520a8ad294"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1603590fca493007c8f3f6a33158e5d0"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a1603590fca493007c8f3f6a33158e5d0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#a1603590fca493007c8f3f6a33158e5d0">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; dim &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:a1603590fca493007c8f3f6a33158e5d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae60cfee357f4b6843d505c69fc763e63"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#ae60cfee357f4b6843d505c69fc763e63">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 2 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 2 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 2 &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt;&gt;&gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:ae60cfee357f4b6843d505c69fc763e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf797a2e906d928e014da5cc00fda5ac"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__checkpoint_8cc.html#acf797a2e906d928e014da5cc00fda5ac">read_checkpoint</a> (TimerOutput &amp;computing_timer, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; 3 &gt; &amp;parameters, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;simulation_control, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;particles_pvdhandler, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;grid_pvdhandler, parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, Particles::ParticleHandler&lt; 3 &gt; &amp;particle_handler, std::shared_ptr&lt; <a class="el" href="classInsertion.html">Insertion</a>&lt; 3 &gt;&gt; &amp;insertion_object, std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt;&gt;&gt; &amp;solid_surfaces, <a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;checkpoint_controller)</td></tr>
+<tr class="separator:acf797a2e906d928e014da5cc00fda5ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a360e7e0aaebc8a80a88daf881ca0d516"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a360e7e0aaebc8a80a88daf881ca0d516">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[1/3]</span></h2>
+<a id="ae60cfee357f4b6843d505c69fc763e63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae60cfee357f4b6843d505c69fc763e63">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +217,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 1, 2 &gt;&gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>solid_surfaces</em>&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -228,8 +235,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ae93ab0373469f63c085907520a8ad294"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae93ab0373469f63c085907520a8ad294">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[2/3]</span></h2>
+<a id="acf797a2e906d928e014da5cc00fda5ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf797a2e906d928e014da5cc00fda5ac">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,7 +293,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; 2, 3 &gt;&gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>solid_surfaces</em>&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -298,8 +311,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9054e133f1e31c5036f6e6aa3daeb23f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9054e133f1e31c5036f6e6aa3daeb23f">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[3/3]</span></h2>
+<a id="a1603590fca493007c8f3f6a33158e5d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1603590fca493007c8f3f6a33158e5d0">&#9670;&nbsp;</a></span>read_checkpoint() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -358,7 +371,13 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt;&gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>solid_surfaces</em>&#160;</td>
+          <td class="paramname"><em>solid_surfaces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCheckpointControl.html">CheckpointControl</a> &amp;&#160;</td>
+          <td class="paramname"><em>checkpoint_controller</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -380,13 +399,14 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramname">particle_handler</td><td>Particle handler </td></tr>
     <tr><td class="paramname">insertion_object</td><td>Shared pointer of <a class="el" href="classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system.">Insertion</a> type. </td></tr>
     <tr><td class="paramname">solid_surfaces</td><td>Vector of solids surfaces used in <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations </td></tr>
+    <tr><td class="paramname">checkpoint_controller</td><td>Checkpoint controller </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="read__checkpoint_8cc_source.html#l00017">17</a> of file <a class="el" href="read__checkpoint_8cc_source.html">read_checkpoint.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="read__checkpoint_8cc_source.html#l00019">19</a> of file <a class="el" href="read__checkpoint_8cc_source.html">read_checkpoint.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01513">Parameters::Restart::filename</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>, and <a class="el" href="dem__solver__parameters_8h_source.html#l00021">DEMSolverParameters&lt; dim &gt;::restart</a>.</p>
+<p class="reference">References <a class="el" href="checkpoint__control_8h_source.html#l00078">CheckpointControl::deserialize()</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00058">CheckpointControl::get_filename()</a>, <a class="el" href="checkpoint__control_8h_source.html#l00049">CheckpointControl::get_next_checkpoint_id()</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00471">Parameters::Lagrangian::LagrangianPostProcessing::lagrangian_post_processing_enabled</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00033">DEMSolverParameters&lt; dim &gt;::post_processing</a>, and <a class="el" href="pvd__handler_8cc_source.html#l00024">PVDHandler::read()</a>.</p>
 
 </div>
 </div>
