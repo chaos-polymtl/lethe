@@ -7,9 +7,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem.h>
 #include <dem/dem_post_processing.h>
-#include <dem/distributions.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
@@ -39,6 +37,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , parameters(dem_parameters)
+  , checkpoint_controller(parameters.restart)
   , triangulation(this->mpi_communicator)
   , mapping(1)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
@@ -858,7 +857,8 @@ DEMSolver<dim>::solve()
                   triangulation,
                   particle_handler,
                   insertion_object,
-                  solid_surfaces);
+                  solid_surfaces,
+                  checkpoint_controller);
 
   // Set up the various parameters that need the triangulation
   setup_triangulation_dependent_parameters();
@@ -1064,10 +1064,8 @@ DEMSolver<dim>::solve()
       post_process_results();
 
       // Write checkpoint if needed
-      if (parameters.restart.checkpoint &&
-          simulation_control->get_step_number() %
-              parameters.restart.frequency ==
-            0)
+      if (checkpoint_controller.is_checkpoint_time_step(
+            simulation_control->get_step_number()))
         {
           write_checkpoint(computing_timer,
                            parameters,
@@ -1079,7 +1077,8 @@ DEMSolver<dim>::solve()
                            insertion_object,
                            solid_surfaces,
                            pcout,
-                           mpi_communicator);
+                           mpi_communicator,
+                           checkpoint_controller);
         }
 
       // Reset all trigger flags

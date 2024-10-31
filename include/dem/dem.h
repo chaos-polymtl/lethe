@@ -4,6 +4,7 @@
 #ifndef lethe_dem_h
 #define lethe_dem_h
 
+#include <core/checkpoint_control.h>
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 #include <core/serial_solid.h>
@@ -233,6 +234,11 @@ private:
    * @brief The parameters of the DEM simulation.
    */
   DEMSolverParameters<dim> parameters;
+
+  /**
+   * @brief The checkpoint controller of the DEM simulation.
+   */
+  CheckpointControl checkpoint_controller;
 
   /**
    * @brief The distributed triangulation used for the DEM simulation.
