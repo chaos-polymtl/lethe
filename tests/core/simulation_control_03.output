@@ -6,8 +6,10 @@ DEAL::Iteration : 0    Time : 0.00000
 DEAL::Iteration : 1    Time : 0.100000
 DEAL::This is the first time step
 DEAL::Iteration : 2    Time : 0.200000
+DEAL::This is an output iteration
 DEAL::Iteration : 3    Time : 0.300000
 DEAL::Iteration : 4    Time : 0.400000
+DEAL::This is an output iteration
 DEAL::Iteration : 5    Time : 0.500000
 DEAL::*************************************************
 DEAL::Constant time stepping - specific time output
@@ -32,6 +34,18 @@ DEAL::Iteration : 2    Time : 0.200000
 DEAL::This is an output iteration
 DEAL::Iteration : 3    Time : 0.300000
 DEAL::This is an output iteration
+DEAL::Iteration : 4    Time : 0.400000
+DEAL::This is an output iteration
+DEAL::Iteration : 5    Time : 0.500000
+DEAL::*************************************************
+DEAL::Constant time stepping - output time frequency
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000
+DEAL::Iteration : 1    Time : 0.100000
+DEAL::This is the first time step
+DEAL::Iteration : 2    Time : 0.200000
+DEAL::This is an output iteration
+DEAL::Iteration : 3    Time : 0.300000
 DEAL::Iteration : 4    Time : 0.400000
 DEAL::This is an output iteration
 DEAL::Iteration : 5    Time : 0.500000
@@ -99,3 +113,28 @@ DEAL::Iteration : 11    Time : 19.3680    Time step : 2.00000
 DEAL::Iteration : 12    Time : 21.3680    Time step : 2.00000
 DEAL::Iteration : 13    Time : 23.3680    Time step : 2.00000
 DEAL::Iteration : 14    Time : 25.3680    Time step : 2.00000
+DEAL::*************************************************
+DEAL::Adaptative time stepping - output time frequency
+DEAL::*************************************************
+DEAL::Iteration : 0    Time : 0.00000    Time step : 1.00000
+DEAL::Iteration : 1    Time : 1.00000    Time step : 1.00000
+DEAL::This is the first time step
+DEAL::Iteration : 2    Time : 2.20000    Time step : 1.20000
+DEAL::Iteration : 3    Time : 3.64000    Time step : 1.44000
+DEAL::Iteration : 4    Time : 5.36800    Time step : 1.72800
+DEAL::This is an output iteration
+DEAL::Iteration : 5    Time : 7.36800    Time step : 2.00000
+DEAL::Iteration : 6    Time : 9.36800    Time step : 2.00000
+DEAL::This is an output iteration
+DEAL::Iteration : 7    Time : 11.3680    Time step : 2.00000
+DEAL::Iteration : 8    Time : 13.3680    Time step : 2.00000
+DEAL::This is an output iteration
+DEAL::Iteration : 9    Time : 15.3680    Time step : 2.00000
+DEAL::Iteration : 10    Time : 17.3680    Time step : 2.00000
+DEAL::This is an output iteration
+DEAL::Iteration : 11    Time : 19.3680    Time step : 2.00000
+DEAL::Iteration : 12    Time : 21.3680    Time step : 2.00000
+DEAL::This is an output iteration
+DEAL::Iteration : 13    Time : 23.3680    Time step : 2.00000
+DEAL::Iteration : 14    Time : 25.3680    Time step : 2.00000
+DEAL::This is an output iteration

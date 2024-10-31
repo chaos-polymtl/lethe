@@ -319,20 +319,12 @@ SimulationControlTransient::is_output_iteration()
   bool   is_output_time = false;
   double upper_bound, lower_bound;
 
-  // 1. A specific output time is given
-  if (output_time != -1)
+  // Case 1. A specific output time frequency is given (with or without a
+  // specific time interval):
+  if (output_time_frequency != -1)
     {
-      upper_bound = output_time;
-      lower_bound = output_time;
-    }
-  else if (output_time_frequency !=
-           -1) // 2. A specific time frequency is given. This works with a
-               // specific time interval or none.
-    {
-      double epsilon = 1e-12;
-
       if ((current_time - time_last_output) - output_time_frequency >
-            -epsilon * output_time_frequency &&
+            -1e-12 * output_time_frequency &&
           current_time >= output_time_interval[0] &&
           current_time <= output_time_interval[1])
         {
@@ -340,44 +332,44 @@ SimulationControlTransient::is_output_iteration()
           lower_bound = current_time;
 
           time_last_output = current_time;
+
+          is_output_time =
+            (current_time >= lower_bound && current_time <= upper_bound);
+
+          return is_output_time;
         }
       else
         return false;
     }
-  else // 3. If only a specific time interval is specified
+  else if (output_time != -1) // Case 2. If a specific time is given.
+    {
+      upper_bound = output_time;
+      lower_bound = output_time;
+    }
+  else // Case 3. Only a specific time interval is specified
     {
       upper_bound = output_time_interval[1];
       lower_bound = output_time_interval[0];
     }
 
-  // If we are in case 1 and 3:
-  if (output_time_frequency == -1)
-    {
-      // We output in the current time.
-      is_output_time =
-        (current_time >= lower_bound && current_time <= upper_bound);
 
-      // We always write one step before, in case the specific time or the
-      // interval lower bound does not correspond exactly to a time iteration
-      // performed (due to restrictions in time step)
-      double next_time = current_time + calculate_time_step();
-      if (current_time < lower_bound && (next_time >= lower_bound))
-        is_output_time = true;
+  // For cases 2 and 3:
 
-      // We always write one step after, in case the specific time or the
-      // interval upper bound does not correspond exactly to a time iteration
-      // performed (due to restrictions in time step)
-      if (current_time >= upper_bound && (previous_time < upper_bound))
-        is_output_time = true;
-    }
-  else
-    {
-      // We are in case 2. This case only considers the actual time step that
-      // fulfills the condition with the frequency.
-      is_output_time =
-        (current_time >= lower_bound && current_time <= upper_bound &&
-         time_last_output == current_time);
-    }
+  // We output in the current time.
+  is_output_time = (current_time >= lower_bound && current_time <= upper_bound);
+
+  // We always write one step before, in case the specific time or the
+  // interval lower bound does not correspond exactly to a time iteration
+  // performed (due to time step)
+  double next_time = current_time + calculate_time_step();
+  if (current_time < lower_bound && (next_time >= lower_bound))
+    is_output_time = true;
+
+  // We always write one step after, in case the specific time or the
+  // interval upper bound does not correspond exactly to a time iteration
+  // performed (due to in time step)
+  if (current_time >= upper_bound && (previous_time < upper_bound))
+    is_output_time = true;
 
   return is_output_time;
 }

@@ -25,12 +25,12 @@ test()
 
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
 
-  simulation_control_parameters.timeEnd                = 20;
-  simulation_control_parameters.number_mesh_adaptation = 0;
-  simulation_control_parameters.output_name            = "test";
-  simulation_control_parameters.subdivision            = 7;
-  simulation_control_parameters.output_folder          = "canard";
-  simulation_control_parameters.output_frequency       = 8;
+  simulation_control_parameters.timeEnd                    = 20;
+  simulation_control_parameters.number_mesh_adaptation     = 0;
+  simulation_control_parameters.output_name                = "test";
+  simulation_control_parameters.subdivision                = 7;
+  simulation_control_parameters.output_folder              = "canard";
+  simulation_control_parameters.output_iteration_frequency = 8;
 
   {
     SimulationControlTransient simulation_control(

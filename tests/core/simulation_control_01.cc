@@ -22,12 +22,12 @@ test()
   simulationControlParameters.maxCFL = 99;
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulationControlParameters.timeEnd                = 999;
-  simulationControlParameters.number_mesh_adaptation = 9;
-  simulationControlParameters.output_name            = "test";
-  simulationControlParameters.subdivision            = 7;
-  simulationControlParameters.output_folder          = "canard";
-  simulationControlParameters.output_frequency       = 8;
+  simulationControlParameters.timeEnd                    = 999;
+  simulationControlParameters.number_mesh_adaptation     = 9;
+  simulationControlParameters.output_name                = "test";
+  simulationControlParameters.subdivision                = 7;
+  simulationControlParameters.output_folder              = "canard";
+  simulationControlParameters.output_iteration_frequency = 8;
 
   SimulationControlTransient simulationControl(simulationControlParameters);
 
