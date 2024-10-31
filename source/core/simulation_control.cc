@@ -316,8 +316,6 @@ SimulationControlTransient::is_output_iteration()
     }
 
   // If time control there are several options:
-  bool   is_output_time = false;
-  double upper_bound, lower_bound;
 
   // Case 1. A specific output time frequency is given (with or without a
   // specific time interval):
@@ -328,20 +326,19 @@ SimulationControlTransient::is_output_iteration()
           current_time >= output_time_interval[0] &&
           current_time <= output_time_interval[1])
         {
-          upper_bound = current_time;
-          lower_bound = current_time;
-
           time_last_output = current_time;
 
-          is_output_time =
-            (current_time >= lower_bound && current_time <= upper_bound);
-
-          return is_output_time;
+          return true;
         }
       else
         return false;
     }
-  else if (output_time != -1) // Case 2. If a specific time is given.
+
+  // For cases 2 and 3:
+  bool   is_output_time = false;
+  double upper_bound, lower_bound;
+
+  if (output_time != -1) // Case 2. If a specific time is given.
     {
       upper_bound = output_time;
       lower_bound = output_time;
@@ -351,9 +348,6 @@ SimulationControlTransient::is_output_iteration()
       upper_bound = output_time_interval[1];
       lower_bound = output_time_interval[0];
     }
-
-
-  // For cases 2 and 3:
 
   // We output in the current time.
   is_output_time = (current_time >= lower_bound && current_time <= upper_bound);
