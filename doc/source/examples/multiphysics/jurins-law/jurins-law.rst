@@ -33,7 +33,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -------------------------
 
-Have you ever wondered why does your coffee goes up the sugar cube when it touches the surface of your drink? Or how the sap goes up the tree? Or how the wax that keeps the flame of a candle alive is brought to the flame? These phenomena are all consequences of capillary action, a force that appears in narrow spaces and that seemingly opposes the gravitational forces.
+Have you ever wondered why does your coffee goes up the sugar cube when it touches the surface of your drink? Or how the sap goes up in the tree? Or how the wax that keeps the flame of a candle alive is brought to the flame? These phenomena are all consequences of capillary action, a force that appears in narrow spaces and that seemingly opposes the gravitational forces.
 A simple case of capillary rise is described in this example, and compared to an analytical solution to check the implementation of our model. It consists of a 2D case, in which a dense fluid climbs the narrow space between two walls because of capillary actions.
 
 Thanks to the symmetry of the problem, only one side is considered in the example. At :math:`t = 0`, a denser fluid (fluid 1) occupies the lower half of the domain with a lighter fluid (fluid 0) on the top. The wall is half-way submerged in both fluids. Because of the boundary condition imposing an angle of contact between the wall and the denser fluid, the surface is curved and a pressure gradient appears. Depending on the value of the angle, the height of the fluid will increase (or decrease) and reach an equilibrium height.
@@ -109,7 +109,7 @@ The ``dimensionality`` subsection is used to define the unit length as :math:`0.
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Fidelity Pointwise, the source file is ``jurins-law-2d-dimensioned.pw``. It was then exported into a readable format: ``jurins-law-2d-mesh-dimensioned.msh``. The initial refinement is set to :math:`2`.
+In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example was designed using Fidelity Pointwise. The source file is ``jurins-law-2d-dimensioned.pw``. It was then exported into a readable format: ``jurins-law-2d-mesh-dimensioned.msh``. The initial refinement is set to :math:`2`.
 
 .. code-block:: text
 
@@ -200,7 +200,7 @@ In the ``initial conditions`` subsection, we need only need to initialize the ph
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-We need to set boundary conditions both for the fluid dynamics solver and the Cahn-Hilliard solver. For the latter, we constraint the angle of contact between the left side of the plate and the fluid using the ``angle_of_contact`` boundary condition of the Cahn-Hilliard solver.
+We need to set boundary conditions both for the fluid dynamics solver and the Cahn-Hilliard solver. For the latter, we constrain the angle of contact between the left side of the plate and the fluid using the ``angle_of_contact`` boundary condition of the Cahn-Hilliard solver.
 
 .. code-block:: text
 
