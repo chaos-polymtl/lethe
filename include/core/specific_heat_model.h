@@ -346,10 +346,10 @@ public:
             case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
               {
                 // Clipping to ensure a minimal temperature difference
-                if (temperature > temperature_p2)
-                  temperature = std::max(temperature, temperature_p2 + 1e-6);
-                else
-                  temperature_p2 = std::max(temperature_p2, temperature + 1e-6);
+                // if (temperature > temperature_p2)
+                //   temperature = std::max(temperature, temperature_p2 + 1e-6);
+                // else
+                //   temperature_p2 = std::max(temperature_p2, temperature + 1e-6);
 
                 const double enthalpy_current = enthalpy(temperature);
                 const double enthalpy_p1      = enthalpy(temperature_p1);
@@ -360,7 +360,7 @@ public:
                 const double dT = bdf_coefs[0] * temperature +
                                   bdf_coefs[1] * temperature_p1 +
                                   bdf_coefs[2] * temperature_p2;
-                property_vector[i] = dH / dT;
+                property_vector[i] = dH / (dT + 1e-6);
                 break;
               }
 
