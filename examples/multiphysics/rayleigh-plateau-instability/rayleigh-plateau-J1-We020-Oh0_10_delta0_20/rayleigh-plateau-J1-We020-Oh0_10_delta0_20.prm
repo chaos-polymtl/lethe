@@ -148,7 +148,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 1
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet

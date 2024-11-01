@@ -103,7 +103,7 @@ subsection boundary conditions
 end
 
 subsection boundary conditions tracer
-  set number = 2
+  set number = 4
   subsection bc 0
     set id   = 1
     set type = dirichlet
@@ -117,6 +117,14 @@ subsection boundary conditions tracer
     subsection dirichlet
       set Function expression = 1
     end
+  end
+  subsection bc 2
+    set id   = 3
+    set type = outlet
+  end
+  subsection bc 3
+    set id   = 4
+    set type = outlet
   end
 end
 
