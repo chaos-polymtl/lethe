@@ -43,6 +43,8 @@
 
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/data_out_base.h>
+#include <deal.II/base/table_handler.h>
+
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
@@ -267,7 +269,10 @@ Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
   Tensor<1, dim> value;
   value[0] = -(Utilities::pow(sin(numbers::PI*p[0]),2)*sin(2*numbers::PI*p[1])*cos(numbers::PI*this->get_time()/period));
   value[1] = Utilities::pow(sin(numbers::PI*p[1]),2)*sin(2*numbers::PI*p[0])*cos(numbers::PI*this->get_time()/period);
-
+  
+  // const double period = 1.0;
+  // value[0] = cos(numbers::PI*this->get_time()/period);
+  
   return value;
 }
 
@@ -292,8 +297,30 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   Point<dim> center = Point<dim>(0.5,0.75);
   Tensor<1,dim> dist = center - p;
   
-  return 0.5+0.5*std::tanh((0.15-dist.norm())/0.008);
+  return 0.5+0.5*std::tanh((0.15-dist.norm())/0.004);
+  
+  
+  // Point<dim> bl = Point<dim>(0.4,0.4);
+  // Point<dim> tr = Point<dim>(0.6,0.6);
+  // 
+  // Tensor<1,dim> dist_bl = bl - p;
+  // Tensor<1,dim> dist_tr = p - tr;
+  // 
+  // Tensor<1,dim> dist_border;
+  // dist_border[0] = std::max(dist_bl[0],dist_tr[0]);
+  // dist_border[1] = std::max(dist_bl[1],dist_tr[1]);
+  // 
+  // Tensor<1,dim> dist_corner;
+  // dist_corner[0] = std::max(0.0,dist_border[0]);
+  // dist_corner[1] = std::max(0.0,dist_border[1]);
+  // 
+  // double dist = dist_corner.norm() + std::min(0.0, std::max(dist_border[0],dist_border[1]));
+  // return 0.5+0.5*std::tanh(-1.0*dist/0.004);
+  
+  // return 0.5+0.5*std::tanh((0.1-abs(dist[0]))/0.004);
 }
+
+
 
 template <int dim>
 class Visualization : public dealii::DataOutInterface<0, dim>
@@ -427,9 +454,11 @@ private:
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration);
+  void compute_volume();
   
   void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
   void output_results(const int time_iteration) const;
+  
   
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
@@ -479,6 +508,7 @@ private:
   
   MPI_Comm           mpi_communicator;
   ConditionalOStream pcout;
+  TableHandler table_volume_monitoring;
 };
 
 enum ActiveFEIndex
@@ -810,7 +840,7 @@ AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = signed_distance[p];
-      solution_owned[p] = 0.5+0.5*std::tanh(signed_dist/0.008);
+      solution_owned[p] = 0.5+0.5*std::tanh(signed_dist/0.004);
     }
     locally_relevant_solution = solution_owned;
 }
@@ -930,8 +960,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   // Local distance vetors initialization
   for (auto p : this->locally_active_dofs)
     {
-      distance(p) = 0.2;
-      distance_with_ghost(p) = 0.2;
+      distance(p) = 0.02;
+      distance_with_ghost(p) = 0.02;
     }
   
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
@@ -969,6 +999,22 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   
         double D = compute_point_2_interface_min_distance(point_0, point_1, y);
         
+        // Point<dim> bl = Point<dim>(0.4,0.4);
+        // Point<dim> tr = Point<dim>(0.6,0.6);
+        // 
+        // Tensor<1,dim> dist_bl = bl - y;
+        // Tensor<1,dim> dist_tr = y - tr;
+        // 
+        // Tensor<1,dim> dist_border;
+        // dist_border[0] = std::max(dist_bl[0],dist_tr[0]);
+        // dist_border[1] = std::max(dist_bl[1],dist_tr[1]);
+        // 
+        // Tensor<1,dim> dist_corner;
+        // dist_corner[0] = std::max(0.0,dist_border[0]);
+        // dist_corner[1] = std::max(0.0,dist_border[1]);
+        // 
+        // D = dist_corner.norm() + std::min(0.0, std::max(dist_border[0],dist_border[1]));
+        // 
         distance(dof_indices[i]) = std::min(std::abs(distance(dof_indices[i])), std::abs(D));
 
         dofs_location_status.insert(dof_indices[i]);
@@ -1179,6 +1225,47 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
 }
 
 template <int dim>
+void AdvectionProblem<dim>::compute_volume()
+{
+  double volume = 0.0;
+  FEValues<dim> fe_values(fe,
+                          QGauss<dim>(fe.degree + 1),
+                          update_values | update_JxW_values);
+                          
+  const unsigned int n_q_points    = fe_values.n_quadrature_points;
+  std::vector<double> phase_values(n_q_points);
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          fe_values.get_function_values(locally_relevant_solution, phase_values);
+          
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              volume += fe_values.JxW(q) * phase_values[q];
+            }
+        }
+      }
+      
+      volume = Utilities::MPI::sum(volume, mpi_communicator);
+      
+      table_volume_monitoring.add_value("time", time);
+      table_volume_monitoring.set_scientific("time", true);
+      
+      table_volume_monitoring.add_value("volume", volume);
+      table_volume_monitoring.set_scientific("volume", true);
+      
+      // pcout << "Volume conservation" << std::endl;
+      // table_volume_monitoring.write_text(std::cout);
+              
+      std::ofstream output("output/volume.dat");
+      table_volume_monitoring.write_text(output);
+      
+}
+
+template <int dim>
 void AdvectionProblem<dim>::output_results(const int time_iteration) const
 {
   DataOut<dim> data_out;
@@ -1213,6 +1300,8 @@ void AdvectionProblem<dim>::output_results(const int time_iteration) const
                                       time_iteration,
                                       MPI_COMM_WORLD,
                                       3);
+                                      
+                                        
 }
 
 template <int dim>
@@ -1255,6 +1344,8 @@ void AdvectionProblem<dim>::run()
   previous_solution = locally_relevant_solution;
   
   output_results(it);
+  compute_volume();
+  
   
   pcout << "Solve system" << std::endl;
   while (time < final_time) 
@@ -1276,6 +1367,7 @@ void AdvectionProblem<dim>::run()
     compute_phase_fraction_from_level_set();
     
     refine_grid(8,6);
+    compute_volume();
     
     previous_solution = locally_relevant_solution;
   } 
