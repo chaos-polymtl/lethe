@@ -31,6 +31,7 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <map>
 
 template <int dim>
 void
@@ -141,10 +142,7 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      const auto &triangulation_boundary_id =
-        cell->face(face_no)->boundary_id();
-      const unsigned int boundary_index =
-        get_lethe_boundary_index(triangulation_boundary_id);
+      const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
         cell,
@@ -426,13 +424,8 @@ Tracer<dim>::assemble_system_rhs_dg()
         const unsigned int                                   &face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      // Identify which boundary condition corresponds to the boundary id. If
-      // this boundary condition is not identified, then exit the simulation
-      // instead of assuming an outlet.
-      const auto &triangulation_boundary_id =
-        cell->face(face_no)->boundary_id();
-      const unsigned int boundary_index =
-        get_lethe_boundary_index(triangulation_boundary_id);
+      // Identify which boundary condition corresponds to the boundary id.
+      const auto boundary_index = cell->face(face_no)->boundary_id();
 
       scratch_data.reinit_boundary_face(
         cell,
@@ -762,8 +755,7 @@ Tracer<dim>::postprocess(bool first_iteration)
           announce_string(this->pcout, "Tracer flow rates");
         }
 
-      std::vector<double> tracer_flow_rates(
-        this->simulation_parameters.boundary_conditions.size);
+      std::map<types::boundary_id, double> tracer_flow_rates;
       if (multiphysics->fluid_dynamics_is_block())
         {
           tracer_flow_rates = postprocess_tracer_flow_rate(
@@ -883,7 +875,7 @@ Tracer<dim>::calculate_tracer_statistics()
 
 template <int dim>
 template <typename VectorType>
-std::vector<double>
+std::map<types::boundary_id, double>
 Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face  = this->face_quadrature->size();
@@ -920,13 +912,9 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   std::vector<double>     tracer_diffusivity(n_q_points_face);
   std::vector<Point<dim>> face_quadrature_points;
 
-  std::vector<double> tracer_flow_rate_vector(
-    this->simulation_parameters.boundary_conditions.size, 0);
+  std::map<types::boundary_id, double> tracer_flow_rate;
 
   // Get vector of all boundary conditions
-  const auto boundary_conditions_ids =
-    this->simulation_parameters.boundary_conditions.id;
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
@@ -935,14 +923,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
             {
               if (cell->face(face)->at_boundary())
                 {
-                  const auto boundary_id =
-                    std::find(begin(boundary_conditions_ids),
-                              end(boundary_conditions_ids),
-                              cell->face(face)->boundary_id());
-
-
-                  unsigned int vector_index =
-                    boundary_id - boundary_conditions_ids.begin();
+                  const auto boundary_id = cell->face(face)->boundary_id();
 
                   // Gather tracer information
                   fe_face_values_tracer.reinit(cell, face);
@@ -990,7 +971,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                       Tensor<1, dim> normal_vector_tracer =
                         -fe_face_values_tracer.normal_vector(q);
 
-                      tracer_flow_rate_vector[vector_index] +=
+                      tracer_flow_rate[boundary_id] +=
                         (-tracer_diffusivity[q] * tracer_gradient[q] *
                            normal_vector_tracer +
                          tracer_values[q] * velocity_values[q] *
@@ -1004,34 +985,30 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 
 
   // Sum across all cores
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
-    tracer_flow_rate_vector[i_bc] =
-      Utilities::MPI::sum(tracer_flow_rate_vector[i_bc], mpi_communicator);
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions.type)
+    tracer_flow_rate[id] =
+      Utilities::MPI::sum(tracer_flow_rate[id], mpi_communicator);
 
-  return tracer_flow_rate_vector;
+  return tracer_flow_rate;
 }
 
 template <int dim>
 void
 Tracer<dim>::write_tracer_flow_rates(
-  const std::vector<double> &tracer_flow_rate_vector)
+  const std::map<types::boundary_id, double> &tracer_flow_rate_map)
 {
   // Fill table
   this->tracer_flow_rate_table.add_value(
     "time", this->simulation_control->get_current_time());
   this->tracer_flow_rate_table.set_precision("time", 12);
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
-       ++i_bc)
+  for (auto const &[id, value] : tracer_flow_rate_map)
     {
       this->tracer_flow_rate_table.add_value("flow-rate-" +
-                                               Utilities::int_to_string(i_bc,
-                                                                        2),
-                                             tracer_flow_rate_vector[i_bc]);
+                                               Utilities::int_to_string(id, 2),
+                                             value);
       this->tracer_flow_rate_table.set_scientific(
-        "flow-rate-" + Utilities::int_to_string(i_bc, 2), true);
+        "flow-rate-" + Utilities::int_to_string(id, 2), true);
     }
 
   // Console output
@@ -1039,11 +1016,8 @@ Tracer<dim>::write_tracer_flow_rates(
       Parameters::Verbosity::verbose)
     {
       this->pcout << "Tracer flow rate at the boundaries: " << std::endl;
-      for (unsigned int i_bc = 0;
-           i_bc < this->simulation_parameters.boundary_conditions.size;
-           ++i_bc)
-        this->pcout << "\t boundary " << i_bc << ": "
-                    << tracer_flow_rate_vector[i_bc] << std::endl;
+      for (auto const &[id, value] : tracer_flow_rate_map)
+        this->pcout << "\t boundary " << id << ": " << value << std::endl;
     }
 
   auto mpi_communicator = triangulation->get_communicator();
@@ -1204,6 +1178,8 @@ template <int dim>
 void
 Tracer<dim>::setup_dofs()
 {
+  verify_consistency_of_boundary_conditions();
+
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
@@ -1237,19 +1213,17 @@ Tracer<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_tracer.type)
       {
         // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
-            BoundaryConditions::BoundaryType::tracer_dirichlet)
+        if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
-              *this->simulation_parameters.boundary_conditions_tracer
-                 .tracer[i_bc],
+              id,
+              *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+                id),
               nonzero_constraints);
           }
       }
@@ -1263,16 +1237,14 @@ Tracer<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             zero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
-         ++i_bc)
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_tracer.type)
       {
-        if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
-            BoundaryConditions::BoundaryType::tracer_dirichlet)
+        if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
+              id,
               Functions::ZeroFunction<dim>(),
               zero_constraints);
           }
@@ -1334,21 +1306,19 @@ Tracer<dim>::update_boundary_conditions()
   DoFTools::make_hanging_node_constraints(this->dof_handler,
                                           nonzero_constraints);
 
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
-       ++i_bc)
+  for (auto const &[id, type] :
+       this->simulation_parameters.boundary_conditions_tracer.type)
     {
       // Dirichlet condition : imposed temperature at i_bc
-      if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
-          BoundaryConditions::BoundaryType::tracer_dirichlet)
+      if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_tracer.tracer[i_bc]
+          this->simulation_parameters.boundary_conditions_tracer.tracer.at(id)
             ->set_time(time);
           VectorTools::interpolate_boundary_values(
             this->dof_handler,
-            this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
-            *this->simulation_parameters.boundary_conditions_tracer
-               .tracer[i_bc],
+            id,
+            *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
+              id),
             nonzero_constraints);
         }
     }

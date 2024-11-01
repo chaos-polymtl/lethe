@@ -35,6 +35,13 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <map>
+DeclException1(
+  TracerBoundaryConditionMissing,
+  types::boundary_id,
+  << "The boundary id: " << arg1
+  << " is defined in the triangulation, but not as a boundary condition for the tracer physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+
 
 template <int dim>
 class Tracer : public AuxiliaryPhysics<dim, GlobalVectorType>
@@ -284,6 +291,28 @@ public:
 
 private:
   /**
+   * @brief Verify consistency of the input parameters for boundary
+   * conditions to ensure that for every boundary condition within the
+   * triangulation, a boundary condition has been specified in the input file.
+   */
+  void
+  verify_consistency_of_boundary_conditions()
+  {
+    // Sanity check all of the boundary conditions of the triangulation to
+    // ensure that they have a type.
+    std::vector<types::boundary_id> boundary_ids_in_triangulation =
+      this->triangulation->get_boundary_ids();
+    for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
+      {
+        AssertThrow(
+          simulation_parameters.boundary_conditions_tracer.type.find(
+            boundary_id_in_tria) !=
+            simulation_parameters.boundary_conditions_tracer.type.end(),
+          TracerBoundaryConditionMissing(boundary_id_in_tria));
+      }
+  }
+
+  /**
    *  @brief Assembles the matrix associated with the solver
    */
   void
@@ -408,14 +437,15 @@ private:
    * @tparam GlobalVectorType The type of the global vector used for the tracer physic
    */
   template <typename GlobalVectorType>
-  std::vector<double>
+  std::map<types::boundary_id, double>
   postprocess_tracer_flow_rate(const GlobalVectorType &current_solution_fd);
 
   /**
    * @brief Writes the tracer flow rates to an output file
    */
   void
-  write_tracer_flow_rates(const std::vector<double> &tracer_flow_rate_vector);
+  write_tracer_flow_rates(
+    const std::map<types::boundary_id, double> &tracer_flow_rate_vector);
 
   /**
    * @brief Writes the tracer statistics to an output file
@@ -423,38 +453,6 @@ private:
   void
   write_tracer_statistics();
 
-
-
-  /**
-   * @brief Get the Lethe boundary indicator for a given triangulation boundary while
-   * carrying the appropriate checks.
-   *
-   * @param[in] triangulation_boundary_id The boundary id of the triangulation
-   *
-   * NOTE: This function is a temporary function. It will be deprecated in a
-   * future PR once boundary conditions have been refactored using maps.
-   */
-  unsigned int
-  get_lethe_boundary_index(const types::boundary_id &triangulation_boundary_id)
-  {
-    // Identify which boundary condition corresponds to the boundary id. If
-    // this boundary condition is not identified, then exit the simulation
-    // instead of assuming an outlet.
-    const auto lethe_boundary_id = std::find(
-      this->simulation_parameters.boundary_conditions_tracer.id.begin(),
-      this->simulation_parameters.boundary_conditions_tracer.id.end(),
-      triangulation_boundary_id);
-
-    AssertThrow(
-      lethe_boundary_id !=
-        this->simulation_parameters.boundary_conditions_tracer.id.end(),
-      ExcMessage("The boundary condition with id " +
-                 std::to_string(triangulation_boundary_id) +
-                 " is not present in the tracer boundary conditions."));
-
-    return (lethe_boundary_id -
-            this->simulation_parameters.boundary_conditions_tracer.id.begin());
-  }
 
   /**
    * @brief Helper function to reinit the face velocity with the adequate solution.

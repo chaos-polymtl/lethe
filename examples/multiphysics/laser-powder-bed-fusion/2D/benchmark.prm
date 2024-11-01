@@ -139,6 +139,10 @@ subsection boundary conditions heat transfer
   end
 end
 
+subsection boundary conditions VOF
+  set number = 6
+end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------

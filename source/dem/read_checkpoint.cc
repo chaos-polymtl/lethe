@@ -53,7 +53,7 @@ read_checkpoint(
 
   if (parameters.post_processing.lagrangian_post_processing_enabled)
     {
-      grid_pvdhandler.read(prefix + "_postprocess_data");
+      grid_pvdhandler.read(prefix + "_lagrangian_postprocessing");
     }
 
   // Gather particle serialization information

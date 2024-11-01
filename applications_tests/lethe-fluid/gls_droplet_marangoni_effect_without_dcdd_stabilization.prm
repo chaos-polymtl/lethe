@@ -190,6 +190,10 @@ subsection boundary conditions heat transfer
   end
 end
 
+subsection boundary conditions VOF
+  set number = 4
+end
+
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------

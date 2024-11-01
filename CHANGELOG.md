@@ -3,12 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-10-31
+
+### Changed
+
+- MAJOR The way Lethe manages boundary conditions was changed dramatically. As of this change, every boundary condition defined in the triangulation (the mesh), but have a corresponding boundary condition defined in the parameter file for every physics that is enabled. This will be tested by the solver at run time. For example, if a mesh containing four boundary conditions (id 0, 1, 2, 3) is used, then a boundary condition must be defined for all of these ids. In the past, a default boundary condition was automatically applied to these boundaries. As of this change, there is no default boundary condition. Although this change requires more work and slightly longer parameter files, it has enabled us to extensively refactor and simplify the way boundary conditions are managed. It also greatly enhances the sanity checks we can do with boundary conditions.
+
 ## [Master] - 2024-10-28
 
 ### Added
 
 - MINOR The DEM solver generates two versions of checkpoint files alternately, so that at least one version is not corrupted when the simulation stops during a checkpoint procedure. [#1327](https://github.com/chaos-polymtl/lethe/pull/1327)
-
 
 ## [Master] - 2024-10-22
 

@@ -97,7 +97,7 @@ end
 
 subsection insertion info
   set insertion method                               = volume
-  set inserted number of particles at each time step = 10000lethe-
+  set inserted number of particles at each time step = 10000
   set insertion frequency                            = 100000
   set insertion box points coordinates               = -0.0144, -0.0590, -0.0144 : 0.0144, 0.21, 0.0144
   set insertion distance threshold                   = 1.3

@@ -42,8 +42,8 @@ end
 #--------------------------------------------------
 
 subsection velocity source
-  set rotating frame type    = srf
-  set omega_z                = -6.28318
+  set rotating frame type = srf
+  set omega_z             = -6.28318
 end
 
 #---------------------------------------------------
@@ -118,7 +118,6 @@ subsection boundary conditions
       set Function expression = 0
     end
   end
-
 end
 
 #---------------------------------------------------

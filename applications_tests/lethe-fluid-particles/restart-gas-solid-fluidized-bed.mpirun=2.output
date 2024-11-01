@@ -15,9 +15,9 @@ This feature is useful in geometries with concave boundaries.
 Finished initializing DEM parameters
 DEM time-step is 5e-06 s
 
-********************************************************************************
-Transient iteration: 6        Time: 0.00125  Time step: 0.00025  CFL: 0.0354915
-********************************************************************************
+*******************************************************************************
+Transient iteration: 22       Time: 0.00525  Time step: 0.00025  CFL: 0.054788
+*******************************************************************************
 --------------
 Void Fraction
 --------------
@@ -28,11 +28,11 @@ Volume-Averaged Fluid Dynamics
 DEM
 ----
 DEM contact search at dem step 0
-DEM contact search at dem step 33
+DEM contact search at dem step 32
 DEM contact search at dem step 49
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Pressure drop: 22.2064 Pa
-Total pressure drop: 22.2129 Pa
-Global continuity equation error: -1.33592e-09 s^-1
-Max local continuity error: 1.008e-06 s^-1
+Pressure drop: 9.73912 Pa
+Total pressure drop: 9.68964 Pa
+Global continuity equation error: 5.47125e-11 s^-1
+Max local continuity error: 2.94775e-06 s^-1

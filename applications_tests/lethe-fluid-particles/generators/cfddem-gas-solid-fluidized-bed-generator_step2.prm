@@ -14,7 +14,7 @@ subsection simulation control
   set method            = bdf2
   set number mesh adapt = 0
   set output frequency  = 0
-  set time end          = 0.001
+  set time end          = 0.005
   set time step         = 0.00025
 end
 

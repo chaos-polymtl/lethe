@@ -76,7 +76,7 @@ subsection mesh
   set grid type          = hyper_shell
   set grid arguments     = 0, 0 : 0.025 : 0.1 : 4:  true
   set initial refinement = 2
-  set scale = 10
+  set scale              = 10
 end
 
 #---------------------------------------------------
@@ -86,9 +86,11 @@ end
 subsection boundary conditions
   set number = 2
   subsection bc 1
+    set id   = 1
     set type = noslip
   end
   subsection bc 0
+    set id   = 0
     set type = function
     subsection u
       set Function expression = -y

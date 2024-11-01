@@ -61,7 +61,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 5
+  set number = 6
   subsection bc 0
     set id   = 0
     set type = function
@@ -90,6 +90,11 @@ subsection boundary conditions
   subsection bc 4
     set id   = 5
     set type = slip
+  end
+  subsection bc 5
+    set id   = 1
+    set type = outlet
+    set beta = 0
   end
 end
 

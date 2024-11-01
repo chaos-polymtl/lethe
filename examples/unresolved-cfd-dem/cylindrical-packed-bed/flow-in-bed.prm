@@ -91,7 +91,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = slip
@@ -108,6 +108,10 @@ subsection boundary conditions
     subsection w
       set Function expression = 0
     end
+  end
+  subsection bc 2
+    set id = 2
+    set type = outlet
   end
 end
 
@@ -146,11 +150,12 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method                                = gmres
-    set max iters                             = 5000
+    set max iters                             = 1000
+    set max krylov vectors                    = 1000
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-11
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
+    set ilu preconditioner fill               = 3
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose

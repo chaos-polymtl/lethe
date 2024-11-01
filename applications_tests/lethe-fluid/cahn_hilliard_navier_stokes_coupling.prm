@@ -50,7 +50,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
-  set number = 2
+  set number = 4
   subsection bc 0
     set id          = 0
     set type        = angle_of_contact
@@ -59,6 +59,14 @@ subsection boundary conditions cahn hilliard
   subsection bc 1
     set id   = 2
     set type = free_angle
+  end
+  subsection bc 2
+    set id   = 1
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noflux
   end
 end
 
@@ -105,7 +113,7 @@ subsection physical properties
   set number of material interactions = 1
   subsection material interaction 0
     subsection fluid-fluid interaction
-      set surface tension coefficient = 1
+      set surface tension coefficient     = 1
       set cahn hilliard mobility constant = 1e-2
     end
   end

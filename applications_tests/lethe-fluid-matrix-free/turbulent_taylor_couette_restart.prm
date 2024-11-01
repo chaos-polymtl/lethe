@@ -100,6 +100,7 @@ subsection boundary conditions
   set fix pressure constant = true
   set time dependent        = true
   subsection bc 0
+    set id   = 0
     set type = function
     set beta = 1
     subsection u
@@ -113,6 +114,7 @@ subsection boundary conditions
     end
   end
   subsection bc 1
+    set id   = 1
     set type = noslip
   end
   subsection bc 2

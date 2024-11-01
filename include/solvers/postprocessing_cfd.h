@@ -211,7 +211,7 @@ calculate_apparent_viscosity(
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
-std::vector<std::vector<Tensor<1, dim>>>
+std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
 calculate_forces(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,
@@ -242,7 +242,7 @@ calculate_forces(
  * @param mapping The mapping of the simulation.
  */
 template <int dim, typename VectorType>
-std::vector<Tensor<1, 3>>
+std::map<types::boundary_id, Tensor<1, 3>>
 calculate_torques(
   const DoFHandler<dim>                               &dof_handler,
   const VectorType                                    &evaluation_point,

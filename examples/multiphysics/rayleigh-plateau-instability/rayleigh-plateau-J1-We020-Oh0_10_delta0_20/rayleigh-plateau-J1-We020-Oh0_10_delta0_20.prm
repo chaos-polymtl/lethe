@@ -122,7 +122,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = function
@@ -137,6 +137,10 @@ subsection boundary conditions
     set periodic_id        = 3
     set periodic_direction = 1
   end
+  subsection bc 2
+    set id                 = 1
+    set type               = outlet
+  end
 end
 
 # --------------------------------------------------
@@ -144,7 +148,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 1
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet

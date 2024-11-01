@@ -26,14 +26,11 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
 {
   previous_void_fraction.resize(maximum_number_of_previous_solutions());
 
-  // Check if the simulation has periodic boundaries for fluid.
-  std::vector<BoundaryConditions::BoundaryType> boundary_conditions_types =
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type;
-
   unsigned int n_pbc = 0;
-  for (auto &bc : boundary_conditions_types)
+  for (auto const &[id, type] :
+       cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
     {
-      if (bc == BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::BoundaryType::periodic)
         {
           if (n_pbc++ > 1)
             {
@@ -76,16 +73,15 @@ FluidDynamicsVANS<dim>::setup_dofs()
   // Define constraints for periodic boundary conditions
   auto &boundary_conditions =
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          periodic_direction = boundary_conditions.periodic_direction[i_bc];
+          periodic_direction = boundary_conditions.periodic_direction.at(id);
           DoFTools::make_periodicity_constraints(
             void_fraction_dof_handler,
-            boundary_conditions.id[i_bc],
-            boundary_conditions.periodic_id[i_bc],
+            id,
+            boundary_conditions.periodic_neighbor_id.at(id),
             periodic_direction,
             void_fraction_constraints);
 
@@ -95,8 +91,7 @@ FluidDynamicsVANS<dim>::setup_dofs()
               this->cfd_dem_simulation_parameters.void_fraction->mode ==
                 Parameters::VoidFractionMode::spm)
             {
-              periodic_offset =
-                get_periodic_offset_distance(boundary_conditions.id[i_bc]);
+              periodic_offset = get_periodic_offset_distance(id);
             }
         }
     }
@@ -343,16 +338,15 @@ FluidDynamicsVANS<dim>::update_solution_and_constraints()
   // Define constraints for periodic boundary conditions
   auto &boundary_conditions =
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
+      if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          periodic_direction = boundary_conditions.periodic_direction[i_bc];
+          periodic_direction = boundary_conditions.periodic_direction.at(id);
           DoFTools::make_periodicity_constraints(
             void_fraction_dof_handler,
-            boundary_conditions.id[i_bc],
-            boundary_conditions.periodic_id[i_bc],
+            id,
+            boundary_conditions.periodic_neighbor_id.at(id),
             periodic_direction,
             void_fraction_constraints);
 
@@ -362,8 +356,7 @@ FluidDynamicsVANS<dim>::update_solution_and_constraints()
               this->cfd_dem_simulation_parameters.void_fraction->mode ==
                 Parameters::VoidFractionMode::spm)
             {
-              periodic_offset =
-                get_periodic_offset_distance(boundary_conditions.id[i_bc]);
+              periodic_offset = get_periodic_offset_distance(id);
             }
         }
     }

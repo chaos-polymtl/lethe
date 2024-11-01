@@ -167,6 +167,14 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions VOF
+  set number = 4
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 

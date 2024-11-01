@@ -94,7 +94,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = slip
@@ -111,6 +111,10 @@ subsection boundary conditions
     subsection w
       set Function expression = 0
     end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
   end
 end
 

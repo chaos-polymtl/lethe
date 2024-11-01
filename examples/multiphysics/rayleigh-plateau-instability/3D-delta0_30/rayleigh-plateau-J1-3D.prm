@@ -123,7 +123,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 1
     set type = function
@@ -136,6 +136,10 @@ subsection boundary conditions
     set id   = 0
     set type = slip
   end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
 end
 
 # --------------------------------------------------
@@ -143,13 +147,19 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 1
+  set number = 3
   subsection bc 0
     set id   = 1
     set type = dirichlet
     subsection dirichlet
       set Function expression = if((y^2 + z^2) <= 1.3110e-6, 1, 0)
     end
+  end
+  subsection bc 1
+    set id   = 0
+  end
+  subsection bc 2
+    set id   = 2
   end
 end
 

@@ -23,6 +23,7 @@
 // Dealii Includes
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
@@ -41,6 +42,14 @@
 #include <deal.II/numerics/data_out.h>
 
 using namespace dealii;
+
+
+
+DeclException1(
+  FluidDynamicsBoundaryConditionMissing,
+  types::boundary_id,
+  << "The boundary id: " << arg1
+  << " is defined in the triangulation, but not as a boundary condition for the fluid dynamics physics. Lethe does not assign a    default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 /**
  * @brief Struct containing fluid id, temperature and phase fraction range
@@ -198,6 +207,7 @@ protected:
   virtual void
   setup_dofs()
   {
+    verify_consistency_of_boundary_conditions();
     setup_dofs_fd();
     multiphysics->setup_dofs();
   };
@@ -812,6 +822,28 @@ protected:
 
   // Member variables
 protected:
+  /**
+   * @brief Verify consistency of the input parameters for boundary
+   * conditions to ensure that for every boundary condition within the
+   * triangulation, a boundary condition has been specified in the input file.
+   */
+  void
+  verify_consistency_of_boundary_conditions()
+  {
+    // Sanity check all of the boundary conditions of the triangulation to
+    // ensure that they have a type.
+    std::vector<types::boundary_id> boundary_ids_in_triangulation =
+      this->triangulation->get_boundary_ids();
+    for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
+      {
+        AssertThrow(simulation_parameters.boundary_conditions.type.find(
+                      boundary_id_in_tria) !=
+                      simulation_parameters.boundary_conditions.type.end(),
+                    FluidDynamicsBoundaryConditionMissing(boundary_id_in_tria));
+      }
+  }
+
+
   DofsType locally_owned_dofs;
   DofsType locally_relevant_dofs;
 
@@ -887,10 +919,10 @@ protected:
   ConvergenceTable error_table;
 
   // Force analysis
-  std::vector<std::vector<Tensor<1, dim>>> forces_on_boundaries;
-  std::vector<Tensor<1, 3>>                torques_on_boundaries;
-  std::vector<TableHandler>                forces_tables;
-  std::vector<TableHandler>                torques_tables;
+  std::vector<std::map<types::boundary_id, Tensor<1, dim>>>
+                                             forces_on_boundaries;
+  std::map<types::boundary_id, TableHandler> forces_tables;
+  std::map<types::boundary_id, TableHandler> torques_tables;
 
   /// FEValues object used for temperature-dependent solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;

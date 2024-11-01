@@ -89,7 +89,12 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 0
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = outlet
+    set beta = 0
+  end
 end
 
 #---------------------------------------------------

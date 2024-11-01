@@ -47,7 +47,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = hyper_rectangle
-  set grid arguments     = -2.5, -2.5 : 2.5, 2.5 : true
+  set grid arguments     = -2.5, -2.5 : 2.5, 2.5 : false
   set initial refinement = 7
 end
 
@@ -89,7 +89,17 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 0
+  set number = 1
+  subsection bc 0
+    set type = outlet
+  end
+end
+
+subsection boundary conditions cahn hilliard
+  set number = 1
+  subsection bc 0
+    set type = noflux
+  end
 end
 
 #---------------------------------------------------

@@ -103,11 +103,13 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
+    set id   = 0
     set type = noslip
   end
   subsection bc 1
+    set id   = 1
     set type = function
     subsection u
       set Function expression = (0.75*0.75-sqrt(y*y+z*z))
@@ -118,6 +120,11 @@ subsection boundary conditions
     subsection w
       set Function expression = 0
     end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet 
+    set beta = 0
   end
 end
 
