@@ -1092,49 +1092,49 @@ $(function() {
 <div class="line"><a name="l01011"></a><span class="lineno"> 1011</span>&#160;<span class="keywordtype">void</span></div>
 <div class="line"><a name="l01012"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a5e73668b024d2697820f386fdbebccd6"> 1012</a></span>&#160;<a class="code" href="classCahnHilliard.html#a5e73668b024d2697820f386fdbebccd6">CahnHilliard&lt;dim&gt;::setup_dofs</a>()</div>
 <div class="line"><a name="l01013"></a><span class="lineno"> 1013</span>&#160;{</div>
-<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;  FEValuesExtractors::Scalar phase_order(0);</div>
-<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160;  FEValuesExtractors::Scalar chemical_potential(1);</div>
-<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160; </div>
-<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;  dof_handler.distribute_dofs(*fe);</div>
-<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160;  DoFRenumbering::Cuthill_McKee(this-&gt;dof_handler);</div>
-<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160; </div>
-<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
+<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;  verify_consistency_of_boundary_conditions();</div>
+<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160; </div>
+<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160;  FEValuesExtractors::Scalar phase_order(0);</div>
+<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;  FEValuesExtractors::Scalar chemical_potential(1);</div>
+<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160; </div>
+<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160;  dof_handler.distribute_dofs(*fe);</div>
+<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160;  DoFRenumbering::Cuthill_McKee(this-&gt;dof_handler);</div>
 <div class="line"><a name="l01021"></a><span class="lineno"> 1021</span>&#160; </div>
-<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160; </div>
-<div class="line"><a name="l01023"></a><span class="lineno"> 1023</span>&#160;  locally_owned_dofs    = dof_handler.locally_owned_dofs();</div>
-<div class="line"><a name="l01024"></a><span class="lineno"> 1024</span>&#160;  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);</div>
-<div class="line"><a name="l01025"></a><span class="lineno"> 1025</span>&#160; </div>
-<div class="line"><a name="l01026"></a><span class="lineno"> 1026</span>&#160;  present_solution.reinit(locally_owned_dofs,</div>
-<div class="line"><a name="l01027"></a><span class="lineno"> 1027</span>&#160;                          locally_relevant_dofs,</div>
-<div class="line"><a name="l01028"></a><span class="lineno"> 1028</span>&#160;                          mpi_communicator);</div>
-<div class="line"><a name="l01029"></a><span class="lineno"> 1029</span>&#160; </div>
-<div class="line"><a name="l01030"></a><span class="lineno"> 1030</span>&#160;  filtered_solution.reinit(this-&gt;locally_owned_dofs,</div>
-<div class="line"><a name="l01031"></a><span class="lineno"> 1031</span>&#160;                           this-&gt;locally_relevant_dofs,</div>
-<div class="line"><a name="l01032"></a><span class="lineno"> 1032</span>&#160;                           mpi_communicator);</div>
-<div class="line"><a name="l01033"></a><span class="lineno"> 1033</span>&#160; </div>
-<div class="line"><a name="l01034"></a><span class="lineno"> 1034</span>&#160;  <span class="comment">// Previous solutions for transient schemes</span></div>
-<div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;solution : this-&gt;previous_solutions)</div>
-<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;    {</div>
-<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;      solution.reinit(locally_owned_dofs,</div>
-<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160;                      locally_relevant_dofs,</div>
-<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;                      mpi_communicator);</div>
-<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;    }</div>
-<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160; </div>
-<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;  system_rhs.reinit(locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
+<div class="line"><a name="l01023"></a><span class="lineno"> 1023</span>&#160; </div>
+<div class="line"><a name="l01024"></a><span class="lineno"> 1024</span>&#160; </div>
+<div class="line"><a name="l01025"></a><span class="lineno"> 1025</span>&#160;  locally_owned_dofs    = dof_handler.locally_owned_dofs();</div>
+<div class="line"><a name="l01026"></a><span class="lineno"> 1026</span>&#160;  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);</div>
+<div class="line"><a name="l01027"></a><span class="lineno"> 1027</span>&#160; </div>
+<div class="line"><a name="l01028"></a><span class="lineno"> 1028</span>&#160;  present_solution.reinit(locally_owned_dofs,</div>
+<div class="line"><a name="l01029"></a><span class="lineno"> 1029</span>&#160;                          locally_relevant_dofs,</div>
+<div class="line"><a name="l01030"></a><span class="lineno"> 1030</span>&#160;                          mpi_communicator);</div>
+<div class="line"><a name="l01031"></a><span class="lineno"> 1031</span>&#160; </div>
+<div class="line"><a name="l01032"></a><span class="lineno"> 1032</span>&#160;  filtered_solution.reinit(this-&gt;locally_owned_dofs,</div>
+<div class="line"><a name="l01033"></a><span class="lineno"> 1033</span>&#160;                           this-&gt;locally_relevant_dofs,</div>
+<div class="line"><a name="l01034"></a><span class="lineno"> 1034</span>&#160;                           mpi_communicator);</div>
+<div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160; </div>
+<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;  <span class="comment">// Previous solutions for transient schemes</span></div>
+<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;solution : this-&gt;previous_solutions)</div>
+<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160;    {</div>
+<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;      solution.reinit(locally_owned_dofs,</div>
+<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                      locally_relevant_dofs,</div>
+<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;                      mpi_communicator);</div>
+<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;    }</div>
 <div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160; </div>
-<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;  newton_update.reinit(locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;  system_rhs.reinit(locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160; </div>
-<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;  local_evaluation_point.reinit(this-&gt;locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;  newton_update.reinit(locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160; </div>
-<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;  {</div>
-<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;    nonzero_constraints.clear();</div>
-<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
-<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;                                            nonzero_constraints);</div>
-<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160; </div>
-<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_bc = 0;</div>
-<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;         i_bc &lt;</div>
-<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;         this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.size;</div>
-<div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;         ++i_bc)</div>
+<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;  local_evaluation_point.reinit(this-&gt;locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160; </div>
+<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;  {</div>
+<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;    nonzero_constraints.clear();</div>
+<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;                                            nonzero_constraints);</div>
+<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160; </div>
+<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>] :</div>
+<div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;         this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.type)</div>
 <div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;      {</div>
 <div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;        ComponentMask mask(2, <span class="keyword">true</span>);</div>
 <div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;        mask.set(1, <span class="keyword">false</span>);</div>
@@ -1142,497 +1142,488 @@ $(function() {
 <div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160;        <span class="comment">// Dirichlet condition: imposed phase_order at i_bc</span></div>
 <div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;        <span class="comment">// To impose the boundary condition only on the phase order, a component</span></div>
 <div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;        <span class="comment">// mask is used at the end of the interpolate_boundary_values function</span></div>
-<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        <span class="keywordflow">if</span> (this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;              .type[i_bc] == <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>::</div>
-<div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;                               cahn_hilliard_dirichlet_phase_order)</div>
-<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;          {</div>
-<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;            VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;              this-&gt;dof_handler,</div>
-<div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;              this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;                .id[i_bc],</div>
-<div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;              <a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined&lt;dim&gt;</a>(</div>
-<div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;                &amp;this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;                   .bcFunctions[i_bc]</div>
-<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;                   .phi),</div>
-<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;              nonzero_constraints,</div>
-<div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;              mask);</div>
-<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;          }</div>
-<div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;      }</div>
-<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160;  }</div>
-<div class="line"><a name="l01081"></a><span class="lineno"> 1081</span>&#160;  nonzero_constraints.close();</div>
-<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160; </div>
-<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160;  <span class="comment">// Boundary conditions for Newton correction</span></div>
-<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;  {</div>
-<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160;    zero_constraints.clear();</div>
-<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160;    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
-<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160;                                            zero_constraints);</div>
-<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160; </div>
-<div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_bc = 0;</div>
-<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;         i_bc &lt;</div>
-<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;         this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.size;</div>
-<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;         ++i_bc)</div>
-<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;      {</div>
-<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;        <span class="keywordflow">if</span> (this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;              .type[i_bc] == <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>::</div>
-<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;                               cahn_hilliard_dirichlet_phase_order)</div>
-<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;          {</div>
-<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;            VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;              this-&gt;dof_handler,</div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;              this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;                .id[i_bc],</div>
-<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;              Functions::ZeroFunction&lt;dim&gt;(2),</div>
-<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;              zero_constraints);</div>
-<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;          }</div>
-<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;      }</div>
-<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;  }</div>
-<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160; </div>
-<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;  zero_constraints.close();</div>
-<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160; </div>
-<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;  <span class="comment">// Sparse matrices initialization</span></div>
-<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;  DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
-<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;  DoFTools::make_sparsity_pattern(this-&gt;dof_handler,</div>
-<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;                                  dsp,</div>
-<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160;                                  nonzero_constraints,</div>
-<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;                                  <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
-<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160; </div>
-<div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;  SparsityTools::distribute_sparsity_pattern(dsp,</div>
-<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;                                             locally_owned_dofs,</div>
-<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160;                                             mpi_communicator,</div>
-<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;                                             locally_relevant_dofs);</div>
-<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;  system_matrix.reinit(locally_owned_dofs,</div>
-<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;                       locally_owned_dofs,</div>
-<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;                       dsp,</div>
-<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;                       mpi_communicator);</div>
-<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160; </div>
-<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of Cahn-Hilliard degrees of freedom: &quot;</span></div>
-<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160;              &lt;&lt; dof_handler.n_dofs() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160; </div>
-<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160;  <span class="comment">// Provide the cahn_hilliard dof_handler and present solution pointers to the</span></div>
-<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;  <span class="comment">// multiphysics interface</span></div>
-<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;  multiphysics-&gt;set_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>, &amp;this-&gt;dof_handler);</div>
-<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;  multiphysics-&gt;set_solution(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>, &amp;this-&gt;present_solution);</div>
-<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;  multiphysics-&gt;set_filtered_solution(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>,</div>
-<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;                                      &amp;this-&gt;filtered_solution);</div>
-<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;  multiphysics-&gt;set_previous_solutions(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>,</div>
-<div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;                                       &amp;this-&gt;previous_solutions);</div>
-<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;}</div>
-<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160; </div>
-<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01140"></a><span class="lineno"> 1140</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01141"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1"> 1141</a></span>&#160;<a class="code" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard&lt;dim&gt;::update_boundary_conditions</a>()</div>
-<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;{</div>
-<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;         .time_dependent)</div>
-<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160; </div>
-<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
-<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160;  nonzero_constraints.clear();</div>
-<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;  DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
-<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160;                                          nonzero_constraints);</div>
+<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>::</div>
+<div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;                      cahn_hilliard_dirichlet_phase_order)</div>
+<div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;          {</div>
+<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;            VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;              this-&gt;dof_handler,</div>
+<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;              <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;              <a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined&lt;dim&gt;</a>(</div>
+<div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;                &amp;this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
+<div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;                   .bcFunctions.at(<span class="keywordtype">id</span>)</div>
+<div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;                   -&gt;phi),</div>
+<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;              nonzero_constraints,</div>
+<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;              mask);</div>
+<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;          }</div>
+<div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;      }</div>
+<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;  }</div>
+<div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;  nonzero_constraints.close();</div>
+<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160; </div>
+<div class="line"><a name="l01081"></a><span class="lineno"> 1081</span>&#160;  <span class="comment">// Boundary conditions for Newton correction</span></div>
+<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160;  {</div>
+<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160;    zero_constraints.clear();</div>
+<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160;                                            zero_constraints);</div>
+<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160; </div>
+<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>] :</div>
+<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;         this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.type)</div>
+<div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;      {</div>
+<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> == <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>::</div>
+<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;                      cahn_hilliard_dirichlet_phase_order)</div>
+<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;          {</div>
+<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;            VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;              this-&gt;dof_handler,</div>
+<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;              <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;              Functions::ZeroFunction&lt;dim&gt;(2),</div>
+<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;              zero_constraints);</div>
+<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;          }</div>
+<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;      }</div>
+<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;  }</div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160; </div>
+<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;  zero_constraints.close();</div>
+<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160; </div>
+<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;  <span class="comment">// Sparse matrices initialization</span></div>
+<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;  DynamicSparsityPattern dsp(locally_relevant_dofs);</div>
+<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;  DoFTools::make_sparsity_pattern(this-&gt;dof_handler,</div>
+<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;                                  dsp,</div>
+<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;                                  nonzero_constraints,</div>
+<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;                                  <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
+<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160; </div>
+<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;  SparsityTools::distribute_sparsity_pattern(dsp,</div>
+<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;                                             locally_owned_dofs,</div>
+<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;                                             mpi_communicator,</div>
+<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160;                                             locally_relevant_dofs);</div>
+<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;  system_matrix.reinit(locally_owned_dofs,</div>
+<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;                       locally_owned_dofs,</div>
+<div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;                       dsp,</div>
+<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;                       mpi_communicator);</div>
+<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160; </div>
+<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of Cahn-Hilliard degrees of freedom: &quot;</span></div>
+<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;              &lt;&lt; dof_handler.n_dofs() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160; </div>
+<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;  <span class="comment">// Provide the cahn_hilliard dof_handler and present solution pointers to the</span></div>
+<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;  <span class="comment">// multiphysics interface</span></div>
+<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160;  multiphysics-&gt;set_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>, &amp;this-&gt;dof_handler);</div>
+<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;  multiphysics-&gt;set_solution(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>, &amp;this-&gt;present_solution);</div>
+<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160;  multiphysics-&gt;set_filtered_solution(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>,</div>
+<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;                                      &amp;this-&gt;filtered_solution);</div>
+<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160;  multiphysics-&gt;set_previous_solutions(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>,</div>
+<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;                                       &amp;this-&gt;previous_solutions);</div>
+<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;}</div>
+<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160; </div>
+<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01135"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1"> 1135</a></span>&#160;<a class="code" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard&lt;dim&gt;::update_boundary_conditions</a>()</div>
+<div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;{</div>
+<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;  <span class="keywordflow">if</span> (!this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
+<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160;         .time_dependent)</div>
+<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01140"></a><span class="lineno"> 1140</span>&#160; </div>
+<div class="line"><a name="l01141"></a><span class="lineno"> 1141</span>&#160;  <span class="keywordtype">double</span> time = this-&gt;simulation_control-&gt;get_current_time();</div>
+<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;  nonzero_constraints.clear();</div>
+<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;  DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;                                          nonzero_constraints);</div>
+<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160; </div>
+<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, <a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>] :</div>
+<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;       this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.type)</div>
+<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160;    {</div>
+<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;      ComponentMask mask(2, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160;      mask.set(1, <span class="keyword">false</span>);</div>
 <div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160; </div>
-<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_bc = 0;</div>
-<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;       i_bc &lt;</div>
-<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;       this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard.size;</div>
-<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;       ++i_bc)</div>
-<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;    {</div>
-<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;      ComponentMask mask(2, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;      mask.set(1, <span class="keyword">false</span>);</div>
-<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160; </div>
-<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;      <span class="comment">// Dirichlet condition: imposed phase_order at i_bc</span></div>
-<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160;      <span class="comment">// To impose the boundary condition only on the phase order, a component</span></div>
-<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;      <span class="comment">// mask is used at the end of the interpolate_boundary_values function</span></div>
-<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;            .type[i_bc] ==</div>
-<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order</a>)</div>
-<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;        {</div>
-<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;          this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;            .bcFunctions[i_bc]</div>
-<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;            .phi.set_time(time);</div>
-<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;            this-&gt;dof_handler,</div>
-<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;            this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;              .id[i_bc],</div>
-<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;            <a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined&lt;dim&gt;</a>(</div>
-<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;              &amp;this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
-<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;                 .bcFunctions[i_bc]</div>
-<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;                 .phi),</div>
-<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;            nonzero_constraints,</div>
-<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;            mask);</div>
-<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;        }</div>
-<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;    }</div>
-<div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160; </div>
-<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;  nonzero_constraints.close();</div>
-<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;  <span class="keyword">auto</span> &amp;nonzero_constraints = this-&gt;nonzero_constraints;</div>
-<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
-<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;  this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
-<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;}</div>
-<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160; </div>
-<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01191"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36"> 1191</a></span>&#160;<a class="code" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard&lt;dim&gt;::set_initial_conditions</a>()</div>
-<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;{</div>
-<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar potential(1);</div>
-<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160; </div>
+<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;      <span class="comment">// Dirichlet condition: imposed phase_order at i_bc</span></div>
+<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;      <span class="comment">// To impose the boundary condition only on the phase order, a component</span></div>
+<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;      <span class="comment">// mask is used at the end of the interpolate_boundary_values function</span></div>
+<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;      <span class="keywordflow">if</span> (<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a> ==</div>
+<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order</a>)</div>
+<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;        {</div>
+<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;          this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
+<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160;            .bcFunctions.at(<span class="keywordtype">id</span>)</div>
+<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;            -&gt;phi.set_time(time);</div>
+<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160; </div>
+<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;          VectorTools::interpolate_boundary_values(</div>
+<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;            this-&gt;dof_handler,</div>
+<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;            <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160;            <a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined&lt;dim&gt;</a>(</div>
+<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;              &amp;this-&gt;simulation_parameters.boundary_conditions_cahn_hilliard</div>
+<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;                 .bcFunctions.at(<span class="keywordtype">id</span>)</div>
+<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;                 -&gt;phi),</div>
+<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;            nonzero_constraints,</div>
+<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;            mask);</div>
+<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;        }</div>
+<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;    }</div>
+<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160; </div>
+<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;  nonzero_constraints.close();</div>
+<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;  <span class="keyword">auto</span> &amp;nonzero_constraints = this-&gt;nonzero_constraints;</div>
+<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
+<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;  this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
+<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;}</div>
+<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160; </div>
+<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01182"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36"> 1182</a></span>&#160;<a class="code" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard&lt;dim&gt;::set_initial_conditions</a>()</div>
+<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;{</div>
+<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
+<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar potential(1);</div>
+<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160; </div>
+<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;  VectorTools::interpolate(</div>
+<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;    *mapping,</div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;    dof_handler,</div>
+<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;    simulation_parameters.initial_condition-&gt;cahn_hilliard,</div>
+<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;    newton_update,</div>
+<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;    fe-&gt;component_mask(phase_order));</div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160; </div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;  <span class="comment">// Set the initial chemical potential to 0. (May be discussed or modified</span></div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;  <span class="comment">// later)</span></div>
 <div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;  VectorTools::interpolate(</div>
 <div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;    *mapping,</div>
 <div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;    dof_handler,</div>
 <div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;    simulation_parameters.initial_condition-&gt;cahn_hilliard,</div>
 <div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;    newton_update,</div>
-<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;    fe-&gt;component_mask(phase_order));</div>
+<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;    fe-&gt;component_mask(potential));</div>
 <div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160; </div>
-<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;  <span class="comment">// Set the initial chemical potential to 0. (May be discussed or modified</span></div>
-<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;  <span class="comment">// later)</span></div>
-<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;  VectorTools::interpolate(</div>
-<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;    *mapping,</div>
-<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;    dof_handler,</div>
-<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;    simulation_parameters.initial_condition-&gt;cahn_hilliard,</div>
-<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;    newton_update,</div>
-<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;    fe-&gt;component_mask(potential));</div>
-<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160; </div>
-<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;  nonzero_constraints.distribute(newton_update);</div>
-<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;  present_solution = newton_update;</div>
-<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;  apply_phase_filter();</div>
-<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;  percolate_time_vectors();</div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;}</div>
+<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;  nonzero_constraints.distribute(newton_update);</div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;  present_solution = newton_update;</div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;  apply_phase_filter();</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;  percolate_time_vectors();</div>
+<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;}</div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160; </div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01211"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59"> 1211</a></span>&#160;<a class="code" href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59">CahnHilliard&lt;dim&gt;::solve_linear_system</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step,</div>
+<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">bool</span> <span class="comment">/*renewed_matrix*/</span>)</div>
+<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;{</div>
+<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
+<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160; </div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
 <div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160; </div>
-<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01220"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59"> 1220</a></span>&#160;<a class="code" href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59">CahnHilliard&lt;dim&gt;::solve_linear_system</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step,</div>
-<div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;                                       <span class="keyword">const</span> <span class="keywordtype">bool</span> <span class="comment">/*renewed_matrix*/</span>)</div>
-<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;{</div>
-<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
-<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160; </div>
-<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
-<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160; </div>
-<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
-<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;    initial_step ? nonzero_constraints : this-&gt;zero_constraints;</div>
-<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160; </div>
-<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
-<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;      .minimum_residual;</div>
-<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
-<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;      .relative_residual;</div>
-<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160; </div>
-<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
-<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);</div>
-<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160; </div>
-<div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;        .verbosity != <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160;    {</div>
-<div class="line"><a name="l01243"></a><span class="lineno"> 1243</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
-<div class="line"><a name="l01244"></a><span class="lineno"> 1244</span>&#160;                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01245"></a><span class="lineno"> 1245</span>&#160;    }</div>
-<div class="line"><a name="l01246"></a><span class="lineno"> 1246</span>&#160; </div>
-<div class="line"><a name="l01247"></a><span class="lineno"> 1247</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
-<div class="line"><a name="l01248"></a><span class="lineno"> 1248</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01249"></a><span class="lineno"> 1249</span>&#160;      .ilu_precond_fill;</div>
-<div class="line"><a name="l01250"></a><span class="lineno"> 1250</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
-<div class="line"><a name="l01251"></a><span class="lineno"> 1251</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01252"></a><span class="lineno"> 1252</span>&#160;      .ilu_precond_atol;</div>
-<div class="line"><a name="l01253"></a><span class="lineno"> 1253</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
-<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;      .ilu_precond_rtol;</div>
-<div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160;  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
-<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
-<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160; </div>
-<div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160;  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
-<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160; </div>
-<div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160;  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
-<div class="line"><a name="l01262"></a><span class="lineno"> 1262</span>&#160; </div>
-<div class="line"><a name="l01263"></a><span class="lineno"> 1263</span>&#160;  <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
-<div class="line"><a name="l01264"></a><span class="lineno"> 1264</span>&#160;                                                   mpi_communicator);</div>
-<div class="line"><a name="l01265"></a><span class="lineno"> 1265</span>&#160; </div>
-<div class="line"><a name="l01266"></a><span class="lineno"> 1266</span>&#160;  SolverControl solver_control(simulation_parameters.linear_solver</div>
-<div class="line"><a name="l01267"></a><span class="lineno"> 1267</span>&#160;                                 .at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01268"></a><span class="lineno"> 1268</span>&#160;                                 .max_iterations,</div>
-<div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160;                               linear_solver_tolerance,</div>
-<div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160;                               <span class="keyword">true</span>,</div>
-<div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160;                               <span class="keyword">true</span>);</div>
+<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
+<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;    initial_step ? nonzero_constraints : this-&gt;zero_constraints;</div>
+<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160; </div>
+<div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
+<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;      .minimum_residual;</div>
+<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
+<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;      .relative_residual;</div>
+<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160; </div>
+<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
+<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);</div>
+<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160; </div>
+<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;        .verbosity != <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;    {</div>
+<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
+<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160;    }</div>
+<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160; </div>
+<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
+<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;      .ilu_precond_fill;</div>
+<div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
+<div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01243"></a><span class="lineno"> 1243</span>&#160;      .ilu_precond_atol;</div>
+<div class="line"><a name="l01244"></a><span class="lineno"> 1244</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
+<div class="line"><a name="l01245"></a><span class="lineno"> 1245</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01246"></a><span class="lineno"> 1246</span>&#160;      .ilu_precond_rtol;</div>
+<div class="line"><a name="l01247"></a><span class="lineno"> 1247</span>&#160;  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
+<div class="line"><a name="l01248"></a><span class="lineno"> 1248</span>&#160;    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
+<div class="line"><a name="l01249"></a><span class="lineno"> 1249</span>&#160; </div>
+<div class="line"><a name="l01250"></a><span class="lineno"> 1250</span>&#160;  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
+<div class="line"><a name="l01251"></a><span class="lineno"> 1251</span>&#160; </div>
+<div class="line"><a name="l01252"></a><span class="lineno"> 1252</span>&#160;  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
+<div class="line"><a name="l01253"></a><span class="lineno"> 1253</span>&#160; </div>
+<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;  <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
+<div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;                                                   mpi_communicator);</div>
+<div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160; </div>
+<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;  SolverControl solver_control(simulation_parameters.linear_solver</div>
+<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;                                 .at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160;                                 .max_iterations,</div>
+<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;                               linear_solver_tolerance,</div>
+<div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160;                               <span class="keyword">true</span>,</div>
+<div class="line"><a name="l01262"></a><span class="lineno"> 1262</span>&#160;                               <span class="keyword">true</span>);</div>
+<div class="line"><a name="l01263"></a><span class="lineno"> 1263</span>&#160; </div>
+<div class="line"><a name="l01264"></a><span class="lineno"> 1264</span>&#160;  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
+<div class="line"><a name="l01265"></a><span class="lineno"> 1265</span>&#160;    <span class="keyword">false</span>,</div>
+<div class="line"><a name="l01266"></a><span class="lineno"> 1266</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01267"></a><span class="lineno"> 1267</span>&#160;      .max_krylov_vectors);</div>
+<div class="line"><a name="l01268"></a><span class="lineno"> 1268</span>&#160; </div>
+<div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160; </div>
+<div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160;  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
+<div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160; </div>
 <div class="line"><a name="l01272"></a><span class="lineno"> 1272</span>&#160; </div>
-<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
-<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;    <span class="keyword">false</span>,</div>
-<div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160;    simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160;      .max_krylov_vectors);</div>
+<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;  solver.solve(system_matrix,</div>
+<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;               completely_distributed_solution,</div>
+<div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160;               system_rhs,</div>
+<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160;               ilu_preconditioner);</div>
 <div class="line"><a name="l01277"></a><span class="lineno"> 1277</span>&#160; </div>
-<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160; </div>
-<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
-<div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160; </div>
-<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160; </div>
-<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160;  solver.solve(system_matrix,</div>
-<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;               completely_distributed_solution,</div>
-<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160;               system_rhs,</div>
-<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160;               ilu_preconditioner);</div>
-<div class="line"><a name="l01286"></a><span class="lineno"> 1286</span>&#160; </div>
-<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
-<div class="line"><a name="l01288"></a><span class="lineno"> 1288</span>&#160;        .verbosity != <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160;    {</div>
-<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
-<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
-<div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160;                  &lt;&lt; solver_control.last_value() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01293"></a><span class="lineno"> 1293</span>&#160;    }</div>
-<div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160; </div>
-<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;  constraints_used.distribute(completely_distributed_solution);</div>
-<div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160;  newton_update = completely_distributed_solution;</div>
-<div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160;}</div>
-<div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160; </div>
-<div class="line"><a name="l01299"></a><span class="lineno"> 1299</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01300"></a><span class="lineno"> 1300</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt;</div>
-<div class="line"><a name="l01302"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e"> 1302</a></span>&#160;<a class="code" href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e">CahnHilliard&lt;dim&gt;::calculate_barycenter</a>(<span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
-<div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160;                                        <span class="keyword">const</span> VectorType       &amp;solution_fd)</div>
-<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;{</div>
-<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;  <span class="keyword">const</span> MPI_Comm mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
-<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160; </div>
-<div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;  FEValues&lt;dim&gt; fe_values_cahn_hilliard(*this-&gt;mapping,</div>
-<div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160;                                        *this-&gt;fe,</div>
-<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;                                        *this-&gt;cell_quadrature,</div>
-<div class="line"><a name="l01310"></a><span class="lineno"> 1310</span>&#160;                                        update_values | update_gradients |</div>
-<div class="line"><a name="l01311"></a><span class="lineno"> 1311</span>&#160;                                          update_quadrature_points |</div>
-<div class="line"><a name="l01312"></a><span class="lineno"> 1312</span>&#160;                                          update_JxW_values);</div>
-<div class="line"><a name="l01313"></a><span class="lineno"> 1313</span>&#160;  std::shared_ptr&lt;CahnHilliardFilterBase&gt; filter =</div>
-<div class="line"><a name="l01314"></a><span class="lineno"> 1314</span>&#160;    <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a>(</div>
-<div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160;      this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters);</div>
+<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">PhysicsID::cahn_hilliard</a>)</div>
+<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;        .verbosity != <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160;    {</div>
+<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
+<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
+<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;                  &lt;&lt; solver_control.last_value() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160;    }</div>
+<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160; </div>
+<div class="line"><a name="l01286"></a><span class="lineno"> 1286</span>&#160;  constraints_used.distribute(completely_distributed_solution);</div>
+<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;  newton_update = completely_distributed_solution;</div>
+<div class="line"><a name="l01288"></a><span class="lineno"> 1288</span>&#160;}</div>
+<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160; </div>
+<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160;std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt;</div>
+<div class="line"><a name="l01293"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e"> 1293</a></span>&#160;<a class="code" href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e">CahnHilliard&lt;dim&gt;::calculate_barycenter</a>(<span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
+<div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160;                                        <span class="keyword">const</span> VectorType       &amp;solution_fd)</div>
+<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;{</div>
+<div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160;  <span class="keyword">const</span> MPI_Comm mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
+<div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160; </div>
+<div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160;  FEValues&lt;dim&gt; fe_values_cahn_hilliard(*this-&gt;mapping,</div>
+<div class="line"><a name="l01299"></a><span class="lineno"> 1299</span>&#160;                                        *this-&gt;fe,</div>
+<div class="line"><a name="l01300"></a><span class="lineno"> 1300</span>&#160;                                        *this-&gt;cell_quadrature,</div>
+<div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;                                        update_values | update_gradients |</div>
+<div class="line"><a name="l01302"></a><span class="lineno"> 1302</span>&#160;                                          update_quadrature_points |</div>
+<div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160;                                          update_JxW_values);</div>
+<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;  std::shared_ptr&lt;CahnHilliardFilterBase&gt; filter =</div>
+<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;    <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a>(</div>
+<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;      this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters);</div>
+<div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160; </div>
+<div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160; </div>
+<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
+<div class="line"><a name="l01310"></a><span class="lineno"> 1310</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
+<div class="line"><a name="l01311"></a><span class="lineno"> 1311</span>&#160; </div>
+<div class="line"><a name="l01312"></a><span class="lineno"> 1312</span>&#160;  FEValues&lt;dim&gt; fe_values_fd(*this-&gt;mapping,</div>
+<div class="line"><a name="l01313"></a><span class="lineno"> 1313</span>&#160;                             dof_handler_fd-&gt;get_fe(),</div>
+<div class="line"><a name="l01314"></a><span class="lineno"> 1314</span>&#160;                             *this-&gt;cell_quadrature,</div>
+<div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160;                             update_values);</div>
 <div class="line"><a name="l01316"></a><span class="lineno"> 1316</span>&#160; </div>
-<div class="line"><a name="l01317"></a><span class="lineno"> 1317</span>&#160; </div>
-<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
-<div class="line"><a name="l01319"></a><span class="lineno"> 1319</span>&#160;    multiphysics-&gt;get_dof_handler(<a class="code" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
-<div class="line"><a name="l01320"></a><span class="lineno"> 1320</span>&#160; </div>
-<div class="line"><a name="l01321"></a><span class="lineno"> 1321</span>&#160;  FEValues&lt;dim&gt; fe_values_fd(*this-&gt;mapping,</div>
-<div class="line"><a name="l01322"></a><span class="lineno"> 1322</span>&#160;                             dof_handler_fd-&gt;get_fe(),</div>
-<div class="line"><a name="l01323"></a><span class="lineno"> 1323</span>&#160;                             *this-&gt;cell_quadrature,</div>
-<div class="line"><a name="l01324"></a><span class="lineno"> 1324</span>&#160;                             update_values);</div>
+<div class="line"><a name="l01317"></a><span class="lineno"> 1317</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>          n_q_points = this-&gt;cell_quadrature-&gt;size();</div>
+<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;  std::vector&lt;double&gt;         phase_cahn_hilliard_values(n_q_points);</div>
+<div class="line"><a name="l01319"></a><span class="lineno"> 1319</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; phase_cahn_hilliard_gradients(n_q_points);</div>
+<div class="line"><a name="l01320"></a><span class="lineno"> 1320</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; velocity_values(n_q_points);</div>
+<div class="line"><a name="l01321"></a><span class="lineno"> 1321</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;     quadrature_locations(n_q_points);</div>
+<div class="line"><a name="l01322"></a><span class="lineno"> 1322</span>&#160; </div>
+<div class="line"><a name="l01323"></a><span class="lineno"> 1323</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Vector <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>(0);</div>
+<div class="line"><a name="l01324"></a><span class="lineno"> 1324</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
 <div class="line"><a name="l01325"></a><span class="lineno"> 1325</span>&#160; </div>
-<div class="line"><a name="l01326"></a><span class="lineno"> 1326</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>          n_q_points = this-&gt;cell_quadrature-&gt;size();</div>
-<div class="line"><a name="l01327"></a><span class="lineno"> 1327</span>&#160;  std::vector&lt;double&gt;         phase_cahn_hilliard_values(n_q_points);</div>
-<div class="line"><a name="l01328"></a><span class="lineno"> 1328</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; phase_cahn_hilliard_gradients(n_q_points);</div>
-<div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160;  std::vector&lt;Tensor&lt;1, dim&gt;&gt; velocity_values(n_q_points);</div>
-<div class="line"><a name="l01330"></a><span class="lineno"> 1330</span>&#160;  std::vector&lt;Point&lt;dim&gt;&gt;     quadrature_locations(n_q_points);</div>
-<div class="line"><a name="l01331"></a><span class="lineno"> 1331</span>&#160; </div>
-<div class="line"><a name="l01332"></a><span class="lineno"> 1332</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Vector <a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>(0);</div>
-<div class="line"><a name="l01333"></a><span class="lineno"> 1333</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
-<div class="line"><a name="l01334"></a><span class="lineno"> 1334</span>&#160; </div>
-<div class="line"><a name="l01335"></a><span class="lineno"> 1335</span>&#160;  Tensor&lt;1, dim&gt; barycenter_location;</div>
-<div class="line"><a name="l01336"></a><span class="lineno"> 1336</span>&#160;  Tensor&lt;1, dim&gt; barycenter_velocity;</div>
-<div class="line"><a name="l01337"></a><span class="lineno"> 1337</span>&#160;  <span class="keywordtype">double</span>         volume = 0;</div>
-<div class="line"><a name="l01338"></a><span class="lineno"> 1338</span>&#160; </div>
-<div class="line"><a name="l01339"></a><span class="lineno"> 1339</span>&#160; </div>
-<div class="line"><a name="l01340"></a><span class="lineno"> 1340</span>&#160;  std::map&lt;field, std::vector&lt;double&gt;&gt; fields;</div>
-<div class="line"><a name="l01341"></a><span class="lineno"> 1341</span>&#160; </div>
-<div class="line"><a name="l01342"></a><span class="lineno"> 1342</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler.active_cell_iterators())</div>
-<div class="line"><a name="l01343"></a><span class="lineno"> 1343</span>&#160;    {</div>
-<div class="line"><a name="l01344"></a><span class="lineno"> 1344</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
-<div class="line"><a name="l01345"></a><span class="lineno"> 1345</span>&#160;        {</div>
-<div class="line"><a name="l01346"></a><span class="lineno"> 1346</span>&#160;          fe_values_cahn_hilliard.reinit(cell);</div>
-<div class="line"><a name="l01347"></a><span class="lineno"> 1347</span>&#160;          quadrature_locations =</div>
-<div class="line"><a name="l01348"></a><span class="lineno"> 1348</span>&#160;            fe_values_cahn_hilliard.get_quadrature_points();</div>
-<div class="line"><a name="l01349"></a><span class="lineno"> 1349</span>&#160;          fe_values_cahn_hilliard[phase_order].get_function_values(</div>
-<div class="line"><a name="l01350"></a><span class="lineno"> 1350</span>&#160;            solution, phase_cahn_hilliard_values);</div>
-<div class="line"><a name="l01351"></a><span class="lineno"> 1351</span>&#160;          fe_values_cahn_hilliard[phase_order].get_function_gradients(</div>
-<div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;            solution, phase_cahn_hilliard_gradients);</div>
-<div class="line"><a name="l01353"></a><span class="lineno"> 1353</span>&#160; </div>
-<div class="line"><a name="l01354"></a><span class="lineno"> 1354</span>&#160;          <span class="comment">// Get fluid dynamics active cell iterator</span></div>
-<div class="line"><a name="l01355"></a><span class="lineno"> 1355</span>&#160;          <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_fd(</div>
-<div class="line"><a name="l01356"></a><span class="lineno"> 1356</span>&#160;            &amp;(*(this-&gt;triangulation)),</div>
-<div class="line"><a name="l01357"></a><span class="lineno"> 1357</span>&#160;            cell-&gt;level(),</div>
-<div class="line"><a name="l01358"></a><span class="lineno"> 1358</span>&#160;            cell-&gt;index(),</div>
-<div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;            dof_handler_fd);</div>
+<div class="line"><a name="l01326"></a><span class="lineno"> 1326</span>&#160;  Tensor&lt;1, dim&gt; barycenter_location;</div>
+<div class="line"><a name="l01327"></a><span class="lineno"> 1327</span>&#160;  Tensor&lt;1, dim&gt; barycenter_velocity;</div>
+<div class="line"><a name="l01328"></a><span class="lineno"> 1328</span>&#160;  <span class="keywordtype">double</span>         volume = 0;</div>
+<div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160; </div>
+<div class="line"><a name="l01330"></a><span class="lineno"> 1330</span>&#160; </div>
+<div class="line"><a name="l01331"></a><span class="lineno"> 1331</span>&#160;  std::map&lt;field, std::vector&lt;double&gt;&gt; fields;</div>
+<div class="line"><a name="l01332"></a><span class="lineno"> 1332</span>&#160; </div>
+<div class="line"><a name="l01333"></a><span class="lineno"> 1333</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler.active_cell_iterators())</div>
+<div class="line"><a name="l01334"></a><span class="lineno"> 1334</span>&#160;    {</div>
+<div class="line"><a name="l01335"></a><span class="lineno"> 1335</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
+<div class="line"><a name="l01336"></a><span class="lineno"> 1336</span>&#160;        {</div>
+<div class="line"><a name="l01337"></a><span class="lineno"> 1337</span>&#160;          fe_values_cahn_hilliard.reinit(cell);</div>
+<div class="line"><a name="l01338"></a><span class="lineno"> 1338</span>&#160;          quadrature_locations =</div>
+<div class="line"><a name="l01339"></a><span class="lineno"> 1339</span>&#160;            fe_values_cahn_hilliard.get_quadrature_points();</div>
+<div class="line"><a name="l01340"></a><span class="lineno"> 1340</span>&#160;          fe_values_cahn_hilliard[phase_order].get_function_values(</div>
+<div class="line"><a name="l01341"></a><span class="lineno"> 1341</span>&#160;            solution, phase_cahn_hilliard_values);</div>
+<div class="line"><a name="l01342"></a><span class="lineno"> 1342</span>&#160;          fe_values_cahn_hilliard[phase_order].get_function_gradients(</div>
+<div class="line"><a name="l01343"></a><span class="lineno"> 1343</span>&#160;            solution, phase_cahn_hilliard_gradients);</div>
+<div class="line"><a name="l01344"></a><span class="lineno"> 1344</span>&#160; </div>
+<div class="line"><a name="l01345"></a><span class="lineno"> 1345</span>&#160;          <span class="comment">// Get fluid dynamics active cell iterator</span></div>
+<div class="line"><a name="l01346"></a><span class="lineno"> 1346</span>&#160;          <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_fd(</div>
+<div class="line"><a name="l01347"></a><span class="lineno"> 1347</span>&#160;            &amp;(*(this-&gt;triangulation)),</div>
+<div class="line"><a name="l01348"></a><span class="lineno"> 1348</span>&#160;            cell-&gt;level(),</div>
+<div class="line"><a name="l01349"></a><span class="lineno"> 1349</span>&#160;            cell-&gt;index(),</div>
+<div class="line"><a name="l01350"></a><span class="lineno"> 1350</span>&#160;            dof_handler_fd);</div>
+<div class="line"><a name="l01351"></a><span class="lineno"> 1351</span>&#160; </div>
+<div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;          fe_values_fd.reinit(cell_fd);</div>
+<div class="line"><a name="l01353"></a><span class="lineno"> 1353</span>&#160;          fe_values_fd[<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>].get_function_values(solution_fd,</div>
+<div class="line"><a name="l01354"></a><span class="lineno"> 1354</span>&#160;                                                     velocity_values);</div>
+<div class="line"><a name="l01355"></a><span class="lineno"> 1355</span>&#160; </div>
+<div class="line"><a name="l01356"></a><span class="lineno"> 1356</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
+<div class="line"><a name="l01357"></a><span class="lineno"> 1357</span>&#160;            {</div>
+<div class="line"><a name="l01358"></a><span class="lineno"> 1358</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> JxW          = fe_values_cahn_hilliard.JxW(q);</div>
+<div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> phase_values = phase_cahn_hilliard_values[q];</div>
 <div class="line"><a name="l01360"></a><span class="lineno"> 1360</span>&#160; </div>
-<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;          fe_values_fd.reinit(cell_fd);</div>
-<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160;          fe_values_fd[<a class="code" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>].get_function_values(solution_fd,</div>
-<div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;                                                     velocity_values);</div>
-<div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160; </div>
-<div class="line"><a name="l01365"></a><span class="lineno"> 1365</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
-<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;            {</div>
-<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> JxW          = fe_values_cahn_hilliard.JxW(q);</div>
-<div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> phase_values = phase_cahn_hilliard_values[q];</div>
-<div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160; </div>
-<div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160; </div>
+<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160; </div>
+<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160; </div>
+<div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;              volume += (1 - phase_values) * 0.5 * JxW;</div>
+<div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;              barycenter_location +=</div>
+<div class="line"><a name="l01365"></a><span class="lineno"> 1365</span>&#160;                (1 - phase_values) * 0.5 * quadrature_locations[q] * JxW;</div>
+<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;              barycenter_velocity +=</div>
+<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;                (1 - phase_values) * 0.5 * velocity_values[q] * JxW;</div>
+<div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160;            }</div>
+<div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160;        }</div>
+<div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;    }</div>
 <div class="line"><a name="l01371"></a><span class="lineno"> 1371</span>&#160; </div>
-<div class="line"><a name="l01372"></a><span class="lineno"> 1372</span>&#160;              volume += (1 - phase_values) * 0.5 * JxW;</div>
-<div class="line"><a name="l01373"></a><span class="lineno"> 1373</span>&#160;              barycenter_location +=</div>
-<div class="line"><a name="l01374"></a><span class="lineno"> 1374</span>&#160;                (1 - phase_values) * 0.5 * quadrature_locations[q] * JxW;</div>
-<div class="line"><a name="l01375"></a><span class="lineno"> 1375</span>&#160;              barycenter_velocity +=</div>
-<div class="line"><a name="l01376"></a><span class="lineno"> 1376</span>&#160;                (1 - phase_values) * 0.5 * velocity_values[q] * JxW;</div>
-<div class="line"><a name="l01377"></a><span class="lineno"> 1377</span>&#160;            }</div>
-<div class="line"><a name="l01378"></a><span class="lineno"> 1378</span>&#160;        }</div>
-<div class="line"><a name="l01379"></a><span class="lineno"> 1379</span>&#160;    }</div>
-<div class="line"><a name="l01380"></a><span class="lineno"> 1380</span>&#160; </div>
-<div class="line"><a name="l01381"></a><span class="lineno"> 1381</span>&#160;  volume = Utilities::MPI::sum(volume, mpi_communicator);</div>
-<div class="line"><a name="l01382"></a><span class="lineno"> 1382</span>&#160;  barycenter_location =</div>
-<div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160;    Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;</div>
-<div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;  barycenter_velocity =</div>
-<div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;    Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;</div>
-<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160; </div>
-<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;  <span class="keywordflow">return</span> std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt;(barycenter_location,</div>
-<div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;                                                   barycenter_velocity);</div>
-<div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160;}</div>
-<div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160; </div>
-<div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01393"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467"> 1393</a></span>&#160;<a class="code" href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467">CahnHilliard&lt;dim&gt;::apply_phase_filter</a>()</div>
-<div class="line"><a name="l01394"></a><span class="lineno"> 1394</span>&#160;{</div>
-<div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160;  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
-<div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160; </div>
-<div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;  FEValues&lt;dim&gt; fe_values(*mapping,</div>
-<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;                          *fe,</div>
-<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160;                          *cell_quadrature,</div>
-<div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160;                          update_values | update_gradients |</div>
-<div class="line"><a name="l01401"></a><span class="lineno"> 1401</span>&#160;                            update_quadrature_points | update_JxW_values);</div>
-<div class="line"><a name="l01402"></a><span class="lineno"> 1402</span>&#160; </div>
-<div class="line"><a name="l01403"></a><span class="lineno"> 1403</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
+<div class="line"><a name="l01372"></a><span class="lineno"> 1372</span>&#160;  volume = Utilities::MPI::sum(volume, mpi_communicator);</div>
+<div class="line"><a name="l01373"></a><span class="lineno"> 1373</span>&#160;  barycenter_location =</div>
+<div class="line"><a name="l01374"></a><span class="lineno"> 1374</span>&#160;    Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;</div>
+<div class="line"><a name="l01375"></a><span class="lineno"> 1375</span>&#160;  barycenter_velocity =</div>
+<div class="line"><a name="l01376"></a><span class="lineno"> 1376</span>&#160;    Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;</div>
+<div class="line"><a name="l01377"></a><span class="lineno"> 1377</span>&#160; </div>
+<div class="line"><a name="l01378"></a><span class="lineno"> 1378</span>&#160;  <span class="keywordflow">return</span> std::pair&lt;Tensor&lt;1, dim&gt;, Tensor&lt;1, dim&gt;&gt;(barycenter_location,</div>
+<div class="line"><a name="l01379"></a><span class="lineno"> 1379</span>&#160;                                                   barycenter_velocity);</div>
+<div class="line"><a name="l01380"></a><span class="lineno"> 1380</span>&#160;}</div>
+<div class="line"><a name="l01381"></a><span class="lineno"> 1381</span>&#160; </div>
+<div class="line"><a name="l01382"></a><span class="lineno"> 1382</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01384"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467"> 1384</a></span>&#160;<a class="code" href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467">CahnHilliard&lt;dim&gt;::apply_phase_filter</a>()</div>
+<div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;{</div>
+<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_communicator();</div>
+<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160; </div>
+<div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;  FEValues&lt;dim&gt; fe_values(*mapping,</div>
+<div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160;                          *fe,</div>
+<div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160;                          *cell_quadrature,</div>
+<div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;                          update_values | update_gradients |</div>
+<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;                            update_quadrature_points | update_JxW_values);</div>
+<div class="line"><a name="l01393"></a><span class="lineno"> 1393</span>&#160; </div>
+<div class="line"><a name="l01394"></a><span class="lineno"> 1394</span>&#160;  <span class="keyword">const</span> FEValuesExtractors::Scalar phase_order(0);</div>
+<div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160; </div>
+<div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160;  <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> filtered_solution_owned(this-&gt;locally_owned_dofs,</div>
+<div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;                                           mpi_communicator);</div>
+<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;  filtered_solution_owned = this-&gt;present_solution;</div>
+<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160; </div>
+<div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160;  filtered_solution.reinit(this-&gt;present_solution);</div>
+<div class="line"><a name="l01401"></a><span class="lineno"> 1401</span>&#160; </div>
+<div class="line"><a name="l01402"></a><span class="lineno"> 1402</span>&#160;  <span class="comment">// std::unordered_map&lt;unsigned int, bool&gt; filtered_cell_list;</span></div>
+<div class="line"><a name="l01403"></a><span class="lineno"> 1403</span>&#160;  std::unordered_set&lt;unsigned int&gt; filtered_cell_list;</div>
 <div class="line"><a name="l01404"></a><span class="lineno"> 1404</span>&#160; </div>
-<div class="line"><a name="l01405"></a><span class="lineno"> 1405</span>&#160;  <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> filtered_solution_owned(this-&gt;locally_owned_dofs,</div>
-<div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;                                           mpi_communicator);</div>
-<div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160;  filtered_solution_owned = this-&gt;present_solution;</div>
-<div class="line"><a name="l01408"></a><span class="lineno"> 1408</span>&#160; </div>
-<div class="line"><a name="l01409"></a><span class="lineno"> 1409</span>&#160;  filtered_solution.reinit(this-&gt;present_solution);</div>
-<div class="line"><a name="l01410"></a><span class="lineno"> 1410</span>&#160; </div>
-<div class="line"><a name="l01411"></a><span class="lineno"> 1411</span>&#160;  <span class="comment">// std::unordered_map&lt;unsigned int, bool&gt; filtered_cell_list;</span></div>
-<div class="line"><a name="l01412"></a><span class="lineno"> 1412</span>&#160;  std::unordered_set&lt;unsigned int&gt; filtered_cell_list;</div>
-<div class="line"><a name="l01413"></a><span class="lineno"> 1413</span>&#160; </div>
-<div class="line"><a name="l01414"></a><span class="lineno"> 1414</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                   dofs_per_cell = this-&gt;fe-&gt;dofs_per_cell;</div>
-<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;  std::vector&lt;types::global_dof_index&gt; local_dof_indices(dofs_per_cell);</div>
-<div class="line"><a name="l01416"></a><span class="lineno"> 1416</span>&#160; </div>
-<div class="line"><a name="l01417"></a><span class="lineno"> 1417</span>&#160;  <span class="comment">// Create filter object</span></div>
-<div class="line"><a name="l01418"></a><span class="lineno"> 1418</span>&#160;  filter = <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a>(</div>
-<div class="line"><a name="l01419"></a><span class="lineno"> 1419</span>&#160;    this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters);</div>
-<div class="line"><a name="l01420"></a><span class="lineno"> 1420</span>&#160; </div>
-<div class="line"><a name="l01421"></a><span class="lineno"> 1421</span>&#160;  <span class="comment">// Apply filter to solution</span></div>
-<div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler.active_cell_iterators())</div>
-<div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160;    {</div>
-<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
-<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;        {</div>
-<div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160;          cell-&gt;get_dof_indices(local_dof_indices);</div>
-<div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160; </div>
-<div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; local_dof_indices.size(); ++p)</div>
-<div class="line"><a name="l01429"></a><span class="lineno"> 1429</span>&#160;            {</div>
-<div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;              <span class="keywordflow">if</span> (this-&gt;locally_owned_dofs.is_element(local_dof_indices[p]))</div>
-<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160;                {</div>
-<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;                  <span class="comment">//  Allows to obtain the component corresponding to the degree</span></div>
-<div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;                  <span class="comment">//  of freedom</span></div>
-<div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160;                  <span class="keyword">auto</span> component_index = fe-&gt;system_to_component_index(p).first;</div>
-<div class="line"><a name="l01435"></a><span class="lineno"> 1435</span>&#160; </div>
-<div class="line"><a name="l01436"></a><span class="lineno"> 1436</span>&#160;                  <span class="comment">// Filter only the phase field</span></div>
-<div class="line"><a name="l01437"></a><span class="lineno"> 1437</span>&#160;                  <span class="keywordflow">if</span> (component_index == 0)</div>
-<div class="line"><a name="l01438"></a><span class="lineno"> 1438</span>&#160;                    {</div>
-<div class="line"><a name="l01439"></a><span class="lineno"> 1439</span>&#160;                      <span class="keyword">auto</span> iterator =</div>
-<div class="line"><a name="l01440"></a><span class="lineno"> 1440</span>&#160;                        filtered_cell_list.find(local_dof_indices[p]);</div>
-<div class="line"><a name="l01441"></a><span class="lineno"> 1441</span>&#160;                      <span class="keywordflow">if</span> (iterator == filtered_cell_list.end())</div>
-<div class="line"><a name="l01442"></a><span class="lineno"> 1442</span>&#160;                        {</div>
-<div class="line"><a name="l01443"></a><span class="lineno"> 1443</span>&#160;                          filtered_cell_list.insert(local_dof_indices[p]);</div>
-<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;                          filtered_solution_owned[local_dof_indices[p]] =</div>
-<div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;                            filter-&gt;filter_phase(</div>
-<div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160;                              filtered_solution_owned[local_dof_indices[p]]);</div>
-<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;                        }</div>
-<div class="line"><a name="l01448"></a><span class="lineno"> 1448</span>&#160;                    }</div>
-<div class="line"><a name="l01449"></a><span class="lineno"> 1449</span>&#160;                }</div>
-<div class="line"><a name="l01450"></a><span class="lineno"> 1450</span>&#160;            }</div>
-<div class="line"><a name="l01451"></a><span class="lineno"> 1451</span>&#160;        }</div>
-<div class="line"><a name="l01452"></a><span class="lineno"> 1452</span>&#160;    }</div>
-<div class="line"><a name="l01453"></a><span class="lineno"> 1453</span>&#160; </div>
-<div class="line"><a name="l01454"></a><span class="lineno"> 1454</span>&#160;  filtered_solution = filtered_solution_owned;</div>
-<div class="line"><a name="l01455"></a><span class="lineno"> 1455</span>&#160; </div>
-<div class="line"><a name="l01456"></a><span class="lineno"> 1456</span>&#160;  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters</div>
-<div class="line"><a name="l01457"></a><span class="lineno"> 1457</span>&#160;        .cahn_hilliard_phase_filter.verbosity == <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>)</div>
-<div class="line"><a name="l01458"></a><span class="lineno"> 1458</span>&#160;    {</div>
-<div class="line"><a name="l01459"></a><span class="lineno"> 1459</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Filtered phase values: &quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01460"></a><span class="lineno"> 1460</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">double</span> filtered_phase : filtered_solution)</div>
-<div class="line"><a name="l01461"></a><span class="lineno"> 1461</span>&#160;        {</div>
-<div class="line"><a name="l01462"></a><span class="lineno"> 1462</span>&#160;          this-&gt;pcout &lt;&lt; filtered_phase &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01463"></a><span class="lineno"> 1463</span>&#160;        }</div>
-<div class="line"><a name="l01464"></a><span class="lineno"> 1464</span>&#160;    }</div>
-<div class="line"><a name="l01465"></a><span class="lineno"> 1465</span>&#160;}</div>
-<div class="line"><a name="l01466"></a><span class="lineno"> 1466</span>&#160; </div>
-<div class="line"><a name="l01467"></a><span class="lineno"> 1467</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01468"></a><span class="lineno"> 1468</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l01469"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d"> 1469</a></span>&#160;<a class="code" href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d">CahnHilliard&lt;dim&gt;::output_newton_update_norms</a>(</div>
-<div class="line"><a name="l01470"></a><span class="lineno"> 1470</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> display_precision)</div>
-<div class="line"><a name="l01471"></a><span class="lineno"> 1471</span>&#160;{</div>
-<div class="line"><a name="l01472"></a><span class="lineno"> 1472</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
-<div class="line"><a name="l01473"></a><span class="lineno"> 1473</span>&#160; </div>
-<div class="line"><a name="l01474"></a><span class="lineno"> 1474</span>&#160;  FEValuesExtractors::Scalar phase_order(0);</div>
-<div class="line"><a name="l01475"></a><span class="lineno"> 1475</span>&#160;  FEValuesExtractors::Scalar chemical_potential(1);</div>
-<div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160; </div>
-<div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;  ComponentMask phase_order_mask = fe-&gt;component_mask(phase_order);</div>
-<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;  ComponentMask chemical_potential_mask =</div>
-<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;    fe-&gt;component_mask(chemical_potential);</div>
+<div class="line"><a name="l01405"></a><span class="lineno"> 1405</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                   dofs_per_cell = this-&gt;fe-&gt;dofs_per_cell;</div>
+<div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;  std::vector&lt;types::global_dof_index&gt; local_dof_indices(dofs_per_cell);</div>
+<div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160; </div>
+<div class="line"><a name="l01408"></a><span class="lineno"> 1408</span>&#160;  <span class="comment">// Create filter object</span></div>
+<div class="line"><a name="l01409"></a><span class="lineno"> 1409</span>&#160;  filter = <a class="code" href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a>(</div>
+<div class="line"><a name="l01410"></a><span class="lineno"> 1410</span>&#160;    this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters);</div>
+<div class="line"><a name="l01411"></a><span class="lineno"> 1411</span>&#160; </div>
+<div class="line"><a name="l01412"></a><span class="lineno"> 1412</span>&#160;  <span class="comment">// Apply filter to solution</span></div>
+<div class="line"><a name="l01413"></a><span class="lineno"> 1413</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler.active_cell_iterators())</div>
+<div class="line"><a name="l01414"></a><span class="lineno"> 1414</span>&#160;    {</div>
+<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
+<div class="line"><a name="l01416"></a><span class="lineno"> 1416</span>&#160;        {</div>
+<div class="line"><a name="l01417"></a><span class="lineno"> 1417</span>&#160;          cell-&gt;get_dof_indices(local_dof_indices);</div>
+<div class="line"><a name="l01418"></a><span class="lineno"> 1418</span>&#160; </div>
+<div class="line"><a name="l01419"></a><span class="lineno"> 1419</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; local_dof_indices.size(); ++p)</div>
+<div class="line"><a name="l01420"></a><span class="lineno"> 1420</span>&#160;            {</div>
+<div class="line"><a name="l01421"></a><span class="lineno"> 1421</span>&#160;              <span class="keywordflow">if</span> (this-&gt;locally_owned_dofs.is_element(local_dof_indices[p]))</div>
+<div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;                {</div>
+<div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160;                  <span class="comment">//  Allows to obtain the component corresponding to the degree</span></div>
+<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;                  <span class="comment">//  of freedom</span></div>
+<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;                  <span class="keyword">auto</span> component_index = fe-&gt;system_to_component_index(p).first;</div>
+<div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160; </div>
+<div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160;                  <span class="comment">// Filter only the phase field</span></div>
+<div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160;                  <span class="keywordflow">if</span> (component_index == 0)</div>
+<div class="line"><a name="l01429"></a><span class="lineno"> 1429</span>&#160;                    {</div>
+<div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;                      <span class="keyword">auto</span> iterator =</div>
+<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160;                        filtered_cell_list.find(local_dof_indices[p]);</div>
+<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;                      <span class="keywordflow">if</span> (iterator == filtered_cell_list.end())</div>
+<div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;                        {</div>
+<div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160;                          filtered_cell_list.insert(local_dof_indices[p]);</div>
+<div class="line"><a name="l01435"></a><span class="lineno"> 1435</span>&#160;                          filtered_solution_owned[local_dof_indices[p]] =</div>
+<div class="line"><a name="l01436"></a><span class="lineno"> 1436</span>&#160;                            filter-&gt;filter_phase(</div>
+<div class="line"><a name="l01437"></a><span class="lineno"> 1437</span>&#160;                              filtered_solution_owned[local_dof_indices[p]]);</div>
+<div class="line"><a name="l01438"></a><span class="lineno"> 1438</span>&#160;                        }</div>
+<div class="line"><a name="l01439"></a><span class="lineno"> 1439</span>&#160;                    }</div>
+<div class="line"><a name="l01440"></a><span class="lineno"> 1440</span>&#160;                }</div>
+<div class="line"><a name="l01441"></a><span class="lineno"> 1441</span>&#160;            }</div>
+<div class="line"><a name="l01442"></a><span class="lineno"> 1442</span>&#160;        }</div>
+<div class="line"><a name="l01443"></a><span class="lineno"> 1443</span>&#160;    }</div>
+<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160; </div>
+<div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;  filtered_solution = filtered_solution_owned;</div>
+<div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160; </div>
+<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.cahn_hilliard_parameters</div>
+<div class="line"><a name="l01448"></a><span class="lineno"> 1448</span>&#160;        .cahn_hilliard_phase_filter.verbosity == <a class="code" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>)</div>
+<div class="line"><a name="l01449"></a><span class="lineno"> 1449</span>&#160;    {</div>
+<div class="line"><a name="l01450"></a><span class="lineno"> 1450</span>&#160;      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Filtered phase values: &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01451"></a><span class="lineno"> 1451</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">double</span> filtered_phase : filtered_solution)</div>
+<div class="line"><a name="l01452"></a><span class="lineno"> 1452</span>&#160;        {</div>
+<div class="line"><a name="l01453"></a><span class="lineno"> 1453</span>&#160;          this-&gt;pcout &lt;&lt; filtered_phase &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01454"></a><span class="lineno"> 1454</span>&#160;        }</div>
+<div class="line"><a name="l01455"></a><span class="lineno"> 1455</span>&#160;    }</div>
+<div class="line"><a name="l01456"></a><span class="lineno"> 1456</span>&#160;}</div>
+<div class="line"><a name="l01457"></a><span class="lineno"> 1457</span>&#160; </div>
+<div class="line"><a name="l01458"></a><span class="lineno"> 1458</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01459"></a><span class="lineno"> 1459</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l01460"></a><span class="lineno"><a class="line" href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d"> 1460</a></span>&#160;<a class="code" href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d">CahnHilliard&lt;dim&gt;::output_newton_update_norms</a>(</div>
+<div class="line"><a name="l01461"></a><span class="lineno"> 1461</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> display_precision)</div>
+<div class="line"><a name="l01462"></a><span class="lineno"> 1462</span>&#160;{</div>
+<div class="line"><a name="l01463"></a><span class="lineno"> 1463</span>&#160;  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_communicator();</div>
+<div class="line"><a name="l01464"></a><span class="lineno"> 1464</span>&#160; </div>
+<div class="line"><a name="l01465"></a><span class="lineno"> 1465</span>&#160;  FEValuesExtractors::Scalar phase_order(0);</div>
+<div class="line"><a name="l01466"></a><span class="lineno"> 1466</span>&#160;  FEValuesExtractors::Scalar chemical_potential(1);</div>
+<div class="line"><a name="l01467"></a><span class="lineno"> 1467</span>&#160; </div>
+<div class="line"><a name="l01468"></a><span class="lineno"> 1468</span>&#160;  ComponentMask phase_order_mask = fe-&gt;component_mask(phase_order);</div>
+<div class="line"><a name="l01469"></a><span class="lineno"> 1469</span>&#160;  ComponentMask chemical_potential_mask =</div>
+<div class="line"><a name="l01470"></a><span class="lineno"> 1470</span>&#160;    fe-&gt;component_mask(chemical_potential);</div>
+<div class="line"><a name="l01471"></a><span class="lineno"> 1471</span>&#160; </div>
+<div class="line"><a name="l01472"></a><span class="lineno"> 1472</span>&#160;  <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_phase_order =</div>
+<div class="line"><a name="l01473"></a><span class="lineno"> 1473</span>&#160;    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);</div>
+<div class="line"><a name="l01474"></a><span class="lineno"> 1474</span>&#160;  <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_chemical_potential =</div>
+<div class="line"><a name="l01475"></a><span class="lineno"> 1475</span>&#160;    DoFTools::locally_owned_dofs_per_component(dof_handler,</div>
+<div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160;                                               chemical_potential_mask);</div>
+<div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160; </div>
+<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;  <span class="keywordtype">double</span> local_sum = 0.0;</div>
+<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;  <span class="keywordtype">double</span> local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
 <div class="line"><a name="l01480"></a><span class="lineno"> 1480</span>&#160; </div>
-<div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160;  <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_phase_order =</div>
-<div class="line"><a name="l01482"></a><span class="lineno"> 1482</span>&#160;    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);</div>
-<div class="line"><a name="l01483"></a><span class="lineno"> 1483</span>&#160;  <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_chemical_potential =</div>
-<div class="line"><a name="l01484"></a><span class="lineno"> 1484</span>&#160;    DoFTools::locally_owned_dofs_per_component(dof_handler,</div>
-<div class="line"><a name="l01485"></a><span class="lineno"> 1485</span>&#160;                                               chemical_potential_mask);</div>
-<div class="line"><a name="l01486"></a><span class="lineno"> 1486</span>&#160; </div>
-<div class="line"><a name="l01487"></a><span class="lineno"> 1487</span>&#160;  <span class="keywordtype">double</span> local_sum = 0.0;</div>
-<div class="line"><a name="l01488"></a><span class="lineno"> 1488</span>&#160;  <span class="keywordtype">double</span> local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
+<div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160; </div>
+<div class="line"><a name="l01482"></a><span class="lineno"> 1482</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_phase_order[0])</div>
+<div class="line"><a name="l01483"></a><span class="lineno"> 1483</span>&#160;    {</div>
+<div class="line"><a name="l01484"></a><span class="lineno"> 1484</span>&#160;      <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
+<div class="line"><a name="l01485"></a><span class="lineno"> 1485</span>&#160;      local_sum += dof_newton_update * dof_newton_update;</div>
+<div class="line"><a name="l01486"></a><span class="lineno"> 1486</span>&#160;      local_max = std::max(local_max, std::abs(dof_newton_update));</div>
+<div class="line"><a name="l01487"></a><span class="lineno"> 1487</span>&#160;    }</div>
+<div class="line"><a name="l01488"></a><span class="lineno"> 1488</span>&#160; </div>
 <div class="line"><a name="l01489"></a><span class="lineno"> 1489</span>&#160; </div>
-<div class="line"><a name="l01490"></a><span class="lineno"> 1490</span>&#160; </div>
-<div class="line"><a name="l01491"></a><span class="lineno"> 1491</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_phase_order[0])</div>
-<div class="line"><a name="l01492"></a><span class="lineno"> 1492</span>&#160;    {</div>
-<div class="line"><a name="l01493"></a><span class="lineno"> 1493</span>&#160;      <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
-<div class="line"><a name="l01494"></a><span class="lineno"> 1494</span>&#160;      local_sum += dof_newton_update * dof_newton_update;</div>
-<div class="line"><a name="l01495"></a><span class="lineno"> 1495</span>&#160;      local_max = std::max(local_max, std::abs(dof_newton_update));</div>
-<div class="line"><a name="l01496"></a><span class="lineno"> 1496</span>&#160;    }</div>
+<div class="line"><a name="l01490"></a><span class="lineno"> 1490</span>&#160;  <span class="keywordtype">double</span> global_phase_order_l2_norm =</div>
+<div class="line"><a name="l01491"></a><span class="lineno"> 1491</span>&#160;    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));</div>
+<div class="line"><a name="l01492"></a><span class="lineno"> 1492</span>&#160;  <span class="keywordtype">double</span> global_phase_order_linfty_norm =</div>
+<div class="line"><a name="l01493"></a><span class="lineno"> 1493</span>&#160;    Utilities::MPI::max(local_max, mpi_communicator);</div>
+<div class="line"><a name="l01494"></a><span class="lineno"> 1494</span>&#160; </div>
+<div class="line"><a name="l01495"></a><span class="lineno"> 1495</span>&#160;  local_sum = 0.0;</div>
+<div class="line"><a name="l01496"></a><span class="lineno"> 1496</span>&#160;  local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
 <div class="line"><a name="l01497"></a><span class="lineno"> 1497</span>&#160; </div>
-<div class="line"><a name="l01498"></a><span class="lineno"> 1498</span>&#160; </div>
-<div class="line"><a name="l01499"></a><span class="lineno"> 1499</span>&#160;  <span class="keywordtype">double</span> global_phase_order_l2_norm =</div>
-<div class="line"><a name="l01500"></a><span class="lineno"> 1500</span>&#160;    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));</div>
-<div class="line"><a name="l01501"></a><span class="lineno"> 1501</span>&#160;  <span class="keywordtype">double</span> global_phase_order_linfty_norm =</div>
-<div class="line"><a name="l01502"></a><span class="lineno"> 1502</span>&#160;    Utilities::MPI::max(local_max, mpi_communicator);</div>
-<div class="line"><a name="l01503"></a><span class="lineno"> 1503</span>&#160; </div>
-<div class="line"><a name="l01504"></a><span class="lineno"> 1504</span>&#160;  local_sum = 0.0;</div>
-<div class="line"><a name="l01505"></a><span class="lineno"> 1505</span>&#160;  local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
-<div class="line"><a name="l01506"></a><span class="lineno"> 1506</span>&#160; </div>
-<div class="line"><a name="l01507"></a><span class="lineno"> 1507</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_chemical_potential[0])</div>
-<div class="line"><a name="l01508"></a><span class="lineno"> 1508</span>&#160;    {</div>
-<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160;      <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
-<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160;      local_sum += dof_newton_update * dof_newton_update;</div>
-<div class="line"><a name="l01511"></a><span class="lineno"> 1511</span>&#160;      local_max = std::max(local_max, std::abs(dof_newton_update));</div>
-<div class="line"><a name="l01512"></a><span class="lineno"> 1512</span>&#160;    }</div>
-<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160; </div>
-<div class="line"><a name="l01514"></a><span class="lineno"> 1514</span>&#160;  <span class="keywordtype">double</span> global_chemical_potential_l2_norm =</div>
-<div class="line"><a name="l01515"></a><span class="lineno"> 1515</span>&#160;    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));</div>
-<div class="line"><a name="l01516"></a><span class="lineno"> 1516</span>&#160;  <span class="keywordtype">double</span> global_chemical_potential_linfty_norm =</div>
-<div class="line"><a name="l01517"></a><span class="lineno"> 1517</span>&#160;    Utilities::MPI::max(local_max, mpi_communicator);</div>
-<div class="line"><a name="l01518"></a><span class="lineno"> 1518</span>&#160; </div>
-<div class="line"><a name="l01519"></a><span class="lineno"> 1519</span>&#160;  this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a name="l01520"></a><span class="lineno"> 1520</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\n\t||dphi||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
-<div class="line"><a name="l01521"></a><span class="lineno"> 1521</span>&#160;              &lt;&lt; global_phase_order_l2_norm &lt;&lt; std::setw(6)</div>
-<div class="line"><a name="l01522"></a><span class="lineno"> 1522</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||dphi||_Linfty = &quot;</span> &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a name="l01523"></a><span class="lineno"> 1523</span>&#160;              &lt;&lt; global_phase_order_linfty_norm &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01524"></a><span class="lineno"> 1524</span>&#160;  this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a name="l01525"></a><span class="lineno"> 1525</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||deta||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
-<div class="line"><a name="l01526"></a><span class="lineno"> 1526</span>&#160;              &lt;&lt; global_chemical_potential_l2_norm &lt;&lt; std::setw(6)</div>
-<div class="line"><a name="l01527"></a><span class="lineno"> 1527</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||deta||_Linfty = &quot;</span> &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a name="l01528"></a><span class="lineno"> 1528</span>&#160;              &lt;&lt; global_chemical_potential_linfty_norm &lt;&lt; std::endl;</div>
-<div class="line"><a name="l01529"></a><span class="lineno"> 1529</span>&#160;}</div>
-<div class="line"><a name="l01530"></a><span class="lineno"> 1530</span>&#160; </div>
-<div class="line"><a name="l01531"></a><span class="lineno"> 1531</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 2&gt;, Tensor&lt;1, 2&gt;&gt;</div>
-<div class="line"><a name="l01532"></a><span class="lineno"> 1532</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;::calculate_barycenter&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a name="l01533"></a><span class="lineno"> 1533</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
-<div class="line"><a name="l01534"></a><span class="lineno"> 1534</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
-<div class="line"><a name="l01535"></a><span class="lineno"> 1535</span>&#160; </div>
-<div class="line"><a name="l01536"></a><span class="lineno"> 1536</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
-<div class="line"><a name="l01537"></a><span class="lineno"> 1537</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;::calculate_barycenter&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a name="l01538"></a><span class="lineno"> 1538</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
-<div class="line"><a name="l01539"></a><span class="lineno"> 1539</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
-<div class="line"><a name="l01540"></a><span class="lineno"> 1540</span>&#160; </div>
-<div class="line"><a name="l01541"></a><span class="lineno"> 1541</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 2&gt;, Tensor&lt;1, 2&gt;&gt;</div>
-<div class="line"><a name="l01542"></a><span class="lineno"> 1542</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;::calculate_barycenter&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a name="l01543"></a><span class="lineno"> 1543</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>      &amp;solution,</div>
-<div class="line"><a name="l01544"></a><span class="lineno"> 1544</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
-<div class="line"><a name="l01545"></a><span class="lineno"> 1545</span>&#160; </div>
-<div class="line"><a name="l01546"></a><span class="lineno"> 1546</span>&#160; </div>
-<div class="line"><a name="l01547"></a><span class="lineno"> 1547</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
-<div class="line"><a name="l01548"></a><span class="lineno"> 1548</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;::calculate_barycenter&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a name="l01549"></a><span class="lineno"> 1549</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>      &amp;solution,</div>
-<div class="line"><a name="l01550"></a><span class="lineno"> 1550</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
-<div class="line"><a name="l01551"></a><span class="lineno"> 1551</span>&#160; </div>
-<div class="line"><a name="l01552"></a><span class="lineno"> 1552</span>&#160; </div>
-<div class="line"><a name="l01553"></a><span class="lineno"> 1553</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;</a>;</div>
-<div class="line"><a name="l01554"></a><span class="lineno"> 1554</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;</a>;</div>
+<div class="line"><a name="l01498"></a><span class="lineno"> 1498</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_chemical_potential[0])</div>
+<div class="line"><a name="l01499"></a><span class="lineno"> 1499</span>&#160;    {</div>
+<div class="line"><a name="l01500"></a><span class="lineno"> 1500</span>&#160;      <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
+<div class="line"><a name="l01501"></a><span class="lineno"> 1501</span>&#160;      local_sum += dof_newton_update * dof_newton_update;</div>
+<div class="line"><a name="l01502"></a><span class="lineno"> 1502</span>&#160;      local_max = std::max(local_max, std::abs(dof_newton_update));</div>
+<div class="line"><a name="l01503"></a><span class="lineno"> 1503</span>&#160;    }</div>
+<div class="line"><a name="l01504"></a><span class="lineno"> 1504</span>&#160; </div>
+<div class="line"><a name="l01505"></a><span class="lineno"> 1505</span>&#160;  <span class="keywordtype">double</span> global_chemical_potential_l2_norm =</div>
+<div class="line"><a name="l01506"></a><span class="lineno"> 1506</span>&#160;    std::sqrt(Utilities::MPI::sum(local_sum, mpi_communicator));</div>
+<div class="line"><a name="l01507"></a><span class="lineno"> 1507</span>&#160;  <span class="keywordtype">double</span> global_chemical_potential_linfty_norm =</div>
+<div class="line"><a name="l01508"></a><span class="lineno"> 1508</span>&#160;    Utilities::MPI::max(local_max, mpi_communicator);</div>
+<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160; </div>
+<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160;  this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a name="l01511"></a><span class="lineno"> 1511</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\n\t||dphi||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
+<div class="line"><a name="l01512"></a><span class="lineno"> 1512</span>&#160;              &lt;&lt; global_phase_order_l2_norm &lt;&lt; std::setw(6)</div>
+<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||dphi||_Linfty = &quot;</span> &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a name="l01514"></a><span class="lineno"> 1514</span>&#160;              &lt;&lt; global_phase_order_linfty_norm &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01515"></a><span class="lineno"> 1515</span>&#160;  this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a name="l01516"></a><span class="lineno"> 1516</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||deta||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
+<div class="line"><a name="l01517"></a><span class="lineno"> 1517</span>&#160;              &lt;&lt; global_chemical_potential_l2_norm &lt;&lt; std::setw(6)</div>
+<div class="line"><a name="l01518"></a><span class="lineno"> 1518</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\t||deta||_Linfty = &quot;</span> &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a name="l01519"></a><span class="lineno"> 1519</span>&#160;              &lt;&lt; global_chemical_potential_linfty_norm &lt;&lt; std::endl;</div>
+<div class="line"><a name="l01520"></a><span class="lineno"> 1520</span>&#160;}</div>
+<div class="line"><a name="l01521"></a><span class="lineno"> 1521</span>&#160; </div>
+<div class="line"><a name="l01522"></a><span class="lineno"> 1522</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 2&gt;, Tensor&lt;1, 2&gt;&gt;</div>
+<div class="line"><a name="l01523"></a><span class="lineno"> 1523</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;::calculate_barycenter&lt;GlobalVectorType&gt;</a>(</div>
+<div class="line"><a name="l01524"></a><span class="lineno"> 1524</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
+<div class="line"><a name="l01525"></a><span class="lineno"> 1525</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
+<div class="line"><a name="l01526"></a><span class="lineno"> 1526</span>&#160; </div>
+<div class="line"><a name="l01527"></a><span class="lineno"> 1527</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
+<div class="line"><a name="l01528"></a><span class="lineno"> 1528</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;::calculate_barycenter&lt;GlobalVectorType&gt;</a>(</div>
+<div class="line"><a name="l01529"></a><span class="lineno"> 1529</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution,</div>
+<div class="line"><a name="l01530"></a><span class="lineno"> 1530</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
+<div class="line"><a name="l01531"></a><span class="lineno"> 1531</span>&#160; </div>
+<div class="line"><a name="l01532"></a><span class="lineno"> 1532</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 2&gt;, Tensor&lt;1, 2&gt;&gt;</div>
+<div class="line"><a name="l01533"></a><span class="lineno"> 1533</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;::calculate_barycenter&lt;GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a name="l01534"></a><span class="lineno"> 1534</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>      &amp;solution,</div>
+<div class="line"><a name="l01535"></a><span class="lineno"> 1535</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
+<div class="line"><a name="l01536"></a><span class="lineno"> 1536</span>&#160; </div>
+<div class="line"><a name="l01537"></a><span class="lineno"> 1537</span>&#160; </div>
+<div class="line"><a name="l01538"></a><span class="lineno"> 1538</span>&#160;<span class="keyword">template</span> std::pair&lt;Tensor&lt;1, 3&gt;, Tensor&lt;1, 3&gt;&gt;</div>
+<div class="line"><a name="l01539"></a><span class="lineno"> 1539</span>&#160;<a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;::calculate_barycenter&lt;GlobalBlockVectorType&gt;</a>(</div>
+<div class="line"><a name="l01540"></a><span class="lineno"> 1540</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>      &amp;solution,</div>
+<div class="line"><a name="l01541"></a><span class="lineno"> 1541</span>&#160;  <span class="keyword">const</span> <a class="code" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
+<div class="line"><a name="l01542"></a><span class="lineno"> 1542</span>&#160; </div>
+<div class="line"><a name="l01543"></a><span class="lineno"> 1543</span>&#160; </div>
+<div class="line"><a name="l01544"></a><span class="lineno"> 1544</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliard.html">CahnHilliard&lt;2&gt;</a>;</div>
+<div class="line"><a name="l01545"></a><span class="lineno"> 1545</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliard.html">CahnHilliard&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="acahn__hilliard_8h_html"><div class="ttname"><a href="cahn__hilliard_8h.html">cahn_hilliard.h</a></div></div>
 <div class="ttc" id="acahn__hilliard__assemblers_8h_html"><div class="ttname"><a href="cahn__hilliard__assemblers_8h.html">cahn_hilliard_assemblers.h</a></div></div>
@@ -1642,25 +1633,25 @@ $(function() {
 <div class="ttc" id="aclassCahnHilliardAssemblerCore_html"><div class="ttname"><a href="classCahnHilliardAssemblerCore.html">CahnHilliardAssemblerCore</a></div><div class="ttdoc">Class that assembles the core of the Cahn-Hilliard equation : .</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00038">cahn_hilliard_assemblers.h:39</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle</a></div><div class="ttdoc">Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00139">cahn_hilliard_assemblers.h:140</a></div></div>
 <div class="ttc" id="aclassCahnHilliardFilterBase_html_a3768b77608aa7e5f45fe38efdc5827f4"><div class="ttname"><a href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; CahnHilliardFilterBase &gt; model_cast(const Parameters::CahnHilliard &amp;cahn_hilliard_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a CahnHilliardFilterBase object by casting it to the proper child...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__filter_8cc_source.html#l00007">cahn_hilliard_filter.cc:7</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFunctionDefined_html"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a></div><div class="ttdoc">Class that implements a boundary conditions for the Cahn-Hilliard equation where the phase and chemic...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01267">boundary_conditions.h:1268</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFunctionDefined_html"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a></div><div class="ttdoc">Class that implements a boundary conditions for the Cahn-Hilliard equation where the phase and chemic...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01365">boundary_conditions.h:1366</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html"><div class="ttname"><a href="classCahnHilliardScratchData.html">CahnHilliardScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for the Cahn-Hilliard equations....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00052">cahn_hilliard_scratch_data.h:53</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_ac916ff90a35a98aaf860fea8a8679100"><div class="ttname"><a href="classCahnHilliardScratchData.html#ac916ff90a35a98aaf860fea8a8679100">CahnHilliardScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties that may be required by the Cahn-Hilliard problem....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8cc_source.html#l00087">cahn_hilliard_scratch_data.cc:87</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_ac92fa3d3c4689333ec4d840a444e67cc"><div class="ttname"><a href="classCahnHilliardScratchData.html#ac92fa3d3c4689333ec4d840a444e67cc">CahnHilliardScratchData::reinit_velocity</a></div><div class="ttdeci">void reinit_velocity(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const Parameters::ALE&lt; dim &gt; &amp;ale)</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00301">cahn_hilliard_scratch_data.h:301</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_aee2615c17b9b368cce9a152a16e31dee"><div class="ttname"><a href="classCahnHilliardScratchData.html#aee2615c17b9b368cce9a152a16e31dee">CahnHilliardScratchData::reinit</a></div><div class="ttdeci">void reinit(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, Function&lt; dim &gt; *source_function)</div><div class="ttdoc">Reinitializes the content of the scratch.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00160">cahn_hilliard_scratch_data.h:160</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html"><div class="ttname"><a href="classCahnHilliard.html">CahnHilliard</a></div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8h_source.html#l00047">cahn_hilliard.h:48</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_a0021477a9c06b0c4d1819a5bb7c8b467"><div class="ttname"><a href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467">CahnHilliard::apply_phase_filter</a></div><div class="ttdeci">void apply_phase_filter()</div><div class="ttdoc">Applies filter on phase fraction values.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01393">cahn_hilliard.cc:1393</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html"><div class="ttname"><a href="classCahnHilliard.html">CahnHilliard</a></div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8h_source.html#l00054">cahn_hilliard.h:55</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_a0021477a9c06b0c4d1819a5bb7c8b467"><div class="ttname"><a href="classCahnHilliard.html#a0021477a9c06b0c4d1819a5bb7c8b467">CahnHilliard::apply_phase_filter</a></div><div class="ttdeci">void apply_phase_filter()</div><div class="ttdoc">Applies filter on phase fraction values.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01384">cahn_hilliard.cc:1384</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a06f41b5561e4017c381bbb27217f0b2f"><div class="ttname"><a href="classCahnHilliard.html#a06f41b5561e4017c381bbb27217f0b2f">CahnHilliard::setup_assemblers</a></div><div class="ttdeci">virtual void setup_assemblers()</div><div class="ttdoc">sets up the vector of assembler functions</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00034">cahn_hilliard.cc:34</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a2cb71332d1e345a18e5be0472de4b31e"><div class="ttname"><a href="classCahnHilliard.html#a2cb71332d1e345a18e5be0472de4b31e">CahnHilliard::finish_simulation</a></div><div class="ttdeci">void finish_simulation() override</div><div class="ttdoc">Carry out the operations required to finish a simulation correctly.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00599">cahn_hilliard.cc:599</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a35c8ceb847c857e5105e4e6de7b37d7e"><div class="ttname"><a href="classCahnHilliard.html#a35c8ceb847c857e5105e4e6de7b37d7e">CahnHilliard::copy_local_matrix_to_global_matrix</a></div><div class="ttdeci">virtual void copy_local_matrix_to_global_matrix(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell information to global matrix.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00173">cahn_hilliard.cc:173</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a5e73668b024d2697820f386fdbebccd6"><div class="ttname"><a href="classCahnHilliard.html#a5e73668b024d2697820f386fdbebccd6">CahnHilliard::setup_dofs</a></div><div class="ttdeci">void setup_dofs() override</div><div class="ttdoc">Sets-up the DofHandler and the degree of freedom associated with the physics.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01012">cahn_hilliard.cc:1012</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a6500525903349398640b028bba2d6437"><div class="ttname"><a href="classCahnHilliard.html#a6500525903349398640b028bba2d6437">CahnHilliard::assemble_system_matrix</a></div><div class="ttdeci">void assemble_system_matrix() override</div><div class="ttdoc">Assembles the matrix associated with the solver.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00090">cahn_hilliard.cc:90</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a66eb728bcf77d15809adb397558f0681"><div class="ttname"><a href="classCahnHilliard.html#a66eb728bcf77d15809adb397558f0681">CahnHilliard::modify_solution</a></div><div class="ttdeci">void modify_solution() override</div><div class="ttdoc">Carry out modifications on the auxiliary physic solution.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00640">cahn_hilliard.cc:640</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_a6c3a985a76bf5b8443e6e7210a0f2b59"><div class="ttname"><a href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59">CahnHilliard::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system(const bool initial_step, const bool renewed_matrix=true) override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01220">cahn_hilliard.cc:1220</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_a6c3a985a76bf5b8443e6e7210a0f2b59"><div class="ttname"><a href="classCahnHilliard.html#a6c3a985a76bf5b8443e6e7210a0f2b59">CahnHilliard::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system(const bool initial_step, const bool renewed_matrix=true) override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01211">cahn_hilliard.cc:1211</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a7256cf0d8415b8a20750fa7895940d1c"><div class="ttname"><a href="classCahnHilliard.html#a7256cf0d8415b8a20750fa7895940d1c">CahnHilliard::compute_kelly</a></div><div class="ttdeci">void compute_kelly(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the Kelly error estimator for mesh refinement. NB : not implemented for the cahn_hilliard equ...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00898">cahn_hilliard.cc:898</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a77e1079efb4a15271a5bd238b1fe4a0f"><div class="ttname"><a href="classCahnHilliard.html#a77e1079efb4a15271a5bd238b1fe4a0f">CahnHilliard::write_phase_statistics</a></div><div class="ttdeci">void write_phase_statistics()</div><div class="ttdoc">Writes the phase statistics to an output file.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00478">cahn_hilliard.cc:478</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_a7d44b1d4589ce3abe9d207fe5be9076d"><div class="ttname"><a href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d">CahnHilliard::output_newton_update_norms</a></div><div class="ttdeci">void output_newton_update_norms(const unsigned int display_precision) override</div><div class="ttdoc">Output the L2 and Linfty norms of the correction vector.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01469">cahn_hilliard.cc:1469</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_a7d44b1d4589ce3abe9d207fe5be9076d"><div class="ttname"><a href="classCahnHilliard.html#a7d44b1d4589ce3abe9d207fe5be9076d">CahnHilliard::output_newton_update_norms</a></div><div class="ttdeci">void output_newton_update_norms(const unsigned int display_precision) override</div><div class="ttdoc">Output the L2 and Linfty norms of the correction vector.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01460">cahn_hilliard.cc:1460</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_a86873b1c21635dcb96321cdec91e3251"><div class="ttname"><a href="classCahnHilliard.html#a86873b1c21635dcb96321cdec91e3251">CahnHilliard::copy_local_rhs_to_global_rhs</a></div><div class="ttdeci">virtual void copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell rhs information to global rhs.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00270">cahn_hilliard.cc:270</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_a9a979d647bfa251a583f550eef5b7f1e"><div class="ttname"><a href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e">CahnHilliard::calculate_barycenter</a></div><div class="ttdeci">std::pair&lt; Tensor&lt; 1, dim &gt;, Tensor&lt; 1, dim &gt; &gt; calculate_barycenter(const GlobalVectorType &amp;solution, const VectorType &amp;current_solution_fd)</div><div class="ttdoc">Calculates the barycenter of fluid 1 and its velocity.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01302">cahn_hilliard.cc:1302</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_a9a979d647bfa251a583f550eef5b7f1e"><div class="ttname"><a href="classCahnHilliard.html#a9a979d647bfa251a583f550eef5b7f1e">CahnHilliard::calculate_barycenter</a></div><div class="ttdeci">std::pair&lt; Tensor&lt; 1, dim &gt;, Tensor&lt; 1, dim &gt; &gt; calculate_barycenter(const GlobalVectorType &amp;solution, const VectorType &amp;current_solution_fd)</div><div class="ttdoc">Calculates the barycenter of fluid 1 and its velocity.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01293">cahn_hilliard.cc:1293</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_aa67bd4ae2b4f0a07d92224ef73b01e4e"><div class="ttname"><a href="classCahnHilliard.html#aa67bd4ae2b4f0a07d92224ef73b01e4e">CahnHilliard::post_mesh_adaptation</a></div><div class="ttdeci">void post_mesh_adaptation() override</div><div class="ttdoc">post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00869">cahn_hilliard.cc:869</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_aa96108c743c84c51fb532dc02c45fb92"><div class="ttname"><a href="classCahnHilliard.html#aa96108c743c84c51fb532dc02c45fb92">CahnHilliard::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">Allows Cahn-Hilliard physics to set-up solution vector from checkpoint file;.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00966">cahn_hilliard.cc:966</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_aadf3482b407082b319fbfeb31bbc99ad"><div class="ttname"><a href="classCahnHilliard.html#aadf3482b407082b319fbfeb31bbc99ad">CahnHilliard::write_checkpoint</a></div><div class="ttdeci">void write_checkpoint() override</div><div class="ttdoc">Prepares Cahn-Hilliard to write checkpoint.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00933">cahn_hilliard.cc:933</a></div></div>
@@ -1669,13 +1660,13 @@ $(function() {
 <div class="ttc" id="aclassCahnHilliard_html_ac739e11f42f0041c17b33ee9e4b177ba"><div class="ttname"><a href="classCahnHilliard.html#ac739e11f42f0041c17b33ee9e4b177ba">CahnHilliard::assemble_local_system_rhs</a></div><div class="ttdeci">virtual void assemble_local_system_rhs(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local rhs for a given cell.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00219">cahn_hilliard.cc:219</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_acae32e8fc7fca8cd911338d65154bf22"><div class="ttname"><a href="classCahnHilliard.html#acae32e8fc7fca8cd911338d65154bf22">CahnHilliard::percolate_time_vectors</a></div><div class="ttdeci">void percolate_time_vectors() override</div><div class="ttdoc">Rearrange vector solution correctly for transient simulations.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00629">cahn_hilliard.cc:629</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_acc03545536c89564bcff8815401cb469"><div class="ttname"><a href="classCahnHilliard.html#acc03545536c89564bcff8815401cb469">CahnHilliard::calculate_phase_statistics</a></div><div class="ttdeci">void calculate_phase_statistics()</div><div class="ttdoc">Calculate phase statistics for monitoring purposes.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00389">cahn_hilliard.cc:389</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_ade1e46e3e24c91cf566a00a799c75e36"><div class="ttname"><a href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01191">cahn_hilliard.cc:1191</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_ade1e46e3e24c91cf566a00a799c75e36"><div class="ttname"><a href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Sets-up the initial conditions associated with the physics. Generally, physics only support imposing ...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01182">cahn_hilliard.cc:1182</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_ae7097ba585595d2f1d00ea69498e7603"><div class="ttname"><a href="classCahnHilliard.html#ae7097ba585595d2f1d00ea69498e7603">CahnHilliard::postprocess</a></div><div class="ttdeci">void postprocess(bool first_iteration) override</div><div class="ttdoc">Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all d...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00648">cahn_hilliard.cc:648</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_aebfae6c29cd95f9b3af7f97fd2f1e1f0"><div class="ttname"><a href="classCahnHilliard.html#aebfae6c29cd95f9b3af7f97fd2f1e1f0">CahnHilliard::calculate_phase_energy</a></div><div class="ttdeci">void calculate_phase_energy()</div><div class="ttdoc">Calculate the phase energies : bulk energy, interface energy and total energy.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00495">cahn_hilliard.cc:495</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af4a9d35de8e0fbbb2386fbbbd986b0c6"><div class="ttname"><a href="classCahnHilliard.html#af4a9d35de8e0fbbb2386fbbbd986b0c6">CahnHilliard::assemble_local_system_matrix</a></div><div class="ttdeci">virtual void assemble_local_system_matrix(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local matrix for a given cell.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00122">cahn_hilliard.cc:122</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af4cb5f47a1918a7b3aa4827ac0087127"><div class="ttname"><a href="classCahnHilliard.html#af4cb5f47a1918a7b3aa4827ac0087127">CahnHilliard::calculate_L2_error</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_L2_error()</div><div class="ttdoc">Calculates the L2 error of the solution.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00315">cahn_hilliard.cc:315</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_af56ea0db69002200c35099b710677727"><div class="ttname"><a href="classCahnHilliard.html#af56ea0db69002200c35099b710677727">CahnHilliard::attach_solution_to_output</a></div><div class="ttdeci">void attach_solution_to_output(DataOut&lt; dim &gt; &amp;data_out) override</div><div class="ttdoc">Attach the solution vector to the DataOut provided. This function enable the auxiliary physics to out...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00284">cahn_hilliard.cc:284</a></div></div>
-<div class="ttc" id="aclassCahnHilliard_html_af92cd0dbe8d21a2b38062e4fa49e39b1"><div class="ttname"><a href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01141">cahn_hilliard.cc:1141</a></div></div>
+<div class="ttc" id="aclassCahnHilliard_html_af92cd0dbe8d21a2b38062e4fa49e39b1"><div class="ttname"><a href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l01135">cahn_hilliard.cc:1135</a></div></div>
 <div class="ttc" id="aclassCahnHilliard_html_afa1b7715047c80410dcca6a64b040e74"><div class="ttname"><a href="classCahnHilliard.html#afa1b7715047c80410dcca6a64b040e74">CahnHilliard::pre_mesh_adaptation</a></div><div class="ttdeci">void pre_mesh_adaptation() override</div><div class="ttdoc">pre_mesh_adaption Prepares the auxiliary physics variables for a mesh refinement/coarsening</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard_8cc_source.html#l00856">cahn_hilliard.cc:856</a></div></div>
 <div class="ttc" id="aclassStabilizedMethodsCopyData_html"><div class="ttname"><a href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a></div><div class="ttdoc">Class responsible for storing the information calculated using the assembly of stabilized scalar equa...</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00067">copy_data.h:68</a></div></div>
 <div class="ttc" id="aclassStabilizedMethodsCopyData_html_a27d0fd925602c6b173e9acc396a21370"><div class="ttname"><a href="classStabilizedMethodsCopyData.html#a27d0fd925602c6b173e9acc396a21370">StabilizedMethodsCopyData::cell_is_local</a></div><div class="ttdeci">bool cell_is_local</div><div class="ttdef"><b>Definition:</b> <a href="copy__data_8h_source.html#l00114">copy_data.h:114</a></div></div>
@@ -1688,14 +1679,15 @@ $(function() {
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">fluid_dynamics</a></div><div class="ttdeci">@ fluid_dynamics</div><div class="ttdef"><b>Definition:</b> <a href="multiphysics_8h_source.html#l00009">multiphysics.h:9</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a></div><div class="ttdeci">@ cahn_hilliard</div><div class="ttdef"><b>Definition:</b> <a href="multiphysics_8h_source.html#l00014">multiphysics.h:13</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></div><div class="ttdeci">BoundaryType</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00023">boundary_conditions.h:24</a></div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></div><div class="ttdeci">BoundaryType</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00052">boundary_conditions.h:53</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::BoundaryType::cahn_hilliard_dirichlet_phase_order</a></div><div class="ttdeci">@ cahn_hilliard_dirichlet_phase_order</div></div>
+<div class="ttc" id="anamespaceDEM_html_ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099"><div class="ttname"><a href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">DEM::type</a></div><div class="ttdeci">@ type</div><div class="ttdef"><b>Definition:</b> <a href="dem__properties_8h_source.html#l00022">dem_properties.h:22</a></div></div>
 <div class="ttc" id="anamespaceParameters_html_a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427"><div class="ttname"><a href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::InitialConditionType::average_velocity_profile</a></div><div class="ttdeci">@ average_velocity_profile</div></div>
 <div class="ttc" id="anamespaceParameters_html_a8bb9c2c55665dc6e89b6bdc455f0a0c0a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#a8bb9c2c55665dc6e89b6bdc455f0a0c0a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::EpsilonVerbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></div><div class="ttdeci">@ quiet</div></div>
 <div class="ttc" id="anamespaceParameters_html_ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5"><div class="ttname"><a href="namespaceParameters.html#ae03f477a858859a4711ef40159b5912aa3c78b35502b2693fefdfc51cba3a53a5">Parameters::EpsilonSetMethod::manual</a></div><div class="ttdeci">@ manual</div></div>
-<div class="ttc" id="apostprocessing__cfd_8h_html_a02e5072b6f6abdda7c5ef07e0b866f19"><div class="ttname"><a href="postprocessing__cfd_8h.html#a02e5072b6f6abdda7c5ef07e0b866f19">calculate_L2_error</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_L2_error(const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Function&lt; dim &gt; *exact_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">Calculates the L2 norm of the error on velocity and pressure.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessing__cfd_8cc_source.html#l01233">postprocessing_cfd.cc:1233</a></div></div>
+<div class="ttc" id="apostprocessing__cfd_8h_html_a02e5072b6f6abdda7c5ef07e0b866f19"><div class="ttname"><a href="postprocessing__cfd_8h.html#a02e5072b6f6abdda7c5ef07e0b866f19">calculate_L2_error</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_L2_error(const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Function&lt; dim &gt; *exact_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">Calculates the L2 norm of the error on velocity and pressure.</div><div class="ttdef"><b>Definition:</b> <a href="postprocessing__cfd_8cc_source.html#l01222">postprocessing_cfd.cc:1222</a></div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::TimeSteppingMethod::steady</a></div><div class="ttdeci">@ steady</div></div>
 <div class="ttc" id="astructParameters_1_1Timer_html_ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99"><div class="ttname"><a href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a></div><div class="ttdeci">@ iteration</div></div>
 <div class="ttc" id="atime__integration__utilities_8h_html"><div class="ttname"><a href="time__integration__utilities_8h.html">time_integration_utilities.h</a></div></div>

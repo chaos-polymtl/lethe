@@ -106,61 +106,62 @@ $(function() {
 <code>#include &lt;deal.II/lac/trilinos_sparse_matrix.h&gt;</code><br />
 <code>#include &lt;deal.II/lac/trilinos_vector.h&gt;</code><br />
 <code>#include &lt;deal.II/numerics/error_estimator.h&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for vof.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="vof_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2vof_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2vof_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2vof_8h">
-<area shape="rect" title=" " alt="" coords="2201,5,2398,47"/>
-<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="241,609,328,635"/>
-<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="215,527,402,553"/>
-<area shape="rect" href="vector_8h.html" title=" " alt="" coords="1481,609,1587,635"/>
-<area shape="rect" title=" " alt="" coords="1916,691,2051,732"/>
-<area shape="rect" href="auxiliary__physics_8h.html" title=" " alt="" coords="603,527,801,553"/>
-<area shape="rect" href="multiphysics__interface_8h.html" title=" " alt="" coords="977,437,1133,479"/>
-<area shape="rect" title=" " alt="" coords="2180,601,2352,643"/>
-<area shape="rect" title=" " alt="" coords="2019,601,2155,643"/>
-<area shape="rect" title=" " alt="" coords="2377,609,2499,635"/>
-<area shape="rect" title=" " alt="" coords="2575,609,2757,635"/>
-<area shape="rect" title=" " alt="" coords="2781,609,2953,635"/>
-<area shape="rect" href="vof__assemblers_8h.html" title=" " alt="" coords="1319,273,1507,300"/>
-<area shape="rect" href="vof__scratch__data_8h.html" title=" " alt="" coords="1684,348,1832,389"/>
-<area shape="rect" href="vof__filter_8h.html" title=" " alt="" coords="989,273,1132,300"/>
-<area shape="rect" href="vof__linear__subequations__solver_8h.html" title=" " alt="" coords="2399,95,2573,136"/>
-<area shape="rect" href="vof__subequations__interface_8h.html" title=" " alt="" coords="1633,184,1821,225"/>
-<area shape="rect" title=" " alt="" coords="2675,191,2822,218"/>
-<area shape="rect" title=" " alt="" coords="2847,191,3013,218"/>
-<area shape="rect" title=" " alt="" coords="3037,184,3172,225"/>
-<area shape="rect" title=" " alt="" coords="3196,184,3331,225"/>
-<area shape="rect" title=" " alt="" coords="3507,95,3691,136"/>
-<area shape="rect" title=" " alt="" coords="3716,95,3851,136"/>
-<area shape="rect" title=" " alt="" coords="3875,95,4022,136"/>
-<area shape="rect" title=" " alt="" coords="4047,95,4208,136"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="673,780,814,807"/>
-<area shape="rect" title=" " alt="" coords="294,698,435,725"/>
-<area shape="rect" title=" " alt="" coords="460,698,523,725"/>
-<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="1130,855,1279,881"/>
-<area shape="rect" title=" " alt="" coords="1249,691,1406,732"/>
-<area shape="rect" title=" " alt="" coords="1430,691,1587,732"/>
-<area shape="rect" title=" " alt="" coords="1046,691,1225,732"/>
-<area shape="rect" href="physics__solver_8h.html" title=" " alt="" coords="5,698,167,725"/>
-<area shape="rect" href="simulation__parameters_8h.html" title=" " alt="" coords="716,601,859,643"/>
-<area shape="rect" title=" " alt="" coords="454,609,641,635"/>
-<area shape="rect" title=" " alt="" coords="935,601,1093,643"/>
-<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="781,698,1012,725"/>
-<area shape="rect" href="exceptions_8h.html" title=" " alt="" coords="1268,527,1405,553"/>
-<area shape="rect" title=" " alt="" coords="1201,609,1385,635"/>
-<area shape="rect" href="solid__base_8h.html" title=" " alt="" coords="1916,527,2051,553"/>
-<area shape="rect" title=" " alt="" coords="1091,527,1142,553"/>
-<area shape="rect" title=" " alt="" coords="1166,527,1243,553"/>
-<area shape="rect" href="copy__data_8h.html" title=" " alt="" coords="426,527,578,553"/>
-<area shape="rect" href="physics__assemblers_8h.html" title=" " alt="" coords="1051,355,1267,382"/>
-<area shape="rect" href="time__integration__utilities_8h.html" title=" " alt="" coords="1811,437,1974,479"/>
-<area shape="rect" href="physics__scratch__data_8h.html" title=" " alt="" coords="1158,437,1334,479"/>
-<area shape="rect" title=" " alt="" coords="1358,445,1542,471"/>
-<area shape="rect" title=" " alt="" coords="1566,445,1787,471"/>
-<area shape="rect" href="physics__subequations__solver_8h.html" title=" " alt="" coords="1291,348,1507,389"/>
-<area shape="rect" title=" " alt="" coords="2251,191,2449,218"/>
+<area shape="rect" title=" " alt="" coords="1890,5,2087,47"/>
+<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="75,609,161,635"/>
+<area shape="rect" href="simulation__control_8h.html" title=" " alt="" coords="250,527,437,553"/>
+<area shape="rect" href="vector_8h.html" title=" " alt="" coords="1174,609,1281,635"/>
+<area shape="rect" title=" " alt="" coords="1557,691,1692,732"/>
+<area shape="rect" href="auxiliary__physics_8h.html" title=" " alt="" coords="615,527,813,553"/>
+<area shape="rect" href="multiphysics__interface_8h.html" title=" " alt="" coords="1693,437,1849,479"/>
+<area shape="rect" title=" " alt="" coords="2321,601,2493,643"/>
+<area shape="rect" title=" " alt="" coords="1761,601,1897,643"/>
+<area shape="rect" title=" " alt="" coords="2123,609,2246,635"/>
+<area shape="rect" title=" " alt="" coords="2517,609,2700,635"/>
+<area shape="rect" title=" " alt="" coords="2724,609,2896,635"/>
+<area shape="rect" title=" " alt="" coords="1745,527,1795,553"/>
+<area shape="rect" href="vof__assemblers_8h.html" title=" " alt="" coords="1327,273,1515,300"/>
+<area shape="rect" href="vof__scratch__data_8h.html" title=" " alt="" coords="1581,348,1729,389"/>
+<area shape="rect" href="vof__filter_8h.html" title=" " alt="" coords="381,273,524,300"/>
+<area shape="rect" href="vof__linear__subequations__solver_8h.html" title=" " alt="" coords="2155,95,2329,136"/>
+<area shape="rect" href="vof__subequations__interface_8h.html" title=" " alt="" coords="1611,184,1799,225"/>
+<area shape="rect" title=" " alt="" coords="2602,191,2749,218"/>
+<area shape="rect" title=" " alt="" coords="2773,191,2940,218"/>
+<area shape="rect" title=" " alt="" coords="2964,184,3099,225"/>
+<area shape="rect" title=" " alt="" coords="3123,184,3257,225"/>
+<area shape="rect" title=" " alt="" coords="3434,95,3618,136"/>
+<area shape="rect" title=" " alt="" coords="3643,95,3777,136"/>
+<area shape="rect" title=" " alt="" coords="3802,95,3949,136"/>
+<area shape="rect" title=" " alt="" coords="3973,95,4135,136"/>
+<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="577,780,718,807"/>
+<area shape="rect" title=" " alt="" coords="143,698,285,725"/>
+<area shape="rect" title=" " alt="" coords="5,698,68,725"/>
+<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="1291,855,1441,881"/>
+<area shape="rect" title=" " alt="" coords="991,691,1149,732"/>
+<area shape="rect" title=" " alt="" coords="1173,691,1330,732"/>
+<area shape="rect" title=" " alt="" coords="1354,691,1533,732"/>
+<area shape="rect" href="physics__solver_8h.html" title=" " alt="" coords="360,698,521,725"/>
+<area shape="rect" href="simulation__parameters_8h.html" title=" " alt="" coords="773,601,916,643"/>
+<area shape="rect" title=" " alt="" coords="511,609,698,635"/>
+<area shape="rect" title=" " alt="" coords="940,601,1099,643"/>
+<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="736,698,967,725"/>
+<area shape="rect" href="exceptions_8h.html" title=" " alt="" coords="1481,527,1619,553"/>
+<area shape="rect" title=" " alt="" coords="1517,609,1701,635"/>
+<area shape="rect" href="solid__base_8h.html" title=" " alt="" coords="1972,527,2107,553"/>
+<area shape="rect" title=" " alt="" coords="1329,527,1406,553"/>
+<area shape="rect" href="copy__data_8h.html" title=" " alt="" coords="74,527,226,553"/>
+<area shape="rect" href="physics__assemblers_8h.html" title=" " alt="" coords="1101,355,1317,382"/>
+<area shape="rect" href="time__integration__utilities_8h.html" title=" " alt="" coords="650,437,813,479"/>
+<area shape="rect" href="physics__scratch__data_8h.html" title=" " alt="" coords="1039,437,1215,479"/>
+<area shape="rect" title=" " alt="" coords="1239,445,1423,471"/>
+<area shape="rect" title=" " alt="" coords="1447,445,1669,471"/>
+<area shape="rect" href="physics__subequations__solver_8h.html" title=" " alt="" coords="1341,348,1557,389"/>
+<area shape="rect" title=" " alt="" coords="2279,191,2477,218"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -185,10 +186,12 @@ Classes</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aeedddc4879d6bfb3082279b9caf7aedb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vof_8h.html#aeedddc4879d6bfb3082279b9caf7aedb">DeclException1</a> (InvalidNumberOfFluid, int,&lt;&lt; &quot;The <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> physics is enabled, but the number of fluids is set to &quot;&lt;&lt; arg1&lt;&lt; &quot;. The <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> solver only supports 2 fluids.&quot;)</td></tr>
 <tr class="separator:aeedddc4879d6bfb3082279b9caf7aedb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a128e4db66a4de333d859d1b0373e5698"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vof_8h.html#a128e4db66a4de333d859d1b0373e5698">DeclException1</a> (VOFBoundaryConditionMissing, types::boundary_id,&lt;&lt; &quot;The boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; is defined in the triangulation, but not as a boundary condition for the <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.&quot;)</td></tr>
+<tr class="separator:a128e4db66a4de333d859d1b0373e5698"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aeedddc4879d6bfb3082279b9caf7aedb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeedddc4879d6bfb3082279b9caf7aedb">&#9670;&nbsp;</a></span>DeclException1()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeedddc4879d6bfb3082279b9caf7aedb">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -215,6 +218,46 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">but the number of fluids is set to &quot;&lt;&lt; arg1&lt;&lt; &quot;. The <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> solver only supports 2 fluids.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a128e4db66a4de333d859d1b0373e5698"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a128e4db66a4de333d859d1b0373e5698">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">VOFBoundaryConditionMissing&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;The boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; is defined in the&#160;</td>
+          <td class="paramname"><em>triangulation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">but not as a boundary condition for the <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

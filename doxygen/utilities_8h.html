@@ -231,6 +231,12 @@ Functions</h2></td></tr>
 <tr class="separator:a3d02cb065c32b672c94bb862ecff4431"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb087a954bd6464fa862ca5974bebeaf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a> (const unsigned int fe_degree, const double cell_extent_here, const double cell_extent_there)</td></tr>
 <tr class="separator:adb087a954bd6464fa862ca5974bebeaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4462fe950d7dfed7f454c71f5adf0b3"><td class="memTemplParams" colspan="2">template&lt;typename key , typename val &gt; </td></tr>
+<tr class="memitem:ac4462fe950d7dfed7f454c71f5adf0b3"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; key &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#ac4462fe950d7dfed7f454c71f5adf0b3">extract_keys_from_map</a> (const std::map&lt; key, val &gt; &amp;map)</td></tr>
+<tr class="separator:ac4462fe950d7dfed7f454c71f5adf0b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a27ada6d16e99f7b03ffd311c8d6474"><td class="memTemplParams" colspan="2">template&lt;typename key , typename val &gt; </td></tr>
+<tr class="memitem:a3a27ada6d16e99f7b03ffd311c8d6474"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; val &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a3a27ada6d16e99f7b03ffd311c8d6474">extract_values_from_map</a> (const std::map&lt; key, val &gt; &amp;map)</td></tr>
+<tr class="separator:a3a27ada6d16e99f7b03ffd311c8d6474"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a28e3647b49b871d119c8e19d390d6d66"></a>
@@ -679,6 +685,82 @@ template&lt;int dim&gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00438">438</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="ac4462fe950d7dfed7f454c71f5adf0b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4462fe950d7dfed7f454c71f5adf0b3">&#9670;&nbsp;</a></span>extract_keys_from_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename key , typename val &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;key&gt; extract_keys_from_map </td>
+          <td>(</td>
+          <td class="paramtype">const std::map&lt; key, val &gt; &amp;&#160;</td>
+          <td class="paramname"><em>map</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extract the keys from map object. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">key</td><td>Key of the map </td></tr>
+    <tr><td class="paramname">val</td><td>Value of the map. This template parameter is not used. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">map</td><td>Map object from which the keys are extracted </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00662">662</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+
+</div>
+</div>
+<a id="a3a27ada6d16e99f7b03ffd311c8d6474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a27ada6d16e99f7b03ffd311c8d6474">&#9670;&nbsp;</a></span>extract_values_from_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename key , typename val &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;val&gt; extract_values_from_map </td>
+          <td>(</td>
+          <td class="paramtype">const std::map&lt; key, val &gt; &amp;&#160;</td>
+          <td class="paramname"><em>map</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extract the values from map object. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">key</td><td>Key of the map. This template parameter is not used. </td></tr>
+    <tr><td class="paramname">val</td><td>Value of the map. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">map</td><td>Map object from which the keys are extracted </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00681">681</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

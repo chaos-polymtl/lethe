@@ -88,16 +88,18 @@ $(function() {
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/base/parsed_function.h&gt;</code><br />
 <code>#include &lt;deal.II/base/patterns.h&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for boundary_conditions.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="boundary__conditions_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2boundary__conditions_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2boundary__conditions_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2boundary__conditions_8h">
-<area shape="rect" title=" " alt="" coords="268,5,475,61"/>
+<area shape="rect" title=" " alt="" coords="359,5,565,61"/>
 <area shape="rect" title=" " alt="" coords="5,117,172,143"/>
 <area shape="rect" title=" " alt="" coords="196,109,365,151"/>
 <area shape="rect" title=" " alt="" coords="389,109,535,151"/>
 <area shape="rect" title=" " alt="" coords="559,117,725,143"/>
+<area shape="rect" title=" " alt="" coords="750,117,801,143"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -168,8 +170,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html">BoundaryConditions::CahnHilliardBoundaryFunctions&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1NSPressureBoundaryFunctions.html">BoundaryConditions::NSPressureBoundaryFunctions&lt; dim &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1HTBoundaryConditions.html">BoundaryConditions::HTBoundaryConditions&lt; dim &gt;</a></td></tr>
@@ -205,17 +205,18 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>
+&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924">BoundaryConditions::periodic_neighbor</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e">BoundaryConditions::noflux</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::temperature</a>
-, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::convection_radiation</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>
+&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::convection_radiation</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::vof_dirichlet</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11">BoundaryConditions::cahn_hilliard_noflux</a>
-, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::cahn_hilliard_dirichlet_phase_order</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::cahn_hilliard_angle_of_contact</a>
+&#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::cahn_hilliard_dirichlet_phase_order</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::cahn_hilliard_angle_of_contact</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::cahn_hilliard_free_angle</a>
 <br />
  }</td></tr>
@@ -225,10 +226,54 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a5fcd305334cb05e8a032b84fcfbf3918"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a5fcd305334cb05e8a032b84fcfbf3918">DeclException1</a> (EmissivityError, double,&lt;&lt; &quot;Emissivity : &quot;&lt;&lt; arg1&lt;&lt; &quot; cannot be larger than 1.0 (black body) or smaller than 0.0&quot;)</td></tr>
 <tr class="separator:a5fcd305334cb05e8a032b84fcfbf3918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0001250ae6b13fc779df7b5d31a1a0cd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a0001250ae6b13fc779df7b5d31a1a0cd">DeclException1</a> (NavierStokesBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;Fluid dynamics boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:a0001250ae6b13fc779df7b5d31a1a0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c1df402b0c124629faf2d693b48d1b1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a4c1df402b0c124629faf2d693b48d1b1">DeclException1</a> (HeatTransferBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;Heat transfer boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:a4c1df402b0c124629faf2d693b48d1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5706bedb33658cec03813b9bd01ec64"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#ab5706bedb33658cec03813b9bd01ec64">DeclException1</a> (TracerBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;Tracer boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:ab5706bedb33658cec03813b9bd01ec64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5499f92f8678097a530c972e003a08bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a5499f92f8678097a530c972e003a08bf">DeclException1</a> (CahnHilliardBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;Cahn Hilliard boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:a5499f92f8678097a530c972e003a08bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e32717a81907600e6240f19bbf9332e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a0e32717a81907600e6240f19bbf9332e">DeclException1</a> (VOFBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;VOF boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:a0e32717a81907600e6240f19bbf9332e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a5499f92f8678097a530c972e003a08bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5499f92f8678097a530c972e003a08bf">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[1/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">CahnHilliardBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;Cahn Hilliard boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a5fcd305334cb05e8a032b84fcfbf3918"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fcd305334cb05e8a032b84fcfbf3918">&#9670;&nbsp;</a></span>DeclException1()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fcd305334cb05e8a032b84fcfbf3918">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -249,6 +294,142 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&lt;&lt; &quot;Emissivity : &quot;&lt;&lt; arg1&lt;&lt; &quot; cannot be larger than 1.0 (black body) or smaller than 0.0&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4c1df402b0c124629faf2d693b48d1b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c1df402b0c124629faf2d693b48d1b1">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">HeatTransferBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;Heat transfer boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0001250ae6b13fc779df7b5d31a1a0cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0001250ae6b13fc779df7b5d31a1a0cd">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">NavierStokesBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;Fluid dynamics boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab5706bedb33658cec03813b9bd01ec64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5706bedb33658cec03813b9bd01ec64">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[5/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">TracerBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;Tracer boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0e32717a81907600e6240f19bbf9332e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e32717a81907600e6240f19bbf9332e">&#9670;&nbsp;</a></span>DeclException1() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">VOFBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;VOF boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

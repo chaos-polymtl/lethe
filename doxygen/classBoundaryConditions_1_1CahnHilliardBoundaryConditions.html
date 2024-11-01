@@ -97,40 +97,38 @@ Inheritance diagram for BoundaryConditions::CahnHilliardBoundaryConditions&lt; d
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad692dee2013d05ecaa37520616079145"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#ad692dee2013d05ecaa37520616079145">declareDefaultEntry</a> (ParameterHandler &amp;prm, const unsigned int i_bc)</td></tr>
-<tr class="separator:ad692dee2013d05ecaa37520616079145"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a96b493ae473dd2f21584bf671c2268"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a9a96b493ae473dd2f21584bf671c2268">declare_parameters</a> (ParameterHandler &amp;prm, const unsigned int number_of_boundary_conditions)</td></tr>
+<tr class="memitem:af477e60010470b4ff429e419a39a27b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#af477e60010470b4ff429e419a39a27b0">declare_default_entry</a> (ParameterHandler &amp;prm, const types::boundary_id default_boundary_id)</td></tr>
+<tr class="separator:af477e60010470b4ff429e419a39a27b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a96b493ae473dd2f21584bf671c2268"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a9a96b493ae473dd2f21584bf671c2268">declare_parameters</a> (ParameterHandler &amp;prm, const unsigned int <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#af547a9b1043715849267d45e53fb5c16">number_of_boundary_conditions</a>)</td></tr>
 <tr class="separator:a9a96b493ae473dd2f21584bf671c2268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a884261927783b50a3a85cc9e8e83ed54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a884261927783b50a3a85cc9e8e83ed54">parse_boundary</a> (ParameterHandler &amp;prm, const unsigned int i_bc)</td></tr>
-<tr class="separator:a884261927783b50a3a85cc9e8e83ed54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf12e404b1dcc3cf47cf37154b3857bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#acf12e404b1dcc3cf47cf37154b3857bf">parse_boundary</a> (ParameterHandler &amp;prm)</td></tr>
+<tr class="separator:acf12e404b1dcc3cf47cf37154b3857bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f52016d03f3fe375bfe22a1e89d2976"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a0f52016d03f3fe375bfe22a1e89d2976">parse_parameters</a> (ParameterHandler &amp;prm)</td></tr>
 <tr class="separator:a0f52016d03f3fe375bfe22a1e89d2976"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1120f663888ac5b8a37652e936603721"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a1120f663888ac5b8a37652e936603721">angle_of_contact</a></td></tr>
-<tr class="separator:a1120f663888ac5b8a37652e936603721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0466e90eb56e3083e2182a59e6ee936e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a0466e90eb56e3083e2182a59e6ee936e">phase_dirichlet_value</a></td></tr>
-<tr class="separator:a0466e90eb56e3083e2182a59e6ee936e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9256d057213cddfa98a9d7f681c80365"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html">CahnHilliardBoundaryFunctions</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a9256d057213cddfa98a9d7f681c80365">bcFunctions</a></td></tr>
-<tr class="separator:a9256d057213cddfa98a9d7f681c80365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35173bde5fa0eba1b8f3c5846e8f3d73"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a35173bde5fa0eba1b8f3c5846e8f3d73">angle_of_contact</a></td></tr>
+<tr class="separator:a35173bde5fa0eba1b8f3c5846e8f3d73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51d0dae708894c8c4ec6fb1c9da0f934"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a51d0dae708894c8c4ec6fb1c9da0f934">phase_dirichlet_value</a></td></tr>
+<tr class="separator:a51d0dae708894c8c4ec6fb1c9da0f934"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab84a0d7558ffbfd9d85a01cc71de11d0"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html">CahnHilliardBoundaryFunctions</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#ab84a0d7558ffbfd9d85a01cc71de11d0">bcFunctions</a></td></tr>
+<tr class="separator:ab84a0d7558ffbfd9d85a01cc71de11d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classBoundaryConditions_1_1BoundaryConditions')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html">BoundaryConditions::BoundaryConditions&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a9f0a13fff1090ec20fdebe92e10fb982 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a9f0a13fff1090ec20fdebe92e10fb982">id</a></td></tr>
-<tr class="separator:a9f0a13fff1090ec20fdebe92e10fb982 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7852339da7c9700fe048748f99fc98bf inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a7852339da7c9700fe048748f99fc98bf">type</a></td></tr>
-<tr class="separator:a7852339da7c9700fe048748f99fc98bf inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad940f6c788585aa2bfe51ec0b927f415 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#ad940f6c788585aa2bfe51ec0b927f415">beta</a></td></tr>
-<tr class="separator:ad940f6c788585aa2bfe51ec0b927f415 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69a23f240b848adc948bf2d27cbfe6d3 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a69a23f240b848adc948bf2d27cbfe6d3">boundary_layer_thickness</a></td></tr>
-<tr class="separator:a69a23f240b848adc948bf2d27cbfe6d3 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08c2186d9e77e8587160371300999e79 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a08c2186d9e77e8587160371300999e79">size</a></td></tr>
-<tr class="separator:a08c2186d9e77e8587160371300999e79 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8016ef4f0647d339b33f85d5ebfcb7e8 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a8016ef4f0647d339b33f85d5ebfcb7e8">type</a></td></tr>
+<tr class="separator:a8016ef4f0647d339b33f85d5ebfcb7e8 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3fb1a097be0820fb295c9146536b6d2 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#af3fb1a097be0820fb295c9146536b6d2">beta</a></td></tr>
+<tr class="separator:af3fb1a097be0820fb295c9146536b6d2 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a236b3f81c55be37a05573c0860dbdca0 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a236b3f81c55be37a05573c0860dbdca0">boundary_layer_thickness</a></td></tr>
+<tr class="separator:a236b3f81c55be37a05573c0860dbdca0 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af547a9b1043715849267d45e53fb5c16 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#af547a9b1043715849267d45e53fb5c16">number_of_boundary_conditions</a></td></tr>
+<tr class="separator:af547a9b1043715849267d45e53fb5c16 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfb9ed560c7aa1fc3d556ab38a2352fb inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#abfb9ed560c7aa1fc3d556ab38a2352fb">time_dependent</a></td></tr>
 <tr class="separator:abfb9ed560c7aa1fc3d556ab38a2352fb inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae292c7adc9ff6f9bc6bbf2aab46b514b inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#ae292c7adc9ff6f9bc6bbf2aab46b514b">periodic_id</a></td></tr>
-<tr class="separator:ae292c7adc9ff6f9bc6bbf2aab46b514b inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace05ee5b52058b48aa8e90d53ce7c174 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#ace05ee5b52058b48aa8e90d53ce7c174">periodic_direction</a></td></tr>
-<tr class="separator:ace05ee5b52058b48aa8e90d53ce7c174 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4b86c1f513f80d14ad258dd9089dbcc inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, types::boundary_id &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#ad4b86c1f513f80d14ad258dd9089dbcc">periodic_neighbor_id</a></td></tr>
+<tr class="separator:ad4b86c1f513f80d14ad258dd9089dbcc inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768f01477ffe2d44190462c5ac3c6a20 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a768f01477ffe2d44190462c5ac3c6a20">periodic_direction</a></td></tr>
+<tr class="separator:a768f01477ffe2d44190462c5ac3c6a20 inherit pub_attribs_classBoundaryConditions_1_1BoundaryConditions"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -141,8 +139,51 @@ class BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;</h3>
 <li>if bc type is "dirichlet" (Dirichlet condition), "value" is the double passed to the deal.ii ConstantFunction </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00839">839</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00923">923</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="af477e60010470b4ff429e419a39a27b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af477e60010470b4ff429e419a39a27b0">&#9670;&nbsp;</a></span>declare_default_entry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::declare_default_entry </td>
+          <td>(</td>
+          <td class="paramtype">ParameterHandler &amp;&#160;</td>
+          <td class="paramname"><em>prm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const types::boundary_id&#160;</td>
+          <td class="paramname"><em>default_boundary_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Declares the default parameters for a boundary condition id i_bc i.e. Dirichlet condition (ConstantFunction) with value 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information</td></tr>
+    <tr><td class="paramname">i_bc</td><td>The boundary condition id. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00954">954</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+
+<p class="reference">References <a class="el" href="boundary__conditions_8h_source.html#l00992">BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;::declare_parameters()</a>.</p>
+
+</div>
+</div>
 <a id="a9a96b493ae473dd2f21584bf671c2268"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9a96b493ae473dd2f21584bf671c2268">&#9670;&nbsp;</a></span>declare_parameters()</h2>
 
@@ -179,57 +220,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00904">904</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00992">992</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="ad692dee2013d05ecaa37520616079145"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad692dee2013d05ecaa37520616079145">&#9670;&nbsp;</a></span>declareDefaultEntry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::declareDefaultEntry </td>
-          <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname"><em>i_bc</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Declares the default parameters for a boundary condition id i_bc i.e. Dirichlet condition (ConstantFunction) with value 0. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information</td></tr>
-    <tr><td class="paramname">i_bc</td><td>The boundary condition id. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00867">867</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
-
-<p class="reference">References <a class="el" href="boundary__conditions_8h_source.html#l00904">BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;::declare_parameters()</a>.</p>
-
-</div>
-</div>
-<a id="a884261927783b50a3a85cc9e8e83ed54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a884261927783b50a3a85cc9e8e83ed54">&#9670;&nbsp;</a></span>parse_boundary()</h2>
+<a id="acf12e404b1dcc3cf47cf37154b3857bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf12e404b1dcc3cf47cf37154b3857bf">&#9670;&nbsp;</a></span>parse_boundary()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,18 +236,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">void <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::parse_boundary </td>
           <td>(</td>
           <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>prm</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname"><em>i_bc</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -265,7 +251,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00947">947</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01030">1030</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
 
@@ -297,15 +283,13 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00984">984</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
-
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01077">1077</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a1120f663888ac5b8a37652e936603721"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1120f663888ac5b8a37652e936603721">&#9670;&nbsp;</a></span>angle_of_contact</h2>
+<a id="a35173bde5fa0eba1b8f3c5846e8f3d73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35173bde5fa0eba1b8f3c5846e8f3d73">&#9670;&nbsp;</a></span>angle_of_contact</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,17 +297,17 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::angle_of_contact</td>
+          <td class="memname">std::map&lt;types::boundary_id, double&gt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::angle_of_contact</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00842">842</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00926">926</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="a9256d057213cddfa98a9d7f681c80365"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9256d057213cddfa98a9d7f681c80365">&#9670;&nbsp;</a></span>bcFunctions</h2>
+<a id="ab84a0d7558ffbfd9d85a01cc71de11d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab84a0d7558ffbfd9d85a01cc71de11d0">&#9670;&nbsp;</a></span>bcFunctions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -331,17 +315,17 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html">CahnHilliardBoundaryFunctions</a>&lt;dim&gt;* <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::bcFunctions</td>
+          <td class="memname">std::map&lt;types::boundary_id, std::shared_ptr&lt;<a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html">CahnHilliardBoundaryFunctions</a>&lt;dim&gt; &gt; &gt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::bcFunctions</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00844">844</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00930">930</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>
-<a id="a0466e90eb56e3083e2182a59e6ee936e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0466e90eb56e3083e2182a59e6ee936e">&#9670;&nbsp;</a></span>phase_dirichlet_value</h2>
+<a id="a51d0dae708894c8c4ec6fb1c9da0f934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51d0dae708894c8c4ec6fb1c9da0f934">&#9670;&nbsp;</a></span>phase_dirichlet_value</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -349,12 +333,12 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::phase_dirichlet_value</td>
+          <td class="memname">std::map&lt;types::boundary_id, double&gt; <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;::phase_dirichlet_value</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00843">843</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l00927">927</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
 </div>
 </div>

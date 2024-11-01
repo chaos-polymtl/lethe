@@ -141,9 +141,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a959f418c3a6c15cbcd88ee3495b4f8ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73e5c7e432b15f2ba929cf1dd0cbed9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a73e5c7e432b15f2ba929cf1dd0cbed9d">output_newton_update_norms</a> (const unsigned int display_precision) override</td></tr>
 <tr class="separator:a73e5c7e432b15f2ba929cf1dd0cbed9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58534024e5d3d02ea54f8da974cd243f"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a58534024e5d3d02ea54f8da974cd243f"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracer.html#a58534024e5d3d02ea54f8da974cd243f">postprocess_tracer_flow_rate</a> (const VectorType &amp;current_solution_fd)</td></tr>
-<tr class="separator:a58534024e5d3d02ea54f8da974cd243f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa29f6066e441d1541e26e24196886856"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
+<tr class="memitem:aa29f6066e441d1541e26e24196886856"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracer.html#aa29f6066e441d1541e26e24196886856">postprocess_tracer_flow_rate</a> (const VectorType &amp;current_solution_fd)</td></tr>
+<tr class="separator:aa29f6066e441d1541e26e24196886856"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classAuxiliaryPhysics"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classAuxiliaryPhysics')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a></td></tr>
 <tr class="memitem:afe5c8707f20900ab81eae0526156dc82 inherit pub_methods_classAuxiliaryPhysics"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#afe5c8707f20900ab81eae0526156dc82">AuxiliaryPhysics</a> (const <a class="el" href="structParameters_1_1NonLinearSolver.html">Parameters::NonLinearSolver</a> non_linear_solver_parameters)</td></tr>
 <tr class="separator:afe5c8707f20900ab81eae0526156dc82 inherit pub_methods_classAuxiliaryPhysics"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,6 +169,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:afcf96889d69d200d009c33f81edd3c72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#afcf96889d69d200d009c33f81edd3c72">verify_consistency_of_boundary_conditions</a> ()</td></tr>
+<tr class="separator:afcf96889d69d200d009c33f81edd3c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c10ff5606b5cf3ba53ab44bd1e8a076"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a6c10ff5606b5cf3ba53ab44bd1e8a076">assemble_system_matrix</a> () override</td></tr>
 <tr class="separator:a6c10ff5606b5cf3ba53ab44bd1e8a076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57a99174155bd6cfdfa9f944cf1c05d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a57a99174155bd6cfdfa9f944cf1c05d1">assemble_system_matrix_cg</a> ()</td></tr>
@@ -193,15 +195,13 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a43f8facd06187b6f2e2f219883e2a698"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcc81d835a1e2e9b71ea0c897d16dcf9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#adcc81d835a1e2e9b71ea0c897d16dcf9">calculate_tracer_statistics</a> ()</td></tr>
 <tr class="separator:adcc81d835a1e2e9b71ea0c897d16dcf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0439b00f690dc6276e160e9c9c0fb683"><td class="memTemplParams" colspan="2">template&lt;typename GlobalVectorType &gt; </td></tr>
-<tr class="memitem:a0439b00f690dc6276e160e9c9c0fb683"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracer.html#a0439b00f690dc6276e160e9c9c0fb683">postprocess_tracer_flow_rate</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd)</td></tr>
-<tr class="separator:a0439b00f690dc6276e160e9c9c0fb683"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1e2070615f8ff5e8a4f68388571a2b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#aa1e2070615f8ff5e8a4f68388571a2b5">write_tracer_flow_rates</a> (const std::vector&lt; double &gt; &amp;tracer_flow_rate_vector)</td></tr>
-<tr class="separator:aa1e2070615f8ff5e8a4f68388571a2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af90c3910cecd47471841eee921cc462f"><td class="memTemplParams" colspan="2">template&lt;typename GlobalVectorType &gt; </td></tr>
+<tr class="memitem:af90c3910cecd47471841eee921cc462f"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracer.html#af90c3910cecd47471841eee921cc462f">postprocess_tracer_flow_rate</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd)</td></tr>
+<tr class="separator:af90c3910cecd47471841eee921cc462f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c7643f181f0e0eb7638d89471b4ac83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a2c7643f181f0e0eb7638d89471b4ac83">write_tracer_flow_rates</a> (const std::map&lt; types::boundary_id, double &gt; &amp;tracer_flow_rate_vector)</td></tr>
+<tr class="separator:a2c7643f181f0e0eb7638d89471b4ac83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9965b466837ae2879ee0763ec928ec8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a9965b466837ae2879ee0763ec928ec8e">write_tracer_statistics</a> ()</td></tr>
 <tr class="separator:a9965b466837ae2879ee0763ec928ec8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a277e269cb2ee7dcf273a90d016ba99be"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a277e269cb2ee7dcf273a90d016ba99be">get_lethe_boundary_index</a> (const types::boundary_id &amp;triangulation_boundary_id)</td></tr>
-<tr class="separator:a277e269cb2ee7dcf273a90d016ba99be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c12f1c5a98769bd48d5d043d29b473d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracer.html#a5c12f1c5a98769bd48d5d043d29b473d">reinit_face_velocity_with_adequate_solution</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const unsigned int &amp;face_no, <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data)</td></tr>
 <tr class="separator:a5c12f1c5a98769bd48d5d043d29b473d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -279,7 +279,7 @@ Additional Inherited Members</h2></td></tr>
 class Tracer&lt; dim &gt;</h3>
 
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00040">40</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00047">47</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1439103a764cca0bafe5acc6284b6e31"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1439103a764cca0bafe5acc6284b6e31">&#9670;&nbsp;</a></span>Tracer()</h2>
@@ -329,9 +329,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00043">43</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00050">50</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00558">Tracer&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="tracer_8h_source.html#l00543">Tracer&lt; dim &gt;::computing_timer</a>, <a class="el" href="tracer_8h_source.html#l00551">Tracer&lt; dim &gt;::dof_handler</a>, <a class="el" href="tracer_8h_source.html#l00559">Tracer&lt; dim &gt;::face_quadrature</a>, <a class="el" href="tracer_8h_source.html#l00554">Tracer&lt; dim &gt;::fe</a>, <a class="el" href="tracer_8h_source.html#l00557">Tracer&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00086">maximum_number_of_previous_solutions()</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="tracer_8h_source.html#l00578">Tracer&lt; dim &gt;::previous_solutions</a>, <a class="el" href="tracer_8h_source.html#l00585">Tracer&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="tracer_8h_source.html#l00545">Tracer&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="tracer_8h_source.html#l00583">Tracer&lt; dim &gt;::solution_transfer</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00556">Tracer&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="tracer_8h_source.html#l00541">Tracer&lt; dim &gt;::computing_timer</a>, <a class="el" href="tracer_8h_source.html#l00549">Tracer&lt; dim &gt;::dof_handler</a>, <a class="el" href="tracer_8h_source.html#l00557">Tracer&lt; dim &gt;::face_quadrature</a>, <a class="el" href="tracer_8h_source.html#l00552">Tracer&lt; dim &gt;::fe</a>, <a class="el" href="tracer_8h_source.html#l00555">Tracer&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00086">maximum_number_of_previous_solutions()</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="tracer_8h_source.html#l00576">Tracer&lt; dim &gt;::previous_solutions</a>, <a class="el" href="tracer_8h_source.html#l00583">Tracer&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="tracer_8h_source.html#l00543">Tracer&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="tracer_8h_source.html#l00581">Tracer&lt; dim &gt;::solution_transfer</a>.</p>
 
 </div>
 </div>
@@ -389,7 +389,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00249">249</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00247">247</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="tracer__scratch__data_8cc_source.html#l00065">TracerScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00158">TracerScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00240">TracerScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
 
@@ -447,7 +447,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00533">533</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00526">526</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="tracer__scratch__data_8cc_source.html#l00065">TracerScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00158">TracerScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00240">TracerScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>.</p>
 
@@ -479,7 +479,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00066">66</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00067">67</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -507,9 +507,9 @@ template&lt;int dim&gt; </div>
 
 <p>Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00085">85</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00086">86</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8cc_source.html#l00249">Tracer&lt; dim &gt;::assemble_local_system_matrix()</a>, <a class="el" href="tracer_8cc_source.html#l00337">Tracer&lt; dim &gt;::copy_local_matrix_to_global_matrix()</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8cc_source.html#l00247">Tracer&lt; dim &gt;::assemble_local_system_matrix()</a>, <a class="el" href="tracer_8cc_source.html#l00335">Tracer&lt; dim &gt;::copy_local_matrix_to_global_matrix()</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -537,7 +537,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assembles the matrix associated with the solver when DG elements are used. This uses the MeshWorker paradigm instead of the WorkStream paradigm. This is because the DG system matrix is assembled in a different way and requires face and boundary integrals. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00113">113</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00114">114</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00150">StabilizedDGMethodsCopyData::face_data</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
@@ -569,7 +569,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a74110493860247f4ed2da56ef3050f08">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00351">351</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00349">349</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -597,9 +597,9 @@ template&lt;int dim&gt; </div>
 
 <p>Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream paradigm. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00374">374</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00372">372</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8cc_source.html#l00533">Tracer&lt; dim &gt;::assemble_local_system_rhs()</a>, <a class="el" href="tracer_8cc_source.html#l00623">Tracer&lt; dim &gt;::copy_local_rhs_to_global_rhs()</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8cc_source.html#l00526">Tracer&lt; dim &gt;::assemble_local_system_rhs()</a>, <a class="el" href="tracer_8cc_source.html#l00616">Tracer&lt; dim &gt;::copy_local_rhs_to_global_rhs()</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -627,7 +627,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assembles the rhs associated with the solver when DG elements are used. This uses the MeshWorker paradigm instead of the WorkStream paradigm This is because the DG system matrix is assembled in a different way and requires face and boundary integrals. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00401">401</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00399">399</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00150">StabilizedDGMethodsCopyData::face_data</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
@@ -663,7 +663,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#adf185a85398b75121b700d94b49fac05">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00637">637</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00630">630</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -683,7 +683,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculates the L2 error of the solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00644">644</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00637">637</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -711,7 +711,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate tracer statistics : Max, min, average and standard-deviation. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00791">791</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00783">783</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -764,7 +764,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a8f6a9984eba0d0dcf53468843eb39e45">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01376">1376</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01346">1346</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">tracer</a>.</p>
 
@@ -798,7 +798,7 @@ template&lt;int dim&gt; </div>
 
 <p>Copy local cell information to global matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00337">337</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00335">335</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_matrix</a>.</p>
 
@@ -832,7 +832,7 @@ template&lt;int dim&gt; </div>
 
 <p>Copy local cell rhs information to global rhs. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00623">623</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00616">616</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00106">StabilizedMethodsCopyData::local_rhs</a>.</p>
 
@@ -864,7 +864,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00689">689</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00682">682</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -899,9 +899,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a47bd3339a5b8b1ccdc8fbe25a58c5265">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00195">195</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00202">202</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00551">Tracer&lt; dim &gt;::dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00549">Tracer&lt; dim &gt;::dof_handler</a>.</p>
 
 </div>
 </div>
@@ -934,50 +934,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a313727ad7574c4d4fb744f667f733508">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00239">239</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00246">246</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00568">Tracer&lt; dim &gt;::evaluation_point</a>.</p>
-
-</div>
-</div>
-<a id="a277e269cb2ee7dcf273a90d016ba99be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a277e269cb2ee7dcf273a90d016ba99be">&#9670;&nbsp;</a></span>get_lethe_boundary_index()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::get_lethe_boundary_index </td>
-          <td>(</td>
-          <td class="paramtype">const types::boundary_id &amp;&#160;</td>
-          <td class="paramname"><em>triangulation_boundary_id</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the Lethe boundary indicator for a given triangulation boundary while carrying the appropriate checks. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">triangulation_boundary_id</td><td>The boundary id of the triangulation</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>NOTE: This function is a temporary function. It will be deprecated in a future PR once boundary conditions have been refactored using maps. </p>
-
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00438">438</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
-
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00545">Tracer&lt; dim &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00566">Tracer&lt; dim &gt;::evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1008,9 +967,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aef3b890ff2cffc97d546e32583c5ba3a">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00244">244</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00251">251</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00569">Tracer&lt; dim &gt;::local_evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00567">Tracer&lt; dim &gt;::local_evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1041,9 +1000,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abcd8bead5555e17de5c6e20b64cb3ebb">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00249">249</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00256">256</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00570">Tracer&lt; dim &gt;::newton_update</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00568">Tracer&lt; dim &gt;::newton_update</a>.</p>
 
 </div>
 </div>
@@ -1074,9 +1033,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aadfaeda6c524f54395f64cbc100c3003">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00264">264</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00271">271</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00573">Tracer&lt; dim &gt;::nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00571">Tracer&lt; dim &gt;::nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1107,9 +1066,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a254a20d9cf4297efac822566de52fb83">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00254">254</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00261">261</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00571">Tracer&lt; dim &gt;::present_solution</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00569">Tracer&lt; dim &gt;::present_solution</a>.</p>
 
 </div>
 </div>
@@ -1140,9 +1099,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a46683552514c3323218b73817070a95e">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00259">259</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00266">266</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00572">Tracer&lt; dim &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00570">Tracer&lt; dim &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -1182,9 +1141,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a33c67d4913c1e92d0404cc67f70caca4">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00276">276</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00283">283</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer_8h_source.html#l00570">Tracer&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00568">Tracer&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00135">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -1214,7 +1173,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a0e74925e0067b4bcf2578f18a2f15204">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00716">716</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00709">709</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1203,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3870a0c5dc427098c9bec1afc9a668c0">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01097">1097</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01071">1071</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -1278,14 +1237,14 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a5cddfe1a7224404a899d7564d908d098">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00727">727</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00720">720</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00406">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01233">calculate_L2_error()</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00406">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01222">calculate_L2_error()</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
-<a id="a0439b00f690dc6276e160e9c9c0fb683"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0439b00f690dc6276e160e9c9c0fb683">&#9670;&nbsp;</a></span>postprocess_tracer_flow_rate() <span class="overload">[1/2]</span></h2>
+<a id="af90c3910cecd47471841eee921cc462f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af90c3910cecd47471841eee921cc462f">&#9670;&nbsp;</a></span>postprocess_tracer_flow_rate() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1298,7 +1257,7 @@ template&lt;typename GlobalVectorType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::postprocess_tracer_flow_rate </td>
+          <td class="memname">std::map&lt;types::boundary_id, double&gt; <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::postprocess_tracer_flow_rate </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution_fd</em></td><td>)</td>
@@ -1328,8 +1287,8 @@ template&lt;typename GlobalVectorType &gt; </div>
 
 </div>
 </div>
-<a id="a58534024e5d3d02ea54f8da974cd243f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58534024e5d3d02ea54f8da974cd243f">&#9670;&nbsp;</a></span>postprocess_tracer_flow_rate() <span class="overload">[2/2]</span></h2>
+<a id="aa29f6066e441d1541e26e24196886856"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa29f6066e441d1541e26e24196886856">&#9670;&nbsp;</a></span>postprocess_tracer_flow_rate() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1339,7 +1298,7 @@ template&lt;int dim&gt; </div>
 template&lt;typename VectorType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::postprocess_tracer_flow_rate </td>
+          <td class="memname">std::map&lt;types::boundary_id, double&gt; <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::postprocess_tracer_flow_rate </td>
           <td>(</td>
           <td class="paramtype">const VectorType &amp;&#160;</td>
           <td class="paramname"><em>current_solution_fd</em></td><td>)</td>
@@ -1348,9 +1307,9 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00887">887</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00879">879</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, and <a class="el" href="physical__property__model_8h_source.html#l00050">set_field_vector()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="physical__property__model_8h_source.html#l00050">set_field_vector()</a>, and <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
 
 </div>
 </div>
@@ -1380,7 +1339,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ae80e26995eb53ee0ea0239a2390d082f">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01084">1084</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01058">1058</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -1410,7 +1369,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01159">1159</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01133">1133</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00438">deserialize_table()</a>.</p>
 
@@ -1468,9 +1427,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00476">476</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00474">474</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="tracer_8h_source.html#l00541">Tracer&lt; dim &gt;::multiphysics</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00430">TracerScratchData&lt; dim &gt;::reinit_face_velocity()</a>, <a class="el" href="tracer_8h_source.html#l00550">Tracer&lt; dim &gt;::simulation_control</a>, and <a class="el" href="tracer_8h_source.html#l00545">Tracer&lt; dim &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#a86eaa101a59015fa52c81783382dd525a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="tracer_8h_source.html#l00539">Tracer&lt; dim &gt;::multiphysics</a>, <a class="el" href="tracer__scratch__data_8h_source.html#l00430">TracerScratchData&lt; dim &gt;::reinit_face_velocity()</a>, <a class="el" href="tracer_8h_source.html#l00548">Tracer&lt; dim &gt;::simulation_control</a>, and <a class="el" href="tracer_8h_source.html#l00543">Tracer&lt; dim &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1500,7 +1459,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01362">1362</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01332">1332</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -1528,7 +1487,7 @@ template&lt;int dim&gt; </div>
 
 <p>sets up the vector of assembler functions </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00037">37</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00038">38</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00040">is_bdf()</a>.</p>
 
@@ -1560,9 +1519,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01205">1205</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01179">1179</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>, and <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
 
 </div>
 </div>
@@ -1613,7 +1572,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a210eb1a42329bbc5b66e0d449bd815b1">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01398">1398</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01368">1368</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>.</p>
 
@@ -1645,9 +1604,42 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01326">1326</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01298">1298</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>.</p>
+<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>, and <a class="el" href="dem__properties_8h_source.html#l00022">DEM::type</a>.</p>
+
+</div>
+</div>
+<a id="afcf96889d69d200d009c33f81edd3c72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcf96889d69d200d009c33f81edd3c72">&#9670;&nbsp;</a></span>verify_consistency_of_boundary_conditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::verify_consistency_of_boundary_conditions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Verify consistency of the input parameters for boundary conditions to ensure that for every boundary condition within the triangulation, a boundary condition has been specified in the input file. </p>
+
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00299">299</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+
+<p class="reference">References <a class="el" href="tracer_8h_source.html#l00543">Tracer&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="tracer_8h_source.html#l00547">Tracer&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -1677,14 +1669,14 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01126">1126</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01100">1100</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00423">serialize_table()</a>.</p>
 
 </div>
 </div>
-<a id="aa1e2070615f8ff5e8a4f68388571a2b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1e2070615f8ff5e8a4f68388571a2b5">&#9670;&nbsp;</a></span>write_tracer_flow_rates()</h2>
+<a id="a2c7643f181f0e0eb7638d89471b4ac83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c7643f181f0e0eb7638d89471b4ac83">&#9670;&nbsp;</a></span>write_tracer_flow_rates()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1697,7 +1689,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classTracer.html">Tracer</a>&lt; dim &gt;::write_tracer_flow_rates </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::map&lt; types::boundary_id, double &gt; &amp;&#160;</td>
           <td class="paramname"><em>tracer_flow_rate_vector</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1711,7 +1703,7 @@ template&lt;int dim&gt; </div>
 
 <p>Writes the tracer flow rates to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01018">1018</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l00998">998</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1741,7 +1733,7 @@ template&lt;int dim&gt; </div>
 
 <p>Writes the tracer statistics to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01066">1066</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8cc_source.html#l01040">1040</a> of file <a class="el" href="tracer_8cc_source.html">tracer.cc</a>.</p>
 
 </div>
 </div>
@@ -1768,7 +1760,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00588">588</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00586">586</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1794,7 +1786,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00591">591</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00589">589</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1820,7 +1812,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00558">558</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00556">556</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1846,7 +1838,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00543">543</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00541">541</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1872,7 +1864,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00551">551</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00549">549</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1898,7 +1890,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00562">562</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00560">560</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1924,7 +1916,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00568">568</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00566">566</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1950,7 +1942,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00559">559</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00557">557</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -1976,7 +1968,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00554">554</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00552">552</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2002,7 +1994,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00590">590</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00588">588</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2028,7 +2020,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00569">569</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00567">567</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2054,7 +2046,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00565">565</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00563">563</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2080,7 +2072,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00566">566</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00564">564</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2106,7 +2098,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00557">557</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00555">555</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2132,7 +2124,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00541">541</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00539">539</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2158,7 +2150,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00570">570</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00568">568</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2184,7 +2176,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00573">573</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00571">571</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2210,7 +2202,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00571">571</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00569">569</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2236,7 +2228,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00578">578</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00576">576</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2262,7 +2254,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00585">585</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00583">583</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2288,7 +2280,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00550">550</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00548">548</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2314,7 +2306,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00545">545</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00543">543</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2340,7 +2332,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00583">583</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00581">581</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2366,7 +2358,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00594">594</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00592">592</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2392,7 +2384,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00575">575</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00573">573</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2418,7 +2410,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00572">572</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00570">570</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2444,7 +2436,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00595">595</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00593">593</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2470,7 +2462,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00549">549</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00547">547</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>
@@ -2496,7 +2488,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00574">574</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer_8h_source.html#l00572">572</a> of file <a class="el" href="tracer_8h_source.html">tracer.h</a>.</p>
 
 </div>
 </div>

@@ -1,3 +1,12 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classBoundaryConditions_1_1NSPressureBoundaryFunctions.html" title="This class manages the functions associated with function&#45;type pressure boundary conditions for the N..." alt="" coords="5,5,233,61"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,274,189,301"/>
+<area shape="rect" id="node2" href="$classBoundaryPostprocessor.html" title="BoundaryPostprocessor Post&#45;processor class used to attach the boundary id to the faces when outputtin..." alt="" coords="269,5,444,47"/>
+<area shape="rect" id="node3" href="$classDensityPostprocessor.html" title="Compute the density scalar field of a material within a domain." alt="" coords="275,71,438,112"/>
+<area shape="rect" id="node4" href="$classDivergencePostprocessor.html" title="Compute the velocity divergence scalar field within a domain." alt="" coords="263,136,450,177"/>
+<area shape="rect" id="node5" href="$classDynamicViscosityPostprocessor.html" title="Compute the dynamic viscosity scalar field of a fluid within a domain." alt="" coords="241,201,472,243"/>
+<area shape="rect" id="node6" href="$classKinematicViscosityPostprocessor.html" title="Compute the kinematic viscosity scalar field of a fluid within a domain." alt="" coords="237,267,476,308"/>
+<area shape="rect" id="node7" href="$classLevelsetPostprocessor.html" title="Compute levelset field for a given shape within a domain." alt="" coords="273,332,441,373"/>
+<area shape="rect" id="node8" href="$classQCriterionPostprocessor.html" title="Compute the Q&#45;criterion scalar field within a domain." alt="" coords="267,397,446,439"/>
+<area shape="rect" id="node9" href="$classScalarFunctionPostprocessor.html" title="Compute a scalar field for a given function within a domain." alt="" coords="253,463,461,504"/>
+<area shape="rect" id="node10" href="$classShearRatePostprocessor.html" title="Compute the shear rate scalar field within a domain." alt="" coords="267,528,447,569"/>
 </map>
