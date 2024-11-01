@@ -14,16 +14,16 @@ x1 =L;
 //nr=30;
 //nt=30;
 //nl=150;
-nr=60;
-nt=60;
-nl=150;
+nr=10;
+nt=10;
+nl=30;
 
 xc=8;
 yc=8;
 r=0.5;
 srq=1.414213562/2.*r;
 
-Ls=10*r;
+Ls=8*r;
 ss=1.414213562/2.*Ls;
 
 xs0=xc-ss;
@@ -99,9 +99,9 @@ Line(52)={22,32};
 Line(53)={21,31};
 
 //Theta of the circle
-Transfinite Line {3,22,4,10,34,20,32,13,40,41,42,43} = Ceil(nt) Using Progression 1.0;
+Transfinite Line {3,22,4,10,34,20,32,13,40,41,42,43,63,33,35,66,60,30,31,64,2,12,11,1} = Ceil(nt) Using Progression 1.0;
 // Radial direction
-Transfinite Line {50,51,52,53} = Ceil(nr) Using Progression 1.05;
+Transfinite Line {50,51,52,53} = Ceil(nr) Using Progression 1.0;
 Transfinite Line {5,21,23,6} = Ceil(nl) Using Progression 1.00;
 
 //
