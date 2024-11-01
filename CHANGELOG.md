@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Curvature L2 projection within the VOF auxiliary physics now go through the VOF subequations interface. [#13XX](https://github.com/chaos-polymtl/lethe/pull/13XX)
+- MINOR Curvature L2 projection within the VOF auxiliary physics now go through the VOF subequations interface. [#1336](https://github.com/chaos-polymtl/lethe/pull/1336)
 
 ## [Master] - 2024-11-03
 
