@@ -179,6 +179,20 @@ FluidDynamicsVANS<dim>::read_dem()
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
 
+  // Load checkpoint controller
+  std::string checkpoint_controller_object_filename =
+    prefix + ".checkpoint_controller";
+  std::ifstream iss_checkpoint_controller_obj(
+    checkpoint_controller_object_filename);
+  boost::archive::text_iarchive ia_checkpoint_controller_obj(
+    iss_checkpoint_controller_obj, boost::archive::no_header);
+
+  unsigned int checkpoint_id;
+  ia_checkpoint_controller_obj >> checkpoint_id;
+
+  // New prefix for the remaining files
+  prefix = prefix + "_" + Utilities::int_to_string(checkpoint_id);
+
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
