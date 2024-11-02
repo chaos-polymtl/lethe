@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-02
+
+### Fix
+
+- MINOR The checkpoint files generated from the lethe-particles solver were now incompatible with the CFD-DEM solvers (lethe-fluid-particles and lethe-fluid-vans) since the prefix are now ending with a "_0" or "_1". The "read_dem" function now reads the ".checkpoint_controller" file at first.
+
 ## [Master] - 2024-10-31
 
 ### Changed
