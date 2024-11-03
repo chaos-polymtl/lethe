@@ -251,9 +251,9 @@ It can be used by modifying the ``simulation control`` subsection:
       # Maximum CFL value
       set max cfl = 1000
       # Tolerance at which the simulation is stopped
-      set stop tolerance = 1e-10
+      set stop tolerance = 1e-6
       # Adaptative time step scaling
-      set adaptative time step scaling = 1.05
+      set adaptative time step scaling = 1.1
       set time step = 0.001
     end
 

@@ -14,15 +14,10 @@ This comparison is similar to what is done in the step-57 of deal.II
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 import pyvista as pv
-
-import glob
+import re
 
 import os
-import sys
-from pyvista.plotting.renderer import CameraPosition
 
 #--------------------------------------------
 # Main
@@ -40,8 +35,31 @@ raw_erturk=np.loadtxt(ref_data_erturk,skiprows=2)
 y_erturk=raw_erturk[:,0]
 u_erturk=raw_erturk[:,4]
 
+
+
+# Regular expression to match the file format prefix.number.vtu
+pattern = re.compile(r'out\.(\d+)\.00000.vtu')
+
+# Initialize variables to store the maximum number and corresponding filename
+max_number = -1
+max_file = None
+
+# Iterate through files in the directory
+for filename in os.listdir("."):
+    match = pattern.match(filename)
+    if match:
+        number = int(match.group(1))
+        if number > max_number:
+            max_number = number
+            max_file = filename
+
+if max_file:
+    print(f'The file with the largest number is: {max_file}')
+else:
+    print('No matching files found.')
+
 # Load VTU file
-vtu_file="out.0320.0000.vtu"
+vtu_file=max_file
 sim = pv.read(vtu_file)
 sim.set_active_vectors("velocity")
 
