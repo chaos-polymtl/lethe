@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fix
 
-- MINOR The checkpoint files generated from the lethe-particles solver were now incompatible with the CFD-DEM solvers (lethe-fluid-particles and lethe-fluid-vans) since the prefix are now ending with a "_0" or "_1". The "read_dem" function now reads the ".checkpoint_controller" file at first. [#1327](https://github.com/chaos-polymtl/lethe/pull/1327)
+- MINOR The checkpoint files generated from the lethe-particles solver were now incompatible with the CFD-DEM solvers (lethe-fluid-particles and lethe-fluid-vans) since the prefix are now ending with a "_0" or "_1". The "read_dem" function now reads the ".checkpoint_controller" file at first. [#1338](https://github.com/chaos-polymtl/lethe/pull/1338)
 
 ## [Master] - 2024-10-31
 
