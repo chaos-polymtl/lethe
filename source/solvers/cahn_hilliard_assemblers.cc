@@ -183,39 +183,44 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 
   for (unsigned int f = 0; f < scratch_data.n_faces; f++)
     {
-      if (this->boundary_conditions_cahn_hilliard.type.at(
-            scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
         {
-          const double angle_of_contact =
-            this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
-              scratch_data.boundary_face_id[f]);
-          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+          if (this->boundary_conditions_cahn_hilliard.type.at(
+                scratch_data.boundary_face_id[f]) ==
+              BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
             {
-              const Tensor<1, dim> face_phase_grad_value =
-                scratch_data.face_phase_grad_values[f][q];
-              const double lambda =
-                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-
-              const double JxW_face = scratch_data.face_JxW[f][q];
-
-              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+              const double angle_of_contact =
+                this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
+                  scratch_data.boundary_face_id[f]);
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
-                  const double phi_potential_i =
-                    scratch_data.phi_potential[q][i];
+                  const Tensor<1, dim> face_phase_grad_value =
+                    scratch_data.face_phase_grad_values[f][q];
+                  const double lambda = 3 * epsilon *
+                                        scratch_data.surface_tension[q] /
+                                        (2 * sqrt(2));
 
-                  for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                  const double JxW_face = scratch_data.face_JxW[f][q];
+
+                  for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                     {
-                      const Tensor<1, dim> grad_phi_face_phase_j =
-                        scratch_data.grad_phi_face_phase[f][q][j];
+                      const double phi_potential_i =
+                        scratch_data.phi_potential[q][i];
 
-                      local_matrix(i, j) +=
-                        -lambda * -phi_potential_i * grad_phi_face_phase_j *
-                        face_phase_grad_value *
-                        std::cos(angle_of_contact * M_PI / 180.0) *
-                        (1.0 / (face_phase_grad_value.norm() +
-                                std::numeric_limits<double>::min())) *
-                        JxW_face;
+                      for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                        {
+                          const Tensor<1, dim> grad_phi_face_phase_j =
+                            scratch_data.grad_phi_face_phase[f][q][j];
+
+                          local_matrix(i, j) +=
+                            -lambda * -phi_potential_i * grad_phi_face_phase_j *
+                            face_phase_grad_value *
+                            std::cos(angle_of_contact * M_PI / 180.0) *
+                            (1.0 / (face_phase_grad_value.norm() +
+                                    std::numeric_limits<double>::min())) *
+                            JxW_face;
+                        }
                     }
                 }
             }
@@ -239,31 +244,37 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
   for (unsigned int f = 0; f < scratch_data.n_faces; f++)
     {
-      if (this->boundary_conditions_cahn_hilliard.type.at(
-            scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
         {
-          const double angle_of_contact =
-            this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
-              scratch_data.boundary_face_id[f]);
-          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+          if (this->boundary_conditions_cahn_hilliard.type.at(
+                scratch_data.boundary_face_id[f]) ==
+              BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
             {
-              const Tensor<1, dim> face_phase_grad_value =
-                scratch_data.face_phase_grad_values[f][q];
-
-              const double lambda =
-                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-
-              const double JxW_face = scratch_data.face_JxW[f][q];
-
-              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+              const double angle_of_contact =
+                this->boundary_conditions_cahn_hilliard.angle_of_contact.at(
+                  scratch_data.boundary_face_id[f]);
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
-                  const double phi_potential_i =
-                    scratch_data.phi_potential[q][i];
+                  const Tensor<1, dim> face_phase_grad_value =
+                    scratch_data.face_phase_grad_values[f][q];
 
-                  local_rhs(i) += lambda * phi_potential_i *
-                                  std::cos(angle_of_contact * M_PI / 180.0) *
-                                  (face_phase_grad_value.norm()) * JxW_face;
+                  const double lambda = 3 * epsilon *
+                                        scratch_data.surface_tension[q] /
+                                        (2 * sqrt(2));
+
+                  const double JxW_face = scratch_data.face_JxW[f][q];
+
+                  for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                    {
+                      const double phi_potential_i =
+                        scratch_data.phi_potential[q][i];
+
+                      local_rhs(i) +=
+                        lambda * phi_potential_i *
+                        std::cos(angle_of_contact * M_PI / 180.0) *
+                        (face_phase_grad_value.norm()) * JxW_face;
+                    }
                 }
             }
         }
@@ -289,31 +300,37 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 
   for (unsigned int f = 0; f < scratch_data.n_faces; f++)
     {
-      if (boundary_conditions_cahn_hilliard.type.at(
-            scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
         {
-          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+          if (boundary_conditions_cahn_hilliard.type.at(
+                scratch_data.boundary_face_id[f]) ==
+              BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
             {
-              const Tensor<1, dim> face_normal = scratch_data.face_normal[f][q];
-              const double         JxW_face    = scratch_data.face_JxW[f][q];
-
-              const double lambda =
-                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-
-              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
-                  const double phi_potential_i =
-                    scratch_data.phi_potential[q][i];
+                  const Tensor<1, dim> face_normal =
+                    scratch_data.face_normal[f][q];
+                  const double JxW_face = scratch_data.face_JxW[f][q];
 
-                  for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                  const double lambda = 3 * epsilon *
+                                        scratch_data.surface_tension[q] /
+                                        (2 * sqrt(2));
+
+                  for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                     {
-                      const Tensor<1, dim> grad_phi_face_phase_j =
-                        scratch_data.grad_phi_face_phase[f][q][j];
+                      const double phi_potential_i =
+                        scratch_data.phi_potential[q][i];
 
-                      local_matrix(i, j) -= lambda * phi_potential_i *
-                                            grad_phi_face_phase_j *
-                                            face_normal * JxW_face;
+                      for (unsigned int j = 0; j < scratch_data.n_dofs; ++j)
+                        {
+                          const Tensor<1, dim> grad_phi_face_phase_j =
+                            scratch_data.grad_phi_face_phase[f][q][j];
+
+                          local_matrix(i, j) -= lambda * phi_potential_i *
+                                                grad_phi_face_phase_j *
+                                                face_normal * JxW_face;
+                        }
                     }
                 }
             }
@@ -336,28 +353,34 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
 
   for (unsigned int f = 0; f < scratch_data.n_faces; f++)
     {
-      if (this->boundary_conditions_cahn_hilliard.type.at(
-            scratch_data.boundary_face_id[f]) ==
-          BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
         {
-          for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+          if (this->boundary_conditions_cahn_hilliard.type.at(
+                scratch_data.boundary_face_id[f]) ==
+              BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
             {
-              const Tensor<1, dim> face_phase_grad_value =
-                scratch_data.face_phase_grad_values[f][q];
-              const Tensor<1, dim> face_normal = scratch_data.face_normal[f][q];
-              const double         JxW_face    = scratch_data.face_JxW[f][q];
-
-              const double lambda =
-                3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
-
-              for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
-                  const double phi_potential_i =
-                    scratch_data.phi_potential[q][i];
+                  const Tensor<1, dim> face_phase_grad_value =
+                    scratch_data.face_phase_grad_values[f][q];
+                  const Tensor<1, dim> face_normal =
+                    scratch_data.face_normal[f][q];
+                  const double JxW_face = scratch_data.face_JxW[f][q];
 
-                  local_rhs(i) += lambda * phi_potential_i *
-                                  face_phase_grad_value * face_normal *
-                                  JxW_face;
+                  const double lambda = 3 * epsilon *
+                                        scratch_data.surface_tension[q] /
+                                        (2 * sqrt(2));
+
+                  for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
+                    {
+                      const double phi_potential_i =
+                        scratch_data.phi_potential[q][i];
+
+                      local_rhs(i) += lambda * phi_potential_i *
+                                      face_phase_grad_value * face_normal *
+                                      JxW_face;
+                    }
                 }
             }
         }
