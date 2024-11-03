@@ -229,7 +229,8 @@ private:
 
         vertices.push_back(particle_one_location);
         vertices.push_back(particle_two_location);
-        force_normal.push_back(sqrt(normal_force.norm()));
+        force_normal.push_back(
+          scalar_product(normal_force, normal_unit_vector));
       }
   }
 

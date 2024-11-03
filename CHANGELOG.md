@@ -3,11 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-03
+
+### Fix
+
+- MINOR It was not possible to differentiate cohesive and repulsive forces with the force chains since the code was using the ".norm()" function. Now, the force chain calculation uses the scalar product between the normal force and the normal unit vector. [#1339](https://github.com/chaos-polymtl/lethe/pull/1339)
+
 ## [Master] - 2024-11-02
 
 ### Fix
 
-- MINOR The checkpoint files generated from the lethe-particles solver were now incompatible with the CFD-DEM solvers (lethe-fluid-particles and lethe-fluid-vans) since the prefix are now ending with a "_0" or "_1". The "read_dem" function now reads the ".checkpoint_controller" file at first.
+- MINOR The checkpoint files generated from the lethe-particles solver were now incompatible with the CFD-DEM solvers (lethe-fluid-particles and lethe-fluid-vans) since the prefix are now ending with a "_0" or "_1". The "read_dem" function now reads the ".checkpoint_controller" file at first. [#1338](https://github.com/chaos-polymtl/lethe/pull/1338)
 
 ## [Master] - 2024-10-31
 
