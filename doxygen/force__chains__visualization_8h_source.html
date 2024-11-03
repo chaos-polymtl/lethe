@@ -310,108 +310,109 @@ $(function() {
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        vertices.push_back(particle_one_location);</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        vertices.push_back(particle_two_location);</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        force_normal.push_back(sqrt(normal_force.norm()));</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      }</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  }</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">   * @brief Update the contact pair information for all contact force</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   * calculations.</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">   * @param[out] tangential_relative_velocity Tangential relative velocity.</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">   * @param[out] normal_relative_velocity_value Normal relative velocity.</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">   * @param[out] normal_unit_vector Normal vector of the contact.</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">   * @param[in] particle_one_properties Properties of particle one in contact.</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">   * @param[in] particle_two_properties Properties of particle two in contact.</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   * @param[in] particle_one_location Location of particle one in contact.</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   * @param[in] particle_two_location Location of particle two in contact.</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">  249</a></span>&#160;  <a class="code" href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">update_contact_information</a>(</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    Tensor&lt;1, 3&gt;                  &amp;tangential_relative_velocity,</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keywordtype">double</span>                        &amp;normal_relative_velocity_value,</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    Tensor&lt;1, 3&gt;                  &amp;normal_unit_vector,</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keyword">const</span> ArrayView&lt;const double&gt; &amp;particle_one_properties,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keyword">const</span> ArrayView&lt;const double&gt; &amp;particle_two_properties,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keyword">const</span> Point&lt;3&gt;                &amp;particle_one_location,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keyword">const</span> Point&lt;3&gt;                &amp;particle_two_location)</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  {</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="comment">// Calculation of the contact vector from particle one to particle two</span></div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    Tensor&lt;1, 3&gt; contact_vector = particle_two_location - particle_one_location;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="comment">// Calculation of the normal unit contact vector</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    normal_unit_vector = contact_vector / contact_vector.norm();</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="comment">// Defining velocities and angular velocities of particles one and</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="comment">// two as vectors</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    Tensor&lt;1, 3&gt; particle_one_omega, particle_two_omega;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="comment">// Defining relative contact velocity</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    Tensor&lt;1, 3&gt; contact_relative_velocity;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="comment">// Assigning velocities and angular velocities of particles</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    contact_relative_velocity[0] =</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a>] -</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a>];</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    contact_relative_velocity[1] =</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">PropertiesIndex::v_y</a>] -</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">PropertiesIndex::v_y</a>];</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    contact_relative_velocity[2] =</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">PropertiesIndex::v_z</a>] -</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">PropertiesIndex::v_z</a>];</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    particle_one_omega[0] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a>];</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    particle_one_omega[1] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca136fea0581798241b41ea9646d5c299d">PropertiesIndex::omega_y</a>];</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    particle_one_omega[2] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">PropertiesIndex::omega_z</a>];</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    particle_two_omega[0] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a>];</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    particle_two_omega[1] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca136fea0581798241b41ea9646d5c299d">PropertiesIndex::omega_y</a>];</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    particle_two_omega[2] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">PropertiesIndex::omega_z</a>];</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="comment">// Calculation of contact relative velocity</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="comment">// v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    contact_relative_velocity += (cross_product_3d(</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      0.5 * (particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">PropertiesIndex::dp</a>] * particle_one_omega +</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;             particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">PropertiesIndex::dp</a>] * particle_two_omega),</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      normal_unit_vector));</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="comment">// Calculation of normal relative velocity. Note that in the</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// following line the product acts as inner product since both</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="comment">// sides are vectors, while in the second line the product is</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="comment">// scalar and vector product</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    normal_relative_velocity_value =</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;      contact_relative_velocity * normal_unit_vector;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="comment">// Calculation of tangential relative velocity</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="comment">// v_rt = v_ij - (v_ij⋅n_ij)*n_ij</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    tangential_relative_velocity =</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;      contact_relative_velocity -</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;      (normal_relative_velocity_value * normal_unit_vector);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  }</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">   * @brief Create a triangulation with a unique cell (represented by a line)</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">   * for each normal force between two particles.</span></div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">   * @param[out] tria Empty triangulation used to create a triangulation with</span></div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">   * all the vertices needed.</span></div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * @param[in] vertices Vector of points used to create a triangulation</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  multi_general_cell(Triangulation&lt;1, 3&gt;         &amp;tria,</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                     <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;vertices);</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">   * @brief Vector of normal forces between each touching particles.</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">  326</a></span>&#160;  std::vector&lt;double&gt; <a class="code" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">force_normal</a>;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">   * @brief Vector of positions of touching particles.</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">  331</a></span>&#160;  std::vector&lt;Point&lt;3&gt;&gt; <a class="code" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">vertices</a>;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;};</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        force_normal.push_back(</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;          scalar_product(normal_force, normal_unit_vector));</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;      }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   * @brief Update the contact pair information for all contact force</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">   * calculations.</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">   * @param[out] tangential_relative_velocity Tangential relative velocity.</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">   * @param[out] normal_relative_velocity_value Normal relative velocity.</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">   * @param[out] normal_unit_vector Normal vector of the contact.</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">   * @param[in] particle_one_properties Properties of particle one in contact.</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   * @param[in] particle_two_properties Properties of particle two in contact.</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   * @param[in] particle_one_location Location of particle one in contact.</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">   * @param[in] particle_two_location Location of particle two in contact.</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">  250</a></span>&#160;  <a class="code" href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">update_contact_information</a>(</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    Tensor&lt;1, 3&gt;                  &amp;tangential_relative_velocity,</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordtype">double</span>                        &amp;normal_relative_velocity_value,</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    Tensor&lt;1, 3&gt;                  &amp;normal_unit_vector,</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keyword">const</span> ArrayView&lt;const double&gt; &amp;particle_one_properties,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keyword">const</span> ArrayView&lt;const double&gt; &amp;particle_two_properties,</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keyword">const</span> Point&lt;3&gt;                &amp;particle_one_location,</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keyword">const</span> Point&lt;3&gt;                &amp;particle_two_location)</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="comment">// Calculation of the contact vector from particle one to particle two</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    Tensor&lt;1, 3&gt; contact_vector = particle_two_location - particle_one_location;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="comment">// Calculation of the normal unit contact vector</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    normal_unit_vector = contact_vector / contact_vector.norm();</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="comment">// Defining velocities and angular velocities of particles one and</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="comment">// two as vectors</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    Tensor&lt;1, 3&gt; particle_one_omega, particle_two_omega;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="comment">// Defining relative contact velocity</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    Tensor&lt;1, 3&gt; contact_relative_velocity;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="comment">// Assigning velocities and angular velocities of particles</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    contact_relative_velocity[0] =</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a>] -</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acac7a1d6ccd38157e036b13326fd8a1241">PropertiesIndex::v_x</a>];</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    contact_relative_velocity[1] =</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">PropertiesIndex::v_y</a>] -</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acad41815479aa2f7e7bdec6f18d11e7e49">PropertiesIndex::v_y</a>];</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    contact_relative_velocity[2] =</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">PropertiesIndex::v_z</a>] -</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;      particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941acae34cd195a396e0ef118bf686455986dc">PropertiesIndex::v_z</a>];</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    particle_one_omega[0] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a>];</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    particle_one_omega[1] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca136fea0581798241b41ea9646d5c299d">PropertiesIndex::omega_y</a>];</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    particle_one_omega[2] = particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">PropertiesIndex::omega_z</a>];</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    particle_two_omega[0] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca904f2c361967f4e79920c93699201bf5">PropertiesIndex::omega_x</a>];</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    particle_two_omega[1] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca136fea0581798241b41ea9646d5c299d">PropertiesIndex::omega_y</a>];</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    particle_two_omega[2] = particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca165540b7d468cbe94151239e9ce584c1">PropertiesIndex::omega_z</a>];</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="comment">// Calculation of contact relative velocity</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="comment">// v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    contact_relative_velocity += (cross_product_3d(</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      0.5 * (particle_one_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">PropertiesIndex::dp</a>] * particle_one_omega +</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;             particle_two_properties[<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca0bd015690e666a6f4cd57b8767f61070">PropertiesIndex::dp</a>] * particle_two_omega),</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;      normal_unit_vector));</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// Calculation of normal relative velocity. Note that in the</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="comment">// following line the product acts as inner product since both</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="comment">// sides are vectors, while in the second line the product is</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// scalar and vector product</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    normal_relative_velocity_value =</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      contact_relative_velocity * normal_unit_vector;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="comment">// Calculation of tangential relative velocity</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="comment">// v_rt = v_ij - (v_ij⋅n_ij)*n_ij</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    tangential_relative_velocity =</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;      contact_relative_velocity -</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;      (normal_relative_velocity_value * normal_unit_vector);</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  }</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">   * @brief Create a triangulation with a unique cell (represented by a line)</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">   * for each normal force between two particles.</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">   * @param[out] tria Empty triangulation used to create a triangulation with</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * all the vertices needed.</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   * @param[in] vertices Vector of points used to create a triangulation</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  multi_general_cell(Triangulation&lt;1, 3&gt;         &amp;tria,</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                     <span class="keyword">const</span> std::vector&lt;Point&lt;3&gt;&gt; &amp;vertices);</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   * @brief Vector of normal forces between each touching particles.</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">  327</a></span>&#160;  std::vector&lt;double&gt; <a class="code" href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">force_normal</a>;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment">   * @brief Vector of positions of touching particles.</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">  332</a></span>&#160;  std::vector&lt;Point&lt;3&gt;&gt; <a class="code" href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">vertices</a>;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;};</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aauxiliary__math__functions_8h_html"><div class="ttname"><a href="auxiliary__math__functions_8h.html">auxiliary_math_functions.h</a></div></div>
 <div class="ttc" id="aclassDEMSolverParameters_html"><div class="ttname"><a href="classDEMSolverParameters.html">DEMSolverParameters</a></div><div class="ttdoc">Handles all the parameters declared in the parameter handler file.</div><div class="ttdef"><b>Definition:</b> <a href="dem__solver__parameters_8h_source.html#l00016">dem_solver_parameters.h:17</a></div></div>
 <div class="ttc" id="aclassPVDHandler_html"><div class="ttname"><a href="classPVDHandler.html">PVDHandler</a></div><div class="ttdoc">The PVDHandler class manages the storage of the information required to write pvd file....</div><div class="ttdef"><b>Definition:</b> <a href="pvd__handler_8h_source.html#l00016">pvd_handler.h:17</a></div></div>
@@ -421,9 +422,9 @@ $(function() {
 <div class="ttc" id="aclassParticlesForceChainsBase_html_a9630d9feb5bda806f90706aeda8e5d50"><div class="ttname"><a href="classParticlesForceChainsBase.html#a9630d9feb5bda806f90706aeda8e5d50">ParticlesForceChainsBase::calculate_force_chains</a></div><div class="ttdeci">virtual void calculate_force_chains(typename dem_data_structures&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename dem_data_structures&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles)=0</div><div class="ttdoc">Use a ParticleParticleContactForce object to calculate normal forces between particles....</div></div>
 <div class="ttc" id="aclassParticlesForceChains_html"><div class="ttname"><a href="classParticlesForceChains.html">ParticlesForceChains</a></div><div class="ttdoc">Class that carries out the calculation of particle-particle contact force and the visualization of fo...</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00096">force_chains_visualization.h:101</a></div></div>
 <div class="ttc" id="aclassParticlesForceChains_html_a1b1bc149876ebc75d2fc4c33dac3edc0"><div class="ttname"><a href="classParticlesForceChains.html#a1b1bc149876ebc75d2fc4c33dac3edc0">ParticlesForceChains::execute_contact_calculation</a></div><div class="ttdeci">void execute_contact_calculation(typename DEM::dem_data_structures&lt; dim &gt;::particle_contact_info &amp;adjacent_particles_list)</div><div class="ttdoc">Execute the contact calculation step for the particle-particle contact only for local-local and local...</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00160">force_chains_visualization.h:160</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_a38397b0e5bd454c873c9d8298e354cea"><div class="ttname"><a href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">ParticlesForceChains::vertices</a></div><div class="ttdeci">std::vector&lt; Point&lt; 3 &gt; &gt; vertices</div><div class="ttdoc">Vector of positions of touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00331">force_chains_visualization.h:331</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_a73f0977a5193266518968e69eac2bcec"><div class="ttname"><a href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">ParticlesForceChains::force_normal</a></div><div class="ttdeci">std::vector&lt; double &gt; force_normal</div><div class="ttdoc">Vector of normal forces between each touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00326">force_chains_visualization.h:326</a></div></div>
-<div class="ttc" id="aclassParticlesForceChains_html_a9e1cb00b609bac11efc9887a1aaa5bd9"><div class="ttname"><a href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">ParticlesForceChains::update_contact_information</a></div><div class="ttdeci">void update_contact_information(Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, double &amp;normal_relative_velocity_value, Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, const Point&lt; 3 &gt; &amp;particle_one_location, const Point&lt; 3 &gt; &amp;particle_two_location)</div><div class="ttdoc">Update the contact pair information for all contact force calculations.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00249">force_chains_visualization.h:249</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_a38397b0e5bd454c873c9d8298e354cea"><div class="ttname"><a href="classParticlesForceChains.html#a38397b0e5bd454c873c9d8298e354cea">ParticlesForceChains::vertices</a></div><div class="ttdeci">std::vector&lt; Point&lt; 3 &gt; &gt; vertices</div><div class="ttdoc">Vector of positions of touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00332">force_chains_visualization.h:332</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_a73f0977a5193266518968e69eac2bcec"><div class="ttname"><a href="classParticlesForceChains.html#a73f0977a5193266518968e69eac2bcec">ParticlesForceChains::force_normal</a></div><div class="ttdeci">std::vector&lt; double &gt; force_normal</div><div class="ttdoc">Vector of normal forces between each touching particles.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00327">force_chains_visualization.h:327</a></div></div>
+<div class="ttc" id="aclassParticlesForceChains_html_a9e1cb00b609bac11efc9887a1aaa5bd9"><div class="ttname"><a href="classParticlesForceChains.html#a9e1cb00b609bac11efc9887a1aaa5bd9">ParticlesForceChains::update_contact_information</a></div><div class="ttdeci">void update_contact_information(Tensor&lt; 1, 3 &gt; &amp;tangential_relative_velocity, double &amp;normal_relative_velocity_value, Tensor&lt; 1, 3 &gt; &amp;normal_unit_vector, const ArrayView&lt; const double &gt; &amp;particle_one_properties, const ArrayView&lt; const double &gt; &amp;particle_two_properties, const Point&lt; 3 &gt; &amp;particle_one_location, const Point&lt; 3 &gt; &amp;particle_two_location)</div><div class="ttdoc">Update the contact pair information for all contact force calculations.</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00250">force_chains_visualization.h:250</a></div></div>
 <div class="ttc" id="aclassParticlesForceChains_html_adee2f4f5c4833cfac2f4bcb0462dbe6f"><div class="ttname"><a href="classParticlesForceChains.html#adee2f4f5c4833cfac2f4bcb0462dbe6f">ParticlesForceChains::~ParticlesForceChains</a></div><div class="ttdeci">virtual ~ParticlesForceChains()</div><div class="ttdef"><b>Definition:</b> <a href="force__chains__visualization_8h_source.html#l00105">force_chains_visualization.h:105</a></div></div>
 <div class="ttc" id="acontact__type_8h_html"><div class="ttname"><a href="contact__type_8h.html">contact_type.h</a></div></div>
 <div class="ttc" id="adata__containers_8h_html"><div class="ttname"><a href="data__containers_8h.html">data_containers.h</a></div></div>
