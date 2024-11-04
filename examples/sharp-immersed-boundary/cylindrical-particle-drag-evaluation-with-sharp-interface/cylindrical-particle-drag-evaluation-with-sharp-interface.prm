@@ -12,7 +12,7 @@ set dimension = 3
 
 subsection simulation control
   set method      = steady
-  set output path = ./particle_drag/
+  set output path = ./particle_drag_out/
 end
 
 #---------------------------------------------------
@@ -55,18 +55,18 @@ end
 #---------------------------------------------------
 
 subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 2,1,1 : -24,-16,-16 : 40,16,16 : true
-    set initial refinement = 4
-  end
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2,1,1 : -24,-16,-16 : 40,16,16 : true
+  set initial refinement = 4
+end
 
-subsection box refinement 
+subsection box refinement
   set initial refinement = 3
   subsection mesh
     set type               = dealii
     set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 2,1,1: -6,-4,-4 : 10,4,4 : true
+    set grid arguments     = 2,1,1 : -6,-4,-4 : 10,4,4 : true
     set initial refinement = 0
   end
 end
@@ -78,7 +78,7 @@ end
 subsection boundary conditions
   set number = 6
   subsection bc 0
-    set id = 0
+    set id   = 0
     set type = function
     subsection u
       set Function expression = 1
@@ -91,23 +91,23 @@ subsection boundary conditions
     end
   end
   subsection bc 1
-    set id = 1
+    set id   = 1
     set type = outlet
   end
   subsection bc 2
-    set id = 2
+    set id   = 2
     set type = slip
   end
   subsection bc 3
-    set id = 3
+    set id   = 3
     set type = slip
   end
   subsection bc 4
-    set id = 4
+    set id   = 4
     set type = slip
   end
   subsection bc 5
-    set id = 5
+    set id   = 5
     set type = slip
   end
 end
@@ -129,8 +129,9 @@ subsection particles
     set refine mesh outside radius factor = 2
   end
   subsection particle info 0
-    set type            = cylinder
-    set shape arguments = 0.5;1.0
+    set type             = cylinder
+    set shape arguments  = 0.5;1.0
+    set integrate motion = false
     subsection position
       set Function expression = 0;0;0
     end
@@ -168,7 +169,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set method                                = gmres
+    set verbosity = verbose
+    set method    = gmres
   end
 end

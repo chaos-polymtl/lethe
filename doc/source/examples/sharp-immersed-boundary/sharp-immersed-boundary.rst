@@ -42,7 +42,7 @@ Sharp Immersed Boundary Solver
       
       sharp_2_6 [label="3D Static Mixer \nImpeller Using RBF", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html", tooltip="3D Static Mixer \nImpeller Using RBF Sharp-immersed boundary"];
       
-      sharp_2_7 [label="Flow Around a Finite \nCylindrical Particle Using the \nSharp Interface Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/flow-around-particle-sharp/flow-around-particle-sharp.html", tooltop = "Flow Around a Finite \nCylindrical Particle Using the \nSharp Interface Method"]
+      sharp_2_7 [label="Flow Around a Finite \nCylindrical Particle Using the \nSharp Interface Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface.html", tooltop = "Flow Around a finite \ncylindrical particle using the \nsharp interface method"]
 
       sharp_3 [label="Geometry Definition", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/geometry-definition.html"];
 

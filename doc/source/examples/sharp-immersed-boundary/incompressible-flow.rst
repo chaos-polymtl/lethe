@@ -13,5 +13,5 @@ Incompressible Flow
     3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller
     3d-rbf-static-mixer/3d-rbf-static-mixer
     inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller
-    flow-around-particle-sharp/flow-around-particle-sharp
+    cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface
     
