@@ -201,7 +201,7 @@ test()
     simulation_control_parameters.maxCFL                       = 2;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_times_vector   = {7.5};
+    simulation_control_parameters.output_times_vector   = {7.5, 22.1};
     simulation_control_parameters.output_time_frequency = -1;
     simulation_control_parameters.output_time_interval  = {0,
                                                            1.7976931348623157e3};

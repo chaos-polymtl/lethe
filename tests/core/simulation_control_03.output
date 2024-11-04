@@ -86,7 +86,9 @@ DEAL::Iteration : 9    Time : 15.3680    Time step : 2.00000
 DEAL::Iteration : 10    Time : 17.3680    Time step : 2.00000
 DEAL::Iteration : 11    Time : 19.3680    Time step : 2.00000
 DEAL::Iteration : 12    Time : 21.3680    Time step : 2.00000
+DEAL::This is an output iteration
 DEAL::Iteration : 13    Time : 23.3680    Time step : 2.00000
+DEAL::This is an output iteration
 DEAL::Iteration : 14    Time : 25.3680    Time step : 2.00000
 DEAL::*************************************************
 DEAL::Adaptative time stepping - interval time output
