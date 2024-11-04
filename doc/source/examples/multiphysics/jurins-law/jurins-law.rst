@@ -205,13 +205,24 @@ We need to set boundary conditions both for the fluid dynamics solver and the Ca
 .. code-block:: text
 
     subsection boundary conditions cahn hilliard
-
-    set number = 1
-    	subsection bc 0
-    		set id          = 2 
-    		set type        = angle_of_contact
-    		set angle value = 50
-    	end
+      set number = 4
+      subsection bc 0
+        set id          = 2
+        set type        = angle_of_contact
+        set angle value = 50
+      end
+      subsection bc 1
+        set id   = 3
+        set type = noflux
+      end
+      subsection bc 2
+        set id   = 4
+        set type = noflux
+      end
+      subsection bc 3
+        set id   = 5
+        set type = noflux
+      end
     end
 
 Then, a ``slip`` boundary condition is applied everywhere, except for the upper boundary, where it is set as ``none``.
@@ -221,16 +232,17 @@ Then, a ``slip`` boundary condition is applied everywhere, except for the upper 
     subsection boundary conditions
       set number = 4
       subsection bc 0
-        set id   = 2 # inner wall
-        set type = slip 
+        set id   = 2 # angle of contact
+        set type = slip
       end
       subsection bc 1
-        set id   = 5 # remaining walls
+        set id   = 5 # walls
         set type = slip
       end
       subsection bc 2
-        set id = 4 # upper surface
-        set type = none
+        set id   = 4 # upper surface
+        set type = outlet
+        set beta = 0
       end
       subsection bc 3
         set id   = 3 # middle
