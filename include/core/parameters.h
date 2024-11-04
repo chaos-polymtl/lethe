@@ -145,8 +145,8 @@ namespace Parameters
     // Time frequency of the output (for time output control)
     double output_time_frequency;
 
-    // Output at a specific time (for time output control)
-    double output_time;
+    // Output at specific times (for time output control)
+    std::vector<double> output_times_vector;
 
     // Time window for file output (for both iteration and time output control)
     std::vector<double> output_time_interval;

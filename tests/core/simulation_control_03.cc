@@ -57,7 +57,7 @@ test()
   {
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = 0.3;
+    simulation_control_parameters.output_times          = 0.3;
     simulation_control_parameters.output_time_frequency = -1;
     simulation_control_parameters.output_time_interval  = {0,
                                                            1.7976931348623157e3};
@@ -90,7 +90,7 @@ test()
   {
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = -1;
+    simulation_control_parameters.output_times          = -1;
     simulation_control_parameters.output_time_frequency = -1;
     simulation_control_parameters.output_time_interval  = {0.2, 0.4};
 
@@ -122,7 +122,7 @@ test()
   {
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = -1;
+    simulation_control_parameters.output_times          = -1;
     simulation_control_parameters.output_time_frequency = 0.2;
     simulation_control_parameters.output_time_interval  = {0,
                                                            1.7976931348623157e3};
@@ -201,7 +201,7 @@ test()
     simulation_control_parameters.maxCFL                       = 2;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = 7.5;
+    simulation_control_parameters.output_times          = 7.5;
     simulation_control_parameters.output_time_frequency = -1;
     simulation_control_parameters.output_time_interval  = {0,
                                                            1.7976931348623157e3};
@@ -244,7 +244,7 @@ test()
     simulation_control_parameters.max_dt                       = 1e6;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = -1;
+    simulation_control_parameters.output_times          = -1;
     simulation_control_parameters.output_time_frequency = -1;
     simulation_control_parameters.output_time_interval  = {7.5, 17};
 
@@ -286,7 +286,7 @@ test()
     simulation_control_parameters.max_dt                       = 1e6;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
-    simulation_control_parameters.output_time           = -1;
+    simulation_control_parameters.output_times          = -1;
     simulation_control_parameters.output_time_frequency = 4;
     simulation_control_parameters.output_time_interval  = {0,
                                                            1.7976931348623157e3};

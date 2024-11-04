@@ -216,7 +216,7 @@ SimulationControlTransient::SimulationControlTransient(
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
   , output_time_frequency(param.output_time_frequency)
-  , output_time(param.output_time)
+  , output_times_vector(param.output_times_vector)
   , output_time_interval(param.output_time_interval)
   , output_control(param.output_control)
 {}
@@ -336,12 +336,15 @@ SimulationControlTransient::is_output_iteration()
 
   // For cases 2 and 3:
   bool   is_output_time = false;
-  double upper_bound, lower_bound;
+  double upper_bound, lower_bound, local_output_time;
 
-  if (output_time != -1) // Case 2. If a specific time is given.
+  // Case 2. If one or several specific output times are given
+  // We check the vector of output times once at a time
+  local_output_time = output_times_vector[output_times_counter];
+  if (local_output_time != -1)
     {
-      upper_bound = output_time;
-      lower_bound = output_time;
+      upper_bound = local_output_time;
+      lower_bound = local_output_time;
     }
   else // Case 3. Only a specific time interval is specified
     {
@@ -363,7 +366,16 @@ SimulationControlTransient::is_output_iteration()
   // interval upper bound does not correspond exactly to a time iteration
   // performed (due to in time step)
   if (current_time >= upper_bound && (previous_time < upper_bound))
-    is_output_time = true;
+    {
+      is_output_time = true;
+
+      if (local_output_time != -1 &&
+          is_output_time) // Update specific time for case 2, only when we have
+                          // written the upper bound
+        {
+          output_times_counter++;
+        }
+    }
 
   return is_output_time;
 }

@@ -498,8 +498,11 @@ protected:
   // Specific output frequency for time output control
   double output_time_frequency;
 
-  // Specific output time for time output control
-  double output_time;
+  // Specific output times for time output control
+  std::vector<double> output_times_vector;
+
+  // Counter to move between output times given in previous vector
+  unsigned int output_times_counter = 0;
 
   // Time interval for output of transient iterations either with time output
   // control or iterations control
