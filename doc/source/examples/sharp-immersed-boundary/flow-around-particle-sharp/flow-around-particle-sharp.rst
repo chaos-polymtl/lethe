@@ -165,8 +165,7 @@ The following block defines the viscosity for a Reynolds number of 1:
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~
 
-With the Reynolds number ranging from 0.01 to 5, the simulation can easily be solved by using a steady-state solver. The mesh is sufficiently refined to capture the flow around the particle and therefore doesn't 
-require any mesh adaptation.
+With the Reynolds number ranging from 0.01 to 5, the simulation can easily be solved by using a steady-state solver. The mesh is sufficiently refined to capture the flow around the particle and therefore doesn't require any mesh adaptation.
 
 .. code-block:: text
 
