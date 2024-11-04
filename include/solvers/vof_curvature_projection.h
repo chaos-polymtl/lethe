@@ -25,7 +25,7 @@ public:
    * @param[in] p_triangulation Distributed mesh information.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object used to
-   * getinformation from physics.
+   * get information from physics.
    *
    * @param[in,out] p_subequations_interface Subequations interface object used
    * to get information from other subequations and store information from the
