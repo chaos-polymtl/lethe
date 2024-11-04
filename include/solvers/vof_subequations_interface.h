@@ -15,7 +15,7 @@ using namespace dealii;
 /**
  * @brief IDs associated to the different subequations solved in Lethe.
  */
-enum VOFSubequationsID : unsigned int
+enum class VOFSubequationsID : unsigned int
 {
   /// VOF phase fraction gradient L2 projection
   phase_gradient_projection = 0,

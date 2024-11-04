@@ -58,9 +58,6 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
     this->simulation_parameters.multiphysics.vof_parameters
       .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
-  // Cell size
-  double h;
-
   // Loop over phase gradient projection cells
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -88,8 +85,9 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
           // Compute cell size
           auto &fe_phase_gradient_projection =
             fe_values_phase_gradient_projection.get_fe();
-          h = compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
-                                         fe_phase_gradient_projection.degree);
+          const double h =
+            compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
+                                       fe_phase_gradient_projection.degree);
 
           // Get projected phase fraction gradient values, gradients and VOF
           // phase fraction gradients
