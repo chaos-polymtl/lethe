@@ -1,0 +1,41 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       2176
+   Number of degrees of freedom: 7008
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 4672
+   Number of active cells:       2560
+   Number of degrees of freedom: 8280
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 5520
+   Number of active cells:       3328
+   Number of degrees of freedom: 10800
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 7200
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.0005   Time step: 0.0005   CFL: 0       
+*******************************************************************************
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.001    Time step: 0.0005   CFL: 0.342862
+*******************************************************************************
+   Number of active cells:       3886
+   Number of degrees of freedom: 12540
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 8360
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.0015   Time step: 0.0005   CFL: 0.76523 
+*******************************************************************************
+   Number of active cells:       3907
+   Number of degrees of freedom: 12585
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 8390
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.002    Time step: 0.0005   CFL: 0.761194
+*******************************************************************************
+   Number of active cells:       3919
+   Number of degrees of freedom: 12642
+   Volume of triangulation:      34
+   Number of Cahn-Hilliard degrees of freedom: 8428
