@@ -198,8 +198,7 @@ The drag coefficient :math:`C_d` is:
 
     C_d = \frac{F_d}{0.5 \rho U^2 A} = \frac{2f_x}{U^2 L D}
 
-Where :math:`F_d` is the drag force, :math:`\rho` is the fluid density, :math:`U` is the velocity, and :math:`A` is the projected area :math:`(A = LD)`. In Lethe, we solve for :math:`f = F/\rho`. Therefore, the drag force is calculated as the force applied 
-on the particle in the flow direction using :math:`f_x` from the simulation output.
+Where :math:`F_d` is the drag force, :math:`\rho` is the fluid density, :math:`U` is the velocity, and :math:`A` is the projected area :math:`(A = LD)`. In Lethe, we solve for :math:`f = F/\rho`. Therefore, the drag force is calculated as the force applied on the particle in the flow direction using :math:`f_x` from the simulation output.
 
 The following graph shows the drag coefficient as a function of the Reynolds number. The results are compared to the literature values for a perpendicular cylinder with an aspect ratio of 2.
 
