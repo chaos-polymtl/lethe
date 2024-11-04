@@ -111,6 +111,7 @@ The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip bou
     subsection boundary conditions
         set number = 6
         subsection bc 0
+            set id = 0
             set type = function
             subsection u
                 set Function expression = 1
@@ -123,18 +124,23 @@ The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip bou
             end
         end
         subsection bc 1
+            set id = 1
             set type = outlet
         end
         subsection bc 2
+            set id = 2
             set type = slip
         end
         subsection bc 3
+            set id = 3
             set type = slip
         end
         subsection bc 4
+            set id = 4
             set type = slip
         end
         subsection bc 5
+            set id = 5
             set type = slip
         end
     end
