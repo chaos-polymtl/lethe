@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid`` (Q1-Q1)
 - Two phase flow handled by the Cahn-Hilliard-Navier-Stokes (CHNS) approach
-- Dimensionality of the length
+- Changing the unit of length of the problem using the dimensionality option
 - Mobility coefficient setting for advective problems with CHNS solver
 - Parametric sweep on the shear rate of the fluid
 - Post-processing of the quantities of interest (detachment time and volume) and plots of the contour of the bubble at detachment
@@ -49,7 +49,7 @@ The computational domain with relevant boundary conditions is described in the f
 +-------------------------------------------------------------------------------------------------------------------+
 
 The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
-Below, all the parameters are set for a simulation whose shear rate :math:`S = 500 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the "Running the Simulation" section of this example.
+Below, all the parameters are set for a simulation whose shear rate :math:`S = 500 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the **Running the Simulation** section of this example.
 
 -----------------
 Parameter File
@@ -98,7 +98,7 @@ Dimensionality
 
 The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.	
 
-.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. One exception to this is the source terms and the initial conditions, which need to be specified in rescaled units.
+.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. The other subsections : sources terms, initial conditins and boundary conditions are not affected by the dimensionality parameters. Thus, any dimensioned parameter contained in these subsections need to be rescaled accordingly by the user.
 
 
 .. code-block:: text
