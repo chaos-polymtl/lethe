@@ -39,7 +39,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ./jurins-law-2d-mesh-dimensioned.msh
+  set file name          = ../../jurins-law-2d-mesh-dimensioned.msh
   set initial refinement = 2
 end
 

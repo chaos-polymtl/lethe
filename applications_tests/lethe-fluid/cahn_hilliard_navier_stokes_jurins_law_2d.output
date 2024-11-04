@@ -13,7 +13,7 @@ Running on 1 MPI rank(s)...
    Number of Cahn-Hilliard degrees of freedom: 7200
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.0005   Time step: 0.0005   CFL: 0       
+Transient iteration: 1        Time: 0.0005   Time step: 0.0005   CFL: 0
 *******************************************************************************
 
 *******************************************************************************
@@ -25,7 +25,7 @@ Transient iteration: 2        Time: 0.001    Time step: 0.0005   CFL: 0.342862
    Number of Cahn-Hilliard degrees of freedom: 8360
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.0015   Time step: 0.0005   CFL: 0.76523 
+Transient iteration: 3        Time: 0.0015   Time step: 0.0005   CFL: 0.76523
 *******************************************************************************
    Number of active cells:       3907
    Number of degrees of freedom: 12585

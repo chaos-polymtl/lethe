@@ -241,8 +241,7 @@ Then, a ``slip`` boundary condition is applied everywhere, except for the upper 
       end
       subsection bc 2
         set id   = 4 # upper surface
-        set type = outlet
-        set beta = 0
+        set type = none
       end
       subsection bc 3
         set id   = 3 # middle
