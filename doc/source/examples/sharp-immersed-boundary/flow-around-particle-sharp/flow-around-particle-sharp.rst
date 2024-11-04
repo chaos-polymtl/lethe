@@ -59,7 +59,7 @@ We then make use of a ``box refinement`` to refine the mesh around the particle 
         subsection mesh
             set type               = dealii
             set grid type          = subdivided_hyper_rectangle
-            set grid arguments     = 2,1,1: -6,-4,-4 : 10,4,4 : true
+            set grid arguments     = 2,1,1 : -6,-4,-4 : 10,4,4 : true
             set initial refinement = 0
         end
     end
