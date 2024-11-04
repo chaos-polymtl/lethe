@@ -259,16 +259,8 @@ namespace Parameters
                         output_name.end());
       output_iteration_frequency = prm.get_integer("output frequency");
       output_time_frequency      = prm.get_double("output time frequency");
-
-      const std::string        output_times_str = prm.get("output times");
-      std::vector<std::string> output_times_vec =
-        Utilities::split_string_list(output_times_str);
-
-      for (std::vector<int>::size_type i = 0; i != output_times_vec.size(); ++i)
-        {
-          output_times_vector.push_back(std::stod(output_times_vec[i]));
-        }
-
+      output_times_vector =
+        convert_string_to_vector<double>(prm, "output times");
       output_time_interval =
         convert_string_to_vector<double>(prm, "output time interval");
       output_boundaries = prm.get_bool("output boundaries");
