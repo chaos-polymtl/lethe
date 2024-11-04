@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=rrg-blaisbru
+#SBATCH --account=acount-name
 #SBATCH --ntasks-per-node=64
 #SBATCH --nodes=1 
 #SBATCH --mem=150G
@@ -11,4 +11,4 @@
 #SBATCH --mail-user=your-email@your-mailbox
 
 source $HOME/.dealii
-srun $HOME/lethe/inst/bin/lethe-fluid detachment.prm
+srun $HOME/lethe/inst/bin/lethe-fluid bubble-detachment-shear-flow.prm
