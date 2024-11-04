@@ -104,15 +104,14 @@ Boundary Conditions
 
 We define the boundary conditions similarly to the :doc:`../../incompressible-flow/3d-flow-around-sphere/flow-around-sphere` example although, in our case, we won't need a boundary condition defined on the particle as the sharp immersed boundary method will take care of it.
 
-The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and an outlet with :math:`p = 0` on the right of the domain. In our case, the outlet boundary condition is the same as the natural boundary condition. Therefore, it can be left unchanged as Lethe will apply it by default.
+The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip boundary conditions parallel to the flow direction, and an `outlet` boundary condition, corresponding to :math:`p = 0`, at the right of the domain.
 
 .. code-block:: text
 
     subsection boundary conditions
-        set number = 5
+        set number = 6
         subsection bc 0
-            set id   = 0
-                set type = function
+            set type = function
             subsection u
                 set Function expression = 1
             end
@@ -124,19 +123,18 @@ The domain makes use of an inlet velocity of :math:`1~m/s` on the left, slip bou
             end
         end
         subsection bc 1
-            set id   = 2
-            set type = slip
+            set type = outlet
         end
         subsection bc 2
-            set id   = 3
             set type = slip
         end
         subsection bc 3
-            set id   = 4
             set type = slip
         end
         subsection bc 4
-            set id   = 5
+            set type = slip
+        end
+        subsection bc 5
             set type = slip
         end
     end
