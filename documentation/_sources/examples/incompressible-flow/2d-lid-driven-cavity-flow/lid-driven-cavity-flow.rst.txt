@@ -20,12 +20,12 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-lid-driven-cavity``).
 
-- Base case parameter file (:math:`Re=400`): ``cavity.prm``
+- Base case parameter file (:math:`\mathrm{Re}=400`): ``cavity.prm``
 - Experimental data file from Ghia `et al.` (1982) [#ghia1982]_: ``ref-2d-ghia-u.txt``
 - Experimental data file from Erturk `et al.` (2005) [#erturk2005]_: ``ref-2d-erturk-u.txt``
-- Higher-Reynolds case parameter file (:math:`Re=7500`): ``Reynolds_7500/cavity.prm``
-- Postprocessing Python script for the :math:`Re=400` case: ``post_process_Reynolds_400.py``
-- Postprocessing Python script for the :math:`Re=7500` case: ``Reynolds_7500/post_process_Reynolds_7500.py``
+- Higher-Reynolds case parameter file (:math:`\mathrm{Re}=7500`): ``Reynolds_7500/cavity.prm``
+- Postprocessing Python script for the :math:`\mathrm{Re}=400` case: ``post_process_Reynolds_400.py``
+- Postprocessing Python script for the :math:`\mathrm{Re}=7500` case: ``Reynolds_7500/post_process_Reynolds_7500.py``
 
 
 -----------------------
@@ -49,7 +49,7 @@ We first investigate this case at a Reynolds number of 400 for which a steady-st
 Parameter File
 --------------
 
-Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, you may refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_.
+Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.II library from which Lethe derives. For more information on this class, you may refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_.
 
 Parameter files are made of subsections which describe a portion of the simulation (e.g. mesh generation, physical properties, simulation control). In parameter files, lines starting with ``#`` are comments. Parameters are set using the following syntax:
 
@@ -75,13 +75,13 @@ The ``mesh`` subsection specifies the computational grid:
       set initial refinement = 6
     end
 
-The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by it's ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids. 
+The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by its ``grid arguments``. We refer to the documentation of the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids. 
 
 Since the lid-driven cavity problem domain is a square, we use the ``hyper_cube`` ``grid_type``. The arguments of this grid type are the position of the bottom left corner, the position of the top right corner and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ID given to each face was given in the graphical description of the case. If ``colorize`` option were set to false, all boundaries would have been given the ID ``0``.
 
 It is a bit surprising that the position of the bottom left and the top right corner are specified by a single value. Since the geometry is a square, the position of the corner is specified using a single number, assuming that this identifies both the x and y value associated with that point. Other grid generators, such as the ``hyper_rectangle``, allow for more flexibility.
 
-The last parameter specifies the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. For example, the ``hyper_cube`` mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
+The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. For example, the ``hyper_cube`` mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -121,7 +121,7 @@ First, the ``number`` of boundary conditions to be applied must be specified. Fo
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-For the base case, we wish to simulate the lid-driven cavity at a Reynolds number of 400. Since the characteristic dimension of the cavity is :math:`L=1` and the velocity of the top boundary is :math:`u=1`, the Reynolds number is :math:`Re=\frac{1}{\nu}` where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set by the ``physical properties`` subsection:
+For the base case, we wish to simulate the lid-driven cavity at a Reynolds number of 400. Since the characteristic dimension of the cavity is :math:`L=1` and the velocity of the top boundary is :math:`u=1`, the Reynolds number is :math:`\mathrm{Re}=\frac{1}{\nu}` where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set by the ``physical properties`` subsection:
 
 .. code-block:: text
 
@@ -148,7 +148,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
     end
 
 .. warning:: 
-    An alternative would be to use the ``lethe-fluid-block`` solver; for `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
+    An alternative would be to use the ``lethe-fluid-block`` solver for which `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
@@ -164,12 +164,12 @@ Lethe is an implicit CFD solver. Consequently, each time-step requires the solut
       end
     end
 
-The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity=verbose`` in order to monitor possible non-convergence of the solver.
+The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity = verbose`` in order to monitor possible non-convergence of the solver.
 
 Linear Solver
 ~~~~~~~~~~~~~
 
-Each non-linear solver step requires the solution of a linear system of equations. Lethe has multiple options to parametrize its linear solvers, but here, we only enable its verbosity to monitor the number of iteration per time step and use the default parameters for the rest. 
+Each non-linear solver step requires the solution of a linear system of equations. Lethe has multiple parameters for its linear solvers, but here, we only enable its verbosity to monitor the number of iteration per time step and use the default parameters for the rest. 
 
 .. note:: 
     A good thing to remember is that, generally, linear solver parameters control the robustness of the simulation.
@@ -216,8 +216,8 @@ Lethe will generate a number of files. The most important one bears the extensio
 Results and Discussion
 -----------------------
 
-Base Case (:math:`Re=400`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Case (:math:`\mathrm{Re}=400`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
@@ -236,8 +236,8 @@ We note that the agreement is perfect. This is not surprising, especially consid
 .. note:: 
     The vtu files generated by Lethe are compressed archives. Consequently, they cannot be postprocessed directly. Although they can be easily post-processed using Paraview, it is sometimes necessary to be able to work with the raw data. The python library `PyVista <https://www.pyvista.org/>`_  allows us to do this.
 
-Higher-Reynolds Case (:math:`Re=7500`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Higher-Reynolds Case (:math:`\mathrm{Re}=7500`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We now consider the case at a Reynolds number of 7500. At this value of the Reynolds number, the ``steady`` solver will generally not converge as the problem is too non-linear (or too stiff). A workaround for this issue is to use an adjoint time-stepping strategy. This strategy consists in transforming the steady-state problem into a transient problem and to use an increasingly large time-step to reach a steady-state solution. This method is called ``steady_bdf`` in Lethe.
 
@@ -246,15 +246,12 @@ It can be used by modifying the ``simulation control`` subsection:
 .. code-block:: text
 
     subsection simulation control
-      set method = steady_bdf
-      set adapt = true
-      # Maximum CFL value
-      set max cfl = 1000
-      # Tolerance at which the simulation is stopped
-      set stop tolerance = 1e-10
-      # Adaptative time step scaling
-      set adaptative time step scaling = 1.05
-      set time step = 0.001
+      set method                       = steady_bdf
+      set adapt                        = true
+      set max cfl                      = 1000
+      set stop tolerance               = 1e-6
+      set adaptative time step scaling = 1.1
+      set time step                    = 0.001
     end
 
 The ``adapt`` parameter allows dynamic time-step adaptation. This feature is also used in transient simulations to carry simulations at a constant CFL number. The ``max cfl`` controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The ``stop-tolerance`` controls the initial tolerance of a time-step below which steady-state will be considered reached.  The ``time step`` controls the initial value of the time step and, finally, the ``adaptative time step scaling`` controls the rate of increase of the time step. The increase of the time step follows:
