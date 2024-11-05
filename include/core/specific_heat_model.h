@@ -338,6 +338,9 @@ public:
                   bdf_coefs[0] * enthalpy_current + bdf_coefs[1] * enthalpy_p1;
                 const double dT =
                   bdf_coefs[0] * temperature + bdf_coefs[1] * temperature_p1;
+                  
+                // The division does not need a tolerance to avoid a division by 0 
+                // since the temperature is clipped 
                 property_vector[i] = dH / dT;
 
                 break;
@@ -346,10 +349,10 @@ public:
             case Parameters::SimulationControl::TimeSteppingMethod::bdf2:
               {
                 // Clipping to ensure a minimal temperature difference
-                // if (temperature > temperature_p2)
-                //   temperature = std::max(temperature, temperature_p2 + 1e-6);
-                // else
-                //   temperature_p2 = std::max(temperature_p2, temperature + 1e-6);
+                if (temperature > temperature_p2)
+                  temperature = std::max(temperature, temperature_p2 + 1e-6);
+                else
+                  temperature_p2 = std::max(temperature_p2, temperature + 1e-6);
 
                 const double enthalpy_current = enthalpy(temperature);
                 const double enthalpy_p1      = enthalpy(temperature_p1);
