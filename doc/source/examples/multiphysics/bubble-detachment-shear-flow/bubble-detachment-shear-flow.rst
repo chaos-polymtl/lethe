@@ -44,12 +44,12 @@ The computational domain with relevant boundary conditions is described in the f
 |     :align: center                                                                                                |
 |     :name: Computational domain definition and initial conditions of the bubble detachment in a shear flow.       |
 |                                                                                                                   |
-|     Representation of the initial conditions of the bubble detachment in a shear flow                             |
+|     2D slice of the domain of the bubble detachment in a shear flow                                               |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
-Below, all the parameters are set for a simulation whose shear rate :math:`S = 500 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the **Running the Simulation** section of this example.
+Below, all the parameters are set for a simulation whose shear rate is :math:`S = 450 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the **Running the Simulation** section of this example.
 
 -----------------
 Parameter File
@@ -58,7 +58,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`5 \times 10^{-7} \ \text{s}`. Time-step adaptation is enabled using ``adapt = true`` and the max CFL is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
+Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`5 \times 10^{-7} \ \text{s}`. Time-step adaptation is enabled using ``adapt = true`` and the ``max cfl`` is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
 
 .. math::
     \Delta t < \Delta t_\sigma = \sqrt{\frac{(\rho_a+\rho_l)\Delta x^3}{4\pi\sigma}}
@@ -96,9 +96,9 @@ Note that the fluid dynamics are solved by default.
 Dimensionality
 ~~~~~~~~~~~~~~
 
-The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.	
+The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \ \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.	
 
-.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. The other subsections : sources terms, initial conditins and boundary conditions are not affected by the dimensionality parameters. Thus, any dimensioned parameter contained in these subsections need to be rescaled accordingly by the user.
+.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. The other subsections: source term, initial conditions and boundary conditions are not affected by the dimensionality parameters. Thus, any dimensioned parameter contained in these subsections need to be rescaled accordingly by the user.
 
 
 .. code-block:: text
@@ -124,7 +124,7 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The grid a
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase_cahn_hilliard`` as the refinement ``variable``. The maximum and minimum refinement levels are respectively set to :math:`6` and :math:`3` with the number of ``initial refinement steps`` set to :math:`4` to adequately capture the interface at the beginning. This ensures the physics close to the interface to be well resolved, while keeping a coearse cell size far from the interface. The mesh refinement ``frequency`` is set to :math:`3` because the refinement operation is expensive on 3D meshes. The ``fraction refinement`` and ``fraction coarsening`` are set to keep a high level of refinement close to the interface.
+The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase_cahn_hilliard`` as the refinement ``variable``. The maximum and minimum refinement levels are respectively set to :math:`6` and :math:`3` with the number of ``initial refinement steps`` set to :math:`4` to adequately capture the interface at the beginning. This ensures the physics close to the interface to be well resolved, while keeping a coarse cell size far from the interface. The mesh refinement ``frequency`` is set to :math:`3` because the refinement operation is expensive on 3D meshes. The ``fraction refinement`` and ``fraction coarsening`` are set to keep a high level of refinement close to the interface.
 
 .. code-block:: text
 
@@ -166,7 +166,7 @@ First the velocity over the domain is initialized to that of a Couette flow of a
 .. math::
     \mathbf{u}_\text{in,l}(y) = S\cdot y\mathbf{e}_x
     
-Here, the initial conditions are those corresponding to :math:`S = 450 \text{s}^{-1}`. We multiply by :math:`1000` because the length unit is the millimeter.
+Here, the initial conditions are those corresponding to :math:`S = 450 \ \text{s}^{-1}`. We multiply by :math:`1000` because the unit length is the millimeter.
     
 
 The chemical potential field is set to :math:`0` uniformly. The air bubble is initialized as a semi-sphere centered in the air inlet with a radius equal to :math:`R_0`. This corresponds to the following phase profile at :math:`t = 0`:
@@ -195,25 +195,45 @@ We need to set boundary conditions both for the fluid dynamics solver and the Ca
 .. code-block:: text
 
     subsection boundary conditions cahn hilliard
-      set number = 1
-      subsection bc 0 #lower-walls
+      set number = 6
+      subsection bc 0 # lower-walls
         set id   = 2
         set type = dirichlet
         subsection phi
           set Function expression = -tanh((5e-1 - sqrt(x*x + z*z))/(1.41*0.0346))
         end
       end
+      subsection bc 1
+        set id   = 1
+        set type = noflux
+      end
+      subsection bc 2
+        set id   = 0
+        set type = noflux
+      end
+      subsection bc 3
+        set id   = 3
+        set type = noflux
+      end
+      subsection bc 4
+        set id   = 4
+        set type = noflux
+      end
+      subsection bc 5
+        set id   = 5
+        set type = noflux
+      end
     end
     
-For the Navier-Stokes equations, we constraint the velocity to correspond to that of a Couette flow at the inlet (``subsection bc 0``)  and the upper wall (``subsection bc 1``). 
+For the Navier-Stokes equations, we constrain the velocity to correspond to that of a Couette flow at the inlet (``subsection bc 0``)  and the upper wall (``subsection bc 1``). 
 Then, the velocity profile on the bottom wall (``subsection bc 2``) needs to be :math:`0` outside of the air inlet and must correspond to a Poiseuille profile in the air inlet. We remind the expression of the Poiseuille velocity profile below:
 
 .. math::
    \mathbf{u}_{\text{in,a}} = u_\text{max,a}\left(1-\frac{x^2+z^2}{R_0^2}\right)\mathbf{e}_y
    
-This profile corresponds to a volumetric air flux :math:`Q = 500 \ \text{mm}^3\text{s}^{-1}` so that :math:`u_\text{max,a} = \frac{2Q}{\pi R_0^2} = 1.2732 \ \text{m} \text{s}^{-1}`. Once again, we multiply by because the length unit is the millimeter.
+This profile corresponds to a volumetric air flux :math:`Q = 500 \ \text{mm}^3\text{s}^{-1}` so that :math:`u_\text{max,a} = \frac{2Q}{\pi R_0^2} = 1.2732 \ \text{m} \text{s}^{-1}`. Once again, we multiply by :math:`1000` because the length unit is the millimeter.
 
-The lateral walls (``subsection bc 4`` and ``subsection bc 3``) are endowed with ``slip`` boundary conditions and the last boundary (``subsection bc 5``) is defined as an ``outlet``, with a penalization constant :math:`\beta = 100`
+The lateral walls (``subsection bc 4`` and ``subsection bc 3``) are endowed with ``slip`` boundary conditions and the last boundary (``subsection bc 5``) is defined as an ``outlet``, with a penalization constant :math:`\beta = 100`.
 
 .. code-block:: text
 
@@ -271,10 +291,10 @@ In this problem, the radius of the bubble is below the critical radius (see Yue 
 .. math::
     D = \frac{(S + S_a)R_0\epsilon}{\sigma}
     
-where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the shear rate related to the air flow, :math:`\varepsilon` is the interface thickness and :math:`\sigma` is the surface tension coefficient. :math:`S_a` is the only unknown, it is estimated as follows:
+where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the shear rate related to the air flow, :math:`\epsilon` is the interface thickness and :math:`\sigma` is the surface tension coefficient. :math:`S_a` is the only unknown, it is estimated as follows:
 
 .. math::
-    S_a = \frac{v_\text{max,a}}{2R_0}
+    S_a = \frac{u_\text{max,a}}{2R_0}
     
 .. code-block:: text
 
@@ -307,14 +327,14 @@ In the ``source term`` subsection, we define the gravitational acceleration. Sin
 
     subsection source term
       subsection fluid dynamics
-        set Function expression = 0; 0; -9810; 0
+        set Function expression = 0; -9810; 0; 0
       end
     end
     
 Post-processing
 ~~~~~~~~~~~~~~~
 
-In order to compute the quantities of interest of the problem, we enable Lethe to post-process the phase field at every iteration (``set output frequency = 1``). The phase statistics and the flow rates are necessary to compute derived quantities that serve to analyze the problem more in-depth.
+In order to compute the quantities of interest of the problem, we enable Lethe to post-process the phase field at every iteration (``set output frequency = 1``). The phase statistics and the flow rates are necessary to compute derived quantities to analyze the problem more in-depth.
 
 .. code-block:: text
 
@@ -341,7 +361,7 @@ The simulation may be run locally by calling ``lethe-fluid`` by invoking:
    
 to run the simulation using ten CPU cores. 
 
-Though we highly advise you to run the simulation on a computationnal cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included to generate automatically the cases with the correct parameters and physical properties locally. The script works with a ``.prm`` template (``bubble-detachment-shear-flow.prm``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on the Narval cluster. 
+Though we highly advise you to run the simulation on a computationnal cluster (such as Narval, Béluga, etc.). To do so, a python script (``generate_cases_locally.py``) is included to generate automatically the cases with the correct parameters and physical properties locally. The script works with a ``.prm`` template (``bubble-detachment-shear-flow.prm``) and a ``.sh`` file (``launch_lethe.sh``) containing the information to launch the simulation on Narval. 
 To use the python script, invoke:
 
 .. code-block:: text
@@ -362,7 +382,7 @@ Then, to post-process the results, you may use the provided ``multiple_folders_b
 Results
 -----------------
 
-In order to analyze the influence of the surrounding liquid on the detachment of the bubble, we run the simulations for different values of the shear rate: :math:`S \in [100,200,300,450]`. The detachment time and volume are then computed and compared to the results of Mirsandi *et al.* in the following figure, which shows an excellent agreement. The result for no-shear simulation was added to the plot for completion.
+In order to analyze the influence of the surrounding liquid on the detachment of the bubble, we run the simulations for different values of the shear rate: :math:`S \in [100,200,300,450]`. The detachment time and volume are then computed and compared to the results of Mirsandi *et al.* [#mirsandi2020]_ in the following figure, which shows an excellent agreement. The result of the no-shear simulation was added to the plot for completion.
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/bubble-detachment_volume.png                                                                  |
