@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fix
 
+- MINOR Force chains between local-ghost particle were being written multiple time when running in parallel. An arbitrary rule was added so that only one of the process is writing the force chain.[#1340](https://github.com/chaos-polymtl/lethe/pull/1340)
+
+
+### Fix
+
 - MINOR It was not possible to differentiate cohesive and repulsive forces with the force chains since the code was using the ".norm()" function. Now, the force chain calculation uses the scalar product between the normal force and the normal unit vector. [#1339](https://github.com/chaos-polymtl/lethe/pull/1339)
 
 ## [Master] - 2024-11-02

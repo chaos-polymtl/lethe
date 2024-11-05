@@ -30,7 +30,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
 {
   /*Initialize with a dummy normal force between two same points (0,0,0) to be
   sure every core have someting to write. */
-  force_normal.emplace_back(0);
+  normal_forces_vector.emplace_back(0);
   vertices.emplace_back(Point<3>(0, 0, 0));
   vertices.emplace_back(Point<3>(0, 0, 0));
 }
@@ -104,7 +104,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   Vector<float> force_values(triangulation.n_active_cells());
   for (unsigned int i = 0; i < force_values.size(); ++i)
     {
-      force_values[i] = force_normal[i];
+      force_values[i] = normal_forces_vector[i];
     }
   data_out.add_data_vector(force_values, "force");
   data_out.build_patches();
@@ -131,6 +131,10 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   pvd_handler.append(time, pvtu_filename);
   std::ofstream pvd_output(pvdPrefix.c_str());
   DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
+
+  // Clear the containers for the next writing time step.
+  vertices.clear();
+  normal_forces_vector.clear();
 }
 
 // No resistance

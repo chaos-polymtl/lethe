@@ -239,7 +239,7 @@ private:
 
         vertices.push_back(particle_one_location);
         vertices.push_back(particle_two_location);
-        force_normal.push_back(
+        normal_forces_vector.push_back(
           scalar_product(normal_force, normal_unit_vector));
       }
   }
@@ -334,7 +334,7 @@ private:
   /**
    * @brief Vector of normal forces between each touching particles.
    */
-  std::vector<double> force_normal;
+  std::vector<double> normal_forces_vector;
 
   /**
    * @brief Vector of positions of touching particles.
