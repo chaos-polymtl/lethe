@@ -11,13 +11,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method = steady_bdf
-  set adapt  = true
-  # Maximum CFL value
-  set max cfl = 1000
-  # Tolerance at which the simulation is stopped
-  set stop tolerance = 1e-6
-  # Adaptative time step scaling
+  set method                       = steady_bdf
+  set adapt                        = true
+  set max cfl                      = 1000
+  set stop tolerance               = 1e-6
   set adaptative time step scaling = 1.1
   set time step                    = 0.001
 end
