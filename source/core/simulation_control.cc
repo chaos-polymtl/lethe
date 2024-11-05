@@ -301,14 +301,15 @@ bool
 SimulationControlTransient::is_output_iteration()
 {
   // If iteration control the only options are to not print or at certain
-  // frequency of iterations
+  // frequency of iterations for the time interval given
   if (output_control == Parameters::SimulationControl::OutputControl::iteration)
     {
       if (output_iteration_frequency == 0)
         return false;
       else
         {
-          // Check if the current step number matches the output frequency
+          // Check if the current step number matches the output frequency and
+          // the time interval
           return (get_step_number() % output_iteration_frequency == 0 &&
                   get_current_time() >= output_time_interval[0] &&
                   get_current_time() <= output_time_interval[1]);
@@ -330,7 +331,7 @@ SimulationControlTransient::is_output_iteration()
 
           return true;
         }
-      else
+      else // if it does not match the time frequency we do not output
         return false;
     }
 
@@ -339,12 +340,18 @@ SimulationControlTransient::is_output_iteration()
   double upper_bound, lower_bound, local_output_time;
 
   // Case 2. If one or several specific output times are given
-  // We check the vector of output times once at a time
+  // We check the vector of output times one at a time. Once the list of
+  // specific times is over, we do not check anymore.
   local_output_time = output_times_vector[output_times_counter];
   if (local_output_time != -1)
     {
-      upper_bound = local_output_time;
-      lower_bound = local_output_time;
+      if (!no_more_output_times)
+        {
+          upper_bound = local_output_time;
+          lower_bound = local_output_time;
+        }
+      else // if no more output times, we do not output anymore
+        return false;
     }
   else // Case 3. Only a specific time interval is specified
     {
@@ -364,16 +371,20 @@ SimulationControlTransient::is_output_iteration()
 
   // We always write one step after, in case the specific time or the
   // interval upper bound does not correspond exactly to a time iteration
-  // performed (due to in time step)
+  // performed (due to time step)
   if (current_time >= upper_bound && (previous_time < upper_bound))
     {
       is_output_time = true;
 
-      if (local_output_time != -1 &&
-          is_output_time) // Update specific time for case 2, only when we have
-                          // written the upper bound
+      // Update specific time for case 2 once we have written the upper bound
+      if (local_output_time != -1 && is_output_time)
         {
-          output_times_counter++;
+          // Update the counter only if there are more elements in vector
+          if (output_times_vector.size() > output_times_counter + 1)
+            output_times_counter++;
+          else // otherwise set flag to false as no more times need to be
+               // checked
+            no_more_output_times = true;
         }
     }
 

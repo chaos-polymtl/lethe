@@ -504,6 +504,10 @@ protected:
   // Counter to move between output times given in previous vector
   unsigned int output_times_counter = 0;
 
+  // Variable to check whether we still have specific times to check in output
+  // times vector
+  bool no_more_output_times = false;
+
   // Time interval for output of transient iterations either with time output
   // control or iterations control
   std::vector<double> output_time_interval;
