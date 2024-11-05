@@ -47,13 +47,19 @@ public:
    * @param[in] ghost_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local-ghost particle-particle
    * contact forces.
+   * @param[out] vertices the vector of positions of touching particles.
+   * @param[out] normal_forces_vector the vector of normal forces between each
+   * touching particles.
    */
   virtual void
   calculate_force_chains(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles) = 0;
+                          &ghost_adjacent_particles,
+    std::vector<Point<3>> &vertices,
+    std::vector<double>   &normal_forces_vector) = 0;
+
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and
    * a PVD file.
@@ -73,7 +79,11 @@ public:
                      const MPI_Comm                  mpi_communicator,
                      const std::string               folder,
                      const unsigned int              iter,
-                     const double                    time) = 0;
+                     const double                    time,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &local_adjacent_particles,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &ghost_adjacent_particles) = 0;
 };
 
 /**
@@ -116,13 +126,18 @@ public:
    * @param[in] ghost_adjacent_particles Container of the contact pair
    * candidates information for calculation of the local-ghost particle-particle
    * contact forces.
+   * @param[out] vertices the vector of positions of touching particles.
+   * @param[out] normal_forces_vector the vector of normal forces between each
+   * touching particles.
    */
   void
   calculate_force_chains(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles) override;
+                          &ghost_adjacent_particles,
+    std::vector<Point<3>> &vertices,
+    std::vector<double>   &normal_forces_vector) override;
 
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and
@@ -136,6 +151,12 @@ public:
    * be saved.
    * @param[in] iter the iteration number associated with the file.
    * @param[in] time the time associated with the file.
+   * @param[in] local_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local particle-particle
+   * contact forces.
+   * @param[in] ghost_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost particle-particle
+   * contact forces.
    */
   void
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
@@ -143,7 +164,11 @@ public:
                      const MPI_Comm                  mpi_communicator,
                      const std::string               folder,
                      const unsigned int              iter,
-                     const double                    time) override;
+                     const double                    time,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &local_adjacent_particles,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &ghost_adjacent_particles) override;
 
 private:
   /**
@@ -156,12 +181,17 @@ private:
    * @tparam force_model The particle-particle contact force model.
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles.
+   * @param[out] vertices the vector of positions of touching particles.
+   * @param[out] normal_forces_vector the vector of normal forces between each
+   * touching particles.
    */
   template <ContactType contact_type>
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
-      &adjacent_particles_list)
+                          &adjacent_particles_list,
+    std::vector<Point<3>> &vertices,
+    std::vector<double>   &normal_forces_vector)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
@@ -330,15 +360,5 @@ private:
   void
   multi_general_cell(Triangulation<1, 3>         &tria,
                      const std::vector<Point<3>> &vertices);
-
-  /**
-   * @brief Vector of normal forces between each touching particles.
-   */
-  std::vector<double> normal_forces_vector;
-
-  /**
-   * @brief Vector of positions of touching particles.
-   */
-  std::vector<Point<3>> vertices;
 };
 #endif
