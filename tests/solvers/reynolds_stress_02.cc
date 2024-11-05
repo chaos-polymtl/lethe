@@ -39,11 +39,12 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                           = 0.1;
-  simulation_control_parameters.timeEnd                      = 1.0;
-  simulation_control_parameters.adapt                        = true;
-  simulation_control_parameters.adaptative_time_step_scaling = 0.99;
-  simulation_control_parameters.max_dt                       = 1e6;
+  simulation_control_parameters.dt                                = 0.1;
+  simulation_control_parameters.timeEnd                           = 1.0;
+  simulation_control_parameters.adapt                             = true;
+  simulation_control_parameters.adaptative_time_step_scaling      = 0.99;
+  simulation_control_parameters.max_dt                            = 1e6;
+  simulation_control_parameters.time_step_independent_of_end_time = true;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;

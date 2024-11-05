@@ -22,8 +22,8 @@ test()
   simulation_control_parameters.adapt  = false;
   simulation_control_parameters.maxCFL = 1;
   simulation_control_parameters.method =
-
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+  simulation_control_parameters.time_step_independent_of_end_time = true;
 
   simulation_control_parameters.timeEnd                    = 20;
   simulation_control_parameters.number_mesh_adaptation     = 0;

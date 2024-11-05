@@ -31,6 +31,7 @@ test()
   simulationControlParameters.output_folder              = "canard";
   simulationControlParameters.output_iteration_frequency = 8;
   simulationControlParameters.output_time_interval       = {0, 1000000000};
+  simulationControlParameters.time_step_independent_of_end_time = true;
 
   SimulationControlSteady simulation_control(simulationControlParameters);
 
