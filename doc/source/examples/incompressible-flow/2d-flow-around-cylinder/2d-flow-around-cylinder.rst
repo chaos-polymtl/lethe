@@ -85,7 +85,7 @@ This example uses a non-uniform mesh adaptation. The parameters used are specifi
       set fraction coarsening  = 0.1
     end
 
-For steady-state simulations, one can enable a fixed number of mesh adaptations in the simulation control subsection. For this example, in the ``simulation control`` subsection (see :doc:`../../../parameters/cfd/simulation_control`), the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. To more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
+For steady-state simulations, one can enable a fixed number of mesh adaptations in the simulation control subsection. For this example, in the ``simulation control`` subsection (see :doc:`../../../parameters/cfd/simulation_control`), the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. For more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
 
 The result of this mesh adaptation can be clearly seen if we compare the initial mesh:
 
