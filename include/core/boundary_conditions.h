@@ -1039,6 +1039,16 @@ namespace BoundaryConditions
     AssertThrow(this->type.find(boundary_id) == this->type.end(),
                 CahnHilliardBoundaryDuplicated(boundary_id));
 
+    // Create and parse the phase order boundary condition for all cases.
+    prm.enter_subsection("phi");
+    this->bcFunctions[boundary_id] =
+      std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
+    bcFunctions[boundary_id]->phi.parse_parameters(prm);
+    prm.leave_subsection();
+
+    // Do the same with the angle of contact
+    this->angle_of_contact[boundary_id] = prm.get_double("angle value");
+
     const std::string op = prm.get("type");
     if (op == "noflux")
       {
@@ -1048,16 +1058,10 @@ namespace BoundaryConditions
       {
         this->type[boundary_id] =
           BoundaryType::cahn_hilliard_dirichlet_phase_order;
-        prm.enter_subsection("phi");
-        this->bcFunctions[boundary_id] =
-          std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
-        bcFunctions[boundary_id]->phi.parse_parameters(prm);
-        prm.leave_subsection();
       }
     if (op == "angle_of_contact")
       {
         this->type[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;
-        this->angle_of_contact[boundary_id] = prm.get_double("angle value");
       }
     if (op == "free_angle")
       {

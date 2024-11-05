@@ -10,6 +10,7 @@ Multiphysics
     vof
     heat-transfer
     tracer
+    chns
 
 .. graphviz:: 
 
@@ -64,9 +65,14 @@ Multiphysics
 
       multiphysics_3_1 [label="Tracer through CAD Junction in Simplex", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html"];
 
+      multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
+
+      multiphysics_4_1 [label="Jurin's Law", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/jurins-law/jurins-law.html"];
+
       multiphysics -> multiphysics_1:w;
       multiphysics -> multiphysics_2:w;
       multiphysics -> multiphysics_3:w;
+      multiphysics -> multiphysics_4:w;
 
       multiphysics_1 -> multiphysics_1_1:w;
       multiphysics_1 -> multiphysics_1_2:w;
@@ -88,5 +94,7 @@ Multiphysics
       multiphysics_2 -> multiphysics_2_7:w;
 
       multiphysics_3 -> multiphysics_3_1:w;
+
+      multiphysics_4 -> multiphysics_4_1:w;
     }
 

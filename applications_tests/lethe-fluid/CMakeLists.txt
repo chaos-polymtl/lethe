@@ -10,6 +10,7 @@ file(COPY box.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_manifold.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY lpbf_benchmark_mesh.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY jurins-law-2d-mesh-dimensioned.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
