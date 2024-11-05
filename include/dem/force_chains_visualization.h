@@ -153,9 +153,11 @@ private:
    * particle-particle contact forces class, without the other contact types and
    * the update of the particles forces, torques and tangential overlap.
    *
+   * @tparam force_model The particle-particle contact force model.
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles.
    */
+  template <ContactType contact_type>
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
@@ -193,6 +195,14 @@ private:
         // contact with particle 1
         auto particle_two            = contact_info.particle_two;
         auto particle_two_properties = particle_two->get_properties();
+
+        if constexpr (contact_type == ghost_particle_particle)
+          {
+            // We create an arbitrary rule so that forces between local-ghost
+            // particle are not written twice by each processor.
+            if (particle_one->get_id() < particle_two->get_id())
+              continue;
+          }
 
         // Get particle 2 location in dimension independent way
         Point<3> particle_two_location = this->get_location(particle_two);

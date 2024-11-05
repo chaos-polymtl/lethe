@@ -70,14 +70,16 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)
     {
-      execute_contact_calculation(adjacent_particles_list);
+      execute_contact_calculation<ContactType::local_particle_particle>(
+        adjacent_particles_list);
     }
 
   // Calculate force for local-ghost particle pairs
   for (auto &&adjacent_particles_list :
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
-      execute_contact_calculation(adjacent_particles_list);
+      execute_contact_calculation<ContactType::ghost_particle_particle>(
+        adjacent_particles_list);
     }
 }
 
