@@ -1120,372 +1120,376 @@ $(function() {
 <div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
 <div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                CahnHilliardBoundaryDuplicated(boundary_id));</div>
 <div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160; </div>
-<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
-<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;noflux&quot;</span>)</div>
-<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;      {</div>
-<div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_noflux;</div>
-<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;      }</div>
-<div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
-<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;      {</div>
-<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] =</div>
-<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;          BoundaryType::cahn_hilliard_dirichlet_phase_order;</div>
-<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;        prm.enter_subsection(<span class="stringliteral">&quot;phi&quot;</span>);</div>
-<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;        this-&gt;bcFunctions[boundary_id] =</div>
-<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;          std::make_shared&lt;CahnHilliardBoundaryFunctions&lt;dim&gt;&gt;();</div>
-<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;        bcFunctions[boundary_id]-&gt;phi.parse_parameters(prm);</div>
-<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;        prm.leave_subsection();</div>
+<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;    <span class="comment">// Create and parse the phase order boundary condition for all cases.</span></div>
+<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;phi&quot;</span>);</div>
+<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;    this-&gt;bcFunctions[boundary_id] =</div>
+<div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;      std::make_shared&lt;CahnHilliardBoundaryFunctions&lt;dim&gt;&gt;();</div>
+<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;    bcFunctions[boundary_id]-&gt;phi.parse_parameters(prm);</div>
+<div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;    prm.leave_subsection();</div>
+<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160; </div>
+<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;    <span class="comment">// Do the same with the angle of contact</span></div>
+<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;    this-&gt;angle_of_contact[boundary_id] = prm.get_double(<span class="stringliteral">&quot;angle value&quot;</span>);</div>
+<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160; </div>
+<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
+<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;noflux&quot;</span>)</div>
+<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;      {</div>
+<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_noflux;</div>
 <div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;      }</div>
-<div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;angle_of_contact&quot;</span>)</div>
+<div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
 <div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;      {</div>
-<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;</div>
-<div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;        this-&gt;angle_of_contact[boundary_id] = prm.get_double(<span class="stringliteral">&quot;angle value&quot;</span>);</div>
+<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] =</div>
+<div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;          BoundaryType::cahn_hilliard_dirichlet_phase_order;</div>
 <div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160;      }</div>
-<div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;free_angle&quot;</span>)</div>
+<div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;angle_of_contact&quot;</span>)</div>
 <div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;      {</div>
-<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_free_angle;</div>
+<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;</div>
 <div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;      }</div>
-<div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;  }</div>
-<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;<span class="comment">   * @brief Parse the boundary conditions</span></div>
-<div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;<span class="comment">   * Calls parse_boundary method for each boundary (max 14 boundaries)</span></div>
-<div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
-<div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160; </div>
-<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01077"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a0f52016d03f3fe375bfe22a1e89d2976"> 1077</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">CahnHilliardBoundaryConditions&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;  {</div>
-<div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions cahn hilliard&quot;</span>);</div>
-<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160;    {</div>
-<div class="line"><a name="l01081"></a><span class="lineno"> 1081</span>&#160;      this-&gt;number_of_boundary_conditions = prm.get_integer(<span class="stringliteral">&quot;number&quot;</span>);</div>
-<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160;      this-&gt;time_dependent                = prm.get_bool(<span class="stringliteral">&quot;time dependent&quot;</span>);</div>
-<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160; </div>
-<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; this-&gt;number_of_boundary_conditions; n++)</div>
-<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160;        {</div>
-<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
-<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160;          {</div>
-<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;            parse_boundary(prm);</div>
-<div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;          }</div>
-<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;          prm.leave_subsection();</div>
-<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;        }</div>
-<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;    }</div>
-<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;    prm.leave_subsection();</div>
-<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;  }</div>
-<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;<span class="comment">   * @brief This class manages the boundary conditions for VOF solver</span></div>
-<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;<span class="comment">   * It introduces the boundary functions and declares the boundary conditions</span></div>
-<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;<span class="comment">   * coherently.</span></div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;<span class="comment">   * - if bc type is &quot;dirichlet&quot;, the function is applied on the selected</span></div>
-<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;<span class="comment">   * boundary</span></div>
-<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;<span class="comment">   * - if bc type is &quot;none&quot;, nothing happens</span></div>
-<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160; </div>
-<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01108"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html"> 1108</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions</a> : <span class="keyword">public</span> <a class="code" href="namespaceBoundaryConditions.html">BoundaryConditions</a>&lt;dim&gt;</div>
-<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;  {</div>
-<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;    std::map&lt;types::boundary_id,</div>
-<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;             std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt;&gt;&gt;</div>
-<div class="line"><a name="l01113"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886"> 1113</a></span>&#160;      <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886">phase_fraction</a>;</div>
-<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160; </div>
-<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;    declare_default_entry(ParameterHandler        &amp;prm,</div>
-<div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;                          <span class="keyword">const</span> types::boundary_id default_boundary_id);</div>
-<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160;    declare_parameters(ParameterHandler  &amp;prm,</div>
-<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_of_boundary_conditions);</div>
-<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;    parse_boundary(ParameterHandler &amp;prm);</div>
-<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;    parse_parameters(ParameterHandler &amp;prm);</div>
-<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160;  };</div>
-<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;<span class="comment">   * @brief Declares the default parameters for a boundary condition id i_bc</span></div>
-<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
-<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;<span class="comment">   * @param i_bc The boundary condition id.</span></div>
-<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01136"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aa770e82d87c3444d3e81167aaf1c09fe"> 1136</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::declare_default_entry</a>(</div>
-<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;    ParameterHandler        &amp;prm,</div>
-<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160;    <span class="keyword">const</span> types::boundary_id default_boundary_id)</div>
-<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;  {</div>
-<div class="line"><a name="l01140"></a><span class="lineno"> 1140</span>&#160;    prm.declare_entry(<span class="stringliteral">&quot;type&quot;</span>,</div>
-<div class="line"><a name="l01141"></a><span class="lineno"> 1141</span>&#160;                      <span class="stringliteral">&quot;none&quot;</span>,</div>
-<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;                      Patterns::Selection(<span class="stringliteral">&quot;none|dirichlet&quot;</span>),</div>
-<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;                      <span class="stringliteral">&quot;Type of boundary condition for VOF&quot;</span></div>
-<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;                      <span class="stringliteral">&quot;Choices are &lt;none|dirichlet&gt;.&quot;</span>);</div>
-<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160; </div>
-<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;    prm.declare_entry(<span class="stringliteral">&quot;id&quot;</span>,</div>
-<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;                      Utilities::int_to_string(default_boundary_id, 2),</div>
-<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160;                      Patterns::Integer(),</div>
-<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;                      <span class="stringliteral">&quot;Mesh id for boundary conditions&quot;</span>);</div>
-<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160; </div>
-<div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;    Functions::ParsedFunction&lt;dim&gt; temporary_function;</div>
-<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
-<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;    temporary_function.<a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9">declare_parameters</a>(prm);</div>
-<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;    prm.leave_subsection();</div>
-<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;  }</div>
-<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;<span class="comment">   * @brief Declare the boundary conditions default parameters</span></div>
-<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160;<span class="comment">   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)</span></div>
-<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
-<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01165"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9"> 1165</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::declare_parameters</a>(</div>
-<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;    ParameterHandler  &amp;prm,</div>
-<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_of_boundary_conditions)</div>
-<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;  {</div>
-<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
-<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;    {</div>
-<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;      prm.declare_entry(<span class="stringliteral">&quot;number&quot;</span>,</div>
-<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;                        <span class="stringliteral">&quot;0&quot;</span>,</div>
-<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;                        Patterns::Integer(),</div>
-<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;                        <span class="stringliteral">&quot;Number of boundary conditions&quot;</span>);</div>
-<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;      prm.declare_entry(</div>
-<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;        <span class="stringliteral">&quot;time dependent&quot;</span>,</div>
-<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;        <span class="stringliteral">&quot;false&quot;</span>,</div>
-<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;        Patterns::Bool(),</div>
-<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;        <span class="stringliteral">&quot;Bool to define if the boundary condition is time-dependent&quot;</span>);</div>
-<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160; </div>
-<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; number_of_boundary_conditions; n++)</div>
-<div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;        {</div>
-<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
-<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;          {</div>
-<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;            declare_default_entry(prm, n);</div>
-<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;          }</div>
-<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;          prm.leave_subsection();</div>
-<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;        }</div>
-<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;    }</div>
-<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;    prm.leave_subsection();</div>
-<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;  }</div>
-<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;<span class="comment">   * @brief Parse the information for a boundary condition</span></div>
-<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
-<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;<span class="comment">   * @param i_bc The boundary condition number (and not necessarily it&#39;s id).</span></div>
-<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160; </div>
-<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01203"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a009a8fd61ccc32788a8cbd689d0de9b1"> 1203</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::parse_boundary</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;  {</div>
-<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;    AssertThrow(</div>
-<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;      prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>) &gt;= 0,</div>
-<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;      ExcMessage(</div>
-<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;        <span class="stringliteral">&quot;An invalid boundary id has been given for a VOF boundary condition.&quot;</span>));</div>
-<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160; </div>
-<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
-<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160; </div>
-<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
-<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;                VOFBoundaryDuplicated(boundary_id));</div>
-<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160; </div>
-<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;none&quot;</span>)</div>
-<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;      {</div>
-<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::none;</div>
-<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;      }</div>
-<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
+<div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;free_angle&quot;</span>)</div>
+<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;      {</div>
+<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::cahn_hilliard_free_angle;</div>
+<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;      }</div>
+<div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;  }</div>
+<div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;<span class="comment">   * @brief Parse the boundary conditions</span></div>
+<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;<span class="comment">   * Calls parse_boundary method for each boundary (max 14 boundaries)</span></div>
+<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
+<div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160; </div>
+<div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01081"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html#a0f52016d03f3fe375bfe22a1e89d2976"> 1081</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">CahnHilliardBoundaryConditions&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160;  {</div>
+<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions cahn hilliard&quot;</span>);</div>
+<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;    {</div>
+<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160;      this-&gt;number_of_boundary_conditions = prm.get_integer(<span class="stringliteral">&quot;number&quot;</span>);</div>
+<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160;      this-&gt;time_dependent                = prm.get_bool(<span class="stringliteral">&quot;time dependent&quot;</span>);</div>
+<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160; </div>
+<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; this-&gt;number_of_boundary_conditions; n++)</div>
+<div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;        {</div>
+<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
+<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;          {</div>
+<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;            parse_boundary(prm);</div>
+<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;          }</div>
+<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;          prm.leave_subsection();</div>
+<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;        }</div>
+<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;    }</div>
+<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;    prm.leave_subsection();</div>
+<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;  }</div>
+<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;<span class="comment">   * @brief This class manages the boundary conditions for VOF solver</span></div>
+<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;<span class="comment">   * It introduces the boundary functions and declares the boundary conditions</span></div>
+<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;<span class="comment">   * coherently.</span></div>
+<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;<span class="comment">   * - if bc type is &quot;dirichlet&quot;, the function is applied on the selected</span></div>
+<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;<span class="comment">   * boundary</span></div>
+<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;<span class="comment">   * - if bc type is &quot;none&quot;, nothing happens</span></div>
+<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160; </div>
+<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01112"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html"> 1112</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions</a> : <span class="keyword">public</span> <a class="code" href="namespaceBoundaryConditions.html">BoundaryConditions</a>&lt;dim&gt;</div>
+<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;  {</div>
+<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;    std::map&lt;types::boundary_id,</div>
+<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;             std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt;&gt;&gt;</div>
+<div class="line"><a name="l01117"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886"> 1117</a></span>&#160;      <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886">phase_fraction</a>;</div>
+<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160; </div>
+<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160;    <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;    declare_default_entry(ParameterHandler        &amp;prm,</div>
+<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;                          <span class="keyword">const</span> types::boundary_id default_boundary_id);</div>
+<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;    <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;    declare_parameters(ParameterHandler  &amp;prm,</div>
+<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_of_boundary_conditions);</div>
+<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160;    <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;    parse_boundary(ParameterHandler &amp;prm);</div>
+<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160;    <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;    parse_parameters(ParameterHandler &amp;prm);</div>
+<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160;  };</div>
+<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;<span class="comment">   * @brief Declares the default parameters for a boundary condition id i_bc</span></div>
+<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
+<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;<span class="comment">   * @param i_bc The boundary condition id.</span></div>
+<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01140"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aa770e82d87c3444d3e81167aaf1c09fe"> 1140</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::declare_default_entry</a>(</div>
+<div class="line"><a name="l01141"></a><span class="lineno"> 1141</span>&#160;    ParameterHandler        &amp;prm,</div>
+<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;    <span class="keyword">const</span> types::boundary_id default_boundary_id)</div>
+<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;  {</div>
+<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;    prm.declare_entry(<span class="stringliteral">&quot;type&quot;</span>,</div>
+<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160;                      <span class="stringliteral">&quot;none&quot;</span>,</div>
+<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;                      Patterns::Selection(<span class="stringliteral">&quot;none|dirichlet&quot;</span>),</div>
+<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;                      <span class="stringliteral">&quot;Type of boundary condition for VOF&quot;</span></div>
+<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160;                      <span class="stringliteral">&quot;Choices are &lt;none|dirichlet&gt;.&quot;</span>);</div>
+<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160; </div>
+<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160;    prm.declare_entry(<span class="stringliteral">&quot;id&quot;</span>,</div>
+<div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;                      Utilities::int_to_string(default_boundary_id, 2),</div>
+<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;                      Patterns::Integer(),</div>
+<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;                      <span class="stringliteral">&quot;Mesh id for boundary conditions&quot;</span>);</div>
+<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160; </div>
+<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;    Functions::ParsedFunction&lt;dim&gt; temporary_function;</div>
+<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
+<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;    temporary_function.<a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9">declare_parameters</a>(prm);</div>
+<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;    prm.leave_subsection();</div>
+<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160;  }</div>
+<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;<span class="comment">   * @brief Declare the boundary conditions default parameters</span></div>
+<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;<span class="comment">   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)</span></div>
+<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
+<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01169"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9"> 1169</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::declare_parameters</a>(</div>
+<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;    ParameterHandler  &amp;prm,</div>
+<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_of_boundary_conditions)</div>
+<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;  {</div>
+<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
+<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;    {</div>
+<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;      prm.declare_entry(<span class="stringliteral">&quot;number&quot;</span>,</div>
+<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;                        <span class="stringliteral">&quot;0&quot;</span>,</div>
+<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;                        Patterns::Integer(),</div>
+<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;                        <span class="stringliteral">&quot;Number of boundary conditions&quot;</span>);</div>
+<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;      prm.declare_entry(</div>
+<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;        <span class="stringliteral">&quot;time dependent&quot;</span>,</div>
+<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;        <span class="stringliteral">&quot;false&quot;</span>,</div>
+<div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;        Patterns::Bool(),</div>
+<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;        <span class="stringliteral">&quot;Bool to define if the boundary condition is time-dependent&quot;</span>);</div>
+<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160; </div>
+<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; number_of_boundary_conditions; n++)</div>
+<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;        {</div>
+<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
+<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;          {</div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            declare_default_entry(prm, n);</div>
+<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;          }</div>
+<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;          prm.leave_subsection();</div>
+<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;        }</div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;    }</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;    prm.leave_subsection();</div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;  }</div>
+<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;<span class="comment">   * @brief Parse the information for a boundary condition</span></div>
+<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
+<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;<span class="comment">   * @param i_bc The boundary condition number (and not necessarily it&#39;s id).</span></div>
+<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160; </div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01207"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a009a8fd61ccc32788a8cbd689d0de9b1"> 1207</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::parse_boundary</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;  {</div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;    AssertThrow(</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;      prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>) &gt;= 0,</div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;      ExcMessage(</div>
+<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;        <span class="stringliteral">&quot;An invalid boundary id has been given for a VOF boundary condition.&quot;</span>));</div>
+<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160; </div>
+<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;    types::boundary_id boundary_id = prm.get_integer(<span class="stringliteral">&quot;id&quot;</span>);</div>
+<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160; </div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;    AssertThrow(this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>.find(boundary_id) == this-&gt;type.end(),</div>
+<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;                VOFBoundaryDuplicated(boundary_id));</div>
+<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160; </div>
+<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;    <span class="keyword">const</span> std::string op = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
+<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;    <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;none&quot;</span>)</div>
 <div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;      {</div>
-<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::vof_dirichlet;</div>
-<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;        prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
-<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;        phase_fraction[boundary_id] =</div>
-<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;        phase_fraction[boundary_id]-&gt;parse_parameters(prm);</div>
-<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;        prm.leave_subsection();</div>
-<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;      }</div>
-<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;  }</div>
-<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160; </div>
-<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;<span class="comment">   * @brief Parse the boundary conditions</span></div>
-<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;<span class="comment">   * Calls parse_boundary method for each boundary (max 14 boundaries)</span></div>
-<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
-<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160; </div>
-<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01241"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a74210c57cd2d9146c2ca7d5cdbed747e"> 1241</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160;  {</div>
-<div class="line"><a name="l01243"></a><span class="lineno"> 1243</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
-<div class="line"><a name="l01244"></a><span class="lineno"> 1244</span>&#160;    {</div>
-<div class="line"><a name="l01245"></a><span class="lineno"> 1245</span>&#160;      this-&gt;number_of_boundary_conditions = prm.get_integer(<span class="stringliteral">&quot;number&quot;</span>);</div>
-<div class="line"><a name="l01246"></a><span class="lineno"> 1246</span>&#160;      this-&gt;time_dependent                = prm.get_bool(<span class="stringliteral">&quot;time dependent&quot;</span>);</div>
-<div class="line"><a name="l01247"></a><span class="lineno"> 1247</span>&#160; </div>
-<div class="line"><a name="l01248"></a><span class="lineno"> 1248</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; this-&gt;number_of_boundary_conditions; n++)</div>
-<div class="line"><a name="l01249"></a><span class="lineno"> 1249</span>&#160;        {</div>
-<div class="line"><a name="l01250"></a><span class="lineno"> 1250</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
-<div class="line"><a name="l01251"></a><span class="lineno"> 1251</span>&#160;          {</div>
-<div class="line"><a name="l01252"></a><span class="lineno"> 1252</span>&#160;            parse_boundary(prm);</div>
-<div class="line"><a name="l01253"></a><span class="lineno"> 1253</span>&#160;          }</div>
-<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;          prm.leave_subsection();</div>
-<div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;        }</div>
-<div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160;    }</div>
-<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;    prm.leave_subsection();</div>
-<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;  }</div>
-<div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160; </div>
-<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;} <span class="comment">// namespace BoundaryConditions</span></div>
-<div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160; </div>
-<div class="line"><a name="l01262"></a><span class="lineno"> 1262</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01263"></a><span class="lineno"> 1263</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01264"></a><span class="lineno"> 1264</span>&#160;<span class="comment"> * @brief This class implements a boundary conditions for the Navier-Stokes equation</span></div>
-<div class="line"><a name="l01265"></a><span class="lineno"> 1265</span>&#160;<span class="comment"> * where the velocity component are defined using individual functions</span></div>
-<div class="line"><a name="l01266"></a><span class="lineno"> 1266</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01267"></a><span class="lineno"> 1267</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01268"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html"> 1268</a></span>&#160;<span class="keyword">class </span><a class="code" href="classNavierStokesFunctionDefined.html">NavierStokesFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
-<div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160;{</div>
-<div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l01271"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6"> 1271</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6">u</a>;</div>
-<div class="line"><a name="l01272"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723"> 1272</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723">v</a>;</div>
-<div class="line"><a name="l01273"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65"> 1273</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65">w</a>;</div>
-<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160; </div>
-<div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l01276"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af"> 1276</a></span>&#160;  <a class="code" href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af">NavierStokesFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_u,</div>
-<div class="line"><a name="l01277"></a><span class="lineno"> 1277</span>&#160;                              Functions::ParsedFunction&lt;dim&gt; *p_v,</div>
-<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;                              Functions::ParsedFunction&lt;dim&gt; *p_w)</div>
-<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;    : Function&lt;dim&gt;(dim + 1)</div>
-<div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160;    , u(p_u)</div>
-<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;    , v(p_v)</div>
-<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160;    , w(p_w)</div>
-<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;  {}</div>
-<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160; </div>
-<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l01286"></a><span class="lineno"> 1286</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;};</div>
+<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::none;</div>
+<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;      }</div>
+<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;dirichlet&quot;</span>)</div>
+<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;      {</div>
+<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;        this-&gt;<a class="code" href="namespaceDEM.html#ae6292a647794105882a3dcd6b8c941aca583578bd4a0494a2a7a1b60ea1ec8099">type</a>[boundary_id] = BoundaryType::vof_dirichlet;</div>
+<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;        prm.enter_subsection(<span class="stringliteral">&quot;dirichlet&quot;</span>);</div>
+<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;        phase_fraction[boundary_id] =</div>
+<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
+<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;        phase_fraction[boundary_id]-&gt;parse_parameters(prm);</div>
+<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;        prm.leave_subsection();</div>
+<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;      }</div>
+<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;  }</div>
+<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160; </div>
+<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;<span class="comment">   * @brief Parse the boundary conditions</span></div>
+<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;<span class="comment">   * Calls parse_boundary method for each boundary (max 14 boundaries)</span></div>
+<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;<span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation information</span></div>
+<div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160; </div>
+<div class="line"><a name="l01243"></a><span class="lineno"> 1243</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01244"></a><span class="lineno"> 1244</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01245"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a74210c57cd2d9146c2ca7d5cdbed747e"> 1245</a></span>&#160;  <a class="code" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">VOFBoundaryConditions&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a name="l01246"></a><span class="lineno"> 1246</span>&#160;  {</div>
+<div class="line"><a name="l01247"></a><span class="lineno"> 1247</span>&#160;    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
+<div class="line"><a name="l01248"></a><span class="lineno"> 1248</span>&#160;    {</div>
+<div class="line"><a name="l01249"></a><span class="lineno"> 1249</span>&#160;      this-&gt;number_of_boundary_conditions = prm.get_integer(<span class="stringliteral">&quot;number&quot;</span>);</div>
+<div class="line"><a name="l01250"></a><span class="lineno"> 1250</span>&#160;      this-&gt;time_dependent                = prm.get_bool(<span class="stringliteral">&quot;time dependent&quot;</span>);</div>
+<div class="line"><a name="l01251"></a><span class="lineno"> 1251</span>&#160; </div>
+<div class="line"><a name="l01252"></a><span class="lineno"> 1252</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n = 0; n &lt; this-&gt;number_of_boundary_conditions; n++)</div>
+<div class="line"><a name="l01253"></a><span class="lineno"> 1253</span>&#160;        {</div>
+<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;          prm.enter_subsection(<span class="stringliteral">&quot;bc &quot;</span> + std::to_string(n));</div>
+<div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;          {</div>
+<div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160;            parse_boundary(prm);</div>
+<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;          }</div>
+<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;          prm.leave_subsection();</div>
+<div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160;        }</div>
+<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;    }</div>
+<div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160;    prm.leave_subsection();</div>
+<div class="line"><a name="l01262"></a><span class="lineno"> 1262</span>&#160;  }</div>
+<div class="line"><a name="l01263"></a><span class="lineno"> 1263</span>&#160; </div>
+<div class="line"><a name="l01264"></a><span class="lineno"> 1264</span>&#160;} <span class="comment">// namespace BoundaryConditions</span></div>
+<div class="line"><a name="l01265"></a><span class="lineno"> 1265</span>&#160; </div>
+<div class="line"><a name="l01266"></a><span class="lineno"> 1266</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01267"></a><span class="lineno"> 1267</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01268"></a><span class="lineno"> 1268</span>&#160;<span class="comment"> * @brief This class implements a boundary conditions for the Navier-Stokes equation</span></div>
+<div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160;<span class="comment"> * where the velocity component are defined using individual functions</span></div>
+<div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01272"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html"> 1272</a></span>&#160;<span class="keyword">class </span><a class="code" href="classNavierStokesFunctionDefined.html">NavierStokesFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
+<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;{</div>
+<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l01275"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6"> 1275</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6">u</a>;</div>
+<div class="line"><a name="l01276"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723"> 1276</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723">v</a>;</div>
+<div class="line"><a name="l01277"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65"> 1277</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65">w</a>;</div>
+<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160; </div>
+<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l01280"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af"> 1280</a></span>&#160;  <a class="code" href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af">NavierStokesFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_u,</div>
+<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;                              Functions::ParsedFunction&lt;dim&gt; *p_v,</div>
+<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160;                              Functions::ParsedFunction&lt;dim&gt; *p_w)</div>
+<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;    : Function&lt;dim&gt;(dim + 1)</div>
+<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160;    , u(p_u)</div>
+<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160;    , v(p_v)</div>
+<div class="line"><a name="l01286"></a><span class="lineno"> 1286</span>&#160;    , w(p_w)</div>
+<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;  {}</div>
 <div class="line"><a name="l01288"></a><span class="lineno"> 1288</span>&#160; </div>
-<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type Navier-Stokes equations</span></div>
-<div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01293"></a><span class="lineno"> 1293</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
-<div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
-<div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l01299"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951"> 1299</a></span>&#160;<a class="code" href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951">NavierStokesFunctionDefined&lt;dim&gt;::value</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;p,</div>
-<div class="line"><a name="l01300"></a><span class="lineno"> 1300</span>&#160;                                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
-<div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l01302"></a><span class="lineno"> 1302</span>&#160;  Assert(component &lt; this-&gt;n_components,</div>
-<div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160;         ExcIndexRange(component, 0, this-&gt;n_components));</div>
-<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160; </div>
-<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;  <span class="keywordflow">if</span> (component == 0)</div>
-<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;    {</div>
-<div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;      <span class="keywordflow">return</span> u-&gt;value(p);</div>
-<div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160;    }</div>
-<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 1)</div>
+<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;};</div>
+<div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160; </div>
+<div class="line"><a name="l01293"></a><span class="lineno"> 1293</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type Navier-Stokes equations</span></div>
+<div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
+<div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01299"></a><span class="lineno"> 1299</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
+<div class="line"><a name="l01300"></a><span class="lineno"> 1300</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01302"></a><span class="lineno"> 1302</span>&#160;<span class="keywordtype">double</span></div>
+<div class="line"><a name="l01303"></a><span class="lineno"><a class="line" href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951"> 1303</a></span>&#160;<a class="code" href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951">NavierStokesFunctionDefined&lt;dim&gt;::value</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;p,</div>
+<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;                                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;  Assert(component &lt; this-&gt;n_components,</div>
+<div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;         ExcIndexRange(component, 0, this-&gt;n_components));</div>
+<div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160; </div>
+<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;  <span class="keywordflow">if</span> (component == 0)</div>
 <div class="line"><a name="l01310"></a><span class="lineno"> 1310</span>&#160;    {</div>
-<div class="line"><a name="l01311"></a><span class="lineno"> 1311</span>&#160;      <span class="keywordflow">return</span> v-&gt;value(p);</div>
+<div class="line"><a name="l01311"></a><span class="lineno"> 1311</span>&#160;      <span class="keywordflow">return</span> u-&gt;value(p);</div>
 <div class="line"><a name="l01312"></a><span class="lineno"> 1312</span>&#160;    }</div>
-<div class="line"><a name="l01313"></a><span class="lineno"> 1313</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 2)</div>
+<div class="line"><a name="l01313"></a><span class="lineno"> 1313</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 1)</div>
 <div class="line"><a name="l01314"></a><span class="lineno"> 1314</span>&#160;    {</div>
-<div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160;      <span class="keywordflow">return</span> w-&gt;value(p);</div>
+<div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160;      <span class="keywordflow">return</span> v-&gt;value(p);</div>
 <div class="line"><a name="l01316"></a><span class="lineno"> 1316</span>&#160;    }</div>
-<div class="line"><a name="l01317"></a><span class="lineno"> 1317</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
-<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;}</div>
-<div class="line"><a name="l01319"></a><span class="lineno"> 1319</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01320"></a><span class="lineno"> 1320</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01321"></a><span class="lineno"> 1321</span>&#160;<span class="comment"> * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.</span></div>
-<div class="line"><a name="l01322"></a><span class="lineno"> 1322</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01323"></a><span class="lineno"> 1323</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01324"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html"> 1324</a></span>&#160;<span class="keyword">class </span><a class="code" href="classNavierStokesPressureFunctionDefined.html">NavierStokesPressureFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
-<div class="line"><a name="l01325"></a><span class="lineno"> 1325</span>&#160;{</div>
-<div class="line"><a name="l01326"></a><span class="lineno"> 1326</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l01327"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0"> 1327</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0">p</a>;</div>
-<div class="line"><a name="l01328"></a><span class="lineno"> 1328</span>&#160; </div>
-<div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l01330"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936"> 1330</a></span>&#160;  <a class="code" href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936">NavierStokesPressureFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_p)</div>
-<div class="line"><a name="l01331"></a><span class="lineno"> 1331</span>&#160;    : Function&lt;dim&gt;(dim + 1)</div>
-<div class="line"><a name="l01332"></a><span class="lineno"> 1332</span>&#160;    , p(p_p)</div>
-<div class="line"><a name="l01333"></a><span class="lineno"> 1333</span>&#160;  {}</div>
-<div class="line"><a name="l01334"></a><span class="lineno"> 1334</span>&#160; </div>
-<div class="line"><a name="l01335"></a><span class="lineno"> 1335</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l01336"></a><span class="lineno"> 1336</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l01337"></a><span class="lineno"> 1337</span>&#160;};</div>
+<div class="line"><a name="l01317"></a><span class="lineno"> 1317</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 2)</div>
+<div class="line"><a name="l01318"></a><span class="lineno"> 1318</span>&#160;    {</div>
+<div class="line"><a name="l01319"></a><span class="lineno"> 1319</span>&#160;      <span class="keywordflow">return</span> w-&gt;value(p);</div>
+<div class="line"><a name="l01320"></a><span class="lineno"> 1320</span>&#160;    }</div>
+<div class="line"><a name="l01321"></a><span class="lineno"> 1321</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
+<div class="line"><a name="l01322"></a><span class="lineno"> 1322</span>&#160;}</div>
+<div class="line"><a name="l01323"></a><span class="lineno"> 1323</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01324"></a><span class="lineno"> 1324</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01325"></a><span class="lineno"> 1325</span>&#160;<span class="comment"> * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.</span></div>
+<div class="line"><a name="l01326"></a><span class="lineno"> 1326</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01327"></a><span class="lineno"> 1327</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01328"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html"> 1328</a></span>&#160;<span class="keyword">class </span><a class="code" href="classNavierStokesPressureFunctionDefined.html">NavierStokesPressureFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
+<div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160;{</div>
+<div class="line"><a name="l01330"></a><span class="lineno"> 1330</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l01331"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0"> 1331</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0">p</a>;</div>
+<div class="line"><a name="l01332"></a><span class="lineno"> 1332</span>&#160; </div>
+<div class="line"><a name="l01333"></a><span class="lineno"> 1333</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l01334"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936"> 1334</a></span>&#160;  <a class="code" href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936">NavierStokesPressureFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_p)</div>
+<div class="line"><a name="l01335"></a><span class="lineno"> 1335</span>&#160;    : Function&lt;dim&gt;(dim + 1)</div>
+<div class="line"><a name="l01336"></a><span class="lineno"> 1336</span>&#160;    , p(p_p)</div>
+<div class="line"><a name="l01337"></a><span class="lineno"> 1337</span>&#160;  {}</div>
 <div class="line"><a name="l01338"></a><span class="lineno"> 1338</span>&#160; </div>
-<div class="line"><a name="l01339"></a><span class="lineno"> 1339</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01340"></a><span class="lineno"> 1340</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01341"></a><span class="lineno"> 1341</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type Navier-Stokes equations</span></div>
-<div class="line"><a name="l01342"></a><span class="lineno"> 1342</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01343"></a><span class="lineno"> 1343</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
-<div class="line"><a name="l01344"></a><span class="lineno"> 1344</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01345"></a><span class="lineno"> 1345</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
-<div class="line"><a name="l01346"></a><span class="lineno"> 1346</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01347"></a><span class="lineno"> 1347</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01348"></a><span class="lineno"> 1348</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l01349"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e"> 1349</a></span>&#160;<a class="code" href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e">NavierStokesPressureFunctionDefined&lt;dim&gt;::value</a>(</div>
-<div class="line"><a name="l01350"></a><span class="lineno"> 1350</span>&#160;  <span class="keyword">const</span> Point&lt;dim&gt;  &amp;point,</div>
-<div class="line"><a name="l01351"></a><span class="lineno"> 1351</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
-<div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l01353"></a><span class="lineno"> 1353</span>&#160;  <span class="keywordflow">if</span> (component == dim)</div>
-<div class="line"><a name="l01354"></a><span class="lineno"> 1354</span>&#160;    {</div>
-<div class="line"><a name="l01355"></a><span class="lineno"> 1355</span>&#160;      <span class="keywordflow">return</span> p-&gt;value(point);</div>
-<div class="line"><a name="l01356"></a><span class="lineno"> 1356</span>&#160;    }</div>
-<div class="line"><a name="l01357"></a><span class="lineno"> 1357</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
-<div class="line"><a name="l01358"></a><span class="lineno"> 1358</span>&#160;}</div>
-<div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01360"></a><span class="lineno"> 1360</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;<span class="comment"> * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation</span></div>
-<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160;<span class="comment"> * where the phase and chemical potential are defined using individual functions</span></div>
-<div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01365"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html"> 1365</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
-<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;{</div>
-<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l01368"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80"> 1368</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80">phi</a>;</div>
-<div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160; </div>
-<div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l01371"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74"> 1371</a></span>&#160;  <a class="code" href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74">CahnHilliardFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_phi)</div>
-<div class="line"><a name="l01372"></a><span class="lineno"> 1372</span>&#160;    : Function&lt;dim&gt;(2)</div>
-<div class="line"><a name="l01373"></a><span class="lineno"> 1373</span>&#160;    , phi(p_phi)</div>
-<div class="line"><a name="l01374"></a><span class="lineno"> 1374</span>&#160;  {}</div>
-<div class="line"><a name="l01375"></a><span class="lineno"> 1375</span>&#160; </div>
-<div class="line"><a name="l01376"></a><span class="lineno"> 1376</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l01377"></a><span class="lineno"> 1377</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l01378"></a><span class="lineno"> 1378</span>&#160;};</div>
+<div class="line"><a name="l01339"></a><span class="lineno"> 1339</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l01340"></a><span class="lineno"> 1340</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l01341"></a><span class="lineno"> 1341</span>&#160;};</div>
+<div class="line"><a name="l01342"></a><span class="lineno"> 1342</span>&#160; </div>
+<div class="line"><a name="l01343"></a><span class="lineno"> 1343</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01344"></a><span class="lineno"> 1344</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01345"></a><span class="lineno"> 1345</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type Navier-Stokes equations</span></div>
+<div class="line"><a name="l01346"></a><span class="lineno"> 1346</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01347"></a><span class="lineno"> 1347</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
+<div class="line"><a name="l01348"></a><span class="lineno"> 1348</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01349"></a><span class="lineno"> 1349</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
+<div class="line"><a name="l01350"></a><span class="lineno"> 1350</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01351"></a><span class="lineno"> 1351</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;<span class="keywordtype">double</span></div>
+<div class="line"><a name="l01353"></a><span class="lineno"><a class="line" href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e"> 1353</a></span>&#160;<a class="code" href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e">NavierStokesPressureFunctionDefined&lt;dim&gt;::value</a>(</div>
+<div class="line"><a name="l01354"></a><span class="lineno"> 1354</span>&#160;  <span class="keyword">const</span> Point&lt;dim&gt;  &amp;point,</div>
+<div class="line"><a name="l01355"></a><span class="lineno"> 1355</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01356"></a><span class="lineno"> 1356</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l01357"></a><span class="lineno"> 1357</span>&#160;  <span class="keywordflow">if</span> (component == dim)</div>
+<div class="line"><a name="l01358"></a><span class="lineno"> 1358</span>&#160;    {</div>
+<div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;      <span class="keywordflow">return</span> p-&gt;value(point);</div>
+<div class="line"><a name="l01360"></a><span class="lineno"> 1360</span>&#160;    }</div>
+<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
+<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160;}</div>
+<div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01365"></a><span class="lineno"> 1365</span>&#160;<span class="comment"> * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation</span></div>
+<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;<span class="comment"> * where the phase and chemical potential are defined using individual functions</span></div>
+<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01369"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html"> 1369</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
+<div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;{</div>
+<div class="line"><a name="l01371"></a><span class="lineno"> 1371</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l01372"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80"> 1372</a></span>&#160;  Functions::ParsedFunction&lt;dim&gt; *<a class="code" href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80">phi</a>;</div>
+<div class="line"><a name="l01373"></a><span class="lineno"> 1373</span>&#160; </div>
+<div class="line"><a name="l01374"></a><span class="lineno"> 1374</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l01375"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74"> 1375</a></span>&#160;  <a class="code" href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74">CahnHilliardFunctionDefined</a>(Functions::ParsedFunction&lt;dim&gt; *p_phi)</div>
+<div class="line"><a name="l01376"></a><span class="lineno"> 1376</span>&#160;    : Function&lt;dim&gt;(2)</div>
+<div class="line"><a name="l01377"></a><span class="lineno"> 1377</span>&#160;    , phi(p_phi)</div>
+<div class="line"><a name="l01378"></a><span class="lineno"> 1378</span>&#160;  {}</div>
 <div class="line"><a name="l01379"></a><span class="lineno"> 1379</span>&#160; </div>
-<div class="line"><a name="l01380"></a><span class="lineno"> 1380</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l01381"></a><span class="lineno"> 1381</span>&#160;<span class="comment">/**</span></div>
-<div class="line"><a name="l01382"></a><span class="lineno"> 1382</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations</span></div>
-<div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
-<div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
-<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l01390"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d"> 1390</a></span>&#160;<a class="code" href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d">CahnHilliardFunctionDefined&lt;dim&gt;::value</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;p,</div>
-<div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;                                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
-<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l01393"></a><span class="lineno"> 1393</span>&#160;  Assert(component &lt; this-&gt;n_components,</div>
-<div class="line"><a name="l01394"></a><span class="lineno"> 1394</span>&#160;         ExcIndexRange(component, 0, this-&gt;n_components));</div>
-<div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160; </div>
-<div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160;  <span class="keywordflow">if</span> (component == 0)</div>
-<div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;    {</div>
-<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;      <span class="keywordflow">return</span> phi-&gt;value(p);</div>
-<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160;    }</div>
-<div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 1)</div>
+<div class="line"><a name="l01380"></a><span class="lineno"> 1380</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l01381"></a><span class="lineno"> 1381</span>&#160;  value(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l01382"></a><span class="lineno"> 1382</span>&#160;};</div>
+<div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160; </div>
+<div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;<span class="comment"> * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations</span></div>
+<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;<span class="comment"> * @param p A point (generally a gauss point)</span></div>
+<div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160;<span class="comment"> * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)</span></div>
+<div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l01393"></a><span class="lineno"> 1393</span>&#160;<span class="keywordtype">double</span></div>
+<div class="line"><a name="l01394"></a><span class="lineno"><a class="line" href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d"> 1394</a></span>&#160;<a class="code" href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d">CahnHilliardFunctionDefined&lt;dim&gt;::value</a>(<span class="keyword">const</span> Point&lt;dim&gt;  &amp;p,</div>
+<div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160;                                        <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;  Assert(component &lt; this-&gt;n_components,</div>
+<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;         ExcIndexRange(component, 0, this-&gt;n_components));</div>
+<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160; </div>
+<div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160;  <span class="keywordflow">if</span> (component == 0)</div>
 <div class="line"><a name="l01401"></a><span class="lineno"> 1401</span>&#160;    {</div>
-<div class="line"><a name="l01402"></a><span class="lineno"> 1402</span>&#160;      <span class="keywordflow">return</span> 0.;</div>
+<div class="line"><a name="l01402"></a><span class="lineno"> 1402</span>&#160;      <span class="keywordflow">return</span> phi-&gt;value(p);</div>
 <div class="line"><a name="l01403"></a><span class="lineno"> 1403</span>&#160;    }</div>
-<div class="line"><a name="l01404"></a><span class="lineno"> 1404</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
-<div class="line"><a name="l01405"></a><span class="lineno"> 1405</span>&#160;}</div>
-<div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160; </div>
-<div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l01404"></a><span class="lineno"> 1404</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (component == 1)</div>
+<div class="line"><a name="l01405"></a><span class="lineno"> 1405</span>&#160;    {</div>
+<div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;      <span class="keywordflow">return</span> 0.;</div>
+<div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160;    }</div>
+<div class="line"><a name="l01408"></a><span class="lineno"> 1408</span>&#160;  <span class="keywordflow">return</span> 0.;</div>
+<div class="line"><a name="l01409"></a><span class="lineno"> 1409</span>&#160;}</div>
+<div class="line"><a name="l01410"></a><span class="lineno"> 1410</span>&#160; </div>
+<div class="line"><a name="l01411"></a><span class="lineno"> 1411</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aboundary__conditions_8h_html_a5fcd305334cb05e8a032b84fcfbf3918"><div class="ttname"><a href="boundary__conditions_8h.html#a5fcd305334cb05e8a032b84fcfbf3918">DeclException1</a></div><div class="ttdeci">DeclException1(EmissivityError, double,&lt;&lt; &quot;Emissivity : &quot;&lt;&lt; arg1&lt;&lt; &quot; cannot be larger than 1.0 (black body) or smaller than 0.0&quot;)</div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1BoundaryConditions_html_a236b3f81c55be37a05573c0860dbdca0"><div class="ttname"><a href="classBoundaryConditions_1_1BoundaryConditions.html#a236b3f81c55be37a05573c0860dbdca0">BoundaryConditions::BoundaryConditions::boundary_layer_thickness</a></div><div class="ttdeci">std::map&lt; types::boundary_id, double &gt; boundary_layer_thickness</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00105">boundary_conditions.h:105</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1BoundaryConditions_html_a768f01477ffe2d44190462c5ac3c6a20"><div class="ttname"><a href="classBoundaryConditions_1_1BoundaryConditions.html#a768f01477ffe2d44190462c5ac3c6a20">BoundaryConditions::BoundaryConditions::periodic_direction</a></div><div class="ttdeci">std::map&lt; types::boundary_id, unsigned int &gt; periodic_direction</div><div class="ttdoc">Map containing the boundary id and its periodic direction.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00118">boundary_conditions.h:118</a></div></div>
@@ -1522,23 +1526,23 @@ $(function() {
 <div class="ttc" id="aclassBoundaryConditions_1_1TracerBoundaryConditions_html"><div class="ttname"><a href="classBoundaryConditions_1_1TracerBoundaryConditions.html">BoundaryConditions::TracerBoundaryConditions</a></div><div class="ttdoc">This class manages the boundary conditions for Tracer solver It introduces the boundary functions and...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00754">boundary_conditions.h:755</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TracerBoundaryConditions_html_aafa0f7f8a4f8a451d3f034d5bb571c37"><div class="ttname"><a href="classBoundaryConditions_1_1TracerBoundaryConditions.html#aafa0f7f8a4f8a451d3f034d5bb571c37">BoundaryConditions::TracerBoundaryConditions::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm, const unsigned int number_of_boundary_conditions)</div><div class="ttdoc">Declare the boundary conditions default parameters Calls declareDefaultEntry method for each boundary...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00814">boundary_conditions.h:814</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TracerBoundaryConditions_html_adbd22fae0c2c8f1db654128a0fc9ac19"><div class="ttname"><a href="classBoundaryConditions_1_1TracerBoundaryConditions.html#adbd22fae0c2c8f1db654128a0fc9ac19">BoundaryConditions::TracerBoundaryConditions::tracer</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; tracer</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00759">boundary_conditions.h:759</a></div></div>
-<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html">BoundaryConditions::VOFBoundaryConditions</a></div><div class="ttdoc">This class manages the boundary conditions for VOF solver It introduces the boundary functions and de...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01108">boundary_conditions.h:1109</a></div></div>
-<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html_aaa3baf069b4a0abcd9f4ce5dcd1f4886"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886">BoundaryConditions::VOFBoundaryConditions::phase_fraction</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; phase_fraction</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01113">boundary_conditions.h:1113</a></div></div>
-<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html_ac8563ef51be4405b8b43b20c1e314bd9"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9">BoundaryConditions::VOFBoundaryConditions::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm, const unsigned int number_of_boundary_conditions)</div><div class="ttdoc">Declare the boundary conditions default parameters Calls declareDefaultEntry method for each boundary...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01165">boundary_conditions.h:1165</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFunctionDefined_html"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a></div><div class="ttdoc">Class that implements a boundary conditions for the Cahn-Hilliard equation where the phase and chemic...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01365">boundary_conditions.h:1366</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a30e737f06c4a85508a6ec8a853df5d74"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74">CahnHilliardFunctionDefined::CahnHilliardFunctionDefined</a></div><div class="ttdeci">CahnHilliardFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_phi)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01371">boundary_conditions.h:1371</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a67e83c97adf1428512d5550d3129534d"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d">CahnHilliardFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type for the Cahn-Hilliard equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01390">boundary_conditions.h:1390</a></div></div>
-<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a9b3164a19c569687afd78dabb398ca80"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80">CahnHilliardFunctionDefined::phi</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * phi</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01368">boundary_conditions.h:1368</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html"><div class="ttname"><a href="classNavierStokesFunctionDefined.html">NavierStokesFunctionDefined</a></div><div class="ttdoc">This class implements a boundary conditions for the Navier-Stokes equation where the velocity compone...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01268">boundary_conditions.h:1269</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a1b6e3541592e01fe1581bf486f75e951"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951">NavierStokesFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01299">boundary_conditions.h:1299</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a3f01b369dbe69adf9f936af57b958723"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723">NavierStokesFunctionDefined::v</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * v</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01272">boundary_conditions.h:1272</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a97cfeaefe7491291eb8545174a0b09af"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af">NavierStokesFunctionDefined::NavierStokesFunctionDefined</a></div><div class="ttdeci">NavierStokesFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_u, Functions::ParsedFunction&lt; dim &gt; *p_v, Functions::ParsedFunction&lt; dim &gt; *p_w)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01276">boundary_conditions.h:1276</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html_aee00e964756cb793506e8f5db17abe65"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65">NavierStokesFunctionDefined::w</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * w</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01273">boundary_conditions.h:1273</a></div></div>
-<div class="ttc" id="aclassNavierStokesFunctionDefined_html_af65b09b287e7646437fc45ab5ebec3a6"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6">NavierStokesFunctionDefined::u</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * u</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01271">boundary_conditions.h:1271</a></div></div>
-<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html">NavierStokesPressureFunctionDefined</a></div><div class="ttdoc">This class implements a pressure boundary condition for the Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01324">boundary_conditions.h:1325</a></div></div>
-<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a05dd72f5bec3590703ad7d2ff6ae85a0"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0">NavierStokesPressureFunctionDefined::p</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * p</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01327">boundary_conditions.h:1327</a></div></div>
-<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a09c28a35ac86bba72fc0875deb36d13e"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e">NavierStokesPressureFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01349">boundary_conditions.h:1349</a></div></div>
-<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a73b6f0ec2f780841a608ef53ea428936"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936">NavierStokesPressureFunctionDefined::NavierStokesPressureFunctionDefined</a></div><div class="ttdeci">NavierStokesPressureFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_p)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01330">boundary_conditions.h:1330</a></div></div>
+<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html">BoundaryConditions::VOFBoundaryConditions</a></div><div class="ttdoc">This class manages the boundary conditions for VOF solver It introduces the boundary functions and de...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01112">boundary_conditions.h:1113</a></div></div>
+<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html_aaa3baf069b4a0abcd9f4ce5dcd1f4886"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html#aaa3baf069b4a0abcd9f4ce5dcd1f4886">BoundaryConditions::VOFBoundaryConditions::phase_fraction</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; phase_fraction</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01117">boundary_conditions.h:1117</a></div></div>
+<div class="ttc" id="aclassBoundaryConditions_1_1VOFBoundaryConditions_html_ac8563ef51be4405b8b43b20c1e314bd9"><div class="ttname"><a href="classBoundaryConditions_1_1VOFBoundaryConditions.html#ac8563ef51be4405b8b43b20c1e314bd9">BoundaryConditions::VOFBoundaryConditions::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm, const unsigned int number_of_boundary_conditions)</div><div class="ttdoc">Declare the boundary conditions default parameters Calls declareDefaultEntry method for each boundary...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01169">boundary_conditions.h:1169</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFunctionDefined_html"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html">CahnHilliardFunctionDefined</a></div><div class="ttdoc">Class that implements a boundary conditions for the Cahn-Hilliard equation where the phase and chemic...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01369">boundary_conditions.h:1370</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a30e737f06c4a85508a6ec8a853df5d74"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a30e737f06c4a85508a6ec8a853df5d74">CahnHilliardFunctionDefined::CahnHilliardFunctionDefined</a></div><div class="ttdeci">CahnHilliardFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_phi)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01375">boundary_conditions.h:1375</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a67e83c97adf1428512d5550d3129534d"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a67e83c97adf1428512d5550d3129534d">CahnHilliardFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type for the Cahn-Hilliard equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01394">boundary_conditions.h:1394</a></div></div>
+<div class="ttc" id="aclassCahnHilliardFunctionDefined_html_a9b3164a19c569687afd78dabb398ca80"><div class="ttname"><a href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80">CahnHilliardFunctionDefined::phi</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * phi</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01372">boundary_conditions.h:1372</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html"><div class="ttname"><a href="classNavierStokesFunctionDefined.html">NavierStokesFunctionDefined</a></div><div class="ttdoc">This class implements a boundary conditions for the Navier-Stokes equation where the velocity compone...</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01272">boundary_conditions.h:1273</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a1b6e3541592e01fe1581bf486f75e951"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a1b6e3541592e01fe1581bf486f75e951">NavierStokesFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01303">boundary_conditions.h:1303</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a3f01b369dbe69adf9f936af57b958723"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a3f01b369dbe69adf9f936af57b958723">NavierStokesFunctionDefined::v</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * v</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01276">boundary_conditions.h:1276</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html_a97cfeaefe7491291eb8545174a0b09af"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#a97cfeaefe7491291eb8545174a0b09af">NavierStokesFunctionDefined::NavierStokesFunctionDefined</a></div><div class="ttdeci">NavierStokesFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_u, Functions::ParsedFunction&lt; dim &gt; *p_v, Functions::ParsedFunction&lt; dim &gt; *p_w)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01280">boundary_conditions.h:1280</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html_aee00e964756cb793506e8f5db17abe65"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65">NavierStokesFunctionDefined::w</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * w</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01277">boundary_conditions.h:1277</a></div></div>
+<div class="ttc" id="aclassNavierStokesFunctionDefined_html_af65b09b287e7646437fc45ab5ebec3a6"><div class="ttname"><a href="classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6">NavierStokesFunctionDefined::u</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * u</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01275">boundary_conditions.h:1275</a></div></div>
+<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html">NavierStokesPressureFunctionDefined</a></div><div class="ttdoc">This class implements a pressure boundary condition for the Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01328">boundary_conditions.h:1329</a></div></div>
+<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a05dd72f5bec3590703ad7d2ff6ae85a0"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0">NavierStokesPressureFunctionDefined::p</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; * p</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01331">boundary_conditions.h:1331</a></div></div>
+<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a09c28a35ac86bba72fc0875deb36d13e"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a09c28a35ac86bba72fc0875deb36d13e">NavierStokesPressureFunctionDefined::value</a></div><div class="ttdeci">virtual double value(const Point&lt; dim &gt; &amp;p, const unsigned int component) const override</div><div class="ttdoc">Calculates the value of a Function-type Navier-Stokes equations.</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01353">boundary_conditions.h:1353</a></div></div>
+<div class="ttc" id="aclassNavierStokesPressureFunctionDefined_html_a73b6f0ec2f780841a608ef53ea428936"><div class="ttname"><a href="classNavierStokesPressureFunctionDefined.html#a73b6f0ec2f780841a608ef53ea428936">NavierStokesPressureFunctionDefined::NavierStokesPressureFunctionDefined</a></div><div class="ttdeci">NavierStokesPressureFunctionDefined(Functions::ParsedFunction&lt; dim &gt; *p_p)</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l01334">boundary_conditions.h:1334</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a></div><div class="ttdeci">@ tracer</div><div class="ttdef"><b>Definition:</b> <a href="multiphysics_8h_source.html#l00011">multiphysics.h:11</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html"><div class="ttname"><a href="namespaceBoundaryConditions.html">BoundaryConditions</a></div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00049">boundary_conditions.h:50</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></div><div class="ttdeci">BoundaryType</div><div class="ttdef"><b>Definition:</b> <a href="boundary__conditions_8h_source.html#l00052">boundary_conditions.h:53</a></div></div>

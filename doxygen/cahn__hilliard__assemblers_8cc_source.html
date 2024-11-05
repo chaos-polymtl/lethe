@@ -264,293 +264,317 @@ $(function() {
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact</a>)</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> angle_of_contact =</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            this-&gt;boundary_conditions_cahn_hilliard.angle_of_contact.at(</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;              scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]);</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;            {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;              <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> lambda =</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                3 * epsilon * scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] / (2 * sqrt(2));</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++j)</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                    {</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                      <span class="keyword">const</span> Tensor&lt;1, dim&gt; grad_phi_face_phase_j =</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a19da72f15856d23dcc944d5f1563e207">grad_phi_face_phase</a>[f][q][j];</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                      local_matrix(i, j) +=</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                        -lambda * -phi_potential_i * grad_phi_face_phase_j *</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                        face_phase_grad_value *</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                        std::cos(angle_of_contact * M_PI / 180.0) *</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                        (1.0 / (face_phase_grad_value.norm() +</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                                std::numeric_limits&lt;double&gt;::min())) *</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                        JxW_face;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                    }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            }</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        }</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    }</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;}</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">  228</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">CahnHilliardAssemblerAngleOfContact&lt;dim&gt;::assemble_rhs</a>(</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;{</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      <span class="comment">// Check if the face is on a boundary</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      <span class="keywordflow">if</span> (scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13">is_boundary_face</a>[f])</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;          <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;              <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact</a>)</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            {</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> angle_of_contact =</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                this-&gt;boundary_conditions_cahn_hilliard.angle_of_contact.at(</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                  scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                  <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 3 * epsilon *</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] /</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                                        (2 * sqrt(2));</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                    {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++j)</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                        {</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                          <span class="keyword">const</span> Tensor&lt;1, dim&gt; grad_phi_face_phase_j =</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a19da72f15856d23dcc944d5f1563e207">grad_phi_face_phase</a>[f][q][j];</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                          local_matrix(i, j) +=</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                            -lambda * -phi_potential_i * grad_phi_face_phase_j *</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                            face_phase_grad_value *</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                            std::cos(angle_of_contact * M_PI / 180.0) *</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                            (1.0 / (face_phase_grad_value.norm() +</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                                    std::numeric_limits&lt;double&gt;::min())) *</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                            JxW_face;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                        }</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                    }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                }</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            }</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    }</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;}</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">  233</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">CahnHilliardAssemblerAngleOfContact&lt;dim&gt;::assemble_rhs</a>(</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;{</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    {</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;      <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact</a>)</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        {</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> angle_of_contact =</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            this-&gt;boundary_conditions_cahn_hilliard.angle_of_contact.at(</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;              scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            {</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;              <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> lambda =</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                3 * epsilon * scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] / (2 * sqrt(2));</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                  local_rhs(i) += lambda * phi_potential_i *</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                                  std::cos(angle_of_contact * M_PI / 180.0) *</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                                  (face_phase_grad_value.norm()) * JxW_face;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                }</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            }</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        }</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      <span class="comment">// Check if the face is on a boundary</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordflow">if</span> (scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13">is_boundary_face</a>[f])</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;          <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;              <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact</a>)</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            {</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> angle_of_contact =</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                this-&gt;boundary_conditions_cahn_hilliard.angle_of_contact.at(</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                  scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                  <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 3 * epsilon *</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] /</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                                        (2 * sqrt(2));</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                    {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerAngleOfContact.html">CahnHilliardAssemblerAngleOfContact&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerAngleOfContact.html">CahnHilliardAssemblerAngleOfContact&lt;3&gt;</a>;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">  278</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">CahnHilliardAssemblerFreeAngle&lt;dim&gt;::assemble_matrix</a>(</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;{</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                      local_rhs(i) +=</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                        lambda * phi_potential_i *</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                        std::cos(angle_of_contact * M_PI / 180.0) *</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                        (face_phase_grad_value.norm()) * JxW_face;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                    }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                }</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;}</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerAngleOfContact.html">CahnHilliardAssemblerAngleOfContact&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerAngleOfContact.html">CahnHilliardAssemblerAngleOfContact&lt;3&gt;</a>;</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      <span class="keywordflow">if</span> (boundary_conditions_cahn_hilliard.type.at(</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::BoundaryType::cahn_hilliard_free_angle</a>)</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        {</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;              <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_normal = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a5a672e140d6fdd08c8f1da1afe800e7d">face_normal</a>[f][q];</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW_face    = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">  289</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">CahnHilliardAssemblerFreeAngle&lt;dim&gt;::assemble_matrix</a>(</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;{</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> lambda =</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                3 * epsilon * scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] / (2 * sqrt(2));</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                {</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++j)</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                    {</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                      <span class="keyword">const</span> Tensor&lt;1, dim&gt; grad_phi_face_phase_j =</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a19da72f15856d23dcc944d5f1563e207">grad_phi_face_phase</a>[f][q][j];</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                      local_matrix(i, j) -= lambda * phi_potential_i *</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                                            grad_phi_face_phase_j *</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                                            face_normal * JxW_face;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                    }</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        }</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;}</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">  326</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">CahnHilliardAssemblerFreeAngle&lt;dim&gt;::assemble_rhs</a>(</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;{</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    {</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;          <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::BoundaryType::cahn_hilliard_free_angle</a>)</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        {</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            {</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;              <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;              <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_normal = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a5a672e140d6fdd08c8f1da1afe800e7d">face_normal</a>[f][q];</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span>         JxW_face    = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      <span class="comment">// Check if the face is on a boundary</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      <span class="keywordflow">if</span> (scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13">is_boundary_face</a>[f])</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;          <span class="keywordflow">if</span> (boundary_conditions_cahn_hilliard.type.at(</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;              <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::BoundaryType::cahn_hilliard_free_angle</a>)</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            {</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                  <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_normal =</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a5a672e140d6fdd08c8f1da1afe800e7d">face_normal</a>[f][q];</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 3 * epsilon *</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] /</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                                        (2 * sqrt(2));</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                    {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++j)</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                        {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                          <span class="keyword">const</span> Tensor&lt;1, dim&gt; grad_phi_face_phase_j =</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                            scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a19da72f15856d23dcc944d5f1563e207">grad_phi_face_phase</a>[f][q][j];</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                          local_matrix(i, j) -= lambda * phi_potential_i *</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                                                grad_phi_face_phase_j *</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                                                face_normal * JxW_face;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                        }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                    }</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                }</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            }</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        }</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    }</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;}</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">  343</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">CahnHilliardAssemblerFreeAngle&lt;dim&gt;::assemble_rhs</a>(</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;{</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  <span class="keywordflow">if</span> (!scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be">is_boundary_cell</a>)</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> lambda =</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                3 * epsilon * scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] / (2 * sqrt(2));</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160; </div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                {</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                  local_rhs(i) += lambda * phi_potential_i *</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                                  face_phase_grad_value * face_normal *</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                                  JxW_face;</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                }</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            }</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        }</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    }</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;}</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle&lt;3&gt;</a>;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">double</span> epsilon = this-&gt;epsilon;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> f = 0; f &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a7355cef1cdb2809d58731f7ebb4ae70b">n_faces</a>; f++)</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      <span class="comment">// Check if the face is on a boundary</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;      <span class="keywordflow">if</span> (scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13">is_boundary_face</a>[f])</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        {</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;          <span class="keywordflow">if</span> (this-&gt;boundary_conditions_cahn_hilliard.type.at(</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a4def3234a07eb168479f0be30035f79e">boundary_face_id</a>[f]) ==</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;              <a class="code" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::BoundaryType::cahn_hilliard_free_angle</a>)</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            {</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a39a121198ec721cfaa41f47021713f3f">n_faces_q_points</a>; ++q)</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                {</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                  <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_phase_grad_value =</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ab77d11ab736d21945235067782a30b5a">face_phase_grad_values</a>[f][q];</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                  <span class="keyword">const</span> Tensor&lt;1, dim&gt; face_normal =</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                    scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a5a672e140d6fdd08c8f1da1afe800e7d">face_normal</a>[f][q];</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_face = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a8ebdc957ea2e07c8b1f1e4da4f83fc82">face_JxW</a>[f][q];</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">  373</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">CahnHilliardAssemblerBDF&lt;dim&gt;::assemble_matrix</a>(</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;{</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#abc194c444ec7951d6faeff13aa65cac3">JxW</a>;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a91cb40edea15d19bebd751d98a177d5a">n_q_points</a>;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>;</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  <span class="comment">// Time stepping information</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  std::vector&lt;double&gt; phase_order(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    {</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;      phase_order[0] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad1bfaedbdfecee860cf73e6bf0044ec8">phase_order_values</a>[q];</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;        phase_order[p + 1] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aedf27db28a30f61d618d54d52e4348b4">previous_phase_order_values</a>[p][q];</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160; </div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        {</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][i];</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            {</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_j = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][j];</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;              local_matrix(i, j) +=</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;                phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            }</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        }</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    }</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;}</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160; </div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">  415</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">CahnHilliardAssemblerBDF&lt;dim&gt;::assemble_rhs</a>(</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;{</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#abc194c444ec7951d6faeff13aa65cac3">JxW</a>;</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a91cb40edea15d19bebd751d98a177d5a">n_q_points</a>;</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>;</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  <span class="comment">// Copy data elements</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;  <span class="comment">// Time stepping information</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;  std::vector&lt;double&gt; phase_order(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160; </div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    {</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;      phase_order[0] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad1bfaedbdfecee860cf73e6bf0044ec8">phase_order_values</a>[q];</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        phase_order[p + 1] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aedf27db28a30f61d618d54d52e4348b4">previous_phase_order_values</a>[p][q];</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        {</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][i];</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;          <span class="keywordtype">double</span>       local_rhs_i = 0;</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;               ++p)</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;            {</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;              local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;            }</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;          local_rhs(i) += local_rhs_i * JxW[q];</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;        }</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    }</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;}</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerBDF.html">CahnHilliardAssemblerBDF&lt;2&gt;</a>;</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerBDF.html">CahnHilliardAssemblerBDF&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> lambda = 3 * epsilon *</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a2771e27f3c7af6320aa2ae8025f8393f">surface_tension</a>[q] /</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;                                        (2 * sqrt(2));</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160; </div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>; ++i)</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;                    {</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> phi_potential_i =</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                        scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aaf8c4aa7187634d0b2b863c912197480">phi_potential</a>[q][i];</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160; </div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;                      local_rhs(i) += lambda * phi_potential_i *</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                                      face_phase_grad_value * face_normal *</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;                                      JxW_face;</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                    }</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;                }</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            }</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        }</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    }</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;}</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle&lt;3&gt;</a>;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00396"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">  396</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">CahnHilliardAssemblerBDF&lt;dim&gt;::assemble_matrix</a>(</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;{</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#abc194c444ec7951d6faeff13aa65cac3">JxW</a>;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a91cb40edea15d19bebd751d98a177d5a">n_q_points</a>;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  <span class="keyword">auto</span> &amp;local_matrix = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a6c3e7385d9e533d5c5ec749a856edcae">local_matrix</a>;</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  <span class="comment">// Time stepping information</span></div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;  std::vector&lt;double&gt; phase_order(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    {</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;      phase_order[0] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad1bfaedbdfecee860cf73e6bf0044ec8">phase_order_values</a>[q];</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        phase_order[p + 1] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aedf27db28a30f61d618d54d52e4348b4">previous_phase_order_values</a>[p][q];</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160; </div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        {</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][i];</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; n_dofs; ++j)</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;            {</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;              <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_j = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][j];</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;              local_matrix(i, j) +=</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;                phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW[q];</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            }</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;        }</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    }</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;}</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160; </div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno"><a class="line" href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">  438</a></span>&#160;<a class="code" href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">CahnHilliardAssemblerBDF&lt;dim&gt;::assemble_rhs</a>(</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;  <span class="keyword">const</span> <a class="code" href="classCahnHilliardScratchData.html">CahnHilliardScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;  <a class="code" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a>          &amp;copy_data)</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;{</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;  <span class="comment">// Loop and quadrature information</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>        &amp;JxW        = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#abc194c444ec7951d6faeff13aa65cac3">JxW</a>;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#a91cb40edea15d19bebd751d98a177d5a">n_q_points</a>;</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs     = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ae7c7176122d6bfd25ed31d08a8efbff4">n_dofs</a>;</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160; </div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;  <span class="comment">// Copy data elements</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  <span class="keyword">auto</span> &amp;local_rhs = copy_data.<a class="code" href="classStabilizedMethodsCopyData.html#a3f0641e43ef491085155e7c75f2181ee">local_rhs</a>;</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  <span class="comment">// Time stepping information</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;  <span class="comment">// Vector for the BDF coefficients</span></div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;  std::vector&lt;double&gt; phase_order(1 + <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method));</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160; </div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  <span class="comment">// Loop over the quadrature points</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; ++q)</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    {</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;      phase_order[0] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad1bfaedbdfecee860cf73e6bf0044ec8">phase_order_values</a>[q];</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method); ++p)</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        phase_order[p + 1] = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#aedf27db28a30f61d618d54d52e4348b4">previous_phase_order_values</a>[p][q];</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160; </div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;      for (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; n_dofs; ++i)</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        {</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;          <span class="keyword">const</span> <span class="keywordtype">double</span> phi_phase_i = scratch_data.<a class="code" href="classCahnHilliardScratchData.html#ad81e1bed2e52ffef361d86b2b656d8cb">phi_phase</a>[q][i];</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;          <span class="keywordtype">double</span>       local_rhs_i = 0;</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code" href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a>(method) + 1;</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;               ++p)</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;            {</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;              local_rhs_i -= bdf_coefs[p] * (phase_order[p] * phi_phase_i);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;            }</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;          local_rhs(i) += local_rhs_i * JxW[q];</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;        }</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    }</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;}</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerBDF.html">CahnHilliardAssemblerBDF&lt;2&gt;</a>;</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;<span class="keyword">template</span> <span class="keyword">class </span><a class="code" href="classCahnHilliardAssemblerBDF.html">CahnHilliardAssemblerBDF&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="abdf_8h_html_a8b5d2bb44cdac716464d7e779fa14c4c"><div class="ttname"><a href="bdf_8h.html#a8b5d2bb44cdac716464d7e779fa14c4c">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition:</b> <a href="bdf_8h_source.html#l00099">bdf.h:99</a></div></div>
 <div class="ttc" id="acahn__hilliard__assemblers_8h_html"><div class="ttname"><a href="cahn__hilliard__assemblers_8h.html">cahn_hilliard_assemblers.h</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerAngleOfContact_html"><div class="ttname"><a href="classCahnHilliardAssemblerAngleOfContact.html">CahnHilliardAssemblerAngleOfContact</a></div><div class="ttdoc">Class that assembles the boundary condition on the angle of contact in the Cahn-Hilliard equations.</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00085">cahn_hilliard_assemblers.h:87</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerAngleOfContact_html_aa57754c8b73900b0baa035e5709ea6e0"><div class="ttname"><a href="classCahnHilliardAssemblerAngleOfContact.html#aa57754c8b73900b0baa035e5709ea6e0">CahnHilliardAssemblerAngleOfContact::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00171">cahn_hilliard_assemblers.cc:171</a></div></div>
-<div class="ttc" id="aclassCahnHilliardAssemblerAngleOfContact_html_adb4378cda5d6d898d13bbac4f0524e7b"><div class="ttname"><a href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">CahnHilliardAssemblerAngleOfContact::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00228">cahn_hilliard_assemblers.cc:228</a></div></div>
+<div class="ttc" id="aclassCahnHilliardAssemblerAngleOfContact_html_adb4378cda5d6d898d13bbac4f0524e7b"><div class="ttname"><a href="classCahnHilliardAssemblerAngleOfContact.html#adb4378cda5d6d898d13bbac4f0524e7b">CahnHilliardAssemblerAngleOfContact::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00233">cahn_hilliard_assemblers.cc:233</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerBDF_html"><div class="ttname"><a href="classCahnHilliardAssemblerBDF.html">CahnHilliardAssemblerBDF</a></div><div class="ttdoc">Class that assembles the transient time arising from BDF time integration for the Cahn-Hilliard equat...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00194">cahn_hilliard_assemblers.h:195</a></div></div>
-<div class="ttc" id="aclassCahnHilliardAssemblerBDF_html_a6b7bbc21b44d60bda46dd5e8573429aa"><div class="ttname"><a href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">CahnHilliardAssemblerBDF::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00373">cahn_hilliard_assemblers.cc:373</a></div></div>
-<div class="ttc" id="aclassCahnHilliardAssemblerBDF_html_af6c242da53cf5a051136f447e96a2ba2"><div class="ttname"><a href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">CahnHilliardAssemblerBDF::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00415">cahn_hilliard_assemblers.cc:415</a></div></div>
+<div class="ttc" id="aclassCahnHilliardAssemblerBDF_html_a6b7bbc21b44d60bda46dd5e8573429aa"><div class="ttname"><a href="classCahnHilliardAssemblerBDF.html#a6b7bbc21b44d60bda46dd5e8573429aa">CahnHilliardAssemblerBDF::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00396">cahn_hilliard_assemblers.cc:396</a></div></div>
+<div class="ttc" id="aclassCahnHilliardAssemblerBDF_html_af6c242da53cf5a051136f447e96a2ba2"><div class="ttname"><a href="classCahnHilliardAssemblerBDF.html#af6c242da53cf5a051136f447e96a2ba2">CahnHilliardAssemblerBDF::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00438">cahn_hilliard_assemblers.cc:438</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerCore_html"><div class="ttname"><a href="classCahnHilliardAssemblerCore.html">CahnHilliardAssemblerCore</a></div><div class="ttdoc">Class that assembles the core of the Cahn-Hilliard equation : .</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00038">cahn_hilliard_assemblers.h:39</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerCore_html_aa213d94360fc7474c450b0a48bee72e2"><div class="ttname"><a href="classCahnHilliardAssemblerCore.html#aa213d94360fc7474c450b0a48bee72e2">CahnHilliardAssemblerCore::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00095">cahn_hilliard_assemblers.cc:95</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerCore_html_adae85e1d0ea8959b8b4f2290d379076e"><div class="ttname"><a href="classCahnHilliardAssemblerCore.html#adae85e1d0ea8959b8b4f2290d379076e">CahnHilliardAssemblerCore::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00012">cahn_hilliard_assemblers.cc:12</a></div></div>
 <div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html">CahnHilliardAssemblerFreeAngle</a></div><div class="ttdoc">Class that assembles the boundary condition that allows a free angle of contact, thus adding a degree...</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8h_source.html#l00139">cahn_hilliard_assemblers.h:140</a></div></div>
-<div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html_a80fa337446906c4b821e989fc3622134"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">CahnHilliardAssemblerFreeAngle::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00278">cahn_hilliard_assemblers.cc:278</a></div></div>
-<div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html_a91cafdf5d91177884a5a01350082a284"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">CahnHilliardAssemblerFreeAngle::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00326">cahn_hilliard_assemblers.cc:326</a></div></div>
+<div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html_a80fa337446906c4b821e989fc3622134"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html#a80fa337446906c4b821e989fc3622134">CahnHilliardAssemblerFreeAngle::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00289">cahn_hilliard_assemblers.cc:289</a></div></div>
+<div class="ttc" id="aclassCahnHilliardAssemblerFreeAngle_html_a91cafdf5d91177884a5a01350082a284"><div class="ttname"><a href="classCahnHilliardAssemblerFreeAngle.html#a91cafdf5d91177884a5a01350082a284">CahnHilliardAssemblerFreeAngle::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const CahnHilliardScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__assemblers_8cc_source.html#l00343">cahn_hilliard_assemblers.cc:343</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html"><div class="ttname"><a href="classCahnHilliardScratchData.html">CahnHilliardScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for the Cahn-Hilliard equations....</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00052">cahn_hilliard_scratch_data.h:53</a></div></div>
+<div class="ttc" id="aclassCahnHilliardScratchData_html_a01c7a824d8b0a2bd8b55918310618b13"><div class="ttname"><a href="classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13">CahnHilliardScratchData::is_boundary_face</a></div><div class="ttdeci">std::vector&lt; bool &gt; is_boundary_face</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00409">cahn_hilliard_scratch_data.h:409</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_a1546de13674d2641275c9428af9c1ff8"><div class="ttname"><a href="classCahnHilliardScratchData.html#a1546de13674d2641275c9428af9c1ff8">CahnHilliardScratchData::source_chemical_potential</a></div><div class="ttdeci">std::vector&lt; double &gt; source_chemical_potential</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00378">cahn_hilliard_scratch_data.h:378</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_a19da72f15856d23dcc944d5f1563e207"><div class="ttname"><a href="classCahnHilliardScratchData.html#a19da72f15856d23dcc944d5f1563e207">CahnHilliardScratchData::grad_phi_face_phase</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &gt; &gt; grad_phi_face_phase</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00413">cahn_hilliard_scratch_data.h:413</a></div></div>
 <div class="ttc" id="aclassCahnHilliardScratchData_html_a1d84b64752137d8e4ae402b7da9acd88"><div class="ttname"><a href="classCahnHilliardScratchData.html#a1d84b64752137d8e4ae402b7da9acd88">CahnHilliardScratchData::grad_phi_phase</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &gt; grad_phi_phase</div><div class="ttdef"><b>Definition:</b> <a href="cahn__hilliard__scratch__data_8h_source.html#l00384">cahn_hilliard_scratch_data.h:384</a></div></div>
