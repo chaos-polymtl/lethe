@@ -235,12 +235,12 @@ private:
                                     particle_one_tangential_torque,
                                     particle_two_tangential_torque,
                                     rolling_resistance_torque);
-          }
 
-        vertices.push_back(particle_one_location);
-        vertices.push_back(particle_two_location);
-        normal_forces_vector.push_back(
-          scalar_product(normal_force, normal_unit_vector));
+            vertices.push_back(particle_one_location);
+            vertices.push_back(particle_two_location);
+            normal_forces_vector.push_back(
+              scalar_product(normal_force, normal_unit_vector));
+          }
       }
   }
 
