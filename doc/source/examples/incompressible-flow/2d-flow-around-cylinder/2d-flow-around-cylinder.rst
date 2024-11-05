@@ -118,7 +118,7 @@ All the deal.II meshes supported by Lethe that correspond to the `GridGenerator 
     end
 
 
-First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a spherical manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. For more informations on the types of manifolds supported in Lethe, we refer to the :doc:`../../../parameters/cfd/manifolds` section. 
+First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a spherical manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. For more information on the types of manifolds supported in Lethe, we refer to the :doc:`../../../parameters/cfd/manifolds` section. 
 
 .. note::
     For more information about manifolds and the way they can be leveraged for simulations, we invite you to read the documentation page of deal.II: `Manifold description for triangulations <https://www.dealii.org/developer/doxygen/deal.II/group__manifold.html>`_.
