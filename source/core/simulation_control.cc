@@ -265,6 +265,18 @@ SimulationControlTransient::integrate()
     return false;
 }
 
+void
+SimulationControlTransient::read(const std::string &prefix)
+{
+  SimulationControl::read(prefix);
+
+  // Fix the time step to the new provided value.
+  // We understand that users providing this value when adaptive time stepping
+  // is not enabled means a time step change is the desired effect.
+  if (!adapt)
+    set_current_time_step(initial_time_step);
+}
+
 bool
 SimulationControlTransient::is_at_end()
 {
