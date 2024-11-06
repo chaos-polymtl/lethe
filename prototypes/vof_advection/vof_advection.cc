@@ -276,6 +276,91 @@ Tensor<1, dim> AdvectionField<dim>::value(const Point<dim> &p) const
   return value;
 }
 
+template <int dim, typename VectorType = Vector<double>>
+class LocalCellWiseFunction : public Function<dim>
+{
+public:
+  LocalCellWiseFunction();
+  
+  void
+  set_active_cell(
+    const typename DoFHandler<dim>::active_cell_iterator &cell, const VectorType &in_local_dof_values);
+
+  double
+  value(const Point<dim>  &point,
+        const unsigned int component = 0) const override;
+
+  Tensor<1, dim>
+  gradient(const Point<dim>  &point,
+           const unsigned int component = 0) const override;
+
+  SymmetricTensor<2, dim>
+  hessian(const Point<dim>  &point,
+          const unsigned int component = 0) const override;
+          
+private: 
+  FE_Q<dim> element;
+  
+  unsigned int n_local_dof;
+  
+  Vector<typename VectorType::value_type> local_dof_values;
+};
+
+template <int dim, typename VectorType>
+LocalCellWiseFunction<dim, VectorType>::LocalCellWiseFunction()
+  : element(1)
+{
+  this->n_local_dof = element.dofs_per_cell;
+} 
+
+template <int dim, typename VectorType>
+void
+LocalCellWiseFunction<dim, VectorType>::set_active_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell, const VectorType &in_local_dof_values)
+{
+  n_local_dof = element.dofs_per_cell;
+  local_dof_values = in_local_dof_values;
+} 
+
+template <int dim, typename VectorType>
+double
+LocalCellWiseFunction<dim, VectorType>::value(
+  const Point<dim>  &point, const unsigned int component) const
+{
+  double value = 0;
+  for (unsigned int i = 0; i < n_local_dof; ++i)
+    value += local_dof_values[i] *
+             element.shape_value_component(i, point, component);
+
+  return value;
+} 
+
+template <int dim, typename VectorType>
+Tensor<1, dim>
+LocalCellWiseFunction<dim, VectorType>::gradient(
+  const Point<dim>  &point, const unsigned int component) const
+{
+  Tensor<1, dim> gradient;
+  for (unsigned int i = 0; i < n_local_dof; ++i)
+    gradient += local_dof_values[i] *
+             element.shape_grad_component(i, point, component);
+
+  return gradient;
+} 
+
+template <int dim, typename VectorType>
+SymmetricTensor<2, dim>
+LocalCellWiseFunction<dim, VectorType>::hessian(
+  const Point<dim>  &point, const unsigned int component) const
+{
+  Tensor<2, dim> hessian;
+  for (unsigned int i = 0; i < n_local_dof; ++i)
+    hessian += local_dof_values[i] *
+             element.shape_grad_grad_component(i, point, component);
+
+  return symmetrize(hessian);
+} 
+
 template <int dim>
 class InitialConditions : public Function<dim>
 {
@@ -455,6 +540,7 @@ private:
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration);
   void compute_volume();
+  void correct_volume();
   
   void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
   void output_results(const int time_iteration) const;
@@ -852,7 +938,6 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
                                            mpi_communicator);
   for (auto p : this->locally_owned_dofs)
     {
-      // level_set_owned[p] = 2.0*locally_relevant_solution[p] - 1.0;
       const double phase = locally_relevant_solution[p];
       level_set_owned[p] = log10(std::max(phase,1e-8)/std::max(1.0-phase,1e-8));
     }
@@ -873,13 +958,11 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   
   unsigned int n;
   
-  if constexpr (dim == 3)
-    n = 4;
   if constexpr (dim == 2)
     n = 2;
-  
-  // Store (or precompute) vertex to cells connectivity
-  const auto vetex_2_cells = grid_tools_cache.get_vertex_to_cell_map();
+  if constexpr (dim == 3)
+    n = 4;
+
   
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
