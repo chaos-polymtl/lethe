@@ -472,7 +472,7 @@ public:
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
-  void
+  virtual void
   read(const std::string &prefix);
 
   /**
@@ -523,6 +523,14 @@ public:
    */
   virtual bool
   integrate() override;
+
+  /**
+   * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
+  void
+  read(const std::string &prefix) override;
 
 
   /**
