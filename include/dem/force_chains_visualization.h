@@ -35,7 +35,7 @@ using namespace DEM;
 template <int dim>
 class ParticlesForceChainsBase
 {
-public:
+protected:
   /**
    * @brief Use a ParticleParticleContactForce object to calculate normal forces
    * between particles. Store normal forces and particles position in
@@ -60,6 +60,7 @@ public:
     std::vector<Point<3>> &vertices,
     std::vector<double>   &normal_forces_vector) = 0;
 
+public:
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and
    * a PVD file.
@@ -115,30 +116,7 @@ public:
   virtual ~ParticlesForceChains()
   {}
 
-  /**
-   * @brief Calculate normal forces between all touching particles with
-   * ParticleParticleContactForce class' methods. Stock normal forces and
-   * particles position in vectors.
-   *
-   * @param[in] local_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local particle-particle
-   * contact forces.
-   * @param[in] ghost_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost particle-particle
-   * contact forces.
-   * @param[out] vertices the vector of positions of touching particles.
-   * @param[out] normal_forces_vector the vector of normal forces between each
-   * touching particles.
-   */
-  void
-  calculate_force_chains(
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
-                          &ghost_adjacent_particles,
-    std::vector<Point<3>> &vertices,
-    std::vector<double>   &normal_forces_vector) override;
-
+public:
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and
    * a PVD file.
@@ -171,6 +149,30 @@ public:
                        &ghost_adjacent_particles) override;
 
 private:
+  /**
+   * @brief Calculate normal forces between all touching particles with
+   * ParticleParticleContactForce class' methods. Stock normal forces and
+   * particles position in vectors.
+   *
+   * @param[in] local_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local particle-particle
+   * contact forces.
+   * @param[in] ghost_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost particle-particle
+   * contact forces.
+   * @param[out] vertices the vector of positions of touching particles.
+   * @param[out] normal_forces_vector the vector of normal forces between each
+   * touching particles.
+   */
+  void
+  calculate_force_chains(
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename dem_data_structures<dim>::adjacent_particle_pairs
+                          &ghost_adjacent_particles,
+    std::vector<Point<3>> &vertices,
+    std::vector<double>   &normal_forces_vector) override;
+
   /**
    * @brief Execute the contact calculation step for the particle-particle
    * contact only for local-local and local-ghost contacts with no periodicity.

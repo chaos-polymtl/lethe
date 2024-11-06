@@ -94,8 +94,8 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                        &ghost_adjacent_particles)
 {
   // Creating containers
-  std::vector<Point<3>> vertices;
-  std::vector<double>   normal_forces_vector;
+  std::vector<Point<3>> vertices ={Point<3>(),Point<3>()};
+  std::vector<double>   normal_forces_vector = {0.};
 
   this->calculate_force_chains(local_adjacent_particles,
                                ghost_adjacent_particles,
@@ -108,7 +108,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   DataOut<1, 3>    data_out;
   data_out.attach_dof_handler(force_dh);
 
-  Vector<float> force_values(triangulation.n_active_cells());
+  Vector<double> force_values(triangulation.n_active_cells());
   for (unsigned int i = 0; i < force_values.size(); ++i)
     {
       force_values[i] = normal_forces_vector[i];
@@ -139,9 +139,6 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   std::ofstream pvd_output(pvdPrefix.c_str());
   DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
 
-  // Clear the containers for the next writing time step.
-  vertices.clear();
-  normal_forces_vector.clear();
 }
 
 // No resistance
