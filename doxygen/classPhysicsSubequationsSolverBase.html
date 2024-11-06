@@ -85,10 +85,11 @@ Inheritance diagram for PhysicsSubequationsSolverBase:</div>
 <div class="dyncontent">
 <div class="center"><img src="classPhysicsSubequationsSolverBase__inherit__graph.png" border="0" usemap="#aPhysicsSubequationsSolverBase_inherit__map" alt="Inheritance graph"/></div>
 <map name="aPhysicsSubequationsSolverBase_inherit__map" id="aPhysicsSubequationsSolverBase_inherit__map">
-<area shape="rect" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,32"/>
-<area shape="rect" href="classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="22,80,221,121"/>
-<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="12,169,231,211"/>
-<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="17,259,226,300"/>
+<area shape="rect" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="88,5,320,32"/>
+<area shape="rect" href="classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="105,80,303,121"/>
+<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="95,169,313,211"/>
+<area shape="rect" href="classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="5,259,184,300"/>
+<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="209,259,418,300"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -96,10 +97,6 @@ Inheritance diagram for PhysicsSubequationsSolverBase:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abb7e722d51428100ef3e642309f6ff6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#abb7e722d51428100ef3e642309f6ff6c">setup_dofs</a> ()=0</td></tr>
 <tr class="separator:abb7e722d51428100ef3e642309f6ff6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a237851fb8c5a4a108295c83d51f2052c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#a237851fb8c5a4a108295c83d51f2052c">assemble_system_matrix</a> ()=0</td></tr>
-<tr class="separator:a237851fb8c5a4a108295c83d51f2052c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3e645abbf03e90a98d6603baa2edc49"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#ab3e645abbf03e90a98d6603baa2edc49">assemble_system_rhs</a> ()=0</td></tr>
-<tr class="separator:ab3e645abbf03e90a98d6603baa2edc49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd4ed509215128b76e4610c1c5c4fc15"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSubequationsSolverBase.html#acd4ed509215128b76e4610c1c5c4fc15">solve</a> (const bool &amp;is_post_mesh_adaptation)=0</td></tr>
 <tr class="separator:acd4ed509215128b76e4610c1c5c4fc15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -108,64 +105,6 @@ Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="physics__subequations__solver_8h_source.html#l00016">16</a> of file <a class="el" href="physics__subequations__solver_8h_source.html">physics_subequations_solver.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a237851fb8c5a4a108295c83d51f2052c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a237851fb8c5a4a108295c83d51f2052c">&#9670;&nbsp;</a></span>assemble_system_matrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void PhysicsSubequationsSolverBase::assemble_system_matrix </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Assemble the matrix. </p>
-
-<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#ab04e8685285c297b696c2e90e4e6a498">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
-
-</div>
-</div>
-<a id="ab3e645abbf03e90a98d6603baa2edc49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3e645abbf03e90a98d6603baa2edc49">&#9670;&nbsp;</a></span>assemble_system_rhs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void PhysicsSubequationsSolverBase::assemble_system_rhs </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Assemble the right-hand side (rhs). </p>
-
-<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#a57aa629ff72630e63e3d5dd02f85d9a6">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
-
-</div>
-</div>
 <a id="abb7e722d51428100ef3e642309f6ff6c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb7e722d51428100ef3e642309f6ff6c">&#9670;&nbsp;</a></span>setup_dofs()</h2>
 
@@ -191,7 +130,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Set up the DofHandler and the degrees of freedom associated with the equation to solve. </p>
 
-<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#aedddd3595102e570f601571331110261">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#a454cdb154deb6108e692d70ed5781685">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -227,7 +166,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#af8cb760f5ae58ca5a43e6e6f62c7ad6b">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classVOFLinearSubequationsSolver.html#a40ad455c161722d4d805663e4951637e">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

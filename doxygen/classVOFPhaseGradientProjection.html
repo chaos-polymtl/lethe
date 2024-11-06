@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: VOFPhaseGradientProjection&lt; dim &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,16 +76,16 @@ $(function() {
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="classVOFPhaseGradientProjection-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt; Class Template Reference</div>  </div>
+<div class="title">VOFPhaseGradientProjection&lt; dim &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="vof__phase__gradient__projection_8h_source.html">vof_phase_gradient_projection.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt;:</div>
+Inheritance diagram for VOFPhaseGradientProjection&lt; dim &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classVOFPhaseGradientProjection__inherit__graph.png" border="0" usemap="#aVOFPhaseGradientProjection_3_01dim_00_01ScratchDataType_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="aVOFPhaseGradientProjection_3_01dim_00_01ScratchDataType_01_4_inherit__map" id="aVOFPhaseGradientProjection_3_01dim_00_01ScratchDataType_01_4_inherit__map">
+<div class="center"><img src="classVOFPhaseGradientProjection__inherit__graph.png" border="0" usemap="#aVOFPhaseGradientProjection_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aVOFPhaseGradientProjection_3_01dim_01_4_inherit__map" id="aVOFPhaseGradientProjection_3_01dim_01_4_inherit__map">
 <area shape="rect" title="VOF phase fraction gradient L2 projection solver." alt="" coords="17,259,226,300"/>
 <area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="12,169,231,211"/>
 <area shape="rect" href="classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="22,80,221,121"/>
@@ -95,135 +95,114 @@ Inheritance diagram for VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt;
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae3c372b01ceeab821369e95a711ffe9c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#ae3c372b01ceeab821369e95a711ffe9c">VOFPhaseGradientProjection</a> (<a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *p_subequations, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics, const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt;&gt; &amp;p_triangulation, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;p_simulation_control, const ConditionalOStream &amp;p_pcout)</td></tr>
-<tr class="separator:ae3c372b01ceeab821369e95a711ffe9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9088532f1cee92b1f1ca7a6835ddc6b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#ad9088532f1cee92b1f1ca7a6835ddc6b">~VOFPhaseGradientProjection</a> ()=default</td></tr>
-<tr class="separator:ad9088532f1cee92b1f1ca7a6835ddc6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a></td></tr>
-<tr class="memitem:ab20895102d841e0f0b43b6c9ce0e6885 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ab20895102d841e0f0b43b6c9ce0e6885">VOFLinearSubequationsSolver</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;p_subequation_id, <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *p_subequations, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics, const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt;&gt; &amp;p_triangulation, std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;p_simulation_control, const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a> &amp;p_subequation_verbosity, const ConditionalOStream &amp;p_pcout)</td></tr>
-<tr class="separator:ab20895102d841e0f0b43b6c9ce0e6885 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a066ed25e23b7629ead54d7619994b563 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a066ed25e23b7629ead54d7619994b563">~VOFLinearSubequationsSolver</a> ()=default</td></tr>
-<tr class="separator:a066ed25e23b7629ead54d7619994b563 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedddd3595102e570f601571331110261 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aedddd3595102e570f601571331110261">setup_dofs</a> () override</td></tr>
-<tr class="separator:aedddd3595102e570f601571331110261 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c616727e23de621346d617faa6592e5 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a3c616727e23de621346d617faa6592e5">solve_linear_system_and_update_solution</a> (const bool &amp;is_post_mesh_adaptation=false) override</td></tr>
-<tr class="separator:a3c616727e23de621346d617faa6592e5 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8cb760f5ae58ca5a43e6e6f62c7ad6b inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#af8cb760f5ae58ca5a43e6e6f62c7ad6b">solve</a> (const bool &amp;is_post_mesh_adaptation=false) override</td></tr>
-<tr class="separator:af8cb760f5ae58ca5a43e6e6f62c7ad6b inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0037ed813aaaf9e6a20a4248ee5d319"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#aa0037ed813aaaf9e6a20a4248ee5d319">VOFPhaseGradientProjection</a> (const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, const ConditionalOStream &amp;p_pcout, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt;&gt; &amp;p_triangulation, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics_interface, <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *p_subequations_interface)</td></tr>
+<tr class="separator:aa0037ed813aaaf9e6a20a4248ee5d319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6e208b8a35a5facf3737926dc37309c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#ae6e208b8a35a5facf3737926dc37309c">~VOFPhaseGradientProjection</a> ()=default</td></tr>
+<tr class="separator:ae6e208b8a35a5facf3737926dc37309c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim &gt;</a></td></tr>
+<tr class="memitem:a663524400c01d523bc2992e7158cc3ee inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a663524400c01d523bc2992e7158cc3ee">VOFLinearSubequationsSolver</a> (const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a> &amp;p_subequation_id, const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;p_simulation_parameters, const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a> &amp;p_subequation_verbosity, const ConditionalOStream &amp;p_pcout, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt;&gt; &amp;p_triangulation, <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *p_multiphysics_interface, <a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *p_subequations_interface)</td></tr>
+<tr class="separator:a663524400c01d523bc2992e7158cc3ee inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae273a44334a1b0609a596617d0550edf inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ae273a44334a1b0609a596617d0550edf">~VOFLinearSubequationsSolver</a> ()=default</td></tr>
+<tr class="separator:ae273a44334a1b0609a596617d0550edf inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a454cdb154deb6108e692d70ed5781685 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a454cdb154deb6108e692d70ed5781685">setup_dofs</a> () override</td></tr>
+<tr class="separator:a454cdb154deb6108e692d70ed5781685 inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40ad455c161722d4d805663e4951637e inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a40ad455c161722d4d805663e4951637e">solve</a> (const bool &amp;is_post_mesh_adaptation=false) override</td></tr>
+<tr class="separator:a40ad455c161722d4d805663e4951637e inherit pub_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysicsLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsLinearSubequationsSolver.html">PhysicsLinearSubequationsSolver</a></td></tr>
-<tr class="memitem:a852b65e89e97c5f5171b34bf89e6f6ac inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#a852b65e89e97c5f5171b34bf89e6f6ac">PhysicsLinearSubequationsSolver</a> (const ConditionalOStream &amp;<a class="el" href="classPhysicsLinearSubequationsSolver.html#aa0bca38e61d08287327a5263699599a6">pcout</a>)</td></tr>
+<tr class="memitem:a852b65e89e97c5f5171b34bf89e6f6ac inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#a852b65e89e97c5f5171b34bf89e6f6ac">PhysicsLinearSubequationsSolver</a> (const ConditionalOStream &amp;<a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">pcout</a>)</td></tr>
 <tr class="separator:a852b65e89e97c5f5171b34bf89e6f6ac inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2f7cd4915b0c7b02d76836a38d30db1 inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#af2f7cd4915b0c7b02d76836a38d30db1">~PhysicsLinearSubequationsSolver</a> ()=default</td></tr>
 <tr class="separator:af2f7cd4915b0c7b02d76836a38d30db1 inherit pub_methods_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a85ad779ffef362e32ed56a3079d9d5ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#a85ad779ffef362e32ed56a3079d9d5ab">assemble_local_system_matrix</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, ScratchDataType &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:a85ad779ffef362e32ed56a3079d9d5ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0682e78284106b82594d9f5d64be85d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#a0682e78284106b82594d9f5d64be85d8">assemble_local_system_rhs</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, ScratchDataType &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
-<tr class="separator:a0682e78284106b82594d9f5d64be85d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeca66d04d63a22cdd12eaca8ef26429d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFPhaseGradientProjection.html#aeca66d04d63a22cdd12eaca8ef26429d">assemble_system_matrix_and_rhs</a> () override</td></tr>
+<tr class="separator:aeca66d04d63a22cdd12eaca8ef26429d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a></td></tr>
-<tr class="memitem:ab04e8685285c297b696c2e90e4e6a498 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ab04e8685285c297b696c2e90e4e6a498">assemble_system_matrix</a> () override</td></tr>
-<tr class="separator:ab04e8685285c297b696c2e90e4e6a498 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57aa629ff72630e63e3d5dd02f85d9a6 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a57aa629ff72630e63e3d5dd02f85d9a6">assemble_system_rhs</a> () override</td></tr>
-<tr class="separator:a57aa629ff72630e63e3d5dd02f85d9a6 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9eef6bdd24e369c94b72b2e87618710 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aa9eef6bdd24e369c94b72b2e87618710">copy_local_matrix_to_global_matrix</a> (const <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</td></tr>
-<tr class="separator:aa9eef6bdd24e369c94b72b2e87618710 inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58caebdb4b39ba4626b7021e9ed7b4ae inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a58caebdb4b39ba4626b7021e9ed7b4ae">copy_local_rhs_to_global_rhs</a> (const <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data)</td></tr>
-<tr class="separator:a58caebdb4b39ba4626b7021e9ed7b4ae inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a></td></tr>
-<tr class="memitem:a74791d631cd49a62fd9a3769a5dfa80f inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a74791d631cd49a62fd9a3769a5dfa80f">subequation_id</a></td></tr>
-<tr class="separator:a74791d631cd49a62fd9a3769a5dfa80f inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c32d0aefcd8a593b050a5f9fed51202 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a1c32d0aefcd8a593b050a5f9fed51202">subequations</a></td></tr>
-<tr class="separator:a1c32d0aefcd8a593b050a5f9fed51202 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac915446da7309f974050f34982762d00 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ac915446da7309f974050f34982762d00">multiphysics</a></td></tr>
-<tr class="separator:ac915446da7309f974050f34982762d00 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a603b1f384910f5899ec170c8ca060300 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a603b1f384910f5899ec170c8ca060300">simulation_parameters</a></td></tr>
-<tr class="separator:a603b1f384910f5899ec170c8ca060300 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acae22cc77baa655b2d78ccb024f43104 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#acae22cc77baa655b2d78ccb024f43104">triangulation</a></td></tr>
-<tr class="separator:acae22cc77baa655b2d78ccb024f43104 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3a1fe162bb6c974cd77982fbdde5136 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aa3a1fe162bb6c974cd77982fbdde5136">simulation_control</a></td></tr>
-<tr class="separator:aa3a1fe162bb6c974cd77982fbdde5136 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46d13557d04be68ebe5e264c080a2ae9 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a46d13557d04be68ebe5e264c080a2ae9">dof_handler</a></td></tr>
-<tr class="separator:a46d13557d04be68ebe5e264c080a2ae9 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf3b88173639c756a5937994940db28d inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FESystem&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#abf3b88173639c756a5937994940db28d">fe</a></td></tr>
-<tr class="separator:abf3b88173639c756a5937994940db28d inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf838c58d7e6ab34549733b93a32008c inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#abf838c58d7e6ab34549733b93a32008c">mapping</a></td></tr>
-<tr class="separator:abf838c58d7e6ab34549733b93a32008c inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa1a25ba1f5938cff6dc52580f7e7809 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#afa1a25ba1f5938cff6dc52580f7e7809">cell_quadrature</a></td></tr>
-<tr class="separator:afa1a25ba1f5938cff6dc52580f7e7809 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4cf1ff6a672b117fe1a94e49a7ea74a inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aa4cf1ff6a672b117fe1a94e49a7ea74a">locally_owned_dofs</a></td></tr>
-<tr class="separator:aa4cf1ff6a672b117fe1a94e49a7ea74a inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a861e1cc4312e2b209d74280688ee0d91 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a861e1cc4312e2b209d74280688ee0d91">locally_relevant_dofs</a></td></tr>
-<tr class="separator:a861e1cc4312e2b209d74280688ee0d91 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a869204ac3bc43b8b29fe08d2543661a2 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a869204ac3bc43b8b29fe08d2543661a2">evaluation_point</a></td></tr>
-<tr class="separator:a869204ac3bc43b8b29fe08d2543661a2 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ae15c8066c141d362e4bbfa04a6a484 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a8ae15c8066c141d362e4bbfa04a6a484">present_solution</a></td></tr>
-<tr class="separator:a8ae15c8066c141d362e4bbfa04a6a484 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a860b129132d847101913bf85065b21ad inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a860b129132d847101913bf85065b21ad">system_rhs</a></td></tr>
-<tr class="separator:a860b129132d847101913bf85065b21ad inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8595e0527f803972679192216aaec84b inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a8595e0527f803972679192216aaec84b">constraints</a></td></tr>
-<tr class="separator:a8595e0527f803972679192216aaec84b inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5927d272be97ccca650ca108fbb7326 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">TrilinosWrappers::SparseMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ad5927d272be97ccca650ca108fbb7326">system_matrix</a></td></tr>
-<tr class="separator:ad5927d272be97ccca650ca108fbb7326 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6e03499af0e095efa4d8d9014ab30e1 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; TrilinosWrappers::PreconditionILU &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ac6e03499af0e095efa4d8d9014ab30e1">ilu_preconditioner</a></td></tr>
-<tr class="separator:ac6e03499af0e095efa4d8d9014ab30e1 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb21b4284c0de59a112beb7eb92861bf inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="vof__assemblers_8h.html#aa4d06c2214adb32479de7024e03b1518">VOFSubequationAssemblerBase</a>&lt; ScratchDataType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#adb21b4284c0de59a112beb7eb92861bf">assembler</a></td></tr>
-<tr class="separator:adb21b4284c0de59a112beb7eb92861bf inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a447fbfe7b05cdf80da542a562602b927 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a447fbfe7b05cdf80da542a562602b927">linear_solver_verbosity</a></td></tr>
-<tr class="separator:a447fbfe7b05cdf80da542a562602b927 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa871b4edad1ce41f478b865c0243cc29 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aa871b4edad1ce41f478b865c0243cc29">subequation_verbosity</a></td></tr>
-<tr class="separator:aa871b4edad1ce41f478b865c0243cc29 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim &gt;</a></td></tr>
+<tr class="memitem:acb8125fff4e75e7b498e272e24884c9c inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#acb8125fff4e75e7b498e272e24884c9c">solve_linear_system_and_update_solution</a> (const bool &amp;is_post_mesh_adaptation=false) override</td></tr>
+<tr class="separator:acb8125fff4e75e7b498e272e24884c9c inherit pro_methods_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classVOFLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classVOFLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classVOFLinearSubequationsSolver.html">VOFLinearSubequationsSolver&lt; dim &gt;</a></td></tr>
+<tr class="memitem:aaba8fdc46d4c98d8b6b1fcc7526357ba inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vof__subequations__interface_8h.html#a24bad343f5052b85d1cc3dbd877b3a12">VOFSubequationsID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aaba8fdc46d4c98d8b6b1fcc7526357ba">subequation_id</a></td></tr>
+<tr class="separator:aaba8fdc46d4c98d8b6b1fcc7526357ba inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c0d32e4106753ecf26d0034e67f083d inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a3c0d32e4106753ecf26d0034e67f083d">subequations_interface</a></td></tr>
+<tr class="separator:a3c0d32e4106753ecf26d0034e67f083d inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acff5ede4d5a206147604a0daea4ced86 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#acff5ede4d5a206147604a0daea4ced86">multiphysics_interface</a></td></tr>
+<tr class="separator:acff5ede4d5a206147604a0daea4ced86 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7f4363eb60e91f2d194d9cf4925a20c inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ad7f4363eb60e91f2d194d9cf4925a20c">simulation_parameters</a></td></tr>
+<tr class="separator:ad7f4363eb60e91f2d194d9cf4925a20c inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bbe947a11c412cba934bc5cd33b5af3 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a5bbe947a11c412cba934bc5cd33b5af3">triangulation</a></td></tr>
+<tr class="separator:a5bbe947a11c412cba934bc5cd33b5af3 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46c19c9c424b2aba652e15d80ded4a10 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a46c19c9c424b2aba652e15d80ded4a10">dof_handler</a></td></tr>
+<tr class="separator:a46c19c9c424b2aba652e15d80ded4a10 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b8a465186a81f8faa8b6d0fec268277 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FiniteElement&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a0b8a465186a81f8faa8b6d0fec268277">fe</a></td></tr>
+<tr class="separator:a0b8a465186a81f8faa8b6d0fec268277 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe02ee2c03dec1e548848683c03b23d9 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#abe02ee2c03dec1e548848683c03b23d9">mapping</a></td></tr>
+<tr class="separator:abe02ee2c03dec1e548848683c03b23d9 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88398180194bca84ae48191701345022 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Quadrature&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a88398180194bca84ae48191701345022">cell_quadrature</a></td></tr>
+<tr class="separator:a88398180194bca84ae48191701345022 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81d20c91b7e8274823eb61caa487a3e2 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a81d20c91b7e8274823eb61caa487a3e2">locally_owned_dofs</a></td></tr>
+<tr class="separator:a81d20c91b7e8274823eb61caa487a3e2 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76f213bb846bf08766686ab7acff20c1 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">IndexSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a76f213bb846bf08766686ab7acff20c1">locally_relevant_dofs</a></td></tr>
+<tr class="separator:a76f213bb846bf08766686ab7acff20c1 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f2b1d7f2cbedcc07fd9d63778393cd6 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a3f2b1d7f2cbedcc07fd9d63778393cd6">evaluation_point</a></td></tr>
+<tr class="separator:a3f2b1d7f2cbedcc07fd9d63778393cd6 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2f906481f7c80e62fd59d530fee37b0 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ad2f906481f7c80e62fd59d530fee37b0">present_solution</a></td></tr>
+<tr class="separator:ad2f906481f7c80e62fd59d530fee37b0 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac307c08c84c0e64d7b7e819b44db8baf inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ac307c08c84c0e64d7b7e819b44db8baf">system_rhs</a></td></tr>
+<tr class="separator:ac307c08c84c0e64d7b7e819b44db8baf inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca104bfd2d24ad8ae4874dfc721a41d3 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#aca104bfd2d24ad8ae4874dfc721a41d3">constraints</a></td></tr>
+<tr class="separator:aca104bfd2d24ad8ae4874dfc721a41d3 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2b3a86e6c823e6103fb08a95f2859e inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">TrilinosWrappers::SparseMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#abf2b3a86e6c823e6103fb08a95f2859e">system_matrix</a></td></tr>
+<tr class="separator:abf2b3a86e6c823e6103fb08a95f2859e inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50d22aa27afbe4aaaa6c73dbcb35990f inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; TrilinosWrappers::PreconditionILU &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#a50d22aa27afbe4aaaa6c73dbcb35990f">ilu_preconditioner</a></td></tr>
+<tr class="separator:a50d22aa27afbe4aaaa6c73dbcb35990f inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7844869e2a3a93ed017f0961112c507 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#ac7844869e2a3a93ed017f0961112c507">linear_solver_verbosity</a></td></tr>
+<tr class="separator:ac7844869e2a3a93ed017f0961112c507 inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af44de2a8b2ca403dce384fcf1b2d8cab inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26">Parameters::Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFLinearSubequationsSolver.html#af44de2a8b2ca403dce384fcf1b2d8cab">subequation_verbosity</a></td></tr>
+<tr class="separator:af44de2a8b2ca403dce384fcf1b2d8cab inherit pro_attribs_classVOFLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classPhysicsLinearSubequationsSolver"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classPhysicsLinearSubequationsSolver')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classPhysicsLinearSubequationsSolver.html">PhysicsLinearSubequationsSolver</a></td></tr>
-<tr class="memitem:aa0bca38e61d08287327a5263699599a6 inherit pro_attribs_classPhysicsLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#aa0bca38e61d08287327a5263699599a6">pcout</a></td></tr>
-<tr class="separator:aa0bca38e61d08287327a5263699599a6 inherit pro_attribs_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8077bebe593826553b8ee4554428309c inherit pro_attribs_classPhysicsLinearSubequationsSolver"><td class="memItemLeft" align="right" valign="top">const ConditionalOStream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">pcout</a></td></tr>
+<tr class="separator:a8077bebe593826553b8ee4554428309c inherit pro_attribs_classPhysicsLinearSubequationsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;int dim, typename ScratchDataType&gt;<br />
-class VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt;</h3>
+<div class="textblock"><h3>template&lt;int dim&gt;<br />
+class VOFPhaseGradientProjection&lt; dim &gt;</h3>
 
 <p>VOF phase fraction gradient L2 projection solver. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>Number of dimensions of the problem.</td></tr>
-    <tr><td class="paramname">ScratchDataType</td><td>Type of scratch data object used for linear system assembly. </td></tr>
+    <tr><td class="paramname">dim</td><td>Number of dimensions of the problem. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8h_source.html#l00018">18</a> of file <a class="el" href="vof__phase__gradient__projection_8h_source.html">vof_phase_gradient_projection.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8h_source.html#l00015">15</a> of file <a class="el" href="vof__phase__gradient__projection_8h_source.html">vof_phase_gradient_projection.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae3c372b01ceeab821369e95a711ffe9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3c372b01ceeab821369e95a711ffe9c">&#9670;&nbsp;</a></span>VOFPhaseGradientProjection()</h2>
+<a id="aa0037ed813aaaf9e6a20a4248ee5d319"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0037ed813aaaf9e6a20a4248ee5d319">&#9670;&nbsp;</a></span>VOFPhaseGradientProjection()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename ScratchDataType &gt; </div>
+template&lt;int dim&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim, ScratchDataType &gt;::<a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a> </td>
+          <td class="memname"><a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim &gt;::<a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *&#160;</td>
-          <td class="paramname"><em>p_subequations</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *&#160;</td>
-          <td class="paramname"><em>p_multiphysics</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>p_simulation_parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ConditionalOStream &amp;&#160;</td>
+          <td class="paramname"><em>p_pcout</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -234,14 +213,14 @@ template&lt;int dim, typename ScratchDataType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>p_simulation_control</em>, </td>
+          <td class="paramtype"><a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt; *&#160;</td>
+          <td class="paramname"><em>p_multiphysics_interface</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const ConditionalOStream &amp;&#160;</td>
-          <td class="paramname"><em>p_pcout</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classVOFSubequationsInterface.html">VOFSubequationsInterface</a>&lt; dim &gt; *&#160;</td>
+          <td class="paramname"><em>p_subequations_interface</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -259,33 +238,34 @@ template&lt;int dim, typename ScratchDataType &gt; </div>
 <p>Constructor for the L2 projection of the VOF phase fraction gradient (pfg). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">p_subequations</td><td>Subequations interface object used to get information from other subequations and store information from the current one.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">p_multiphysics</td><td>Multiphysics interface object used to get information from physics.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_simulation_parameters</td><td>Simulation parameters.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_pcout</td><td>Parallel cout used to print the information.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_triangulation</td><td>Distributed mesh information.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">p_simulation_control</td><td>Object responsible for the control of steady-state and transient simulations. Contains all the information related to time stepping and the stopping criteria.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">p_pcout</td><td>Parallel cout used to print the information. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_multiphysics_interface</td><td>Multiphysics interface object used to get information from physics.</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">p_subequations_interface</td><td>Subequations interface object used to get information from other subequations and store information from the current one. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8h_source.html#l00043">43</a> of file <a class="el" href="vof__phase__gradient__projection_8h_source.html">vof_phase_gradient_projection.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8h_source.html#l00035">35</a> of file <a class="el" href="vof__phase__gradient__projection_8h_source.html">vof_phase_gradient_projection.h</a>.</p>
+
+<p class="reference">References <a class="el" href="vof__linear__subequations__solver_8h_source.html#l00137">VOFLinearSubequationsSolver&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof__linear__subequations__solver_8h_source.html#l00133">VOFLinearSubequationsSolver&lt; dim &gt;::fe</a>, <a class="el" href="vof__linear__subequations__solver_8h_source.html#l00136">VOFLinearSubequationsSolver&lt; dim &gt;::mapping</a>, and <a class="el" href="vof__linear__subequations__solver_8h_source.html#l00128">VOFLinearSubequationsSolver&lt; dim &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
-<a id="ad9088532f1cee92b1f1ca7a6835ddc6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9088532f1cee92b1f1ca7a6835ddc6b">&#9670;&nbsp;</a></span>~VOFPhaseGradientProjection()</h2>
+<a id="ae6e208b8a35a5facf3737926dc37309c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6e208b8a35a5facf3737926dc37309c">&#9670;&nbsp;</a></span>~VOFPhaseGradientProjection()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename ScratchDataType &gt; </div>
+template&lt;int dim&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim, ScratchDataType &gt;::~<a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a> </td>
+          <td class="memname"><a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim &gt;::~<a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -303,39 +283,19 @@ template&lt;int dim, typename ScratchDataType &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a85ad779ffef362e32ed56a3079d9d5ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85ad779ffef362e32ed56a3079d9d5ab">&#9670;&nbsp;</a></span>assemble_local_system_matrix()</h2>
+<a id="aeca66d04d63a22cdd12eaca8ef26429d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeca66d04d63a22cdd12eaca8ef26429d">&#9670;&nbsp;</a></span>assemble_system_matrix_and_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename ScratchDataType &gt; </div>
+template&lt;int dim&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim, ScratchDataType &gt;::assemble_local_system_matrix </td>
-          <td>(</td>
-          <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
-          <td class="paramname"><em>cell</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ScratchDataType &amp;&#160;</td>
-          <td class="paramname"><em>scratch_data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;&#160;</td>
-          <td class="paramname"><em>copy_data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="memname">void <a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim &gt;::assemble_system_matrix_and_rhs</td>
         </tr>
       </table>
   </td>
@@ -345,81 +305,13 @@ template&lt;int dim, typename ScratchDataType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Assemble the local matrix for a given cell. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell for which the local matrix is assembled.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>Stores the calculated finite element information at Gauss points.</td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>Stores the results of the assembly over a cell. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Assemble system matrix and right-hand side (rhs). </p>
 
-<p>Implements <a class="el" href="classVOFLinearSubequationsSolver.html#a1e064c22a11e76eb029af909cb4f2d0d">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
+<p>Implements <a class="el" href="classVOFLinearSubequationsSolver.html#a709dae99a5f6ef24df655df6db6ccd00">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8cc_source.html#l00008">8</a> of file <a class="el" href="vof__phase__gradient__projection_8cc_source.html">vof_phase_gradient_projection.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
-
-</div>
-</div>
-<a id="a0682e78284106b82594d9f5d64be85d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0682e78284106b82594d9f5d64be85d8">&#9670;&nbsp;</a></span>assemble_local_system_rhs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename ScratchDataType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classVOFPhaseGradientProjection.html">VOFPhaseGradientProjection</a>&lt; dim, ScratchDataType &gt;::assemble_local_system_rhs </td>
-          <td>(</td>
-          <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
-          <td class="paramname"><em>cell</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ScratchDataType &amp;&#160;</td>
-          <td class="paramname"><em>scratch_data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;&#160;</td>
-          <td class="paramname"><em>copy_data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Assemble the local right-hand side (rhs) for a given cell. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell for which the local rhs is assembled.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>Stores the calculated finite element information at Gauss points.</td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>Stores the results of the assembly over a cell. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classVOFLinearSubequationsSolver.html#a76c7ffafadc1a2294612a68d4648f5a7">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="vof__phase__gradient__projection_8cc_source.html#l00037">37</a> of file <a class="el" href="vof__phase__gradient__projection_8cc_source.html">vof_phase_gradient_projection.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00114">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00107">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="copy__data_8h_source.html#l00093">StabilizedMethodsCopyData::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00620">compute_cell_measure_with_JxW()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>

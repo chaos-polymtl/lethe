@@ -293,11 +293,11 @@ $(function() {
 , <a class="el" href="classMFNavierStokesPreconditionGMG.html#af51c319da31e7599ac678e959463ee3d">MFNavierStokesPreconditionGMG&lt; dim &gt;</a>
 , <a class="el" href="classMultiphysicsInterface.html#a15df5d739b55edf36d6fbd8687e72a72">MultiphysicsInterface&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesOperatorBase.html#a5f5067e56ce2479bd58d7922f7279a0c">NavierStokesOperatorBase&lt; dim, number &gt;</a>
-, <a class="el" href="classPhysicsLinearSubequationsSolver.html#aa0bca38e61d08287327a5263699599a6">PhysicsLinearSubequationsSolver</a>
+, <a class="el" href="classPhysicsLinearSubequationsSolver.html#a8077bebe593826553b8ee4554428309c">PhysicsLinearSubequationsSolver</a>
 , <a class="el" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">PhysicsSolver&lt; VectorType &gt;</a>
 , <a class="el" href="classPreconditionBase.html#ad4aefe755e27a309592ae3c2366983d9">PreconditionBase&lt; VectorType &gt;</a>
 , <a class="el" href="classRPTL2Projection.html#a58f232f151ac6c2a7b1c0785ab091347">RPTL2Projection&lt; dim &gt;</a>
-, <a class="el" href="classVOFSubequationsInterface.html#abf773aefbc016d73ba6824c195f13360">VOFSubequationsInterface&lt; dim &gt;</a>
+, <a class="el" href="classVOFSubequationsInterface.html#a293ff724445b2719cf20e4ded1e5b660">VOFSubequationsInterface&lt; dim &gt;</a>
 </li>
 <li>peak_to_total_ratio
 : <a class="el" href="structParameters_1_1RPTParameters.html#aa75b6f0aa5b4159da4d4f2895379da76">Parameters::RPTParameters</a>
@@ -401,9 +401,6 @@ $(function() {
 <li>phase_fraction_gradient_diffusion_factor
 : <a class="el" href="structParameters_1_1VOF__SurfaceTensionForce.html#aaf4640b6b6c93e746e57d0c113aa264c">Parameters::VOF_SurfaceTensionForce</a>
 </li>
-<li>phase_fraction_gradients
-: <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#a4bd83f7a53d11d0a6e1805cd8d1bc2ab">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
-</li>
 <li>phase_gradient_values
 : <a class="el" href="classNavierStokesScratchData.html#a402dc7a9c4c505cb09842b649fbf0c81">NavierStokesScratchData&lt; dim &gt;</a>
 </li>
@@ -451,7 +448,6 @@ $(function() {
 : <a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryFunctions.html#ad424d5cc6f81c59b086d1d56beefb2e8">BoundaryConditions::CahnHilliardBoundaryFunctions&lt; dim &gt;</a>
 , <a class="el" href="classCahnHilliardFunctionDefined.html#a9b3164a19c569687afd78dabb398ca80">CahnHilliardFunctionDefined&lt; dim &gt;</a>
 , <a class="el" href="classTracerScratchData.html#a5ad7083657a5ab1623df23a33149bbf2">TracerScratchData&lt; dim &gt;</a>
-, <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#a3587eefd5e0ebfb34d7b1f410f1a12ba">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
 , <a class="el" href="classVOFScratchData.html#a535ed79ffc709df79d7dd4c6f6224dec">VOFScratchData&lt; dim &gt;</a>
 </li>
 <li>phi_face_T
@@ -595,20 +591,8 @@ $(function() {
 : <a class="el" href="classdealii_1_1MGCoarseGridApplyPreconditioner.html#a00bdd340c5e4f6277e5e561d3ed5450e">dealii::MGCoarseGridApplyPreconditioner&lt; VectorType, PreconditionerType &gt;</a>
 , <a class="el" href="structParameters_1_1LinearSolver.html#a328641e34f1e113bb1dcaf7b2c74df51">Parameters::LinearSolver</a>
 </li>
-<li>present_curvature_solution
-: <a class="el" href="classVolumeOfFluid.html#a42932f1130431924ec5cc47bc7f6774e">VolumeOfFluid&lt; dim &gt;</a>
-</li>
 <li>present_face_temperature_values
 : <a class="el" href="classHeatTransferScratchData.html#ade619da01f88b550066ae2194d8ba8e0">HeatTransferScratchData&lt; dim &gt;</a>
-</li>
-<li>present_filtered_vof_phase_gradients
-: <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#a055ca7c072136d9d1d428d149100da9b">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
-</li>
-<li>present_phase_gradient_projection_gradients
-: <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#a3b41b392c111c1fed2ec79d631344288">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
-</li>
-<li>present_phase_gradient_projection_values
-: <a class="el" href="classVOFPhaseGradientProjectionScratchData.html#af73f01f27063ade19d5ad231dcc0c45f">VOFPhaseGradientProjectionScratchData&lt; dim &gt;</a>
 </li>
 <li>present_phase_values
 : <a class="el" href="classVOFScratchData.html#a17eba8e1acd046930dfecdff0eb03c5e">VOFScratchData&lt; dim &gt;</a>
@@ -618,7 +602,7 @@ $(function() {
 , <a class="el" href="classHeatTransfer.html#aaa54c16dbfc94259d2a0bfb31f464647">HeatTransfer&lt; dim &gt;</a>
 , <a class="el" href="classNavierStokesBase.html#a8edd98ede87021114c54121916e27aec">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 , <a class="el" href="classTracer.html#ab159a633ebc8dddbbfe681388fa9a4db">Tracer&lt; dim &gt;</a>
-, <a class="el" href="classVOFLinearSubequationsSolver.html#a8ae15c8066c141d362e4bbfa04a6a484">VOFLinearSubequationsSolver&lt; dim, ScratchDataType &gt;</a>
+, <a class="el" href="classVOFLinearSubequationsSolver.html#ad2f906481f7c80e62fd59d530fee37b0">VOFLinearSubequationsSolver&lt; dim &gt;</a>
 , <a class="el" href="classVolumeOfFluid.html#ab3543bb457a41602edbbcc97f79ffff2">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>present_temperature_laplacians
@@ -795,7 +779,6 @@ $(function() {
 </li>
 <li>projected_phase_fraction_gradient_values
 : <a class="el" href="classNavierStokesScratchData.html#a77a8a872036804121a9eb9f73a23b7f5">NavierStokesScratchData&lt; dim &gt;</a>
-, <a class="el" href="classVolumeOfFluid.html#a15044aef943a856548d25bc13c4172ce">VolumeOfFluid&lt; dim &gt;</a>
 </li>
 <li>projection_step_diffusion_factor
 : <a class="el" href="classParameters_1_1InitialConditions.html#aaff3a389688210a82cf84239cf1a6b68">Parameters::InitialConditions&lt; dim &gt;</a>

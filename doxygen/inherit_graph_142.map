@@ -1,6 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,13,237,39"/>
-<area shape="rect" id="node2" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="285,5,484,47"/>
-<area shape="rect" id="node3" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="532,5,751,47"/>
-<area shape="rect" id="node4" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="799,5,1008,47"/>
+<area shape="rect" id="node1" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,46,237,73"/>
+<area shape="rect" id="node2" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="285,39,484,80"/>
+<area shape="rect" id="node3" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="532,39,751,80"/>
+<area shape="rect" id="node4" href="$classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="814,5,993,47"/>
+<area shape="rect" id="node5" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="799,71,1008,112"/>
 </map>

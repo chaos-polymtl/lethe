@@ -1,4 +1,4 @@
-<map id="VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt;" name="VOFPhaseGradientProjection&lt; dim, ScratchDataType &gt;">
+<map id="VOFPhaseGradientProjection&lt; dim &gt;" name="VOFPhaseGradientProjection&lt; dim &gt;">
 <area shape="rect" id="node1" title="VOF phase fraction gradient L2 projection solver." alt="" coords="17,259,226,300"/>
 <area shape="rect" id="node2" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="12,169,231,211"/>
 <area shape="rect" id="node3" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="22,80,221,121"/>

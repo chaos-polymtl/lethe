@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['x_5fminus_3667',['x_minus',['../classParameters_1_1Laser.html#a980bd6541af96fcddb537558d644cb4dab647c803fd98ca424cc37c6dbf06c512',1,'Parameters::Laser']]],
-  ['x_5fplus_3668',['x_plus',['../classParameters_1_1Laser.html#a980bd6541af96fcddb537558d644cb4dabc4985ea2fa7449a8831756231d192d2',1,'Parameters::Laser']]]
+  ['x_5fminus_3658',['x_minus',['../classParameters_1_1Laser.html#a980bd6541af96fcddb537558d644cb4dab647c803fd98ca424cc37c6dbf06c512',1,'Parameters::Laser']]],
+  ['x_5fplus_3659',['x_plus',['../classParameters_1_1Laser.html#a980bd6541af96fcddb537558d644cb4dabc4985ea2fa7449a8831756231d192d2',1,'Parameters::Laser']]]
 ];
