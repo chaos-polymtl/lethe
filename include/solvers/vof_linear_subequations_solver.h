@@ -28,12 +28,9 @@
  *
  * @tparam dim Number of dimensions of the problem.
  *
- * @tparam ScratchDataType Type of scratch data object used for linear system
- * assembly.
- *
  * @ingroup solvers
  */
-template <int dim, typename ScratchDataType>
+template <int dim>
 class VOFLinearSubequationsSolver : public PhysicsLinearSubequationsSolver
 {
 public:
@@ -43,71 +40,42 @@ public:
    *
    * @param[in] p_subequation_id Identifier corresponding to the subequation.
    *
-   * @param[in,out] p_subequations Subequations interface object used to get
-   * information from other subequations and store information from the current
-   * one.
-   *
-   * @param[in] p_multiphysics Multiphysics interface object used to get
-   * information from physics.
-   *
    * @param[in] p_simulation_parameters Simulation parameters.
-   *
-   * @param[in] p_triangulation Distributed mesh information.
-   *
-   * @param[in] p_simulation_control Object responsible for the control of
-   * steady-state and transient simulations. Contains all the information
-   * related to time stepping and the stopping criteria.
    *
    * @param[in] p_subequation_verbosity Parameter indicating the verbosity level
    * of the solver.
    *
    * @param[in] p_pcout Parallel cout used to print the information.
+   *
+   * @param[in] p_triangulation Distributed mesh information.
+   *
+   * @param[in] p_multiphysics_interface Multiphysics interface object used to
+   * get information from physics.
+   *
+   * @param[in,out] p_subequations_interface Subequations interface object used
+   * to get information from other subequations and store information from the
+   * current one.
    */
   VOFLinearSubequationsSolver(
     const VOFSubequationsID         &p_subequation_id,
-    VOFSubequationsInterface<dim>   *p_subequations,
-    MultiphysicsInterface<dim>      *p_multiphysics,
     const SimulationParameters<dim> &p_simulation_parameters,
+    const Parameters::Verbosity     &p_subequation_verbosity,
+    const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       &p_triangulation,
-    std::shared_ptr<SimulationControl> &p_simulation_control,
-    const Parameters::Verbosity        &p_subequation_verbosity,
-    const ConditionalOStream           &p_pcout)
+                                  &p_triangulation,
+    MultiphysicsInterface<dim>    *p_multiphysics_interface,
+    VOFSubequationsInterface<dim> *p_subequations_interface)
     : PhysicsLinearSubequationsSolver(p_pcout)
     , subequation_id(p_subequation_id)
-    , subequations(p_subequations)
-    , multiphysics(p_multiphysics)
+    , subequations_interface(p_subequations_interface)
+    , multiphysics_interface(p_multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
     , linear_solver_verbosity(
         p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
     , subequation_verbosity(p_subequation_verbosity)
-  {
-    if (this->simulation_parameters.mesh.simplex)
-      {
-        // for simplex meshes
-        const FE_SimplexP<dim> subequation_fe(
-          this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
-        this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);
-
-        this->cell_quadrature =
-          std::make_shared<QGaussSimplex<dim>>(this->fe->degree + 1);
-      }
-    else
-      {
-        // Usual case, for quad/hex meshes
-        const FE_Q<dim> subequation_fe(
-          this->simulation_parameters.fem_parameters.VOF_order);
-        this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
-        this->mapping = std::make_shared<MappingQ<dim>>(this->fe->degree);
-
-        this->cell_quadrature =
-          std::make_shared<QGauss<dim>>(this->fe->degree + 1);
-      }
-  }
+  {}
 
   /**
    * @brief Default destructor.
@@ -122,17 +90,6 @@ public:
   setup_dofs() override;
 
   /**
-   * @brief Solve linear system of equation using a strategy appropriate
-   * for the partial differential equation.
-   *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
-   * solved during post_mesh_adaptation(), for verbosity.
-   */
-  void
-  solve_linear_system_and_update_solution(
-    const bool &is_post_mesh_adaptation = false) override;
-
-  /**
    * @brief Assemble and solve linear system when the equation to solve is
    * linear without using the non-linear solver interface.
    *
@@ -144,80 +101,36 @@ public:
 
 protected:
   /**
-   * @brief Assemble the matrix associated with the solver
-   */
-  void
-  assemble_system_matrix() override;
-
-  /**
-   * @brief Assemble the rhs associated with the solver
-   */
-  void
-  assemble_system_rhs() override;
-
-  /**
-   * @brief Assemble the local matrix for a given cell.
-   *
-   * @param[in] cell Cell for which the local matrix is assembled.
-   *
-   * @param[in] scratch_data Stores the calculated finite element information at
-   * Gauss points.
-   *
-   * @param[in,out] copy_data Stores the results of the assembly over a cell.
+   * @brief Assemble the matrix and the right-hand side (rhs) associated with
+   * the solver.
    */
   virtual void
-  assemble_local_system_matrix(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    ScratchDataType                                      &scratch_data,
-    StabilizedMethodsCopyData                            &copy_data) = 0;
+  assemble_system_matrix_and_rhs() = 0;
 
   /**
-   * @brief Assemble the local right-hand side (rhs) for a given cell.
+   * @brief Solve linear system of equation using a strategy appropriate
+   * for the partial differential equation.
    *
-   * @param[in] cell Cell for which the local rhs is assembled.
-   *
-   * @param[in] scratch_data Stores the calculated finite element information at
-   * Gauss points.
-   *
-   * @param[in,out] copy_data Stores the results of the assembly over a cell.
-   */
-  virtual void
-  assemble_local_system_rhs(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    ScratchDataType                                      &scratch_data,
-    StabilizedMethodsCopyData                            &copy_data) = 0;
-
-  /**
-   * @brief Copy local cell matrix information to global matrix.
-   *
-   * @param[in] copy_data Stores the results of the assembly over a cell.
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   void
-  copy_local_matrix_to_global_matrix(
-    const StabilizedMethodsCopyData &copy_data);
-
-  /**
-   * @brief Copy local right-hand side (rhs) information to global rhs.
-   *
-   * @param[in] copy_data Stores the results of the assembly over a cell.
-   */
-  void
-  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
+  solve_linear_system_and_update_solution(
+    const bool &is_post_mesh_adaptation = false) override;
 
 
   const VOFSubequationsID        subequation_id;
-  VOFSubequationsInterface<dim> *subequations;
+  VOFSubequationsInterface<dim> *subequations_interface;
   MultiphysicsInterface<dim>
-    *multiphysics; // to get VOF DoFHandler and solution
+    *multiphysics_interface; // to get VOF DoFHandler and solution
 
   // Parameters
   const SimulationParameters<dim> &simulation_parameters;
 
   // Core elements
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  std::shared_ptr<SimulationControl> simulation_control;
-  DoFHandler<dim>                    dof_handler;
-  std::shared_ptr<FESystem<dim>>     fe;
+  DoFHandler<dim>                                              dof_handler;
+  std::shared_ptr<FiniteElement<dim>>                          fe;
 
   // Mapping and Quadrature
   std::shared_ptr<Mapping<dim>>    mapping;
@@ -232,9 +145,6 @@ protected:
   AffineConstraints<double>                          constraints;
   TrilinosWrappers::SparseMatrix                     system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-
-  // Assembler for the matrix and rhs
-  std::shared_ptr<VOFSubequationAssemblerBase<ScratchDataType>> assembler;
 
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;

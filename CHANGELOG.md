@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-11-04
 
+### Changed
+
+- MINOR Curvature L2 projection within the VOF auxiliary physics now go through the VOF subequations interface. [#1336](https://github.com/chaos-polymtl/lethe/pull/1336)
+
 ### Added
 
 - MINOR Added capillary rise example to the documentation [#1328](https://github.com/chaos-polymtl/lethe/pull/1328)

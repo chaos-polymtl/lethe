@@ -11,14 +11,18 @@
 
 using namespace dealii;
 
+
 /**
  * @brief IDs associated to the different subequations solved in Lethe.
  */
-enum VOFSubequationsID : unsigned int
+enum class VOFSubequationsID : unsigned int
 {
   /// VOF phase fraction gradient L2 projection
-  phase_gradient_projection = 0
+  phase_gradient_projection = 0,
+  /// VOF curvature L2 projection
+  curvature_projection = 1
 };
+
 
 /**
  * @brief Interface for secondary equations (subequations) solved within
@@ -36,24 +40,19 @@ public:
    *
    * @param[in] p_simulation_parameters Simulation parameters.
    *
-   * @param[in] p_multiphysics Multiphysics interface object used to get
-   * information from physics.
+   * @param[in] p_pcout Parallel cout used to print the information.
    *
    * @param[in] p_triangulation Distributed mesh information.
    *
-   * @param[in] p_simulation_control Object responsible for the control of
-   * steady-state and transient simulations. Contains all the information
-   * related to time stepping and the stopping criteria.
-   *
-   * @param[in] p_pcout Parallel cout used to print the information.
+   * @param[in] p_multiphysics_interface Multiphysics interface object pointer
+   * used to get information from physics.
    */
   VOFSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
-    MultiphysicsInterface<dim>      *p_multiphysics,
+    const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       &p_triangulation,
-    std::shared_ptr<SimulationControl> &p_simulation_control,
-    ConditionalOStream                 &p_pcout);
+                               &p_triangulation,
+    MultiphysicsInterface<dim> *p_multiphysics_interface);
 
   /**
    * @brief Default destructor.
@@ -90,92 +89,6 @@ public:
 
     this->subequations.find(subequation_id)->second->setup_dofs();
   };
-
-  /**
-   * @brief Cast the appropriate scratch data object.
-   *
-   * @param[in] subequation_id Identifier associated with the subequation wished
-   * to solve.
-   *
-   * @param[in] fe_subequation FiniteElement object used for solving the wished
-   * subequation.
-   *
-   * @param[in] quadrature Quadrature rule used for the assembly of the matrix
-   * and the right-hand side.
-   *
-   * @param[in] mapping Mapping of the domain used when solving the VOF
-   * equation.
-   *
-   * @param[in] fe_input FiniteElement object from the VOF auxiliary physics or
-   * another subequation that is used as an input for the resolution of the
-   * current subequation.
-   *
-   * @return Shared pointer to the scratch data object of the appropriate
-   * subequation.
-   */
-  std::shared_ptr<PhysicsScratchDataBase>
-  scratch_data_cast(const VOFSubequationsID  &subequation_id,
-                    const FiniteElement<dim> &fe_subequation,
-                    const Quadrature<dim>    &quadrature,
-                    const Mapping<dim>       &mapping,
-                    const FiniteElement<dim> &fe_input);
-
-  /**
-   * @brief Get a pointer to the DoFHandler of another solved variable that is
-   * required in the linear system assembly of a specific subequation.
-   *
-   * @param[in] subequation_id Identifier associated with a specific
-   * subequation.
-   *
-   * @return Pointer to the DoFHandler of another solved variable that is
-   * required for the specified subequation.
-   */
-  const DoFHandler<dim> *
-  get_input_dof_handler(const VOFSubequationsID &subequation_id)
-  {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
-                ExcInternalError());
-
-    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
-      return this->multiphysics->get_dof_handler(PhysicsID::VOF);
-    else // At the moment, only one option is possible. This will change with
-         // the addition of other subequations to the interface.
-      return this->multiphysics->get_dof_handler(PhysicsID::VOF);
-  }
-
-  /**
-   * @brief Cast the appropriate assembler object.
-   *
-   * @param[in] subequation_id Identifier associated with the subequation wished
-   * to solve.
-   *
-   * @param[in] vof_parameters VOF auxiliary physics parameter set.
-   *
-   * @return Shared pointer to the assembler object of the appropriate
-   * subequation.
-   */
-  template <typename ScratchDataType>
-  std::shared_ptr<VOFSubequationAssemblerBase<ScratchDataType>>
-  assembler_cast(const VOFSubequationsID &subequation_id,
-                 const Parameters::VOF   &vof_parameters)
-  {
-    AssertThrow((std::find(this->active_subequations.begin(),
-                           this->active_subequations.end(),
-                           subequation_id) != this->active_subequations.end()),
-                ExcInternalError());
-
-    if (subequation_id == VOFSubequationsID::phase_gradient_projection)
-      return std::make_shared<
-        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
-        vof_parameters);
-    else // At the moment, only one option is possible. This will change with
-         // the addition of other subequations to the interface.
-      return std::make_shared<
-        VOFAssemblerPhaseGradientProjection<dim, ScratchDataType>>(
-        vof_parameters);
-  }
 
   /**
    * @brief Call solving method of active subequations.
@@ -284,6 +197,8 @@ public:
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
       subequation_string = "VOF phase fraction gradient L2 projection";
+    else if (subequation_id == VOFSubequationsID::curvature_projection)
+      subequation_string = "VOF curvature L2 projection";
 
     return subequation_string;
   }
@@ -330,11 +245,11 @@ public:
   }
 
 private:
-  MultiphysicsInterface<dim> *multiphysics;
+  MultiphysicsInterface<dim> *multiphysics_interface;
 
-  ConditionalOStream pcout;
+  const ConditionalOStream pcout;
 
-  // Data structure that stores all enabled physics
+  // Data structure that stores all enabled subequations
   std::vector<VOFSubequationsID> active_subequations;
 
   // Subequations stored within a map of shared pointer to ensure proper

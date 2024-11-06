@@ -54,39 +54,3 @@ VOFScratchData<dim>::allocate()
 
 template class VOFScratchData<2>;
 template class VOFScratchData<3>;
-
-
-template <int dim>
-void
-VOFPhaseGradientProjectionScratchData<dim>::allocate()
-{
-  // Initialize size of arrays
-  this->n_q_points =
-    fe_values_phase_gradient_projection.get_quadrature().size();
-  this->n_dofs = fe_values_phase_gradient_projection.get_fe().n_dofs_per_cell();
-
-  // Initialize solution arrays
-  this->present_phase_gradient_projection_values =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
-  this->present_phase_gradient_projection_gradients =
-    std::vector<Tensor<2, dim>>(this->n_q_points);
-
-  // Initialize extractor
-  this->phase_fraction_gradients.first_vector_component = 0;
-
-  // Initialize VOF solution
-  this->present_filtered_vof_phase_gradients =
-    std::vector<Tensor<1, dim>>(this->n_q_points);
-
-  // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(this->n_q_points);
-
-  // Initialize arrays related to shape functions
-  this->phi = std::vector<std::vector<Tensor<1, dim>>>(
-    this->n_q_points, std::vector<Tensor<1, dim>>(this->n_dofs));
-  this->grad_phi = std::vector<std::vector<Tensor<2, dim>>>(
-    this->n_q_points, std::vector<Tensor<2, dim>>(this->n_dofs));
-}
-
-template class VOFPhaseGradientProjectionScratchData<2>;
-template class VOFPhaseGradientProjectionScratchData<3>;
