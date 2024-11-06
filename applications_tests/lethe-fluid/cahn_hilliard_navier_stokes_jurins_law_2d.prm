@@ -12,14 +12,9 @@ set dimension = 2
 subsection simulation control
   set method            = bdf1
   set output name       = jurins-law-2d
-  set output frequency  = 10
-  set output path       = ./outputs/50/
-  set max time step     = 5e-4
-  set adapt             = true
-  set max cfl           = 0.8
-  set time end          = 0.5
+  set output frequency  = 0
+  set time end          = 2e-3
   set time step         = 5e-4
-  set output boundaries = true
 end
 
 #---------------------------------------------------
@@ -44,7 +39,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ./mesh/jurins-law-2d-mesh-dimensioned.msh
+  set file name          = ../../jurins-law-2d-mesh-dimensioned.msh
   set initial refinement = 2
 end
 
@@ -97,7 +92,7 @@ subsection cahn hilliard
 
   subsection epsilon
     set method    = automatic
-    set verbosity = verbose
+    set verbosity = quiet
   end
 end
 
@@ -176,10 +171,12 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
+    set verbosity      = quiet
     set tolerance      = 1e-2
     set max iterations = 20
   end
   subsection cahn hilliard
+    set verbosity      = quiet
     set tolerance      = 1e-2
     set max iterations = 20
   end
@@ -191,6 +188,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
+    set verbosity               = quiet
     set max iters               = 500
     set relative residual       = 1e-2
     set minimum residual        = 1e-3
@@ -198,6 +196,7 @@ subsection linear solver
     set max krylov vectors      = 300
   end
   subsection cahn hilliard
+    set verbosity               = quiet
     set max iters               = 500
     set relative residual       = 1e-2
     set minimum residual        = 1e-3
