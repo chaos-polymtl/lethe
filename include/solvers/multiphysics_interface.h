@@ -564,7 +564,7 @@ public:
   /**
    * @brief Share immersed solid shape
    *
-   * @param shape The immersed solid shape
+   * @param[in] shape The immersed solid shape
    */
   void
   set_immersed_solid_shape(Shape<dim> *shape);
