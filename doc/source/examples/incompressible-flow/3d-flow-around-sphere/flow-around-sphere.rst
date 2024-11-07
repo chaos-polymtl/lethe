@@ -221,7 +221,7 @@ An initial condition is used for the high Reynolds number problem. It is what we
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-To increase the accuracy of the drag coefficient, the mesh must be refined in areas of interest, such as on the front face of the sphere and in the developing wake. Therefore, a dynamic adaptive mesh was introduced to refine the mesh in such regions.
+To increase the accuracy of the drag coefficient, the mesh must be refined in areas of interest, such as on the front face of the sphere and in the developing wake. Therefore, adaptive mesh refinement is used to refine the mesh in such regions.
 
 .. code-block:: text
 
