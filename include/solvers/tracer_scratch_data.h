@@ -175,7 +175,6 @@ public:
           ExcMessage(
             "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
 
-        levelset_function->value_list(quadrature_points, sdf_values);
         for (unsigned int q = 0; q < n_q_points; q++)
           sdf_values[q] =
             levelset_function->value_with_cell_guess(quadrature_points[q],
