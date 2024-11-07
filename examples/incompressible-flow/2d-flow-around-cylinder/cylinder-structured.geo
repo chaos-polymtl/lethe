@@ -11,19 +11,16 @@ y1=H;
 
 x0 =0.;
 x1 =L;
-//nr=30;
-//nt=30;
-//nl=150;
-nr=60;
-nt=60;
-nl=150;
+nr=10;
+nt=10;
+nl=30;
 
 xc=8;
 yc=8;
 r=0.5;
 srq=1.414213562/2.*r;
 
-Ls=10*r;
+Ls=8*r;
 ss=1.414213562/2.*Ls;
 
 xs0=xc-ss;
@@ -99,10 +96,10 @@ Line(52)={22,32};
 Line(53)={21,31};
 
 //Theta of the circle
-Transfinite Line {3,22,4,10,34,20,32,13,40,41,42,43} = Ceil(nt) Using Progression 1.0;
+Transfinite Line {3,22,4,10,34,20,32,13,40,41,42,43,63,33,35,66,60,30,31,64,2,12,11,1} = nt Using Progression 1.0;
 // Radial direction
-Transfinite Line {50,51,52,53} = Ceil(nr) Using Progression 1.05;
-Transfinite Line {5,21,23,6} = Ceil(nl) Using Progression 1.00;
+Transfinite Line {50,51,52,53} = nr Using Progression 1.0;
+Transfinite Line {5,21,23,6} = nl Using Progression 1.00;
 
 //
 //
@@ -122,13 +119,6 @@ Line Loop (55) = {-31,5,64,-21};
 Line Loop (56) = {-20,21,22,-23};
 Line Loop (57) = {-35,23,66,-6};
 
-// Creates a physical entity 1 (i.e. for a BC)
-//Physical Point(1) = {1,2} ;
-//Physical Line(0)={5,6,7,8};
-//Physical Line(1)={1};
-//Physical Line(2)={2,4};
-//Physical Line(3)={3};
-
 
 Plane Surface(41) = {41};
 Plane Surface(42) = {42};
@@ -146,8 +136,6 @@ Transfinite Surface {41:44,50:57};
 Recombine Surface{41:44,50:57};
 
 
-//Plane Surface(2) = {2};
-//Plane Surface(3) = {3};
 Physical Surface(1) = {41:44,50:57};
 Physical Line(0)={40,41,42,43};
 Physical Line(1)={60,10,63};
