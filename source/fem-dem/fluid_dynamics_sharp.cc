@@ -809,8 +809,7 @@ FluidDynamicsSharp<dim>::define_particles()
     }
   combined_shapes =
     std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
-  this->multiphysics->set_immersed_solid_signed_distance_function(
-    &(*combined_shapes));
+  this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
 }
 
 
@@ -4866,8 +4865,7 @@ FluidDynamicsSharp<dim>::solve()
                                                    *this->mapping);
           ib_dem.update_contact_candidates();
 
-          this->multiphysics->set_immersed_solid_signed_distance_function(
-            &(*combined_shapes));
+          this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
           this->iterate();
         }
       else
@@ -4887,8 +4885,7 @@ FluidDynamicsSharp<dim>::solve()
                 0)
             ib_dem.update_contact_candidates();
 
-          this->multiphysics->set_immersed_solid_signed_distance_function(
-            &(*combined_shapes));
+          this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
 
           // add initialization
           this->iterate();

@@ -150,7 +150,7 @@ public:
    *
    * @param[in] source_function The function describing the tracer source term.
    *
-   * @param[in] levelset_function The function describing the particles (if
+   * @param[in] immersed_solid_shape The shape describing the particles (if
    * there are any).
    */
   template <typename VectorType>
@@ -159,7 +159,7 @@ public:
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const Function<dim>           *source_function,
-         Shape<dim>                    *levelset_function)
+         Shape<dim>                    *immersed_solid_shape)
   {
     this->fe_values_tracer.reinit(cell);
 
@@ -171,14 +171,14 @@ public:
     if (properties_manager.field_is_required(field::levelset))
       {
         Assert(
-          levelset_function != nullptr,
+          immersed_solid_shape != nullptr,
           ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
 
         for (unsigned int q = 0; q < n_q_points; q++)
           sdf_values[q] =
-            levelset_function->value_with_cell_guess(quadrature_points[q],
-                                                     cell);
+            immersed_solid_shape->value_with_cell_guess(quadrature_points[q],
+                                                        cell);
       }
 
     // Compute cell diameter
@@ -306,7 +306,7 @@ public:
    *
    * @param[in] current_solution The present value of the solution.
    *
-   * @param[in] levelset_function Function used for the calculation of the
+   * @param[in] immersed_solid_shape Shape used for the calculation of the
    * level set. This is used for the calculation of the physical properties.
    * (if there are any).
    */
@@ -320,7 +320,7 @@ public:
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
     const VectorType                                     &current_solution,
-    const Function<dim>                                  *levelset_function)
+    const Function<dim>                                  *immersed_solid_shape)
   {
     fe_interface_values_tracer.reinit(
       cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
@@ -357,11 +357,12 @@ public:
     if (properties_manager.field_is_required(field::levelset))
       {
         Assert(
-          levelset_function != nullptr,
+          immersed_solid_shape != nullptr,
           ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
 
-        levelset_function->value_list(face_quadrature_points, sdf_face_values);
+        immersed_solid_shape->value_list(face_quadrature_points,
+                                         sdf_face_values);
       }
   }
 
@@ -375,7 +376,7 @@ public:
    * @param[in] current_solution The present value of the solution.
    * there are any).
    *
-   * @param[in] levelset_function Function used for the calculation of the level
+   * @param[in] immersed_solid_shape Shape used for the calculation of the level
    * set. This is used for the calculation of the physical properties. there are
    * any).
    */
@@ -386,7 +387,7 @@ public:
     const unsigned int                                   &face_no,
     const unsigned int                                   &boundary_index,
     const VectorType                                     &current_solution,
-    const Function<dim>                                  *levelset_function)
+    Shape<dim>                                           *immersed_solid_shape)
   {
     fe_interface_values_tracer.reinit(cell, face_no);
     const FEFaceValuesBase<dim> &fe_face =
@@ -410,11 +411,12 @@ public:
     if (properties_manager.field_is_required(field::levelset))
       {
         Assert(
-          levelset_function != nullptr,
+          immersed_solid_shape != nullptr,
           ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
 
-        levelset_function->value_list(face_quadrature_points, sdf_face_values);
+        immersed_solid_shape->value_list(face_quadrature_points,
+                                         sdf_face_values);
       }
   }
 
@@ -555,7 +557,7 @@ public:
   // Bool that defines if the selected face is a dirichlet/outlet boundary
   unsigned int boundary_index;
 
-  // Solid signed distance function
+  // Immersed solid shape (signed distance) function
   std::vector<double> sdf_values;
   std::vector<double> sdf_face_values;
 
