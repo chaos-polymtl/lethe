@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid`` (Q1-Q1)
 - Two phase flow handled by the Cahn-Hilliard-Navier-Stokes (CHNS) approach
-- Changing the unit of length of the problem using the dimensionality option
+- Modification of the unit of length of the problem using the dimensionality option
 - Mobility coefficient setting for advective problems with CHNS solver
 - Parametric sweep on the shear rate of the fluid
 - Post-processing of the quantities of interest (detachment time and volume) and plots of the contour of the bubble at detachment
@@ -34,7 +34,7 @@ Description of the Case
 
 Bubble detachment in shear flow plays a key role in multiphase flows, where shear forces influence the separation of air bubbles from surfaces. This process is important in industries like petroleum engineering, where bubble behavior affects oil extraction, and chemical processing, where it impacts mixing and mass transfer. In this example, we simulate an air bubble in water under shear flow, highlighting how shear forces drive detachment from the interface.
 
-The problem consists of a rectangular box of length :math:`L = 12 \ \text{mm}`, height :math:`H = 5 \ \text{mm}` and thickness :math:`l = 5 \ \text{mm}`. The liquid phase flows from left to right following a Couette profile, that is determined with a given **shear rate**. At the bottom wall is a circular air inlet of radius :math:`R_0 = 0.5 \ \text{mm}`. Air is injected from this inlet following a Poiseuille profile. As the time passes, the bubble, which is initialized as a semi-sphere of radius :math:`R_0`, grows, until the shear force from the surrounding liquid and the buoyancy force detach it.
+The problem consists of a rectangular box of length :math:`L = 12 \ \text{mm}`, height :math:`H = 5 \ \text{mm}` and thickness :math:`l = 5 \ \text{mm}`. The liquid phase flows from left to right following a Couette profile, that is determined with a given **shear rate**. At the bottom wall, there is a circular air inlet of radius :math:`R_0 = 0.5 \ \text{mm}`. Air is injected from this inlet following a Poiseuille profile. As the time passes, the bubble, which is initialized as a semi-sphere of radius :math:`R_0`, grows, until the shear force from the surrounding liquid and the buoyancy force detach it.
 
 The computational domain with relevant boundary conditions is described in the following figure (not to scale):
 
@@ -48,8 +48,8 @@ The computational domain with relevant boundary conditions is described in the f
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour of the phase order field is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
-Below, all the parameters are set for a simulation whose shear rate is :math:`S = 450 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically are given in the **Running the Simulation** section of this example.
+The quantity of interest of this problem is the detachment time :math:`t_\text{det}`. It is defined as the last time where the number of closed contour defined by a phase order field :math:`\phi=0` (indicating a liquid-gas interface) is equal to 1. From this, we derive the detachment volume :math:`V_\text{det}`, which is the bubble volume at :math:`t_\text{det}`. We perform numerous simulations by changing the shear rate and compute the detachment times and volumes using the python scripts provided. Those results are then compared to the results from Mirsandi *et al.* [#mirsandi2020]_
+Below, all the parameters are set for a simulation whose shear rate is :math:`S = 450 \ \text{s}^{-1}`. Detailed instructions on how to generate the parameters files automatically for the parametric sweep are given in the **Running the Simulation** section of this example.
 
 -----------------
 Parameter File
@@ -63,7 +63,7 @@ Time integration is handled by a 2nd order backward differentiation scheme (`bdf
 .. math::
     \Delta t < \Delta t_\sigma = \sqrt{\frac{(\rho_a+\rho_l)\Delta x^3}{4\pi\sigma}}
 
-where :math:`\rho_a` and :math:`\rho_l` are the densities of the gas phase and the liquid phase, respectively, :math:`\Delta x` is the characteristic cell size of the mesh and :math:`\sigma` is the surface tension coefficient.
+where :math:`\rho_a` and :math:`\rho_l` are the densities of the gas and the liquid phases, respectively, :math:`\Delta x` is the minimum cell size of the mesh and :math:`\sigma` is the surface tension coefficient.
 
 .. code-block:: text
 
@@ -96,9 +96,9 @@ Note that the fluid dynamics are solved by default.
 Dimensionality
 ~~~~~~~~~~~~~~
 
-The ``dimensionality`` subsection is used to define the unit length as :math:`0.001 \ \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.	
+The ``dimensionality`` subsection is used to define the length scale of the simulation as :math:`0.001 \ \text{m} = 1 \ \text{mm}`. This setting helps with the convergence of the solver.
 
-.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties can be given their value in SI units and will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. The other subsections: source term, initial conditions and boundary conditions are not affected by the dimensionality parameters. Thus, any dimensioned parameter contained in these subsections need to be rescaled accordingly by the user.
+.. Note:: When using the dimensionality parameters, the problem and the physical properties are rescaled using the new units specified by the user. This means that physical properties need to be given in SI units and they will automatically be rescaled. The resulting fields (velocity and pressure for instance) will also be rescaled accordingly. The other subsections: source term, initial conditions and boundary conditions are not affected by the dimensionality parameters. Thus, any dimensioned parameter contained in these subsections need to be rescaled accordingly by the user.
 
 
 .. code-block:: text
@@ -169,7 +169,7 @@ First the velocity over the domain is initialized to that of a Couette flow of a
 Here, the initial conditions are those corresponding to :math:`S = 450 \ \text{s}^{-1}`. We multiply by :math:`1000` because the unit length is the millimeter.
     
 
-The chemical potential field is set to :math:`0` uniformly. The air bubble is initialized as a semi-sphere centered in the air inlet with a radius equal to :math:`R_0`. This corresponds to the following phase profile at :math:`t = 0`:
+The chemical potential field is set to :math:`0` uniformly. The air bubble is initialized as a semi-sphere centered with the air inlet with a radius equal to :math:`R_0`. This corresponds to the following phase profile at :math:`t = 0`:
 
 .. math::
     \phi(x,y,z) = -\text{tanh}\left(\frac{R_0 - \sqrt{x^2 + y^2 + z^2}}{\sqrt{2}\epsilon}\right)
@@ -231,7 +231,7 @@ Then, the velocity profile on the bottom wall (``subsection bc 2``) needs to be 
 .. math::
    \mathbf{u}_{\text{in,a}} = u_\text{max,a}\left(1-\frac{x^2+z^2}{R_0^2}\right)\mathbf{e}_y
    
-This profile corresponds to a volumetric air flux :math:`Q = 500 \ \text{mm}^3\text{s}^{-1}` so that :math:`u_\text{max,a} = \frac{2Q}{\pi R_0^2} = 1.2732 \ \text{m} \text{s}^{-1}`. Once again, we multiply by :math:`1000` because the length unit is the millimeter.
+This profile corresponds to a volumetric air flux :math:`Q = 500 \ \text{mm}^3\text{s}^{-1}` so that :math:`u_\text{max,a} = \frac{2Q}{\pi R_0^2} = 1.2732 \ \text{m} \text{s}^{-1}`. Once again, we multiply by :math:`1000` because the length scale is :math:`1` millimeter.
 
 The lateral walls (``subsection bc 4`` and ``subsection bc 3``) are endowed with ``slip`` boundary conditions and the last boundary (``subsection bc 5``) is defined as an ``outlet``, with a penalization constant :math:`\beta = 100`.
 
@@ -313,7 +313,7 @@ where :math:`S` is the shear rate related to the liquid flow, :math:`S_a` is the
         subsection fluid-fluid interaction
           set surface tension coefficient     = 0.073
           set cahn hilliard mobility model    = constant
-          set cahn hilliard mobility constant = 2.8177e-08 # Non-diffusion on problem time-scale condition
+          set cahn hilliard mobility constant = 2.8177e-08 # No diffusion on problem time-scale condition
         end
       end
     end
@@ -390,8 +390,6 @@ In order to analyze the influence of the surrounding liquid on the detachment of
 |     :align: center                                                                                                |
 |     :name: Detachment volumes                                                                                     |
 |                                                                                                                   |
-|     Plot of the detachment volume (our results and literature results) with respect to shear rate.                |
-|                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 +-------------------------------------------------------------------------------------------------------------------+
@@ -399,8 +397,6 @@ In order to analyze the influence of the surrounding liquid on the detachment of
 |     :alt: Plot of the detachment time (our results and literature results) with respect to shear rate.            |
 |     :align: center                                                                                                |
 |     :name: Detachment times                                                                                       |
-|                                                                                                                   |
-|     Plot of the detachment times (our results and literature results) with respect to shear rate.                 |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
@@ -412,8 +408,6 @@ Below are the plots of the contour of the bubble in the plane :math:`z = 0` when
 |      rates.                                                                                                       |
 |     :align: center                                                                                                |
 |     :name: Contour cuts at detachment                                                                             |
-|                                                                                                                   |
-|     Cut of the contour of the bubble at detachment time in the plane :math:`z = 0` for different shear rates.     |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
