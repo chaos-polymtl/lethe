@@ -28,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="0.6122477"
-     inkscape:cx="505.51435"
-     inkscape:cy="138.8327"
+     inkscape:zoom="0.865849"
+     inkscape:cx="502.97454"
+     inkscape:cy="192.87428"
      inkscape:window-width="1850"
      inkscape:window-height="1016"
      inkscape:window-x="1990"
@@ -56,6 +56,30 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect38"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect36"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
     <inkscape:path-effect
        effect="bspline"
        id="path-effect34"
@@ -544,25 +568,6 @@
        apply_with_weight="true"
        only_selected="false"
        uniform="false" />
-    <marker
-       style="overflow:visible"
-       id="marker6-1-29"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Stylized triangle arrow"
-       markerWidth="1"
-       markerHeight="1"
-       viewBox="0 0 1 1"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="xMidYMid">
-      <path
-         transform="scale(0.5)"
-         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
-         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
-         id="path6-2-3" />
-    </marker>
     <inkscape:path-effect
        effect="bspline"
        id="path-effect5-7-1"
@@ -1240,8 +1245,15 @@
        id="rect2"
        width="265"
        height="125.00002"
-       x="44.999958"
-       y="140.00058" />
+       x="49.999947"
+       y="140.00056" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-9);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path27"
+       inkscape:path-effect="#path-effect36"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.46191154,0,0,0.7195776,127.1013,117.64444)" />
     <rect
        style="fill:#e9e3cc;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.593;stroke-linecap:round;stroke-dasharray:none;paint-order:fill markers stroke"
        id="rect1"
@@ -1417,60 +1429,48 @@
        inkscape:path-effect="#path-effect3"
        inkscape:original-d="m 75,158.99999 c 4.666668,0 9.333333,0 14.000001,0"
        transform="matrix(0.92874177,0,0,1,82.838882,71.704336)" />
-    <g
-       id="g6"
-       transform="translate(77.906612,72.76267)"
-       style="stroke-width:0.3;stroke-dasharray:none">
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5"
-         inkscape:path-effect="#path-effect5"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(-0.509856,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-7);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-6"
-         inkscape:path-effect="#path-effect5-3"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(3.9880607,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-9"
-         inkscape:path-effect="#path-effect5-7"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(8.4859773,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-0);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-1"
-         inkscape:path-effect="#path-effect5-2"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(-5.0077727,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-9);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-5"
-         inkscape:path-effect="#path-effect5-23"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(-9.5056893,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1-2);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-9-3"
-         inkscape:path-effect="#path-effect5-7-9"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(12.983894,0.096645)" />
-      <path
-         style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1-29);paint-order:fill markers stroke"
-         d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         id="path5-9-4"
-         inkscape:path-effect="#path-effect5-7-1"
-         inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
-         transform="translate(-14.003606,0.096645)" />
-    </g>
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path5"
+       inkscape:path-effect="#path-effect5"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="translate(77.396757,72.859315)" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-7);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path5-6"
+       inkscape:path-effect="#path-effect5-3"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.86905055,0,0,0.86905055,91.904317,93.772719)" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-0);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path5-1"
+       inkscape:path-effect="#path-effect5-2"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.86905055,0,0,0.86905055,82.508107,93.772719)" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-9);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path5-5"
+       inkscape:path-effect="#path-effect5-23"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.46191154,0,0,0.71957784,108.30888,117.6444)" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1-2);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path5-9-3"
+       inkscape:path-effect="#path-effect5-7-9"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.31918736,0,0,0.47218894,142.49091,157.15387)" />
+    <path
+       style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1-2);paint-order:fill markers stroke"
+       d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       id="path36"
+       inkscape:path-effect="#path-effect38"
+       inkscape:original-d="m 74.91024,165.6218 c 0,-1.56655 0,-3.1331 0,-4.69964"
+       transform="matrix(0.31918736,0,0,0.47218894,114.30228,157.15387)" />
     <path
        style="fill:#f2a86b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.776;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6-1);paint-order:fill markers stroke"
        d="m 15,105 c 0,5 0,10 0,14.99999"
