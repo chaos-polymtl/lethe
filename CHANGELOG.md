@@ -8,10 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - MAJOR The time step in the simulation control class is no longer modified by default to be exactly the end time of the simulation. Moreover, the time step is no longer modified to output Paraview files at certain times, therefore, the time output for transient simulations was refactored. [#1336](https://github.com/chaos-polymtl/lethe/pull/1341)
-- 
+-
 ### Added
 
 - MINOR Added bubble detachment in liquid shear flow example to the documentation [#1334](https://github.com/chaos-polymtl/lethe/pull/1334)
+
+## [Master] - 2024-11-07
+
+### Fix
+
+- MINOR Time step can now be changed after a restart if adaptive time stepping is disabled. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
+- MINOR Application of the immersed solid tanh diffusivity model is now faster thanks to using optimizations from the Shape class. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
 
 ## [Master] - 2024-11-04
 
