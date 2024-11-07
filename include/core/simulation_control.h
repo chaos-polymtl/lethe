@@ -141,7 +141,7 @@ public:
    * from which it draws it's arguments. This structure is not kept internally.
    * This means that require information is copied from the struct to the class.
    *
-   * @param param Structure of the parameters for the simulation control
+   * @param[in] param Structure of the parameters for the simulation control
    *
    **/
 
@@ -169,7 +169,8 @@ public:
   /**
    * @brief Add a time step and stores the previous one in a list.
    *
-   *  @param p_timestep the new value of the time step for the present iteration.
+   *  @param[in] p_timestep the new value of the time step for the present
+   *iteration.
    **/
   void
   add_time_step(double p_timestep);
@@ -229,7 +230,7 @@ public:
   /**
    * @brief print_progress Function that prints the current progress status of the simulation
    *
-   * @param pcout the ConditionalOSStream that is use to write
+   * @param[in] pcout the ConditionalOSStream that is use to write
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) = 0;
@@ -289,7 +290,7 @@ public:
   /**
    * @brief Set the value of the CFL condition
    *
-   * @param p_CFL Value of the CFL condition calculated by the solver.
+   * @param[in] p_CFL Value of the CFL condition calculated by the solver.
    */
 
   void
@@ -302,7 +303,7 @@ public:
   /**
    * @brief Manually force the value of the time step for the present iteration
    *
-   * @param new_time_step The new value of the time step.
+   * @param[in] new_time_step The new value of the time step.
    * This time step is appended to the time step history
    */
   void
@@ -316,7 +317,7 @@ public:
    * @brief Suggest the value of the time step for the next iteration. Note that
    * for adaptative simulations this time step may be altered
    *
-   * @param new_time_step The new value of the time step.
+   * @param[in] new_time_step The new value of the time step.
    * This time step is not added to the time step vector
    */
   void
@@ -330,7 +331,7 @@ public:
    * @brief Provide the value of the residual at the beginning
    * of the iteration to the simulation controller
    *
-   * @param new_residual Value of the residual at the beginning
+   * @param[in] new_residual Value of the residual at the beginning
    * of an adjoint time-stepping time step
    */
   void
@@ -455,7 +456,7 @@ public:
   /**
    * @brief Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
    *
-   * @param prefix The prefix of the checkpoint of the simulation
+   * @param[in] prefix The prefix of the checkpoint of the simulation
    */
   virtual void
   save(const std::string &prefix);
@@ -463,7 +464,7 @@ public:
   /**
    * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
    *
-   * @param prefix The prefix of the checkpoint of the simulation
+   * @param[in] prefix The prefix of the checkpoint of the simulation
    */
   virtual void
   read(const std::string &prefix);
@@ -471,7 +472,7 @@ public:
   /**
    * @brief Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information.
    *
-   * @param prefix The prefix of the checkpoint of the simulation
+   * @param[in] prefix The prefix of the checkpoint of the simulation
    *
    * @return A vector containing the last checkpointed file and time step.
    */
@@ -540,9 +541,10 @@ public:
   integrate() override;
 
   /**
-   * @brief Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
+   * @brief Reads the simulation control information and updates the time integration variables. Allows to change time
+   * step if adaptive time stepping is disabled.
    *
-   * @param prefix The prefix of the checkpoint of the simulation
+   * @param[in] prefix The prefix of the checkpoint of the simulation
    */
   void
   read(const std::string &prefix) override;
