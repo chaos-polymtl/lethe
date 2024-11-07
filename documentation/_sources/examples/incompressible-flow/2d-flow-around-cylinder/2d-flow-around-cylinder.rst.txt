@@ -4,7 +4,6 @@ Flow around a Cylinder
 
 This example corresponds to a flow around a fixed cylinder. This is a classical problem studied in fluid mechanics. This example introduces several important features supported by Lethe.
 
-
 ---------
 Features
 ---------
@@ -86,7 +85,7 @@ This example uses a non-uniform mesh adaptation. The parameters used are specifi
       set fraction coarsening  = 0.1
     end
 
-For steady-state simulations, one can enable a fixed number of mesh adaptations in the simulation control subsection. For this example, in the ``simulation control`` subsection (see :doc:`../../../parameters/cfd/simulation_control`), the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. To more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
+For steady-state simulations, one can enable a fixed number of mesh adaptations in the simulation control subsection. For this example, in the ``simulation control`` subsection (see :doc:`../../../parameters/cfd/simulation_control`), the following line is added: ``set number mesh adapt = 4``. This means that the mesh will be adapted 4 times following the parameters specified in this subsection. In this case the ``type`` is set to ``kelly`` which corresponds to the `Kelly Error Estimator strategy <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ as implemented in deal.II, and calculated with respect to the ``velocity`` variable. For more details on the different parameters and options refer to the :doc:`../../../parameters/parameters`.
 
 The result of this mesh adaptation can be clearly seen if we compare the initial mesh:
 
@@ -119,19 +118,10 @@ All the deal.II meshes supported by Lethe that correspond to the `GridGenerator 
     end
 
 
-First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a spherical manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. In Lethe, there are three types supported:
-
-* ``spherical`` manifold: The former can be used to describe any sphere, circle, hypesphere or hyperdisc in two or three dimensions and requires the center of the geometry as an input argument. In this example we set ``point coordinates`` to ``8, 8``.
-
-* ``cylindrical`` manifold: Used to describe cylinders in three dimensions. It uses the coordinates of a point and a direction vector located on the axis of the cylinder.
-
-  .. caution::
-    Cylindrical manifolds are not supported in 2D.
-
-* ``iges`` manifold corresponding to a CAD geometry: the last two lines of the ``manifold 0`` subsection are replaced by the following command ``set cad file = file_name.iges`` where the path to the cad file is specified. 
+First the number of manifolds is specified by the ``set number`` command. Then a subsection for each of the manifolds is created starting with the ``manifold 0``. The boundary ``id`` is in this case set to ``0`` as we want to set a spherical manifold and this is the corresponding id in this example. Then the ``type`` of the manifold is specified. For more information on the types of manifolds supported in Lethe, we refer to the :doc:`../../../parameters/cfd/manifolds` section. 
 
 .. note::
-    For more information about manifolds and the reasons behind them, we invite you to read the documentation page of deal.II: `Manifold description for triangulations <https://www.dealii.org/developer/doxygen/deal.II/group__manifold.html>`_.
+    For more information about manifolds and the way they can be leveraged for simulations, we invite you to read the documentation page of deal.II: `Manifold description for triangulations <https://www.dealii.org/developer/doxygen/deal.II/group__manifold.html>`_.
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
@@ -162,7 +152,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
 .. code-block:: text
     
     subsection boundary conditions
-      set number = 3
+      set number = 4
       subsection bc 0
         set type = noslip
       end
@@ -181,14 +171,15 @@ In this section, we specify the boundary conditions taking into account the IDs 
       subsection bc 2
         set type = slip
       end
+      subsection bc 3
+        set type = outlet
+      end
     end
 
 * ``bc 0`` identifies the cylinder where we apply ``noslip`` boundary conditions on its walls. This leads to a velocity  :math:`\mathbf{u} = \mathbf{0}` for the fluid directly in contact with the walls of the cylinder.
 * ``bc 1`` determines the flow of the fluid from the left wall. As mentioned before, the fluid is moving in the x-direction and therefore its boundary condition is defined with a function having a ``u`` velocity equals to 1. The rest of the velocity components are set to 0.
 * ``bc 2`` is applied at the top and bottom walls. This condition allows the simulation to be performed in a finite sized domain. In real life, the cylinder would be placed in a relatively infinite domain. Using ``slip`` condition, we assume that the fluid cannot go out in the normal direction, but that it can still flow from left to right without friction. Thus, the walls have no effect on the flow of the fluid.
-
-.. note::
-    An implicit fourth boundary condition is implemented on the right wall which represents the outlet of the flow. We do not specify anything explicitly, because this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to :doc:`../../../parameters/cfd/boundary_conditions_cfd` section.
+* ``bc 3`` is applied at the right extremity of the domain to impose an outlet boundary condition. In essence, this corresponds to a natural boundary condition where the pressure :math:`p` becomes close to 0 due to the imposed :math:`\int_{\Gamma}(-p\mathcal{I} + \mathbf{\tau}) \cdot \mathbf{n}=0`. For more details, refer to :doc:`../../../parameters/cfd/boundary_conditions_cfd` section.
 
 Forces
 ~~~~~~
@@ -246,11 +237,11 @@ In addition to these profiles, we also obtain the values of the forces acting on
 .. code-block:: text
 
  cells     f_x           f_y          f_z          f_xv         f_yv          f_zv         f_xp         f_yp          f_zp     
-  1167 6.6047202908  0.0000000824 0.0000000000 3.0431481836  0.0000000312 0.0000000000 3.5615721072  0.0000000512 0.0000000000 
-  2208 6.9680865613 -0.0002186491 0.0000000000 3.2447002611 -0.0000730915 0.0000000000 3.7233863002 -0.0001455576 0.0000000000 
-  4197 7.0833998066  0.0025544399 0.0000000000 3.3778679961  0.0020491181 0.0000000000 3.7055318105  0.0005053218 0.0000000000 
-  8058 7.1321594705 -0.0000600573 0.0000000000 3.4651119900 -0.0000419133 0.0000000000 3.6670474805 -0.0000181441 0.0000000000 
- 15459 7.1121045976  0.0048440122 0.0000000000 3.4730928015  0.0032471187 0.0000000000 3.6390117961  0.0015968935 0.0000000000 
+  1512 6.6313161094  0.0000000557 0.0000000000 3.0711960956  0.0000000291 0.0000000000 3.5601200138  0.0000000266 0.0000000000 
+  2874 6.9728845035 -0.0000000813 0.0000000000 3.2624415260 -0.0000000337 0.0000000000 3.7104429775 -0.0000000477 0.0000000000 
+  5460 7.0836039086  0.0002060398 0.0000000000 3.3909108964  0.0001138765 0.0000000000 3.6926930122  0.0000921633 0.0000000000 
+ 10374 7.0934695138 -0.0000295671 0.0000000000 3.4455331107 -0.0000147141 0.0000000000 3.6479364031 -0.0000148530 0.0000000000 
+ 19521 7.1110693811  0.0000390078 0.0000000000 3.4735982034  0.0000254535 0.0000000000 3.6374711776  0.0000135542 0.0000000000 
 
 The force in the x direction is the parallel or drag force, while the force in the y direction is the perpendicular or lift force. The drag and lift coefficients can be calculated as follows:
 
@@ -262,12 +253,13 @@ where :math:`U_\infty` is the upstream velocity and :math:`D` is the diameter of
 
 .. code-block:: text
 
-  cells     C_D       
-   1167    13.20  
-   2247    13.93  
-   4302    14.15  
-   8268    14.23  
-  15990    14.24  
+ Cells   C_D
+ 1512    13.26
+ 2874    13.94
+ 5460    14.16
+ 10374   14.18
+ 19521   14.22
+
 
 We can see that the simulation is mesh convergent, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1, it corresponds to a value of :math:`C_D = 11.9`. The value calculated by Lethe differs from the theoretical value because of the slip boundary condition at the top and bottom walls, along with the short distance to them from the surface of the cylinder. To obtain a more accurate drag coefficient, the geometry should be enlarged.
 
