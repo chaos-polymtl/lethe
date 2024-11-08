@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/force_chains_visualization.h>
-#include <dem/particle_particle_contact_force.h>
 
-#include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/tria.h>
 
@@ -27,13 +24,7 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
   : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
       dem_parameters_in)
-{
-  /*Initialize with a dummy normal force between two same points (0,0,0) to be
-  sure every core have someting to write. */
-  force_normal.emplace_back(0);
-  vertices.emplace_back(Point<3>(0, 0, 0));
-  vertices.emplace_back(Point<3>(0, 0, 0));
-}
+{}
 
 template <int                               dim,
           ParticleParticleContactForceModel contact_model,
@@ -54,30 +45,35 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
   tria.create_triangulation(vertices, cells, SubCellData());
 }
 
-template <int                               dim,
-          ParticleParticleContactForceModel contact_model,
-          RollingResistanceMethod           rolling_friction_model>
+template <
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel force_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
-ParticlesForceChains<dim, contact_model, rolling_friction_model>::
+ParticlesForceChains<dim, force_model, rolling_friction_model>::
   calculate_force_chains(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles)
+                          &ghost_adjacent_particles,
+    std::vector<Point<3>> &vertices,
+    std::vector<double>   &normal_forces_vector)
 {
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)
     {
-      execute_contact_calculation(adjacent_particles_list);
+      execute_contact_calculation<ContactType::local_particle_particle>(
+        adjacent_particles_list, vertices, normal_forces_vector);
     }
 
   // Calculate force for local-ghost particle pairs
   for (auto &&adjacent_particles_list :
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
-      execute_contact_calculation(adjacent_particles_list);
+      execute_contact_calculation<ContactType::ghost_particle_particle>(
+        adjacent_particles_list, vertices, normal_forces_vector);
     }
 }
 
@@ -91,18 +87,31 @@ ParticlesForceChains<dim, contact_model, rolling_friction_model>::
                      MPI_Comm                        mpi_communicator,
                      const std::string               folder,
                      const unsigned int              iter,
-                     const double                    time)
+                     const double                    time,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &local_adjacent_particles,
+                     typename dem_data_structures<dim>::adjacent_particle_pairs
+                       &ghost_adjacent_particles)
 {
+  // Creating containers
+  std::vector<Point<3>> vertices             = {Point<3>(), Point<3>()};
+  std::vector<double>   normal_forces_vector = {0.};
+
+  this->calculate_force_chains(local_adjacent_particles,
+                               ghost_adjacent_particles,
+                               vertices,
+                               normal_forces_vector);
+
   Triangulation<1, 3> triangulation;
   multi_general_cell(triangulation, vertices);
   DoFHandler<1, 3> force_dh(triangulation);
   DataOut<1, 3>    data_out;
   data_out.attach_dof_handler(force_dh);
 
-  Vector<float> force_values(triangulation.n_active_cells());
+  Vector<double> force_values(triangulation.n_active_cells());
   for (unsigned int i = 0; i < force_values.size(); ++i)
     {
-      force_values[i] = force_normal[i];
+      force_values[i] = normal_forces_vector[i];
     }
   data_out.add_data_vector(force_values, "force");
   data_out.build_patches();

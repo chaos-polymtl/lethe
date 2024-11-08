@@ -685,16 +685,15 @@ DEMSolver<dim>::write_output_results()
       // Force chains visualization
       particles_force_chains_object =
         set_force_chains_contact_force_model(parameters);
-      particles_force_chains_object->calculate_force_chains(
-        contact_manager.get_local_adjacent_particles(),
-        contact_manager.get_ghost_adjacent_particles());
       particles_force_chains_object->write_force_chains(
         parameters,
         particles_pvdhandler_force_chains,
         this->mpi_communicator,
         folder,
         iter,
-        time);
+        time,
+        contact_manager.get_local_adjacent_particles(),
+        contact_manager.get_ghost_adjacent_particles());
     }
 
   // Write all solid objects
