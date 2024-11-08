@@ -115,7 +115,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
       end
     end
 
-There are four boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the boundaries of the domain that are parallel to the flow direction have a ``slip`` boundary condition. The outlet boundary condition needs to be also specified.
+There are four boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the boundaries of the domain that are parallel to the flow direction have a ``slip`` boundary condition. The outlet boundary condition also needs to be specified.
 
 
 Physical Properties
