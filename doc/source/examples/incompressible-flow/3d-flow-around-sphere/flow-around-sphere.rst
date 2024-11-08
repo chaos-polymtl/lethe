@@ -79,10 +79,9 @@ In the parameter file, the mesh is read by specifying its type and file name:
       set file name = sphere.msh
     end
 
-.. note:: text
-
-The mesh is no further refined for the two static mesh cases and it has a total of 5823 cells.
-
+.. note::
+  
+  The mesh is no further refined for the first static mesh case (:math:`\mathrm{Re}=0.1`) and it has a total of 5823 cells. For the second static mesh case (:math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains a bit more than 46,584 cells.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -208,7 +207,7 @@ The ``steady_bdf`` method solves for a steady-state simulation using adjoint tim
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-An initial condition is used for the high Reynolds number problem. It is what we call a viscous initial condition that first finds a solution for the problem at :math:`\mathrm{Re} = 10`` and then uses it as initial condition to find the solution at :math:`\mathrm{Re}=150`.
+An initial condition is used for the high Reynolds number problem. It is what we call a viscous initial condition that first finds a solution for the problem at :math:`\mathrm{Re} = 10` and then uses it as initial condition to find the solution at :math:`\mathrm{Re}=150`.
 
 .. code-block:: text
 

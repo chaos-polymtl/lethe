@@ -76,8 +76,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = gmsh
-  set file name = sphere.msh
+  set type               = gmsh
+  set file name          = sphere.msh
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
