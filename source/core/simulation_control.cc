@@ -217,6 +217,8 @@ SimulationControlTransient::SimulationControlTransient(
   , max_dt(param.max_dt)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
+  , output_times_counter(0)
+  , no_more_output_times(false)
   , output_time_interval(param.output_time_interval)
   , output_control(param.output_control)
 {}
