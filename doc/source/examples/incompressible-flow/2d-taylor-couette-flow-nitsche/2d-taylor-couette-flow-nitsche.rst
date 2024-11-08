@@ -26,10 +26,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-nitsche-taylor-couette``).
+Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-taylor-couette-nitsche``).
 
-- Parameter file with uniform mesh refinement: ``uniform-nitsche-taylor-couette.prm``
-- Parameter file with adaptative mesh refinement: ``adaptative-nitsche-taylor-couette.prm``
+- Parameter file with uniform mesh refinement: ``uniform-taylor-couette-nitsche.prm``
+- Parameter file with adaptative mesh refinement: ``adaptative-taylor-couette-nitsche.prm``
 
 
 
@@ -377,7 +377,7 @@ Possibilities for Extension
 ----------------------------
 
 - Calculate formally the order of convergence for the torque :math:`T_z`.
-- It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
+- It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. 
 
 
 ------------
