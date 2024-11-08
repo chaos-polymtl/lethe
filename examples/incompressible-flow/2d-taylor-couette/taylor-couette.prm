@@ -106,7 +106,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type               = iteration
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -128,10 +128,10 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                    = gmres
-    set relative residual                         = 1e-4
-    set minimum residual                          = 1e-11
-    set preconditioner                            = amg
-    set verbosity                                 = verbose
+    set method            = gmres
+    set relative residual = 1e-4
+    set minimum residual  = 1e-11
+    set preconditioner    = amg
+    set verbosity         = verbose
   end
 end
