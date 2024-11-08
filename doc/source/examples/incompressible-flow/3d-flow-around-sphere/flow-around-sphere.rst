@@ -81,7 +81,7 @@ In the parameter file, the mesh is read by specifying its type and file name:
 
 .. note::
   
-  The mesh is no further refined for the first static mesh case (:math:`\mathrm{Re}=0.1`) and it has a total of 5823 cells. For the second static mesh case (:math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains a bit more than 46,584 cells.
+  The mesh is no further refined for the first static mesh case (:math:`\mathrm{Re}=0.1`) and it has a total of 5823 cells. For the second static mesh case (:math:`\mathrm{Re}=150`), the ``initial refinement`` parameter is used and set to 1, so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains 46,584 cells.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
