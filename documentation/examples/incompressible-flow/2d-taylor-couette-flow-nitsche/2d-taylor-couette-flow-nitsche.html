@@ -446,17 +446,17 @@ now using immersed boundaries to represent the inner cylinder. This example demo
 </div>
 <ul class="simple">
 <li><p>Steady-state problem</p></li>
-<li><p>Displays the use of an adaptative mesh refinement using Nitsche immersed boundaries</p></li>
+<li><p>Displays the use of an adaptive mesh refinement using Nitsche immersed boundaries</p></li>
 <li><p>Displays the use of the analytical solution to calculate the mesh convergence</p></li>
 <li><p>Displays the calculation of the torque induced by the fluid on a boundary</p></li>
 </ul>
 </section>
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
-<p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/2d-nitsche-taylor-couette</span></code>).</p>
+<p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/2d-taylor-couette-nitsche</span></code>).</p>
 <ul class="simple">
-<li><p>Parameter file with uniform mesh refinement: <code class="docutils literal notranslate"><span class="pre">uniform-nitsche-taylor-couette.prm</span></code></p></li>
-<li><p>Parameter file with adaptative mesh refinement: <code class="docutils literal notranslate"><span class="pre">adaptative-nitsche-taylor-couette.prm</span></code></p></li>
+<li><p>Parameter file with uniform mesh refinement: <code class="docutils literal notranslate"><span class="pre">uniform-taylor-couette-nitsche.prm</span></code></p></li>
+<li><p>Parameter file with adaptive mesh refinement: <code class="docutils literal notranslate"><span class="pre">adaptive-taylor-couette-nitsche.prm</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -577,7 +577,7 @@ Setting <code class="docutils literal notranslate"><span class="pre">verbosity=v
 </section>
 <section id="simulation-control-and-mesh-refinement">
 <h3>Simulation Control and Mesh Refinement<a class="headerlink" href="#simulation-control-and-mesh-refinement" title="Link to this heading">#</a></h3>
-<p>As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement</p>
+<p>As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptive mesh refinement</p>
 <section id="uniform-mesh-refinement">
 <h4>Uniform Mesh Refinement<a class="headerlink" href="#uniform-mesh-refinement" title="Link to this heading">#</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">simulation</span> <span class="pre">control</span></code> subsection controls the flow of the simulation. Two additional parameters are introduced in this example.
@@ -599,8 +599,8 @@ end
 </pre></div>
 </div>
 </section>
-<section id="adaptative-mesh-refinement">
-<h4>Adaptative Mesh Refinement<a class="headerlink" href="#adaptative-mesh-refinement" title="Link to this heading">#</a></h4>
+<section id="adaptive-mesh-refinement">
+<h4>Adaptive Mesh Refinement<a class="headerlink" href="#adaptive-mesh-refinement" title="Link to this heading">#</a></h4>
 <p>Since the Nitsche IB method introduces additional error on the surface of the immersed geometry, it is pertinent to investigate the results it can produce with
 adaptive mesh refinement. We now consider the following option:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
@@ -640,7 +640,7 @@ end
 </pre></div>
 </div>
 <p>or</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid-nitsche adaptative-nitsche-taylor-couette.prm
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid-nitsche adaptive-nitsche-taylor-couette.prm
 </pre></div>
 </div>
 <p>Lethe will generate a number of files. The most important one bears the extension <code class="docutils literal notranslate"><span class="pre">.pvd</span></code>. It can be read by popular visualization programs such as <a class="reference external" href="https://www.paraview.org/">Paraview</a>.</p>
@@ -683,8 +683,8 @@ The torque on the inner cylinder should be -0.83776 and we note that the torque 
 Running the simulation with finer meshes lead to this results.</p>
 </section>
 <section id="id3">
-<h3>Adaptative Mesh Refinement<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:</p>
+<h3>adaptive Mesh Refinement<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>Using Paraview, the steady-state velocity profile can be visualized for the adaptive mesh refinement case:</p>
 <a class="reference internal image-reference" href="../../../_images/taylor-couette-with-nitsche-velocity-adapt.png"><img alt="velocity distribution" class="align-center" src="../../../_images/taylor-couette-with-nitsche-velocity-adapt.png" style="height: 10cm;" /></a>
 <p>The end of the simulation log provides the following information about the convergence of the error:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cells error_velocity   error_pressure
@@ -715,7 +715,7 @@ Running the simulation with finer meshes lead to this results.</p>
 <h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Calculate formally the order of convergence for the torque <span class="math notranslate nohighlight">\(T_z\)</span>.</p></li>
-<li><p>It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking.</p></li>
+<li><p>It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability.</p></li>
 </ul>
 </section>
 <section id="reference">
@@ -798,7 +798,7 @@ Running the simulation with finer meshes lead to this results.</p>
 <li><a class="reference internal" href="#forces">Forces</a></li>
 <li><a class="reference internal" href="#simulation-control-and-mesh-refinement">Simulation Control and Mesh Refinement</a><ul>
 <li><a class="reference internal" href="#uniform-mesh-refinement">Uniform Mesh Refinement</a></li>
-<li><a class="reference internal" href="#adaptative-mesh-refinement">Adaptative Mesh Refinement</a></li>
+<li><a class="reference internal" href="#adaptive-mesh-refinement">Adaptive Mesh Refinement</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#rest-of-the-subsections">Rest of the Subsections</a></li>
@@ -807,7 +807,7 @@ Running the simulation with finer meshes lead to this results.</p>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results-and-discussion">Results and Discussion</a><ul>
 <li><a class="reference internal" href="#id2">Uniform Mesh Refinement</a></li>
-<li><a class="reference internal" href="#id3">Adaptative Mesh Refinement</a></li>
+<li><a class="reference internal" href="#id3">adaptive Mesh Refinement</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#possibilities-for-extension">Possibilities for Extension</a></li>

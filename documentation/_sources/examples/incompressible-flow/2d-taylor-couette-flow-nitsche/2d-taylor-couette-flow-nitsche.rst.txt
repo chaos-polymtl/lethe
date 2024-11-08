@@ -17,7 +17,7 @@ Features
     We have not found that Q2-Q2 elements lead to better results when the flows are at a low Reynolds number.
 
 - Steady-state problem
-- Displays the use of an adaptative mesh refinement using Nitsche immersed boundaries
+- Displays the use of an adaptive mesh refinement using Nitsche immersed boundaries
 - Displays the use of the analytical solution to calculate the mesh convergence 
 - Displays the calculation of the torque induced by the fluid on a boundary
 
@@ -26,10 +26,10 @@ Features
 Files Used in This Example
 ----------------------------
 
-Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-nitsche-taylor-couette``).
+Both files mentioned below are located in the example's folder (``examples/incompressible-flow/2d-taylor-couette-nitsche``).
 
-- Parameter file with uniform mesh refinement: ``uniform-nitsche-taylor-couette.prm``
-- Parameter file with adaptative mesh refinement: ``adaptative-nitsche-taylor-couette.prm``
+- Parameter file with uniform mesh refinement: ``uniform-taylor-couette-nitsche.prm``
+- Parameter file with adaptive mesh refinement: ``adaptive-taylor-couette-nitsche.prm``
 
 
 
@@ -197,7 +197,7 @@ Setting ``verbosity=verbose`` will print out the value of the torque calculated 
 Simulation Control and Mesh Refinement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement
+As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptive mesh refinement
 
 
 Uniform Mesh Refinement
@@ -226,7 +226,7 @@ We then set the mesh adaptation ``type`` to ``uniform``.
     end
 
 
-Adaptative Mesh Refinement
+Adaptive Mesh Refinement
 **************************
 
 Since the Nitsche IB method introduces additional error on the surface of the immersed geometry, it is pertinent to investigate the results it can produce with 
@@ -280,7 +280,7 @@ or
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-nitsche adaptative-nitsche-taylor-couette.prm
+  lethe-fluid-nitsche adaptive-nitsche-taylor-couette.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -332,10 +332,10 @@ The torque on the inner cylinder should be -0.83776 and we note that the torque 
 Running the simulation with finer meshes lead to this results.
 
 
-Adaptative Mesh Refinement
+adaptive Mesh Refinement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:
+Using Paraview, the steady-state velocity profile can be visualized for the adaptive mesh refinement case:
 
 .. image:: images/taylor-couette-with-nitsche-velocity-adapt.png
     :alt: velocity distribution
@@ -377,7 +377,7 @@ Possibilities for Extension
 ----------------------------
 
 - Calculate formally the order of convergence for the torque :math:`T_z`.
-- It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
+- It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. 
 
 
 ------------
