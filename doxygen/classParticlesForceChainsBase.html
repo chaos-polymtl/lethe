@@ -73,6 +73,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classParticlesForceChainsBase-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ParticlesForceChainsBase&lt; dim &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -92,10 +93,13 @@ Inheritance diagram for ParticlesForceChainsBase&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9630d9feb5bda806f90706aeda8e5d50"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#a9630d9feb5bda806f90706aeda8e5d50">calculate_force_chains</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles)=0</td></tr>
-<tr class="separator:a9630d9feb5bda806f90706aeda8e5d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8318981c0dadb97256317a3bf4273ddd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#a8318981c0dadb97256317a3bf4273ddd">write_force_chains</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;pvd_handler, const MPI_Comm mpi_communicator, const std::string folder, const unsigned int iter, const double time)=0</td></tr>
-<tr class="separator:a8318981c0dadb97256317a3bf4273ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa1198808651fc12c398cac85758980a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#aaa1198808651fc12c398cac85758980a">write_force_chains</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;pvd_handler, const MPI_Comm mpi_communicator, const std::string folder, const unsigned int iter, const double time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles)=0</td></tr>
+<tr class="separator:aaa1198808651fc12c398cac85758980a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a5ae2d2141c63c7a5a98b3e6d49de52cc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#a5ae2d2141c63c7a5a98b3e6d49de52cc">calculate_force_chains</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, std::vector&lt; Point&lt; 3 &gt;&gt; &amp;vertices, std::vector&lt; double &gt; &amp;normal_forces_vector)=0</td></tr>
+<tr class="separator:a5ae2d2141c63c7a5a98b3e6d49de52cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int dim&gt;<br />
@@ -105,8 +109,8 @@ class ParticlesForceChainsBase&lt; dim &gt;</h3>
 
 <p class="definition">Definition at line <a class="el" href="force__chains__visualization_8h_source.html#l00036">36</a> of file <a class="el" href="force__chains__visualization_8h_source.html">force_chains_visualization.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9630d9feb5bda806f90706aeda8e5d50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9630d9feb5bda806f90706aeda8e5d50">&#9670;&nbsp;</a></span>calculate_force_chains()</h2>
+<a id="a5ae2d2141c63c7a5a98b3e6d49de52cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ae2d2141c63c7a5a98b3e6d49de52cc">&#9670;&nbsp;</a></span>calculate_force_chains()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,7 +130,19 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
-          <td class="paramname"><em>ghost_adjacent_particles</em>&#160;</td>
+          <td class="paramname"><em>ghost_adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Point&lt; 3 &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>vertices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normal_forces_vector</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -136,7 +152,7 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -146,16 +162,18 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">local_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local particle-particle contact forces. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ghost_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local-ghost particle-particle contact forces. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">vertices</td><td>the vector of positions of touching particles. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">normal_forces_vector</td><td>the vector of normal forces between each touching particles. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classParticlesForceChains.html#a1d27f338cd2a91ec18178e6e3c5abbc7">ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticlesForceChains.html#ac2464721fd80abc8e7b3b8f554e3f14c">ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a8318981c0dadb97256317a3bf4273ddd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8318981c0dadb97256317a3bf4273ddd">&#9670;&nbsp;</a></span>write_force_chains()</h2>
+<a id="aaa1198808651fc12c398cac85758980a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa1198808651fc12c398cac85758980a">&#9670;&nbsp;</a></span>write_force_chains()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +217,19 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>time</em>&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>local_adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>ghost_adjacent_particles</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -227,7 +257,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classParticlesForceChains.html#af2be0d10775607b8f739fa47ff6b1047">ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticlesForceChains.html#aadf05060a477747c9aebc4b1798cc56c">ParticlesForceChains&lt; dim, force_model, rolling_friction_model &gt;</a>.</p>
 
 </div>
 </div>
