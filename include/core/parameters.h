@@ -94,7 +94,7 @@ namespace Parameters
     double dt;
 
     // End time
-    double timeEnd;
+    double time_end;
 
     // Boolean to keep the time step for the last iteration regardless of the
     // end time specify. Both for fixed time step and adaptive time step.

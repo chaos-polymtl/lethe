@@ -40,7 +40,7 @@ test()
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt                                = 0.1;
-  simulation_control_parameters.timeEnd                           = 1.0;
+  simulation_control_parameters.time_end                          = 1.0;
   simulation_control_parameters.adapt                             = true;
   simulation_control_parameters.adaptative_time_step_scaling      = 0.99;
   simulation_control_parameters.max_dt                            = 1e6;
@@ -92,7 +92,7 @@ test()
   GlobalBlockVectorType reynolds_shear_stresses;
 
   // Time info
-  const double time_end     = simulation_control_parameters.timeEnd;
+  const double time_end     = simulation_control_parameters.time_end;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;

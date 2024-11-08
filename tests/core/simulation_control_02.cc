@@ -24,7 +24,7 @@ test()
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
 
-  simulationControlParameters.timeEnd                    = 999;
+  simulationControlParameters.time_end                   = 999;
   simulationControlParameters.number_mesh_adaptation     = 9;
   simulationControlParameters.output_name                = "test";
   simulationControlParameters.subdivision                = 7;

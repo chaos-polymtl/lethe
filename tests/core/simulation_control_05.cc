@@ -23,7 +23,7 @@ test()
   simulation_control_parameters.startup_timestep_scaling = 0.4;
   simulation_control_parameters.bdf_startup_method =
     Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf;
-  simulation_control_parameters.timeEnd                           = 4;
+  simulation_control_parameters.time_end                          = 4;
   simulation_control_parameters.number_mesh_adaptation            = 0;
   simulation_control_parameters.output_name                       = "test";
   simulation_control_parameters.subdivision                       = 7;

@@ -22,7 +22,7 @@ test()
   simulation_control_parameters.maxCFL = 2;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.timeEnd = 0.5;
+  simulation_control_parameters.time_end = 0.5;
   simulation_control_parameters.output_control =
     Parameters::SimulationControl::OutputControl::iteration;
   simulation_control_parameters.output_iteration_frequency        = 2;
@@ -156,7 +156,7 @@ test()
 
   {
     simulation_control_parameters.adapt                        = true;
-    simulation_control_parameters.timeEnd                      = 20;
+    simulation_control_parameters.time_end                     = 20;
     simulation_control_parameters.dt                           = 1;
     simulation_control_parameters.adaptative_time_step_scaling = 1.2;
     simulation_control_parameters.maxCFL                       = 2;
@@ -197,7 +197,7 @@ test()
   }
   {
     simulation_control_parameters.adapt                        = true;
-    simulation_control_parameters.timeEnd                      = 25;
+    simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;
     simulation_control_parameters.adaptative_time_step_scaling = 1.2;
     simulation_control_parameters.maxCFL                       = 2;
@@ -239,7 +239,7 @@ test()
 
   {
     simulation_control_parameters.adapt                        = true;
-    simulation_control_parameters.timeEnd                      = 25;
+    simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;
     simulation_control_parameters.adaptative_time_step_scaling = 1.2;
     simulation_control_parameters.maxCFL                       = 2;
@@ -281,7 +281,7 @@ test()
 
   {
     simulation_control_parameters.adapt                        = true;
-    simulation_control_parameters.timeEnd                      = 25;
+    simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;
     simulation_control_parameters.adaptative_time_step_scaling = 1.2;
     simulation_control_parameters.maxCFL                       = 2;

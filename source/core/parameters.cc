@@ -238,9 +238,9 @@ namespace Parameters
         {
           std::runtime_error("Invalid output control scheme");
         }
-      dt      = prm.get_double("time step");
-      timeEnd = prm.get_double("time end");
-      adapt   = prm.get_bool("adapt");
+      dt       = prm.get_double("time step");
+      time_end = prm.get_double("time end");
+      adapt    = prm.get_bool("adapt");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
       maxCFL         = prm.get_double("max cfl");
