@@ -629,7 +629,7 @@ namespace Parameters
 
           prm.declare_entry(
             "particle weight",
-            "10000",
+            "1000",
             Patterns::Integer(),
             "The particle weight based on a default cell weight of 1000");
 
