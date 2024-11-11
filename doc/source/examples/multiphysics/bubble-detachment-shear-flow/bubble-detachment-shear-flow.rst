@@ -414,6 +414,12 @@ Below are the plots of the contour of the bubble in the plane :math:`z = 0` when
 
 The higher the shear rate, the more important the viscous drag as it can be observed above. The bubble is dragged in the direction of the movement of the fluid which flattens it, and brings it closer to the bottom wall. The volume enclosed by the contour is smaller, which is coherent with the values of detachment time and volumes computed before.
 
+The video below displays the results for the case of :math:`S = 450 \ \text{s}^{-1}`
+
+.. raw:: html
+
+    <iframe width="720" height="428" src="https://www.youtube.com/watch?v=jCkhDvCeXT0" title="Air bubble detachment in water shear flow" frameborder="0" allowfullscreen></iframe>
+
 ---------------------------
 Possibilities for Extension
 ---------------------------
