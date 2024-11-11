@@ -11,14 +11,13 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf3
-  set time step         = 0.05  
-  set number mesh adapt = 0     
-  set time end          = 20    
-  set output name       = tgv   
-  set output frequency  = 2      
-  set output path       = ./output/
-  set subdivision       = 3
+  set method           = bdf3
+  set time step        = 0.05
+  set time end         = 20
+  set output name      = tgv
+  set output frequency = 2
+  set output path      = ./output/
+  set subdivision      = 3
 end
 
 #---------------------------------------------------
@@ -35,7 +34,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = iteration 
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -66,7 +65,7 @@ end
 
 subsection source term
   subsection fluid dynamics
-    set enable              = false
+    set enable = false
   end
 end
 
@@ -88,7 +87,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -3.14159265359 : 3.14159265359 : true
-  set initial refinement = 5 
+  set initial refinement = 5
 end
 
 #---------------------------------------------------
@@ -123,8 +122,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance      = 1e-3
-    set verbosity      = verbose
+    set tolerance = 1e-3
+    set verbosity = verbose
   end
 end
 
@@ -142,29 +141,18 @@ subsection linear solver
     set verbosity         = verbose
 
     # MG parameters
-    set mg verbosity       = verbose
-    set mg min level       = -1
-    set mg level min cells = 16
+    set mg verbosity = quiet
 
     # Smoother
-    set mg smoother iterations = 10
+    set mg smoother iterations     = 5
     set mg smoother eig estimation = true
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 10
-    set eig estimation verbosity       = verbose
+    set eig estimation verbosity       = quiet
 
     # Coarse-grid solver
-    set mg coarse grid solver       = gmres
-    set mg gmres max iterations     = 2000
-    set mg gmres tolerance          = 1e-7
-    set mg gmres reduce             = 1e-4
-    set mg gmres max krylov vectors = 30
-    set mg gmres preconditioner     = ilu
-
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    set mg coarse grid solver = direct
   end
 end
