@@ -418,7 +418,7 @@ The video below displays the results for the case of :math:`S = 450 \ \text{s}^{
 
 .. raw:: html
 
-    <iframe width="720" height="428" src="https://www.youtube.com/watch?v=jCkhDvCeXT0" title="Air bubble detachment in water shear flow" frameborder="0" allowfullscreen></iframe>
+    <iframe width="850" height="478" src="https://www.youtube.com/embed/jCkhDvCeXT0?si=gU9cFA2ziwuj39mS" title="Air bubble detachment in water shear flow" frameborder="0" allowfullscreen></iframe>
 
 ---------------------------
 Possibilities for Extension
