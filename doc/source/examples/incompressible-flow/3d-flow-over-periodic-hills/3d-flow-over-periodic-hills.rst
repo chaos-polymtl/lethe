@@ -58,8 +58,6 @@ This section controls the flow of the simulation.
 
 The ``method`` parameter specifies the time-stepping scheme chosen for this simulation. In this case is set to ``bdf2`` that corresponds to a second-order backward difference implicit scheme. The ``output name`` and ``output path``  are parameters that specify the name and the path for the ``.vtu`` files of the simulation, while the ``output frequency`` is relative to the number of time steps in the total time. The ratio between the total time of the simulation ``1000`` and the time step chosen ``0.1`` is 10000. Therefore, if the output frequency is set to ``1000`` a total of 11 ``.vtu`` files will be obtained including an initial output file at time 0. The total time is chosen to be long in order to consider the flow periodic, since it has already passed a significant number of hills.
 
-.. warning:: It is important to remember that the output path folder, in this case ``output`` must exist before running the simulation.
-
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
