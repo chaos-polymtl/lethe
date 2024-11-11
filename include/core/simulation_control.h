@@ -457,7 +457,7 @@ public:
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
-  void
+  virtual void
   save(const std::string &prefix);
 
   /**
@@ -465,7 +465,7 @@ public:
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
-  void
+  virtual void
   read(const std::string &prefix);
 
   /**
@@ -551,6 +551,26 @@ public:
    */
   virtual bool
   is_output_iteration() override;
+
+  /**
+   * @brief Save the simulation control information from the checkpoint file and
+   * updates the time step vector, the CFL value, the time, the iteration number
+   * and the index of the output times vector if time control is used.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
+  void
+  save(const std::string &prefix) override;
+
+  /**
+   * @brief Reads the simulation control information from the checkpoint file and
+   * updates the time step vector, the CFL value, the time, the iteration number
+   * and the index of the output times vector if time control is used.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
+  void
+  read(const std::string &prefix) override;
 };
 
 /**

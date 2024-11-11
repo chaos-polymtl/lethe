@@ -369,7 +369,22 @@ SimulationControlTransient::is_output_iteration()
   // performed (due to time step)
   double next_time = current_time + calculate_time_step();
   if (current_time < lower_bound && (next_time >= lower_bound))
-    is_output_time = true;
+    {
+      is_output_time = true;
+
+      // If the end time is exactly the output time, there is not one step
+      // after to output and we need to update the output times counter for
+      // case 2
+      if (is_at_end() && local_output_time != -1 && is_output_time)
+        {
+          // Update the counter only if there are more elements in vector
+          if (output_times_vector.size() > output_times_counter + 1)
+            output_times_counter++;
+          else // otherwise set flag to false as no more times need to be
+               // checked
+            no_more_output_times = true;
+        }
+    }
 
   // We always write one step after, in case the specific time or the
   // interval upper bound does not correspond exactly to a time iteration
@@ -391,6 +406,39 @@ SimulationControlTransient::is_output_iteration()
     }
 
   return is_output_time;
+}
+
+void
+SimulationControlTransient::save(const std::string &prefix)
+{
+  SimulationControl::save(prefix);
+
+  if (output_control == Parameters::SimulationControl::OutputControl::time)
+    {
+      std::string   filename = prefix + ".simulationcontrol";
+      std::ofstream output(filename.c_str(), std::ios::app);
+      output << "Output_index " << output_times_counter << std::endl;
+    }
+}
+
+void
+SimulationControlTransient::read(const std::string &prefix)
+{
+  SimulationControl::read(prefix);
+
+  if (output_control == Parameters::SimulationControl::OutputControl::time)
+    {
+      std::string   filename = prefix + ".simulationcontrol";
+      std::ifstream input(filename.c_str());
+      unsigned int  line_no = 0;
+      std::string   buffer;
+      while (line_no != 8)
+        {
+          std::getline(input, buffer);
+          line_no++;
+        }
+      input >> buffer >> output_times_counter;
+    }
 }
 
 SimulationControlTransientDEM::SimulationControlTransientDEM(
