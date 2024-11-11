@@ -2,7 +2,7 @@
 Packing in Circle
 ==================================
 
-This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in Lethe-DEM.
+This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in the DEM solver of Lethe.
 
 
 ----------------------------------
@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-Packing in a circle is the most basic example in Lethe-DEM. In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
+In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
 
 
 --------------
@@ -63,11 +63,7 @@ The ``type`` specifies the mesh format used. At the moment, Lethe supports two m
 
 Since the domain of the packing-in-circle problem is a circle, we use the *hyper_ball* as ``grid_type``. The ``grid arguments`` of this ``grid_type`` determine the position of the center, the radius of the ball (circle), and whether the colorize option is going to be used (``true``) or not (``false``). By setting the latter argument to ``true``, each of the boundaries will receive a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. If the ``colorize`` option is set to ``false``, all boundaries would have been given the ID ``0``. This will constitute the walls of the domain.
 
-The ``expand particle-wall contact search`` parameter is an advanced feature of Lethe-DEM that expands the particle-wall contact detection list by including the walls of the neighboring cells.  This feature is necessary when the geometry is concave and presents curvature, as is the case of the circle in which the simulation is carried out.
-
-
-.. note:: 
-	Since the simulation is two-dimensional, we have a circle instead of a ball for the triangulation.
+The ``expand particle-wall contact search`` parameter is a feature of Lethe that expands the particle-wall contact detection list by including the walls of the neighboring cells.  This feature is necessary when the geometry is concave and presents curvature, as is the case of the circle in which the simulation is carried out.
 
 
 The last parameter is the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. Each refinement corresponds to dividing the cell element into two for each dimension, i.e, in 2D, each cell is divided into 4 per refinement.
@@ -94,26 +90,23 @@ The ``insertion info`` subsection manages the insertion of particles.
       set insertion prn seed                             = 19
     end
 
-First, the ``insertion method`` is selected. There are two insertion methods (``uniform`` and ``non_uniform``) in Lethe-DEM. In ``uniform`` insertion, the particles are inserted uniformly (without randomness in their initial location), while in ``non_uniform``, particles are inserted randomly in the insertion box. ``inserted number of particles at each time step`` specifies the desired number of particles to be inserted at each insertion step.
-
-.. note ::
-	The meaning of randomness in the initial location of particles in a non-uniform insertion is structured randomness (Using pseudo-random number generator algorithms).
+First, the ``insertion method`` is selected. In ``volume`` insertion, the particles are inserted in an insertion box. The ``inserted number of particles at each time step`` specifies the desired number of particles to be inserted at each insertion step.
 
 .. note::
     If the insertion box is not adequately large to insert ``inserted number of particles at each time step`` particles with the defined arrangement (initial distance between the inserted particles), Lethe prints a warning and inserts the maximum number of particles that fit inside the insertion box at each insertion step.
 
-``insertion frequency`` specifies the frequency of insertion steps. For example, if we set ``insertion frequency = 1000``, steps 0, 1000, 2000, 3000, ... will be defined as insertion iterations. Then we specify the dimensions of the insertion box. The box is defined using its ``minimum x``, ``minimum y``, ``maximum x``, and ``maximum y`` in two-dimensional simulations. In three-dimensional simulations, ``minimum z``, and ``maximum z`` are defined as well.
+``insertion frequency`` specifies the frequency of insertion steps. For example, if we set ``insertion frequency = 1000``, steps 0, 1000, 2000, 3000, ... will be defined as insertion iterations. 
 
 .. note::
-    We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
+    We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may be inserted with anoverlap with the triangulation walls.
 
-``insertion distance threshold`` specifies the initial distance between the particles in the insertion. If we choose a ``non_uniform`` insertion, this initial distance is added by a random number to generate randomness. The random numbers are generated in the range [0 - ``insertion maximum offset``], and from a seed of ``insertion prn seed``.
+``insertion distance threshold`` specifies the initial distance between the particles inserted. A random number is added to this initial distance to generate randomness in the particles. The random numbers are generated in the range [0 - ``insertion maximum offset``], and from a seed of ``insertion prn seed``.
 
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``Lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient and friction coefficients.
+The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient and friction coefficients.
 
 .. code-block:: text
 
@@ -136,11 +129,7 @@ The gravitational acceleration as well as the physical properties of particles a
       set friction coefficient wall    = 0.3
     end
 
-First, gravitational acceleration is defined. Since the simulation is two-dimensional, we do not define the gravity in `z` direction. The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types. The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions. Since this simulation is monodispersed, the ``size distribution type`` is ``uniform``. ``diameter`` and ``density`` of particles, ``number`` of particles of each type, ``young modulus``, ``poisson ratio``, ``restitution coefficient`` and ``friction coefficient`` are defined.
-
-.. note::
-    The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. For a ``normal`` distribution, we need to define ``average diameter`` and ``standard deviation`` parameters.
-
+First, gravitational acceleration is defined. The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types. The ``size distribution type`` parameter specifies the size distribution for each particle type. Since this simulation is monodispersed, the ``size distribution type`` is ``uniform``. The ``diameter`` and ``density`` of particles, ``number`` of particles of each type, ``young modulus``, ``poisson ratio``, ``restitution coefficient`` and ``friction coefficient`` are defined.
 
 Model Parameters
 ~~~~~~~~~~~~~~~~~
@@ -153,7 +142,7 @@ In the ``model parameters`` subsection, DEM simulation parameters are defined.
       subsection contact detection
         set contact detection method                = dynamic
         set dynamic contact search size coefficient = 0.7
-        set neighborhood threshold                  = 1.5
+        set neighborhood threshold                  = 1.3
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
