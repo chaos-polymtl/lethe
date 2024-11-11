@@ -540,7 +540,7 @@ private:
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration);
   void compute_volume();
-  void correct_volume();
+  void compute_cellwise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell);
   
   void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
   void output_results(const int time_iteration) const;
@@ -574,6 +574,8 @@ private:
   VectorType locally_relevant_solution;
   VectorType previous_solution;
   VectorType location;
+  VectorType cell_wise_volume;
+  
   LinearAlgebra::distributed::Vector<double> signed_distance;
   LinearAlgebra::distributed::Vector<double> distance;
   LinearAlgebra::distributed::Vector<double> distance_with_ghost;
@@ -651,6 +653,8 @@ void AdvectionProblem<dim>::setup_system()
   
   level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, mpi_communicator);
+  cell_wise_volume.reinit(locally_owned_dofs, mpi_communicator);
+  
   
   signed_distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
   distance.reinit(locally_owned_dofs,locally_active_dofs, mpi_communicator);
@@ -971,9 +975,11 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   
   // Update flag for the non-matching fe values
   NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.surface = update_quadrature_points |
+  region_update_flags.surface = update_quadrature_points | 
                                 update_normal_vectors;
   
+  region_update_flags.inside = update_quadrature_points | 
+                                update_JxW_values;
   // non-matching fe values
   NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
                                                     quadrature_1D,
@@ -998,6 +1004,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   
   pcout << "In signed distance computation" << std::endl;
   
+
+  
   // Loop to identify intersected cells and compute the intersection points (interface reconstruction)
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
@@ -1014,14 +1022,16 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
       // Surface (interface reconstruction in the intersected cell) fe values (non-empty if the cell is indeed intersected)
       const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
         &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+        
       
-      // If the cell is intersected, reconstruct the interface in it 
+      
+      // If the cell is intersected, reconstruct the interface in it along with mass correction
       if (surface_fe_values)
       {
         const unsigned int cell_index = cell->global_active_cell_index();
         
         std::vector<Point<dim>> cells_intersection_point;
-                  
+        
         cells_intersection_point.reserve(n);
         
         // Rescontruct interface using Gauss Lobatto quadrature first points (because Gauss Lobatto includes extremities as the first points -> first 2 in 2D to define the intersection line, first 3 in 3D to define the intersection plane)
@@ -1036,6 +1046,18 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
           
         // Store the interface reconstruction 
         intersection_point[cell_index] = cells_intersection_point;
+        
+        const std::optional<FEValues<dim>>
+          &inside_fe_values = non_matching_fe_values.get_inside_fe_values();
+        std::vector<double> JxW_inside = inside_fe_values->get_JxW_values();
+
+        double cell_volume= 0.0;  
+        for (const unsigned int q :
+             inside_fe_values->quadrature_point_indices())
+          {
+            cell_volume += JxW_inside[q];
+          }
+        cell_wise_volume[cell_index] = cell_volume;
       }
     }
   }
@@ -1046,6 +1068,10 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
       distance(p) = 0.02;
       distance_with_ghost(p) = 0.02;
     }
+    
+  const unsigned int n_quad_points = fe.degree + 1;
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
   
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1053,8 +1079,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
     if (cell->is_locally_owned())
     {
       const unsigned int cell_index = cell->global_active_cell_index();
-      
-      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
       
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
@@ -1102,6 +1126,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
 
         dofs_location_status.insert(dof_indices[i]);
       }
+      
     }
   }
   
@@ -1123,7 +1148,54 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   {
     distance(p) = distance_with_ghost(p);
   }
+  
+  // Correct distance to conserve volume
+  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  
+  FEValues<dim> inside_fe_values(mapping, fe, inside_quadrature, update_values | update_quadrature_points | update_JxW_values);
+  
 
+  hp::QCollection<1> q_collection;
+  q_collection.push_back(QGauss<1>(n_quad_points));
+
+  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      // The cell is not intersected, no need to correct the mass
+      if (intersection_point.find(cell_index) == intersection_point.end())
+      {
+        continue;
+      }
+      
+      Vector<double> cell_dof_values(dofs_per_cell);
+      
+      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+      
+      level_set_function.set_active_cell(cell,cell_dof_values);
+      quadrature_generator.generate(level_set_function, unit_box);
+      
+      // const NonMatching::ImmersedSurfaceQuadrature<dim> surface_quadrature = quadrature_generator.get_surface_quadrature();
+      
+      const Quadrature<dim> inside_quadrature = quadrature_generator.get_inside_quadrature();
+      
+      inside_fe_values.reinit(cell);
+      std::vector<double> inside_JxW = inside_fe_values.get_JxW_values();
+
+      double inside_cell_volume = 0.0;
+      for (unsigned int q = 0; q < inside_quadrature.size(); q++)
+      {
+        inside_cell_volume += inside_JxW[q];
+      }
+      
+      double delta_volume = cell_wise_volume[cell_index] - inside_cell_volume;
+      
+      
+      while
+    }
   unsigned int n_opposite_faces_per_dofs = dim;
   
   // Compute the rest of the mesh
