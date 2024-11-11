@@ -470,10 +470,6 @@ end
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> parameter specifies the time-stepping scheme chosen for this simulation. In this case is set to <code class="docutils literal notranslate"><span class="pre">bdf2</span></code> that corresponds to a second-order backward difference implicit scheme. The <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code>  are parameters that specify the name and the path for the <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> files of the simulation, while the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">frequency</span></code> is relative to the number of time steps in the total time. The ratio between the total time of the simulation <code class="docutils literal notranslate"><span class="pre">1000</span></code> and the time step chosen <code class="docutils literal notranslate"><span class="pre">0.1</span></code> is 10000. Therefore, if the output frequency is set to <code class="docutils literal notranslate"><span class="pre">1000</span></code> a total of 11 <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> files will be obtained including an initial output file at time 0. The total time is chosen to be long in order to consider the flow periodic, since it has already passed a significant number of hills.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>It is important to remember that the output path folder, in this case <code class="docutils literal notranslate"><span class="pre">output</span></code> must exist before running the simulation.</p>
-</div>
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
