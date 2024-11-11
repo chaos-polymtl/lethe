@@ -34,9 +34,11 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt      = 0.1;
-  simulation_control_parameters.timeEnd = 1.0;
-  simulation_control_parameters.adapt   = false;
+  simulation_control_parameters.dt                                = 0.1;
+  simulation_control_parameters.time_end                          = 1.0;
+  simulation_control_parameters.adapt                             = false;
+  simulation_control_parameters.time_step_independent_of_end_time = true;
+
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -77,7 +79,7 @@ test()
   // average_solution.update_ghost_values();
 
   // Time and output info
-  const double time_end     = simulation_control_parameters.timeEnd;
+  const double time_end     = simulation_control_parameters.time_end;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   const double epsilon      = 1e-6;

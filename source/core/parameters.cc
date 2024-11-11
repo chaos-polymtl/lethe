@@ -105,6 +105,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
+      prm.declare_entry(
+        "time step independent of end time",
+        "true",
+        Patterns::Bool(),
+        "Ensures that the correct time step is kept when using adaptive time step simulations");
       prm.declare_entry("number mesh adapt",
                         "0",
                         Patterns::Integer(),
@@ -136,10 +141,16 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output prefix");
 
+
       prm.declare_entry("output frequency",
                         "1",
                         Patterns::Integer(),
-                        "Output frequency");
+                        "Output iteration frequency");
+
+      prm.declare_entry("output time frequency",
+                        "-1",
+                        Patterns::Double(),
+                        "Output time frequency");
 
       prm.declare_entry(
         "output boundaries",
@@ -158,8 +169,10 @@ namespace Parameters
                         "Display precision when writing to log",
                         "This setting percolates to all output to the log");
 
-
-      prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
+      prm.declare_entry("output times",
+                        "-1",
+                        Patterns::List(Patterns::Double()),
+                        "List of specific output times separated with a comma");
 
       prm.declare_entry(
         "output control",
@@ -225,9 +238,11 @@ namespace Parameters
         {
           std::runtime_error("Invalid output control scheme");
         }
-      dt             = prm.get_double("time step");
-      timeEnd        = prm.get_double("time end");
-      adapt          = prm.get_bool("adapt");
+      dt       = prm.get_double("time step");
+      time_end = prm.get_double("time end");
+      adapt    = prm.get_bool("adapt");
+      time_step_independent_of_end_time =
+        prm.get_bool("time step independent of end time");
       maxCFL         = prm.get_double("max cfl");
       max_dt         = prm.get_double("max time step");
       stop_tolerance = prm.get_double("stop tolerance");
@@ -242,8 +257,10 @@ namespace Parameters
                                     output_name.end(),
                                     '/'),
                         output_name.end());
-      output_frequency = prm.get_integer("output frequency");
-      output_time      = prm.get_double("output time");
+      output_iteration_frequency = prm.get_integer("output frequency");
+      output_time_frequency      = prm.get_double("output time frequency");
+      output_times_vector =
+        convert_string_to_vector<double>(prm, "output times");
       output_time_interval =
         convert_string_to_vector<double>(prm, "output time interval");
       output_boundaries = prm.get_bool("output boundaries");

@@ -38,12 +38,15 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                           = 0.1;
-  simulation_control_parameters.timeEnd                      = 1.0;
-  simulation_control_parameters.output_frequency             = 1;
-  simulation_control_parameters.adapt                        = true;
-  simulation_control_parameters.adaptative_time_step_scaling = 0.95;
-  simulation_control_parameters.max_dt                       = 1e6;
+  simulation_control_parameters.dt                                = 0.1;
+  simulation_control_parameters.time_end                          = 1.0;
+  simulation_control_parameters.output_iteration_frequency        = 1;
+  simulation_control_parameters.adapt                             = true;
+  simulation_control_parameters.adaptative_time_step_scaling      = 0.95;
+  simulation_control_parameters.max_dt                            = 1e6;
+  simulation_control_parameters.output_time_interval              = {0,
+                                                                     1.7976931348623157e3};
+  simulation_control_parameters.time_step_independent_of_end_time = true;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -81,7 +84,7 @@ test()
   GlobalBlockVectorType average_solution(locally_owned_dofs, mpi_communicator);
 
   // Time and output info
-  const double time_end     = simulation_control_parameters.timeEnd;
+  const double time_end     = simulation_control_parameters.time_end;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
@@ -94,7 +97,7 @@ test()
                              mpi_communicator);
 
   // Time loop
-  while (time < (time_end + epsilon)) // Until time reached end time
+  while (time < (time_end + dt)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {

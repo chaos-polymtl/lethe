@@ -40,6 +40,10 @@ protected:
   // Simulation end time
   double end_time;
 
+  // Boolean to keep the time step for the last iteration regardless of the end
+  // time specify. Both for fixed time step and adaptive time step.
+  bool time_step_independent_of_end_time;
+
   // Time step vector. This vector accumulates the time steps of the previous
   // iterations. This is required for multiple steps methods such as the bdfs.
   std::vector<double> time_step_vector;
@@ -77,18 +81,7 @@ protected:
   // Output iteration frequency
   // Controls the output of the simulation results when the output is controlled
   // by the iteration number.
-  unsigned int output_frequency;
-
-  // Output time frequency
-  // Controls the output of the simulation results when the output is controlled
-  // by the time
-  double output_time_frequency;
-
-  // Adds a condition to the generation of .vtu and .pvd files in addition to
-  // the output generation frequency. If specified in the parameter file, only
-  // the results within the specified simulation time interval will be
-  // generated.
-  std::vector<double> output_time_interval;
+  unsigned int output_iteration_frequency;
 
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
@@ -247,7 +240,7 @@ public:
   bool
   output_enabled() const
   {
-    return output_frequency != 0;
+    return output_iteration_frequency != 0;
   }
 
   /**
@@ -464,7 +457,7 @@ public:
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
-  void
+  virtual void
   save(const std::string &prefix);
 
   /**
@@ -472,7 +465,7 @@ public:
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
-  void
+  virtual void
   read(const std::string &prefix);
 
   /**
@@ -499,18 +492,40 @@ protected:
   // Max time step
   double max_dt;
 
+  // Time last output
+  double time_last_output;
+
+  // Specific output frequency for time output control
+  double output_time_frequency;
+
+  // Specific output times for time output control
+  std::vector<double> output_times_vector;
+
+  // Counter to move between output times given in previous vector
+  unsigned int output_times_counter;
+
+  // Variable to check whether we still have specific times to check in output
+  // times vector
+  bool no_more_output_times;
+
+  // Time interval for output of transient iterations either with time output
+  // control or iterations control
+  std::vector<double> output_time_interval;
+
+  // Output control type: iteration or type
+  Parameters::SimulationControl::OutputControl output_control;
+
   /**
    * @brief Calculates the next value of the time step. If adaptation
    * is enabled, the time step is calculated in order to ensure
    * that the CFL condition is bound by the maximal CFL value.
    * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step. If this surpasses the simulation time or if it surpasses the
-   * maximal CFL value, the time step is scaled down to ensure that this is
-   * respected.
+   * time step. If the time_step_independent_of_end_time is set to false, the
+   * time step is asjusted to meet exactly the end time; the default is to not
+   * modify the time step.
    */
   virtual double
   calculate_time_step() override;
-
 
 public:
   SimulationControlTransient(const Parameters::SimulationControl &param);
@@ -524,12 +539,38 @@ public:
   virtual bool
   integrate() override;
 
-
   /**
    * @brief Ends the simulation when the end time is reached
    */
   virtual bool
   is_at_end() override;
+
+  /**
+   * @brief Output iterations are calculated based on the value of the output time
+   * or the output interval and the output frequency within the interval.
+   */
+  virtual bool
+  is_output_iteration() override;
+
+  /**
+   * @brief Save the simulation control information from the checkpoint file and
+   * updates the time step vector, the CFL value, the time, the iteration number
+   * and the index of the output times vector if time control is used.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
+  void
+  save(const std::string &prefix) override;
+
+  /**
+   * @brief Reads the simulation control information from the checkpoint file and
+   * updates the time step vector, the CFL value, the time, the iteration number
+   * and the index of the output times vector if time control is used.
+   *
+   * @param prefix The prefix of the checkpoint of the simulation
+   */
+  void
+  read(const std::string &prefix) override;
 };
 
 /**
@@ -542,40 +583,6 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
-};
-
-class SimulationControlTransientDynamicOutput
-  : public SimulationControlTransient
-{
-protected:
-  // Time step has been forced
-  bool time_step_forced_output;
-
-  // Time at which there was a last output
-  double last_output_time;
-
-  /**
-   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
-   * that the CFL condition is bound by the maximal CFL value.
-   * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step. If this surpasses the simulation time, the output_time or if it
-   * surpasses the maximal CFL value, the time step is scaled down to ensure
-   * that these elements are respected.
-   */
-  virtual double
-  calculate_time_step() override;
-
-public:
-  SimulationControlTransientDynamicOutput(
-    const Parameters::SimulationControl &param);
-
-
-  /**
-   * @brief Output iterations are calculated based on the value of the time
-   * and the time frequency of the output
-   */
-  virtual bool
-  is_output_iteration() override;
 };
 
 class SimulationControlSteady : public SimulationControl
@@ -606,15 +613,6 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
-
-  /**
-   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
-   * that the CFL condition is bound by the maximal CFL value.
-   * The new time step is equal to adaptative_time_step_scaling * the previous
-   * time step.
-   */
-  virtual double
-  calculate_time_step() override;
 
   /**
    * @brief Ends the simulation when the desired residual is reached

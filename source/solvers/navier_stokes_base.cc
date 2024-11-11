@@ -28,6 +28,7 @@
 #include <deal.II/grid/tria_iterator.h>
 
 #include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/data_out_resample.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/solution_transfer.h>
@@ -134,14 +135,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     }
   else
     {
-      if (simulation_parameters.simulation_control.output_control ==
-          Parameters::SimulationControl::OutputControl::time)
-        simulation_control =
-          std::make_shared<SimulationControlTransientDynamicOutput>(
-            simulation_parameters.simulation_control);
-      else
-        simulation_control = std::make_shared<SimulationControlTransient>(
-          simulation_parameters.simulation_control);
+      simulation_control = std::make_shared<SimulationControlTransient>(
+        simulation_parameters.simulation_control);
     }
 
   // Provide the simulation control object to the physical property manager

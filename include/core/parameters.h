@@ -94,7 +94,11 @@ namespace Parameters
     double dt;
 
     // End time
-    double timeEnd;
+    double time_end;
+
+    // Boolean to keep the time step for the last iteration regardless of the
+    // end time specify. Both for fixed time step and adaptive time step.
+    bool time_step_independent_of_end_time;
 
     // Adaptative time stepping
     bool adapt;
@@ -135,14 +139,16 @@ namespace Parameters
       multiple_step_bdf,
     } bdf_startup_method;
 
+    // Frequency of the output (for iteration output control)
+    unsigned int output_iteration_frequency;
 
-    // Frequency of the output
-    unsigned int output_frequency;
+    // Time frequency of the output (for time output control)
+    double output_time_frequency;
 
-    // Frequency of the output
-    double output_time;
+    // Output at specific times (for time output control)
+    std::vector<double> output_times_vector;
 
-    // Time window for file output
+    // Time window for file output (for both iteration and time output control)
     std::vector<double> output_time_interval;
 
     // Enable output of the boundaries

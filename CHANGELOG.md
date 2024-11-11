@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-11
+
+### Changed
+
+- MAJOR The time step in the simulation control class is no longer modified by default to be exactly the end time of the simulation. Moreover, the time step is no longer modified to output Paraview files at certain times, therefore, the time output for transient simulations was refactored. [#1336](https://github.com/chaos-polymtl/lethe/pull/1341)
+
 ## [Master] - 2024-11-04
 
 ### Changed
@@ -18,7 +24,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fix
 
 - MINOR Force chains between local-ghost particle were being written multiple time when running in parallel. An arbitrary rule was added so that only one of the process is writing the force chain.[#1342](https://github.com/chaos-polymtl/lethe/pull/1342)
-
 
 ### Fix
 
