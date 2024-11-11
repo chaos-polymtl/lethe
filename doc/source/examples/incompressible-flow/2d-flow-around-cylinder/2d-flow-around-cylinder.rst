@@ -204,6 +204,14 @@ To print the values of the forces in the terminal we set ``verbosity`` to ``verb
 ----------------------
 Running the Simulation
 ----------------------
+
+The mesh must be generated before the simulation is launched. A ``gmsh`` file is provided in this example and it can be used to generate the mesh of the domain:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -2 cylinder-structured.geo
+
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-fluid`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text

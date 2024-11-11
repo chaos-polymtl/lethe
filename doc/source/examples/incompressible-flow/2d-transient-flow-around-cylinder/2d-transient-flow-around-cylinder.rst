@@ -213,6 +213,13 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 Running the Simulation
 ----------------------
 
+The mesh must be generated before the simulation is launched. A ``gmsh`` file is provided in this example and it can be used to generate the mesh of the domain:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -2 cylinder-structured.geo
+
 The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
 .. code-block:: text
