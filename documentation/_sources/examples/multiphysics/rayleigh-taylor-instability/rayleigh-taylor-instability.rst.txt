@@ -73,7 +73,7 @@ and the max CFL is :math:`0.8`.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (:math:`0.9` here). Using ``output control = time``, and ``output time = 0.005`` the simulation results are written every :math:`0.005\, \text{s}`.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (:math:`0.8` here).
 
 .. code-block:: text
 

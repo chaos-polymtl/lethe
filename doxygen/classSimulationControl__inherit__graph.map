@@ -1,8 +1,7 @@
 <map id="SimulationControl" name="SimulationControl">
-<area shape="rect" id="node1" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="5,46,144,73"/>
-<area shape="rect" id="node2" href="$classSimulationControlSteady.html" title=" " alt="" coords="199,21,383,47"/>
-<area shape="rect" id="node3" href="$classSimulationControlTransient.html" title=" " alt="" coords="192,71,391,98"/>
-<area shape="rect" id="node4" href="$classSimulationControlAdjointSteady.html" title=" " alt="" coords="460,5,645,47"/>
-<area shape="rect" id="node5" href="$classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="439,71,667,98"/>
-<area shape="rect" id="node6" href="$classSimulationControlTransientDynamicOutput.html" title=" " alt="" coords="453,123,652,164"/>
+<area shape="rect" id="node1" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="136,5,275,32"/>
+<area shape="rect" id="node2" href="$classSimulationControlSteady.html" title=" " alt="" coords="5,80,189,107"/>
+<area shape="rect" id="node3" href="$classSimulationControlTransient.html" title=" " alt="" coords="214,80,413,107"/>
+<area shape="rect" id="node4" href="$classSimulationControlAdjointSteady.html" title=" " alt="" coords="105,155,290,196"/>
+<area shape="rect" id="node5" href="$classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="314,162,542,189"/>
 </map>

@@ -491,7 +491,7 @@ time step of <span class="math notranslate nohighlight">\(0.01\)</span> second.<
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">time</span></code>, and <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">time</span> <span class="pre">=</span> <span class="pre">25</span></code> the simulation results are written every 25 s.</p>
+time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">time</span></code>, and <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">time</span> <span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">25</span></code> the simulation results are written every 25 s.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -508,7 +508,7 @@ time-step is modified during the simulation to keep the maximum value of the CFL
   set number mesh adapt            = 0
   set output name                  = rayleigh-benard_convection
   set output control               = time
-  set output time                  = 25
+  set output time frequency        = 25
   set output path                  = ./output/
 end
 </pre></div>

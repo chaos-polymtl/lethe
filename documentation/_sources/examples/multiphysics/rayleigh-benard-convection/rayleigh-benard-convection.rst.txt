@@ -73,7 +73,7 @@ time step of :math:`0.01` second.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time = 25`` the simulation results are written every 25 s.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time frequency = 25`` the simulation results are written every 25 s.
 
 .. note::   
     Note that the heating process is slow, and the velocity magnitudes are small inside the fluid. Hence, we expect large time-steps and a long simulation.
@@ -91,7 +91,7 @@ time step of :math:`0.01` second.
       set number mesh adapt            = 0
       set output name                  = rayleigh-benard_convection
       set output control               = time
-      set output time                  = 25
+      set output time frequency        = 25
       set output path                  = ./output/
     end
 
