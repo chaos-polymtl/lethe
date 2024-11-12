@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
+In this example, 50 two-dimensional particles are inserted in a circle and accelerate in the direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
 
 
 --------------
@@ -63,7 +63,7 @@ The ``type`` specifies the mesh format used. At the moment, Lethe supports two m
 
 Since the domain of the packing-in-circle problem is a circle, we use the *hyper_ball* as ``grid_type``. The ``grid arguments`` of this ``grid_type`` determine the position of the center, the radius of the ball (circle), and whether the colorize option is going to be used (``true``) or not (``false``). By setting the latter argument to ``true``, each of the boundaries will receive a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. If the ``colorize`` option is set to ``false``, all boundaries would have been given the ID ``0``. This will constitute the walls of the domain.
 
-The ``expand particle-wall contact search`` parameter is a feature of Lethe that expands the particle-wall contact detection list by including the walls of the neighboring cells.  This feature is necessary when the geometry is concave and presents curvature, as is the case of the circle in which the simulation is carried out.
+The ``expand particle-wall contact search`` parameter is a feature that expands the particle-wall contact detection list by including the walls of the neighboring cells.  This feature is necessary when the geometry is concave and presents curvature, as is the case of the circle in which the simulation is carried out.
 
 
 The last parameter is the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. Each refinement corresponds to dividing the cell element into two for each dimension, i.e, in 2D, each cell is divided into 4 per refinement.
@@ -98,15 +98,15 @@ First, the ``insertion method`` is selected. In ``volume`` insertion, the partic
 ``insertion frequency`` specifies the frequency of insertion steps. For example, if we set ``insertion frequency = 1000``, steps 0, 1000, 2000, 3000, ... will be defined as insertion iterations. 
 
 .. note::
-    We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may be inserted with anoverlap with the triangulation walls.
+    We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may be inserted with an overlap with the triangulation walls.
 
-``insertion distance threshold`` specifies the initial distance between the particles inserted. A random number is added to this initial distance to generate randomness in the particles. The random numbers are generated in the range [0 - ``insertion maximum offset``], and from a seed of ``insertion prn seed``.
+``insertion distance threshold`` specifies the initial distance between inserted particles. A random number is added to this initial position in every direction to generate randomness in the particles. The random numbers are generated in the range [0 - ``insertion maximum offset``], and from a seed of ``insertion prn seed``.
 
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient and friction coefficients.
+The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``lagrangian physical properties`` subsection. These properties include particle diameter and density, Young's modulus, Poisson's ratio, restitution coefficient and friction coefficients.
 
 .. code-block:: text
 
@@ -150,16 +150,16 @@ In the ``model parameters`` subsection, DEM simulation parameters are defined.
       set rolling resistance torque method          = constant_resistance
     end
 
-These parameters include ``contact detection method`` and  the ``dynamic contact search size coefficient``, ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * particle diameter), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models, and choices are explained in `DEM parameters <../../../parameters/dem/dem.html>`_.
+These parameters include ``contact detection method`` and  the ``dynamic contact search size coefficient``, ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * ``particle diameter``), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models, and choices are explained in `DEM parameters <../../../parameters/dem/dem.html>`_.
 
-By setting ``contact detection method = dynamic``, Lethe rebuilds the contact lists automatically. In this mode, Lethe stores the displacements of each particle in the simulation since the last contact detection. If the maximum displacement of a particle exceeds the smallest contact search criterion, then the iteration is a contact search iteration and the contact list is rebuilt. The smallest contact search criterion is the minimum of the smallest cell size in the triangulation or the radius of the spherical region in the fine search and it is defined as:
+By setting ``contact detection method = dynamic``, the contact lists is automatically rebuilt. In this mode, Lethe stores the displacements of each particle in the simulation since the last contact detection. If the maximum displacement of a particle exceeds the smallest contact search criterion, then the contact list is rebuilt during the time step. The smallest contact search criterion is the minimum of the smallest cell size in the triangulation or the radius of the spherical region in the fine search and it is defined as:
  
 .. math::
     \phi=\min({d_c^{min}-r_p^{max},\epsilon(\alpha-1)r_p^{max}})
 
 where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon}`, and :math:`{\alpha}` denote smallest contact search criterion, minimum cell size (in the triangulation), maximum particle radius (in polydisperse simulations), ``dynamic contact search size coefficient``, and ``neighborhood threshold``.
 
-``dynamic contact search size coefficient``, as illustrated in the equation above, is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-0.9.
+``dynamic contact search size coefficient``, as illustrated in the equation above, is a safety factor to ensure that late detection of particles contact will not occur in simulations where the ``contact detection method`` is set to ``dynamic`` . Its value should be defined generally in the range of 0.5-0.9.
 
 
 Simulation Control
