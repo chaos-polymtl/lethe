@@ -320,7 +320,7 @@ public:
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
     const VectorType                                     &current_solution,
-    const Function<dim>                                  *immersed_solid_shape)
+    Shape<dim>                                           *immersed_solid_shape)
   {
     fe_interface_values_tracer.reinit(
       cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
@@ -361,8 +361,10 @@ public:
           ExcMessage(
             "Shape is required for tracer assembly, but the shape is a nullptr"));
 
-        immersed_solid_shape->value_list(face_quadrature_points,
-                                         sdf_face_values);
+        unsigned int n_face_q_points = face_quadrature_points.size();
+        for (unsigned int q = 0; q < n_face_q_points; q++)
+          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
+            face_quadrature_points[q], cell);
       }
   }
 
@@ -415,8 +417,10 @@ public:
           ExcMessage(
             "Shape is required for tracer assembly, but the shape is a nullptr"));
 
-        immersed_solid_shape->value_list(face_quadrature_points,
-                                         sdf_face_values);
+        unsigned int n_face_q_points = face_quadrature_points.size();
+        for (unsigned int q = 0; q < n_face_q_points; q++)
+          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
+            face_quadrature_points[q], cell);
       }
   }
 
