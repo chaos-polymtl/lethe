@@ -16,7 +16,7 @@ Features
 
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 - Parameter file: ``examples/sharp-immersed-boundary/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
