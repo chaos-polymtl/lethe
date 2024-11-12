@@ -28,7 +28,7 @@ All files mentioned below are located in the example's folder (``examples/dem/3d
 Description of the Case
 -------------------------
 
-This simulation consists of a single particle bouncing on a flat plane. The particle start at a rest position in the air and accelerate due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles form leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle will lose some kinetic energy and the height of the next bounce will decrease until the particle comes to a complete stop.
+This simulation consists of a single particle bouncing on a flat plane. The particle is inserted at rest at a specific position and accelerates due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles from leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle loses kinetic energy, thus the height of the next bounce decreases until the particle comes to a complete stop.
 
 ---------------
 Parameter File
@@ -51,24 +51,24 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 2.0 m 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~
 
-Since the insertion of the particle must be done at as specific height, the ``list`` insertion method is used. The ``insertion frequency`` can be set to any value, since we're only using one particle. The particle is at a height of 0.5 m in the center of the X,Y plane.
+Since the insertion of the particle must be done at a specific location, the ``list`` insertion method is used. The ``insertion frequency`` can be set to any value, since we're only using one particle. The insertion location is centered in the X-Y plane and at a height of 0.5 m in the Z direction.
 
 .. code-block:: text
 
     subsection insertion info
-      set insertion method                               = list
-      set insertion frequency                            = 10000
-      set list x = 1.0
-      set list y = 1.0
-      set list z = 0.5
+      set insertion method     = list
+      set insertion frequency  = 10000
+      set list x               = 1.0
+      set list y               = 1.0
+      set list z               = 0.5
     end
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Different spring constant and restitution coefficient are used in this example. The spring constant is not defined explicitly in the parameter file, and, consequently, the physical properties must be chosen to obtain a desired spring constant. The interested reader can consult `DEM parameters`_ for more information about the definition of the sprint constant.
+Different spring constant and restitution coefficient are used in this example. The spring constant is not defined explicitly in the parameter file, consequently the physical properties must be chosen to obtain a desired spring constant. The interested reader can consult `DEM theory <../../../theory/multiphase/cfd_dem/dem.html>`_ for more information about the definition of the sprint constant.
 
-The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the high value of 1E12 Pa.
+The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the value of 1e3 GPa.
 
 The following properties are defined in the ``bouncing_particle_original.tpl``  according to MFIX DEM02 verification test.
 
@@ -93,14 +93,14 @@ The following properties are defined in the ``bouncing_particle_original.tpl``  
       set friction coefficient wall    = 0.
     end
 
-As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.tpl`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example. This code allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
+As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.tpl`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example which generates 6 parameter files each using different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
 
 .. code-block:: text
     :class: copy-button
 
     python3 bouncing_particle_case_generator.py 5000000
 
-Where ``5000000`` represent the normal spring constant that is wish to be used for the simulations. This code will generate 6 files named ``bouncing_particle_XX.prm``, where ``XX`` represent the value of the restitution coefficient used in it.
+Where ``5000000`` represent the normal spring constant that is desired for the simulations. This code will generate 6 files named ``bouncing_particle_XX.prm``, where ``XX`` represent the value of the restitution coefficient used in it. (``10`` means restitution of 1.0)
 
 ----------------------
 Running the Simulation
@@ -112,19 +112,19 @@ Once all 6 parameter file are created, the simulation can be launched one after 
 
   for i in $(seq -w 5 10); do lethe-particles bouncing_particle_${i}.prm ; done
 
-All 6 simulations takes less than 2 minutes to run. A folder named according to the restitution coefficient of every simulation used will be generated (``/out_xx``).
+All 6 simulations takes less than 2 minutes to run. Folders named according to the restitution coefficient of every simulation used will be generated (``/out_xx``).
 
 ---------------
 Postprocessing
 ---------------
-A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It is used to compare the height reached by the particle after each rebound with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
+A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It compares the height reached by the particle after each bounce with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
 
 .. math::
         h_{k}^{max} = (h_0 - r_p)e^{2k} + rp
 
-with :math:`k` represent the :math:`k^{th}` bounce, :math:`h_0` the starting height and :math:`r_p` the radius of the particle.
+with :math:`k` representing the :math:`k^{th}` bounce, :math:`h_0` the starting height and :math:`r_p` the radius of the particle.
 
-Once the 6 simulations have been run, use the following line in your command line to run the post-processing code :
+Once all 6 simulations have been run, use the following line in your terminal to run the post-processing code :
 
 .. code-block:: text
   :class: copy-button
@@ -146,7 +146,7 @@ Animation of a bouncing particle with different restitution coefficient (:math:`
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/B1n776jHdoo" frameborder="0" allowfullscreen></iframe>
 
-It can be seen that the particle with a restitution coefficient (:math:`e`) of 1.0 always rebounds at the same height. The other particles show a reduction in rebound height which follows the analytical solution expressed earlier.
+The particle with a restitution coefficient (:math:`e`) of 1.0 always rebounds at the same height. Other particles show a reduction in rebound height which follows the analytical solution expressed earlier.
 
 Using the post-processing code, it is possible to compare the effect of the normal spring constant of the conservation of the kinetic energy during the collision.
 
