@@ -93,7 +93,7 @@ The following properties are defined in the ``bouncing_particle_original.tpl``  
       set friction coefficient wall    = 0.
     end
 
-As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.tpl`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example which allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
+As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.tpl`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example which generates 6 parameter files each using different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
 
 .. code-block:: text
     :class: copy-button
