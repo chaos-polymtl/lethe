@@ -82,4 +82,3 @@ subsection mesh
   set initial refinement                  = 3
   set expand particle-wall contact search = true
 end
-
