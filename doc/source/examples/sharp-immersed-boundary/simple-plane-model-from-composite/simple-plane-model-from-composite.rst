@@ -11,7 +11,7 @@ Features
 - Geometry definition
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/simple-plane-model-from-composite``).
