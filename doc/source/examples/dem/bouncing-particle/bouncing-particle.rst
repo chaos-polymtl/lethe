@@ -68,7 +68,7 @@ Lagrangian Physical Properties
 
 Different spring constant and restitution coefficient are used in this example. The spring constant is not defined explicitly in the parameter file, consequently the physical properties must be chosen to obtain a desired spring constant. The interested reader can consult `DEM theory <../../../theory/multiphase/cfd_dem/dem.html>`_ for more information about the definition of the sprint constant.
 
-The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the value of \SI{1e12}{\pascal}.
+The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the value of 1e3 GPa.
 
 The following properties are defined in the ``bouncing_particle_original.tpl``  according to MFIX DEM02 verification test.
 
