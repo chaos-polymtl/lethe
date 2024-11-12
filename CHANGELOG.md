@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fix
 
 - MINOR Time step can now be changed after a restart if adaptive time stepping is disabled. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
+
 - MINOR Application of the immersed solid tanh diffusivity model is now faster thanks to using optimizations from the Shape class. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
 
 ## [Master] - 2024-11-04
