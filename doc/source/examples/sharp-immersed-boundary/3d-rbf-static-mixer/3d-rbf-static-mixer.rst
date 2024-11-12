@@ -24,7 +24,7 @@ Features
 
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 All files mentioned below are located in the example's folder (``/examples/sharp-immersed-boundary/3d-rbf-static-mixer/``).
 
