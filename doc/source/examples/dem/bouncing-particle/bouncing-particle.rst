@@ -28,7 +28,7 @@ All files mentioned below are located in the example's folder (``examples/dem/3d
 Description of the Case
 -------------------------
 
-This simulation consists of a single particle bouncing on a flat plane. The particle is inserted at rest at a specific position and accelerate due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles form leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle loses kinetic energy, thus the height of the next bounce decreases until the particle comes to a complete stop.
+This simulation consists of a single particle bouncing on a flat plane. The particle is inserted at rest at a specific position and accelerates due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles from leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle loses kinetic energy, thus the height of the next bounce decreases until the particle comes to a complete stop.
 
 ---------------
 Parameter File
@@ -51,7 +51,7 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 2.0 m 
 Insertion Info
 ~~~~~~~~~~~~~~~~~~
 
-Since the insertion of the particle must be done at as specific height, the ``list`` insertion method is used. The ``insertion frequency`` can be set to any value, since we're only using one particle. The insertion location is centered in the X-Y plane and at a height of 0.5 m in the Z direction.
+Since the insertion of the particle must be done at a specific location, the ``list`` insertion method is used. The ``insertion frequency`` can be set to any value, since we're only using one particle. The insertion location is centered in the X-Y plane and at a height of 0.5 m in the Z direction.
 
 .. code-block:: text
 
@@ -68,7 +68,7 @@ Lagrangian Physical Properties
 
 Different spring constant and restitution coefficient are used in this example. The spring constant is not defined explicitly in the parameter file, consequently the physical properties must be chosen to obtain a desired spring constant. The interested reader can consult `DEM theory <../../../theory/multiphase/cfd_dem/dem.html>`_ for more information about the definition of the sprint constant.
 
-The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. Young's modulus of the wall is also being set arbitrarily to the value of \SI{1e12}{\pascal}.
+The ``poisson ratio`` of both the wall and the particle are being set to 0.3 arbitrarily. The Young's modulus of the wall is also being set arbitrarily to the value of \SI{1e12}{\pascal}.
 
 The following properties are defined in the ``bouncing_particle_original.tpl``  according to MFIX DEM02 verification test.
 

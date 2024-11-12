@@ -13,7 +13,7 @@ import os
 
 class Wall_prop:
     poisson_coef_wall = 0.3  # Wall poisson ratio
-    young_wall = 1000000000000  # Wall Young's modulus
+    young_wall = 1e12  # Wall Young's modulus
 
 
 class Particle_prop:
