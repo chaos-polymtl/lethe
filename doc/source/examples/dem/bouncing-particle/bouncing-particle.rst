@@ -117,7 +117,7 @@ All 6 simulations takes less than 2 minutes to run. Folders named according to t
 ---------------
 Postprocessing
 ---------------
-A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It uses is to compare the height reached by the particle after each bounce with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
+A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It compares the height reached by the particle after each bounce with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
 
 .. math::
         h_{k}^{max} = (h_0 - r_p)e^{2k} + rp
