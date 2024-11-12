@@ -95,7 +95,7 @@ In this example, we use the ``frequent`` load balancing method to ensure that th
     end
     subsection load balancing
       set load balance method                     = frequent
-      set frequency                               = 10000
+      set frequency                               = 5000
       set threshold                               = 1.3
     end
     set particle particle contact force method  = hertz_mindlin_limit_overlap
