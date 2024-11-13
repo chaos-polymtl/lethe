@@ -139,7 +139,7 @@ Tracer Boundary Conditions
         set id   = 0
         set type = dirichlet
         subsection dirichlet
-          set Function expression = if(y<0,t<0.1?0:(t<1.1?1:0),0)
+          set Function expression = if(y<0,t<1?0:(t<11?1:0),0)
         end
       end
       subsection bc 1

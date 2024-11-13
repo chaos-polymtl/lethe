@@ -6,7 +6,7 @@ set dimension = 3
 subsection simulation control
   set method    = bdf1
   set time end  = 250
-  set time step = 0.1
+  set time step = 1
 
   set adapt             = false
   set number mesh adapt = 0
@@ -14,12 +14,12 @@ subsection simulation control
   set output path      = ./output/
   set output name      = output
   set output control   = iteration
-  set output frequency = 5
+  set output frequency = 1
 end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 50
+  set frequency  = 5
   set filename   = restart
   set restart    = true
 end
@@ -101,7 +101,7 @@ subsection boundary conditions tracer
     set id   = 0
     set type = dirichlet
     subsection dirichlet
-      set Function expression = if(y<0,t<0.1?0:(t<1.1?1:0),0)
+      set Function expression = if(y<0,t<1?0:(t<11?1:0),0)
     end
   end
   subsection bc 1
