@@ -7,4 +7,4 @@ Tracer
     :glob:
     :titlesonly:
 
-    tracer-through-cad-junction/tracer-through-cad-junction
+    tracer-in-static-mixer/tracer-in-static-mixer

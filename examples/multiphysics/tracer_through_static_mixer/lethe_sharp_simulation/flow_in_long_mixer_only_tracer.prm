@@ -1,0 +1,220 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+set dimension = 3
+
+subsection simulation control
+  set method    = bdf1
+  set time end  = 250
+  set time step = 0.1
+
+  set adapt             = false
+  set number mesh adapt = 0
+
+  set output path      = ./output/
+  set output name      = output
+  set output control   = iteration
+  set output frequency = 5
+end
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 50
+  set filename   = restart
+  set restart    = true
+end
+
+subsection multiphysics
+  set fluid dynamics = false
+  set tracer         = true
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+end
+
+# The problem is set in cm, seconds and grams
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity      = 0.01
+    set tracer diffusivity model = immersed solid tanh
+    subsection immersed solid tanh
+      set tracer diffusivity inside  = 1e-10
+      set tracer diffusivity outside = 1e-5
+      set thickness                  = 5e-1
+    end
+  end
+end
+
+subsection stabilization
+  set pressure scaling factor = 1e2
+end
+
+subsection initial conditions
+  set type = average_velocity_profile
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 6,1,1: -150,-25,-25: 150,25,25: true
+  set initial refinement = 3
+end
+
+subsection mesh adaptation
+  set type                 = kelly
+  set fraction type        = number
+  set max number elements  = 2000000
+  set max refinement level = 5
+  set min refinement level = 0
+  set frequency            = 1000000
+end
+
+subsection particles
+  set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 1
+
+  subsection extrapolation function
+    set length ratio  = 4
+    set stencil order = 1
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 4
+    set refine mesh inside radius factor  = 1
+    set refine mesh outside radius factor = 1
+    set refinement zone extrapolation     = false
+  end
+  subsection particle info 0
+    set type            = composite
+    set shape arguments = mixer_long.composite
+  end
+end
+
+subsection boundary conditions tracer
+  set number         = 6
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = if(y<0,t<0.1?0:(t<1.1?1:0),0)
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
+  subsection bc 3
+    set id   = 3
+    set type = outlet
+  end
+  subsection bc 4
+    set id   = 4
+    set type = outlet
+  end
+  subsection bc 5
+    set id   = 5
+    set type = outlet
+  end
+end
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = noslip
+  end
+end
+
+subsection post-processing
+  set verbosity = verbose
+
+  set calculate average velocities = true
+  set initial time                 = 30e-4
+
+  # Flow post-processing
+  set calculate pressure drop = true
+  set calculate flow rate     = true
+  set inlet boundary id       = 0
+  set outlet boundary id      = 1
+
+  # Tracer post-processing
+  set calculate tracer statistics = true
+  set tracer statistics name      = tracer_statistics
+  set calculate tracer flow rate  = true
+  set tracer flow rate name       = tracer_flow_rate
+end
+
+subsection timer
+  set type = iteration
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = verbose
+    set tolerance      = 1e-4
+    set max iterations = 50
+  end
+  subsection tracer
+    set verbosity      = verbose
+    set tolerance      = 1e-12
+    set max iterations = 15
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = verbose
+    set method                                = gmres
+    set max iters                             = 1000
+    set max krylov vectors                    = 1000
+    set relative residual                     = 1e-2
+    set minimum residual                      = 1e-6
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-6
+    set force linear solver continuation      = false
+  end
+  subsection tracer
+    set verbosity                             = verbose
+    set method                                = gmres
+    set max iters                             = 1000
+    set max krylov vectors                    = 1000
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-13
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-6
+    set force linear solver continuation      = false
+  end
+end
+
