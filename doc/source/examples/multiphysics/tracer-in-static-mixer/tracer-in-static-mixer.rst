@@ -139,7 +139,7 @@ Tracer Boundary Conditions
         set id   = 0
         set type = dirichlet
         subsection dirichlet
-          set Function expression = if(y<0,t<1?0:(t<11?1:0),0)
+          set Function expression = if(y<0,t<11?0:(t<61?1:0),0)
         end
       end
       subsection bc 1
@@ -164,7 +164,7 @@ Tracer Boundary Conditions
       end
     end
 
-#. The boundary conditions are ``time dependent`` because of the inlet.
+#. The boundary conditions are ``time dependent`` because of the inlet. We put conditions on :math:`y<0` and :math:`11 < t < 61` to inject a pulse only on the lower half of the inlet.
 #. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition is also appropriate since no flow is occurring through these; it is then equivalent to a impermeable wall.
 
 Post-processing
@@ -206,13 +206,13 @@ Simulation control
 
     subsection simulation control
       set method    = bdf1
-      set time end  = 50
-      set time step = 0.1
+      set time end  = 500
+      set time step = 10
       ...
     end
 
-#. We use a longer ``time step`` of ``0.1``.
-#. We let the simulation run until ``time end = 50`` to allow the tracer to pass through.
+#. We use a longer ``time step`` of ``10``.
+#. We let the simulation run until ``time end = 500`` to allow the tracer to pass through.
 
 Restart
 ******************
@@ -270,14 +270,39 @@ The simulation can be launched on multiple cores using ``mpirun`` and the ``leth
 -------
 Results
 -------
+After the simulation has run, streamlines can be used to visualize the pressure and velocity fields through the static mixer, as well as show the mixing effects that can be obtained.
 
-The results in ``.pvd`` format can then be viewed using visualisation software such as Paraview. 
++-----------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/long_static_mixer_medium_thick_p_v.png                                                                  |
+|     :align: center                                                                                                          |
+|     :width: 800                                                                                                             |
+|     :name: Streamlines in the static mixer colored by velocity magnitude and pressure                                       |
+|                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------+
 
-.. image:: images/paraview-tracer.png
-    :alt: Simulation results in Meshgrid format
-    :align: center
 
-The higher presence of tracer in the outlet on the same side as the tracer inlet may indicate poor mixing.
-As the tracer diffusivity is low, the mixing between the streams comes mainly from advection.
-However, since the kinematic viscosity is high, the flow is laminar (i.e. dominated by viscous forces) and
-the streamlines do not cross. 
+The mass conservation and pressure drop can both be monitored by plotting their values in time, extracted from ``/output/flow_rate.dat`` and ``/output/pressure_drop.dat``. The Python script ``postprocess_flow_and_pressure.py`` generates the following plot:
+
+.. code-block:: text
+  :class: copy-button
+
+    python3 postprocess_tracer.py
+
+
++-----------------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/tracer_flow_rates.svg                                                                                   |
+|     :align: center                                                                                                          |
+|     :width: 800                                                                                                             |
+|     :name: Tracer flow rates                                                                                                |
+|                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------+
+
+As the plot shows, the mass conservation is constant after only a few time steps; it depends mostly on the length ratio, residual and grid refinement. The pressure drop, on the other hand, decreases steadily. We stopped the simulation after 40 time steps because the decrease is then low enough, but increasing the total duration would be interesting to get a better idea of the steady-state pressure drop.
+
+
+
+---------
+Reference
+---------
+
+.. [#thingiverse] "Group 9., Helix Static Mixer," *Thingiverse* Available: https://www.thingiverse.com/thing:3915237

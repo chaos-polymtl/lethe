@@ -5,8 +5,8 @@ set dimension = 3
 
 subsection simulation control
   set method    = bdf1
-  set time end  = 250
-  set time step = 1
+  set time end  = 500
+  set time step = 10
 
   set adapt             = false
   set number mesh adapt = 0
@@ -101,7 +101,7 @@ subsection boundary conditions tracer
     set id   = 0
     set type = dirichlet
     subsection dirichlet
-      set Function expression = if(y<0,t<1?0:(t<11?1:0),0)
+      set Function expression = if(y<0,t<11?0:(t<61?1:0),0)
     end
   end
   subsection bc 1
