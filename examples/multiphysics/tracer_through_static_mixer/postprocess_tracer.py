@@ -1,65 +1,54 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# We read the output files
-with open('./output/flow_rate.dat', 'r') as input_file:
+# We read the output file
+with open('./output/tracer_flow_rate.dat', 'r') as input_file:
     lines = input_file.readlines()
-    flow_in    = []
-    flow_out   = []
+    tracer_time       = []
+    tracer_flow_in    = []
+    tracer_flow_out   = []
     for line in lines[1:]:
         newLine = line.strip(' ').split()
-        flow_in   .append(float(newLine[1]))
-        flow_out  .append(float(newLine[2]))
-        
-with open('./output/pressure_drop.dat', 'r') as input_file:
-    lines = input_file.readlines()
-    time_steps    = []
-    pressure_drop = []
-    for line in lines[1:]:
-        newLine = line.strip(' ').split()
-        time_steps   .append(float(newLine[0]))
-        pressure_drop.append(float(newLine[1]))
+        tracer_time      .append(float(newLine[0]))
+        tracer_flow_in   .append(float(newLine[1]))
+        tracer_flow_out  .append(float(newLine[2]))
+
+tracer_time     = np.array(tracer_time)
+tracer_flow_in  = np.array(tracer_flow_in)
+tracer_flow_out = np.array(tracer_flow_out)
 
 
-
-time_steps    = np.array(time_steps)
-flow_in       = np.array(flow_in)
-flow_out      = np.array(flow_out)
-pressure_drop = np.array(pressure_drop)
-
-mass_conservation = flow_in + flow_out
-
-
-# We plot the mass conservation and pressure drop
+# We plot the tracer flow rates
 fig,  ax  = plt.subplots()
-
-ax.plot(time_steps,\
-    np.abs(mass_conservation/np.max(mass_conservation)),\
-    label="Mass conservation [%]",\
+ax.plot(tracer_time,\
+    np.abs(tracer_flow_in),\
+    label="Tracer flow rate at inlet",\
     linestyle="-",\
     marker="3",\
     c = "blue")
 
-ax.plot(time_steps,\
-    pressure_drop/1e4,\
-    label="Pressure drop [kPa]",\
+ax.plot(tracer_time,\
+    np.abs(tracer_flow_out),\
+    label="Tracer flow rate at outlet",\
     linestyle="-",\
     marker="4",\
     c = "black")
 
 ax.set_xlabel("Time (s)")
 ax.set_ylabel("[-]")
-ax.set_title("Mass Conservation and Pressure Drop in Static Mixer")
-ax.set_yscale('log')
-ax.set_xticks([0, 0.002, 0.004])
+ax.set_title("Tracer flow rates")
+#ax.set_yscale('lin')
+ax.set_xticks([0, 100, 200, 300, 400, 500])
+ax.set_yticks([0, 250, 500, 750, 1000, 1250])
 ax.grid(True, which="both", ls="-")
 ax.legend(loc='upper left', bbox_to_anchor=(1,1),
       fancybox=True, shadow=True, ncol=1)
-file_output = "./mass_and_pressure_drop.png"
+file_output = "./tracer_flow_rates.png"
 fig.savefig(file_output,dpi=300,bbox_inches='tight')
-file_output = "./mass_and_pressure_drop.svg"
+file_output = "./tracer_flow_rates.svg"
 fig.savefig(file_output,dpi=300,bbox_inches='tight')
+
