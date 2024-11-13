@@ -249,7 +249,7 @@ This section defines each parameter for the particles and has certain requiremen
     end
 
 
-#. In ``subsection extrapolation function``, ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass conservation. Mass conservation can also be increased using a finer grid.
+#. In ``subsection extrapolation function``, ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass conservation. Mass conservation can also be improved using a finer grid.
 #. In ``subsection local mesh refinement``, ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
 #. In ``subsection particle info 0``, ``type = composite`` and ``shape arguments = mixer_long.composite`` define the shape itself. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
 
