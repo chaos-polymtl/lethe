@@ -572,9 +572,6 @@ end
     set relative residual                         = 1e-4
     set minimum residual                          = 1e-8
     set preconditioner                            = amg
-    set amg preconditioner ilu fill               = 0
-    set amg preconditioner ilu absolute tolerance = 1e-12
-    set amg preconditioner ilu relative tolerance = 1.00
   end
 end
 </pre></div>
@@ -612,6 +609,10 @@ end
 </section>
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
+<p>The mesh must be generated before the simulation is launched. A <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> file is provided in this example and it can be used to generate the mesh of the domain:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gmsh -2 cylinder-structured.geo
+</pre></div>
+</div>
 <p>The simulation is launched in parallel using 10 CPUs, as explained in <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html">2D Transient flow around an Ahmed body</a> :</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 10 lethe-fluid cylinder.prm
 </pre></div>
@@ -659,17 +660,17 @@ end
 <tbody>
 <tr class="row-even"><td><p>Lethe example</p></td>
 <td><p>1.396 <span class="math notranslate nohighlight">\(\pm\)</span> 0.048</p></td>
-<td><p>-0.003 <span class="math notranslate nohighlight">\(\pm\)</span> 0.072</p></td>
+<td><p>-0.003 <span class="math notranslate nohighlight">\(\pm\)</span> 0.72</p></td>
 <td><p>0.2</p></td>
 </tr>
 <tr class="row-odd"><td><p>Lethe Sharp <a class="footnote-reference brackets" href="#barbeau2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
 <td><p>1.395 <span class="math notranslate nohighlight">\(\pm\)</span> 0.047</p></td>
-<td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.071</p></td>
+<td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.71</p></td>
 <td><p>0.2</p></td>
 </tr>
 <tr class="row-even"><td><p>Braza et al. <a class="footnote-reference brackets" href="#braza1986" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
 <td><p>1.400 <span class="math notranslate nohighlight">\(\pm\)</span> 0.050</p></td>
-<td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.075</p></td>
+<td><p><span class="math notranslate nohighlight">\(\pm\)</span> 0.75</p></td>
 <td><p>0.2</p></td>
 </tr>
 </tbody>

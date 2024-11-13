@@ -171,9 +171,6 @@ For 2D problems, the ``amg`` preconditioner is an adequate preconditioner. It is
       set relative residual                         = 1e-4
       set minimum residual                          = 1e-8
       set preconditioner                            = amg
-      set amg preconditioner ilu fill               = 0
-      set amg preconditioner ilu absolute tolerance = 1e-12
-      set amg preconditioner ilu relative tolerance = 1.00
     end
   end
 
@@ -215,6 +212,13 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
 ----------------------
 Running the Simulation
 ----------------------
+
+The mesh must be generated before the simulation is launched. A ``gmsh`` file is provided in this example and it can be used to generate the mesh of the domain:
+
+.. code-block:: text
+  :class: copy-button
+
+  gmsh -2 cylinder-structured.geo
 
 The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
@@ -278,15 +282,15 @@ The obtained values of the drag and lift coefficients as well as the Strouhal nu
      - :math:`S_t`
    * - Lethe example
      - 1.396 :math:`\pm` 0.048
-     - -0.003 :math:`\pm` 0.072
+     - -0.003 :math:`\pm` 0.72
      - 0.2
    * - Lethe Sharp [#barbeau2022]_
      - 1.395 :math:`\pm` 0.047
-     - :math:`\pm` 0.071
+     - :math:`\pm` 0.71
      - 0.2
    * - Braza et al. [#braza1986]_
      - 1.400 :math:`\pm` 0.050
-     - :math:`\pm` 0.075
+     - :math:`\pm` 0.75
      - 0.2
 
 

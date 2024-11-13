@@ -590,6 +590,10 @@ end
 </section>
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
+<p>The mesh must be generated before the simulation is launched. A <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> file is provided in this example and it can be used to generate the mesh of the domain:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>gmsh -2 cylinder-structured.geo
+</pre></div>
+</div>
 <p>Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> executable is within your path, the simulation can be launched by typing:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid cylinder.prm
 </pre></div>

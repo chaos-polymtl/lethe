@@ -13,7 +13,7 @@ Features
 - Postprocessing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/chaos-polymtl/lethe/tree/master/contrib/postprocessing>`_
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 All files mentioned below are located in the example's folder (``examples/dem/3d-oblique-wall-impact``).
@@ -147,7 +147,7 @@ A Python post-processing code called ``oblique_wall_impact_postprocessing.py`` i
 
 .. important::
 
-    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing_pyvista.html>`_ for details.
 
 A figure will be generated which compares the simulation results with the experimental data.
 
