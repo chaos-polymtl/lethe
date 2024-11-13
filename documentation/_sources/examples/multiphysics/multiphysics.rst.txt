@@ -64,6 +64,10 @@ Multiphysics
       multiphysics_3 [label="Tracer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html"];  
 
       multiphysics_3_1 [label="Tracer through CAD Junction in Simplex", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html"];
+      
+      multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
+
+      multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html"];
 
       multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
 
@@ -96,5 +100,6 @@ Multiphysics
       multiphysics_3 -> multiphysics_3_1:w;
 
       multiphysics_4 -> multiphysics_4_1:w;
+      multiphysics_4 -> multiphysics_4_2:w;
     }
 
