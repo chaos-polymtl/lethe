@@ -455,7 +455,7 @@
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">/examples/sharp-immersed-boundary/3d-rbf-static-mixer/</span></code>).</p>
 <p><strong>RBF preparation files:</strong></p>
 <ul class="simple">
@@ -520,14 +520,14 @@ make -j6
 <li><p>The number of subdivisions in each of the three spatial dimensions: <code class="docutils literal notranslate"><span class="pre">16</span></code>;</p></li>
 <li><p>The number of adaption cycles. Using <code class="docutils literal notranslate"><span class="pre">4</span></code> adaptation cycles over a initial number of <code class="docutils literal notranslate"><span class="pre">16</span></code> subdivisions results in a level of detail equivalent to a number of <code class="docutils literal notranslate"><span class="pre">256</span></code> subdivisions;</p></li>
 <li><p>The radius ratio means that each node <cite>sees</cite> up to <code class="docutils literal notranslate"><span class="pre">3</span></code> neighbors in each direction, which results in a smooth approximation.</p></li>
-<li><p>The base function of <code class="docutils literal notranslate"><span class="pre">1</span></code> means that the basis function is of Wendland type. This is the best function to represent geometries from our experience.</p></li>
+<li><p>The base function of <code class="docutils literal notranslate"><span class="pre">1</span></code> means that the basis function is of Wendland type. This is the best function to represent geometries, from our experience.</p></li>
 <li><p>The mesh range of <code class="docutils literal notranslate"><span class="pre">0.1</span></code> means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.</p></li>
 </ol>
 <p>Assuming that the <code class="docutils literal notranslate"><span class="pre">RBF_example_00001</span></code> executable is within your <cite>$PATH</cite> or copied to <code class="docutils literal notranslate"><span class="pre">/rbf_generation/</span></code> directory, we can launch the RBF generation from <code class="docutils literal notranslate"><span class="pre">/rbf_generation/</span></code> using the command line:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>RBF_example_00001 ./ helix RBF.param
 </pre></div>
 </div>
-<p>After about 40 minutes this executable will output <code class="docutils literal notranslate"><span class="pre">RBF_helix.output</span></code>, which is the encoding of the shape, and <code class="docutils literal notranslate"><span class="pre">RBF_helix.vtu</span></code>, which can be used to see the resulting approximation.</p>
+<p>After about 40 minutes, this executable will output <code class="docutils literal notranslate"><span class="pre">RBF_helix.output</span></code>, which is the encoding of the shape, and <code class="docutils literal notranslate"><span class="pre">RBF_helix.vtu</span></code>, which can be used to see the resulting approximation.</p>
 </section>
 <section id="creation-of-the-composite-shape-file">
 <h3>Creation of the Composite Shape File<a class="headerlink" href="#creation-of-the-composite-shape-file" title="Link to this heading">#</a></h3>
@@ -564,7 +564,7 @@ operations
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Although we are interested in the steady-state solution of the flow, we use <code class="docutils literal notranslate"><span class="pre">bdf1</span></code> time integration. The required time to reach steady state in our case is low, but solving it with a small value of the time step enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.</p>
+<p>Although we are interested in the steady-state solution of the flow, we use <code class="docutils literal notranslate"><span class="pre">bdf1</span></code> time integration. The required time to reach steady state in our case is low, but solving it with a small <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method      = bdf1
   set time end    = 40e-4
@@ -590,12 +590,9 @@ end
 <h3>Mesh and Mesh Adaptation<a class="headerlink" href="#mesh-and-mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>The mesh is a simple hyper rectangle, large enough to encompass the mixer with its casing and long enough to establish the flow profile upstream and downstream.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type      = dealii
-  set grid type = subdivided_hyper_rectangle
-
-  # Grid to use when solving the flow in the long version of the mixer
-  set grid arguments = 6,1,1: -150,-25,-25: 150,25,25: true
-
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 6,1,1: -150,-25,-25: 150,25,25: true
   set initial refinement = 3
 end
 </pre></div>
@@ -640,7 +637,7 @@ end
 </pre></div>
 </div>
 <ol class="arabic simple">
-<li><p>In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">extrapolation</span> <span class="pre">function</span></code>, <code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">ratio</span></code> defines the length used to apply the immersed boundaries through interpolation. We choose <code class="docutils literal notranslate"><span class="pre">4</span></code> as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass preservation. The latter can also be increased using a finer grid.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">extrapolation</span> <span class="pre">function</span></code>, <code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">ratio</span></code> defines the length used to apply the immersed boundaries through interpolation. We choose <code class="docutils literal notranslate"><span class="pre">4</span></code> as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass conservation. Mass conservation can also be improved using a finer grid.</p></li>
 <li><p>In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">local</span> <span class="pre">mesh</span> <span class="pre">refinement</span></code>, <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">inside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">outside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> are both set to <code class="docutils literal notranslate"><span class="pre">1</span></code>, which activates minimal crown refinement mode.</p></li>
 <li><p>In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">particle</span> <span class="pre">info</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">composite</span></code> and <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">arguments</span> <span class="pre">=</span> <span class="pre">mixer_long.composite</span></code> define the shape itself. This requires that the <code class="docutils literal notranslate"><span class="pre">RBF_helix.output</span></code> is located in the same directory as the parameter file.</p></li>
 </ol>
@@ -806,7 +803,7 @@ end
             <ul>
 <li><a class="reference internal" href="#">3D Static Mixer Using RBF Sharp Immersed Boundary</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#preparation-of-the-solid">Preparation of the Solid</a><ul>
 <li><a class="reference internal" href="#generation-of-the-rbf-file-from-the-stl">Generation of the RBF file from the STL</a></li>

@@ -24,7 +24,7 @@ Features
 
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 All files mentioned below are located in the example's folder (``/examples/sharp-immersed-boundary/3d-rbf-static-mixer/``).
 
@@ -113,7 +113,7 @@ The parameter file (``RBF.param``) contains:
 #. The number of subdivisions in each of the three spatial dimensions: ``16``;
 #. The number of adaption cycles. Using ``4`` adaptation cycles over a initial number of ``16`` subdivisions results in a level of detail equivalent to a number of ``256`` subdivisions;
 #. The radius ratio means that each node `sees` up to ``3`` neighbors in each direction, which results in a smooth approximation.
-#. The base function of ``1`` means that the basis function is of Wendland type. This is the best function to represent geometries from our experience.
+#. The base function of ``1`` means that the basis function is of Wendland type. This is the best function to represent geometries, from our experience.
 #. The mesh range of ``0.1`` means that there is at least 10% of margin on each side of the object, so the collection of RBF nodes are encompassing the whole object.
 
 
@@ -124,7 +124,7 @@ Assuming that the ``RBF_example_00001`` executable is within your `$PATH` or cop
 
   RBF_example_00001 ./ helix RBF.param
 
-After about 40 minutes this executable will output ``RBF_helix.output``, which is the encoding of the shape, and ``RBF_helix.vtu``, which can be used to see the resulting approximation.
+After about 40 minutes, this executable will output ``RBF_helix.output``, which is the encoding of the shape, and ``RBF_helix.vtu``, which can be used to see the resulting approximation.
 
 Creation of the Composite Shape File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -162,7 +162,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Although we are interested in the steady-state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but solving it with a small value of the time step enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.
+Although we are interested in the steady-state solution of the flow, we use ``bdf1`` time integration. The required time to reach steady state in our case is low, but solving it with a small ``time step`` enables the non-linear solver to converge as complex flow patterns are difficult to capture otherwise.
 
 .. code-block:: text
 
@@ -197,12 +197,9 @@ The mesh is a simple hyper rectangle, large enough to encompass the mixer with i
 .. code-block:: text
 
     subsection mesh
-      set type      = dealii
-      set grid type = subdivided_hyper_rectangle
-
-      # Grid to use when solving the flow in the long version of the mixer
-      set grid arguments = 6,1,1: -150,-25,-25: 150,25,25: true
-
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 6,1,1: -150,-25,-25: 150,25,25: true
       set initial refinement = 3
     end
 
@@ -252,7 +249,7 @@ This section defines each parameter for the particles and has certain requiremen
     end
 
 
-#. In ``subsection extrapolation function``, ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass preservation. The latter can also be increased using a finer grid.
+#. In ``subsection extrapolation function``, ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. We choose ``4`` as a compromise between a low value, which is better for the linear solver, and a high value, which is better for mass conservation. Mass conservation can also be improved using a finer grid.
 #. In ``subsection local mesh refinement``, ``refine mesh inside radius factor`` and ``refine mesh outside radius factor`` are both set to ``1``, which activates minimal crown refinement mode.
 #. In ``subsection particle info 0``, ``type = composite`` and ``shape arguments = mixer_long.composite`` define the shape itself. This requires that the ``RBF_helix.output`` is located in the same directory as the parameter file.
 
