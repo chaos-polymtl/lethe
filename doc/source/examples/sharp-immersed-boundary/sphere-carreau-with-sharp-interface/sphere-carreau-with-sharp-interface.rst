@@ -16,7 +16,7 @@ Features
 
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 - Parameter file: ``examples/sharp-immersed-boundary/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
@@ -26,7 +26,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter :math:`D = 1.0` located at :math:`(0,0,0)`
+In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter :math:`D = 1.0` centered at :math:`(0,0,0)`
 and the flow domain located between :math:`(-18,-15,-15)` and :math:`(42,15,15)`.
 
 .. image:: images/sharp-carreau-case.png
@@ -68,12 +68,12 @@ The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the 
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~
-We define the boundary conditions to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
+We define the boundary conditions to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 5
+      set number = 6
       subsection bc 0
         set id   = 0
         set type = function
@@ -88,30 +88,34 @@ We define the boundary conditions to have an inlet velocity of :math:`1~m/s` on 
         end
       end
       subsection bc 1
+        set id   = 1
+        set type = outlet
+      end
+      subsection bc 2
         set id   = 2
         set type = slip
       end
-      subsection bc 2
+      subsection bc 3
         set id   = 3
         set type = slip
       end
-      subsection bc 3
+      subsection bc 4
         set id   = 4
         set type = slip
       end
-      subsection bc 4
+      subsection bc 5
         set id   = 5
         set type = slip
       end
     end
 
 .. note::
-    Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
+    Since we use a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-This example showcases a shear-thinning flow, for which the kinematic viscosity decreases when the local shear rate increases. The Carreau model is being used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`
+This example showcases a shear-thinning flow, for which the kinematic viscosity decreases when the local shear rate increases. The Carreau model is used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`.
 
 .. code-block:: text
 
@@ -119,7 +123,6 @@ This example showcases a shear-thinning flow, for which the kinematic viscosity 
       set number of fluids = 1
       subsection fluid 0
         set rheological model = carreau
-    
         subsection non newtonian
           subsection carreau
             set viscosity_0   = 0.063403
@@ -232,7 +235,7 @@ To generate an additional refinement zone around the immersed boundary, the ``me
       set max number elements  = 8000000
       set min refinement level = 0
       set max refinement level = 11
-      set variable = velocity
+      set variable             = velocity
     end
 
 
@@ -261,7 +264,7 @@ We can notice that the kinematic viscosity rapidly reaches a plateau at :math:`\
 .. image:: images/carreau.png
     :align: center
 
-We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle in the effective force in the same direction fo the flow, which is in the math:`x` direction in this case. 
+We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle is the effective force in the same direction fo the flow, which is in the :math:`x` direction in this case.
 
 .. code-block:: text
 
