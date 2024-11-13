@@ -11,7 +11,7 @@ Features
 - Geometry definition
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/simple-plane-model-from-composite``).
@@ -24,7 +24,7 @@ Both files mentioned below are located in the example's folder (``examples/sharp
 Description of the Case
 -----------------------
 
-This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step creation of the shape. This plane is not a real model. The parameter used only aims at showcasing the different operations of the composite shape creation. The final product will look as follows:
+This example presents the creation of a simple plane model using a composite shape. This example does a step-by-step creation of the shape. This plane is not a real model. The parameters used only aim at showcasing the different operations of the composite shape creation. The final product will look as follows:
 
 .. image:: images/full_plane.png
    :alt: full_plane
@@ -56,34 +56,34 @@ The ``plane.composite`` file contains these instructions. The plane along the X-
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselage of the plane
-    5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
-    6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
-    7; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:0.3:0.3 ; 0:0:0 # Left engine shape
-    8; cylinder; 0.05:1; -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
-    9; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:-0.3:0.3 ; 0:0:0 # Right engine shape
-    10; cylinder; 0.05:1; -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
-    11; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:0.15:0.15 ; -0.78539816:0:0 # Left engine link
-    12; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ; 0.78539816:0:0 # Right engine link
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
+    4;    superquadric;    1.5:0.3:0.3:3:2:2;         -0.25:0:0 ;             0:0:0 # Fuselage of the plane
+    5;    superquadric;  0.15:0.05:0.5:2:2:6;       -1.75:0:0.4 ;          0:-0.5:0 # Tail wing vertical plan
+    6;    superquadric;  0.15:0.5:0.05:2:6:2;       -1.85:0:0.6 ;             0:0:0 # Tail wing horizontal plan
+    7;    superquadric;    0.3:0.1:0.1:5:2:2;     -1.25:0.3:0.3 ;             0:0:0 # Left engine shape
+    8;        cylinder;               0.05:1;     -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
+    9;    superquadric;    0.3:0.1:0.1:5:2:2;    -1.25:-0.3:0.3 ;             0:0:0 # Right engine shape
+    10;       cylinder;               0.05:1;    -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
+    11;   superquadric;  0.1:0.03:0.25:6:2:2;   -1.25:0.15:0.15 ;   -0.78539816:0:0 # Left engine link
+    12;   superquadric;  0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ;    0.78539816:0:0 # Right engine link
     operations
-    30; difference  ; 1:0 # Trim off the left wing
-    31; difference  ; 3:2 # Trim off the right wing
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
     32; union       ; 30:31 # Combine the two wings
-    33; union       ; 32:4 # Combine the wings with the plane fuselage
-    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
-    36; difference  ; 8:7 # Hole in the left engine
+    33; union       ; 32:4  # Combine the wings with the plane fuselage
+    34; union       ; 33:5  # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6  # Combine horizontal part of the tail wing with the fuselage
+    36; difference  ; 8:7   # Hole in the left engine
     37; union       ; 35:36 # Combine left engine with the fuselage
-    38; difference  ; 10:9 # Hole in the right engine
+    38; difference  ; 10:9  # Hole in the right engine
     39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
-    40; difference     ; 7:11 # Trim off  the left engine link with the engine shape
-    41; difference     ; 9:12 # Trim off the right engine link with the engine shape
-    42; union     ; 39:40 # Combine the left engine link with the rest of the plane
-    43; union     ; 42:41 # Combine the right engine link with the rest of the plane
+    40; difference  ; 7:11  # Trim off  the left engine link with the engine shape
+    41; difference  ; 9:12  # Trim off the right engine link with the engine shape
+    42; union       ; 39:40 # Combine the left engine link with the rest of the plane
+    43; union       ; 42:41 # Combine the right engine link with the rest of the plane
   
 Let us read this file step-by-step line-by-line:
 
@@ -93,10 +93,10 @@ Let us read this file step-by-step line-by-line:
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
     operations
-    30; difference  ; 1:0 # Trim off the left wing
+    30; difference  ; 1:0   # Trim off the left wing
 
 This step gives us the first wing of the plane.
 
@@ -111,14 +111,15 @@ This step gives us the first wing of the plane.
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
     operations
-    30; difference  ; 1:0 # Trim off the left wing
-    31; difference  ; 3:2 # Trim off the right wing
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
     32; union       ; 30:31 # Combine the two wings
+
 
 This step gives us the first wing of the plane.
 
@@ -132,16 +133,16 @@ This step gives us the first wing of the plane.
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselage of the plane
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
+    4;    superquadric;    1.5:0.3:0.3:3:2:2;         -0.25:0:0 ;             0:0:0 # Fuselage of the plane
     operations
-    30; difference  ; 1:0 # Trim off the left wing
-    31; difference  ; 3:2 # Trim off the right wing
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
     32; union       ; 30:31 # Combine the two wings
-    33; union     ; 32:4 # Combine the wings with the plane fuselage
+    33; union       ; 32:4  # Combine the wings with the plane fuselage
 
 This step gives us the following wings and fuselage of the plane.
 
@@ -156,20 +157,20 @@ This step gives us the following wings and fuselage of the plane.
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
-    5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
-    6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
+    4;    superquadric;    1.5:0.3:0.3:3:2:2;         -0.25:0:0 ;             0:0:0 # Fuselage of the plane
+    5;    superquadric;  0.15:0.05:0.5:2:2:6;       -1.75:0:0.4 ;          0:-0.5:0 # Tail wing vertical plan
+    6;    superquadric;  0.15:0.5:0.05:2:6:2;       -1.85:0:0.6 ;             0:0:0 # Tail wing horizontal plan
     operations
-    30; difference  ; 1:0 # Trim off  the left wing
-    31; difference  ; 3:2 # Trim off  the right wing
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
     32; union       ; 30:31 # Combine the two wings
-    33; union       ; 32:4 # Combine the wings with the plane fuselage
-    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
+    33; union       ; 32:4  # Combine the wings with the plane fuselage
+    34; union       ; 33:5  # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6  # Combine horizontal part of the tail wing with the fuselage
 
 This step gives us the following plane without engines.
 
@@ -185,30 +186,28 @@ This step gives us the following plane without engines.
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
-    5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
-    6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
-    7; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:0.3:0.3 ; 0:0:0 # Left engine shape
-    8; cylinder; 0.05:1; -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
-    9; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:-0.3:0.3 ; 0:0:0 # Right engine shape
-    10; cylinder; 0.05:1; -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
+    4;    superquadric;    1.5:0.3:0.3:3:2:2;         -0.25:0:0 ;             0:0:0 # Fuselage of the plane
+    5;    superquadric;  0.15:0.05:0.5:2:2:6;       -1.75:0:0.4 ;          0:-0.5:0 # Tail wing vertical plan
+    6;    superquadric;  0.15:0.5:0.05:2:6:2;       -1.85:0:0.6 ;             0:0:0 # Tail wing horizontal plan
+    7;    superquadric;    0.3:0.1:0.1:5:2:2;     -1.25:0.3:0.3 ;             0:0:0 # Left engine shape
+    8;        cylinder;               0.05:1;     -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
+    9;    superquadric;    0.3:0.1:0.1:5:2:2;    -1.25:-0.3:0.3 ;             0:0:0 # Right engine shape
+    10;       cylinder;               0.05:1;    -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
     operations
-    30; difference  ; 1:0 # Trim off  the left wing
-    31; difference  ; 3:2 # Trim off  the right wing
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
     32; union       ; 30:31 # Combine the two wings
-    33; union       ; 32:4 # Combine the wings with the plane fuselage
-    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
-    36; difference  ; 8:7 # Hole in the left engine
+    33; union       ; 32:4  # Combine the wings with the plane fuselage
+    34; union       ; 33:5  # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6  # Combine horizontal part of the tail wing with the fuselage
+    36; difference  ; 8:7   # Hole in the left engine
     37; union       ; 35:36 # Combine left engine with the fuselage
-    38; difference  ; 10:9 # Hole in the right engine
+    38; difference  ; 10:9  # Hole in the right engine
     39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
-
-This step gives us the following plane without engines.
 
 .. image:: images/plane_with_engine.png
    :alt: plane_with_engine
@@ -220,34 +219,34 @@ This step gives us the following plane without engines.
 .. code-block:: text
 
     shapes
-    0; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:0.25 # Full left wing 
-    1; hyper rectangle; 5:5:5;0:-5:0 ; 0:0:0 # Cube to trim off  the right side of the left wing
-    2; superquadric; 0.3:2.5:0.05:2:6:2; 0.1:0:0 ; 0:-0.05:-0.25 # Full right wing 
-    3; hyper rectangle; 5:5:5;0:5:0 ; 0:0:0 # Cube to trim off  the left side of the right wing
-    4; superquadric; 1.5:0.3:0.3:3:2:2; -0.25:0:0 ; 0:0:0 # Fuselabe of the plane
-    5; superquadric; 0.15:0.05:0.5:2:2:6; -1.75:0:0.4 ; 0:-0.5:0 # Tail wing vertical plan
-    6; superquadric; 0.15:0.5:0.05:2:6:2; -1.85:0:0.6 ; 0:0:0 # Tail wing horizontal plan
-    7; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:0.3:0.3 ; 0:0:0 # Left engine shape
-    8; cylinder; 0.05:1; -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
-    9; superquadric; 0.3:0.1:0.1:5:2:2; -1.25:-0.3:0.3 ; 0:0:0 # Right engine shape
-    10; cylinder; 0.05:1; -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
-    11; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:0.15:0.15 ; -0.78539816:0:0 # Left engine link
-    12; superquadric; 0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ; 0.78539816:0:0 # Right engine link
+    0;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;      0:-0.05:0.25 # Full left wing
+    1; hyper rectangle;                5:5:5;            0:-5:0 ;             0:0:0 # Cube to trim off the right side of the left wing
+    2;    superquadric;   0.3:2.5:0.05:2:6:2;           0.1:0:0 ;     0:-0.05:-0.25 # Full right wing
+    3; hyper rectangle;                5:5:5;             0:5:0 ;             0:0:0 # Cube to trim off the left side of the right wing
+    4;    superquadric;    1.5:0.3:0.3:3:2:2;         -0.25:0:0 ;             0:0:0 # Fuselage of the plane
+    5;    superquadric;  0.15:0.05:0.5:2:2:6;       -1.75:0:0.4 ;          0:-0.5:0 # Tail wing vertical plan
+    6;    superquadric;  0.15:0.5:0.05:2:6:2;       -1.85:0:0.6 ;             0:0:0 # Tail wing horizontal plan
+    7;    superquadric;    0.3:0.1:0.1:5:2:2;     -1.25:0.3:0.3 ;             0:0:0 # Left engine shape
+    8;        cylinder;               0.05:1;     -1.25:0.3:0.3 ; 0:1.57079632679:0 # Left engine hole
+    9;    superquadric;    0.3:0.1:0.1:5:2:2;    -1.25:-0.3:0.3 ;             0:0:0 # Right engine shape
+    10;       cylinder;               0.05:1;    -1.25:-0.3:0.3 ; 0:1.57079632679:0 # Right engine hole
+    11;   superquadric;  0.1:0.03:0.25:6:2:2;   -1.25:0.15:0.15 ;   -0.78539816:0:0 # Left engine link
+    12;   superquadric;  0.1:0.03:0.25:6:2:2;  -1.25:-0.15:0.15 ;    0.78539816:0:0 # Right engine link
     operations
-    30; difference  ; 1:0 # Trim off  the left wing
-    31; difference  ; 3:2 # Trim off  the right wing
-    32; union       ; 30:31 # Combined the two wings
-    33; union       ; 32:4 # Combine the wings with the plane fuselage
-    34; union       ; 33:5 # Combine vertical part of the tail wing with the fuselage
-    35; union       ; 34:6 # Combine horizontal part of the tail wing with the fuselage
-    36; difference  ; 8:7 # Hole in the left engine
+    30; difference  ; 1:0   # Trim off the left wing
+    31; difference  ; 3:2   # Trim off the right wing
+    32; union       ; 30:31 # Combine the two wings
+    33; union       ; 32:4  # Combine the wings with the plane fuselage
+    34; union       ; 33:5  # Combine vertical part of the tail wing with the fuselage
+    35; union       ; 34:6  # Combine horizontal part of the tail wing with the fuselage
+    36; difference  ; 8:7   # Hole in the left engine
     37; union       ; 35:36 # Combine left engine with the fuselage
-    38; difference  ; 10:9 # Hole in the right engine
+    38; difference  ; 10:9  # Hole in the right engine
     39; union       ; 37:38 # Combine right engine with the fuselage and the other engine
-    40; difference     ; 7:11 # Trim off  the left engine link with the engine shape
-    41; difference     ; 9:12 # Trim off  the right engine link with the engine shape
-    42; union     ; 39:40 # Combine the left engine link with the rest of the plane
-    43; union     ; 42:41 # Combine the right engine link with the rest of the plane
+    40; difference  ; 7:11  # Trim off  the left engine link with the engine shape
+    41; difference  ; 9:12  # Trim off the right engine link with the engine shape
+    42; union       ; 39:40 # Combine the left engine link with the rest of the plane
+    43; union       ; 42:41 # Combine the right engine link with the rest of the plane
 
 This final step gives us the full plane model.
 
