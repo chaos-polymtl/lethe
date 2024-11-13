@@ -27,5 +27,5 @@ Pull request related list:
 - [ ] Labels are applied
 - [ ] There are at least 2 reviewers (or 1 if small feature) excluding the responsible for the merge
 - [ ] If this PR closes an issue or is related to a project, it is linked in the "Projects" or "Development" section
-- [ ] If any future works is planed, an issue is opened
+- [ ] If any future works is planned, an issue is opened
 - [ ] The PR description is cleaned and ready for merge
