@@ -15,7 +15,7 @@ subsection simulation control
   set time end          = 2
   set log frequency     = 500
   set output frequency  = 500
-  set output path       = ./output/
+  set output path       = ./output-H-40/
   set output boundaries = true
 end
 
@@ -31,7 +31,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 10000
+    set frequency           = 5000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set rolling resistance torque method       = constant_resistance
