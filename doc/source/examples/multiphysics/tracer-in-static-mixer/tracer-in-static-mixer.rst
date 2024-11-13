@@ -33,7 +33,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 * Parameter file for solving the flow: ``flow_in_long_mixer.prm``;
 * Parameter file for solving the tracer transport: ``flow_in_long_mixer_only_tracer.prm``;
 * Composite geometry file: ``mixer_long.composite``;
-* RBF geometry file: ``RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective. RBF preparation was done in the previous :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example;
+* RBF geometry file: ``RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective. RBF preparation was done in the previous :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example, based on this surface grid from Thingiverse [#thingiverse]_ under CC BY 4.0.;
 * Python post-processing script: ``postprocess_tracer.py``.
 
 -----------------------
@@ -270,18 +270,15 @@ The simulation can be launched on multiple cores using ``mpirun`` and the ``leth
 -------
 Results
 -------
-After the simulation has run, streamlines can be used to visualize the pressure and velocity fields through the static mixer, as well as show the mixing effects that can be obtained.
 
-+-----------------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/long_static_mixer_medium_thick_p_v.png                                                                  |
-|     :align: center                                                                                                          |
-|     :width: 800                                                                                                             |
-|     :name: Streamlines in the static mixer colored by velocity magnitude and pressure                                       |
-|                                                                                                                             |
-+-----------------------------------------------------------------------------------------------------------------------------+
+The following movie shows the evolution of tracer through the static mixer, both as a colored slice and colored streamlines:
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dSBRXLukX8E" frameborder="0" allowfullscreen></iframe>
 
 
-The mass conservation and pressure drop can both be monitored by plotting their values in time, extracted from ``/output/flow_rate.dat`` and ``/output/pressure_drop.dat``. The Python script ``postprocess_flow_and_pressure.py`` generates the following plot:
+The tracer evolution through the inlet and outlet can both be monitored by plotting their values in time, extracted from ``/output/tracer_flow_rate.dat``. The Python script ``postprocess_tracer.py`` generates the following plot:
 
 .. code-block:: text
   :class: copy-button
@@ -297,9 +294,7 @@ The mass conservation and pressure drop can both be monitored by plotting their 
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
-As the plot shows, the mass conservation is constant after only a few time steps; it depends mostly on the length ratio, residual and grid refinement. The pressure drop, on the other hand, decreases steadily. We stopped the simulation after 40 time steps because the decrease is then low enough, but increasing the total duration would be interesting to get a better idea of the steady-state pressure drop.
-
-
+As the plot shows, the passage of the tracer through the static mixer highly flattens its distribution. There is a :math:`170` seconds difference between the inlet and outlet peaks. When compared to the theoretical time of :math:`150` seconds (:math:`d_x/u_x`, with :math:`d_x` the domain length and :math:`u_x` the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.
 
 ---------
 Reference
