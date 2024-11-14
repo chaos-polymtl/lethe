@@ -63,7 +63,7 @@ Multiphysics
 
       multiphysics_3 [label="Tracer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html"];  
 
-      multiphysics_3_1 [label="Tracer through CAD Junction in Simplex", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html"];
+      multiphysics_3_1 [label="Tracer in Static Mixer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html"];
       
       multiphysics_4 [label="CHNS", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html"];
 
