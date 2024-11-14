@@ -444,7 +444,7 @@
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller</span></code>).</p>
 <ul class="simple">
 <li><p>Composite geometry file: <code class="docutils literal notranslate"><span class="pre">impeller.composite</span></code></p></li>
@@ -464,15 +464,15 @@
 </ol>
 <p>Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">impeller.composite</span></code> file contains these instructions.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The .composite file cannot contain comments to this moment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">.composite</span></code> files can contain comments after <code class="docutils literal notranslate"><span class="pre">#</span></code> on a line.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>shapes
-0;       cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0
-1;       cylinder; 0.05:0.0416666;0:0:-0.208333 ; 0:0:0
-2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0
-3; hyper rectangle; 0.00625:0.083333333:0.0416666;0:0.08333333:-0.208333; 0:0.7853981:0
+0;        cylinder;                   0.025:0.375;              0:0:0.125 ; 0:0:0
+1;        cylinder;                0.05:0.0416666;          0:0:-0.208333 ; 0:0:0
+2; hyper rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
+3; hyper rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
 4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
 5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
 operations
@@ -492,19 +492,19 @@ operations
 <li><p><code class="docutils literal notranslate"><span class="pre">operations</span></code>: introduces the operations section.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">6;</span> <span class="pre">union;</span> <span class="pre">0:1</span></code>: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.</p></li>
 <li><p>The next operations build iteratively on this intermediate shape.</p></li>
-<li><p>The result of the last defined operation is considered the final shape to be used for simulation, regardless of its ID number.</p></li>
+<li><p>The result of the last defined operation is considered the definitive shape to be used for simulation, regardless of its ID number.</p></li>
 </ul>
-<p>For more detail on the the definition of the shape see: <a class="reference internal" href="../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html"><span class="doc">Sharp-Immersed-Boundary</span></a>.</p>
+<p>For more detail on the the definition of the shape see: <a class="reference internal" href="../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html"><span class="doc">Sharp-Immersed-Boundary</span></a> and <a class="reference internal" href="../simple-plane-model-from-composite/simple-plane-model-from-composite.html"><span class="doc">Simple Plane Model From Composite</span></a>.</p>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="definition-of-the-shape-and-its-motion">
-<h3>Definition of the Shape and Its Motion<a class="headerlink" href="#definition-of-the-shape-and-its-motion" title="Link to this heading">#</a></h3>
+<h3>Definition of the Shape and its Motion<a class="headerlink" href="#definition-of-the-shape-and-its-motion" title="Link to this heading">#</a></h3>
 <p>The section defining each parameter for the particles has certain requirements:</p>
 <ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">ratio</span></code> defines the length used to apply the immersed boundaries through interpolation. It should stay as low as possible, but above <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code> and <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">arguments</span></code> are used to declare that the shape is a <code class="docutils literal notranslate"><span class="pre">composite</span></code> and that its data is located in <code class="docutils literal notranslate"><span class="pre">impeller.composite</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. This way, the solid only moves according to the prescribed <cite>orientation</cite> and angular velocity <cite>omega</cite> (the alternative being the integration of particle movement from forces).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">integrate</span> <span class="pre">motion</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. This way, the solid only moves according to the prescribed <code class="docutils literal notranslate"><span class="pre">orientation</span></code> and angular velocity <code class="docutils literal notranslate"><span class="pre">omega</span></code> (the alternative being the integration of particle movement from forces).</p></li>
 </ol>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection particles
   set number of particles                     = 1
@@ -644,11 +644,11 @@ end
             <ul>
 <li><a class="reference internal" href="#">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#creation-of-the-composite-shape-file">Creation of the Composite Shape File</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
-<li><a class="reference internal" href="#definition-of-the-shape-and-its-motion">Definition of the Shape and Its Motion</a></li>
+<li><a class="reference internal" href="#definition-of-the-shape-and-its-motion">Definition of the Shape and its Motion</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
 </ul>
 </li>

@@ -488,7 +488,7 @@ end
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <p>The boundary condition is similar to the other stirred tank cases, however, the top boundary of the problem is now an open boundary.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 5
+  set number = 6
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -511,7 +511,7 @@ end
   end
   subsection bc 5
     set id   = 5
-    set type = noslip
+    set type = outlet
   end
 end
 </pre></div>
@@ -519,7 +519,7 @@ end
 </section>
 <section id="definition-of-the-impeller-motion">
 <h3>Definition of the Impeller Motion<a class="headerlink" href="#definition-of-the-impeller-motion" title="Link to this heading">#</a></h3>
-<p>The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and a XYZ rotation convention. As such, determining the orientation of an object as it rotates cannot be directly defined by the direct integration of the angular velocity. Therefore, we instead use Rodrigues’ rotation matrix (see <a class="reference external" href="https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula">this link</a> for more details), and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be performed symbolically by a simple Python code using the sympy library. The code is given in the example folder but is also presented here. Depending on the case, the user needs to study the initial rotation, and angular velocity must be modified. Here, the initial rotation of the impeller is given by a <span class="math notranslate nohighlight">\(\frac{\pi}{4}\)</span> rad rotation around the Y axis to align the impeller with the <span class="math notranslate nohighlight">\([1,0,1]\)</span> vector. Then the rotation speed is given by <span class="math notranslate nohighlight">\(\mathbf{\omega}=2 \pi \frac{\sqrt{2}}{2} [-1,0,-1]\)</span>.</p>
+<p>The orientation of an object using the sharp interface immersed boundary method is defined using Euler angles and a XYZ rotation convention. As such, determining the orientation of an object as it rotates cannot be directly defined by the direct integration of the angular velocity. Instead use Rodrigues’ rotation matrix (see <a class="reference external" href="https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula">this link</a> for more details), and from this rotation matrix, we extract the XYZ rotation angle. This calculation can be performed symbolically by a simple Python code using the sympy library. The code is given in the example folder, but is also presented here. Depending on the case, the user needs to study the initial rotation, and angular velocity must be modified. Here, the initial rotation of the impeller is given by a <span class="math notranslate nohighlight">\(\frac{\pi}{4}\)</span> rad rotation around the Y axis to align the impeller with the <span class="math notranslate nohighlight">\([1,0,1]\)</span> vector. Then the rotation speed is given by <span class="math notranslate nohighlight">\(\mathbf{\omega}=2 \pi \frac{\sqrt{2}}{2} [-1,0,-1]\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>from sympy import *
 import numpy as np
 
@@ -626,7 +626,7 @@ print(str(theta_x).replace(&quot;**&quot;,&quot;^&quot;)+&#39;;&#39;+str(theta_y
 </div>
 <p>From this Python code, we obtained the following expression of the orientation using the XYZ rotation convention of the impeller as it rotates:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection orientation
-    set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
+    set Function expression = atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
 end
 </pre></div>
 </div>
@@ -654,7 +654,7 @@ end
       set Function expression = 0;0;0
     end
     subsection orientation
-      set Function expression =atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
+      set Function expression = atan2(0.707106781186548*sin(pi/4)*sin(6.28318530717959*t) - 0.707106781186548*sin(6.28318530717959*t)*cos(pi/4), (0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4));asin((0.5 - 0.5*cos(6.28318530717959*t))*cos(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*sin(pi/4));atan2(-0.707106781186548*sin(6.28318530717959*t), -(0.5 - 0.5*cos(6.28318530717959*t))*sin(pi/4) + (0.5*cos(6.28318530717959*t) + 0.5)*cos(pi/4))
     end
     subsection omega
       set Function expression = -1*pi*2*sqrt(2)/2;0;-1*pi*2*sqrt(2)/2
@@ -665,7 +665,8 @@ end
 end
 </pre></div>
 </div>
-<p>The only noticeable differences are that the initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These values are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">orientation</span></code> and <code class="docutils literal notranslate"><span class="pre">omega</span></code> result from the symbolic calculations accomplished using Python.
+Other differences are that the initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These values are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.</p>
 </section>
 </section>
 <section id="results">

@@ -434,7 +434,7 @@
         <article role="main">
           <section id="mixer-with-pitched-blade-turbine-impeller-using-nitsche-immersed-boundary">
 <h1>Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary<a class="headerlink" href="#mixer-with-pitched-blade-turbine-impeller-using-nitsche-immersed-boundary" title="Link to this heading">#</a></h1>
-<p>Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most often reactor models applied in chemical industries that can be simulated through computational fluid dynamics.</p>
+<p>Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most common reactor models applied in chemical industries that can be simulated through computational fluid dynamics.</p>
 <p>This example illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Nitsche Immersed Boundary (NIB) formulation.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -450,7 +450,7 @@
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller</span></code>).</p>
 <ul class="simple">
 <li><p>Geometry file: <code class="docutils literal notranslate"><span class="pre">pbt.geo</span></code></p></li>
@@ -596,7 +596,7 @@ end
 <p>This will generate a vessel in which the axis of the impeller will be along the <span class="math notranslate nohighlight">\(x\)</span> coordinate. The bottom of the vessel will be on the <span class="math notranslate nohighlight">\(x=-0.5\)</span> plane.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>For detailed explanation of the mesh generators, see the deal.ii <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a>.</p>
+<p>For detailed explanation of the mesh generators, see the deal.II <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a>.</p>
 </div>
 </section>
 <section id="boundary-conditions">
@@ -682,7 +682,7 @@ end
 </section>
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
-<p>We use <a class="reference internal" href="../../../parameters/cfd/mesh_adaptation_control.html"><span class="doc">Mesh Adaptation</span></a> on the fluid velocity, so that cells are refined in cells where the fluid velocity changes the most.</p>
+<p>We use <a class="reference internal" href="../../../parameters/cfd/mesh_adaptation_control.html"><span class="doc">Mesh Adaptation</span></a> on the fluid velocity, so that cells are refined where the fluid velocity changes the most.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                 = kelly
   set variable             = velocity
@@ -701,7 +701,7 @@ end
 <li><p>on a <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">0.2</span></code> (<span class="math notranslate nohighlight">\(20\%\)</span> of the cells),</p></li>
 <li><p>with <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">number</span> <span class="pre">elements</span> <span class="pre">=</span> <span class="pre">1200000</span></code> to limit the computational cost.</p></li>
 </ul>
-<p>The <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> are chosen in consideration of the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">3</span></code> of the fluid mesh: the cells cannot be coarsen (as <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> = <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code>), and can be refined up to two times.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> are chosen in consideration of the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">3</span></code> of the fluid mesh: the cells cannot be coarsened (as <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> = <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code>), and can be refined up to two times.</p>
 </section>
 <section id="non-linear-solver">
 <h3>Non-linear Solver<a class="headerlink" href="#non-linear-solver" title="Link to this heading">#</a></h3>
@@ -844,7 +844,7 @@ Multiple analyses can be done with this type of simulation. For example, one can
             <ul>
 <li><a class="reference internal" href="#">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
 <li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>

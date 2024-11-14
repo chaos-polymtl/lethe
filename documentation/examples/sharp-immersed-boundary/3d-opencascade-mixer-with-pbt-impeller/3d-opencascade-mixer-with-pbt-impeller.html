@@ -434,33 +434,33 @@
         <article role="main">
           <section id="d-mixer-with-pitched-blade-turbine-impeller-using-opencascade-sharp-immersed-boundary">
 <h1>3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary<a class="headerlink" href="#d-mixer-with-pitched-blade-turbine-impeller-using-opencascade-sharp-immersed-boundary" title="Link to this heading">#</a></h1>
-<p>The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of <a class="reference internal" href="../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html"><span class="doc">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</span></a>, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with an OpenCasacade shape from a step file.</p>
+<p>The mixing of stirred tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of <a class="reference internal" href="../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html"><span class="doc">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</span></a>, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with an OpenCasacade shape from a <code class="docutils literal notranslate"><span class="pre">.step</span></code> file.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></li>
 <li><p>Transient problem</p></li>
-<li><p>Rotating complex solid, defined by a step file using the OpenCascade shape, modeled with sharp immersed boundary</p></li>
+<li><p>Rotating complex solid, defined by a <code class="docutils literal notranslate"><span class="pre">.step</span></code> file using the OpenCascade shape, modeled with sharp immersed boundary</p></li>
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">mixer.prm</span></code></p></li>
-<li><p>Step file: <code class="docutils literal notranslate"><span class="pre">impeller.step</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.step</span></code> file: <code class="docutils literal notranslate"><span class="pre">impeller.step</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>In this example, we simulate a mixer using a PBT impeller through the usage of a step file with the OpenCascade shape feature of the sharp immersed boundary solver.</p>
+<p>In this example, we simulate a mixer using a PBT impeller through the usage of a <code class="docutils literal notranslate"><span class="pre">.step</span></code> file with the OpenCascade shape feature of the sharp immersed boundary solver.</p>
 </section>
 <section id="creation-of-the-step-file">
 <h2>Creation of the STEP File<a class="headerlink" href="#creation-of-the-step-file" title="Link to this heading">#</a></h2>
-<p>The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It is preferable to avoid step files that represent shells, composite of solids or a compound of objects.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.step</span></code> file can be defined using any CAD tool available to the user. The <code class="docutils literal notranslate"><span class="pre">.step</span></code> file must represent a solid. It is preferable to avoid <code class="docutils literal notranslate"><span class="pre">.step</span></code> files that represent shells, composite of solids or a compound of objects.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox.</p>
+<p>Use the union tool at your disposal to avoid issues with <code class="docutils literal notranslate"><span class="pre">.step</span></code> files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the <code class="docutils literal notranslate"><span class="pre">.step</span></code> file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox.</p>
 </div>
 </section>
 <section id="parameter-file">
@@ -547,7 +547,7 @@ end
             <ul>
 <li><a class="reference internal" href="#">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#creation-of-the-step-file">Creation of the STEP File</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
