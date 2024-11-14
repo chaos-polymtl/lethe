@@ -10,7 +10,7 @@ Features
 ---------
 
 - Solvers: ``lethe-fluid`` (with Q2-Q2) or  ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
-- Transient problem using ``bdf3`` time integrator
+- Transient problem using ``bdf2`` time integrator
 - Displays the calculation of enstrophy and total kinetic energy
 
 
@@ -148,12 +148,12 @@ To monitor the kinetic energy and the enstrophy, we set both calculation to ``tr
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second order ``bdf2`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
   subsection simulation control
-    set method            = bdf3
+    set method            = bdf2
     set time step         = 0.05 
     set time end          = 20  
     set output frequency  = 2    

@@ -11,7 +11,7 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf3
+  set method           = bdf2
   set time step        = 0.05
   set time end         = 20
   set output name      = tgv
