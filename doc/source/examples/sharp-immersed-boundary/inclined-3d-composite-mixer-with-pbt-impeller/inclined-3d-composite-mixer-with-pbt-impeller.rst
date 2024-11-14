@@ -267,7 +267,7 @@ The parameters used to define the impeller are based on the :doc:`../3d-composit
       end
     end
 
-Note that ``orientation`` and ``omega`` result from the previous calculations.
+Note that ``orientation`` and ``omega`` result from the symbolic calculations accomplished using Python.
 Other differences are that the initial refinement and the refinement zone are adjusted respectively to 6 and 0 to 1.25 reference length. These values are chosen to guarantee that the refinement zone is big enough to cover the motion of the impeller and avoid interaction of the hanging nodes with the sharp immersed boundary constraints.
 
 --------
