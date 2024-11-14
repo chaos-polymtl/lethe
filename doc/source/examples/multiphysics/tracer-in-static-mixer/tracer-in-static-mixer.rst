@@ -4,7 +4,7 @@ Tracer in Static Mixer
 
 In this example, we extend the :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example by using a passive tracer to study mixing effects more formally.
 
-We inject two phases through a static mixer to verify the mixing effects of a given geometry.
+We inject two phases through a static mixer to verify the mixing effects of its geometry.
 
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/static_mixer_stl_casing_arrows.png                                                                      |
@@ -33,7 +33,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 * Parameter file for solving the flow: ``flow_in_long_mixer.prm``;
 * Parameter file for solving the tracer transport: ``flow_in_long_mixer_only_tracer.prm``;
 * Composite geometry file: ``mixer_long.composite``;
-* RBF geometry file: ``RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective. RBF preparation was done in the previous :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example, based on this surface grid from Thingiverse [#thingiverse]_ under CC BY 4.0.;
+* RBF geometry file: ``RBF_helix.output``. The extension is ``.output`` because it was named from a `bitpit <https://github.com/optimad/bitpit>`_ perspective. RBF preparation was done in the previous :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example, based on this surface grid from Thingiverse [#thingiverse]_ under CC BY 4.0;
 * Python post-processing script: ``postprocess_tracer.py``.
 
 -----------------------
@@ -49,8 +49,8 @@ In this example, we use the auxiliary tracer physics to  study the mixing effect
 Parameter File
 --------------
 
-Flow resolution
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulation 1: Flow resolution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simulation control
 ******************
@@ -62,8 +62,7 @@ Simulation control
       set time end  = 40e-4
       set time step = 1e-4
 
-      set adapt             = false
-      set number mesh adapt = 0
+      set adapt = false
 
       set output path      = ./output/
       set output name      = output
@@ -106,7 +105,7 @@ Both ``fluid dynamics`` and ``tracer`` are enabed for the first simulation, alth
 Physical Properties
 *******************
 
-The physical properties here are defined using centimeter length-unit and seconds time-unit, assuming that we have a passive tracer in water.
+The physical properties here are defined using centimeter as the length-unit and seconds as the time-unit. We consider that we have a passive tracer in water.
 
 .. code-block:: text
 
@@ -123,7 +122,7 @@ The physical properties here are defined using centimeter length-unit and second
     end
 
 #. The ``tracer diffusivity model`` is ``immersed solid tanh``. This model is used for tracer simulations involving immersed solids when using ``lethe-fluid-sharp``.
-#. The ``tracer diffusivity outside`` is ``1e-5``, as this is a typical value for a passive tracer inside a liquid.
+#. The ``tracer diffusivity outside`` is ``1e-5``, as this is a typical value for a passive tracer in a liquid.
 #. The ``tracer diffusivity inside`` is set to ``1e-10``. We desire no diffusivity inside the solid, and this value is low enough to achieve this effect while providing numerical stability.
 #. The ``thickness`` is ``5e-1``. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases.
 
@@ -164,7 +163,7 @@ Tracer Boundary Conditions
       end
     end
 
-#. The boundary conditions are ``time dependent`` because of the inlet. We put conditions on :math:`y<0` and :math:`11 < t < 61` to inject a pulse only on the lower half of the inlet.
+#. The boundary conditions are ``time dependent`` because of the inlet. We put conditions on :math:`y<0` and :math:`11 < t < 61` to inject a pulse, only on the lower half of the inlet.
 #. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition is also appropriate since no flow is occurring through these; it is then equivalent to a impermeable wall.
 
 Post-processing
@@ -178,26 +177,18 @@ Post-processing
       set calculate average velocities = true
       set initial time                 = 30e-4
 
-      # Flow post-processing
-      set calculate pressure drop = true
-      set calculate flow rate     = true
-      set inlet boundary id       = 0
-      set outlet boundary id      = 1
-
       # Tracer post-processing
-      set calculate tracer statistics = true
-      set tracer statistics name      = tracer_statistics
       set calculate tracer flow rate  = true
       set tracer flow rate name       = tracer_flow_rate
     end
 
 #. ``calculate average velocities`` is enabled, and its ``initial time = 30e-4``. This means that the last :math:`25\%` of the first simulation will be used to calculate the average velocity profile.
-#. ``calculate tracer physics`` and ``calculate tracer flow rate`` are enabled to provide data for understanding mixing effects.
+#. ``calculate tracer flow rate`` is enabled to provide data for understanding mixing effects.
 
-Tracer transport
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulation 2: Tracer transport
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the second simulation, we reuse the velocity profile from the first simulation and simply transport the passive tracer. This allows to increase the time step and duration of the simulation while keeping numerical stability.
+In the second simulation, we reuse the velocity profile from the first simulation and simply transport the passive tracer. This allows to increase the time step and duration of the simulation while keeping realistic velocity and pressure solutions.
 
 Simulation control
 ******************
@@ -241,7 +232,7 @@ We disable ``fluid dynamics``, as we simply reuse the time-averaged velocity pro
 Initial conditions
 ******************
 
-We use ``average_velocity_profile`` from the previous simulation as the initial (and constant) condition for the fluid dynamics. Since this physics is disable, the velocity and pressure profiles will remain constant throughout the simulation.
+We use ``average_velocity_profile`` from the previous simulation as the initial (and persistent) condition for the fluid dynamics. Since this physics is disabled, the velocity and pressure profiles will remain fixed throughout the simulation.
 
 .. code-block:: text
 
@@ -255,7 +246,8 @@ Running the Simulation
 ----------------------
 
 As previously mentionned, the case is run in two steps:
-#. Simulation to reach a pseudo steady-state for the flow field;
+
+#. Simulation to reach a pseudo steady-state of the flow field;
 #. Transient simulation to transport tracer through the domain.
 
 The simulation can be launched on multiple cores using ``mpirun`` and the ``lethe-fluid-sharp`` executable. Using 6 CPU cores and assuming that the ``lethe-fluid-sharp`` executable is within your path, the simulation can be launched by typing:

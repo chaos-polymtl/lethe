@@ -8,8 +8,7 @@ subsection simulation control
   set time end  = 40e-4
   set time step = 1e-4
 
-  set adapt             = false
-  set number mesh adapt = 0
+  set adapt = false
 
   set output path      = ./output/
   set output name      = output
@@ -165,16 +164,8 @@ subsection post-processing
 
   set calculate average velocities = true
   set initial time                 = 30e-4
-
-  # Flow post-processing
-  set calculate pressure drop = true
-  set calculate flow rate     = true
-  set inlet boundary id       = 0
-  set outlet boundary id      = 1
-
+  
   # Tracer post-processing
-  set calculate tracer statistics = true
-  set tracer statistics name      = tracer_statistics
   set calculate tracer flow rate  = true
   set tracer flow rate name       = tracer_flow_rate
 end
