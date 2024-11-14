@@ -15,7 +15,7 @@ Features
 
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 Both files mentioned below are located in the example's folder (``examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller``).
@@ -44,16 +44,16 @@ Shapes and boolean operations each have an ID, and boolean operations can refere
 
 The ``impeller.composite`` file contains these instructions.
 
-.. warning:: 
-    The .composite file cannot contain comments to this moment.
+.. note::
+    ``.composite`` files can contain comments after ``#`` on a line.
 
 .. code-block:: text
 
     shapes
-    0;       cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0
-    1;       cylinder; 0.05:0.0416666;0:0:-0.208333 ; 0:0:0
-    2; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0
-    3; hyper rectangle; 0.00625:0.083333333:0.0416666;0:0.08333333:-0.208333; 0:0.7853981:0
+    0;        cylinder;                   0.025:0.375;              0:0:0.125 ; 0:0:0
+    1;        cylinder;                0.05:0.0416666;          0:0:-0.208333 ; 0:0:0
+    2; hyper rectangle; 0.083333333:0.00625:0.0416666; 0.08333333:0:-0.208333 ; 0.7853981:0:0
+    3; hyper rectangle; 0.00625:0.083333333:0.0416666;  0:0.08333333:-0.208333; 0:0.7853981:0
     4; hyper rectangle; 0.083333333:0.00625:0.0416666;-0.08333333:0:-0.208333 ; -0.7853981:0:0
     5; hyper rectangle; 0.00625:0.083333333:0.0416666;0:-0.08333333:-0.208333 ; 0:-0.7853981:0
     operations
@@ -72,22 +72,22 @@ Line-by-line:
 * ``operations``: introduces the operations section.
 * ``6; union; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
 * The next operations build iteratively on this intermediate shape.
-* The result of the last defined operation is considered the final shape to be used for simulation, regardless of its ID number.
+* The result of the last defined operation is considered the definitive shape to be used for simulation, regardless of its ID number.
 
-For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary`.
+For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary` and :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`.
 
 ---------------
 Parameter File
 ---------------
 
-Definition of the Shape and Its Motion
+Definition of the Shape and its Motion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The section defining each parameter for the particles has certain requirements:
 
 1. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. It should stay as low as possible, but above ``1``.
 2. ``type`` and ``shape arguments`` are used to declare that the shape is a ``composite`` and that its data is located in ``impeller.composite``.
-3. ``integrate motion`` is set to ``false``. This way, the solid only moves according to the prescribed `orientation` and angular velocity `omega` (the alternative being the integration of particle movement from forces).
+3. ``integrate motion`` is set to ``false``. This way, the solid only moves according to the prescribed ``orientation`` and angular velocity ``omega`` (the alternative being the integration of particle movement from forces).
 
 .. code-block:: text
 

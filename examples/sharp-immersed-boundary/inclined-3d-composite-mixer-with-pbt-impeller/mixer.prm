@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -80,7 +80,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 5
+  set number = 6
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -100,6 +100,10 @@ subsection boundary conditions
   subsection bc 4
     set id   = 4
     set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = outlet
   end
 end
 

@@ -2,7 +2,7 @@
 Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary
 ===============================================================================
 
-Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most often reactor models applied in chemical industries that can be simulated through computational fluid dynamics.
+Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most common reactor models applied in chemical industries that can be simulated through computational fluid dynamics.
 
 This example illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Nitsche Immersed Boundary (NIB) formulation.
 
@@ -21,7 +21,7 @@ Features
 
 
 --------------------------
-Files Used in This Example
+Files Used in this Example
 --------------------------
 
 All files mentioned below are located in the example's folder (``examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller``).
@@ -163,7 +163,7 @@ Thanks to our immersed boundary approach, we only need to mesh the vessel withou
 This will generate a vessel in which the axis of the impeller will be along the :math:`x` coordinate. The bottom of the vessel will be on the :math:`x=-0.5` plane. 
 
 .. seealso::
-	For detailed explanation of the mesh generators, see the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
+	For detailed explanation of the mesh generators, see the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_.
 
 
 Boundary Conditions
@@ -254,7 +254,7 @@ It is often desirable to obtain the time-averaged velocity field when simulating
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-We use :doc:`../../../parameters/cfd/mesh_adaptation_control` on the fluid velocity, so that cells are refined in cells where the fluid velocity changes the most.
+We use :doc:`../../../parameters/cfd/mesh_adaptation_control` on the fluid velocity, so that cells are refined where the fluid velocity changes the most.
 
 .. code-block:: text
 
@@ -275,7 +275,7 @@ Here, we refine:
 * on a ``fraction refinement = 0.2`` (:math:`20\%` of the cells), 
 * with ``max number elements = 1200000`` to limit the computational cost. 
 
-The ``min refinement level`` and ``max refinement level`` are chosen in consideration of the ``initial refinement = 3`` of the fluid mesh: the cells cannot be coarsen (as ``min refinement level`` = ``initial refinement``), and can be refined up to two times.
+The ``min refinement level`` and ``max refinement level`` are chosen in consideration of the ``initial refinement = 3`` of the fluid mesh: the cells cannot be coarsened (as ``min refinement level`` = ``initial refinement``), and can be refined up to two times.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
