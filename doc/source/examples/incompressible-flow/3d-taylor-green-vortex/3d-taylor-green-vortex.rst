@@ -189,7 +189,7 @@ Since this is a transient problem, the linear solver can be relatively simple. W
     subsection fluid dynamics
       set verbosity                             = verbose
       set method                                = gmres
-      set max iters                             = 200
+      set max iters                             = 100
       set max krylov vectors                    = 200
       set relative residual                     = 1e-4
       set minimum residual                      = 1e-7
@@ -223,15 +223,17 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
 
   subsection linear solver
     subsection fluid dynamics
-      set method            = gmres
-      set max iters         = 100
-      set relative residual = 1e-4
-      set minimum residual  = 1e-7
-      set preconditioner    = gcmg
-      set verbosity         = verbose
+      set verbosity          = verbose
+      set method             = gmres
+      set max iters          = 100
+      set max krylov vectors = 200
+      set relative residual  = 1e-4
+      set minimum residual   = 1e-7
+      set preconditioner     = gcmg
       
       # MG parameters
-      set mg verbosity = quiet
+      set mg verbosity                   = quiet
+      set mg enable hessians in jacobian = false
 
       # Smoother
       set mg smoother iterations     = 5
@@ -239,7 +241,7 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
 
       # Eigenvalue estimation parameters
       set eig estimation smoothing range = 5
-      set eig estimation cg n iterations = 10
+      set eig estimation cg n iterations = 20
       set eig estimation verbosity       = quiet
 
       # Coarse-grid solver
