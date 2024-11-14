@@ -180,7 +180,7 @@ The following animation shows the results of this simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe>
 
 
-Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall for Ra=25000. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
+Note that at :math:`Ra=10000`, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall for :math:`Ra=25000`. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
 
 
 -----------

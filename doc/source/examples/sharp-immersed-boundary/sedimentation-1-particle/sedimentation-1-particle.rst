@@ -171,17 +171,17 @@ Boundary Conditions
       set type = noslip
     end
     subsection bc 3
-      set id   = 4
-      set type = noslip
-    end
-    subsection bc 4
-      set id   = 5
-      set type = noslip
-    end
-    subsection bc 5
       set id   = 3
       set type = outlet
       set beta = 0
+    end
+    subsection bc 4
+      set id   = 4
+      set type = noslip
+    end
+    subsection bc 5
+      set id   = 5
+      set type = noslip
     end
   end
 
