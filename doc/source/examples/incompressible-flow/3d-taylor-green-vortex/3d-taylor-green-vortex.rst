@@ -10,7 +10,7 @@ Features
 ---------
 
 - Solvers: ``lethe-fluid`` (with Q2-Q2) or  ``lethe-fluid-matrix-free`` (with Q2-Q2 or Q3-Q3)
-- Transient problem using ``bdf3`` time integrator
+- Transient problem using ``bdf2`` time integrator
 - Displays the calculation of enstrophy and total kinetic energy
 
 
@@ -34,13 +34,12 @@ The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p`
 
 .. math::
 
-  u_{x} &= \sin(x)*\cos(y)*\cos(z) \\
-  u_{y} &= -\cos(x)*\sin(y)*\cos(z)\\
+  u_{x} &= \sin(x)\cos(y)\cos(z) \\
+  u_{y} &= -\cos(x)\sin(y)\cos(z)\\
   u_{z} &= 0 \\
-  p &=  \frac{1}{16}*\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]
+  p &=  \frac{1}{16}\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]
 
-In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demontrated that the time derative of the total kinetic energy :math:`E_\mathrm{k}` is directly related to the enstrophy :math:`\mathcal{E}` such that:
-
+In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demonstrated that the time derative of the total kinetic energy :math:`E_\mathrm{k}` is directly related to the enstrophy :math:`\mathcal{E}` such that:
 
 
 .. math::
@@ -70,7 +69,7 @@ The ``mesh`` subsection specifies the computational grid:
     set initial refinement = 5 
   end
 
-The ``type`` specifies the mesh format used. We use the ``hyper_cube`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize = true`` to be able to adequately set-up the periodic boundary conditions.
+The ``type`` specifies the mesh format used. We use the ``hyper_cube`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . We set ``colorize = true`` (the last parameter of the grid arguments) to assign boundary condition ids to each of the walls of the cube.
 
 
 The last parameter specifies the ``initial refinement`` of the grid. Indicating an ``initial refinement = 5`` implies that the initial mesh is refined 5 times. In 3D, each cell is divided by 8 per refinement. Consequently, the final grid is made of 32768 cells.
@@ -104,7 +103,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     end
   end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are ``periodic``. The ``x-`` (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are ``periodic``. The ``x-`` boundary (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` boundary (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -124,7 +123,7 @@ The Reynolds number of 1600 is set solely using the kinematic viscosity since th
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the Taylor-Green vortex are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will investigate the usage of both second and third degree polynomial.
+The results obtained for the Taylor-Green vortex are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will investigate the usage of both second and third degree polynomials.
 
 .. code-block:: text
 
@@ -149,19 +148,17 @@ To monitor the kinetic energy and the enstrophy, we set both calculation to ``tr
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a third order ``bdf3`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second order ``bdf2`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
   subsection simulation control
-    set method            = bdf3
+    set method            = bdf2
     set time step         = 0.05 
-    set number mesh adapt = 0    
     set time end          = 20  
     set output frequency  = 2    
     set subdivision       = 3
   end
-
 
 
 Matrix-based - Non-linear Solver 
@@ -192,12 +189,13 @@ Since this is a transient problem, the linear solver can be relatively simple. W
     subsection fluid dynamics
       set verbosity                             = verbose
       set method                                = gmres
-      set max iters                             = 200
+      set max iters                             = 100
       set max krylov vectors                    = 200
       set relative residual                     = 1e-4
-      set minimum residual                      = 1e-12
+      set minimum residual                      = 1e-7
+      set preconditioner                        = ilu
       set ilu preconditioner fill               = 0
-      set ilu preconditioner absolute tolerance = 1e-12
+      set ilu preconditioner absolute tolerance = 1e-10
       set ilu preconditioner relative tolerance = 1.00
     end
   end
@@ -225,45 +223,33 @@ The ``lethe-fluid-matrix-free`` has significantly more parameters for its linear
 
   subsection linear solver
     subsection fluid dynamics
-      set method            = gmres
-      set max iters         = 100
-      set relative residual = 1e-4
-      set minimum residual  = 1e-7
-      set preconditioner    = gcmg
-      set verbosity         = verbos
+      set verbosity          = verbose
+      set method             = gmres
+      set max iters          = 100
+      set max krylov vectors = 200
+      set relative residual  = 1e-4
+      set minimum residual   = 1e-7
+      set preconditioner     = gcmg
       
       # MG parameters
-      set mg verbosity       = quiet
-      set mg min level       = -1
-      set mg level min cells = 16
+      set mg verbosity                   = quiet
+      set mg enable hessians in jacobian = false
 
       # Smoother
-      set mg smoother iterations     = 10
+      set mg smoother iterations     = 5
       set mg smoother eig estimation = true
-      
+
       # Eigenvalue estimation parameters
       set eig estimation smoothing range = 5
       set eig estimation cg n iterations = 20
-      set eig estimation verbosity       = verbose
+      set eig estimation verbosity       = quiet
 
       # Coarse-grid solver
-      set mg coarse grid solver                 = gmres
-      set mg gmres max iterations               = 2000
-      set mg gmres tolerance                    = 1e-7
-      set mg gmres reduce                       = 1e-4
-      set mg gmres max krylov vectors           = 30
-      set mg gmres preconditioner               = ilu
-      set ilu preconditioner fill               = 1
-      set ilu preconditioner absolute tolerance = 1e-10
-      set ilu preconditioner relative tolerance = 1.00
+      set mg coarse grid solver = direct
     end
   end
 
-We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation. Setting ``mg min level = -1`` ensures that the ``mg level min cells = 16`` parameter is used to determine the coarsest level. It is important to ensure that the Taylor-Green vortex has sufficient cells on the coarsest level since periodic boundary conditions are used. Indeed, using a coarsest level with a single cell can lead to a problematic situation where too few degrees of freedom are available on the coarsest level.
-
-The ``smoother``, ``Eigenvalue estimation parameters`` and ``coarse-grid solver`` subsections are explained in the **Theory Guide** (under construction).
-
-
+We set ``mg verbosity = quiet`` to prevent logging of the multigrid parameters during the simulation.  The ``smoother``, ``Eigenvalue estimation parameters`` and ``coarse-grid solver`` subsections are explained in the :doc:`../../../parameters/cfd/linear_solver_control` section.
 
 ----------------------
 Running the Simulation
@@ -304,14 +290,14 @@ Using the ``enstrophy.dat`` and ``kinetic_energy.dat`` files generated by Lethe,
 .. code-block:: text
   :class: copy-button
 
-  python3 calculate_dissipation_rate.py -i kinetic_energy.dat -o output.dat
+  python3 calculate_dissipation_rate.py -i output/kinetic_energy.dat
 
 Then, by invoking the second script present in the example, a plot comparing the kinetic energy decay with the enstrophy is generated:
 
 .. code-block:: text
   :class: copy-button
 
-  python3 plot_dissipation_rate.py -ke kinetic_energy_decay.dat -ens enstrophy.dat -v 0.000625
+  python3 plot_dissipation_rate.py -ke ke_rate.dat -ens output/enstrophy.dat -v 0.000625
 
 .. tip::
  
@@ -355,6 +341,8 @@ Possibilities for Extension
 ----------------------------
 
 - This case is very interesting to postprocess. Try to postprocess this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
+
+- This case can also be used to experiment with adaptive time step. In the simulation control section add ``adapt = true`` and ``set max cfl = 1``, similar results should be obtained but with significantly less iterations as larger time steps are taken. To postprocess the results use the additional script ``calculate_dissipation_rate_constant_cfl.py`` given in the same folder to calculate the kinetic energy rate. 
 
 
 ------------
