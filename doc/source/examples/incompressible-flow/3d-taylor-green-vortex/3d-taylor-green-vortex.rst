@@ -34,10 +34,10 @@ The three velocity components :math:`[u_x,u_y,u_z]^T` and the pressure :math:`p`
 
 .. math::
 
-  u_{x} &= \sin(x)*\cos(y)*\cos(z) \\
-  u_{y} &= -\cos(x)*\sin(y)*\cos(z)\\
+  u_{x} &= \sin(x)\cos(y)\cos(z) \\
+  u_{y} &= -\cos(x)\sin(y)\cos(z)\\
   u_{z} &= 0 \\
-  p &=  \frac{1}{16}*\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]
+  p &=  \frac{1}{16}\left[\cos(2x)+\cos(2y)\right]\left[\cos(2z)+2\right]
 
 In this case, the vortex, which is initially 2D, will decay by generating smaller 3D turbulent structures (vortex tubes, rings and sheets). This decay can be monitored through the total kinetic energy of the system. Since the simulation domain is periodic, it can be demonstrated that the time derative of the total kinetic energy :math:`E_\mathrm{k}` is directly related to the enstrophy :math:`\mathcal{E}` such that:
 
