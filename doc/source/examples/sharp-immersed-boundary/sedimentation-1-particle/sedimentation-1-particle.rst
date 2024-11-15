@@ -6,9 +6,7 @@ This example aims to numerically reproduce the results obtained by Ten Cate `et 
 
 
 .. warning:: 
-    * This case is a computationally expensive example. It can take several hours to run.
-    * This case is designed with the upcoming IB_contact_and_stability features.
-
+    * This case is a computationally expensive example. It can take several hours to run on a desktop computer.
 
 ----------------------------------
 Features
@@ -157,32 +155,37 @@ Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-    subsection boundary conditions
-      set number = 5
-      subsection bc 0
-        set id   = 0
-        set type = noslip
-      end
-      subsection bc 1
-        set id   = 1
-        set type = noslip
-      end
-    
-      subsection bc 2
-        set id   = 2
-        set type = noslip
-      end
-      subsection bc 3
-        set id   = 4
-        set type = noslip
-      end
-      subsection bc 4
-        set id   = 5
-        set type = noslip
-      end
+  subsection boundary conditions
+    set number = 6
+    subsection bc 0
+      set id   = 0
+      set type = noslip
+    end
+    subsection bc 1
+      set id   = 1
+      set type = noslip
     end
 
-Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
+    subsection bc 2
+      set id   = 2
+      set type = noslip
+    end
+    subsection bc 3
+      set id   = 3
+      set type = outlet
+      set beta = 0
+    end
+    subsection bc 4
+      set id   = 4
+      set type = noslip
+    end
+    subsection bc 5
+      set id   = 5
+      set type = noslip
+    end
+  end
+
+Here we define the 5 ``no slip`` boundary for all the box walls and specify the boundary with ``id=3`` to an outlet representing the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
     The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
@@ -252,7 +255,7 @@ Linear Solver
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
 
-* The ``max krylov vectors`` is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
+* The ``max krylov vectors`` is set to the same number as the maximum solver iterations. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
@@ -335,6 +338,23 @@ The following parameters are defined in the particle subsection.
 
 * ``density`` is set to 0.001120. This is according to the definition of the case.
 
+
+-----------------------
+Running the Simulation
+-----------------------
+
+Call ``lethe-fluid-sharp`` by invoking the following command:
+
+.. code-block:: text
+  :class: copy-button
+
+  mpirun -np 14 lethe-fluid-sharp sedimentation-1-particle.prm
+
+to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
+
+.. warning:: 
+    Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
+    This simulation takes :math:`\sim \, 4` hours on :math:`14` processes.
 
 ---------------
 Results

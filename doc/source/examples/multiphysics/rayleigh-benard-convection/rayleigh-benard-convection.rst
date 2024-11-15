@@ -73,7 +73,7 @@ time step of :math:`0.01` second.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time frequency = 25`` the simulation results are written every 25 s.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = iteration``, and ``output frequency = 100`` the simulation results are written every 100 iteration regardless of the time steps.
 
 .. note::   
     Note that the heating process is slow, and the velocity magnitudes are small inside the fluid. Hence, we expect large time-steps and a long simulation.
@@ -90,8 +90,8 @@ time step of :math:`0.01` second.
       set adaptative time step scaling = 1.3
       set number mesh adapt            = 0
       set output name                  = rayleigh-benard_convection
-      set output control               = time
-      set output time frequency        = 25
+      set output control               = iteration
+      set output frequency             = 100
       set output path                  = ./output/
     end
 
@@ -180,7 +180,7 @@ The following animation shows the results of this simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe>
 
 
-Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
+Note that at :math:`Ra=10000`, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall for :math:`Ra=25000`. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
 
 
 -----------
