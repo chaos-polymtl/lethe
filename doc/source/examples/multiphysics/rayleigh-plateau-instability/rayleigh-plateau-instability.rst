@@ -184,7 +184,7 @@ The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`. Note that we set ``beta = 0``for the outlet boundary condition to allow for fluid reentry. Otherwise, the default behavior of the outlet boundary condition will be to penalize fluid reentry which will affect the flow.
+In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`. Note that we set ``beta = 0`` for the outlet boundary condition to allow for fluid reentry. Otherwise, the default behavior of the outlet boundary condition will be to penalize fluid reentry which will affect the flow.
 
 .. code-block:: text
 
