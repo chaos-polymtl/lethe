@@ -16,7 +16,7 @@ import pyvista as pv
 #--------------------------------------------
 
 # Load VTU file
-vtu_file="./output/out.0001.0000.vtu"
+vtu_file="./output/out.00001.00000.vtu"
 sim = pv.read(vtu_file)
 sim.set_active_scalars("temperature")
 
