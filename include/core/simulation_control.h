@@ -541,16 +541,6 @@ public:
   integrate() override;
 
   /**
-   * @brief Reads the simulation control information and updates the time integration variables. Allows to change time
-   * step if adaptive time stepping is disabled.
-   *
-   * @param[in] prefix The prefix of the checkpoint of the simulation
-   */
-  void
-  read(const std::string &prefix) override;
-
-
-  /**
    * @brief Ends the simulation when the end time is reached
    */
   virtual bool
@@ -576,7 +566,8 @@ public:
   /**
    * @brief Reads the simulation control information from the checkpoint file and
    * updates the time step vector, the CFL value, the time, the iteration number
-   * and the index of the output times vector if time control is used.
+   * and the index of the output times vector if time control is used. Allows to
+   * change time step if adaptive time stepping is disabled.
    *
    * @param prefix The prefix of the checkpoint of the simulation
    */
