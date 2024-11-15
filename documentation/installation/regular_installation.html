@@ -540,6 +540,17 @@ cd build
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>make -j$numprocs
 </pre></div>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lscpu | grep -E &#39;^Thread|^Core|^Socket|^CPU\(&#39;
+</pre></div>
+</div>
+<p>To limit the number of thread you can set the environment variable <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> to 1 in the terminal you are running the application or in your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> file to make it the default:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>export OMP_NUM_THREADS=1
+</pre></div>
+</div>
+</div>
 </section>
 <section id="testing-your-installation">
 <h2>Testing Your Installation<a class="headerlink" href="#testing-your-installation" title="Link to this heading">#</a></h2>

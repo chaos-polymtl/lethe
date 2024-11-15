@@ -492,7 +492,7 @@ time step of <span class="math notranslate nohighlight">\(0.01\)</span> second.<
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">time</span></code>, and <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">time</span> <span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">25</span></code> the simulation results are written every 25 s.</p>
+time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">control</span> <span class="pre">=</span> <span class="pre">iteration</span></code>, and <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">100</span></code> the simulation results are written every 100 iteration regardless of the time steps.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -508,8 +508,8 @@ time-step is modified during the simulation to keep the maximum value of the CFL
   set adaptative time step scaling = 1.3
   set number mesh adapt            = 0
   set output name                  = rayleigh-benard_convection
-  set output control               = time
-  set output time frequency        = 25
+  set output control               = iteration
+  set output frequency             = 100
   set output path                  = ./output/
 end
 </pre></div>
@@ -576,7 +576,7 @@ run in parallel using mpirun. This simulation takes
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
 <p>The following animation shows the results of this simulation:</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe><p>Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe><p>Note that at <span class="math notranslate nohighlight">\(Ra=10000\)</span>, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall for <span class="math notranslate nohighlight">\(Ra=25000\)</span>. The velocity magnitude in the vortices is larger at smaller Rayleigh number.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>

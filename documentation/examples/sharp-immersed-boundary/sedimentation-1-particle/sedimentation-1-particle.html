@@ -438,8 +438,7 @@
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <ul class="simple">
-<li><p>This case is a computationally expensive example. It can take several hours to run.</p></li>
-<li><p>This case is designed with the upcoming IB_contact_and_stability features.</p></li>
+<li><p>This case is a computationally expensive example. It can take several hours to run on a desktop computer.</p></li>
 </ul>
 </div>
 <section id="features">
@@ -570,7 +569,7 @@ end
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 5
+  set number = 6
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -585,17 +584,22 @@ end
     set type = noslip
   end
   subsection bc 3
+    set id   = 3
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 4
     set id   = 4
     set type = noslip
   end
-  subsection bc 4
+  subsection bc 5
     set id   = 5
     set type = noslip
   end
 end
 </pre></div>
 </div>
-<p>Here we define the 5 <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">slip</span></code> boundary for all the box walls and let the boundary with <code class="docutils literal notranslate"><span class="pre">id=3</span></code> free to represent the top of the box. We refer the reader to the <a class="reference internal" href="../../../parameters/cfd/boundary_conditions_cfd.html"><span class="doc">Boundary Conditions - CFD</span></a> section on how those boundaries are defined.</p>
+<p>Here we define the 5 <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">slip</span></code> boundary for all the box walls and specify the boundary with <code class="docutils literal notranslate"><span class="pre">id=3</span></code> to an outlet representing the top of the box. We refer the reader to the <a class="reference internal" href="../../../parameters/cfd/boundary_conditions_cfd.html"><span class="doc">Boundary Conditions - CFD</span></a> section on how those boundaries are defined.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The boundary id of dealii rectangular mesh are numbered as such:  <span class="math notranslate nohighlight">\(x_{min}=0\)</span>, <span class="math notranslate nohighlight">\(x_{max}=1\)</span>, <span class="math notranslate nohighlight">\(y_{min}=2\)</span>, <span class="math notranslate nohighlight">\(y_{max}=3\)</span>, <span class="math notranslate nohighlight">\(z_{min}=4\)</span>, <span class="math notranslate nohighlight">\(z_{max}=5\)</span>.</p>
@@ -664,7 +668,7 @@ end
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> is set to <code class="docutils literal notranslate"><span class="pre">gmres</span></code>. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the <code class="docutils literal notranslate"><span class="pre">gmres</span></code> solver with <code class="docutils literal notranslate"><span class="pre">ilu</span></code> preconditioner the best option available.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> is set to 1000. This is a lot more steps than how much it should take to solve the system.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">krylov</span> <span class="pre">vectors</span></code> is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">krylov</span> <span class="pre">vectors</span></code> is set to the same number as the maximum solver iterations. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">relative</span> <span class="pre">residual</span></code> is set to 1e-4. This is small enough, so we don’t under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn’t require too many <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">ilu</span> <span class="pre">preconditioner</span> <span class="pre">fill</span></code> is set to 0. This is the cheapest option. In this case, we can use this option without having to do too many <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations. It requires less computational time to do a few more  <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations than building the preconditioner and doing fewer <code class="docutils literal notranslate"><span class="pre">gmres</span></code> iterations.</p></li>
 </ul>
@@ -731,6 +735,19 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">density</span></code> is set to 0.001120. This is according to the definition of the case.</p></li>
 </ul>
 </section>
+</section>
+<section id="running-the-simulation">
+<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
+<p>Call <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> by invoking the following command:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 14 lethe-fluid-sharp sedimentation-1-particle.prm
+</pre></div>
+</div>
+<p>to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure to compile Lethe in <cite>Release</cite> mode and run in parallel using mpirun.
+This simulation takes <span class="math notranslate nohighlight">\(\sim \, 4\)</span> hours on <span class="math notranslate nohighlight">\(14\)</span> processes.</p>
+</div>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
@@ -824,6 +841,7 @@ end
 <li><a class="reference internal" href="#ib-particles">IB Particles</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results">Results</a></li>
 <li><a class="reference internal" href="#reference">Reference</a></li>
 </ul>

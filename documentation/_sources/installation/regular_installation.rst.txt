@@ -163,6 +163,21 @@ Then you can compile:
 
   make -j$numprocs
 
+.. warning:: 
+  Hyper-threading will result in poor performance when running Lethe. Make sure that it is not turned on for your machine if you have more logical CPU(s) than the number of Core(s). To obtain this information, you can run the following command in a linux terminal:
+
+  .. code-block:: text
+    :class: copy-button
+
+    lscpu | grep -E '^Thread|^Core|^Socket|^CPU\('
+
+  To limit the number of thread you can set the environment variable ``OMP_NUM_THREADS`` to 1 in the terminal you are running the application or in your ``.bashrc`` file to make it the default:
+
+  .. code-block:: text
+    :class: copy-button
+
+    export OMP_NUM_THREADS=1
+
 Testing Your Installation 
 -------------------------------------
 
