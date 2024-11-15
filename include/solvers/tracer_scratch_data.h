@@ -149,17 +149,13 @@ public:
    * @param[in] previous_solutions The solutions at the previous time steps.
    *
    * @param[in] source_function The function describing the tracer source term.
-   *
-   * @param[in] immersed_solid_shape The shape describing the particles (if
-   * there are any).
    */
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const Function<dim>           *source_function,
-         Shape<dim>                    *immersed_solid_shape)
+         const Function<dim>           *source_function)
   {
     this->fe_values_tracer.reinit(cell);
 
@@ -167,19 +163,6 @@ public:
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
     source_function->value_list(quadrature_points, source);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          immersed_solid_shape != nullptr,
-          ExcMessage(
-            "Shape is required for tracer assembly, but the shape is a nullptr"));
-
-        for (unsigned int q = 0; q < n_q_points; q++)
-          sdf_values[q] =
-            immersed_solid_shape->value_with_cell_guess(quadrature_points[q],
-                                                        cell);
-      }
 
     // Compute cell diameter
     double cell_measure =
@@ -221,7 +204,34 @@ public:
     boundary_index = 0;
   }
 
+  /** @brief Reinitializes the signed distance vector of the scratch.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * @param[in] immersed_solid_shape The shape describing the particles (if
+   * there are any).
+   */
+  void
+  reinit_signed_distance(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    Shape<dim>                                           *immersed_solid_shape)
+  {
+    this->fe_values_tracer.reinit(cell);
 
+    quadrature_points = this->fe_values_tracer.get_quadrature_points();
+
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        Assert(
+          immersed_solid_shape != nullptr,
+          ExcMessage(
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
+
+        for (unsigned int q = 0; q < n_q_points; q++)
+          sdf_values[q] =
+            immersed_solid_shape->value_with_cell_guess(quadrature_points[q],
+                                                        cell);
+      }
+  }
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
    *
