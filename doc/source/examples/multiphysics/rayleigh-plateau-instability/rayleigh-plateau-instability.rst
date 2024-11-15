@@ -184,12 +184,12 @@ The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`.
+In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`. Note that we set ``beta = 0``for the outlet boundary condition to allow for fluid reentry. Otherwise, the default behavior of the outlet boundary condition will be to penalize fluid reentry which will affect the flow.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 2
+      set number = 3
       subsection bc 0
         set id   = 0
         set type = function
@@ -204,17 +204,22 @@ In the ``boundary conditions`` subsection, the inlet velocity perturbation is sp
         set periodic_id        = 3
         set periodic_direction = 1
       end
+      subsection bc 2
+        set id                 = 1
+        set type               = outlet
+        set beta               = 0
+      end
     end
 
 Boundary Conditions VOF
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` is at the inlet.
+Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` is at the inlet. The other boundary conditions are default outlets.
 
 .. code-block:: text
 
     subsection boundary conditions VOF
-      set number = 1
+      set number = 4
       subsection bc 0
         set id   = 0
         set type = dirichlet
