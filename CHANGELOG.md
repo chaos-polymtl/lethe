@@ -3,6 +3,14 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-18
+
+### Fix
+
+- MINOR Time step can now be changed after a restart if adaptive time stepping is disabled. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
+
+- MINOR Application of the immersed solid tanh diffusivity model is now faster thanks to using optimizations from the Shape class. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
+
 ## [Master] - 2024-11-11
 
 ### Changed
@@ -12,14 +20,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Added bubble detachment in liquid shear flow example to the documentation [#1334](https://github.com/chaos-polymtl/lethe/pull/1334)
-
-## [Master] - 2024-11-07
-
-### Fix
-
-- MINOR Time step can now be changed after a restart if adaptive time stepping is disabled. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
-
-- MINOR Application of the immersed solid tanh diffusivity model is now faster thanks to using optimizations from the Shape class. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
 
 ## [Master] - 2024-11-04
 
