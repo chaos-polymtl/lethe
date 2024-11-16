@@ -4864,8 +4864,6 @@ FluidDynamicsSharp<dim>::solve()
                                                    *this->face_quadrature,
                                                    *this->mapping);
           ib_dem.update_contact_candidates();
-
-          this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
           this->iterate();
         }
       else
@@ -4884,8 +4882,6 @@ FluidDynamicsSharp<dim>::solve()
                     ->contact_search_frequency ==
                 0)
             ib_dem.update_contact_candidates();
-
-          this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
 
           // add initialization
           this->iterate();
