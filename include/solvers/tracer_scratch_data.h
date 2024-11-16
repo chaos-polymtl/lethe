@@ -215,12 +215,12 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     Shape<dim>                                           *immersed_solid_shape)
   {
-    this->fe_values_tracer.reinit(cell);
-
-    quadrature_points = this->fe_values_tracer.get_quadrature_points();
-
     if (properties_manager.field_is_required(field::levelset))
       {
+        this->fe_values_tracer.reinit(cell);
+
+        quadrature_points = this->fe_values_tracer.get_quadrature_points();
+
         Assert(
           immersed_solid_shape != nullptr,
           ExcMessage(
@@ -233,9 +233,10 @@ public:
       }
   }
 
-  /** @brief Reinitializes the signed distance vector of the scratch.
+  /** @brief Reinitializes the signed distance vector of the scratch for a given face.
    *
    * @param[in] cell The cell over which the assembly is being carried.
+   * @param[in] face_no The face index associated with the cell
    * @param[in] immersed_solid_shape The shape describing the particles (if
    * there are any).
    */
@@ -245,11 +246,12 @@ public:
     const unsigned int                                   &face_no,
     Shape<dim>                                           *immersed_solid_shape)
   {
-    fe_interface_values_tracer.reinit(cell, face_no);
-    face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
-
     if (properties_manager.field_is_required(field::levelset))
       {
+        fe_interface_values_tracer.reinit(cell, face_no);
+        face_quadrature_points =
+          fe_interface_values_tracer.get_quadrature_points();
+
         Assert(
           immersed_solid_shape != nullptr,
           ExcMessage(
@@ -277,7 +279,6 @@ public:
    * @param drift_velocity Function to calculate the drift velocity
    *
    */
-
   template <typename VectorType>
   void
   reinit_velocity(
@@ -345,10 +346,6 @@ public:
    * neighboring cell
    *
    * @param[in] current_solution The present value of the solution.
-   *
-   * @param[in] immersed_solid_shape Shape used for the calculation of the
-   * level set. This is used for the calculation of the physical properties.
-   * (if there are any).
    */
   template <typename VectorType>
   void
@@ -403,10 +400,6 @@ public:
    *
    * @param[in] current_solution The present value of the solution.
    * there are any).
-   *
-   * @param[in] immersed_solid_shape Shape used for the calculation of the level
-   * set. This is used for the calculation of the physical properties. there are
-   * any).
    */
   template <typename VectorType>
   void
@@ -511,9 +504,10 @@ public:
     // BB note : Array could be pre-allocated
     tracer_diffusivity_face.resize(face_quadrature_points.size());
 
-    // If the trace diffusivity depends on the level set, take this into account
+    // If the tracer diffusivity depends on the level set, take this into
+    // account
     if (properties_manager.field_is_required(field::levelset))
-      set_field_vector(field::levelset, sdf_face_values, fields);
+      set_field_vector(field::levelset, sdf_values, fields);
 
 
     diffusivity_model->vector_value(fields, tracer_diffusivity_face);
@@ -573,9 +567,8 @@ public:
   // Bool that defines if the selected face is a dirichlet/outlet boundary
   unsigned int boundary_index;
 
-  // Immersed solid shape (signed distance) function
+  // Immersed solid shape (signed distance function)
   std::vector<double> sdf_values;
-  std::vector<double> sdf_face_values;
 
 
   // Source term
