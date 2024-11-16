@@ -144,12 +144,13 @@ Tracer<dim>::assemble_system_matrix_dg()
         StabilizedDGMethodsCopyData                          &copy_data) {
       const auto boundary_index = cell->face(face_no)->boundary_id();
 
-      scratch_data.reinit_boundary_face(
-        cell,
-        face_no,
-        boundary_index,
-        this->evaluation_point,
-        this->multiphysics->get_immersed_solid_shape());
+      scratch_data.reinit_boundary_face(cell,
+                                        face_no,
+                                        boundary_index,
+                                        this->evaluation_point);
+
+      scratch_data.reinit_signed_distance_at_face(
+        cell, face_no, this->multiphysics->get_immersed_solid_shape());
 
       // Gather velocity information at the face to properly advect
       const DoFHandler<dim> *dof_handler_fluid =
@@ -177,15 +178,16 @@ Tracer<dim>::assemble_system_matrix_dg()
         const unsigned int                                   &neigh_sub_face_no,
         TracerScratchData<dim>                               &scratch_data,
         StabilizedDGMethodsCopyData                          &copy_data) {
-      scratch_data.reinit_internal_face(
-        cell,
-        face_no,
-        sub_face_no,
-        neigh_cell,
-        neigh_face_no,
-        neigh_sub_face_no,
-        this->evaluation_point,
-        this->multiphysics->get_immersed_solid_shape());
+      scratch_data.reinit_internal_face(cell,
+                                        face_no,
+                                        sub_face_no,
+                                        neigh_cell,
+                                        neigh_face_no,
+                                        neigh_sub_face_no,
+                                        this->evaluation_point);
+
+      scratch_data.reinit_signed_distance_at_face(
+        cell, face_no, this->multiphysics->get_immersed_solid_shape());
 
       // Pad copy_data memory for the internal faces elementary matrices
       // BB note : Array could be pre-allocated
@@ -428,12 +430,13 @@ Tracer<dim>::assemble_system_rhs_dg()
       // Identify which boundary condition corresponds to the boundary id.
       const auto boundary_index = cell->face(face_no)->boundary_id();
 
-      scratch_data.reinit_boundary_face(
-        cell,
-        face_no,
-        boundary_index,
-        this->evaluation_point,
-        this->multiphysics->get_immersed_solid_shape());
+      scratch_data.reinit_boundary_face(cell,
+                                        face_no,
+                                        boundary_index,
+                                        this->evaluation_point);
+
+      scratch_data.reinit_signed_distance_at_face(
+        cell, face_no, this->multiphysics->get_immersed_solid_shape());
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
@@ -463,15 +466,16 @@ Tracer<dim>::assemble_system_rhs_dg()
         StabilizedDGMethodsCopyData                          &copy_data)
 
   {
-    scratch_data.reinit_internal_face(
-      cell,
-      face_no,
-      sub_face_no,
-      neigh_cell,
-      neigh_face_no,
-      neigh_sub_face_no,
-      this->evaluation_point,
-      this->multiphysics->get_immersed_solid_shape());
+    scratch_data.reinit_internal_face(cell,
+                                      face_no,
+                                      sub_face_no,
+                                      neigh_cell,
+                                      neigh_face_no,
+                                      neigh_sub_face_no,
+                                      this->evaluation_point);
+
+    scratch_data.reinit_signed_distance_at_face(
+      cell, face_no, this->multiphysics->get_immersed_solid_shape());
 
     copy_data.face_data.emplace_back();
     auto &copy_data_face = copy_data.face_data.back();

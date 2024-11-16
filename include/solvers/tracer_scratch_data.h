@@ -233,6 +233,36 @@ public:
       }
   }
 
+  /** @brief Reinitializes the signed distance vector of the scratch.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * @param[in] immersed_solid_shape The shape describing the particles (if
+   * there are any).
+   */
+  void
+  reinit_signed_distance_at_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &face_no,
+    Shape<dim>                                           *immersed_solid_shape)
+  {
+    fe_interface_values_tracer.reinit(cell, face_no);
+    face_quadrature_points = fe_interface_values_tracer.get_quadrature_points();
+
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        Assert(
+          immersed_solid_shape != nullptr,
+          ExcMessage(
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
+
+        unsigned int n_face_q_points = face_quadrature_points.size();
+        for (unsigned int q = 0; q < n_face_q_points; q++)
+          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
+            face_quadrature_points[q], cell);
+      }
+  }
+
+
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
    *
    * @tparam VectorType The Vector type used for the solvers
@@ -329,8 +359,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
-    const VectorType                                     &current_solution,
-    Shape<dim>                                           *immersed_solid_shape)
+    const VectorType                                     &current_solution)
   {
     fe_interface_values_tracer.reinit(
       cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
@@ -363,19 +392,6 @@ public:
 
     fe_interface_values_tracer.get_average_of_function_gradients(
       current_solution, tracer_average_gradient);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          immersed_solid_shape != nullptr,
-          ExcMessage(
-            "Shape is required for tracer assembly, but the shape is a nullptr"));
-
-        unsigned int n_face_q_points = face_quadrature_points.size();
-        for (unsigned int q = 0; q < n_face_q_points; q++)
-          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
-            face_quadrature_points[q], cell);
-      }
   }
 
 
@@ -398,8 +414,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
     const unsigned int                                   &boundary_index,
-    const VectorType                                     &current_solution,
-    Shape<dim>                                           *immersed_solid_shape)
+    const VectorType                                     &current_solution)
   {
     fe_interface_values_tracer.reinit(cell, face_no);
     const FEFaceValuesBase<dim> &fe_face =
@@ -419,19 +434,6 @@ public:
     this->penalty_factor = get_penalty_factor(fe_values_tracer.get_fe().degree,
                                               extent_here,
                                               extent_here);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          immersed_solid_shape != nullptr,
-          ExcMessage(
-            "Shape is required for tracer assembly, but the shape is a nullptr"));
-
-        unsigned int n_face_q_points = face_quadrature_points.size();
-        for (unsigned int q = 0; q < n_face_q_points; q++)
-          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
-            face_quadrature_points[q], cell);
-      }
   }
 
   /** @brief Reinitializes the content of the scratch regarding the velocity for internal/boundary faces.
