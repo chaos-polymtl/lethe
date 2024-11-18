@@ -23,7 +23,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = none
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -119,5 +119,5 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_cylinder
   set grid arguments     = 16:0.01:0.1
-  set initial refinement = 1
+  set initial refinement = 2
 end
