@@ -162,14 +162,14 @@ public:
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
 
-    const unsigned int n_values = levelset_vec.size();
+    const unsigned int n_values = property_vector.size();
 
     Assert(n_values == levelset_vec.size(),
            SizeOfFields(n_values, levelset_vec.size()));
 
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        double levelset = levelset_vec[i];
+        const double levelset = levelset_vec[i];
         property_vector[i] =
           tracer_diffusivity_inside +
           delta_diffusivity * (0.5 + 0.5 * tanh(levelset / thickness));

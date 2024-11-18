@@ -149,17 +149,13 @@ public:
    * @param[in] previous_solutions The solutions at the previous time steps.
    *
    * @param[in] source_function The function describing the tracer source term.
-   *
-   * @param[in] levelset_function The function describing the particles (if
-   * there are any).
    */
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const Function<dim>           *source_function,
-         const Function<dim>           *levelset_function)
+         const Function<dim>           *source_function)
   {
     this->fe_values_tracer.reinit(cell);
 
@@ -167,16 +163,6 @@ public:
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
     source_function->value_list(quadrature_points, source);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          levelset_function != nullptr,
-          ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
-
-        levelset_function->value_list(quadrature_points, sdf_values);
-      }
 
     // Compute cell diameter
     double cell_measure =
@@ -218,6 +204,65 @@ public:
     boundary_index = 0;
   }
 
+  /** @brief Reinitializes the signed distance vector of the scratch.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * @param[in] immersed_solid_shape The shape describing the particles (if
+   * there are any).
+   */
+  void
+  reinit_signed_distance(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    Shape<dim>                                           *immersed_solid_shape)
+  {
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        this->fe_values_tracer.reinit(cell);
+
+        quadrature_points = this->fe_values_tracer.get_quadrature_points();
+
+        Assert(
+          immersed_solid_shape != nullptr,
+          ExcMessage(
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
+
+        for (unsigned int q = 0; q < n_q_points; q++)
+          sdf_values[q] =
+            immersed_solid_shape->value_with_cell_guess(quadrature_points[q],
+                                                        cell);
+      }
+  }
+
+  /** @brief Reinitializes the signed distance vector of the scratch for a given face.
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * @param[in] face_no The face index associated with the cell
+   * @param[in] immersed_solid_shape The shape describing the particles (if
+   * there are any).
+   */
+  void
+  reinit_signed_distance_at_face(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const unsigned int                                   &face_no,
+    Shape<dim>                                           *immersed_solid_shape)
+  {
+    if (properties_manager.field_is_required(field::levelset))
+      {
+        fe_interface_values_tracer.reinit(cell, face_no);
+        face_quadrature_points =
+          fe_interface_values_tracer.get_quadrature_points();
+
+        Assert(
+          immersed_solid_shape != nullptr,
+          ExcMessage(
+            "Shape is required for tracer assembly, but the shape is a nullptr"));
+
+        unsigned int n_face_q_points = face_quadrature_points.size();
+        for (unsigned int q = 0; q < n_face_q_points; q++)
+          sdf_values[q] = immersed_solid_shape->value_with_cell_guess(
+            face_quadrature_points[q], cell);
+      }
+  }
 
 
   /** @brief Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE
@@ -234,7 +279,6 @@ public:
    * @param drift_velocity Function to calculate the drift velocity
    *
    */
-
   template <typename VectorType>
   void
   reinit_velocity(
@@ -302,10 +346,6 @@ public:
    * neighboring cell
    *
    * @param[in] current_solution The present value of the solution.
-   *
-   * @param[in] levelset_function Function used for the calculation of the
-   * level set. This is used for the calculation of the physical properties.
-   * (if there are any).
    */
   template <typename VectorType>
   void
@@ -316,8 +356,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &neigh_cell,
     const unsigned int                                   &neigh_face_no,
     const unsigned int                                   &neigh_sub_face_no,
-    const VectorType                                     &current_solution,
-    const Function<dim>                                  *levelset_function)
+    const VectorType                                     &current_solution)
   {
     fe_interface_values_tracer.reinit(
       cell, face_no, sub_face_no, neigh_cell, neigh_face_no, neigh_sub_face_no);
@@ -350,16 +389,6 @@ public:
 
     fe_interface_values_tracer.get_average_of_function_gradients(
       current_solution, tracer_average_gradient);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          levelset_function != nullptr,
-          ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
-
-        levelset_function->value_list(face_quadrature_points, sdf_face_values);
-      }
   }
 
 
@@ -371,10 +400,6 @@ public:
    *
    * @param[in] current_solution The present value of the solution.
    * there are any).
-   *
-   * @param[in] levelset_function Function used for the calculation of the level
-   * set. This is used for the calculation of the physical properties. there are
-   * any).
    */
   template <typename VectorType>
   void
@@ -382,8 +407,7 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
     const unsigned int                                   &boundary_index,
-    const VectorType                                     &current_solution,
-    const Function<dim>                                  *levelset_function)
+    const VectorType                                     &current_solution)
   {
     fe_interface_values_tracer.reinit(cell, face_no);
     const FEFaceValuesBase<dim> &fe_face =
@@ -403,16 +427,6 @@ public:
     this->penalty_factor = get_penalty_factor(fe_values_tracer.get_fe().degree,
                                               extent_here,
                                               extent_here);
-
-    if (properties_manager.field_is_required(field::levelset))
-      {
-        Assert(
-          levelset_function != nullptr,
-          ExcMessage(
-            "Levelset function is required for tracer assembly, but the level set function is a nullptr"));
-
-        levelset_function->value_list(face_quadrature_points, sdf_face_values);
-      }
   }
 
   /** @brief Reinitializes the content of the scratch regarding the velocity for internal/boundary faces.
@@ -490,9 +504,10 @@ public:
     // BB note : Array could be pre-allocated
     tracer_diffusivity_face.resize(face_quadrature_points.size());
 
-    // If the trace diffusivity depends on the level set, take this into account
+    // If the tracer diffusivity depends on the level set, take this into
+    // account
     if (properties_manager.field_is_required(field::levelset))
-      set_field_vector(field::levelset, sdf_face_values, fields);
+      set_field_vector(field::levelset, sdf_values, fields);
 
 
     diffusivity_model->vector_value(fields, tracer_diffusivity_face);
@@ -552,9 +567,8 @@ public:
   // Bool that defines if the selected face is a dirichlet/outlet boundary
   unsigned int boundary_index;
 
-  // Solid signed distance function
+  // Immersed solid shape (signed distance function)
   std::vector<double> sdf_values;
-  std::vector<double> sdf_face_values;
 
 
   // Source term

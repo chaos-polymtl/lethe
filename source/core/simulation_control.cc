@@ -439,6 +439,12 @@ SimulationControlTransient::read(const std::string &prefix)
         }
       input >> buffer >> output_times_counter;
     }
+
+  if (!adapt)
+    // Fix the time step to the new provided value.
+    // We understand that users providing this value when adaptive time stepping
+    // is not enabled means a time step change is the desired effect.
+    set_current_time_step(initial_time_step);
 }
 
 SimulationControlTransientDEM::SimulationControlTransientDEM(
