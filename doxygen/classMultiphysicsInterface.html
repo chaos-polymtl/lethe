@@ -145,10 +145,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a775cb1abb370cc0655309a32241c87ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a100d7f802ef9f12948be62d32f93bef9"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a100d7f802ef9f12948be62d32f93bef9">get_projected_phase_fraction_gradient_dof_handler</a> ()</td></tr>
 <tr class="separator:a100d7f802ef9f12948be62d32f93bef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa821d532e7531c3db10829cc06973872"><td class="memItemLeft" align="right" valign="top">Function&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa821d532e7531c3db10829cc06973872">get_immersed_solid_signed_distance_function</a> ()</td></tr>
-<tr class="separator:aa821d532e7531c3db10829cc06973872"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a615d3756670f0f96f9e8e4af99726c33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a615d3756670f0f96f9e8e4af99726c33">set_immersed_solid_signed_distance_function</a> (Function&lt; dim &gt; *function)</td></tr>
-<tr class="separator:a615d3756670f0f96f9e8e4af99726c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9a2eca5278a1446e60dbd44421dbdb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">get_immersed_solid_shape</a> ()</td></tr>
+<tr class="separator:ae9a2eca5278a1446e60dbd44421dbdb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75edde8a3131755c75813bee6ce03ebc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">set_immersed_solid_shape</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *shape)</td></tr>
+<tr class="separator:a75edde8a3131755c75813bee6ce03ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf69e251d38040cc93fe723f7f47af23"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#acf69e251d38040cc93fe723f7f47af23">get_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
 <tr class="separator:acf69e251d38040cc93fe723f7f47af23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2441f06c1c9df43f07c167efb5c23a0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae2441f06c1c9df43f07c167efb5c23a0">get_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
@@ -225,8 +225,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a1e8467fbb94062ce3ffadeb98c2ff6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7f1ea6af692b15c2d46ecb87ac193a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#af7f1ea6af692b15c2d46ecb87ac193a1">reynolds_stress_solutions</a></td></tr>
 <tr class="separator:af7f1ea6af692b15c2d46ecb87ac193a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f444ba0e97cece22fde518d8a95cb17"><td class="memItemLeft" align="right" valign="top">Function&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a5f444ba0e97cece22fde518d8a95cb17">immersed_solid_signed_distance_function</a></td></tr>
-<tr class="separator:a5f444ba0e97cece22fde518d8a95cb17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5aebf5bf8d7c461762f955fbdc55150"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac5aebf5bf8d7c461762f955fbdc55150">immersed_solid_shape</a></td></tr>
+<tr class="separator:ac5aebf5bf8d7c461762f955fbdc55150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3d5eacc84646adc0357fe17e75e6f72"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa3d5eacc84646adc0357fe17e75e6f72">physics_solutions_m1</a></td></tr>
 <tr class="separator:aa3d5eacc84646adc0357fe17e75e6f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb30191ab6f77047514aa794e4abdbc4"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#abb30191ab6f77047514aa794e4abdbc4">block_physics_solutions_m1</a></td></tr>
@@ -283,7 +283,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00070">70</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00235">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00232">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00241">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00026">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00857">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00233">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00234">Parameters::Multiphysics::VOF</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00235">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00232">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00240">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00026">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00857">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00233">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00234">Parameters::Multiphysics::VOF</a>.</p>
 
 </div>
 </div>
@@ -766,8 +766,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aa821d532e7531c3db10829cc06973872"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa821d532e7531c3db10829cc06973872">&#9670;&nbsp;</a></span>get_immersed_solid_signed_distance_function()</h2>
+<a id="ae9a2eca5278a1446e60dbd44421dbdb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9a2eca5278a1446e60dbd44421dbdb7">&#9670;&nbsp;</a></span>get_immersed_solid_shape()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -775,12 +775,12 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Function&lt; dim &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_immersed_solid_signed_distance_function</td>
+          <td class="memname"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_immersed_solid_shape</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Request immersed solid signed distance function. </p>
+<p>Request immersed solid shape. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00224">224</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -1041,7 +1041,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00241">241</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00240">240</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics__interface_8cc_source.html#l00011">_unused</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00239">Parameters::Multiphysics::buoyancy_force</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00096">Parameters::VOF_InterfaceSharpening::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00134">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00145">Parameters::VOF_SurfaceTensionForce::enable_marangoni_effect</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00231">Parameters::Multiphysics::fluid_dynamics</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00232">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00181">Parameters::VOF::sharpening</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00182">Parameters::VOF::surface_tension_force</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00234">Parameters::Multiphysics::VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00241">Parameters::Multiphysics::vof_parameters</a>.</p>
 
@@ -1455,8 +1455,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a615d3756670f0f96f9e8e4af99726c33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a615d3756670f0f96f9e8e4af99726c33">&#9670;&nbsp;</a></span>set_immersed_solid_signed_distance_function()</h2>
+<a id="a75edde8a3131755c75813bee6ce03ebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75edde8a3131755c75813bee6ce03ebc">&#9670;&nbsp;</a></span>set_immersed_solid_shape()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1464,19 +1464,19 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::set_immersed_solid_signed_distance_function </td>
+          <td class="memname">void <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::set_immersed_solid_shape </td>
           <td>(</td>
-          <td class="paramtype">Function&lt; dim &gt; *&#160;</td>
-          <td class="paramname"><em>function</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td>
+          <td class="paramname"><em>shape</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Share immersed solid signed distance function. </p>
+<p>Share immersed solid shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">function</td><td>The immersed solid signed distance function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">shape</td><td>The immersed solid shape </td></tr>
   </table>
   </dd>
 </dl>
@@ -2283,8 +2283,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a5f444ba0e97cece22fde518d8a95cb17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f444ba0e97cece22fde518d8a95cb17">&#9670;&nbsp;</a></span>immersed_solid_signed_distance_function</h2>
+<a id="ac5aebf5bf8d7c461762f955fbdc55150"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5aebf5bf8d7c461762f955fbdc55150">&#9670;&nbsp;</a></span>immersed_solid_shape</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2295,7 +2295,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Function&lt;dim&gt;* <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::immersed_solid_signed_distance_function</td>
+          <td class="memname"><a class="el" href="classShape.html">Shape</a>&lt;dim&gt;* <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::immersed_solid_shape</td>
         </tr>
       </table>
   </td>
