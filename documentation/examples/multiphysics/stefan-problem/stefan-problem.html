@@ -445,7 +445,7 @@
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/stefan-problem</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">stefan.prm</span></code></p></li>
@@ -490,7 +490,6 @@
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 100, 1 : 0, 0 : 1, 0.1 : true
-  set initial refinement = 0
 end
 </pre></div>
 </div>
@@ -500,7 +499,7 @@ end
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <p>The next step is establishing the boundary conditions:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions heat transfer
-  set number = 1
+  set number = 4
   subsection bc 0
     set id    = 0
     set type  = temperature
@@ -508,13 +507,20 @@ end
       set Function expression = 1
     end
   end
+  subsection bc 1
+    set id    = 1
+    set type  = noflux
+  end
+  subsection bc 2
+    set id    = 2
+    set type  = noflux
+  end
+  subsection bc 3
+    set id    = 3
+    set type  = noflux
+  end
 end
 </pre></div>
-</div>
-<p>Note that we only set one boundary condition for the temperature, which is a constant temperature on the wall which bears the ID 0 (the left wall). By default, boundaries on which boundary conditions are not specified are no-flux Neumann boundary conditions which, for a heat transfer problem results in:</p>
-<div class="math-wrapper docutils container">
-<div class="math notranslate nohighlight">
-\[\nabla T \cdot \mathbf{n} = 0\]</div>
 </div>
 </section>
 <section id="physical-properties">
@@ -665,7 +671,7 @@ end
             <ul>
 <li><a class="reference internal" href="#">Stefan Problem: Melting of a Solid</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
 <li><a class="reference internal" href="#mesh">Mesh</a></li>

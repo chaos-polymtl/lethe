@@ -419,141 +419,144 @@ $(function() {
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                  bdf_coefs[0] * enthalpy_current + bdf_coefs[1] * enthalpy_p1;</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> dT =</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                  bdf_coefs[0] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> + bdf_coefs[1] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a>;</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                property_vector[i] = dH / dT;</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;              }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                <span class="comment">// The division does not need a tolerance to avoid a division by</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                <span class="comment">// 0 since the temperature is clipped</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                property_vector[i] = dH / dT;</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;            <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::TimeSteppingMethod::bdf2</a>:</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;              {</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;                <span class="comment">// Clipping to ensure a minimal temperature difference</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> &gt; <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>)</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                  <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> = std::max(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a>, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a> + 1e-6);</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                  <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a> = std::max(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> + 1e-6);</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_current = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a>);</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_p1      = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a>);</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_p2      = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>);</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> dH = bdf_coefs[0] * enthalpy_current +</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                                  bdf_coefs[1] * enthalpy_p1 +</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                                  bdf_coefs[2] * enthalpy_p2;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> dT = bdf_coefs[0] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> +</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                                  bdf_coefs[1] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a> +</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                                  bdf_coefs[2] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                property_vector[i] = dH / dT;</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;              }</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;            <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;              <span class="keywordflow">throw</span>(std::runtime_error(</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                <span class="stringliteral">&quot;Other time integration schemes are not supported by the phase change model&quot;</span>));</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;          }</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;      }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  }</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">   * @brief Compute the jacobian (the partial derivative) of the specific heat</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">   * with respect to a specified field.</span></div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment">   * @param[in] field_values Values of the various fields on which the specific</span></div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">   * heat may depend. The map stores a single value per field.</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;              }</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            <span class="keywordflow">case</span> <a class="code" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::TimeSteppingMethod::bdf2</a>:</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;              {</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                <span class="comment">// Clipping to ensure a minimal temperature difference</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> &gt; <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>)</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                  <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> = std::max(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a>, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a> + 1e-6);</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                  <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a> = std::max(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> + 1e-6);</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_current = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a>);</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_p1      = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a>);</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> enthalpy_p2      = enthalpy(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>);</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> dH = bdf_coefs[0] * enthalpy_current +</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                                  bdf_coefs[1] * enthalpy_p1 +</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                                  bdf_coefs[2] * enthalpy_p2;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> dT = bdf_coefs[0] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a> +</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                                  bdf_coefs[1] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a859d4520f7d26120611d9ef4e94df430">temperature_p1</a> +</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                                  bdf_coefs[2] * <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a0b630fe566f33c3b9dda2e80bd35fe07">temperature_p2</a>;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                property_vector[i] = dH / (dT + 1e-8);</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;              }</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;            <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;              <span class="keywordflow">throw</span>(std::runtime_error(</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                <span class="stringliteral">&quot;Other time integration schemes are not supported by the phase change model&quot;</span>));</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;          }</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;      }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  }</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment">   * @brief Compute the jacobian (the partial derivative) of the specific heat</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">   * with respect to a specified field.</span></div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">   * @param[in] id Indicator of the field with respect to which the jacobian</span></div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">   * should be computed.</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">   * @param[in] field_values Values of the various fields on which the specific</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">   * heat may depend. The map stores a single value per field.</span></div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">   * @return Value of the derivative of the specific heat with respect to the</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">   * specified field.</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">  388</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">jacobian</a>(<span class="keyword">const</span> std::map&lt;field, double&gt; &amp;field_values, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> <span class="keywordtype">id</span>)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    <span class="keywordflow">if</span> (<span class="keywordtype">id</span> == <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>)</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;      {</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        AssertThrow(field_values.find(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>) != field_values.end(),</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;                    PhysicialPropertyModelFieldUndefined(</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;                      <span class="stringliteral">&quot;EvaporationModelTemperature&quot;</span>, <span class="stringliteral">&quot;temperature&quot;</span>));</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        <span class="keywordflow">return</span> numerical_jacobian(field_values, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>);</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;      }</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;      <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;  };</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="comment">   * @brief Compute the derivative of the specific heat with respect to a field</span></div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment">   * for an isothermal ideal gas.</span></div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">   * @param[in] field_vectors Vector of values of the fields used to evaluate</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">   * the specific heat. The map stores a vector of values per field.</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">   * @param[in] id Indicator of the field with respect to which the jacobian</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">   * should be computed.</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">   * @return Value of the derivative of the specific heat with respect to the</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">   * specified field.</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00391"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">  391</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">jacobian</a>(<span class="keyword">const</span> std::map&lt;field, double&gt; &amp;field_values, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> <span class="keywordtype">id</span>)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keywordflow">if</span> (<span class="keywordtype">id</span> == <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>)</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;      {</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        AssertThrow(field_values.find(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>) != field_values.end(),</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                    PhysicialPropertyModelFieldUndefined(</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                      <span class="stringliteral">&quot;EvaporationModelTemperature&quot;</span>, <span class="stringliteral">&quot;temperature&quot;</span>));</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        <span class="keywordflow">return</span> numerical_jacobian(field_values, <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>);</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;      }</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  };</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">   * @brief Compute the derivative of the specific heat with respect to a field</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">   * for an isothermal ideal gas.</span></div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">   * @param[in] id Identifier of the field with respect to which a derivative</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment">   * should be computed.</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">   * @param[in] field_vectors Vector of values of the fields used to evaluate</span></div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment">   * the specific heat. The map stores a vector of values per field.</span></div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">   * @param[out] jacobian Vector of computed derivative values of the specific</span></div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">   * heat with respect to the field of the specified @p id.</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;  <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">  415</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">vector_jacobian</a>(<span class="keyword">const</span> std::map&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt; &amp;field_vectors,</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                  <span class="keyword">const</span> <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>                                 <span class="keywordtype">id</span>,</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                  std::vector&lt;double&gt; &amp;jacobian_vector)<span class="keyword"> override</span></div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="keyword">  </span>{</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    AssertThrow(field_vectors.find(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>) != field_vectors.end(),</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                PhysicialPropertyModelFieldUndefined(</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                  <span class="stringliteral">&quot;EvaporationModelTemperature&quot;</span>, <span class="stringliteral">&quot;temperature&quot;</span>));</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    vector_numerical_jacobian(field_vectors, <span class="keywordtype">id</span>, jacobian_vector);</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;  };</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="comment">  /**</span></div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="comment">   * @brief Compute the enthalpy of a phase change material for a temperature</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment">   * \f$T\f$.</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">   * The enthalpy \f$(H)\f$ is defined:</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment">   * - In pure liquid \f$(T&gt;T_\mathrm{l})\f$ as:\n</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment">   * \f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})</span></div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">   * (T_\mathrm{l}-T_\mathrm{s}) + h_\mathrm{l} + c_\mathrm{p,l}</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">   * (T-T_\mathrm{l})\f$\n\n</span></div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="comment">   * - In liquid-solid mixture \f$(T_\mathrm{s} \leq T \leq T_\mathrm{l})\f$</span></div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment">   * as:\n</span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">   *\f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})</span></div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">   * (T_\mathrm{l}-T_\mathrm{s}) + \alpha_\mathrm{l} h_\mathrm{l}\f$\n</span></div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment">   * where \f$\alpha_\mathrm{l} = \frac{T-T_\mathrm{s}}{T_\mathrm{l}-</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment">   * T_\mathrm{s}}\f$ is the liquid fraction.\n\n</span></div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">   * - In pure solid \f$(T&lt;T_\mathrm{s})\f$ as:\n</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment">   * \f$H(T) = c_\mathrm{p,s} T\f$</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">   * @param[in] id Identifier of the field with respect to which a derivative</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">   * should be computed.</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">   * @param[out] jacobian Vector of computed derivative values of the specific</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment">   * heat with respect to the field of the specified @p id.</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00418"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">  418</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">vector_jacobian</a>(<span class="keyword">const</span> std::map&lt;<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt;double&gt;&gt; &amp;field_vectors,</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;                  <span class="keyword">const</span> <a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>                                 <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                  std::vector&lt;double&gt; &amp;jacobian_vector)<span class="keyword"> override</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="keyword">  </span>{</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    AssertThrow(field_vectors.find(<a class="code" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">field::temperature</a>) != field_vectors.end(),</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                PhysicialPropertyModelFieldUndefined(</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                  <span class="stringliteral">&quot;EvaporationModelTemperature&quot;</span>, <span class="stringliteral">&quot;temperature&quot;</span>));</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    vector_numerical_jacobian(field_vectors, <span class="keywordtype">id</span>, jacobian_vector);</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;  };</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">   * @brief Compute the enthalpy of a phase change material for a temperature</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment">   * \f$T\f$.</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment">   * The enthalpy \f$(H)\f$ is defined:</span></div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">   * - In pure liquid \f$(T&gt;T_\mathrm{l})\f$ as:\n</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment">   * \f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="comment">   * (T_\mathrm{l}-T_\mathrm{s}) + h_\mathrm{l} + c_\mathrm{p,l}</span></div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment">   * (T-T_\mathrm{l})\f$\n\n</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">   * - In liquid-solid mixture \f$(T_\mathrm{s} \leq T \leq T_\mathrm{l})\f$</span></div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="comment">   * as:\n</span></div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment">   *\f$H(T) = c_\mathrm{p,s} T_\mathrm{s} + 0.5(c_\mathrm{p,s}+c_\mathrm{p,l})</span></div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment">   * (T_\mathrm{l}-T_\mathrm{s}) + \alpha_\mathrm{l} h_\mathrm{l}\f$\n</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">   * where \f$\alpha_\mathrm{l} = \frac{T-T_\mathrm{s}}{T_\mathrm{l}-</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment">   * T_\mathrm{s}}\f$ is the liquid fraction.\n\n</span></div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">   * @param[in] T temperature at which the enthalpy is computed.</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">   *</span></div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">   * @return Value of the enthalpy evaluated at \f$T\f$.</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment">   */</span></div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160; </div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="line"><a name="l00452"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">  452</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">enthalpy</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> T)</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;  {</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <span class="keywordflow">if</span> (T &gt; param.T_liquidus)</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;      <span class="keywordflow">return</span> (param.cp_s * param.T_solidus +</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;              0.5 * (param.cp_l + param.cp_s) *</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;                (param.T_liquidus - param.T_solidus) +</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;              param.latent_enthalpy + (T - param.T_liquidus) * param.cp_l);</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (T &gt; param.T_solidus)</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;      {</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;        liquid_fraction = <a class="code" href="phase__change_8h.html#a42e019a8aec393ea26cc629ae8376e03">calculate_liquid_fraction</a>(T, param);</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        <span class="keywordflow">return</span> (param.cp_s * param.T_solidus +</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                0.5 * (param.cp_l + param.cp_s) * (T - param.T_solidus) +</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                param.latent_enthalpy * liquid_fraction);</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;      }</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;      <span class="keywordflow">return</span> param.cp_s * T;</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  }</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160; </div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00471"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">  471</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> <a class="code" href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">param</a>;</div>
-<div class="line"><a name="l00472"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">  472</a></span>&#160;  <span class="keywordtype">double</span>                        <a class="code" href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">liquid_fraction</a>;</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;};</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160; </div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">   * - In pure solid \f$(T&lt;T_\mathrm{s})\f$ as:\n</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">   * \f$H(T) = c_\mathrm{p,s} T\f$</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment">   * @param[in] T temperature at which the enthalpy is computed.</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="comment">   * @return Value of the enthalpy evaluated at \f$T\f$.</span></div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160; </div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="line"><a name="l00455"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">  455</a></span>&#160;  <a class="code" href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">enthalpy</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> T)</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;  {</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    <span class="keywordflow">if</span> (T &gt; param.T_liquidus)</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;      <span class="keywordflow">return</span> (param.cp_s * param.T_solidus +</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;              0.5 * (param.cp_l + param.cp_s) *</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;                (param.T_liquidus - param.T_solidus) +</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;              param.latent_enthalpy + (T - param.T_liquidus) * param.cp_l);</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (T &gt; param.T_solidus)</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;      {</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;        liquid_fraction = <a class="code" href="phase__change_8h.html#a42e019a8aec393ea26cc629ae8376e03">calculate_liquid_fraction</a>(T, param);</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <span class="keywordflow">return</span> (param.cp_s * param.T_solidus +</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                0.5 * (param.cp_l + param.cp_s) * (T - param.T_solidus) +</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                param.latent_enthalpy * liquid_fraction);</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;      }</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;      <span class="keywordflow">return</span> param.cp_s * T;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;  }</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160; </div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00474"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">  474</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> <a class="code" href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">param</a>;</div>
+<div class="line"><a name="l00475"></a><span class="lineno"><a class="line" href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">  475</a></span>&#160;  <span class="keywordtype">double</span>                        <a class="code" href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">liquid_fraction</a>;</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;};</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassConstantSpecificHeat_html"><div class="ttname"><a href="classConstantSpecificHeat.html">ConstantSpecificHeat</a></div><div class="ttdoc">Constant specific heat model.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00038">specific_heat_model.h:39</a></div></div>
 <div class="ttc" id="aclassConstantSpecificHeat_html_a14768b3df127f61524563113bb7e4bef"><div class="ttname"><a href="classConstantSpecificHeat.html#a14768b3df127f61524563113bb7e4bef">ConstantSpecificHeat::vector_jacobian</a></div><div class="ttdeci">void vector_jacobian(const std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;field_vectors, const field id, std::vector&lt; double &gt; &amp;jacobian_vector) override</div><div class="ttdoc">Computes the derivative of the specific heat with respect to specified fields.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00132">specific_heat_model.h:132</a></div></div>
 <div class="ttc" id="aclassConstantSpecificHeat_html_a4c894b1b29fc5d8a6b3211c248ca1424"><div class="ttname"><a href="classConstantSpecificHeat.html#a4c894b1b29fc5d8a6b3211c248ca1424">ConstantSpecificHeat::specific_heat</a></div><div class="ttdeci">const double specific_heat</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00142">specific_heat_model.h:139</a></div></div>
@@ -564,12 +567,12 @@ $(function() {
 <div class="ttc" id="aclassParameters_1_1Material_html"><div class="ttname"><a href="classParameters_1_1Material.html">Parameters::Material</a></div><div class="ttdoc">Material - Class that defines the physical property of a material. Generally a material will be a flu...</div><div class="ttdef"><b>Definition:</b> <a href="parameters_8h_source.html#l00403">parameters.h:404</a></div></div>
 <div class="ttc" id="aclassPhaseChangeSpecificHeat_html"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html">PhaseChangeSpecificHeat</a></div><div class="ttdoc">Phase change specific heat model.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00168">specific_heat_model.h:169</a></div></div>
 <div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a214b7fb4283e170664e89ab3a2ca0f50"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a214b7fb4283e170664e89ab3a2ca0f50">PhaseChangeSpecificHeat::vector_value</a></div><div class="ttdeci">void vector_value(const std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</div><div class="ttdoc">Compute a vector of specific heat values for an isothermal ideal gas.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00278">specific_heat_model.h:278</a></div></div>
-<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a2d8dd26977b0519576f231e7d2798e31"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">PhaseChangeSpecificHeat::vector_jacobian</a></div><div class="ttdeci">void vector_jacobian(const std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;field_vectors, const field id, std::vector&lt; double &gt; &amp;jacobian_vector) override</div><div class="ttdoc">Compute the derivative of the specific heat with respect to a field for an isothermal ideal gas.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00415">specific_heat_model.h:415</a></div></div>
+<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a2d8dd26977b0519576f231e7d2798e31"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a2d8dd26977b0519576f231e7d2798e31">PhaseChangeSpecificHeat::vector_jacobian</a></div><div class="ttdeci">void vector_jacobian(const std::map&lt; field, std::vector&lt; double &gt;&gt; &amp;field_vectors, const field id, std::vector&lt; double &gt; &amp;jacobian_vector) override</div><div class="ttdoc">Compute the derivative of the specific heat with respect to a field for an isothermal ideal gas.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00418">specific_heat_model.h:418</a></div></div>
 <div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a877c3a9fc362aba7f3d29ba9b0f53f8d"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a877c3a9fc362aba7f3d29ba9b0f53f8d">PhaseChangeSpecificHeat::PhaseChangeSpecificHeat</a></div><div class="ttdeci">PhaseChangeSpecificHeat(const Parameters::PhaseChange p_phase_change_parameters)</div><div class="ttdoc">Constructor of the phase change specific heat model.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00177">specific_heat_model.h:177</a></div></div>
-<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a8db0c85702ecfeb176fbd570e411835a"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">PhaseChangeSpecificHeat::enthalpy</a></div><div class="ttdeci">double enthalpy(const double T)</div><div class="ttdoc">Compute the enthalpy of a phase change material for a temperature .</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00452">specific_heat_model.h:452</a></div></div>
-<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_abd49a981fb5f9fd30c2998b04b9dda50"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">PhaseChangeSpecificHeat::liquid_fraction</a></div><div class="ttdeci">double liquid_fraction</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00472">specific_heat_model.h:472</a></div></div>
-<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_af4adf0decddd57a13cbeb22810812f8a"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">PhaseChangeSpecificHeat::param</a></div><div class="ttdeci">const Parameters::PhaseChange param</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00471">specific_heat_model.h:471</a></div></div>
-<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_afbfa380b43a7d47233363c41abb1009b"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">PhaseChangeSpecificHeat::jacobian</a></div><div class="ttdeci">double jacobian(const std::map&lt; field, double &gt; &amp;field_values, field id) override</div><div class="ttdoc">Compute the jacobian (the partial derivative) of the specific heat with respect to a specified field.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00388">specific_heat_model.h:388</a></div></div>
+<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_a8db0c85702ecfeb176fbd570e411835a"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#a8db0c85702ecfeb176fbd570e411835a">PhaseChangeSpecificHeat::enthalpy</a></div><div class="ttdeci">double enthalpy(const double T)</div><div class="ttdoc">Compute the enthalpy of a phase change material for a temperature .</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00455">specific_heat_model.h:455</a></div></div>
+<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_abd49a981fb5f9fd30c2998b04b9dda50"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#abd49a981fb5f9fd30c2998b04b9dda50">PhaseChangeSpecificHeat::liquid_fraction</a></div><div class="ttdeci">double liquid_fraction</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00475">specific_heat_model.h:475</a></div></div>
+<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_af4adf0decddd57a13cbeb22810812f8a"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#af4adf0decddd57a13cbeb22810812f8a">PhaseChangeSpecificHeat::param</a></div><div class="ttdeci">const Parameters::PhaseChange param</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00474">specific_heat_model.h:474</a></div></div>
+<div class="ttc" id="aclassPhaseChangeSpecificHeat_html_afbfa380b43a7d47233363c41abb1009b"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#afbfa380b43a7d47233363c41abb1009b">PhaseChangeSpecificHeat::jacobian</a></div><div class="ttdeci">double jacobian(const std::map&lt; field, double &gt; &amp;field_values, field id) override</div><div class="ttdoc">Compute the jacobian (the partial derivative) of the specific heat with respect to a specified field.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00391">specific_heat_model.h:391</a></div></div>
 <div class="ttc" id="aclassPhaseChangeSpecificHeat_html_aff7aaef95aa8bd1f50af84bd385a82a4"><div class="ttname"><a href="classPhaseChangeSpecificHeat.html#aff7aaef95aa8bd1f50af84bd385a82a4">PhaseChangeSpecificHeat::value</a></div><div class="ttdeci">double value(const std::map&lt; field, double &gt; &amp;field_values) override</div><div class="ttdoc">Compute the specific heat of the isothermal ideal gas.</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00196">specific_heat_model.h:196</a></div></div>
 <div class="ttc" id="aclassPhysicalPropertyModel_html"><div class="ttname"><a href="classPhysicalPropertyModel.html">PhysicalPropertyModel</a></div><div class="ttdoc">Abstract class that defines the interface for a physical property model Physical property model provi...</div><div class="ttdef"><b>Definition:</b> <a href="physical__property__model_8h_source.html#l00073">physical_property_model.h:74</a></div></div>
 <div class="ttc" id="aclassSpecificHeatModel_html"><div class="ttname"><a href="classSpecificHeatModel.html">SpecificHeatModel</a></div><div class="ttdoc">Abstract class for calculating the specific heat of materials on quadrature points using the temperat...</div><div class="ttdef"><b>Definition:</b> <a href="specific__heat__model_8h_source.html#l00018">specific_heat_model.h:19</a></div></div>

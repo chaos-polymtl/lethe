@@ -16,7 +16,7 @@ Features
 
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 Both files mentioned below are located in the example's folder (``examples/multiphysics/stefan-problem``).
@@ -85,7 +85,6 @@ We first define the geometry in which the simulation is carried out using the me
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
       set grid arguments     = 100, 1 : 0, 0 : 1, 0.1 : true
-      set initial refinement = 0
     end
 
 We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundary of the domain, hence the colorize option is set to true.
@@ -98,21 +97,28 @@ The next step is establishing the boundary conditions:
 
 .. code-block:: text
 
-    subsection boundary conditions heat transfer
-      set number = 1
-      subsection bc 0
-        set id    = 0
-        set type  = temperature
-        subsection value
-          set Function expression = 1
-        end
+  subsection boundary conditions heat transfer
+    set number = 4
+    subsection bc 0
+      set id    = 0
+      set type  = temperature
+      subsection value
+        set Function expression = 1
       end
     end
-
-Note that we only set one boundary condition for the temperature, which is a constant temperature on the wall which bears the ID 0 (the left wall). By default, boundaries on which boundary conditions are not specified are no-flux Neumann boundary conditions which, for a heat transfer problem results in:
-
-.. math::
-  \nabla T \cdot \mathbf{n} = 0
+    subsection bc 1
+      set id    = 1
+      set type  = noflux
+    end
+    subsection bc 2
+      set id    = 2
+      set type  = noflux
+    end
+    subsection bc 3
+      set id    = 3
+      set type  = noflux
+    end
+  end
 
 
 Physical Properties

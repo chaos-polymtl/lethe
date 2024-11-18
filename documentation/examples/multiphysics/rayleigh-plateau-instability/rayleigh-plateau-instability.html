@@ -458,6 +458,7 @@
 <li><p>Postprocessing Python script for breakup lengths extraction: <code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-postprocess.py</span></code></p></li>
 <li><p>Postprocessing Python script for code to code comparison: <code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-compare.py</span></code></p></li>
 <li><p>Postprocessing Bash script: <code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-postprocess.sh</span></code></p></li>
+<li><p>Reference results from Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> for code-to-code verification (<span class="math notranslate nohighlight">\(We=20\)</span> and <span class="math notranslate nohighlight">\(Oh=10\)</span>): <code class="docutils literal notranslate"><span class="pre">denner-et-al-2022-We020.csv</span></code></p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -523,7 +524,7 @@ end
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection, we define the jet fluid (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>) as presented for case J1 in Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> The viscosity is deduced from the imposed Ohnesorge number <span class="math notranslate nohighlight">\(\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)\)</span> value of <span class="math notranslate nohighlight">\(0.1\)</span>. The ambient fluid (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>) is defined such that the density <span class="math notranslate nohighlight">\(\left(\frac{\rho_1}{\rho_0} = 10^3 \right)\)</span> and dynamic viscosity <span class="math notranslate nohighlight">\(\left(\frac{\mu_1}{\mu_0} = 10^2\right)\)</span> ratios are respected. A <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> type of material interaction is also defined to specify the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>. In this case, it is set to <code class="docutils literal notranslate"><span class="pre">constant</span></code> (default value) with the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> (<span class="math notranslate nohighlight">\(\sigma\)</span>) set to <span class="math notranslate nohighlight">\(0.0674 \; \mathrm{N \, m^{-1}}\)</span>.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection, we define the jet fluid (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>) as presented for case J1 in Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> The viscosity is deduced from the imposed Ohnesorge number <span class="math notranslate nohighlight">\(\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)\)</span> value of <span class="math notranslate nohighlight">\(0.1\)</span>. The ambient fluid (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>) is defined such that the density <span class="math notranslate nohighlight">\(\left(\frac{\rho_1}{\rho_0} = 10^3 \right)\)</span> and dynamic viscosity <span class="math notranslate nohighlight">\(\left(\frac{\mu_1}{\mu_0} = 10^2\right)\)</span> ratios are respected. A <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> type of material interaction is also defined to specify the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>. In this case, it is set to <code class="docutils literal notranslate"><span class="pre">constant</span></code> (default value) with the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> (<span class="math notranslate nohighlight">\(\sigma\)</span>) set to <span class="math notranslate nohighlight">\(0.0674 \; \mathrm{N \, m^{-1}}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   set number of fluids = 2
   subsection fluid 0
@@ -595,9 +596,9 @@ end
 </section>
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection, the inlet velocity perturbation is specified as described in the <a class="reference internal" href="#description-of-the-case">description of the case</a> with <span class="math notranslate nohighlight">\(\kappa = 0.7\)</span>.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection, the inlet velocity perturbation is specified as described in the <a class="reference internal" href="#description-of-the-case">description of the case</a> with <span class="math notranslate nohighlight">\(\kappa = 0.7\)</span>. Note that we set <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">=</span> <span class="pre">0</span></code> for the outlet boundary condition to allow for fluid reentry. Otherwise, the default behavior of the outlet boundary condition will be to penalize fluid reentry which will affect the flow.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = function
@@ -612,15 +613,20 @@ end
     set periodic_id        = 3
     set periodic_direction = 1
   end
+  subsection bc 2
+    set id                 = 1
+    set type               = outlet
+    set beta               = 0
+  end
 end
 </pre></div>
 </div>
 </section>
 <section id="boundary-conditions-vof">
 <h3>Boundary Conditions VOF<a class="headerlink" href="#boundary-conditions-vof" title="Link to this heading">#</a></h3>
-<p>Lasty, in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection we ensure that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is at the inlet.</p>
+<p>Lasty, in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection we ensure that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is at the inlet. The other boundary conditions are default outlets.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions VOF
-  set number = 1
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet
@@ -644,7 +650,7 @@ end
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Make sure to compile Lethe in <cite>Release</cite> mode and run in parallel using mpirun.
-This simulation takes <span class="math notranslate nohighlight">\(\sim \, 40\)</span> minutes on <span class="math notranslate nohighlight">\(14\)</span> processes.</p>
+This simulation takes <span class="math notranslate nohighlight">\(\sim \, 20\)</span> minutes on <span class="math notranslate nohighlight">\(14\)</span> processes.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -677,7 +683,7 @@ This simulation takes <span class="math notranslate nohighlight">\(\sim \, 40\)<
 </section>
 <section id="code-to-code-comparison">
 <h3>Code to Code Comparison<a class="headerlink" href="#code-to-code-comparison" title="Link to this heading">#</a></h3>
-<p>We compare the dimensionless breakup length <span class="math notranslate nohighlight">\(\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)\)</span> with the simulation results from Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <span class="math notranslate nohighlight">\(L_\mathrm{b}\)</span> is the breakup length defined as <strong>the shortest distance from the nozzle (inlet) to the tip of the continuous jet</strong>.</p>
+<p>We compare the dimensionless breakup length <span class="math notranslate nohighlight">\(\left(\frac{L_\mathrm{b}}{R_\mathrm{jet}}\right)\)</span> with the simulation results from Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <span class="math notranslate nohighlight">\(L_\mathrm{b}\)</span> is the breakup length defined as <strong>the shortest distance from the nozzle (inlet) to the tip of the continuous jet</strong>.</p>
 <p>The results can be postprocessed using the provided Bash script (<code class="docutils literal notranslate"><span class="pre">rayleigh-plateau-postprocess.sh</span></code>). Make sure that the file has executable permissions before calling it with:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./rayleigh-plateau-postprocess.sh denner-et-al-2022-We020.csv &quot;{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}&quot;
 </pre></div>
@@ -705,7 +711,7 @@ The script then calculates an average <span class="math notranslate nohighlight"
 </table>
 </div>
 <p>As it can be seen above, for <span class="math notranslate nohighlight">\(\delta_0 \leq 0.1\)</span>, we observe no breakup. The jet stabilizes despite the perturbation. An additional case was studied at <span class="math notranslate nohighlight">\(\delta_0 = 0.12\)</span> to check the increasing stabilizing tendency of the jet for lower excitation amplitude values.
-We also observe that none of the other evaluation points match with the work of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>  However, a similar trend in values is observed for <span class="math notranslate nohighlight">\(\delta_0 \in [0.2,0.5]\)</span>. At <span class="math notranslate nohighlight">\(\delta_0 = 0.6\)</span>, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly <span class="math notranslate nohighlight">\(L_\mathrm{b}\)</span> as displayed in the video below. This might have not been the case in the work of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+We also observe that none of the other evaluation points match with the work of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>  However, a similar trend in values is observed for <span class="math notranslate nohighlight">\(\delta_0 \in [0.2,0.5]\)</span>. At <span class="math notranslate nohighlight">\(\delta_0 = 0.6\)</span>, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly <span class="math notranslate nohighlight">\(L_\mathrm{b}\)</span> as displayed in the video below. This might have not been the case in the work of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <iframe width="720" height="428" src="https://www.youtube.com/embed/p3TXpNErbdc?rel=0&vq=hd720" title="2D Rayleigh-Plateau Instability with an excitation amplitude of 0.60" frameborder="0" allowfullscreen></iframe></section>
 </section>
 <hr class="docutils" />
@@ -714,7 +720,7 @@ We also observe that none of the other evaluation points match with the work of 
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="denner2022" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id4">4</a>,<a role="doc-backlink" href="#id5">5</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id4">4</a>,<a role="doc-backlink" href="#id5">5</a>,<a role="doc-backlink" href="#id6">6</a>)</span>
 <p>F. Denner, F. Evrard, A. A. Castrejón-Pita, J. R. Castrejón-Pita, and B. van Wachem, “Reversal and Inversion of Capillary Jet Breakup at Large Excitation Amplitudes,” <em>Flow Turbul. Combust.</em>, vol. 108, no. 3, pp. 843–863, Mar. 2022, doi: <a class="reference external" href="https://link.springer.com/article/10.1007/s10494-021-00291-w">10.1007/s10494-021-00291-w</a>.</p>
 </aside>
 </aside>
