@@ -27,11 +27,11 @@ All files mentioned below are located in the example's folder (``examples/dem/3d
 - Parameters files for the problem: ``granuheap.prm`` and ``granuheap_multicase.prm``
 - Post-processing python files: ``post_processing.py``, ``post_processing_multicase.prm`` and ``post_processing_functions.py``.
 
------------------------c
+-----------------------
 Description of the Case
 -----------------------
 
-This example simulates the flow of wet sand during a Granuheap experiment. First, particle are inserted inside the cylinder. After 1.6s, the cylinder rises, and the particles can flow freely, producing a heap. We compare the numerical results with our experimental results. To remain consistent with the Granuheap experiment, we use the same geometry in our simulations: a cylinder of 0.01m in diameter. For more information about the Granuheap procedures, visit the `Granuheap web page <https://www.granutools.com/en/granuheap>`_. Multiple simulations using different combinations of surface properties are ran to match experimental and numerical results. We use the work of Hu *et al.* [#hu2022]_ as a basis to choose which contact properties will create those combinations.
+This example simulates the flow of wet sand during a Granuheap experiment. First, particle are inserted inside the cylinder. After :math:`1.6 \ s`, the cylinder rises, and the particles can flow freely, producing a heap. We compare the numerical results with our experimental results. To remain consistent with the Granuheap experiment, we use the same geometry in our simulations: a cylinder of 0.01m in diameter. For more information about the Granuheap procedures, visit the `Granuheap web page <https://www.granutools.com/en/granuheap>`_. Multiple simulations using different combinations of surface properties are ran to match experimental and numerical results. We use the work of Hu *et al.* [#hu2022]_ as a basis to choose which contact properties will create those combinations.
 
 -------------------
 Generate Mesh Files
@@ -45,7 +45,7 @@ To generate the ``cylinder.msh`` and ``support.msh`` files, we used the ``genera
   support(x0, radius, n_points, height)
 
 
-In this case, the cylinder has a height of 2 cm and a radius of :math:`0.5 \ cm`. The support has a height of :math:`0.5 \ cm` and has the same radius as the cylinder. We fix the number of points in the circumference at 50 for both the cylinder and the support.
+In this case, the cylinder has a height of :math:`2 \ cm` and a radius of :math:`0.5 \ cm`. The support has a height of :math:`0.5 \ cm` and has the same radius as the cylinder. We fix the number of points in the circumference at 50 for both the cylinder and the support.
 
 .. code-block:: text
 
@@ -75,7 +75,7 @@ Parameter File
 Mesh
 ~~~~~
 
-The simulation domain is a rectangular box of :math:`0.045\times0.02\times0.02` m, made using the deal.ii grid generator. The grid is refined 6 times using the ``initial refinement`` parameter so that the cell size is approximately :math:`1.5` times the largest particle diameter value in every direction.
+The simulation domain is a rectangular box of :math:`0.045\times0.02\times0.02 \ m`, made using the deal.ii grid generator. The grid is refined 6 times using the ``initial refinement`` parameter so that the cell size is approximately :math:`1.5` times the largest particle diameter value in every direction.
 
 .. code-block:: text
 
