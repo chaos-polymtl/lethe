@@ -183,14 +183,14 @@ An insertion box is defined inside the cylinder.:math:`10^{4}` particles are ins
 .. code-block:: text
 
   subsection insertion info
-  set insertion method                               = volume
-  set inserted number of particles at each time step = 10000
-  set insertion frequency                            = 9000
-  set insertion box points coordinates               = 0.015, -0.00325, -0.00325: 0.035, 0.00325, 0.00325
-  set insertion distance threshold                   = 1.2
-  set insertion maximum offset                       = 0.05
-  set insertion prn seed                             = 19
-  set insertion direction sequence                   =  1, 2, 0
+    set insertion method                               = volume
+    set inserted number of particles at each time step = 10000
+    set insertion frequency                            = 9000
+    set insertion box points coordinates               = 0.015, -0.00325, -0.00325: 0.035, 0.00325, 0.00325
+    set insertion distance threshold                   = 1.2
+    set insertion maximum offset                       = 0.05
+    set insertion prn seed                             = 19
+    set insertion direction sequence                   =  1, 2, 0
   end
 
 
@@ -234,13 +234,13 @@ The process duration lasts for :math:`2.2 \ s`. We output the simulation results
 .. code-block:: text
 
   subsection simulation control
-  set time step         = 7.54e-6
-  set time end          = 2.2
-  set log frequency     = 1000
-  set output frequency  = 1000
-  set output path       = ./output/
-  set output name       = granuheap
-  set output boundaries = true
+    set time step         = 7.54e-6
+    set time end          = 2.2
+    set log frequency     = 1000
+    set output frequency  = 1000
+    set output path       = ./output/
+    set output name       = granuheap
+    set output boundaries = true
   end
     
 -----------------------
