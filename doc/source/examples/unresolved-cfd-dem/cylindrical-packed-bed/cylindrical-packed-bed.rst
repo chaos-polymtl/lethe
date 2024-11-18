@@ -2,7 +2,7 @@
 Cylindrical Packed Bed
 ==================================
 
-It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters ind DEM and CFD-DEM.
+It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in DEM and CFD-DEM.
 
 
 ----------------------------------
@@ -16,7 +16,7 @@ Features
 
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/cylindrical-packed-bed``).
@@ -51,7 +51,7 @@ The ``mesh`` subsection specifies the computational grid:
       set type               = dealii
       set grid type          = subdivided_cylinder
       set grid arguments     = 16:0.01:0.1
-      set initial refinement = 1
+      set initial refinement = 2
     end
 
 Simulation Control
@@ -95,7 +95,6 @@ The section on model parameters is explained in the DEM examples. We show the ch
 
   subsection model parameters
     set contact detection method               = dynamic
-    set contact detection frequency            = 10
     set neighborhood threshold                 = 1.3
     set particle particle contact force method = hertz_mindlin_limit_overlap
     set particle wall contact force method     = nonlinear
@@ -351,12 +350,13 @@ Linear Solver
   subsection linear solver
     subsection fluid dynamics
       set method                                = gmres
-      set max iters                             = 5000
+      set max iters                             = 2000
+      set max krylov vectors                    = 2000
       set relative residual                     = 1e-3
-      set minimum residual                      = 1e-11
+      set minimum residual                      = 1e-10
       set preconditioner                        = ilu
-      set ilu preconditioner fill               = 1
-      set ilu preconditioner absolute tolerance = 1e-14
+      set ilu preconditioner fill               = 4
+      set ilu preconditioner absolute tolerance = 1e-12
       set ilu preconditioner relative tolerance = 1.00
       set verbosity                             = verbose
     end
@@ -372,18 +372,18 @@ The simulation is run using the ``lethe-fluid-vans`` application. Assuming that 
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-vans parameter_file.prm
+  mpirun -np 8 lethe-fluid-vans flow-in-bed.prm
 
 
 -------------
 Results VANS
 -------------
-The results are shown in the plots below. We visualise the velocity of the fluid, the void fraction calculated using the particles' locations, and the pressure drop resulting from the particle-fluid interactions (drag). The plots to the right show the local distribution of the quantities at the center-line of the cylinder. 
+The results are shown in the plots below. The first plot visualises the velocity of the fluid and the void fraction along the center axis of the cylinder. We see that the fluid rapidly accelerates in as the void fraction decreases to ensure mass conservation. The second displays the pressure drop resulting from the particle-fluid interactions. The quasi totality of the pressure drop occurs within the bed of particles.
 
-.. image:: images/packed-bed-vel.png
+.. image:: images/velocity_void_fraction.png
     :alt: velocity and void fraction distribution
     :align: center
     
-.. image:: images/packed-bed-p.png
+.. image:: images/pressure_drop_void_fraction.png
     :alt: pressure drop in packed bed
     :align: center
