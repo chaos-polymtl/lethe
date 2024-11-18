@@ -363,7 +363,7 @@ public:
                 const double dT = bdf_coefs[0] * temperature +
                                   bdf_coefs[1] * temperature_p1 +
                                   bdf_coefs[2] * temperature_p2;
-                property_vector[i] = dH / (dT + 1e-6);
+                property_vector[i] = dH / (dT + 1e-8);
                 break;
               }
 

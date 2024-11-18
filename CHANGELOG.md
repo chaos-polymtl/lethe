@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Application of the immersed solid tanh diffusivity model is now faster thanks to using optimizations from the Shape class. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
 
+- MINOR The specific heat model in BDF2 was not protected against a division by zero (dH/dT). A tolerance is now added to the denominator (dH/(dT+tol)) to avoid this problem. [#1336](https://github.com/chaos-polymtl/lethe/pull/1336)
+
 ## [Master] - 2024-11-11
 
 ### Changed
