@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2024-11-18
 
-### Fix
+### Fixed
 
 - MINOR Time step can now be changed after a restart if adaptive time stepping is disabled. [#1343](https://github.com/chaos-polymtl/lethe/pull/1343)
 
