@@ -31,6 +31,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Postprocessing Python script for breakup lengths extraction: ``rayleigh-plateau-postprocess.py``
 - Postprocessing Python script for code to code comparison: ``rayleigh-plateau-compare.py``
 - Postprocessing Bash script: ``rayleigh-plateau-postprocess.sh``
+- Reference results from Denner *et al.* [#denner2022]_ for code-to-code verification (:math:`We=20` and :math:`Oh=10`): ``denner-et-al-2022-We020.csv``
 
 ****
 
@@ -184,12 +185,12 @@ The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`.
+In the ``boundary conditions`` subsection, the inlet velocity perturbation is specified as described in the `description of the case`_ with :math:`\kappa = 0.7`. Note that we set ``beta = 0`` for the outlet boundary condition to allow for fluid reentry. Otherwise, the default behavior of the outlet boundary condition will be to penalize fluid reentry which will affect the flow.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 2
+      set number = 3
       subsection bc 0
         set id   = 0
         set type = function
@@ -204,17 +205,22 @@ In the ``boundary conditions`` subsection, the inlet velocity perturbation is sp
         set periodic_id        = 3
         set periodic_direction = 1
       end
+      subsection bc 2
+        set id                 = 1
+        set type               = outlet
+        set beta               = 0
+      end
     end
 
 Boundary Conditions VOF
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` is at the inlet.
+Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` is at the inlet. The other boundary conditions are default outlets.
 
 .. code-block:: text
 
     subsection boundary conditions VOF
-      set number = 1
+      set number = 4
       subsection bc 0
         set id   = 0
         set type = dirichlet
@@ -241,7 +247,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 40` minutes on :math:`14` processes.
+    This simulation takes :math:`\sim \, 20` minutes on :math:`14` processes.
 
 .. tip::
   If you want to **generate and launch multiple cases** consecutively, a Bash script (``rayleigh-plateau-launch.sh``) is provided. Make sure that the file has executable permissions before calling it with:

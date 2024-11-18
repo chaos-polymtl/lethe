@@ -119,7 +119,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = function
@@ -134,6 +134,11 @@ subsection boundary conditions
     set periodic_id        = 3
     set periodic_direction = 1
   end
+  subsection bc 2
+    set id                 = 1
+    set type               = outlet
+    set beta               = 0
+  end
 end
 
 # --------------------------------------------------
@@ -141,7 +146,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 1
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet
@@ -157,7 +162,7 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance      = 1e-8
+    set tolerance      = 1e-6
     set max iterations = 20
   end
   subsection VOF
@@ -172,8 +177,9 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set relative residual = 1e-3
-    set minimum residual  = 1e-9
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-9
+    set preconditioner     = amg
   end
   subsection VOF
     set relative residual = 1e-8
