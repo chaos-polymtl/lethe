@@ -13,11 +13,11 @@ set dimension = 3
 subsection simulation control
   set method               = bdf1
   set number mesh adapt    = 0
-  set output name          = result
+  set output name          = cfd-dem
   set output frequency     = 50
   set startup time scaling = 0.6
   set time end             = 5
-  set time step            = 0.001
+  set time step            = 0.0001
   set subdivision          = 1
   set log precision        = 10
   set output path          = ./output/
@@ -143,11 +143,7 @@ subsection boundary conditions
     set id   = 0
     set type = slip
   end
-  subsection bc 1
-    set id   = 2
-    set type = outlet
-  end
-  subsection bc 2
+    subsection bc 1
     set id   = 1
     set type = function
     subsection u
@@ -159,6 +155,10 @@ subsection boundary conditions
     subsection w
       set Function expression = 0
     end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
   end
   subsection bc 3
     set id   = 3
