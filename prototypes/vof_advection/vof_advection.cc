@@ -536,7 +536,7 @@ private:
   
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
-  void compute_sign_distance(unsigned int time_iteration);
+  void compute_sign_distance(unsigned int time_iteration, const double global_volume);
   void compute_volume();
   double compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator);
   
@@ -707,7 +707,7 @@ template <int dim>
 AdvectionProblem<dim>::AssemblyScratchData::AssemblyScratchData(
   const FiniteElement<dim> &fe)
   : fe_values(fe,
-              QGauss<dim>(fe.degree + 1),
+              QGauss<dim>(fe.degree + 2),
               update_values | update_gradients | update_quadrature_points |
                 update_JxW_values)
   , advection_directions(fe_values.get_quadrature().size())
@@ -892,7 +892,7 @@ AdvectionProblem<dim>::refine_grid(const unsigned int max_grid_level, const unsi
   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(triangulation,
                                                         estimated_error_per_cell,
                                                         0.9,
-                                                        0.1);         
+                                                        0.01);         
   if (triangulation.n_levels() > max_grid_level)
     for (auto &cell :
          triangulation.active_cell_iterators_on_level(max_grid_level))
@@ -932,7 +932,10 @@ AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
       const double signed_dist = signed_distance[p];
       solution_owned[p] = 0.5+0.5*std::tanh(signed_dist/0.016);
     }
+    constraints.distribute(solution_owned);
+    
     locally_relevant_solution = solution_owned;
+    
 }
 
 template <int dim>
@@ -946,10 +949,13 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
       const double phase = locally_relevant_solution[p];
       // level_set_owned[p] = log10(std::max(phase,1e-8)/std::max(1.0-phase,1e-8));
       double phase_sign = sgn(phase-0.5);
-      level_set_owned[p] = 0.016*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0));
+      level_set_owned[p] = 0.016*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0-1e-16));
       // level_set_owned[p] = phase-0.5;
     }
-  level_set = level_set_owned;  
+  constraints.distribute(level_set_owned);
+  
+  level_set = level_set_owned; 
+   
 }
 
 template <int dim>
@@ -964,7 +970,7 @@ AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::
   level_set_function.set_active_cell(cell_dof_values);
   quadrature_generator.generate(level_set_function, unit_box);
   
-  const Quadrature<dim> inside_quadrature = quadrature_generator.get_inside_quadrature();
+  const Quadrature<dim> inside_quadrature = quadrature_generator.get_outside_quadrature();
   
   if (inside_quadrature.size() == 0)
     return 0.0;
@@ -985,7 +991,7 @@ AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::
 
 template <int dim>
 void 
-AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
+AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, const double global_volume)
 {   
   
   pcout << "In redistancation" << std::endl;
@@ -1123,8 +1129,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   // Local distance vetors initialization
   for (auto p : this->locally_active_dofs)
     {
-      distance(p) = 0.02;
-      distance_with_ghost(p) = 0.02;
+      distance(p) = 0.08;
+      distance_with_ghost(p) = 0.08;
     }
     
   const unsigned int n_quad_points = fe.degree + 1;
@@ -1205,35 +1211,38 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   for (auto p : this->locally_active_dofs)
   {
     distance(p) = distance_with_ghost(p);
+
+    const double level_set_value = level_set(p);
+    signed_distance(p) = distance(p)*sgn(level_set_value);
   }
-  
+    
   // Correct distance to conserve volume
   const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
   LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
   
   hp::QCollection<1> q_collection;
   q_collection.push_back(QGauss<1>(n_quad_points));
-
+  
   NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
-  
-  double global_volume = 0.0;
-  
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      
-      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-      
-      global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  
-    }
-  }
-  global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  
-  pcout << "global_volume = " << global_volume << std::endl;
+  // 
+  // double global_volume = 0.0;
+  // 
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  // {
+  //   if (cell->is_locally_owned())
+  //   {
+  // 
+  //     Vector<double> cell_dof_values(dofs_per_cell);
+  // 
+  //     cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+  // 
+  //     global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  // 
+  //   }
+  // }
+  // global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
+  // 
+  // pcout << "global_volume = " << global_volume << std::endl;
   
   pcout << "Coucou" << std::endl;
   volume_correction = 0.0;
@@ -1249,18 +1258,28 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
         continue;
       }
       
-      non_matching_fe_values.reinit(cell);
+      // non_matching_fe_values.reinit(cell);
+      // 
+      // const std::optional<FEValues<dim>>
+      //   &inside_fe_values = non_matching_fe_values.get_inside_fe_values();
+      // std::vector<double> JxW_inside = inside_fe_values->get_JxW_values();
+      // 
+      // double cell_volume= 0.0;  
+      // for (const unsigned int q :
+      //      inside_fe_values->quadrature_point_indices())
+      //   {
+      //     cell_volume += JxW_inside[q];
+      //   }
       
-      const std::optional<FEValues<dim>>
-        &inside_fe_values = non_matching_fe_values.get_inside_fe_values();
-      std::vector<double> JxW_inside = inside_fe_values->get_JxW_values();
-
-      double cell_volume= 0.0;  
-      for (const unsigned int q :
-           inside_fe_values->quadrature_point_indices())
-        {
-          cell_volume += JxW_inside[q];
-        }
+      
+      Vector<double> cell_dof_values(dofs_per_cell);
+      Vector<double> cell_level_set_dof_values(dofs_per_cell);
+      
+      
+      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+      
+      double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);;  
       
       double cell_size;
       if (dim == 2)
@@ -1271,13 +1290,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
         {
           cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
         }
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      Vector<double> cell_level_set_dof_values(dofs_per_cell);
-      
-      
-      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
       
       
       for (unsigned int j = 0; j < dofs_per_cell; j++)
@@ -1435,8 +1447,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   for (auto p : this->locally_active_dofs)
   {
     const double level_set_value = level_set(p);
-  
-    distance(p) += C_n*volume_correction(p)*sgn(level_set_value);
+    signed_distance(p) +=  C_n*volume_correction(p);
+    distance(p) = abs(signed_distance(p));
   }
   
   distance.update_ghost_values();    
@@ -1623,47 +1635,100 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration)
   }
   
   constraints.distribute(distance);
-  for (auto p : this->locally_owned_dofs)
+  
+  for (auto p : this->locally_active_dofs)
   {
     const double level_set_value = level_set(p);
-    signed_distance(p) = distance(p)*sgn(level_set_value);
+    signed_distance(p) = distance(p)*sgn(signed_distance(p));
   }
+  signed_distance.update_ghost_values();
   
 }
 
 template <int dim>
 void AdvectionProblem<dim>::compute_volume()
 {
-  double volume = 0.0;
+  
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  const unsigned int n_quad_points = fe.degree + 1;
+  
+  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  
+  hp::QCollection<1> q_collection;
+  q_collection.push_back(QGauss<1>(n_quad_points));
+
+  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
   FEValues<dim> fe_values(fe,
                           QGauss<dim>(fe.degree + 1),
                           update_values | update_JxW_values);
-                          
+  
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
   std::vector<double> phase_values(n_q_points);
   
+  double volume_sharp = 0.0;
+  double volume_phase = 0.0;
+  
   for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
     {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values.get_function_values(locally_relevant_solution, phase_values);
-          
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              volume += fe_values.JxW(q) * phase_values[q];
-            }
-        }
-      }
       
-      volume = Utilities::MPI::sum(volume, mpi_communicator);
+      Vector<double> cell_dof_values(dofs_per_cell);
+      
+      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+      
+      volume_sharp += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      
+      fe_values.reinit(cell);
+      fe_values.get_function_values(locally_relevant_solution, phase_values);
+
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          volume_phase += fe_values.JxW(q) * phase_values[q];
+        }
+    }
+  }
+  volume_sharp = Utilities::MPI::sum(volume_sharp, mpi_communicator);
+  volume_phase = Utilities::MPI::sum(volume_phase, mpi_communicator);
+  
+  pcout << "volume_sharp = " << volume_sharp << std::endl;
+  pcout << "volume_phase = " << volume_phase << std::endl;
+  
+  // 
+  // double volume = 0.0;
+  // FEValues<dim> fe_values(fe,
+  //                         QGauss<dim>(fe.degree + 1),
+  //                         update_values | update_JxW_values);
+  // 
+  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
+  // std::vector<double> phase_values(n_q_points);
+  // 
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  //   {
+  //     if (cell->is_locally_owned())
+  //       {
+  //         fe_values.reinit(cell);
+  //         fe_values.get_function_values(locally_relevant_solution, phase_values);
+  // 
+  //         for (unsigned int q = 0; q < n_q_points; ++q)
+  //           {
+  //             volume += fe_values.JxW(q) * phase_values[q];
+  //           }
+  //       }
+  //     }
+  // 
+  //     volume = Utilities::MPI::sum(volume, mpi_communicator);
       
       table_volume_monitoring.add_value("time", time);
       table_volume_monitoring.set_scientific("time", true);
       
-      table_volume_monitoring.add_value("volume", volume);
-      table_volume_monitoring.set_scientific("volume", true);
+      table_volume_monitoring.add_value("volume_sharp", volume_sharp);
+      table_volume_monitoring.set_scientific("volume_sharp", true);
       
+      table_volume_monitoring.add_value("volume_phase", volume_phase);
+      table_volume_monitoring.set_scientific("volume_phase", true);
       // pcout << "Volume conservation" << std::endl;
       // table_volume_monitoring.write_text(std::cout);
               
@@ -1749,16 +1814,46 @@ void AdvectionProblem<dim>::run()
   refine_grid(8,6);
   
   compute_level_set_from_phase_fraction();
-  mesh_classifier.reclassify();
-  compute_sign_distance(it);
+  // mesh_classifier.reclassify();
+  // compute_sign_distance(it);
   
-  compute_phase_fraction_from_level_set();
+  // compute_phase_fraction_from_level_set();
   
   
   previous_solution = locally_relevant_solution;
   
+  const unsigned int n_quad_points = fe.degree + 1;
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  
+  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  
+  hp::QCollection<1> q_collection;
+  q_collection.push_back(QGauss<1>(n_quad_points));
+
+  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
+  double global_volume = 0.0;
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      
+      Vector<double> cell_dof_values(dofs_per_cell);
+      
+      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+      
+      global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  
+    }
+  }
+  global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
+  
+  pcout << "global_volume = " << global_volume << std::endl;
+  
   output_results(it);
-  compute_volume();
+  // compute_volume();
   
   
   pcout << "Solve system" << std::endl;
@@ -1775,48 +1870,17 @@ void AdvectionProblem<dim>::run()
     
     compute_level_set_from_phase_fraction();
     
-    
-    
     mesh_classifier.reclassify();
-    compute_sign_distance(it);
+    compute_sign_distance(it, global_volume);
     
-    
-    
-    output_results(it);
     compute_phase_fraction_from_level_set();
     
     compute_level_set_from_phase_fraction();
     
-    const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-    const unsigned int n_quad_points = fe.degree + 1;
-    
-    const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-    LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
-    
-    hp::QCollection<1> q_collection;
-    q_collection.push_back(QGauss<1>(n_quad_points));
-
-    NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
-    double corr_global_volume = 0.0;
-    
-    for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-      {
-        
-        Vector<double> cell_dof_values(dofs_per_cell);
-        
-        cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-        
-        corr_global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-    
-      }
-    }
-    corr_global_volume = Utilities::MPI::sum(corr_global_volume, mpi_communicator);
-    
-    pcout << "corr_global_volume after compute level set = " << corr_global_volume << std::endl;
-    
     compute_volume();
+    
+    output_results(it);
+
     refine_grid(8,6);
     
     previous_solution = locally_relevant_solution;
