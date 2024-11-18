@@ -158,7 +158,7 @@ The JKR contact model is used in this case because it has be shown to correctly 
 
     subsection load balancing
       set load balance method = frequent
-      set frequency           = 100000
+      set frequency           = 10000
     end
 
     set particle particle contact force method = hertz_JKR
