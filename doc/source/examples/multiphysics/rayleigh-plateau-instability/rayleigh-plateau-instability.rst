@@ -31,6 +31,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Postprocessing Python script for breakup lengths extraction: ``rayleigh-plateau-postprocess.py``
 - Postprocessing Python script for code to code comparison: ``rayleigh-plateau-compare.py``
 - Postprocessing Bash script: ``rayleigh-plateau-postprocess.sh``
+- Reference results from Denner *et al.* [#denner2022]_ for code-to-code verification (:math:`We=20` and :math:`Oh=10`): ``denner-et-al-2022-We020.csv``
 
 ****
 
@@ -246,7 +247,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
 .. warning:: 
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
-    This simulation takes :math:`\sim \, 40` minutes on :math:`14` processes.
+    This simulation takes :math:`\sim \, 20` minutes on :math:`14` processes.
 
 .. tip::
   If you want to **generate and launch multiple cases** consecutively, a Bash script (``rayleigh-plateau-launch.sh``) is provided. Make sure that the file has executable permissions before calling it with:

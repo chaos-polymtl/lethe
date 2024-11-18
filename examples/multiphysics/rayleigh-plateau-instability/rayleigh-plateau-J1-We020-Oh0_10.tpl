@@ -119,7 +119,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = function
@@ -146,7 +146,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions VOF
-  set number = 1
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = dirichlet
