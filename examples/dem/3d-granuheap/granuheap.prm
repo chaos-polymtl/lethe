@@ -40,7 +40,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 100000
+    set frequency           = 10000
   end
   set particle particle contact force method = hertz_JKR
   set rolling resistance torque method       = constant_resistance
