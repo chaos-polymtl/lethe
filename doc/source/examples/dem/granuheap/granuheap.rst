@@ -31,7 +31,7 @@ All files mentioned below are located in the example's folder (``examples/dem/3d
 Description of the Case
 -----------------------
 
-This example simulates the flow of wet sand during a Granuheap experiment. First, particle are inserted inside the cylinder. After :math:`1.6 \ s`, the cylinder rises, and the particles can flow freely, producing a heap. We compare the numerical results with our experimental results. To remain consistent with the Granuheap experiment, we use the same geometry in our simulations: a cylinder of 0.01m in diameter. For more information about the Granuheap procedures, visit the `Granuheap web page <https://www.granutools.com/en/granuheap>`_. Multiple simulations using different combinations of surface properties are ran to match experimental and numerical results. We use the work of Hu *et al.* [#hu2022]_ as a basis to choose which contact properties will create those combinations.
+This example simulates the flow of wet sand during a Granuheap experiment. First, particle are inserted inside the cylinder. After :math:`1.6 \ s`, the cylinder rises, and the particles can flow freely, producing a heap. We compare the numerical results with our experimental results. To remain consistent with the Granuheap experiment, we use the same geometry in our simulations: a cylinder of 0.01m in diameter. For more information about the Granuheap procedures, visit the `Granuheap web page <https://www.granutools.com/en/granuheap>`_. Multiple simulations using different combinations of surface properties are ran to match experiments and simulations. We use the work of Hu *et al.* [#hu2022]_ as a basis to choose which contact properties will create those combinations.
 
 -------------------
 Generate Mesh Files

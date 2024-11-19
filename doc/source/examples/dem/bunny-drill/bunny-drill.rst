@@ -181,7 +181,7 @@ Whereas the drilling is launched after the loading using:
 -------
 Results
 -------
-As seen in the following two animations, the bunny drills into the particles which generates a complex motion within the granular matter. There is not much more to say here, it is a bunny drill!
+As seen in the following two animations, the bunny drills into the particles which generates a complex motion within the particle bed. There is not much more to say here, it is a bunny drill!
 
 The first animation displays the drill with the entirety of the particles. It is difficult to see the dynamics of the mighty bunny within these circumstances.
 
