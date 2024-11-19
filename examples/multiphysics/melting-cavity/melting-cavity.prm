@@ -99,10 +99,10 @@ subsection physical properties
       set viscosity solid = 10
 
       # Thermal expansion of the liquid phase
-      set thermal expansion liquid       = 1
+      set thermal expansion liquid = 1
 
       # Thermal expansion of the solid phase
-      set thermal expansion solid        = 0
+      set thermal expansion solid = 0
     end
   end
 end
@@ -168,12 +168,12 @@ subsection boundary conditions heat transfer
     end
   end
   subsection bc 2
-    set id         = 2
-    set type       = noflux
+    set id   = 2
+    set type = noflux
   end
   subsection bc 3
-    set id         = 3
-    set type       = noflux
+    set id   = 3
+    set type = noflux
   end
 end
 
