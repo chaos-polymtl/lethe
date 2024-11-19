@@ -70,7 +70,7 @@ if scaling:
             # Create a list of file paths 
             list_files  = find_files(f'{num_name}_{n:.4f}_{u:.2f}/map')
             # Create a map with all files in the list
-            map_processing(list_files, f'map_{n:.4f}_{u:.2f}.png', height, height_exp)
+            map_processing(list_files, f'map/map_{n:.4f}_{u:.2f}.png', height, height_exp)
 
 ############################## DIFFERENCE ######################################
     print('\n ******************************** DIFFERENCE **************************** \n')
@@ -79,9 +79,9 @@ if scaling:
             
     for i, n in enumerate(parameter1):
         for j, u in enumerate(parameter2):
-            difference_images(exp_path, f'map_{n:.4f}_{u:.2f}.png', f'image_difference_{n:.4f}_{u:.2f}.png')
-            error_matrix[j, i] = RMSE(exp_path, f'map_{n:.4f}_{u:.2f}.png')
-            image_matrice[j, i] = f'image_difference_{n:.4f}_{u:.2f}.png'
+            difference_images(exp_path, f'map/map_{n:.4f}_{u:.2f}.png', f'im/image_difference_{n:.4f}_{u:.2f}.png')
+            error_matrix[j, i] = RMSE(exp_path, f'map/map_{n:.4f}_{u:.2f}.png')
+            image_matrice[j, i] = f'im/image_difference_{n:.4f}_{u:.2f}.png'
 
 
 ############################## POST-PROCESSING ######################################
@@ -93,7 +93,7 @@ if scaling:
     plt.title('Root Mean Squared Error (RMSE) Heatmap ')
     plt.xlabel(parameter1_name)
     plt.ylabel(parameter2_name)
-    plt.savefig('error_values_heatmap.png')
+    plt.savefig('im/error_values_heatmap.png')
     # plt.show()
 
     # Shape profile error (Experimental-Numeric)
@@ -119,7 +119,7 @@ if scaling:
 
     fig.supxlabel(parameter1_name, fontsize=12, ha='center')
     fig.supylabel(parameter2_name, fontsize=12, va='center', rotation='vertical')
-    plt.savefig('profile_shape_error.png')
+    plt.savefig('im/profile_shape_error.png')
 
 
     plt.show()
