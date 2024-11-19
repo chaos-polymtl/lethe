@@ -215,6 +215,7 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
+  , time_last_output(0.)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
   , output_times_counter(0)
@@ -302,6 +303,7 @@ SimulationControlTransient::calculate_time_step()
 bool
 SimulationControlTransient::is_output_iteration()
 {
+  std::cout << "Inside of output iteration!" << std::endl;
   // If iteration control the only options are to not print or at certain
   // frequency of iterations for the time interval given
   if (output_control == Parameters::SimulationControl::OutputControl::iteration)
@@ -324,13 +326,35 @@ SimulationControlTransient::is_output_iteration()
   // specific time interval):
   if (output_time_frequency != -1)
     {
+      std::cout << "Inside of output frequency!" << std::endl;
+
+      std::cout << "Current time: " << current_time << std::endl;
+
+      std::cout << "time_last_output: " << time_last_output << std::endl;
+
+      std::cout << "output_time_frequency: " << output_time_frequency
+                << std::endl;
+
+      bool result =
+        (((current_time - time_last_output) - output_time_frequency) >
+         (-1e-12 * output_time_frequency)) ?
+          "true" :
+          "false";
+      std::cout << "First condition: " << result << std::endl;
+
+      bool result_2 = (current_time >= output_time_interval[0]);
+      std::cout << "Second condition: " << result_2 << std::endl;
+
+      bool result_3 = (current_time <= output_time_interval[1]);
+      std::cout << "third condition: " << result_3 << std::endl;
+
       if ((current_time - time_last_output) - output_time_frequency >
             -1e-12 * output_time_frequency &&
           current_time >= output_time_interval[0] &&
           current_time <= output_time_interval[1])
         {
           time_last_output = current_time;
-
+          std::cout << "Inside of if!" << std::endl;
           return true;
         }
       else // if it does not match the time frequency we do not output
