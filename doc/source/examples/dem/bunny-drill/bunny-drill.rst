@@ -14,7 +14,7 @@ Features
 - Insertion of particles from a plane
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 All files mentioned below are located in the example's folder (``examples/dem/3d-bunny-drill``).
