@@ -53,10 +53,8 @@ For :math:`Re < 700`, the solution is stable enough to be computed in steady sta
     subsection simulation control
       set method            = steady
       set number mesh adapt = 10
-      set output name       = backward_facing_step_output
+      set output name       = output
       set output frequency  = 1
-      set subdivision       = 1
-      set output boundaries = false
     end
 	
 A mesh refinement analysis can be done with ``set number mesh adapt = 10``. By starting from a very coarse mesh and by dynamically refining the mesh at least 10 times, asymptotic convergence can be clearly observed.
@@ -67,19 +65,16 @@ However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain w
 
     subsection simulation control
       set method                       = steady_bdf
-      set stop tolerance               = 1e-6
+      set stop tolerance               = 1e-5
       set time step                    = 0.005
       set adapt                        = true
-      set max cfl                      = 1e6
+      set max cfl                      = 1e5
       set adaptative time step scaling = 1.2
-      set number mesh adapt            = 0
       set output name                  = backward_facing_step_output
       set output frequency             = 1
-      set subdivision                  = 1
-      set output boundaries            = false
     end
   
-``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. In this case, choosing ``stop tolerance = 1e-6`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
+``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. In this case, choosing ``stop tolerance = 1e-5`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -171,12 +166,13 @@ As presented in the description of the case (see figure above), three different 
 .. code-block:: text
 
     subsection boundary conditions
-      set number         = 2
-      set time dependent = false
+      set number = 3
       subsection bc 0
+        set id   = 0
         set type = noslip
       end
       subsection bc 1
+        set id   = 1
         set type = function
         subsection u
           set Function expression = 1
@@ -188,9 +184,13 @@ As presented in the description of the case (see figure above), three different 
           set Function expression = 0
         end
       end
+      subsection bc 2
+        set id   = 2
+        set type = outlet
+      end
     end
 	
-First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is automatically loaded when nothing is assigned to a specific ID  (in our case, there is none at the outlet).
+First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is denoted by ``outlet`` and it is specified for the boundary ID :math:`2`.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
@@ -203,7 +203,6 @@ The ``newton`` non-linear solver is used with a medium ``tolerance``, since conv
       subsection fluid dynamics
         set verbosity      = verbose
         set tolerance      = 1e-6
-        set max iterations = 10
       end
     end
 
@@ -218,7 +217,8 @@ For :math:`Re < 700`, standard parameters are suitable to achieve convergence.
       subsection fluid dynamics
         set verbosity                             = verbose
         set method                                = gmres
-        set max iters                             = 10000
+        set max iters                             = 300
+        set max krylov vectors                    = 300
         set relative residual                     = 1e-4
         set minimum residual                      = 1e-9
         set preconditioner                        = ilu
@@ -228,22 +228,20 @@ For :math:`Re < 700`, standard parameters are suitable to achieve convergence.
       end
     end         
 	
-For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtionner fill = 2`` in order to save calculation time. Also, adjusting ``max krylov vectors = 200`` can help to reach convergence.
+For :math:`Re \geq 700`, however, we use an ``amg`` preconditioner with an ILU smoother with ``amg preconditioner ilu fill = 1`` in order to save calculation time. Also, adjusting ``max krylov vectors = 200`` can help to reach convergence.
 
 .. code-block:: text
 
     subsection linear solver
       subsection fluid dynamics
-        set verbosity                             = verbose
-        set method                                = gmres
-        set max iters                             = 10000
-        set relative residual                     = 1e-4
-        set minimum residual                      = 1e-9
-        set preconditioner                        = ilu
-        set ilu preconditioner fill               = 2
-        set ilu preconditioner absolute tolerance = 1e-12
-        set ilu preconditioner relative tolerance = 1.00
-        set max krylov vectors                    = 200
+        set verbosity                   = verbose
+        set method                      = gmres
+        set max iters                   = 500
+        set max krylov vectors          = 500
+        set relative residual           = 1e-4
+        set minimum residual            = 1e-9
+        set preconditioner              = amg
+        set amg preconditioner ilu fill = 1
       end
     end
 	
@@ -313,6 +311,8 @@ For :math:`Re = 1000` :
 .. image:: image/Reynolds1000.png
 
 .. image:: image/Reynolds1000-zoom.png
+
+.. image:: image/Reynolds1000-zoom-2.png
 
 On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python code as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
