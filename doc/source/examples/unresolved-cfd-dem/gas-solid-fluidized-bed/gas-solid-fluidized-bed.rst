@@ -126,13 +126,13 @@ The physical properties section of the particles allows us to specify the differ
         set diameter                          = 0.001
         set number                            = 30000
         set density particles                 = 1500
-        set young modulus particles           = 1000000
+        set young modulus particles           = 1e6
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.2
         set friction coefficient particles    = 0.1
         set rolling friction particles        = 0.2
       end
-      set young modulus wall           = 1000000
+      set young modulus wall           = 1e6
       set poisson ratio wall           = 0.3
       set restitution coefficient wall = 0.2
       set friction coefficient wall    = 0.1
@@ -224,10 +224,7 @@ The simulation is run for 1 s with a time step of 0.002 s. The time scheme chose
 
     subsection simulation control
       set method               = bdf1
-      set number mesh adapt    = 0
-      set output name          = cfd_dem
       set output frequency     = 10
-      set startup time scaling = 0.6
       set time end             = 1
       set time step            = 0.001
       set output path          = ./output/
@@ -322,7 +319,7 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
         set l2 smoothing factor = 0.000005
         set l2 lower bound      = 0
         set l2 upper bound      = 1
-        set bound void fraction = true
+        set bound void fraction = false
     end
 
 CFD-DEM
