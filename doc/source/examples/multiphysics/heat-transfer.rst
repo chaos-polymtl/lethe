@@ -13,4 +13,5 @@ Heat Transfer
     melting-cavity/melting-cavity
     laser-heating/laser-heating
     laser-melt-pool/laser-melt-pool
+    laser-powder-bed-fusion/laser-powder-bed-fusion
     concentric-heat-exchanger/concentric-heat-exchanger
