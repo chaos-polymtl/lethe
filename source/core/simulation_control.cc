@@ -215,6 +215,7 @@ SimulationControlTransient::SimulationControlTransient(
   , adapt(param.adapt)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
+  , time_last_output(0.)
   , output_time_frequency(param.output_time_frequency)
   , output_times_vector(param.output_times_vector)
   , output_times_counter(0)
@@ -330,7 +331,6 @@ SimulationControlTransient::is_output_iteration()
           current_time <= output_time_interval[1])
         {
           time_last_output = current_time;
-
           return true;
         }
       else // if it does not match the time frequency we do not output
