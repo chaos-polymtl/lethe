@@ -2,7 +2,7 @@
 Bunny Drill
 ==================================
 
-This example simulates the drilling motion of a bunny within a bed of particles. It illustrates that the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
+This example simulates the drilling motion of a bunny within a particle bed. It illustrates that the DEM module of Lethe can simulate complex moving objects and is a testament to our love of lagomorphs. Do not worry friend, no bunnies were hurt in the making of this example!
 
 
 ----------------------------------
@@ -14,7 +14,7 @@ Features
 - Insertion of particles from a plane
 
 ----------------------------
-Files Used in This Example
+Files Used in this Example
 ----------------------------
 
 All files mentioned below are located in the example's folder (``examples/dem/3d-bunny-drill``).
@@ -50,7 +50,7 @@ The mesh is a cylinder generated using the deal.II grid generator.
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial velocity to the particles. We set ``insertion maximum offset = 0`` so that the particles inserted are all exactly on the insertion plane.
+An insertion plane is defined just below the bunny drill. The insertion plane is a useful mechanism to insert particles in a simulation in which the available volume is limited for rectangular box insertion. To ensure a more rapid insertion, we also give an initial downward velocity to the particles. We set ``insertion maximum offset = 0`` so that the particles are inserted at the center of each cells being cut by the insertion plane.
 
 .. code-block:: text
 
@@ -99,7 +99,7 @@ The total number of particles in this simulation is 8000. All particles have a d
 Simulation Control (Loading)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time end of the simulation is 2 seconds after all particles have been loaded.
+The end time of the loading simulation is 2 seconds after which all the particles have been inserted.
 
 .. code-block:: text
 
@@ -115,7 +115,7 @@ The time end of the simulation is 2 seconds after all particles have been loaded
 Simulation Control (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The time end of the simulation is 4.75 seconds after which the bunny has done one back-and-forth drilling motion.
+The end time end of the drilling simulation is 4.75 seconds after which the bunny has done one back-and-forth drilling motion.
 
 .. code-block:: text
 
@@ -133,7 +133,7 @@ The time end of the simulation is 4.75 seconds after which the bunny has done on
 Solid Objects (Drilling)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The bunny is defined using the solid objects feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity once the particles have been loaded (:math:`t>2\text{s}`) . This complex drilling motion is fully parametrized from the input file using the function parser of the translational and the angular velocity of the solid object.
+The bunny is defined using the solid surfaces feature of Lethe. The surface mesh of the bunny is a GMSH file. The translational velocity is defined to have a periodic motion along the axis of the cylinder and the bunny is rotating at a constant angular velocity once the particles have been loaded (:math:`t>2\text{s}`) . This complex drilling motion is fully parametrized from the input file using the function parser of the translational and the angular velocity of the solid object.
 
 .. code-block:: text
 
@@ -181,7 +181,7 @@ Whereas the drilling is launched after the loading using:
 -------
 Results
 -------
-As seen in the following two animations, the bunny drills into the particles which generates a complex motion within the granular matter. There is not much more to say here, it is a bunny drill.
+As seen in the following two animations, the bunny drills into the particles which generates a complex motion within the particle bed. There is not much more to say here, it is a bunny drill!
 
 The first animation displays the drill with the entirety of the particles. It is difficult to see the dynamics of the mighty bunny within these circumstances.
 
