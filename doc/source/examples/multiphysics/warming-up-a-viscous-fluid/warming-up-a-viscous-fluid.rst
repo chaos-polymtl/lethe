@@ -118,7 +118,7 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
 Multiphysics
 ~~~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer`` and ``viscous dissipation`` must be set (see Bonuses for results without viscous dissipation).
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``heat transfer`` and ``viscous dissipation`` must be set (see Bonuses for results without viscous dissipation).
 
 .. code-block:: text
 
@@ -156,13 +156,13 @@ Boundary Conditions
 
 The ``boundary conditions`` are set for:
 
-* the fluid dynamic in ``subsection boundary conditions``, with ``noslip`` at the left wall (``bc 0``) and a velocity of ``2`` in the y-direction at the right wall (``bc 1``),
-* the heat transfer in ``subsection boundary conditions heat transfer``, with a ``convection`` imposed at the left wall (``bc 0``) with a heat transfer coefficient ``h = 0`` to represent an insulation condition, and an imposed ``temperature`` of ``80`` at the right wall.
+* the fluid dynamic in ``subsection boundary conditions``, with ``noslip`` at the left wall (``bc 0``) and a velocity of ``2`` in the y-direction at the right wall (``bc 1``). The other walls (``bc 2`` and ``bc 3``) are set as ``outlet`` with a ``beta = 0`` to represent an open boundary condition.
+* the heat transfer in ``subsection boundary conditions heat transfer``, with an imposed ``temperature`` of ``80`` at the right wall. All the other walls are set as ``noflux``.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 2
+      set number = 4
       subsection bc 0
         set id   = 0
         set type = noslip
@@ -177,19 +177,23 @@ The ``boundary conditions`` are set for:
           set Function expression = 2
         end
       end
+      subsection bc 2
+        set id   = 2
+        set type = outlet
+        set beta = 0
+      end
+      subsection bc 3
+        set id   = 3
+        set type = outlet
+        set beta = 0
+      end
     end
 
     subsection boundary conditions heat transfer
-      set number = 2
+      set number = 4
       subsection bc 0
         set id   = 0
-        set type = convection-radiation-flux
-        subsection h
-          set Function expression = 0
-        end
-        subsection Tinf
-          set Function expression = 0
-        end
+        set type = noflux
       end
       subsection bc 1
         set id    = 1
@@ -198,8 +202,18 @@ The ``boundary conditions`` are set for:
           set Function expression = 80
         end
       end
+      subsection bc 2
+        set id   = 2
+        set type = noflux
+      end
+      subsection bc 3
+        set id   = 3
+        set type = noflux
+      end
     end
 
+.. note::
+    In lethe, beta = 1 is the default value for the ``outlet`` boundary condition. Beta acts as a penalizing factor for fluid entering the domain. Because the fluid will be forced to enter through one of the outlets, beta is set to 0. 
 
 -----------------------
 Running the Simulation
@@ -336,7 +350,7 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 2
+      set number = 4
       subsection bc 0
         set id   = 2
         set type = noslip
@@ -345,40 +359,46 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
         set id   = 3
         set type = function
         subsection u
-          set Function expression = 2
-        end
-        subsection v
           set Function expression = 0
         end
+        subsection v
+          set Function expression = 2
+        end
+      end
+      subsection bc 2
+        set id   = 0
+        set type = outlet
+        set beta = 0
+      end
+      subsection bc 3
+        set id   = 1
+        set type = outlet
+        set beta = 0
       end
     end
 
     subsection boundary conditions heat transfer
       set number = 4
-      subsection bc 2
+      subsection bc 0
         set id   = 2
-        set type = convection-radiation-flux
-        subsection h
-          set Function expression = 0
-        end
-        subsection Tinf
-          set Function expression = 0
-        end
+        set type = noflux
       end
-      subsection bc 3
+      subsection bc 1
         set id    = 3
         set type  = temperature
         subsection value
           set Function expression = 80
         end
       end
+      subsection bc 2
+        set id   = 0
+        set type = noflux
+      end
+      subsection bc 3
+        set id   = 1
+        set type = noflux
+      end
     end
-
-.. important::
-	For the fluid ``boundary conditions``, we use ``set number = 2``, whereas for ``boundary conditions heat transfer`` we use ``set number = 4``. These two notations are perfectly equivalent, as the boundary conditions are ``none`` by default (or ``noflux`` in the case of heat transfer, see :doc:`../../../parameters/cfd/boundary_conditions_multiphysics`). However, it is important to make sure that:
-
-	* the index in ``subsection bc ..`` is coherent with the ``number`` set (if ``number = 2``, ``bc 0`` and ``bc 1`` are created but ``bc 2`` does not exist),
-	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
 
 
 ----------------------------
