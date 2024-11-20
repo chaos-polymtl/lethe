@@ -45,6 +45,8 @@ In this example, we use the auxiliary tracer physics to quantify the mixing of t
 #. Simulating the transient flow with a small ``time step`` until the flow has reached the steady state;
 #. Simulate the flow of the tracer with a larger ``time step`` while reusing the computed velocity field from the previous simulation.
 
+This strategy reduces the computational cost of the simulation as the fluid flow solution is reused in the second step.
+
 --------------
 Parameter File
 --------------
@@ -70,7 +72,7 @@ Simulation control
       set output frequency = 5
     end
 
-#. We use a ``bdf1`` time integration scheme with a short ``time step = 1e-4`` seconds. After ``time end = 40e-4`` seconds, we consider that the velocity field has reached a steady state.
+We use a ``bdf1`` time integration scheme with a short ``time step = 1e-4`` :math:`\text{s}`. After ``time end = 40e-4`` :math:`\text{s}`, we consider that the velocity field has reached a steady state. According to :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer`, the pressure drop varies by less than :math:`5` % in the range [30, 40] :math:`\text{s}`.
 
 Restart
 ******************
@@ -86,13 +88,12 @@ We use Lethe's checkpoint/restart mechanism to feed the steady-state flow inform
       set restart    = false
     end
 
-#. We ``checkpoint`` the simulation at every ``5`` time steps, both for safety (each time step takes a long time to complete) and for reuse in the second simulation.
-#. We do not ``restart`` the simulation unless stopped before it reaches ``time end``.
+We ``checkpoint`` the simulation at every ``5`` time steps, both for safety (each time step takes a long time to complete) and for reuse in the second simulation.
 
 Multiphysics
 ******************
 
-Both ``fluid dynamics`` and ``tracer`` are enabled for the first simulation. However, the tracer injection only begins at the second step.
+Both ``fluid dynamics`` and ``tracer`` are enabled for the first simulation to ensure initialization of the ``tracer`` field. However, the tracer injection only begins at the second step.
 
 .. code-block:: text
 
@@ -104,7 +105,7 @@ Both ``fluid dynamics`` and ``tracer`` are enabled for the first simulation. How
 Physical Properties
 *******************
 
-In this case we consider that we have a passive tracer in water. The units used for the physical properties are centimeters and seconds.
+In this case we consider that we have a passive tracer in water. The units used for the physical properties are :math:`\text{cm}` and :math:`\text{s}`.
 
 .. code-block:: text
 
@@ -121,9 +122,9 @@ In this case we consider that we have a passive tracer in water. The units used 
     end
 
 #. The ``tracer diffusivity model`` is ``immersed solid tanh``. This model is used in ``lethe-fluid-sharp`` for tracer flow percolating immersed solids.
-#. The ``tracer diffusivity outside`` is ``1e-5``, as this is a typical value for a passive tracer in a liquid.
-#. The ``tracer diffusivity inside`` is set to ``1e-10``. The low value prevents diffusivity inside the solid while providing numerical stability.
-#. The ``thickness`` is ``5e-1``. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases.
+#. The ``tracer diffusivity outside`` is ``1e-5`` :math:`\text{cm²/s}`, as this is a typical value for a passive tracer in a liquid.
+#. The ``tracer diffusivity inside`` is set to ``1e-10`` :math:`\text{cm²/s}`. The low value prevents diffusivity inside the solid while providing numerical stability (:math:`> 0`).
+#. The ``thickness`` is ``5e-1`` :math:`\text{cm}`. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases. The thickness is of the order of magnitude of the smallest cell length to restrict the transition to one cell thickness.
 
 Tracer Boundary Conditions
 ***************************
@@ -163,7 +164,7 @@ Tracer Boundary Conditions
     end
 
 #.  We use ``time dependent`` boundary conditions, defined at :math:`y<0` and :math:`11 < t < 61` to inject a pulse on the lower half of the inlet.
-#. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition represents an impermeable wall.
+#. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition represents an impermeable wall since velocity is perpendicular.
 
 Post-processing
 *******************
@@ -181,7 +182,7 @@ Post-processing
       set tracer flow rate name       = tracer_flow_rate
     end
 
-#. ``calculate average velocities`` is enabled, beginning at ``initial time = 30e-4``. This means that the last :math:`25\%` of the first simulation will be used to calculate the time-averaged fluid velocity profile.
+#. ``calculate average velocities`` is enabled, beginning at ``initial time = 30e-4`` :math:`\text{s}`. This means that the last :math:`25\%` of the first simulation will be used to calculate the time-averaged fluid velocity profile.
 #. ``calculate tracer flow rate`` is enabled to provide data for mixing quantification.
 
 Simulation 2: Tracer transport
@@ -201,8 +202,8 @@ Simulation control
       ...
     end
 
-#. We use a longer ``time step`` of ``10`` seconds.
-#. We simulate until ``time end = 500`` seconds to allow the tracer to flow through the entire length of the domain.
+#. We use a longer ``time step`` of ``10`` :math:`\text{s}`.
+#. We simulate until ``time end = 500`` :math:`\text{s}` to allow the tracer to flow through the entire length of the domain.
 
 Restart
 ******************
@@ -262,7 +263,7 @@ The simulation can be launched on multiple cores using ``mpirun`` and the ``leth
 Results
 -------
 
-The following movie shows the evolution of tracer through the static mixer, both as a colored slice and colored streamlines:
+The following movie shows the flow of the tracer through the static mixer, both as a colored slice and colored streamlines:
 
 .. raw:: html
 
@@ -285,7 +286,7 @@ The tracer evolution through the inlet and outlet can be monitored by plotting t
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
-As the Figure shows, the concentration of the tracer flattens as it flows. The gap between between the inlet and outlet peaks is of :math:`170` seconds. When compared to the theoretical time of :math:`150` seconds (:math:`d_x/u_x`, with :math:`d_x` the domain length and :math:`u_x` the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.
+As the Figure shows, the concentration of the tracer flattens as it flows. The gap between between the inlet and outlet peaks is of :math:`170` :math:`\text{s}`. When compared to the theoretical time of :math:`150` :math:`\text{s}` (:math:`d_x/u_x`, with :math:`d_x` the domain length and :math:`u_x` the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.
 
 ---------
 Reference
