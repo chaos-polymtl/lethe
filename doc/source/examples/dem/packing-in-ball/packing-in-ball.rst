@@ -86,12 +86,12 @@ Gravitational acceleration has three components in three directions.
         set diameter                          = 0.005
         set number of particles               = 5000
         set density particles                 = 2000
-        set young modulus particles           = 10000000
+        set young modulus particles           = 1e7
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.75
         set friction coefficient particles    = 0.3
       end
-      set young modulus wall           = 10000000
+      set young modulus wall           = 1e7
       set poisson ratio wall           = 0.3
       set restitution coefficient wall = 0.75
       set friction coefficient wall    = 0.3
@@ -106,8 +106,8 @@ Model Parameters
     subsection model parameters
       subsection contact detection
         set contact detection method                = dynamic
-        set dynamic contact search size coefficient = 0.7
-        set neighborhood threshold                  = 1.5
+        set dynamic contact search size coefficient = 0.5
+        set neighborhood threshold                  = 1.4
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
