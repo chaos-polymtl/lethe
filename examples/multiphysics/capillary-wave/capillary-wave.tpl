@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Listing of Parameters
 # ---------------------
 
@@ -56,16 +59,6 @@ subsection initial conditions
       set enable           = true
       set diffusion factor = 1
     end
-  end
-end
-
-#---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  subsection fluid dynamics
-    set Function expression = 0; 0; 0
   end
 end
 
@@ -144,6 +137,11 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+subsection boundary conditions VOF
+  set number = 4
+end
+
 
 #---------------------------------------------------
 # FEM
