@@ -126,13 +126,13 @@ The physical properties section of the particles allows us to specify the differ
         set diameter                          = 0.001
         set number                            = 30000
         set density particles                 = 1500
-        set young modulus particles           = 1000000
+        set young modulus particles           = 1e6
         set poisson ratio particles           = 0.3
         set restitution coefficient particles = 0.2
         set friction coefficient particles    = 0.1
         set rolling friction particles        = 0.2
       end
-      set young modulus wall           = 1000000
+      set young modulus wall           = 1e6
       set poisson ratio wall           = 0.3
       set restitution coefficient wall = 0.2
       set friction coefficient wall    = 0.1
@@ -148,8 +148,8 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
 
   subsection insertion info
       set insertion method                               = volume
-      set inserted number of particles at each time step = 2000
-      set insertion frequency                            = 2000
+      set inserted number of particles at each time step = 30000
+      set insertion frequency                            = 100000
       set insertion box points coordinates               = -0.018, -0.05, -0.018 : 0.018, 0.05, 0.018
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.2
@@ -224,11 +224,9 @@ The simulation is run for 1 s with a time step of 0.002 s. The time scheme chose
 
     subsection simulation control
       set method               = bdf1
-      set output name          = result_
       set output frequency     = 10
-      set startup time scaling = 0.6
       set time end             = 1
-      set time step            = 0.002
+      set time step            = 0.001
       set output path          = ./output/
     end
 
@@ -268,38 +266,42 @@ For the boundary conditions, we choose a slip boundary condition on the walls of
 
 .. code-block:: text
 
-    subsection boundary conditions
-      set number = 5
-      subsection bc 0
-        set id   = 0
-        set type = slip
+  subsection boundary conditions
+    set number = 6
+    subsection bc 0
+      set id   = 0
+      set type = slip
+    end
+    subsection bc 1
+      set id   = 1
+      set type = slip
+    end
+    subsection bc 2
+      set id   = 2
+      set type = function
+      subsection u
+        set Function expression = 0
       end
-      subsection bc 1
-        set id   = 1
-        set type = slip
+      subsection v
+        set Function expression = 2
       end
-      subsection bc 2
-        set id   = 4
-        set type = slip
-      end
-      subsection bc 3
-        set id   = 5
-        set type = slip
-      end
-      subsection bc 4
-        set id   = 2
-        set type = function
-        subsection u
-          set Function expression = 0
-        end
-        subsection v
-          set Function expression = 2
-        end
-        subsection w
-          set Function expression = 0
-        end
+      subsection w
+        set Function expression = 0
       end
     end
+    subsection bc 3
+      set id   = 3
+      set type = outlet
+    end
+    subsection bc 4
+      set id   = 4
+      set type = slip
+    end
+    subsection bc 5
+      set id   = 5
+      set type = slip
+    end
+  end
 
 The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are described in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
@@ -311,13 +313,13 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
 .. code-block:: text
 
     subsection void fraction
-        set mode                = dem
+        set mode                = pcm
         set read dem            = true
         set dem file name       = dem
         set l2 smoothing factor = 0.000005
         set l2 lower bound      = 0
         set l2 upper bound      = 1
-        set bound void fraction = true
+        set bound void fraction = false
     end
 
 CFD-DEM
