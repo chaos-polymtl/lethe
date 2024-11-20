@@ -112,6 +112,14 @@ subsection boundary conditions
     end
   end
   subsection bc 1
+    set type = outlet
+    set id   = 1
+  end
+  subsection bc 2
+    set type = outlet
+    set id   = 2
+  end
+  subsection bc 3
     set type = function
     set id   = 3
     subsection u
@@ -124,17 +132,9 @@ subsection boundary conditions
       set Function expression = -4
     end
   end
-  subsection bc 2
+  subsection bc 4
     set type = noslip
     set id   = 4
-  end
-  subsection bc 3
-    set type = outlet
-    set id   = 1
-  end
-  subsection bc 4
-    set type = outlet
-    set id   = 2
   end
 end
 

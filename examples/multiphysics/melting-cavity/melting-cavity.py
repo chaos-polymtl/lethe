@@ -36,7 +36,7 @@ y_mid	= 0.5 * H
 y_bot	= 0.001 * H
 
 #Set temperature to search for maximum x
-temperature_limit = 29.75
+temperature_limit = 29.7
 
 #Take case path as argument and store it
 output_path = sys.argv[1]

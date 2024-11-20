@@ -35,7 +35,7 @@ y_mid	= 0.5 * H
 y_bot	= 0.001 * H
 
 #Set temperature to search for maximum x
-temperature_limit = 29.75
+temperature_limit = 29.7
 
 # List of name for the cases used in the comparison
 case_list=["Lethe - Viscous penalization", "Lethe - Darcy penalization", "Lethe - Hybrid penalization"]
