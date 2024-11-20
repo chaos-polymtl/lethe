@@ -104,5 +104,5 @@ for i in range(1,5):
     exec(f'ax{i-1}.legend(loc="best")')
     exec(f'for label in (ax{i-1}.get_xticklabels() + ax{i-1}.get_yticklabels()):\n'
          f'\t label.set_fontsize(fs2)')
-fig0.savefig('./H1_to_H4_evolution_2.png')
+fig0.savefig('./H1_to_H4_evolution.png')
 plt.show()
