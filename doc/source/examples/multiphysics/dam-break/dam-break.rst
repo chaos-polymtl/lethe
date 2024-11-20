@@ -88,14 +88,10 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
     subsection multiphysics
       set VOF = true
-    end 
-
-
-Interface Sharpening Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    end
 
 VOF
-***
+~~~
 
 If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
 
@@ -114,11 +110,8 @@ If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters
       end
     end
 
-Fluid Phase Parameters
-~~~~~~~~~~~~~~~~~~~~~~
-
 Initial Conditions
-******************
+~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions``, the initial velocity and initial position
 of the liquid phase are defined. The liquid phase is initially 
@@ -137,7 +130,7 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
     end
 
 Source Term
-***********
+~~~~~~~~~~~
 
 The ``source term`` subsection defines the gravitational acceleration:
 
@@ -150,7 +143,7 @@ The ``source term`` subsection defines the gravitational acceleration:
     end
 
 Physical Properties
-*******************
+~~~~~~~~~~~~~~~~~~~
 
 Two fluids are present in this simulation, hence in the ``physical 
 properties`` subsection, their physical properties should be defined:
@@ -247,8 +240,8 @@ The red area corresponds to the liquid phase and the blue area corresponds to th
     :alt: time-shots
     :align: center
 
-A python post-processing code `(dam-break-2d.py)` 
-is added to the example folder to post-process the results.
+A python postprocessing code `(dam-break-2d.py)`
+is added to the example folder to postprocess the results.
 Run
 
 .. code-block:: text
@@ -256,10 +249,10 @@ Run
 
   python3 ./dam-break-2d.py ./output
 
-to execute this post-processing code, where ``./output`` is the directory that contains the simulation results.
-In post-processing, the maximum dimensionless lateral position of the liquid phase is tracked
+to execute this postprocessing code, where ``./output`` is the directory that contains the simulation results.
+In postprocessing, the maximum dimensionless lateral position of the liquid phase is tracked
 through time and compared with the experiments of Martin and Moyce (1952) [#martin1952]_.
-The following figure shows the result of the post-processing, with a good agreement between the simulation and the experiment:
+The following figure shows the result of the postprocessing, with a good agreement between the simulation and the experiment:
 
 .. image:: images/xmax-t.png
     :alt: xmax_t
