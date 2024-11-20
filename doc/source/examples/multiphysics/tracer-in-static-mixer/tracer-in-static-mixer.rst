@@ -2,9 +2,9 @@
 Tracer in Static Mixer
 ======================================
 
-In this example, we extend the :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example by using a passive tracer to study mixing effects more formally.
+In this example, we extend the :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer` example using a passive tracer to quantify the mixing profile.
 
-We inject two phases through a static mixer to verify the mixing effects of its geometry.
+We inject two phases through a static mixer to verify how geometry affects their mixing.
 
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/static_mixer_stl_casing_arrows.png                                                                      |
@@ -20,15 +20,15 @@ Features
 
 - Solver: ``lethe-fluid-sharp``
 - Transient problem
-- Displays the use of the tracer physics
-- Usage of the ``average_velocity_profile`` initial condition to accelerate transient auxiliary physics resolution
+- Tracer physics
+- Accelerated transient auxiliary physics resolution with ``average_velocity_profile`` initial condition. 
 
 
 ---------------------------
 Files Used in this Example
 ---------------------------
 
-All files mentioned below are located in the example's folder (``examples/multiphysics/tracer-in-static-mixer``).
+All mentioned files are found in the example's folder (``examples/multiphysics/tracer-in-static-mixer``).
 
 * Parameter file for solving the flow: ``flow_in_long_mixer.prm``;
 * Parameter file for solving the tracer transport: ``flow_in_long_mixer_only_tracer.prm``;
@@ -40,10 +40,10 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -----------------------
 
-In this example, we use the auxiliary tracer physics to  study the mixing effects of a static mixer wherein the flow is steady. To achieve this, two simulations are run:
+In this example, we use the auxiliary tracer physics to quantify the mixing of two fluids in a static mixer. We assume the flow is steady. Hence, we use a two-step simulation, consisting of:
 
-#. Solving a pseudo-steady problem using a ``bdf1`` integration scheme with a small ``type step``, until a steady solution is reached;
-#. Solving a transient tracer simulation with a large ``time step`` while reusing the computed velocity field from the previous simulation, which dramatically reduces computing time.
+#. Simulating the transient flow with a small ``time step`` until the flow has reached the steady state;
+#. Simulate the flow of the tracer with a larger ``time step`` while reusing the computed velocity field from the previous simulation.
 
 --------------
 Parameter File
@@ -70,13 +70,12 @@ Simulation control
       set output frequency = 5
     end
 
-#. We use a ``bdf1`` time integration scheme with a short ``time step = 1e-4``. After ``time end = 40e-4``, we consider that the velocity field has reached a steady-state.
-#. We do not allow time step adaptation, since it is a parameter that we control ourselves between simulation: ``adapt = false``.
+#. We use a ``bdf1`` time integration scheme with a short ``time step = 1e-4`` seconds. After ``time end = 40e-4`` seconds, we consider that the velocity field has reached a steady state.
 
 Restart
 ******************
 
-We use the checkpoint/restart mechanism of Lethe to achieve these simulations.
+We use Lethe's checkpoint/restart mechanism to feed the steady-state flow information to the second step of the simulation.
 
 .. code-block:: text
 
@@ -87,13 +86,13 @@ We use the checkpoint/restart mechanism of Lethe to achieve these simulations.
       set restart    = false
     end
 
-#. We ``checkpoint`` the simulation at each ``5`` time steps, both for safety (each time step takes a long time to complete) and for reuse in the second simulation.
-#. We do not ``restart`` the simulation, unless it is stopped before it reaches ``time end``.
+#. We ``checkpoint`` the simulation at every ``5`` time steps, both for safety (each time step takes a long time to complete) and for reuse in the second simulation.
+#. We do not ``restart`` the simulation unless stopped before it reaches ``time end``.
 
 Multiphysics
 ******************
 
-Both ``fluid dynamics`` and ``tracer`` are enabed for the first simulation, although nothing happens tracer-wise.
+Both ``fluid dynamics`` and ``tracer`` are enabled for the first simulation. However, the tracer injection only begins at the second step.
 
 .. code-block:: text
 
@@ -105,7 +104,7 @@ Both ``fluid dynamics`` and ``tracer`` are enabed for the first simulation, alth
 Physical Properties
 *******************
 
-The physical properties here are defined using centimeter as the length-unit and seconds as the time-unit. We consider that we have a passive tracer in water.
+In this case we consider that we have a passive tracer in water. The units used for the physical properties are centimeters and seconds.
 
 .. code-block:: text
 
@@ -121,9 +120,9 @@ The physical properties here are defined using centimeter as the length-unit and
       end
     end
 
-#. The ``tracer diffusivity model`` is ``immersed solid tanh``. This model is used for tracer simulations involving immersed solids when using ``lethe-fluid-sharp``.
+#. The ``tracer diffusivity model`` is ``immersed solid tanh``. This model is used in ``lethe-fluid-sharp`` for tracer flow percolating immersed solids.
 #. The ``tracer diffusivity outside`` is ``1e-5``, as this is a typical value for a passive tracer in a liquid.
-#. The ``tracer diffusivity inside`` is set to ``1e-10``. We desire no diffusivity inside the solid, and this value is low enough to achieve this effect while providing numerical stability.
+#. The ``tracer diffusivity inside`` is set to ``1e-10``. The low value prevents diffusivity inside the solid while providing numerical stability.
 #. The ``thickness`` is ``5e-1``. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases.
 
 Tracer Boundary Conditions
@@ -163,8 +162,8 @@ Tracer Boundary Conditions
       end
     end
 
-#. The boundary conditions are ``time dependent`` because of the inlet. We put conditions on :math:`y<0` and :math:`11 < t < 61` to inject a pulse, only on the lower half of the inlet.
-#. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition is also appropriate since no flow is occurring through these; it is then equivalent to a impermeable wall.
+#.  We use ``time dependent`` boundary conditions, defined at :math:`y<0` and :math:`11 < t < 61` to inject a pulse on the lower half of the inlet.
+#. All other boundary conditions are ``outlet``. This condition is natural for the outlet of the problem. For lateral walls, this condition represents an impermeable wall.
 
 Post-processing
 *******************
@@ -182,13 +181,13 @@ Post-processing
       set tracer flow rate name       = tracer_flow_rate
     end
 
-#. ``calculate average velocities`` is enabled, and its ``initial time = 30e-4``. This means that the last :math:`25\%` of the first simulation will be used to calculate the average velocity profile.
-#. ``calculate tracer flow rate`` is enabled to provide data for understanding mixing effects.
+#. ``calculate average velocities`` is enabled, beginning at ``initial time = 30e-4``. This means that the last :math:`25\%` of the first simulation will be used to calculate the time-averaged fluid velocity profile.
+#. ``calculate tracer flow rate`` is enabled to provide data for mixing quantification.
 
 Simulation 2: Tracer transport
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the second simulation, we reuse the velocity profile from the first simulation and simply transport the passive tracer. This allows to increase the time step and duration of the simulation while keeping realistic velocity and pressure solutions.
+In the second simulation, we reuse the velocity profile from the first simulation and simply transport the passive tracer. This allows us to increase the time step and duration of the simulation while keeping realistic velocity and pressure solutions.
 
 Simulation control
 ******************
@@ -202,8 +201,8 @@ Simulation control
       ...
     end
 
-#. We use a longer ``time step`` of ``10``.
-#. We let the simulation run until ``time end = 500`` to allow the tracer to pass through.
+#. We use a longer ``time step`` of ``10`` seconds.
+#. We simulate until ``time end = 500`` seconds to allow the tracer to flow through the entire length of the domain.
 
 Restart
 ******************
@@ -220,7 +219,7 @@ We enable the ``restart`` from the previous simulation.
 Multiphysics
 ******************
 
-We disable ``fluid dynamics``, as we simply reuse the time-averaged velocity profile from the previous simulation.
+We disable ``fluid dynamics``, as we use the time-averaged velocity profile from the previous simulation.
 
 .. code-block:: text
 
@@ -270,7 +269,7 @@ The following movie shows the evolution of tracer through the static mixer, both
     <iframe width="560" height="315" src="https://www.youtube.com/embed/dSBRXLukX8E" frameborder="0" allowfullscreen></iframe>
 
 
-The tracer evolution through the inlet and outlet can both be monitored by plotting their values in time, extracted from ``/output/tracer_flow_rate.dat``. The Python script ``postprocess_tracer.py`` generates the following plot:
+The tracer evolution through the inlet and outlet can be monitored by plotting their values in time, extracted from ``/output/tracer_flow_rate.dat``. The Python script ``postprocess_tracer.py`` generates the following plot:
 
 .. code-block:: text
   :class: copy-button
@@ -286,7 +285,7 @@ The tracer evolution through the inlet and outlet can both be monitored by plott
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
-As the plot shows, the passage of the tracer through the static mixer highly flattens its distribution. There is a :math:`170` seconds difference between the inlet and outlet peaks. When compared to the theoretical time of :math:`150` seconds (:math:`d_x/u_x`, with :math:`d_x` the domain length and :math:`u_x` the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.
+As the Figure shows, the concentration of the tracer flattens as it flows. The gap between between the inlet and outlet peaks is of :math:`170` seconds. When compared to the theoretical time of :math:`150` seconds (:math:`d_x/u_x`, with :math:`d_x` the domain length and :math:`u_x` the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.
 
 ---------
 Reference
