@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The default value for the particle weight for the load balancing was changed from 10K to 1K. [#1347](https://github.com/chaos-polymtl/lethe/pull/1347)
+- MINOR The default value for the particle weight for the load balancing was changed from 10K to 2K. [#1347](https://github.com/chaos-polymtl/lethe/pull/1347)
 
 ## [Master] - 2024-11-04
 
