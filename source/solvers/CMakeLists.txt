@@ -36,6 +36,7 @@ add_library(lethe-solvers
   tracer_drift_velocity.cc
   tracer_scratch_data.cc
   vof.cc
+  vof_algebraic_interface_reinitialization.cc
   vof_assemblers.cc
   vof_curvature_projection.cc
   vof_filter.cc
@@ -86,6 +87,7 @@ add_library(lethe-solvers
   ../../include/solvers/tracer_drift_velocity.h
   ../../include/solvers/tracer_scratch_data.h
   ../../include/solvers/vof.h
+  ../../include/solvers/vof_algebraic_interface_reinitialization.h
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_curvature_projection.h
   ../../include/solvers/vof_filter.h
