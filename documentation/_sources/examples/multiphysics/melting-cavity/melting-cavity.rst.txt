@@ -67,7 +67,7 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 
 .. note:: 
     All the four boundary conditions are ``noslip``, and an external 
-    gravity field of :math:`-1` is applied in the :math:`y` direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 38 \, ^{\circ} \text{C}`) and the right (:math:`T_l = 28 \, ^{\circ} \text{C}`) walls are defined.
+    gravity field of :math:`-1` is applied in the :math:`y` direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 38 \, ^{\circ} \text{C}`) and the right (:math:`T_r = 28 \, ^{\circ} \text{C}`) walls are defined.
 
 
 --------------

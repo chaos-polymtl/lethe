@@ -130,13 +130,13 @@ The physical properties section of the particles allows us to specify the differ
         set diameter                          = 0.0025
         set number                            = 31050
         set density particles                 = 2526
-        set young modulus particles           = 10000000
+        set young modulus particles           = 1e6
         set poisson ratio particles           = 0.25
         set restitution coefficient particles = 0.97
         set friction coefficient particles    = 0.4
         set rolling friction particles        = 0.3
       end
-      set young modulus wall           = 10000000
+      set young modulus wall           = 1e6
       set poisson ratio wall           = 0.25
       set restitution coefficient wall = 0.33
       set friction coefficient wall    = 0.2
@@ -154,12 +154,7 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
       set insertion method                               = volume
       set inserted number of particles at each time step = 31050
       set insertion frequency                            = 2000
-      set insertion box minimum x                        = -0.075
-      set insertion box minimum y                        = 0.0
-      set insertion box minimum z                        = 0
-      set insertion box maximum x                        = 0.075
-      set insertion box maximum y                        = 0.3
-      set insertion box maximum z                        = 0.015
+      set insertion box points coordinates               = -0.075, 0.0, 0 : 0.075, 0.3, 0.015
       set insertion distance threshold                   = 1.05
       set insertion maximum offset                       = 0.3
       set insertion prn seed                             = 19
@@ -223,10 +218,7 @@ The simulation is run for 5 s with a time step of 0.0001 s. The time scheme chos
 
     subsection simulation control
       set method               = bdf1
-      set number mesh adapt    = 0
-      set output name          = result_
       set output frequency     = 50
-      set startup time scaling = 0.6
       set time end             = 5
       set time step            = 0.0001
       set subdivision          = 1
@@ -346,7 +338,6 @@ We also enable grad-div stabilization in order to improve local mass conservatio
       set pressure force                = true
       set saffman lift force            = false
       set drag model                    = rong
-      set post processing               = true
       set coupling frequency            = 100
       set implicit stabilization        = false
       set grad-div length scale         = 0.005
@@ -390,6 +381,7 @@ Linear Solver
         set ilu preconditioner absolute tolerance = 1e-12
         set ilu preconditioner relative tolerance = 1
         set verbosity                             = verbose
+        set max krylov vectors                    = 200
       end
     end
 

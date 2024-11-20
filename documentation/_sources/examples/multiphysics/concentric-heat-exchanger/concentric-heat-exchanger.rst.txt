@@ -88,45 +88,51 @@ Conjugated heat transfer simulations require meshes in which the fluid and the s
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The next step is establishing the boundary conditions for the fluid flow. We specify a no-slip boundary condition on the outer walls of the cylinder and specify an inlet velocity for both boundaries 1 and 2. Note that the faces at the interfaces between the solid region and the fluid regions automatically have a ``noslip`` boundary condition applied to them. They should not be identified by a Physical Surface in the mesh.
+The next step is establishing the boundary conditions for the fluid flow. We specify a no-slip boundary condition on the outer walls of the cylinder and specify an inlet velocity for both boundaries id 0 and 3 and an outlet on id 1 and 2. Note that the faces at the interfaces between the solid region and the fluid regions automatically have a ``noslip`` boundary condition applied to them. They should not be identified by a Physical Surface in the mesh.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number                  = 3
-    
-        subsection bc 0
-            set type              = function
-            set id                = 0
-            subsection u
-                set Function expression = 0
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = 10
-            end
+    set number = 5
+
+    subsection bc 0
+        set type = function
+        set id   = 0
+        subsection u
+        set Function expression = 0
         end
-        subsection bc 1
-            set type              = function
-            set id                = 3
-            subsection u
-                set Function expression = 0
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = -4
-            end
+        subsection v
+        set Function expression = 0
         end
-    
-        subsection bc 2
-            set type              = noslip
-            set id                = 4
+        subsection w
+        set Function expression = 10
         end
-    
+    end
+    subsection bc 1
+        set type = outlet
+        set id   = 1
+    end
+    subsection bc 2
+        set type = outlet
+        set id   = 2
+    end
+    subsection bc 3
+        set type = function
+        set id   = 3
+        subsection u
+        set Function expression = 0
+        end
+        subsection v
+        set Function expression = 0
+        end
+        subsection w
+        set Function expression = -4
+        end
+    end
+    subsection bc 4
+        set type = noslip
+        set id   = 4
+    end
     end
 
 Boundary Conditions Heat Transfer
@@ -215,6 +221,7 @@ Finally, we are interested in steady-state results and we thus specify a steady-
     subsection simulation control
       set method                  = steady
       set output frequency        = 1
+      set output name             = out
       set output path             = ./output/
     end
 

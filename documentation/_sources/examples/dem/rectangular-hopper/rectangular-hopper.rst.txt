@@ -80,12 +80,7 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
       set insertion method                               = volume
       set inserted number of particles at each time step = 2910
       set insertion frequency                            = 25000
-      set insertion box minimum x                        = -0.1030
-      set insertion box minimum y                        = 0.10644
-      set insertion box minimum z                        = .00224
-      set insertion box maximum x                        = 0.1030
-      set insertion box maximum y                        = 0.16020
-      set insertion box maximum z                        = 0.03136
+      set insertion box points coordinates               = -0.06, 0.10644, .00224 : 0.06, 0.16020, 0.03136
       set insertion distance threshold                   = 1.5
       set insertion maximum offset                       = 0.1
       set insertion prn seed                             = 20
@@ -168,6 +163,7 @@ The time end of the simulation is 7.5 where most of the particles are discharged
       set output frequency = 1000
       set output path      = ./output/
       set output name      = hopper
+      set output boundaries = true
     end
 
 
@@ -341,10 +337,10 @@ Since the geometry of the mesh and the number of the particles are not the same,
 .. code-block:: text
 
     subsection insertion info
-        set insertion method                               = non_uniform
-        set inserted number of particles at each time step = 2910
+        set insertion method                               = volume
+        set inserted number of particles at each time step = 485
         set insertion frequency                            = 25000
-        set insertion box points coordinates               = -0.1030, 0.10644, 0.00224 : 0.1030,0.16020, 0.03136
+        set insertion box points coordinates               = -0.06, 0.10644, .00112 : 0.06, 0.16020, 0.00448
         set insertion distance threshold                   = 1.5
         set insertion maximum offset                       = 0.1
         set insertion prn seed                             = 20
