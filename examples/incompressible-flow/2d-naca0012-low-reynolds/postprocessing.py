@@ -82,7 +82,7 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
     order_range = range(order + 1)
     half_window = (window_size - 1) // 2
     # precompute coefficients
-    b = np.mat([[k ** i for i in order_range] for k in range(-half_window, half_window + 1)])
+    b = np.asmatrix([[k ** i for i in order_range] for k in range(-half_window, half_window + 1)])
     m = np.linalg.pinv(b).A[deriv] * rate ** deriv * factorial(deriv)
     # pad the signal at the extremes with
     # values taken from the signal itself
@@ -163,8 +163,10 @@ def printClCd():
         meanCd.append(np.mean(list_var_interet[0]))
 
         axisCl[i].plot(list_of_list_of_vars[0][0][cut:-cutLast],list_var_interet[1])
-        axisCl[i].set_title(str(angleList[i]) + "degrees" + "//Cl_rms = " + str(np.sqrt(np.mean(list_var_interet[1]**2))))
+        axisCl[i].set_title(str(angleList[i]) + "degrees" + "//Cl_rms = " + f"{np.sqrt(np.mean(list_var_interet[1]**2)):.2e}")
 
+    # Hide the last subplot
+    axisCl[-1].axis('off')
 
     #The following data come from Kouser et al. (2021)
 
@@ -208,6 +210,10 @@ printClCd()
 #Used for plotting the fft of the lift coefficient for the alpha = 15° case. To perform fft on the other angles of attack,
 #simply replace angleIndex =8 by the index of the desired angle.
 def spectralAnalysis():
+
+    # Data from Figure 7. of doi/10.1177/17568293211055656
+    x_ref = [0.4793106605266697, 0.54137946819437, 0.5879316658809266, 0.6344830743197738, 0.6551724137931041, 0.6758625425141431, 0.6913799417429962, 0.7120692812163251, 0.7224139509529903, 0.7379313501818434, 0.7534487494106952, 0.7844827586206892, 0.8362068965517243, 0.9086211632037985, 0.9706899708714973, 1.0224141088025327, 1.037931508031385, 1.0637935769969018, 1.1000003156990847, 1.1931039218244885, 1.275862068965516, 1.3482763356175909, 1.3689656750909214, 1.3793103448275865, 1.394827744056438, 1.4103451432852914, 1.425862542514143, 1.4775866804451783, 1.5448282176050636, 1.6224144245016157]
+    y_ref = [0.002672605415990023, 0.0034744053921120597, 0.004810708100107052, 0.008285093101857979, 0.012828524348077122, 0.025389771842266352, 0.10048998505110408, 0.05077952329417159, 0.020044561010286305, 0.012828524348077122, 0.008285093101857979, 0.0056124876858679555, 0.003207148928585284, 0.0021381026841170293, 0.0021381026841170293, 0.0037416720508193927, 0.010423185590794469, 0.003207148928585284, 0.0008017999761220366, 0, 0.00026727685388790905, 0.0018708462205902724, 0.0056124876858679555, 0.012294001225843013, 0.02458799225650547, 0.006681533930336192, 0.0034744053921120597, 0.0016035795618829206, 0.0010690666348293694, 0.0005345435125952609]
 
     pathList = ["./simu_batch/naca_0.00/force.00.dat",
                 "./simu_batch/naca_1.00/force.00.dat",
@@ -255,15 +261,23 @@ def spectralAnalysis():
     T = N/sr
     freq = n/T
 
-    plt.figure(figsize = (12, 6))
-    plt.subplot(121)
+    # Plot FFT
+    fig, ax1 = plt.subplots(figsize=(12, 6))
 
-    plt.stem(freq, (np.sqrt(np.abs(X)*np.abs(X)))*(np.sqrt(np.abs(X)*np.abs(X))>100), 'b', \
-                 markerfmt=" ", basefmt="-b")
-    plt.xlabel('Freq (Hz)')
-    plt.ylabel('FFT Amplitude |X(freq)|')
-    plt.title("FFT of lift coefficient")
-    plt.xlim(0.5, 3.5)
+    ax1.stem(freq, (np.sqrt(np.abs(X) * np.abs(X))) * (np.sqrt(np.abs(X) * np.abs(X)) > 100),
+            linefmt='b-', markerfmt=" ", basefmt="-b", label="FFT")
+    ax1.set_xlabel('Frequency (Hz)')
+    ax1.set_ylabel('FFT Amplitude |X(freq)|', color='b')
+    ax1.set_xlim(0.5, 1.5)
+    ax1.set_title("FFT of Lift Coefficient")
+
+    # Plot the reference data
+    ax2 = ax1.twinx()
+    ax2.plot(x_ref, y_ref, 'r', label="Reference Data")
+    ax2.set_ylabel('Reference Frequency Spectrum', color='r')
+
+    # Add legends
+    fig.legend(loc="upper right", bbox_to_anchor=(1, 1), bbox_transform=ax1.transAxes)
 
     plt.show()
 
