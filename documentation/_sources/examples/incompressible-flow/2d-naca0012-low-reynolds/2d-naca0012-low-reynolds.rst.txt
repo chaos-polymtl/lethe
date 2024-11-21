@@ -87,9 +87,6 @@ The forces are computed in order to obtain the drag and lift coefficients later 
       set calculate force       = true
       set calculate torque      = false
       set force name            = force
-      set output precision      = 10
-      set calculation frequency = 1
-      set output frequency      = 1
     end
     
 Mesh 
@@ -274,7 +271,7 @@ with :math:`p_{\infty}` the static pressure in the freestream (equal to 0 in thi
 .. image:: image/cp_comparison.png
 
 
-The important pressure at the leading edge of the airfoil is what allows the incoming flow to be deflected to the upper and lower surfaces. Then, if we look at the upper surface (be careful about the reversed y-axis) the adverse pressure gradient is visible. Then at the trailing edge, the mesh is not precise enough. This zone of high pressure gradient, though not physically accurate, do not invalidate the whole result.
+The important pressure at the leading edge of the airfoil is what allows the incoming flow to be deflected to the upper and lower surfaces. Then, if we look at the upper surface (be careful about the reversed y-axis) the adverse pressure gradient is visible. Then at the trailing edge, the mesh is not precise enough. This zone of high pressure gradient, though not physically accurate, does not invalidate the whole result.
 
 
 For angles of attack :math:`\alpha\geq 9°`, the vortices start to detach from the airfoil. It can be seen using the instantaneous velocity fields. The velocity fields for each angle of attack, at t = 40 seconds, are shown below:    

@@ -444,7 +444,7 @@
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed</span></code>).</p>
 <ul class="simple">
 <li><p>Parameter file for particle generation and packing: <code class="docutils literal notranslate"><span class="pre">packing-particles.prm</span></code></p></li>
@@ -453,18 +453,18 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of <a class="reference external" href="../gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a>, we use <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> to fill the bed with particles, and <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> as the CFD-DEM solver.</p>
+<p>This example simulates the spouting of spherical particles in a cylinder. As noted in the example of <a class="reference external" href="../gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a>, we use <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> to fill the bed with particles, and <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> as the unresolved CFD-DEM solver.</p>
 </section>
 <section id="dem-parameter-file">
 <h2>DEM Parameter File<a class="headerlink" href="#dem-parameter-file" title="Link to this heading">#</a></h2>
-<p>Here, we will focus only on the parts that have been modified compared to  <a class="reference external" href="../gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a>. It is also strongly recommended to visit <a class="reference external" href="../../../parameters/dem/dem.html">DEM parameters</a> for a detailed description on the concepts and physical meanings of the DEM parameters.</p>
+<p>Here, we will focus only on the parts that have been modified compared to the <a class="reference external" href="../gas-solid-spouted-bed/gas-solid-spouted-bed.html">Gas-Solid Spouted Bed</a> example. It is also strongly recommended to visit the <a class="reference external" href="../../../parameters/dem/dem.html">DEM parameters</a> for a detailed description on the concepts and physical meanings of the DEM parameters.</p>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <p>In this example, we are simulating a cylinder shaped spouted bed. We introduce the flow through a cylinder of smaller radius that  constitutes the inlet of the bed. A schematic image is shown below;</p>
 <a class="reference internal image-reference" href="../../../_images/geometry3.png" id="geometry"><img alt="The geometry and boundary conditions" class="align-center" id="geometry" src="../../../_images/geometry3.png" style="height: 15cm;" /></a>
-<p>The geometry of the bed was created using <a class="reference external" href="../../../tools/pointwise/pointowise.html">Pointiwise</a>, and the overview of created mesh is:</p>
+<p>The geometry of the bed was created using <a class="reference external" href="../../../tools/pointwise/pointwise.html">Pointwise</a>. An overview of the mesh is:</p>
 <a class="reference internal image-reference" href="../../../_images/mesh2.png" id="mesh-ver"><img alt="The geometry and boundary conditions" class="align-center" id="mesh-ver" src="../../../_images/mesh2.png" style="height: 10cm;" /></a>
-<p>In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (&gt;10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three time larger than the diameter of the particles in order to get stable calculation.</p>
+<p>In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (&gt;10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three times larger than the diameter of the particles in order to get stable calculation.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                                = gmsh
   set file name                           = ./mesh/cylinder-spouted-bed.msh
@@ -476,7 +476,7 @@ end
 </section>
 <section id="lagrangian-physical-properties">
 <h3>Lagrangian Physical Properties<a class="headerlink" href="#lagrangian-physical-properties" title="Link to this heading">#</a></h3>
-<p>The physical properties section is almost the same as the previous spouted bed example. Here, parameters for the gravity, the diameter, density, and the number of particles are modified. In this simulation, we use 100,000 particles with a 5 mm diameter.</p>
+<p>In this simulation, we use 100,000 particles with a 5 mm diameter. The rest of the particle properties are relatively standard.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
   set number of particle types = 1
   subsection particle type 0
@@ -484,13 +484,13 @@ end
     set diameter                          = 0.005
     set number                            = 100000
     set density particles                 = 100
-    set young modulus particles           = 10000000
+    set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
     set restitution coefficient particles = 0.97
     set friction coefficient particles    = 0.4
     set rolling friction particles        = 0.3
   end
-  set young modulus wall           = 10000000
+  set young modulus wall           = 1e7
   set poisson ratio wall           = 0.25
   set restitution coefficient wall = 0.33
   set friction coefficient wall    = 0.2
@@ -501,7 +501,7 @@ end
 </section>
 <section id="insertion-info">
 <h3>Insertion Info<a class="headerlink" href="#insertion-info" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">info</span></code> subsection manages the insertion of particles. The insertion box parameter is set so that it can fit in the cylinder.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">insertion</span> <span class="pre">info</span></code> subsection manages the insertion of particles. The insertion box parameter is set so that it can fit within the cylinder.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 100000
@@ -516,7 +516,7 @@ end
 </section>
 <section id="floating-walls">
 <h3>Floating Walls<a class="headerlink" href="#floating-walls" title="Link to this heading">#</a></h3>
-<p>When we pack the cylinder with particles, we need to keep them inside and prevent them from falling through the small inlet channel. To do so, we place a floating wall at the bottom of the cylinder, which is <span class="math notranslate nohighlight">\(z = 0\)</span> plain, as in:</p>
+<p>We place a floating wall at the bottom of the cylinder, which is at <span class="math notranslate nohighlight">\(z = 0\)</span>, to ensure that the particles remain within the cylinder during the loading step.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection floating walls
   set number of floating walls = 1
   subsection wall 0
@@ -540,22 +540,22 @@ end
 </section>
 <section id="running-the-dem-simulation">
 <h2>Running the DEM Simulation<a class="headerlink" href="#running-the-dem-simulation" title="Link to this heading">#</a></h2>
-<p>Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> executable is within your path, the simulation can be launched in parallel as follows:</p>
+<p>Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> executable is within your path, the simulation can be launched in parallel as follows:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-particles packing-particles.prm
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Running the packing should take approximately 10 hours on 8 cores using Intel(R) Core(TM) i7-9700K.</p>
+<p>Running the packing should take approximately 10 minutes on 8 cores.</p>
 </div>
-<p>After the particles have been packed inside the square bed, we can move on to the fluid-particles simulation.</p>
+<p>After the particles have been packed inside the bed, we can move on to the fluid-particles simulation.</p>
 </section>
 <section id="cfd-dem-parameter-file">
 <h2>CFD-DEM Parameter File<a class="headerlink" href="#cfd-dem-parameter-file" title="Link to this heading">#</a></h2>
-<p>The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting <a class="reference external" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM Parameters Guide</a> for a detailed description.</p>
+<p>The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting the <a class="reference external" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM Parameters Guide</a> for a detailed description.</p>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The simulation is run for 5 seconds with a time step of 0.001 seconds. The time scheme and setting for output is shown as follows.</p>
+<p>The simulation is run for 5 seconds with a time step of 0.001 seconds. The time scheme and setting for output is shown as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method               = bdf2
   set number mesh adapt    = 0
@@ -574,7 +574,6 @@ end
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
   set time dependent = false
   set number         = 5
-
 
   subsection bc 0 #outlet
     set id   = 3
@@ -625,7 +624,7 @@ end
 </section>
 <section id="cfd-dem">
 <h3>CFD-DEM<a class="headerlink" href="#cfd-dem" title="Link to this heading">#</a></h3>
-<p>Here, we enable grad-div stabilization , and take the time derivative of the void fraction into account.</p>
+<p>Here, we enable grad-div stabilization, and take the time derivative of the void fraction into account.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection cfd-dem
   set grad div                      = true
   set void fraction time derivative = true
@@ -649,16 +648,12 @@ end
 <section id="running-the-cfd-dem-simulation">
 <h2>Running the CFD-DEM Simulation<a class="headerlink" href="#running-the-cfd-dem-simulation" title="Link to this heading">#</a></h2>
 <p>The simulation is run using the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> application. Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> executable is within your path, the simulation can be launched as per the following command:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid-particles gas-solid-spouted-cylinder-bed.prm
-</pre></div>
-</div>
-<p>or in parallel (where 8 represents the number of processors)</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-particles gas-solid-spouted-cylinder-bed.prm
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Running the packing should take approximately 8 days on 8 cores using Intel(R) Core(TM) i7-9700K.</p>
+<p>Running the packing should take approximately 5 days on 8 cores.</p>
 </div>
 </section>
 <section id="results">
@@ -666,13 +661,12 @@ end
 <p>We briefly discuss the results that can be obtained from this example here.</p>
 <section id="total-pressure-drop">
 <h3>Total Pressure Drop<a class="headerlink" href="#total-pressure-drop" title="Link to this heading">#</a></h3>
-<p>Here, we show the simulated pressure drop.</p>
-<p>This graph illustrates the variation of pressure drop from 1 second to 5 seconds. We can see the pressure oscillation which is caused by the bubbly state.</p>
+<p>The following plot illustrates the variation of pressure drop from 1 second to 5 seconds. We can see the pressure oscillation which is caused by the bubbly state of the spouted bed.</p>
 <img alt="Pressure drop as a function of time" class="align-center" id="press-t" src="../../../_images/pressure_drop.png" />
 </section>
 <section id="visualization">
 <h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h3>
-<p>The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents their IDs, allowing for the visualization of the mixing. On the left side, we show the fluid velocity field.</p>
+<p>In the following animation, the bubbly flow can be observed on the right side. the color of the particles represents their IDs, allowing for the visualization of the mixing. On the left side, we show the fluid velocity field.</p>
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/weMRnz24GWM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></section>
 </section>
 </section>
@@ -734,7 +728,7 @@ end
             <ul>
 <li><a class="reference internal" href="#">Gas-Solid Spouted Cylinder Bed</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#dem-parameter-file">DEM Parameter File</a><ul>
 <li><a class="reference internal" href="#mesh">Mesh</a></li>

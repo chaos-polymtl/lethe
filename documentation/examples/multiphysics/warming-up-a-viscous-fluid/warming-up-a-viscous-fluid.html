@@ -532,7 +532,7 @@ end
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enable to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>) and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code> and <code class="docutils literal notranslate"><span class="pre">viscous</span> <span class="pre">dissipation</span></code> must be set (see Bonuses for results without viscous dissipation).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>) and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code> and <code class="docutils literal notranslate"><span class="pre">viscous</span> <span class="pre">dissipation</span></code> must be set (see Bonuses for results without viscous dissipation).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
   set heat transfer       = true
   set viscous dissipation = true
@@ -566,11 +566,11 @@ end
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> are set for:</p>
 <ul class="simple">
-<li><p>the fluid dynamic in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code>, with <code class="docutils literal notranslate"><span class="pre">noslip</span></code> at the left wall (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">0</span></code>) and a velocity of <code class="docutils literal notranslate"><span class="pre">2</span></code> in the y-direction at the right wall (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">1</span></code>),</p></li>
-<li><p>the heat transfer in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">heat</span> <span class="pre">transfer</span></code>, with a <code class="docutils literal notranslate"><span class="pre">convection</span></code> imposed at the left wall (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">0</span></code>) with a heat transfer coefficient <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">0</span></code> to represent an insulation condition, and an imposed <code class="docutils literal notranslate"><span class="pre">temperature</span></code> of <code class="docutils literal notranslate"><span class="pre">80</span></code> at the right wall.</p></li>
+<li><p>the fluid dynamic in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code>, with <code class="docutils literal notranslate"><span class="pre">noslip</span></code> at the left wall (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">0</span></code>) and a velocity of <code class="docutils literal notranslate"><span class="pre">2</span></code> in the y-direction at the right wall (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">1</span></code>). The other walls (<code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">2</span></code> and <code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">3</span></code>) are set as <code class="docutils literal notranslate"><span class="pre">outlet</span></code> with a <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">=</span> <span class="pre">0</span></code> to represent an open boundary condition.</p></li>
+<li><p>the heat transfer in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">heat</span> <span class="pre">transfer</span></code>, with an imposed <code class="docutils literal notranslate"><span class="pre">temperature</span></code> of <code class="docutils literal notranslate"><span class="pre">80</span></code> at the right wall. All the other walls are set as <code class="docutils literal notranslate"><span class="pre">noflux</span></code>.</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 2
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -585,19 +585,23 @@ end
       set Function expression = 2
     end
   end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 3
+    set id   = 3
+    set type = outlet
+    set beta = 0
+  end
 end
 
 subsection boundary conditions heat transfer
-  set number = 2
+  set number = 4
   subsection bc 0
     set id   = 0
-    set type = convection-radiation-flux
-    subsection h
-      set Function expression = 0
-    end
-    subsection Tinf
-      set Function expression = 0
-    end
+    set type = noflux
   end
   subsection bc 1
     set id    = 1
@@ -606,8 +610,20 @@ subsection boundary conditions heat transfer
       set Function expression = 80
     end
   end
+  subsection bc 2
+    set id   = 2
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noflux
+  end
 end
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In lethe, beta = 1 is the default value for the <code class="docutils literal notranslate"><span class="pre">outlet</span></code> boundary condition. Beta acts as a penalizing factor for fluid entering the domain. Because the fluid will be forced to enter through one of the outlets, beta is set to 0.</p>
 </div>
 </section>
 </section>
@@ -681,7 +697,7 @@ end
 <li><p>and most importantly, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> should be adapted to use the bottom and top wall (see the <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a56019d263ae45708302d5d7599f0d458">deal.II documentation on hyper_rectangle grid generator</a> for further details):</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 2
+  set number = 4
   subsection bc 0
     set id   = 2
     set type = noslip
@@ -690,43 +706,47 @@ end
     set id   = 3
     set type = function
     subsection u
-      set Function expression = 2
-    end
-    subsection v
       set Function expression = 0
     end
+    subsection v
+      set Function expression = 2
+    end
+  end
+  subsection bc 2
+    set id   = 0
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 3
+    set id   = 1
+    set type = outlet
+    set beta = 0
   end
 end
 
 subsection boundary conditions heat transfer
   set number = 4
-  subsection bc 2
+  subsection bc 0
     set id   = 2
-    set type = convection-radiation-flux
-    subsection h
-      set Function expression = 0
-    end
-    subsection Tinf
-      set Function expression = 0
-    end
+    set type = noflux
   end
-  subsection bc 3
+  subsection bc 1
     set id    = 3
     set type  = temperature
     subsection value
       set Function expression = 80
     end
   end
+  subsection bc 2
+    set id   = 0
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 1
+    set type = noflux
+  end
 end
 </pre></div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>For the fluid <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code>, we use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span> <span class="pre">=</span> <span class="pre">2</span></code>, whereas for <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">heat</span> <span class="pre">transfer</span></code> we use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">number</span> <span class="pre">=</span> <span class="pre">4</span></code>. These two notations are perfectly equivalent, as the boundary conditions are <code class="docutils literal notranslate"><span class="pre">none</span></code> by default (or <code class="docutils literal notranslate"><span class="pre">noflux</span></code> in the case of heat transfer, see <a class="reference internal" href="../../../parameters/cfd/boundary_conditions_multiphysics.html"><span class="doc">Boundary Conditions - Multiphysics</span></a>). However, it is important to make sure that:</p>
-<ul class="simple">
-<li><p>the index in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">bc</span> <span class="pre">..</span></code> is coherent with the <code class="docutils literal notranslate"><span class="pre">number</span></code> set (if <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">=</span> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">1</span></code> are created but <code class="docutils literal notranslate"><span class="pre">bc</span> <span class="pre">2</span></code> does not exist),</p></li>
-<li><p>the index in <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">..</span></code> is coherent with the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the boundary in the mesh (here, the deal.II generated mesh).</p></li>
-</ul>
 </div>
 </section>
 </section>
