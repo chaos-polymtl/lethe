@@ -22,8 +22,8 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/static-irradiation``).
 
-- Parameter file: ``static-irradiation.prm``
-- Mesh file: ``mesh/bare-plate.msh``
+- Parameter file: ``2D/static-irradiation.prm``
+- Mesh file: ``mesh/bare-plate-2D.msh``
 
 ****
 
@@ -31,13 +31,13 @@ All files mentioned below are located in the example's folder (``examples/multip
 Description of the Case
 -----------------------
 
-Laser powder bed fusion is a manufacturing process using a laser to selectively melt and consolidate, layer-by-layer, a metal powder. Simply, it corresponds to 3D printing with a metal powder as the raw material. The main laser-material interaction takes place at the melt pool scale where the flow dynamics involve multiple driving forces:
+Laser powder bed fusion is a manufacturing process using a laser to selectively melt and consolidate, layer-by-layer, a metal powder. Simply, it corresponds to 3D printing with a metal powder. The main laser-material interaction takes place at the melt pool scale where the flow dynamics involve multiple driving forces:
 
 - phase change due to laser heating
-- surface tension due to the small scale of the melt pool
-- evaporative cooling and recoil pressure due to temperature reaching the boiling point
+- surface tension effects due to the small scale of the melt pool
+- evaporative cooling and recoil pressure as temperature reaches the boiling point
 
-In this example, we are considering the static irradiation of Ti6Al4V bare plate (without powder) in a building chamber backfilled with Argon to study the melt pool dynamics. We simulate an irradiation of :math:`0.5 \;\text{ms}` by a laser beam with a diameter of :math:`140\;\mu\text{m}` and a power of :math:`156\;\text{W}`. The following figure shows the case setup, which is based on the experimental work of Cunningham *et al.* [#cunningham2019]_ 
+In this example, we consider the static irradiation of Ti6Al4V bare plate (without powder) in a building chamber backfilled with Argon to study the melt pool dynamics. We simulate an irradiation of :math:`0.5 \;\text{ms}` by a laser beam with a diameter of :math:`140\;\mu\text{m}` and a power of :math:`156\;\text{W}`. The following figure shows the case setup, which is based on the experimental work of Cunningham *et al.* [#cunningham2019]_ 
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/new-benchmark.png                                                                             |
@@ -46,6 +46,8 @@ In this example, we are considering the static irradiation of Ti6Al4V bare plate
 |     :name: Case setup                                                                                             |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
+
+The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`\vec{u}_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed bellow.
 
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | Parameter                 | Value                     | Parameter                  | Value                       |
@@ -59,10 +61,8 @@ In this example, we are considering the static irradiation of Ti6Al4V bare plate
 
 There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
 
-The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`\vec{u}_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed bellow.
-
 .. note::
-  To improve the performances of the solvers, all dimensional quantites bellow are based on the SI system except for the reference lenght, which is taken as :math:`1\;\text{mm}`.
+  To improve the performances of the solvers, all dimensional quantites in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
     
 --------------
 Parameter File
@@ -71,7 +71,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.2` to prevent instability resulting from the explicit coupling of the NS and HT solvers through the recoil pressure. 
+The time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.1` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure. 
 
 .. code-block:: text
 
@@ -108,7 +108,7 @@ The coarse level mesh considered for this example is generated with Pointwise to
 
     subsection mesh
       set type               = gmsh
-      set file name          = ./mesh/2d-benchmark.msh
+      set file name          = ./mesh/bare-plate-2D.msh
       set initial refinement = 4
     end
 
@@ -117,7 +117,6 @@ The coarse level mesh considered for this example is generated with Pointwise to
         set type               = dealii
         set grid type          = subdivided_hyper_rectangle
         set grid arguments     = 8,1 : 0,0.3925: 0.6,0.4675: false
-        set initial refinement = 0
       end
       set initial refinement = 3
     end
@@ -125,7 +124,7 @@ The coarse level mesh considered for this example is generated with Pointwise to
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-As the laser heats the metal-gas interface, the melt pool deepens and the solid-liquid interface reach the bottom boundary of the box refinement. Hence, we dynamically adapt the mesh using the ``temperature`` as the refinement ``variable`` to keep a well discretized melt pool. We choose :math:`7` as the ``min refinement level`` and :math:`4` as the ``max refinement level``. The mesh is adapted each :math:`20` iterations to reduce the computational cost by setting ``frequency = 20``. Note that the ``fraction coarsening`` is set to :math:`0.0` to avoid coarsening in the center of the melt pool, where the temperature gradient, used by the Kelly error estimator, is less important than at the solid-liquid interface.
+As the laser heats the metal-gas interface, a vapor depression forms and deepens, and the liquid-gas interface reaches the bottom boundary of the box refinement. Hence, we dynamically adapt the mesh using the ``temperature`` as the refinement ``variable`` to keep a well discretized interface. We choose :math:`7` as the ``min refinement level`` and :math:`4` as the ``max refinement level``. The mesh is adapted each :math:`20` iterations to reduce the computational cost by setting ``frequency = 20``. Note that the ``fraction coarsening`` is set to :math:`0.0` to avoid coarsening in the center of the melt pool, where the temperature gradient, used by the Kelly error estimator, is less important than at the liquid-gas interface.
 
 .. code-block:: text
 
@@ -143,21 +142,7 @@ As the laser heats the metal-gas interface, the melt pool deepens and the solid-
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and VOF solvers. Note that the ``id`` of each boundary is recovered at the end of the mesh file generated with Pointwise (``mesh/bare-plate.msh``):
-
-.. code-block:: text
-
-    $PhysicalNames
-    6
-    1 2 "bottom"
-    1 3 "left_bottom"
-    1 4 "left_top"
-    1 5 "right_bottom"
-    1 6 "right_top"
-    1 7 "top"
-    $EndPhysicalNames
-
-Here, the ``id`` corresponds to the second column and the corresponding boundary in the domain is identified with the description given in the third column. The following ``subsection boundary conditions`` sets the NS boundary conditions:
+In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and VOF solvers. The following ``subsection boundary conditions`` sets the NS boundary conditions:
 
 .. code-block:: text
 
@@ -196,7 +181,7 @@ Here, the ``id`` corresponds to the second column and the corresponding boundary
       end
     end
     
-The boundary conditions for the HT solver are set in ``subsection boundary conditions heat transfer``:
+In ``subsection boundary conditions heat transfer``, we set the boundary conditions for the HT solver:
 
 .. code-block:: text
 
@@ -233,17 +218,34 @@ The boundary conditions for the HT solver are set in ``subsection boundary condi
       set type  = noflux
     end
 
+.. note::
+  
+  We recover the ``id`` of each boundary at the end of the mesh file generated with Pointwise (``mesh/bare-plate-2D.msh``):
+
+  .. code-block:: text
+
+      $PhysicalNames
+      6
+      1 2 "bottom"
+      1 3 "left_bottom"
+      1 4 "left_top"
+      1 5 "right_bottom"
+      1 6 "right_top"
+      1 7 "top"
+      $EndPhysicalNames
+
+  Here, the ``id`` corresponds to the second column and we identify the corresponding boundary in the domain with the description given in the third column.
     
-For the sake of brevity, we leave out the ``subsection boundary conditions VOF`` because they are all set to ``none``, corresponding to no flux boundary conditions. However, in the example's parameter file, all boundary conditions are defined.  
+For the sake of brevity, we leave out the ``subsection boundary conditions VOF`` because they all corresponds to no flux boundary conditions (``none``). However, in the example's parameter file, all boundary conditions are defined.  
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions`` subsection, we set the initial condition for all the solvers:
 
-- NS intial conditions are set to :math:`0.0` for both velocity components and for the pressure
+- NS intial conditions are :math:`0.0` for both velocity components and for the pressure
 - HT intial condition corresponds to a uniform temperature :math:`T_\text{0} = 298\;\text{K}`
-- VOF intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while the top part is filled with Argon (``fluid 0``).
+- VOF intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
 
 .. code-block:: text
 
@@ -267,14 +269,12 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase. It is done in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we a considering an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
+The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
 
 We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
 
-.. We also set in this subsection the reference surface tension coefficient of the metal-gas interface :math:`\sigma_\text{0} = 1.52\;\text{Nm}^{-1}` at  :math:`T_\text{0}=T_\text{liquidus}=1928\;\text{K}` and its temperature derivative :math:`d\sigma/dT = -5.5\times 10^{-4}\;\text{Nm}^{-1}\text{K}^{-1}` to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
-
 .. note::
-  To improve the performances of the solvers, all dimensional quantites bellow are based on the SI system except for the reference lenght, which is taken as :math:`1\;\text{mm}`.
+  To improve the performances of the solvers, all dimensional quantites below are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
   
 .. code-block:: text
 
@@ -292,12 +292,12 @@ We also set in this subsection the reference surface tension coefficient of the 
           set liquidus temperature  = 1928.0
           set solidus temperature   = 1878.0
           
-          set viscosity liquid     = 0.905
-          set viscosity solid      = 9.05e4
+          set viscosity liquid      = 0.905
+          set viscosity solid       = 9.05e4
           
-          set specific heat liquid = 1.126e9
-          set specific heat solid  = 0.8e9 
-          set latent enthalpy      = 2.9e11
+          set specific heat liquid  = 1.126e9
+          set specific heat solid   = 0.8e9 
+          set latent enthalpy       = 2.9e11
         end
       end
       
@@ -327,7 +327,7 @@ We also set in this subsection the reference surface tension coefficient of the 
 Constrain Stasis
 ~~~~~~~~~~~~~~~~
 
-To improve the computational time, we constrain the solid degree of liberty to a velocity of :math:`0.0`. This is achieved with the ``constrain statis`` subsection.
+To improve the computational time, we constrain solid degrees of freedom to a velocity of :math:`0.0` using the ``constrain statis`` subsection.
 
 .. code-block:: text
 
@@ -343,7 +343,7 @@ To improve the computational time, we constrain the solid degree of liberty to a
       end
     end
 
-Here, we are imposing this constrain only in the metal (``set fluid id = 1``) when the temperature is below :math:`500\;\text{K}` (``set max temperature = 500``). To avoid any insconsitency when the liquid metal wets the solid surface, the constrain is only applied below the plane define by the point :math:`(0.0, 0.387)` and the unit normal vector :math:`\vec{n} = [0.0, 1.0]`. 
+Here, we impose this constrain only in the metal (``set fluid id = 1``) when the temperature is below :math:`500\;\text{K}` (``set max temperature = 500``). To avoid any insconsitency when the liquid metal wets the solid surface, we apply the constrain only below the plane define by the point :math:`(0.0, 0.387)` and the unit normal vector :math:`\vec{n} = [0.0, 1.0]`. 
 
 Laser parameters
 ~~~~~~~~~~~~~~~~
@@ -366,12 +366,30 @@ We defined the laser heat source in the ``laser parameters`` subsection. In the 
       end
     end
 
-The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the laser heat flux is applied at the metal-gas interface no matter its postion along the :math:`y` axis. This allows to model the effect of the interface deformation on the surface heat flux.
+The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_vof_interface`` model applies the laser heat flux at the metal-gas interface no matter its postion along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
 
 Evaporation
 ~~~~~~~~~~~
 
-The cooling and the recoil pressure due to a fast, out of equilibrium, evaporation are driving forces in the energy and momentum balances, respectively. They are both activated in the ``evaporation`` subsection. In this example, we consider the model of Anisimov and Khokhlov [#anisimov1995]_ to compute the evaporative cooling :math:`q_\text{evap}` and the recoil pressure :math:`p_\text{rec}`:
+The cooling and the recoil pressure due to a fast, out of equilibrium, evaporation are driving forces in the energy and momentum balances, respectively. We active both terms in the ``evaporation`` subsection. 
+
+.. code-block:: text
+
+    subsection evaporation
+      set evaporation mass flux model = temperature_dependent
+      set enable evaporative cooling  = true
+      set enable recoil pressure      = true
+      
+      set evaporation coefficient     = 0.82
+      set recoil pressure coefficient = 0.56
+      set evaporation latent heat     = 8.9e12
+      set molar mass                  = 4.58e-2
+      set universal gas constant      = 8.314e6
+      set boiling temperature         = 3550.0
+      set ambient pressure            = 101.325
+    end
+    
+In this example, we consider the model of Anisimov and Khokhlov [#anisimov1995]_ to compute the evaporative cooling :math:`q_\text{evap}` and the recoil pressure :math:`p_\text{rec}`:
 
 .. math::
 
@@ -391,21 +409,6 @@ where :math:`p_\text{atm}=101.325\;\text{kPa}` is the ``ambient pressure``, and 
 
 Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
 
-.. code-block:: text
-
-    subsection evaporation
-      set evaporation mass flux model = temperature_dependent
-      set enable evaporative cooling = true
-      set enable recoil pressure = true
-      set evaporation latent heat = 8.9e12
-      set molar mass = 4.58e-2
-      set boiling temperature = 3550.0
-      
-      set evaporation coefficient = 0.82
-      set recoil pressure coefficient = 0.56
-      set ambient pressure = 101.325
-      set universal gas constant = 8.314e6
-    end
     
 Non-Linear Solver
 ~~~~~~~~~~~~~~~~~
@@ -460,7 +463,7 @@ The linear solver tolerances are set accordingly.
 Running the Simulation
 -----------------------
 
-We can call ``lethe-fluid`` to launch the simulation by invoking the following command:
+We call ``lethe-fluid`` to launch the simulation by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -475,13 +478,13 @@ We can call ``lethe-fluid`` to launch the simulation by invoking the following c
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the rigth, the phase field evolution. We can observe the melt pool, delimited by the black line, deepening and the formation of a cavity at the liquid-gas interface. This is often refered as a keyhole or a vapor depression. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
 
 .. raw:: html
 
     <iframe width="720" height="428" src="https://www.youtube.com/embed/gtIBY9FRyvY?rel=0&vq=hd720" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allowfullscreen></iframe>
 
-We can also observe a air cushion forming at the triple-phase contact line. It is assumed to be link to the fact that wetting is not modeled in the simulation. Thus, the implementation of a wetting model corresponds to a future addition in Lethe.
+We also observe a air cushion forming at the triple-phase contact line. We assume it is linked to the fact that wetting is not modeled in the simulation. Thus, the implementation of a wetting model corresponds to a future addition in Lethe.
 
 ----------
 References
