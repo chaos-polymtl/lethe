@@ -114,9 +114,9 @@ The coarse level mesh considered for this example is generated with Pointwise to
 
     subsection box refinement
       subsection mesh
-        set type               = dealii
-        set grid type          = subdivided_hyper_rectangle
-        set grid arguments     = 8,1 : 0,0.3925: 0.6,0.4675: false
+        set type           = dealii
+        set grid type      = subdivided_hyper_rectangle
+        set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
       end
       set initial refinement = 3
     end
@@ -129,14 +129,14 @@ As the laser heats the metal-gas interface, a vapor depression forms and deepens
 .. code-block:: text
 
     subsection mesh adaptation
-    set type                    = kelly
-    set variable                = temperature
-    set fraction type           = fraction
-    set max refinement level    = 7
-    set min refinement level    = 4
-    set frequency               = 20
-    set fraction refinement     = 0.4
-    set fraction coarsening     = 0.0
+      set type                 = kelly
+      set variable             = temperature
+      set fraction type        = fraction
+      set max refinement level = 7
+      set min refinement level = 4
+      set frequency            = 20
+      set fraction refinement  = 0.4
+      set fraction coarsening  = 0.0
     end
     
 Boundary Conditions
@@ -169,7 +169,7 @@ In the ``boundary conditions`` subsection, we set the boundary conditions descri
         set id   = 4 # top part of the left wall
         set type = function
         subsection u
-          set Function expression = 100.0 
+          set Function expression = 100.0
         end
         subsection v
           set Function expression = 0
@@ -186,36 +186,37 @@ In ``subsection boundary conditions heat transfer``, we set the boundary conditi
 .. code-block:: text
 
     subsection boundary conditions heat transfer
-    set number = 6
-    subsection bc 0
-      set id    = 2 # bottom wall
-      set type  = temperature
-      subsection value
-        set Function expression = 298
+      set number = 6
+      subsection bc 0
+        set id   = 2  # bottom wall
+        set type = temperature
+        subsection value
+          set Function expression = 298
+        end
       end
-    end
-    subsection bc 1
-      set id    = 5 # bottom part of the right wall
-      set type  = noflux
-    end
-    subsection bc 2
-      set id    = 6 # top part of the right wall
-      set type  = noflux
-    end
-    subsection bc 3
-      set id    = 7 # top wall
-      set type  = noflux
-    end
-    subsection bc 4
-      set id    = 4 # top part of the left wall
-      set type  = temperature
-      subsection value
-        set Function expression = 298
+      subsection bc 1
+        set id   = 5 # bottom part of the right wall
+        set type = noflux
       end
-    end
-    subsection bc 5
-      set id    = 3 # bottom part of the left wall
-      set type  = noflux
+      subsection bc 2
+        set id   = 6 # top part of the right wall
+        set type = noflux
+      end
+      subsection bc 3
+        set id   = 7 # top wall
+        set type = noflux
+      end
+      subsection bc 4
+        set id   = 4 # top part of the left wall
+        set type = temperature
+        subsection value
+          set Function expression = 298
+        end
+      end
+      subsection bc 5
+        set id   = 3 # bottom part of the left wall
+        set type = noflux
+      end
     end
 
 .. note::
@@ -281,33 +282,33 @@ We also set in this subsection the reference surface tension coefficient of the 
     subsection physical properties
       set number of fluids = 2
       subsection fluid 1
-        set density                 = 4.42e-6
-        set thermal conductivity    = 2.88e4
-        
+        set density              = 4.42e-6
+        set thermal conductivity = 2.88e4
+
         set thermal expansion model = phase_change
         set rheological model       = phase_change
         set specific heat model     = phase_change
 
         subsection phase change
-          set liquidus temperature  = 1928.0
-          set solidus temperature   = 1878.0
-          
-          set viscosity liquid      = 0.905
-          set viscosity solid       = 9.05e4
-          
-          set specific heat liquid  = 1.126e9
-          set specific heat solid   = 0.8e9 
-          set latent enthalpy       = 2.9e11
+          set liquidus temperature = 1928.0
+          set solidus temperature  = 1878.0
+
+          set viscosity liquid = 0.905
+          set viscosity solid  = 9.05e4
+
+          set specific heat liquid = 1.126e9
+          set specific heat solid  = 0.8e9
+          set latent enthalpy      = 2.9e11
         end
       end
-      
+
       subsection fluid 0
         set density              = 1.784e-9
         set thermal conductivity = 18
         set kinematic viscosity  = 56.1
         set specific heat        = 5.20e8
       end
-      
+
       set number of material interactions = 1
       subsection material interaction 0
         set type = fluid-fluid
@@ -338,8 +339,8 @@ To improve the computational time, we constrain solid degrees of freedom to a ve
       set restriction plane point              = 0.0, 0.387
       set restriction plane normal vector      = 0.0, 1.0
       subsection constraint 0
-        set fluid id                 = 1
-        set max temperature          = 500
+        set fluid id        = 1
+        set max temperature = 500
       end
     end
 
@@ -353,14 +354,14 @@ We defined the laser heat source in the ``laser parameters`` subsection. In the 
 .. code-block:: text
 
     subsection laser parameters
-      set enable               = true
-      set type                 = gaussian_heat_flux_vof_interface
-      set power                = 1.56e8
-      set absorptivity         = 0.35
-      set beam radius          = 0.07
-      set start time           = 0
-      set end time             = 0.002
-      set beam orientation     = y-
+      set enable           = true
+      set type             = gaussian_heat_flux_vof_interface
+      set power            = 156e6
+      set absorptivity     = 0.35
+      set beam radius      = 0.07
+      set start time       = 0
+      set end time         = 0.002
+      set beam orientation = y-
       subsection path
         set Function expression = 0.3; 0.43
       end

@@ -55,7 +55,7 @@ Multiphysics
 
       multiphysics_2_4 [label="Melting Cavity", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html"];
       
-      multiphysics_2_5 [label="Satic Irradiation", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html"];
+      multiphysics_2_5 [label="Static Irradiation of a Bare Plate", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html"];
 
       multiphysics_2_6 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
 

@@ -43,9 +43,9 @@ end
 
 subsection box refinement
   subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 8,1 : 0,0.3925: 0.6,0.4675: false
+    set type           = dealii
+    set grid type      = subdivided_hyper_rectangle
+    set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
   end
   set initial refinement = 3
 end
@@ -53,15 +53,16 @@ end
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = temperature
-  set fraction type           = fraction
-  set max refinement level    = 7
-  set min refinement level    = 4
-  set frequency               = 20
-  set fraction refinement     = 0.4
-  set fraction coarsening     = 0.0
+  set type                 = kelly
+  set variable             = temperature
+  set fraction type        = fraction
+  set max refinement level = 7
+  set min refinement level = 4
+  set frequency            = 20
+  set fraction refinement  = 0.4
+  set fraction coarsening  = 0.0
 end
 
 #---------------------------------------------------
@@ -91,7 +92,7 @@ subsection boundary conditions
     set id   = 4
     set type = function
     subsection u
-      set Function expression = 100.0 
+      set Function expression = 100.0
     end
     subsection v
       set Function expression = 0
@@ -106,34 +107,34 @@ end
 subsection boundary conditions heat transfer
   set number = 6
   subsection bc 0
-    set id    = 2
-    set type  = temperature
+    set id   = 2
+    set type = temperature
     subsection value
       set Function expression = 298
     end
   end
   subsection bc 1
-    set id    = 5
-    set type  = noflux
+    set id   = 5
+    set type = noflux
   end
   subsection bc 2
-    set id    = 6
-    set type  = noflux
+    set id   = 6
+    set type = noflux
   end
   subsection bc 3
-    set id    = 7
-    set type  = noflux
+    set id   = 7
+    set type = noflux
   end
   subsection bc 4
-    set id    = 4
-    set type  = temperature
+    set id   = 4
+    set type = temperature
     subsection value
       set Function expression = 298
     end
   end
   subsection bc 5
-    set id    = 3
-    set type  = noflux
+    set id   = 3
+    set type = noflux
   end
 end
 
@@ -193,33 +194,33 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density                 = 4.42e-6
-    set thermal conductivity    = 2.88e4
-    
+    set density              = 4.42e-6
+    set thermal conductivity = 2.88e4
+
     set thermal expansion model = phase_change
     set rheological model       = phase_change
     set specific heat model     = phase_change
 
     subsection phase change
-      set liquidus temperature  = 1928.0
-      set solidus temperature   = 1878.0
-      
-      set viscosity liquid      = 0.905
-      set viscosity solid       = 9.05e4
-      
-      set specific heat liquid  = 1.126e9
-      set specific heat solid   = 0.8e9 
-      set latent enthalpy       = 2.9e11
+      set liquidus temperature = 1928.0
+      set solidus temperature  = 1878.0
+
+      set viscosity liquid = 0.905
+      set viscosity solid  = 9.05e4
+
+      set specific heat liquid = 1.126e9
+      set specific heat solid  = 0.8e9
+      set latent enthalpy      = 2.9e11
     end
   end
-  
+
   subsection fluid 0
     set density              = 1.784e-9
     set thermal conductivity = 18
     set kinematic viscosity  = 56.1
     set specific heat        = 5.20e8
   end
-  
+
   set number of material interactions = 1
   subsection material interaction 0
     set type = fluid-fluid
@@ -239,6 +240,7 @@ end
 #---------------------------------------------------
 # Constrain Stasis
 #---------------------------------------------------
+
 subsection constrain stasis
   set enable                               = true
   set number of constraints                = 1
@@ -246,24 +248,24 @@ subsection constrain stasis
   set restriction plane point              = 0.0, 0.387
   set restriction plane normal vector      = 0.0, 1.0
   subsection constraint 0
-    set fluid id                 = 1
-    set max temperature          = 500
+    set fluid id        = 1
+    set max temperature = 500
   end
 end
-                                   
+
 #---------------------------------------------------
 # Laser parameters
 #---------------------------------------------------
 
 subsection laser parameters
-  set enable               = true
-  set type                 = gaussian_heat_flux_vof_interface
-  set power                = 156e6
-  set absorptivity         = 0.35
-  set beam radius          = 0.07
-  set start time           = 0
-  set end time             = 0.002
-  set beam orientation     = y-
+  set enable           = true
+  set type             = gaussian_heat_flux_vof_interface
+  set power            = 156e6
+  set absorptivity     = 0.35
+  set beam radius      = 0.07
+  set start time       = 0
+  set end time         = 0.002
+  set beam orientation = y-
   subsection path
     set Function expression = 0.3; 0.43
   end
@@ -327,7 +329,6 @@ subsection post-processing
   set calculate mass conservation = true
 end
 
-
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
@@ -356,27 +357,27 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = verbose
-    set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
-    set preconditioner                        = amg
+    set verbosity         = verbose
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-5
+    set preconditioner    = amg
   end
   subsection heat transfer
-    set verbosity                             = verbose
-    set method                                = gmres
-    set relative residual                     = 1e-2
-    set minimum residual                      = 1e-1
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
+    set verbosity               = verbose
+    set method                  = gmres
+    set relative residual       = 1e-2
+    set minimum residual        = 1e-1
+    set preconditioner          = ilu
+    set ilu preconditioner fill = 1
   end
   subsection VOF
-    set verbosity                             = verbose
-    set method                                = gmres
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-5
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
+    set verbosity               = verbose
+    set method                  = gmres
+    set relative residual       = 1e-3
+    set minimum residual        = 1e-5
+    set preconditioner          = ilu
+    set ilu preconditioner fill = 1
   end
 end
 
@@ -398,4 +399,3 @@ end
 subsection timer
   set type = iteration
 end
-
