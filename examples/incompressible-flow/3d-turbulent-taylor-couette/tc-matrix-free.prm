@@ -49,9 +49,10 @@ end
 #---------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
   subsection fluid dynamics
-    set enable              = false
+    set enable = false
   end
 end
 
@@ -71,8 +72,7 @@ end
 #---------------------------------------------------
 
 subsection forces
-  set verbosity        = quiet # Output force and torques in log <quiet|verbose>
-  set calculate torque = true  # Enable torque calculation
+  set calculate torque = true
 end
 
 #---------------------------------------------------
@@ -89,11 +89,8 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  # Kinetic energy calculation
   set calculate kinetic energy = true
-
-  # Enstrophy calculation
-  set calculate enstrophy = true
+  set calculate enstrophy      = true
 end
 
 #---------------------------------------------------
@@ -159,28 +156,20 @@ subsection linear solver
     set verbosity         = verbose
 
     # MG parameters
-    set mg verbosity       = quiet
-    set mg min level       = -1
-    set mg level min cells = 16
+    set mg verbosity                   = verbose
+    set mg enable hessians in jacobian = false
 
     # Smoother
-    set mg smoother iterations     = 10
-    set mg smoother eig estimation = true
+    set mg smoother iterations          = 5
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 20
-    set eig estimation verbosity       = verbose
+    set eig estimation verbosity       = quiet
 
-    # Coarse-grid solver
-    set mg coarse grid solver                 = gmres
-    set mg gmres max iterations               = 2000
-    set mg gmres tolerance                    = 1e-7
-    set mg gmres reduce                       = 1e-4
-    set mg gmres max krylov vectors           = 30
-    set mg gmres preconditioner               = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    #coarse-grid solver
+    set mg coarse grid solver = direct
   end
 end
