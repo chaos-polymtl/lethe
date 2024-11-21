@@ -43,7 +43,7 @@ with open(tmp_lethe_parameter_file, "w") as file:  # Write .prm with new paramet
     file.write("\n".join(filestr))
 
 # Call rpt_3d executable
-os.system("rpt_3d " + tmp_lethe_parameter_file)
+os.system("lethe-rpt-3d " + tmp_lethe_parameter_file)
 
 # Delete temporary parameter files
 os.remove(tmp_lethe_parameter_file)
