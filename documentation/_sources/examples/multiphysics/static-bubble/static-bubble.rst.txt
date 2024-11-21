@@ -75,8 +75,7 @@ Time integration is handled by a 1st order backward differentiation scheme (BDF1
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on `(true)`
-and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``surface tension force`` are enabled in the VOF subsection.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``VOF`` is chosen. The ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
@@ -103,8 +102,8 @@ The computational domain is defined by a square with opposite corners located at
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, the initial velocity and initial position of the droplet are defined. The droplet is initially
-defined as a circle with a radius :math:`R= 0.5` in the center of the defined computational domain at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase representation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
+In the ``initial conditions`` subsection, the initial velocity and initial position of the droplet are imposed. The droplet is initially
+defined as a circle with a radius :math:`R= 0.5` in the center of the computational domain :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase representation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer the reader to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
 
 .. code-block:: text
 
@@ -141,7 +140,7 @@ The surface tension force computation is enabled in the ``VOF`` subsection. The 
 
 .. tip::
 
-  The phase fraction gradient filter value (:math:`\eta_n = \alpha h^2`) and curvature filter value (:math:`\eta_\kappa = \beta h^2`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
+  The phase fraction gradient filter value :math:`\left(\eta_n = \alpha h^2\right)` and curvature filter value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
 
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
   2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
@@ -152,7 +151,7 @@ The surface tension force computation is enabled in the ``VOF`` subsection. The 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The ``density`` and the ``kinematic viscosity`` of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. And, the kinematic viscosity is set to :math:`0.1` in both cases. Finally, a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`1.0`.
+The ``density`` and the ``kinematic viscosity`` of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. The kinematic viscosity is set to :math:`0.1` for both fluids. Finally, a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`1.0`.
 
 .. code-block:: text
 
@@ -182,7 +181,7 @@ The ``density`` and the ``kinematic viscosity`` of the two fluids involved in th
 Analytical Solution
 ~~~~~~~~~~~~~~~~~~~
 
-As presented in the section :ref:`Surface tension force`, the analytical solution for this case is zero for the velocity and the pressure drop is given by :math:`\Delta p = \sigma \kappa` whit :math:`\kappa = 1/R`. For :math:`\sigma = 1.0` and :math:`R=0.5`, we have :math:`\Delta p = 2.0`.
+As presented in the section :ref:`Surface tension force`, the analytical solution for this case is zero for the velocity and the pressure drop is given by :math:`\Delta p = \sigma \kappa` with :math:`\kappa = 1/R`. For :math:`\sigma = 1.0` and :math:`R=0.5`, we have :math:`\Delta p = 2.0`.
 
 When providing the analytical solution in the ``analytical solution`` subsection and setting the parameter ``enable`` to ``true``, we can monitor the :math:`\mathcal{L}^2` norm of the error on the velocity and pressure fields. They are outputted in the file specified in the parameter ``filename``.
 
@@ -244,7 +243,7 @@ Mesh Convergence Study
 
 While the filters presented in section :ref:`Normal and curvature computations` allow to decrease the magnitude of the parasitic currents, it can be seen from the previous results that they don't completely disappear. It is, therefore, interesting to see if they vanish with a mesh refinement by performing a space convergence study on their magnitude.
 
-Four levels of refinement are studied (6 to 9) by changing the parameter ``initial refinement`` in the ``mesh`` subsection. The :math:`\mathcal{L}^2` norm of the error on the velocity at 3 seconds is selected as the verification metric. The following figure shows that the scheme reaches nearly an order of accuracy of 2 in space.
+Four levels of refinement are studied (6 to 9) by changing the parameter ``initial refinement`` in the ``mesh`` subsection. The :math:`\mathcal{L}^2` norm of the error on the velocity at 6 seconds is selected as the verification metric. The following figure shows that the scheme reaches an order of accuracy of 1 in space, which is expected due to the irregularity of the solution.
 
 .. image:: images/mesh-convergence-study-order.png
 

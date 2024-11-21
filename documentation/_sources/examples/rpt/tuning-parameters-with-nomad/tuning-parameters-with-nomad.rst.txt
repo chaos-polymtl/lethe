@@ -113,7 +113,7 @@ As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindri
       set verbosity                        = quiet
       set export counts                    = false
       set counts file                      = run.csv
-      set monte carlo iteration            = 10000
+      set monte carlo iteration            = 100000
       set random number seed               = 0
       set reactor height                   = 0.3
       set reactor radius                   = 0.4
