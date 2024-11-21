@@ -13,7 +13,7 @@ Features
 - Simulates a solid-gas cylinder-shaped spouted bed
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 Both files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed``).
@@ -25,13 +25,13 @@ Both files mentioned below are located in the example's folder (``examples/unres
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as the CFD-DEM solver.
+This example simulates the spouting of spherical particles in a cylinder. As noted in the example of `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_, we use ``lethe-particles`` to fill the bed with particles, and ``lethe-fluid-particles`` as the unresolved CFD-DEM solver.
 
 -------------------
 DEM Parameter File
 -------------------
 
-Here, we will focus only on the parts that have been modified compared to  `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. It is also strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM parameters.
+Here, we will focus only on the parts that have been modified compared to the `Gas-Solid Spouted Bed <../gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_ example. It is also strongly recommended to visit the `DEM parameters <../../../parameters/dem/dem.html>`_ for a detailed description on the concepts and physical meanings of the DEM parameters.
 
 Mesh
 ~~~~~
@@ -44,7 +44,7 @@ In this example, we are simulating a cylinder shaped spouted bed. We introduce t
     :name: geometry
     :height: 15cm 
 
-The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/pointowise.html>`_, and the overview of created mesh is:
+The geometry of the bed was created using `Pointwise <../../../tools/pointwise/pointwise.html>`_. An overview of the mesh is:
 
 .. image:: images/mesh.png
     :alt: The geometry and boundary conditions
@@ -52,7 +52,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three time larger than the diameter of the particles in order to get stable calculation.
+In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three times larger than the diameter of the particles in order to get stable calculation.
 
 .. code-block:: text
 
@@ -67,7 +67,7 @@ where the file name includes the path to the mesh file. Here, we activate ``expa
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The physical properties section is almost the same as the previous spouted bed example. Here, parameters for the gravity, the diameter, density, and the number of particles are modified. In this simulation, we use 100,000 particles with a 5 mm diameter. 
+In this simulation, we use 100,000 particles with a 5 mm diameter. The rest of the particle properties are relatively standard.
 
 .. code-block:: text
 
@@ -78,13 +78,13 @@ The physical properties section is almost the same as the previous spouted bed e
         set diameter                          = 0.005
         set number                            = 100000
         set density particles                 = 100
-        set young modulus particles           = 10000000
+        set young modulus particles           = 1e7
         set poisson ratio particles           = 0.25
         set restitution coefficient particles = 0.97
         set friction coefficient particles    = 0.4
         set rolling friction particles        = 0.3
       end
-      set young modulus wall           = 10000000
+      set young modulus wall           = 1e7
       set poisson ratio wall           = 0.25
       set restitution coefficient wall = 0.33
       set friction coefficient wall    = 0.2
@@ -94,7 +94,7 @@ The physical properties section is almost the same as the previous spouted bed e
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The ``insertion info`` subsection manages the insertion of particles. The insertion box parameter is set so that it can fit in the cylinder.
+The ``insertion info`` subsection manages the insertion of particles. The insertion box parameter is set so that it can fit within the cylinder.
 
 .. code-block:: text
 
@@ -111,7 +111,7 @@ The ``insertion info`` subsection manages the insertion of particles. The insert
 Floating Walls
 ~~~~~~~~~~~~~~~~~~~
 
-When we pack the cylinder with particles, we need to keep them inside and prevent them from falling through the small inlet channel. To do so, we place a floating wall at the bottom of the cylinder, which is :math:`z = 0` plain, as in:
+We place a floating wall at the bottom of the cylinder, which is at :math:`z = 0`, to ensure that the particles remain within the cylinder during the loading step.
 
 .. code-block:: text
 
@@ -136,7 +136,7 @@ When we pack the cylinder with particles, we need to keep them inside and preven
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched in parallel as follows:
+Assuming that the ``lethe-particles`` executable is within your path, the simulation can be launched in parallel as follows:
 
 .. code-block:: text
   :class: copy-button
@@ -144,21 +144,21 @@ Launching the simulation is as simple as specifying the executable name and the 
   mpirun -np 8 lethe-particles packing-particles.prm
 
 .. note::
-  Running the packing should take approximately 10 hours on 8 cores using Intel(R) Core(TM) i7-9700K.
+  Running the packing should take approximately 10 minutes on 8 cores.
 
-After the particles have been packed inside the square bed, we can move on to the fluid-particles simulation.
+After the particles have been packed inside the bed, we can move on to the fluid-particles simulation.
 
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting `Unresolved CFD-DEM Parameters Guide <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description.
+The CFD-DEM simulation is carried out using the packed bed previously generated. Here we will focus on the modified section as well. We recommend visiting the `Unresolved CFD-DEM Parameters Guide <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for a detailed description.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation is run for 5 seconds with a time step of 0.001 seconds. The time scheme and setting for output is shown as follows.
+The simulation is run for 5 seconds with a time step of 0.001 seconds. The time scheme and setting for output is shown as follows:
 
 .. code-block:: text
 
@@ -189,8 +189,7 @@ We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on 
   subsection boundary conditions
     set time dependent = false
     set number         = 5
-
-
+    
     subsection bc 0 #outlet
       set id   = 3
       set type = outlet
@@ -239,7 +238,7 @@ We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on 
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, we enable grad-div stabilization , and take the time derivative of the void fraction into account.
+Here, we enable grad-div stabilization, and take the time derivative of the void fraction into account.
 
 .. code-block:: text
 
@@ -270,17 +269,10 @@ The simulation is run using the ``lethe-fluid-particles`` application. Assuming 
 .. code-block:: text
   :class: copy-button
 
-  lethe-fluid-particles gas-solid-spouted-cylinder-bed.prm
-
-or in parallel (where 8 represents the number of processors)
-
-.. code-block:: text
-  :class: copy-button
-
   mpirun -np 8 lethe-particles gas-solid-spouted-cylinder-bed.prm
 
 .. note::
-  Running the packing should take approximately 8 days on 8 cores using Intel(R) Core(TM) i7-9700K.
+  Running the packing should take approximately 5 days on 8 cores.
 
 ---------
 Results
@@ -291,9 +283,7 @@ We briefly discuss the results that can be obtained from this example here.
 Total Pressure Drop
 ~~~~~~~~~~~~~~~~~~~
 
-Here, we show the simulated pressure drop.
-
-This graph illustrates the variation of pressure drop from 1 second to 5 seconds. We can see the pressure oscillation which is caused by the bubbly state.
+The following plot illustrates the variation of pressure drop from 1 second to 5 seconds. We can see the pressure oscillation which is caused by the bubbly state of the spouted bed.
 
 .. image:: images/pressure_drop.png
     :alt: Pressure drop as a function of time
@@ -302,7 +292,7 @@ This graph illustrates the variation of pressure drop from 1 second to 5 seconds
 
 Visualization
 ~~~~~~~~~~~~~
-The results are shown in an animation below. As seen, the bubbly flow can be observed on the right side. the color of the particles represents their IDs, allowing for the visualization of the mixing. On the left side, we show the fluid velocity field.
+In the following animation, the bubbly flow can be observed on the right side. the color of the particles represents their IDs, allowing for the visualization of the mixing. On the left side, we show the fluid velocity field.
 
 .. raw:: html
 
