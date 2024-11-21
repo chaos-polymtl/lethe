@@ -226,9 +226,8 @@ The simulation is run in steady state. The simulation control section is shown:
 .. code-block:: text
 
     subsection simulation control
-      set method            = bdf1
-      set output name       = result
-      set output path       = ./output/
+      set method      = bdf1
+      set output path = ./output/
     end
    
 Physical Properties
@@ -262,7 +261,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the boundary conditions, we choose a slip boundary condition on the walls of the cylinder (ID = 0) and an inlet velocity of 0.2 m/s at the lower face of the cylinder (ID = 1). 
+For the boundary conditions, we set a slip boundary condition on the walls of the cylinder (ID = 0), an inlet velocity of 0.2 m/s at the lower face of the cylinder (ID = 1) and an outlet at the upper face of the cylinder (ID = 2).
 
 .. code-block:: text
 
@@ -284,6 +283,10 @@ For the boundary conditions, we choose a slip boundary condition on the walls of
         subsection w
           set Function expression = 0
         end
+      end
+      subsection bc 2
+        set id   = 2
+        set type = outlet
       end
     end
 
