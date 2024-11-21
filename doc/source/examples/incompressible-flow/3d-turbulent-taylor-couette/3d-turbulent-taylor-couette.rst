@@ -207,8 +207,7 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 .. code-block:: text
 
     subsection forces
-      set verbosity        = quiet   # Output force and torques in log <quiet|verbose>
-      set calculate torque = true    # Enable torque calculation
+      set calculate torque = true
     end
 
 By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbosity = quiet`` will disable the print out on the terminal for each time step.
