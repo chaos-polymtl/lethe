@@ -39,9 +39,10 @@ end
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
- # Enable output of grid, granular temperature, and particles' average velocity
- set lagrangian post-processing = true
+  # Enable output of grid, granular temperature, and particles' average velocity
+  set lagrangian post-processing = true
 end
 
 #---------------------------------------------------
@@ -75,7 +76,7 @@ subsection lagrangian physical properties
     set size distribution type            = uniform
     set diameter                          = 0.005
     set number of particles               = 100000
-    set density particles                 = 100 
+    set density particles                 = 100
     set young modulus particles           = 1e7
     set poisson ratio particles           = 0.25
     set restitution coefficient particles = 0.97
