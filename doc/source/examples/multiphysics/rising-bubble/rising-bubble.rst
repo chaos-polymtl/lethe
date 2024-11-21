@@ -191,7 +191,7 @@ Mesh
 ~~~~
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
-:math:`|(1,2)`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
+:math:`(1,2)`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
 This makes our initial mesh composed of perfect squares. We proceed then to redefine the mesh globally six times by setting
 ``set initial refinement = 6``. 
 
