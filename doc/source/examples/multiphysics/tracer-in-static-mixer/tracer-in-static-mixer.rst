@@ -105,7 +105,7 @@ Both ``fluid dynamics`` and ``tracer`` are enabled for the first simulation to e
 Physical Properties
 *******************
 
-In this case we consider that we have a passive tracer in water. The units used for the physical properties are :math:`\text{cm}` and :math:`\text{s}`.
+In this case we consider that we have a passive tracer in water. The units used for the presented case are :math:`\text{cm}`, :math:`\text{s}`, and :math:`\text{g}`.
 
 .. code-block:: text
 
@@ -281,7 +281,7 @@ The tracer evolution through the inlet and outlet can be monitored by plotting t
 +-----------------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/tracer_flow_rates.svg                                                                                   |
 |     :align: center                                                                                                          |
-|     :width: 800                                                                                                             |
+|     :width: 600                                                                                                             |
 |     :name: Tracer flow rates                                                                                                |
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+

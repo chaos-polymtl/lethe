@@ -26,26 +26,22 @@ tracer_flow_out = np.array(tracer_flow_out)
 fig,  ax  = plt.subplots()
 ax.plot(tracer_time,\
     np.abs(tracer_flow_in),\
-    label="Tracer flow rate at inlet",\
+    label="Inlet",\
     linestyle="-",\
-    marker="3",\
     c = "blue")
 
 ax.plot(tracer_time,\
     np.abs(tracer_flow_out),\
-    label="Tracer flow rate at outlet",\
+    label="Outlet",\
     linestyle="-",\
-    marker="4",\
     c = "black")
 
-ax.set_xlabel("Time (s)")
-ax.set_ylabel("[-]")
-ax.set_title("Tracer flow rates")
-#ax.set_yscale('lin')
+ax.set_xlabel("Time [s]")
+ax.set_ylabel("Tracer flow rate [g/s]")
 ax.set_xticks([0, 100, 200, 300, 400, 500])
 ax.set_yticks([0, 250, 500, 750, 1000, 1250])
-ax.grid(True, which="both", ls="-")
-ax.legend(loc='upper left', bbox_to_anchor=(1,1),
+ax.grid(False)
+ax.legend(loc='upper right',
       fancybox=True, shadow=True, ncol=1)
 file_output = "./tracer_flow_rates.png"
 fig.savefig(file_output,dpi=300,bbox_inches='tight')
