@@ -157,6 +157,7 @@ sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` e
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
+
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of :math:`0`.
 A similar procedure is done for the phase associated with a VOF indicator of :math:`1` in ``subsection fluid 1``. Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
@@ -190,7 +191,7 @@ Mesh
 ~~~~
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
-:math:`[1,2]`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
+:math:`(1,2)`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
 This makes our initial mesh composed of perfect squares. We proceed then to redefine the mesh globally six times by setting
 ``set initial refinement = 6``. 
 
@@ -282,12 +283,12 @@ contains the simulation results. The results for the barycenter position and vel
 .. image:: images/ymean-t.png
     :alt: ymean_t
     :align: center
-    :width: 500
+    :width: 600
 
 .. image:: images/bubble-rise-velocity.png
     :alt: bubble_rise_velocity
     :align: center
-    :width: 500
+    :width: 600
 
 Animation of the rising bubble example:
 
