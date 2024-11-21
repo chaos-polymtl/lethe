@@ -14,12 +14,12 @@ This feature should only be activated in geometries with concave boundaries. (Fo
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2940 and 3017
+Minimum and maximum number of cells owned by the processors are 2940 and 3024
 -->Repartitionning triangulation
-Load balance finished 
+Load balance finished
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2940 and 3017
-id, type, dp, x, y, z 
+Minimum and maximum number of cells owned by the processors are 2940 and 3024
+id, type, dp, x, y, z
 0 0 0.00500 -0.0349 -0.0349 -0.0766
 1 0 0.00500 -0.0295 -0.0355 -0.0773
 2 0 0.00500 -0.0235 -0.0351 -0.0785
