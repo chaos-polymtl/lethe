@@ -109,7 +109,7 @@ subsection boundary conditions
     end
   end
   subsection bc 2
-    set id = 2
+    set id   = 2
     set type = outlet
   end
 end
