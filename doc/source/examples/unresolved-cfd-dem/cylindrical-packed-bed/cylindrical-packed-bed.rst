@@ -378,7 +378,7 @@ The simulation is run using the ``lethe-fluid-vans`` application. Assuming that 
 -------------
 Results VANS
 -------------
-The results are shown in the plots below. The first plot visualises the velocity of the fluid and the void fraction along the center axis of the cylinder. We see that the fluid rapidly accelerates in as the void fraction decreases to ensure mass conservation. The second displays the pressure drop resulting from the particle-fluid interactions. The quasi totality of the pressure drop occurs within the bed of particles.
+The results are shown in the plots below. The first plot visualises the velocity of the fluid and the void fraction along the center axis of the cylinder. We see that the fluid rapidly accelerates in as the void fraction decreases to ensure mass conservation. The second plot displays the pressure drop resulting from the particle-fluid interactions. The quasi totality of the pressure drop occurs within the bed of particles.
 
 .. image:: images/velocity_void_fraction.png
     :alt: velocity and void fraction distribution
