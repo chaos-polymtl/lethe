@@ -459,7 +459,7 @@
 <p>This example is drawn from a case study by Wang and Jourdan <a class="footnote-reference brackets" href="#wang2021" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. It simulates a turbulent Taylor-Couette flow with a Reynolds number of 4000. It incorporates initial conditions based on a modified version of the laminar solution to generate specific vortical structures, inspired by the Taylor-Green vortex.</p>
 <p>The inner cylinder rotates counterclockwise at a constant angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>, while the outer cylinder remains fixed. Periodic boundary conditions are applied to the upper and lower openings of the annular section. The following figure illustrates the geometry of this case:</p>
 <a class="reference internal image-reference" href="../../../_images/geometry.png" id="geometry"><img alt="The geometry and surface ID" class="align-center" id="geometry" src="../../../_images/geometry.png" style="height: 6cm;" /></a>
-<p>The initial conditions for velocity and pressure are defined as follow:</p>
+<p>The initial conditions for velocity and pressure are defined as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}u_{\theta} &amp;= Ar + \frac{B}{r} + \epsilon U\sin(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
@@ -588,7 +588,7 @@ end
 end
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">nodal</span></code> (as per now, <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> solver only lets us use this option). Then we choose the <code class="docutils literal notranslate"><span class="pre">uvwp</span> <span class="pre">subsection</span></code> which allows us to respectively set the <span class="math notranslate nohighlight">\(u_x;u_y;u_z;p\)</span> expressions under the <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">expression</span></code>. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">constant</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">nodal</span></code>. Then we choose the <code class="docutils literal notranslate"><span class="pre">uvwp</span> <span class="pre">subsection</span></code> which allows us to respectively set the <span class="math notranslate nohighlight">\(u_x;u_y;u_z;p\)</span> expressions under the <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">expression</span></code>. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">constant</span></code>.</p>
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
@@ -604,8 +604,7 @@ end
 <h3>Forces<a class="headerlink" href="#forces" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">forces</span></code> subsection controls the postprocessing of the torque and the forces acting on the boundaries of the domain:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection forces
-  set verbosity        = quiet   # Output force and torques in log &lt;quiet|verbose&gt;
-  set calculate torque = true    # Enable torque calculation
+  set calculate torque = true
 end
 </pre></div>
 </div>
@@ -614,16 +613,8 @@ end
 <section id="post-processing">
 <h3>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
-  set verbosity                        = quiet
-  set output frequency                 = 1
-
-  # Kinetic energy calculation
-  set calculate kinetic energy         = true
-  set kinetic energy name              = kinetic_energy
-
-  # Enstrophy calculation
-  set calculate enstrophy              = true
-  set enstrophy name                   = enstrophy
+  set calculate kinetic energy = true
+  set calculate enstrophy      = true
 end
 </pre></div>
 </div>
@@ -650,7 +641,7 @@ end
 </section>
 <section id="other-subsections">
 <h3>Other Subsections<a class="headerlink" href="#other-subsections" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">non-linear</span> <span class="pre">solver</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span> <span class="pre">solver</span></code> subsections use the same parameters as the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a> example. More details can be found in this example and a complete overview of the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> linear solver can be found in the <strong>Theory Guide</strong> (under construction).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">non-linear</span> <span class="pre">solver</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span> <span class="pre">solver</span></code> subsections use the same parameters as the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a> example. More details can be found in this example and a complete overview of the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> linear solver can be found in the the <a class="reference internal" href="../../../parameters/cfd/linear_solver_control.html"><span class="doc">Linear Solver</span></a> section.</p>
 </section>
 </section>
 <section id="running-the-simulation">
@@ -659,6 +650,7 @@ end
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np n_proc lethe-fluid-matrix-free tc-matrix-free.prm
 </pre></div>
 </div>
+<p>and choosing the number of processes <code class="docutils literal notranslate"><span class="pre">n_proc</span></code> according to the resources you have available.</p>
 </section>
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
@@ -671,8 +663,8 @@ end
 </tbody>
 </table>
 </div>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">enstrophy.dat</span></code> file generated by Lethe, the history of enstrophy can be monitored and compared to the reference values extracted from the case study. Assuming that the file is in the same directory as the post-processing scripts, a plot comparing our simulation results to the reference enstrophy data will be generated by using the following command:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 tc_postprocessing.py
+<p>Using the <code class="docutils literal notranslate"><span class="pre">enstrophy.dat</span></code> file generated by Lethe, the history of enstrophy can be monitored and compared to the reference values extracted from the case study. A plot comparing our simulation results to the reference enstrophy data will be generated by using the following command:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 tc_postprocessing.py -ens output/enstrophy.dat
 </pre></div>
 </div>
 <p>The enstrophy plot features a zoomed section of the enstrophy cascade. The following plot shows the history of the enstrophy as measured with the Q2 scheme:</p>
