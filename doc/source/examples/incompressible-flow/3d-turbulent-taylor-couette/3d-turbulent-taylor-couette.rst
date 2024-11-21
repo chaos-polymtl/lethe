@@ -40,7 +40,7 @@ The inner cylinder rotates counterclockwise at a constant angular velocity :math
     :name: geometry
     :height: 6cm
 
-The initial conditions for velocity and pressure are defined as follow: 
+The initial conditions for velocity and pressure are defined as follows: 
 
 .. math::
    u_{\theta} &= Ar + \frac{B}{r} + \epsilon U\sin(\theta) \sin \left( \frac{(r-r_i)\pi}{r_i} \right) \sin \left( \frac{z}{d} \right) \\
@@ -185,7 +185,7 @@ The ``initial conditions`` subsection lets us set-up the velocity and pressure o
       end
     end
 
-The ``type`` is set to ``nodal`` (as per now, ``lethe-fluid-matrix-free`` solver only lets us use this option). Then we choose the ``uvwp subsection`` which allows us to respectively set the :math:`u_x;u_y;u_z;p` expressions under the ``function expression``. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the ``Function constant``. 
+The ``type`` is set to ``nodal``. Then we choose the ``uvwp subsection`` which allows us to respectively set the :math:`u_x;u_y;u_z;p` expressions under the ``function expression``. Switching from cylindrical to Cartesian coordinates results in a quite complex expression. To help with that matter, we use the ``Function constant``. 
 
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
@@ -220,16 +220,8 @@ Post-processing
 .. code-block:: text
 
     subsection post-processing
-      set verbosity                        = quiet
-      set output frequency                 = 1
-
-      # Kinetic energy calculation
-      set calculate kinetic energy         = true
-      set kinetic energy name              = kinetic_energy
-
-      # Enstrophy calculation
-      set calculate enstrophy              = true
-      set enstrophy name                   = enstrophy
+      set calculate kinetic energy = true
+      set calculate enstrophy      = true
     end
 
 To monitor the kinetic energy and the enstrophy, we set calculation to ``true`` in the post-processing section.  
@@ -258,7 +250,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 Other Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the **Theory Guide** (under construction).
+The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the the :doc:`../../../parameters/cfd/linear_solver_control` section.
 
 ----------------------
 Running the Simulation
@@ -270,6 +262,8 @@ Launching the simulation is as simple as specifying the executable name and the 
   :class: copy-button
 
   mpirun -np n_proc lethe-fluid-matrix-free tc-matrix-free.prm 
+
+and choosing the number of processes ``n_proc`` according to the resources you have available.
 
 ----------------------
 Results and Discussion
