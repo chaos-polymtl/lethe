@@ -11,12 +11,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method               = bdf2
-  set number mesh adapt    = 0
-  set output frequency     = 50
-  set time end             = 5
-  set time step            = 0.001
-  set output path          = output/
+  set method            = bdf2
+  set number mesh adapt = 0
+  set output frequency  = 50
+  set time end          = 5
+  set time step         = 0.001
+  set output path       = output/
 end
 
 #---------------------------------------------------
@@ -38,6 +38,10 @@ subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
 
 subsection timer
   set type = iteration
@@ -118,7 +122,6 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 
-
 subsection boundary conditions
   set time dependent = false
   set number         = 5
@@ -144,16 +147,16 @@ subsection boundary conditions
   end
 
   subsection bc 2 #wall
-    set id = 6
+    set id   = 6
     set type = slip
   end
 
   subsection bc 3 #channel_wall
-    set id = 5
+    set id   = 5
     set type = slip
   end
-    
-  subsection bc 4   #bed_wall_bottom
+
+  subsection bc 4 #bed_wall_bottom
     set id   = 4
     set type = function
     subsection u

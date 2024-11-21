@@ -44,7 +44,7 @@ In this example, we are simulating a cylinder shaped spouted bed. We introduce t
     :name: geometry
     :height: 15cm 
 
-The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/pointowise.html>`_. An overview of the mesh is:
+The geometry of the bed was created using `Pointwise <../../../tools/pointwise/pointwise.html>`_. An overview of the mesh is:
 
 .. image:: images/mesh.png
     :alt: The geometry and boundary conditions
@@ -52,7 +52,7 @@ The geometry of the bed was created using `Pointiwise <../../../tools/pointwise/
     :name: mesh_ver
     :height: 10cm
 
-In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three time larger than the diameter of the particles in order to get stable calculation.
+In unresolved CFD-DEM, the averaging volume used to calculate the void fraction needs to be large enough to contain several particles (>10). Since the averaging volume used in the quadrature-centred method is generally related to the cell volume, this introduces a limitation on the cell size. In general, the averaging volume, which in this case is controlled by the cell size, should be approximately three times larger than the diameter of the particles in order to get stable calculation.
 
 .. code-block:: text
 
@@ -189,8 +189,7 @@ We set the inlet velocity to 2.5 m/s, and the background velocity to 0.5 m/s on 
   subsection boundary conditions
     set time dependent = false
     set number         = 5
-
-
+    
     subsection bc 0 #outlet
       set id   = 3
       set type = outlet
