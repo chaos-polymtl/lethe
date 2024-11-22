@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-21
+
+### Changed
+
+- MINOR The default value for the particle weight for the load balancing was changed from 10K to 2K. [#1347](https://github.com/chaos-polymtl/lethe/pull/1347)
+
 ## [Master] - 2024-11-18
 
 ### Fixed
@@ -38,6 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fix
 
 - MINOR Force chains between local-ghost particle were being written multiple time when running in parallel. An arbitrary rule was added so that only one of the process is writing the force chain.[#1342](https://github.com/chaos-polymtl/lethe/pull/1342)
+
 
 ### Fix
 
