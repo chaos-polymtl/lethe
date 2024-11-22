@@ -51,7 +51,7 @@ The DEM files used in this example are obtained following the `Small scale rotat
 Python Code
 ---------------
 
-Please, read this :doc:`documentation <../../../tools/postprocessing/postprocessing_pyvista>`_ before jumping to the following steps.
+Please, read this `documentation <../../../tools/postprocessing/postprocessing_pyvista>`_ before jumping to the following steps.
 
 Constructing the Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

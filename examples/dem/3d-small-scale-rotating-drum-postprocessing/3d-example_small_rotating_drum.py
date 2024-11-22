@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 # Create object named "particles"
-particles = lethe_pyvista_tools("../3d-small-scale-rotating-drum", "small-rotating-drum-dem.prm", "out.pvd", prefix="mod_", first = 20, n_procs=8)
+particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm", "out.pvd", prefix="mod_", first = 200)
 
 # State condition for particle_color array creation
 condition = "(y**2 + z**2)**(1/2) > 0.025"
