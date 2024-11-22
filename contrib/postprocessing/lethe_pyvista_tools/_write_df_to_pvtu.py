@@ -31,8 +31,8 @@ def write_df_to_pvtu(self, prefix = "mod_"):
                             # If line matches one of the files
                             if path in line:
                                                                
-                                # If pvtu is in list_vtu
-                                if line.split('file="')[1].split('"/>')[0] in self.list_vtu:
+                                # If pvtu is in list_pvtu
+                                if line.split('file="')[1].split('"/>')[0] in self.list_pvtu:
                                     line = line.replace('file="', f'file="{prefix}')
                                     pvd_out.write(line)
                                 read_files_path_list.remove(path)
@@ -48,7 +48,7 @@ def write_df_to_pvtu(self, prefix = "mod_"):
         N_pvtu = len(self.df)
         pbar = tqdm(total = N_pvtu, desc="Writing new PVTU and PVD files")
         for i in range(len(self.df)):
-            self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
+            self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}', binary = False)
             pbar.update(1)
 
         print(f"Modified .pvtu and .pvd files with prefix {prefix} successfully written")
