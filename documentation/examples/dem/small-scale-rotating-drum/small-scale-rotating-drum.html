@@ -460,19 +460,20 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
-<p>In this example, we choose a <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">initial</span> <span class="pre">refinement</span></code> parameters. The <code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see <a class="reference external" href="../rotating-drum/rotating-drum.html">Rotating Drum example</a>).</p>
+<p>In this example, we choose a <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">initial</span> <span class="pre">refinement</span></code> parameters. The <code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see <a class="reference external" href="../rotating-drum/rotating-drum.html">Rotating Drum example</a>). The mesh subsection is the same for both parameter files.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type               = dealii
-  set grid type          = cylinder
-  set grid arguments     = 0.056:0.051
-  set initial refinement = 3
+  set type                                = dealii
+  set grid type                           = cylinder
+  set grid arguments                      = 0.056:0.051
+  set initial refinement                  = 3
+  set expand particle-wall contact search = true
 end
 </pre></div>
 </div>
 </section>
 <section id="packing-information">
 <h3>Packing information<a class="headerlink" href="#packing-information" title="Link to this heading">#</a></h3>
-<p>An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry. Otherwise, particles will be lost during the insertion stage.</p>
+<p>An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry to prevent particles loss during the insertion stage. This section is in the <code class="docutils literal notranslate"><span class="pre">packing-rotating-drum.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 8000
@@ -484,11 +485,11 @@ end
 end
 </pre></div>
 </div>
-<p>Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.</p>
+<p>Restart files are written once the packing ends. Using these restart files we can run the rotating drum simulation the end of the packing simulation.</p>
 </section>
 <section id="lagrangian-physical-properties">
 <h3>Lagrangian Physical Properties<a class="headerlink" href="#lagrangian-physical-properties" title="Link to this heading">#</a></h3>
-<p>The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m3, respectively. All other particles’ physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.</p>
+<p>The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m<sup>3</sup>. All other particles’ physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.  Both parameters files have the same physical properties.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
     set g                        = 0.0, -9.81, 0.0
     set number of particle types = 1
@@ -507,7 +508,7 @@ end
     set young modulus wall           = 100000000
     set poisson ratio wall           = 0.24
     set restitution coefficient wall = 0.85
-    set friction coefficient wall    = 0.35
+    set friction coefficient wall    = 0.3
     set rolling friction wall        = 0.1
 end
 </pre></div>
@@ -515,12 +516,12 @@ end
 </section>
 <section id="model-parameters">
 <h3>Model Parameters<a class="headerlink" href="#model-parameters" title="Link to this heading">#</a></h3>
-<p>In this example, we use the <code class="docutils literal notranslate"><span class="pre">dynamic</span></code> load balancing method. This method checks frequently if load balancing should be applied based on a user inputted frequency. Load balancing is dynamically applied if a certain condition is applied. More details regarding load balancing are explained in the <a class="reference external" href="../rotating-drum/rotating-drum.html">Rotating Drum example</a>.</p>
+<p>In this example, we use the <code class="docutils literal notranslate"><span class="pre">dynamic</span></code> load balancing method. This method checks frequently if load balancing should be applied based on a user inputted frequency. Load balancing is dynamically applied if a certain condition is applied. More details regarding load balancing are explained in the <a class="reference external" href="../rotating-drum/rotating-drum.html">Rotating Drum example</a>. This section is in the <code class="docutils literal notranslate"><span class="pre">small-rotating-drum-dem.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection model parameters
   subsection contact detection
     set contact detection method                = dynamic
-    set dynamic contact search size coefficient = 0.8
-    set neighborhood threshold                  = 1.3
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.2
   end
   subsection load balancing
     set load balance method                     = dynamic
@@ -537,7 +538,7 @@ end
 </section>
 <section id="dem-boundary-conditions">
 <h3>DEM Boundary Conditions<a class="headerlink" href="#dem-boundary-conditions" title="Link to this heading">#</a></h3>
-<p>The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">deal.II boundary colouring</a>, the hull of the cylinder (rotating drum) has an id = 0.</p>
+<p>The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">deal.II boundary colouring</a>, the hull of the cylinder (rotating drum) has an id = 0. This section is in the <code class="docutils literal notranslate"><span class="pre">small-rotating-drum-dem.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
@@ -552,23 +553,25 @@ end
 </section>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The packing <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> simulation was run for 2 seconds in real time.</p>
+<p>The packing <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> simulation was run for 2 seconds in real time. This section is in the <code class="docutils literal notranslate"><span class="pre">packing-rotating-drum.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set time step        = 5e-6
-  set time end         = 2
-  set log frequency    = 2000
-  set output frequency = 2000
-  set output path      = ./output_dem/
+  set time step         = 5e-6
+  set time end          = 2
+  set log frequency     = 2000
+  set output frequency  = 2000
+  set output path       = ./output_dem/
+  set output boundaries = true
 end
 </pre></div>
 </div>
-<p>The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> simulation.</p>
+<p>The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> simulation. This section is in the <code class="docutils literal notranslate"><span class="pre">small-rotating-drum-dem.prm</span></code> file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set time step        = 5e-6
-  set time end         = 5
-  set log frequency    = 2000
-  set output frequency = 2000
-  set output path      = ./output_dem/
+  set time step         = 5e-6
+  set time end          = 5
+  set log frequency     = 2000
+  set output frequency  = 2000
+  set output path       = ./output_dem/
+  set output boundaries = true
 end
 </pre></div>
 </div>

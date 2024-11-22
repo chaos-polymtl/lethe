@@ -22,7 +22,7 @@ In this subsection, contact detection, force models, time integration, load bala
     subsection load balancing
       # Choices are none|once|frequent|dynamic|dynamic_with_sparse_contacts
       set load balance method     = none
-      set particle weight         = 10000  # Every method, except none
+      set particle weight         = 2000   # Every method, except none
       set step                    = 100000 # if method = once
       set frequency               = 100000 # if method = frequent
       set dynamic check frequency = 10000  # if method = dynamic

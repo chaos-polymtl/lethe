@@ -38,22 +38,24 @@ Parameter File
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the ``set initial refinement`` parameters. The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see `Rotating Drum example <../rotating-drum/rotating-drum.html>`_).
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the ``set initial refinement`` parameters. The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see `Rotating Drum example <../rotating-drum/rotating-drum.html>`_). The mesh subsection is the same for both parameter files.
+
 
 .. code-block:: text
 
     subsection mesh
-      set type               = dealii
-      set grid type          = cylinder
-      set grid arguments     = 0.056:0.051
-      set initial refinement = 3
+      set type                                = dealii
+      set grid type                           = cylinder
+      set grid arguments                      = 0.056:0.051
+      set initial refinement                  = 3
+      set expand particle-wall contact search = true
     end
 
 
 Packing information
 ~~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry. Otherwise, particles will be lost during the insertion stage.
+An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry to prevent particles loss during the insertion stage. This section is in the ``packing-rotating-drum.prm`` file.
 
 .. code-block:: text
 
@@ -68,12 +70,12 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
       set insertion prn seed                             = 19
     end
 
-Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.
+Restart files are written once the packing ends. Using these restart files we can run the rotating drum simulation the end of the packing simulation.
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m3, respectively. All other particles' physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.
+The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m\ :sup:`3`. All other particles' physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.  Both parameters files have the same physical properties.
 
 .. code-block:: text
 
@@ -95,7 +97,7 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
         set young modulus wall           = 100000000
         set poisson ratio wall           = 0.24
         set restitution coefficient wall = 0.85
-        set friction coefficient wall    = 0.35
+        set friction coefficient wall    = 0.3
         set rolling friction wall        = 0.1
     end
 
@@ -103,15 +105,15 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-In this example, we use the ``dynamic`` load balancing method. This method checks frequently if load balancing should be applied based on a user inputted frequency. Load balancing is dynamically applied if a certain condition is applied. More details regarding load balancing are explained in the `Rotating Drum example <../rotating-drum/rotating-drum.html>`_. 
+In this example, we use the ``dynamic`` load balancing method. This method checks frequently if load balancing should be applied based on a user inputted frequency. Load balancing is dynamically applied if a certain condition is applied. More details regarding load balancing are explained in the `Rotating Drum example <../rotating-drum/rotating-drum.html>`_. This section is in the ``small-rotating-drum-dem.prm`` file.
 
 .. code-block:: text
 
     subsection model parameters
       subsection contact detection
         set contact detection method                = dynamic
-        set dynamic contact search size coefficient = 0.8
-        set neighborhood threshold                  = 1.3
+        set dynamic contact search size coefficient = 0.9
+        set neighborhood threshold                  = 1.2
       end
       subsection load balancing
         set load balance method                     = dynamic
@@ -127,7 +129,7 @@ In this example, we use the ``dynamic`` load balancing method. This method check
 DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder (rotating drum) has an id = 0.
+The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder (rotating drum) has an id = 0. This section is in the ``small-rotating-drum-dem.prm`` file.
 
 .. code-block:: text
 
@@ -145,28 +147,31 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The packing ``lethe-particles`` simulation was run for 2 seconds in real time.
+The packing ``lethe-particles`` simulation was run for 2 seconds in real time. This section is in the ``packing-rotating-drum.prm`` file.
 
 .. code-block:: text
 
     subsection simulation control
-      set time step        = 5e-6
-      set time end         = 2
-      set log frequency    = 2000
-      set output frequency = 2000
-      set output path      = ./output_dem/
+      set time step         = 5e-6
+      set time end          = 2
+      set log frequency     = 2000
+      set output frequency  = 2000
+      set output path       = ./output_dem/
+      set output boundaries = true
     end
     
-The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing ``lethe-particles`` simulation.
+The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing ``lethe-particles`` simulation. This section is in the ``small-rotating-drum-dem.prm`` file.
+
 
 .. code-block:: text
 
     subsection simulation control
-      set time step        = 5e-6
-      set time end         = 5
-      set log frequency    = 2000
-      set output frequency = 2000
-      set output path      = ./output_dem/
+      set time step         = 5e-6
+      set time end          = 5
+      set log frequency     = 2000
+      set output frequency  = 2000
+      set output path       = ./output_dem/
+      set output boundaries = true
     end
 
 

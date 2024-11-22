@@ -12,7 +12,7 @@ This is an example of how to post-process results obtained in the `Small scale r
 
 .. warning::
   
-  Details about installing the module or using it without installing it are available on this `documentation <../../../tools/postprocessing/postprocessing.py>`_.
+  Details about installing the module or using it without installing it are available on `here <../../../tools/postprocessing/postprocessing.py>`_.
 
 
 ----------------------------------
@@ -51,7 +51,7 @@ The DEM files used in this example are obtained following the `Small scale rotat
 Python Code
 ---------------
 
-Please, read this `documentation <../../../tools/postprocessing/postprocessing.py>`_ before jumping to the following steps.
+Please, read this `documentation <../../../tools/postprocessing/postprocessing_pyvista>`_ before jumping to the following steps.
 
 Constructing the Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
