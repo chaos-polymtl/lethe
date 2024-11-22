@@ -274,7 +274,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.html">Tracer through CAD Junction in Simplex</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html">Tracer in Static Mixer</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/chns.html">CHNS</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of CHNS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -440,7 +440,7 @@
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-center" id="surface-grid-representation-of-a-helix-static-mixer-with-its-casing">
-<a class="reference internal image-reference" href="../../../_images/static_mixer_stl_casing_arrows.png"><img alt="../../../_images/static_mixer_stl_casing_arrows.png" src="../../../_images/static_mixer_stl_casing_arrows.png" style="width: 800px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/static_mixer_stl_casing_arrows1.png"><img alt="../../../_images/static_mixer_stl_casing_arrows1.png" src="../../../_images/static_mixer_stl_casing_arrows1.png" style="width: 800px;" /></a>
 </figure>
 </td>
 </tr>
@@ -583,6 +583,15 @@ end
   subsection fluid 0
     set kinematic viscosity = 0.01
   end
+end
+</pre></div>
+</div>
+</section>
+<section id="stabilization">
+<h3>Stabilization<a class="headerlink" href="#stabilization" title="Link to this heading">#</a></h3>
+<p>We rescale the pressure for solving the Navier-Stokes equations by using a <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">scaling</span> <span class="pre">factor</span> <span class="pre">=</span> <span class="pre">1e2</span></code>. Because the flow is heavily restricted by the geometry, unless rescaling is applied, the pressure range and its oscillations are way higher than the velocity magnitude, which negatively affects the convergence of the linear solver. More information on this parameter is available at doc:<cite>../../../parameters/cfd/stabilization</cite>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection stabilization
+  set pressure scaling factor = 1e2
 end
 </pre></div>
 </div>
@@ -814,6 +823,7 @@ end
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
 <li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
+<li><a class="reference internal" href="#stabilization">Stabilization</a></li>
 <li><a class="reference internal" href="#mesh-and-mesh-adaptation">Mesh and Mesh Adaptation</a></li>
 <li><a class="reference internal" href="#definition-of-the-shape">Definition of the Shape</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>

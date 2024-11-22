@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="CHNS" href="../chns.html" /><link rel="prev" title="Tracer" href="../tracer.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Tracer through CAD Junction in Simplex - Lethe documentation</title>
+        <title>Tracer in Static Mixer - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -274,7 +274,7 @@
 </ul>
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../tracer.html">Tracer</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Tracer through CAD Junction in Simplex</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Tracer in Static Mixer</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../chns.html">CHNS</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of CHNS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -432,215 +432,268 @@
           </label>
         </div>
         <article role="main">
-          <section id="tracer-through-cad-junction-in-simplex">
-<h1>Tracer through CAD Junction in Simplex<a class="headerlink" href="#tracer-through-cad-junction-in-simplex" title="Link to this heading">#</a></h1>
-<p>In this example, we solve a problem using the simplex capabilities of Lethe.
-The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made from boolean addition.
-We will also demonstrate the tracer physics capabilities.</p>
+          <section id="tracer-in-static-mixer">
+<h1>Tracer in Static Mixer<a class="headerlink" href="#tracer-in-static-mixer" title="Link to this heading">#</a></h1>
+<p>In this example, we extend the <a class="reference internal" href="../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html"><span class="doc">3D Static Mixer Using RBF Sharp Immersed Boundary</span></a> example using a passive tracer to quantify the mixing profile.</p>
+<p>We inject two phases through a static mixer to verify how geometry affects their mixing.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="surface-grid-representation-of-a-helix-static-mixer-with-its-casing">
+<a class="reference internal image-reference" href="../../../_images/static_mixer_stl_casing_arrows.png"><img alt="../../../_images/static_mixer_stl_casing_arrows.png" src="../../../_images/static_mixer_stl_casing_arrows.png" style="width: 800px;" /></a>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
+<li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></li>
 <li><p>Transient problem</p></li>
-<li><p>Displays the use of the tracer physics</p></li>
-<li><p>Displays the use of a simplex mesh generated with a CAD platform</p></li>
+<li><p>Tracer physics</p></li>
+<li><p>Accelerated transient auxiliary physics resolution with <code class="docutils literal notranslate"><span class="pre">average_velocity_profile</span></code> initial condition.</p></li>
 </ul>
 </section>
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
-<p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/tracer-through-cad-junction</span></code>).</p>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<p>All mentioned files are found in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/tracer-in-static-mixer</span></code>).</p>
 <ul class="simple">
-<li><p>Hierarchical Data Format file for SALOME mesh generation: <code class="docutils literal notranslate"><span class="pre">tracer-through-cad-junction.hdf</span></code></p></li>
-<li><p>GMSH geometry file: <code class="docutils literal notranslate"><span class="pre">tracer-through-cad-junction.geo</span></code></p></li>
-<li><p>GMSH mesh file: <code class="docutils literal notranslate"><span class="pre">tracer-through-cad-junction.msh</span></code></p></li>
-<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">tracer-through-cad-junction.prm</span></code></p></li>
-<li><p>SALOME mesh file: <code class="docutils literal notranslate"><span class="pre">Mesh-1.mesh</span></code></p></li>
+<li><p>Parameter file for solving the flow: <code class="docutils literal notranslate"><span class="pre">flow_in_long_mixer.prm</span></code>;</p></li>
+<li><p>Parameter file for solving the tracer transport: <code class="docutils literal notranslate"><span class="pre">flow_in_long_mixer_only_tracer.prm</span></code>;</p></li>
+<li><p>Composite geometry file: <code class="docutils literal notranslate"><span class="pre">mixer_long.composite</span></code>;</p></li>
+<li><p>RBF geometry file: <code class="docutils literal notranslate"><span class="pre">RBF_helix.output</span></code>. The extension is <code class="docutils literal notranslate"><span class="pre">.output</span></code> because it was named from a <a class="reference external" href="https://github.com/optimad/bitpit">bitpit</a> perspective. RBF preparation was done in the previous <a class="reference internal" href="../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html"><span class="doc">3D Static Mixer Using RBF Sharp Immersed Boundary</span></a> example, based on this surface grid from Thingiverse <a class="footnote-reference brackets" href="#thingiverse" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> under CC BY 4.0;</p></li>
+<li><p>Python post-processing script: <code class="docutils literal notranslate"><span class="pre">postprocess_tracer.py</span></code>.</p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>A junction of pipes following an arbitrary path is difficult to mesh properly with hexaedral elements.
-A simplex mesh, on the other hand, is easy to setup and can be built with many well-established algorithms;
-all software that can create a mesh can create a simplex mesh.
-In this example, we consider a junction of pipes that follow orthogonal sinusoids.
-This case shows how a passive tracer injected in such a geometry can be used to visualize preferential paths.</p>
-<section id="generating-a-geometry-with-salome">
-<h3>Generating a Geometry with SALOME<a class="headerlink" href="#generating-a-geometry-with-salome" title="Link to this heading">#</a></h3>
-<p>Complex geometries can be set up and meshed with the SALOME platform.</p>
-<p>First, the geometry module must be loaded as such, and geometric shapes can be added. For example, here, disks are drawn alongside sinusoidal curves that will be used for pipe generation through extrusion. The <code class="docutils literal notranslate"><span class="pre">Fuse</span></code> command can then be used to obtain a single geometry.</p>
-<img alt="Salome menu with geometry visible" class="align-center" src="../../../_images/salome-menu.png" />
-<img alt="Geometry generated with Salome" class="align-center" src="../../../_images/salome-geometry.png" />
-<p>Second, the mesh module can be loaded to generate a <code class="docutils literal notranslate"><span class="pre">.mesh</span></code> file. A new mesh must be created with an associated geometry, algorithm and hypothesis. <code class="docutils literal notranslate"><span class="pre">NETGEN</span> <span class="pre">1D-2D-3D</span></code> works well, and automatic hypothesis selection can be used. The element size can be edited to specific requirements, and then the Compute command must be used to generate the grid. Through <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">-&gt;</span> <span class="pre">Export</span> <span class="pre">-&gt;</span> <span class="pre">GMF</span> <span class="pre">File</span></code>, the <code class="docutils literal notranslate"><span class="pre">.mesh</span></code> file can be output.</p>
-<img alt="Contextual menu for mesh generation in Salome" class="align-center" src="../../../_images/salome-mesh-creation.png" />
-</section>
-<section id="adding-the-boundary-ids-from-gmsh">
-<h3>Adding the Boundary IDs from Gmsh<a class="headerlink" href="#adding-the-boundary-ids-from-gmsh" title="Link to this heading">#</a></h3>
-<p>A criterion for the use of <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file in Lethe is that the boundaries have an associated ID number. These numbers can be added in Gmsh.</p>
-<p>The boundaries from the mesh must be linked to a Physical object. In 3D for example, the inlet, outlet and walls must be specified as <code class="docutils literal notranslate"><span class="pre">Physical</span> <span class="pre">surfaces</span></code>. Selecting the surface for the inlet and outlet can be done easily, and then the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file can be text-edited to add a new physical surface with the remaining surfaces.</p>
-<p>In this specific case, there are four boundaries: inlets with no tracer (1), inlet with tracer (2), walls (3) and outlets (4), as stated in the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file (see excerpt in the text block below).</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Merge &quot;Mesh-1.mesh&quot;;
-Physical Surface(1) = {729, 712};
-Physical Surface(2) = {10};
-Physical Surface(3) = {1:9,11:711,713:728,730:848,850,852:5000};
-Physical Surface(4) = {849, 851};
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">Physical</span> <span class="pre">Volume</span></code> must also be specified for compatibility with deal.II, as stated with this line from the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Physical Volume(1) = {1};
-</pre></div>
-</div>
-<p>The last step in Gmsh is to generate the 3D mesh, and then save it to a <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file.</p>
-</section>
+<p>In this example, we use the auxiliary tracer physics to quantify the mixing of two fluids in a static mixer. We assume the flow is steady. Hence, we use a two-step simulation, consisting of:</p>
+<ol class="arabic simple">
+<li><p>Simulating the transient flow with a small <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> until the flow has reached the steady state;</p></li>
+<li><p>Simulate the flow of the tracer with a larger <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> while reusing the computed velocity field from the previous simulation.</p></li>
+</ol>
+<p>This strategy reduces the computational cost of the simulation as the fluid flow solution is reused in the second step.</p>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
-<p>Using Lethe requires a solver executable, in this case <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code>, and a <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file. This second one can be setup in many ways, but for this specific case two aspects must be treated with more care: the enabling of simplex mode, and the setup of the tracer physics.</p>
-<section id="enabling-the-simplex-mode">
-<h3>Enabling the Simplex Mode<a class="headerlink" href="#enabling-the-simplex-mode" title="Link to this heading">#</a></h3>
-<section id="mesh">
-<h4>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h4>
-<p>In the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">mesh</span></code>, the simplex mode can be enabled with <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">simplex</span> <span class="pre">=</span> <span class="pre">true</span></code>. Also, the mesh in the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file must obviously be built with simplex elements.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type               = gmsh
-  set file name          = tracer-through-cad-junction.msh
-  set initial refinement = 0
-  set simplex            = true
+<section id="simulation-1-flow-resolution">
+<h3>Simulation 1: Flow resolution<a class="headerlink" href="#simulation-1-flow-resolution" title="Link to this heading">#</a></h3>
+<section id="simulation-control">
+<h4>Simulation control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
+  set method    = bdf1
+  set time end  = 40e-4
+  set time step = 1e-4
+
+  set adapt = false
+
+  set output path      = ./output/
+  set output name      = output
+  set output control   = iteration
+  set output frequency = 5
 end
 </pre></div>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If the mesh type is set to <code class="docutils literal notranslate"><span class="pre">dealii</span></code> instead of <code class="docutils literal notranslate"><span class="pre">gmsh</span></code>, the deal.II generated mesh will be properly built with simplices.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>[2022-01-19] It is crucial to consider a current limitation : simplex grid refinement isn’t implemented in Lethe.</p>
-</div>
+<p>We use a <code class="docutils literal notranslate"><span class="pre">bdf1</span></code> time integration scheme with a short <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span> <span class="pre">=</span> <span class="pre">1e-4</span></code> <span class="math notranslate nohighlight">\(\text{s}\)</span>. After <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">end</span> <span class="pre">=</span> <span class="pre">40e-4</span></code> <span class="math notranslate nohighlight">\(\text{s}\)</span>, we consider that the velocity field has reached a steady state. According to <a class="reference internal" href="../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html"><span class="doc">3D Static Mixer Using RBF Sharp Immersed Boundary</span></a>, the pressure drop varies by less than <span class="math notranslate nohighlight">\(5\)</span> % in the range [30, 40] <span class="math notranslate nohighlight">\(\text{s}\)</span>.</p>
 </section>
+<section id="restart">
+<h4>Restart<a class="headerlink" href="#restart" title="Link to this heading">#</a></h4>
+<p>We use Lethe’s checkpoint/restart mechanism to feed the steady-state flow information to the second step of the simulation.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection restart
+  set checkpoint = true
+  set frequency  = 5
+  set filename   = restart
+  set restart    = false
+end
+</pre></div>
+</div>
+<p>We <code class="docutils literal notranslate"><span class="pre">checkpoint</span></code> the simulation at every <code class="docutils literal notranslate"><span class="pre">5</span></code> time steps, both for safety (each time step takes a long time to complete) and for reuse in the second simulation.</p>
 </section>
-<section id="setting-up-the-tracer-physics">
-<h3>Setting up the Tracer Physics<a class="headerlink" href="#setting-up-the-tracer-physics" title="Link to this heading">#</a></h3>
-<p>Using the tracer physics requires four elements: activating the physics, setting the tracer diffusivity, setting the tracer elements order and setting the boundary conditions. These elements are provided as such:</p>
 <section id="multiphysics">
 <h4>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h4>
+<p>Both <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code> and <code class="docutils literal notranslate"><span class="pre">tracer</span></code> are enabled for the first simulation to ensure initialization of the <code class="docutils literal notranslate"><span class="pre">tracer</span></code> field. However, the tracer injection only begins at the second step.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set tracer = true
+  set fluid dynamics = true
+  set tracer         = true
 end
 </pre></div>
 </div>
 </section>
 <section id="physical-properties">
 <h4>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h4>
+<p>In this case we consider that we have a passive tracer in water. The units used for the presented case are <span class="math notranslate nohighlight">\(\text{cm}\)</span>, <span class="math notranslate nohighlight">\(\text{s}\)</span>, and <span class="math notranslate nohighlight">\(\text{g}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 1
-    set tracer diffusivity  = 0.001
+    set kinematic viscosity      = 0.01
+    set tracer diffusivity model = immersed solid tanh
+    subsection immersed solid tanh
+      set tracer diffusivity inside  = 1e-10
+      set tracer diffusivity outside = 1e-5
+      set thickness                  = 5e-1
+    end
   end
 end
 </pre></div>
 </div>
-</section>
-<section id="fem">
-<h4>FEM<a class="headerlink" href="#fem" title="Link to this heading">#</a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set tracer order   = 1
-end
-</pre></div>
-</div>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">model</span></code> is <code class="docutils literal notranslate"><span class="pre">immersed</span> <span class="pre">solid</span> <span class="pre">tanh</span></code>. This model is used in <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> for tracer flow percolating immersed solids.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">outside</span></code> is <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> <span class="math notranslate nohighlight">\(\text{cm²/s}\)</span>, as this is a typical value for a passive tracer in a liquid.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">diffusivity</span> <span class="pre">inside</span></code> is set to <code class="docutils literal notranslate"><span class="pre">1e-10</span></code> <span class="math notranslate nohighlight">\(\text{cm²/s}\)</span>. The low value prevents diffusivity inside the solid while providing numerical stability (<span class="math notranslate nohighlight">\(&gt; 0\)</span>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">thickness</span></code> is <code class="docutils literal notranslate"><span class="pre">5e-1</span></code> <span class="math notranslate nohighlight">\(\text{cm}\)</span>. At the scale of the problem, this provides a smooth transition without generating oscillations between liquid and solid phases. The thickness is of the order of magnitude of the smallest cell length to restrict the transition to one cell thickness.</p></li>
+</ol>
 </section>
 <section id="tracer-boundary-conditions">
 <h4>Tracer Boundary Conditions<a class="headerlink" href="#tracer-boundary-conditions" title="Link to this heading">#</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions tracer
-  set number = 2
+  set number         = 6
+  set time dependent = true
   subsection bc 0
-    set id   = 1
+    set id   = 0
     set type = dirichlet
     subsection dirichlet
-      set Function expression = 0
+      set Function expression = if(y&lt;0,t&lt;11?0:(t&lt;61?1:0),0)
     end
   end
   subsection bc 1
-    set id   = 2
-    set type = dirichlet
-    subsection dirichlet
-      set Function expression = 1
-    end
-  end
-end
-</pre></div>
-</div>
-<p>The boundary conditions are written in a specific way.
-We have specified 2 boundaries, a Dirichlet condition with a concentration of 1 for the first inlet, and another Dirichlet condition with a tracer concentration of 0 for the second inlet. All the remaining boundaries are unspecified.
-An unspecified boundary condition in Lethe for the tracer is considered as the natural condition of finite elements,
-which is a zero gradient condition.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">tracer</span></code> subsection is different from the general <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code>
-which concerns the flow.</p>
-</div>
-</section>
-</section>
-<section id="boundary-conditions">
-<h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection for the flow is setup as follows. The inlet with a high tracer concentration (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">2</span></code>)
-is given a higher velocity than the other two (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code>). The walls of the junction (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">3</span></code>) are given a <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">slip</span></code> type.
-The remaining boundaries (<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">4</span></code>) are unspecified for the same reason as in the previous subsection: no constraint
-must be applied to the outlet flow.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 3
-  subsection bc 0
     set id   = 1
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 1
-    end
-  end
-  # boundary id2 will have the tracer
-  subsection bc 1
-    set id   = 2
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 4
-    end
+    set type = outlet
   end
   subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
+  subsection bc 3
     set id   = 3
-    set type = noslip
+    set type = outlet
+  end
+  subsection bc 4
+    set id   = 4
+    set type = outlet
+  end
+  subsection bc 5
+    set id   = 5
+    set type = outlet
   end
 end
 </pre></div>
 </div>
+<ol class="arabic simple">
+<li><p>We use <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">dependent</span></code> boundary conditions, defined at <span class="math notranslate nohighlight">\(y&lt;0\)</span> and <span class="math notranslate nohighlight">\(11 &lt; t &lt; 61\)</span> to inject a pulse on the lower half of the inlet.</p></li>
+<li><p>All other boundary conditions are <code class="docutils literal notranslate"><span class="pre">outlet</span></code>. This condition is natural for the outlet of the problem. For lateral walls, this condition represents an impermeable wall since velocity is perpendicular.</p></li>
+</ol>
+</section>
+<section id="post-processing">
+<h4>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
+  set verbosity = verbose
+
+  set calculate average velocities = true
+  set initial time                 = 30e-4
+
+  # Tracer post-processing
+  set calculate tracer flow rate  = true
+  set tracer flow rate name       = tracer_flow_rate
+end
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">average</span> <span class="pre">velocities</span></code> is enabled, beginning at <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">=</span> <span class="pre">30e-4</span></code> <span class="math notranslate nohighlight">\(\text{s}\)</span>. This means that the last <span class="math notranslate nohighlight">\(25\%\)</span> of the first simulation will be used to calculate the time-averaged fluid velocity profile.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">tracer</span> <span class="pre">flow</span> <span class="pre">rate</span></code> is enabled to provide data for mixing quantification.</p></li>
+</ol>
+</section>
+</section>
+<section id="simulation-2-tracer-transport">
+<h3>Simulation 2: Tracer transport<a class="headerlink" href="#simulation-2-tracer-transport" title="Link to this heading">#</a></h3>
+<p>In the second simulation, we reuse the velocity profile from the first simulation and simply transport the passive tracer. This allows us to increase the time step and duration of the simulation while keeping realistic velocity and pressure solutions.</p>
+<section id="id2">
+<h4>Simulation control<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
+  set method    = bdf1
+  set time end  = 500
+  set time step = 10
+  ...
+end
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>We use a longer <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> of <code class="docutils literal notranslate"><span class="pre">10</span></code> <span class="math notranslate nohighlight">\(\text{s}\)</span>.</p></li>
+<li><p>We simulate until <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">end</span> <span class="pre">=</span> <span class="pre">500</span></code> <span class="math notranslate nohighlight">\(\text{s}\)</span> to allow the tracer to flow through the entire length of the domain.</p></li>
+</ol>
+</section>
+<section id="id3">
+<h4>Restart<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>We enable the <code class="docutils literal notranslate"><span class="pre">restart</span></code> from the previous simulation.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection restart
+  ...
+  set restart    = true
+end
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h4>Multiphysics<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>We disable <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code>, as we use the time-averaged velocity profile from the previous simulation.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
+  set fluid dynamics = false
+  set tracer         = true
+end
+</pre></div>
+</div>
+</section>
+<section id="initial-conditions">
+<h4>Initial conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h4>
+<p>We use <code class="docutils literal notranslate"><span class="pre">average_velocity_profile</span></code> from the previous simulation as the initial (and persistent) condition for the fluid dynamics. Since this physics is disabled, the velocity and pressure profiles will remain fixed throughout the simulation.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
+  set type = average_velocity_profile
+end
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
-<p>The case must be run with the solver and the parameter file. The simulation is launched in the same folder as the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file, using the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> solver. It takes a long time since problem is transient and the time steps are short. Assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> executable is within your path, the simulation can be launched by typing:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>lethe-fluid tracer-through-cad-junction.prm
+<p>As previously mentionned, the case is run in two steps:</p>
+<ol class="arabic simple">
+<li><p>Simulation to reach a pseudo steady-state of the flow field;</p></li>
+<li><p>Transient simulation to transport tracer through the domain.</p></li>
+</ol>
+<p>The simulation can be launched on multiple cores using <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> and the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> executable. Using 6 CPU cores and assuming that the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> executable is within your path, the simulation can be launched by typing:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 6 lethe-fluid-sharp flow_in_long_mixer.prm
+mpirun -np 6 lethe-fluid-sharp flow_in_long_mixer_only_tracer.prm
 </pre></div>
 </div>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>The results in <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> format can then be viewed using visualisation software such as Paraview.</p>
-<img alt="Simulation results in Meshgrid format" class="align-center" src="../../../_images/paraview-tracer.png" />
-<p>The higher presence of tracer in the outlet on the same side as the tracer inlet may indicate poor mixing.
-As the tracer diffusivity is low, the mixing between the streams comes mainly from advection.
-However, since the kinematic viscosity is high, the flow is laminar (i.e. dominated by viscous forces) and
-the streamlines do not cross.</p>
+<p>The following movie shows the flow of the tracer through the static mixer, both as a colored slice and colored streamlines:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dSBRXLukX8E" frameborder="0" allowfullscreen></iframe><p>The tracer evolution through the inlet and outlet can be monitored by plotting their values in time, extracted from <code class="docutils literal notranslate"><span class="pre">/output/tracer_flow_rate.dat</span></code>. The Python script <code class="docutils literal notranslate"><span class="pre">postprocess_tracer.py</span></code> generates the following plot:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  python3 postprocess_tracer.py
+</pre></div>
+</div>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="tracer-flow-rates">
+<a class="reference internal image-reference" href="../../../_images/tracer_flow_rates.svg"><img alt="../../../_images/tracer_flow_rates.svg" src="../../../_images/tracer_flow_rates.svg" width="600" /></a>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As the Figure shows, the concentration of the tracer flattens as it flows. The gap between between the inlet and outlet peaks is of <span class="math notranslate nohighlight">\(170\)</span> <span class="math notranslate nohighlight">\(\text{s}\)</span>. When compared to the theoretical time of <span class="math notranslate nohighlight">\(150\)</span> <span class="math notranslate nohighlight">\(\text{s}\)</span> (<span class="math notranslate nohighlight">\(d_x/u_x\)</span>, with <span class="math notranslate nohighlight">\(d_x\)</span> the domain length and <span class="math notranslate nohighlight">\(u_x\)</span> the inlet velocity), this difference can be explained by retention effects and the tortuous paths that the tracer travels through.</p>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="thingiverse" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>“Group 9., Helix Static Mixer,” <em>Thingiverse</em> Available: <a class="reference external" href="https://www.thingiverse.com/thing:3915237">https://www.thingiverse.com/thing:3915237</a></p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -699,31 +752,32 @@ the streamlines do not cross.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Tracer through CAD Junction in Simplex</a><ul>
+<li><a class="reference internal" href="#">Tracer in Static Mixer</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
-<li><a class="reference internal" href="#description-of-the-case">Description of the Case</a><ul>
-<li><a class="reference internal" href="#generating-a-geometry-with-salome">Generating a Geometry with SALOME</a></li>
-<li><a class="reference internal" href="#adding-the-boundary-ids-from-gmsh">Adding the Boundary IDs from Gmsh</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
+<li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
-<li><a class="reference internal" href="#enabling-the-simplex-mode">Enabling the Simplex Mode</a><ul>
-<li><a class="reference internal" href="#mesh">Mesh</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#setting-up-the-tracer-physics">Setting up the Tracer Physics</a><ul>
+<li><a class="reference internal" href="#simulation-1-flow-resolution">Simulation 1: Flow resolution</a><ul>
+<li><a class="reference internal" href="#simulation-control">Simulation control</a></li>
+<li><a class="reference internal" href="#restart">Restart</a></li>
 <li><a class="reference internal" href="#multiphysics">Multiphysics</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
-<li><a class="reference internal" href="#fem">FEM</a></li>
 <li><a class="reference internal" href="#tracer-boundary-conditions">Tracer Boundary Conditions</a></li>
+<li><a class="reference internal" href="#post-processing">Post-processing</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
+<li><a class="reference internal" href="#simulation-2-tracer-transport">Simulation 2: Tracer transport</a><ul>
+<li><a class="reference internal" href="#id2">Simulation control</a></li>
+<li><a class="reference internal" href="#id3">Restart</a></li>
+<li><a class="reference internal" href="#id4">Multiphysics</a></li>
+<li><a class="reference internal" href="#initial-conditions">Initial conditions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results">Results</a></li>
+<li><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
 </ul>
@@ -741,5 +795,6 @@ the streamlines do not cross.</p>
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

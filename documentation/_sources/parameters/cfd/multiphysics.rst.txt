@@ -48,7 +48,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 .. seealso::
 
-  The tracer solver is used in the example :doc:`../../examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction`.
+  The tracer solver is used in the example :doc:`../../examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer`.
 
 * ``VOF``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
 
