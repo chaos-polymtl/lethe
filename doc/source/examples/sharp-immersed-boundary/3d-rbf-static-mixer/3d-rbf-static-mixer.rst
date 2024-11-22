@@ -187,6 +187,18 @@ We assume that the fluid is water, and that the length of the static mixer is in
       end
     end
 
+Stabilization
+~~~~~~~~~~~~~
+
+We rescale the pressure for solving the Navier-Stokes equations by using a ``pressure scaling factor = 1e2``. Because the flow is heavily restricted by the geometry, unless rescaling is applied, the pressure range and its oscillations are way higher than the velocity magnitude, which negatively affects the convergence of the linear solver. More information on this parameter is available at doc:`../../../parameters/cfd/stabilization`.
+
+.. code-block:: text
+
+    subsection stabilization
+      set pressure scaling factor = 1e2
+    end
+
+
 
 Mesh and Mesh Adaptation
 ~~~~~~~~~~~~~~~~~~~~~~~~

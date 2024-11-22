@@ -16,6 +16,10 @@ subsection FEM
   set pressure order = 1
 end
 
+subsection stabilization
+  set pressure scaling factor = 1e2
+end
+
 # The problem is set in cm and seconds
 
 subsection physical properties
