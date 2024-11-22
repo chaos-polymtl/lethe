@@ -4,6 +4,7 @@
 #include <core/lethe_grid_tools.h>
 
 #include <fem-dem/fluid_dynamics_vans.h>
+#include <fem-dem/void_fraction.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -17,15 +18,21 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   CFDDEMSimulationParameters<dim> &nsparam)
   : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
-  , void_fraction_dof_handler(*this->triangulation)
-  , fe_void_fraction(nsparam.cfd_parameters.fem_parameters.void_fraction_order)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
                      DEM::get_number_properties())
+  , void_fraction_manager(
+      &(*this->triangulation),
+      nsparam.void_fraction,
+      this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
+        PhysicsID::fluid_dynamics),
+      &particle_handler,
+      this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
+        .void_fraction_order,
+      this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
+      this->pcout)
 {
-  previous_void_fraction.resize(maximum_number_of_previous_solutions());
-
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -49,7 +56,6 @@ template <int dim>
 FluidDynamicsVANS<dim>::~FluidDynamicsVANS()
 {
   this->dof_handler.clear();
-  void_fraction_dof_handler.clear();
 }
 
 template <int dim>
@@ -58,107 +64,86 @@ FluidDynamicsVANS<dim>::setup_dofs()
 {
   FluidDynamicsMatrixBased<dim>::setup_dofs();
 
-  void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
-  locally_owned_dofs_voidfraction =
-    void_fraction_dof_handler.locally_owned_dofs();
+  void_fraction_manager.setup_dofs();
 
-  locally_relevant_dofs_voidfraction =
-    DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler);
+  // // Define constraints for periodic boundary conditions
+  // auto &boundary_conditions =
+  //   this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
+  // for (auto const &[id, type] : boundary_conditions.type)
+  //   {
+  //     if (type == BoundaryConditions::BoundaryType::periodic)
+  //       {
+  //         periodic_direction = boundary_conditions.periodic_direction.at(id);
+  //         DoFTools::make_periodicity_constraints(
+  //           void_fraction_dof_handler,
+  //           id,
+  //           boundary_conditions.periodic_neighbor_id.at(id),
+  //           periodic_direction,
+  //           void_fraction_constraints);
 
-  void_fraction_constraints.clear();
-  void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
-  DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
-                                          void_fraction_constraints);
+  //         // Get periodic offset if void fraction method is qcm or spm
+  //         if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+  //               Parameters::VoidFractionMode::qcm ||
+  //             this->cfd_dem_simulation_parameters.void_fraction->mode ==
+  //               Parameters::VoidFractionMode::spm)
+  //           {
+  //             periodic_offset = get_periodic_offset_distance(id);
+  //           }
+  //       }
+  //   }
 
-  // Define constraints for periodic boundary conditions
-  auto &boundary_conditions =
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
-  for (auto const &[id, type] : boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          periodic_direction = boundary_conditions.periodic_direction.at(id);
-          DoFTools::make_periodicity_constraints(
-            void_fraction_dof_handler,
-            id,
-            boundary_conditions.periodic_neighbor_id.at(id),
-            periodic_direction,
-            void_fraction_constraints);
+  // void_fraction_constraints.close();
 
-          // Get periodic offset if void fraction method is qcm or spm
-          if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-                Parameters::VoidFractionMode::qcm ||
-              this->cfd_dem_simulation_parameters.void_fraction->mode ==
-                Parameters::VoidFractionMode::spm)
-            {
-              periodic_offset = get_periodic_offset_distance(id);
-            }
-        }
-    }
+  // nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
+  //                                     locally_relevant_dofs_voidfraction,
+  //                                     this->mpi_communicator);
 
-  void_fraction_constraints.close();
+  // // Initialize vector of previous solutions for the void fraction
+  // for (auto &solution : this->previous_void_fraction)
+  //   {
+  //     solution.reinit(this->locally_owned_dofs_voidfraction,
+  //                     this->locally_relevant_dofs_voidfraction,
+  //                     this->mpi_communicator);
+  //   }
 
-  nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
-                                      locally_relevant_dofs_voidfraction,
-                                      this->mpi_communicator);
+  // nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
+  //                                  this->mpi_communicator);
 
-  // Initialize vector of previous solutions for the void fraction
-  for (auto &solution : this->previous_void_fraction)
-    {
-      solution.reinit(this->locally_owned_dofs_voidfraction,
-                      this->locally_relevant_dofs_voidfraction,
-                      this->mpi_communicator);
-    }
+  // DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
+  // DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
+  //                                 dsp,
+  //                                 void_fraction_constraints,
+  //                                 false);
+  // SparsityTools::distribute_sparsity_pattern(
+  //   dsp,
+  //   locally_owned_dofs_voidfraction,
+  //   this->mpi_communicator,
+  //   locally_relevant_dofs_voidfraction);
 
-  nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
-                                   this->mpi_communicator);
+  // system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
+  //                                    locally_owned_dofs_voidfraction,
+  //                                    dsp,
+  //                                    this->mpi_communicator);
 
-  DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
-  DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
-                                  dsp,
-                                  void_fraction_constraints,
-                                  false);
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    locally_owned_dofs_voidfraction,
-    this->mpi_communicator,
-    locally_relevant_dofs_voidfraction);
+  // complete_system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
+  //                                             locally_owned_dofs_voidfraction,
+  //                                             dsp,
+  //                                             this->mpi_communicator);
 
-  system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
-                                     locally_owned_dofs_voidfraction,
-                                     dsp,
-                                     this->mpi_communicator);
+  // system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
+  //                                 this->mpi_communicator);
 
-  complete_system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
-                                              locally_owned_dofs_voidfraction,
-                                              dsp,
-                                              this->mpi_communicator);
+  // complete_system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
+  //                                          this->mpi_communicator);
 
-  system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
-                                  this->mpi_communicator);
+  // active_set.set_size(void_fraction_dof_handler.n_dofs());
 
-  complete_system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
-                                           this->mpi_communicator);
-
-  active_set.set_size(void_fraction_dof_handler.n_dofs());
-
-  mass_matrix.reinit(locally_owned_dofs_voidfraction,
-                     locally_owned_dofs_voidfraction,
-                     dsp,
-                     this->mpi_communicator);
-
-  assemble_mass_matrix_diagonal(mass_matrix);
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::percolate_void_fraction()
-{
-  for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
-    {
-      previous_void_fraction[i] = previous_void_fraction[i - 1];
-    }
-  previous_void_fraction[0] = nodal_void_fraction_relevant;
+  // mass_matrix.reinit(locally_owned_dofs_voidfraction,
+  //  locally_owned_dofs_voidfraction,
+  //  dsp,
+  //  this->mpi_communicator);
+  //
+  // assemble_mass_matrix_diagonal(mass_matrix);
 }
 
 template <int dim>
@@ -167,7 +152,7 @@ FluidDynamicsVANS<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
-  percolate_void_fraction();
+  void_fraction_manager.percolate_void_fraction();
 
   FluidDynamicsMatrixBased<dim>::finish_time_step();
 }
@@ -243,55 +228,13 @@ FluidDynamicsVANS<dim>::read_dem()
 
 template <int dim>
 void
-FluidDynamicsVANS<dim>::initialize_void_fraction()
-{
-  calculate_void_fraction(this->simulation_control->get_current_time(), false);
-  for (auto &previous_solution : this->previous_void_fraction)
-    previous_solution = nodal_void_fraction_relevant;
-}
-
-template <int dim>
-void
 FluidDynamicsVANS<dim>::calculate_void_fraction(const double time,
                                                 bool         load_balance_step)
 {
   announce_string(this->pcout, "Void Fraction");
 
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
-
-  if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-      Parameters::VoidFractionMode::function)
-    {
-      const MappingQ<dim> mapping(1);
-
-      this->cfd_dem_simulation_parameters.void_fraction->void_fraction.set_time(
-        time);
-
-      VectorTools::interpolate(
-        mapping,
-        void_fraction_dof_handler,
-        this->cfd_dem_simulation_parameters.void_fraction->void_fraction,
-        nodal_void_fraction_owned);
-
-      nodal_void_fraction_relevant = nodal_void_fraction_owned;
-    }
-  else
-    {
-      if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-          Parameters::VoidFractionMode::pcm)
-        particle_centered_method();
-      else if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-               Parameters::VoidFractionMode::qcm)
-        quadrature_centered_sphere_method(load_balance_step);
-      else if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-               Parameters::VoidFractionMode::spm)
-        satellite_point_method();
-
-      solve_L2_system_void_fraction();
-      if (this->cfd_dem_simulation_parameters.void_fraction
-            ->bound_void_fraction == true)
-        update_solution_and_constraints();
-    }
+  void_fraction_manager.calculate_void_fraction(time);
 }
 
 template <int dim>
@@ -299,143 +242,146 @@ void
 FluidDynamicsVANS<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
-  Assert(fe_void_fraction.degree == 1, ExcNotImplemented());
-  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  FEValues<dim>      fe_void_fraction_values(fe_void_fraction,
-                                        quadrature_formula,
-                                        update_values | update_JxW_values);
-  const unsigned int dofs_per_cell = fe_void_fraction.dofs_per_cell;
-  const unsigned int n_qpoints     = quadrature_formula.size();
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_void_fraction_values.reinit(cell);
-          cell_matrix = 0;
-          for (unsigned int q = 0; q < n_qpoints; ++q)
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              cell_matrix(i, i) += (fe_void_fraction_values.shape_value(i, q) *
-                                    fe_void_fraction_values.shape_value(i, q) *
-                                    fe_void_fraction_values.JxW(q));
-          cell->get_dof_indices(local_dof_indices);
-          void_fraction_constraints.distribute_local_to_global(
-            cell_matrix, local_dof_indices, mass_matrix);
-        }
-    }
+  // Assert(fe_void_fraction.degree == 1, ExcNotImplemented());
+  // QGauss<dim>        quadrature_formula(this->number_quadrature_points);
+  // FEValues<dim>      fe_void_fraction_values(fe_void_fraction,
+  // quadrature_formula,
+  // update_values | update_JxW_values);
+  // const unsigned int dofs_per_cell = fe_void_fraction.dofs_per_cell;
+  // const unsigned int n_qpoints     = quadrature_formula.size();
+  // FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  // std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  // for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+  // {
+  // if (cell->is_locally_owned())
+  // {
+  // fe_void_fraction_values.reinit(cell);
+  // cell_matrix = 0;
+  // for (unsigned int q = 0; q < n_qpoints; ++q)
+  // for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  // cell_matrix(i, i) += (fe_void_fraction_values.shape_value(i, q) *
+  // fe_void_fraction_values.shape_value(i, q) *
+  // fe_void_fraction_values.JxW(q));
+  // cell->get_dof_indices(local_dof_indices);
+  // void_fraction_constraints.distribute_local_to_global(
+  // cell_matrix, local_dof_indices, mass_matrix);
+  // }
+  // }
 }
 
 template <int dim>
 void
 FluidDynamicsVANS<dim>::update_solution_and_constraints()
 {
-  const double penalty_parameter = 100;
+  // const double penalty_parameter = 100;
 
-  GlobalVectorType lambda(locally_owned_dofs_voidfraction,
-                          this->mpi_communicator);
+  // GlobalVectorType lambda(locally_owned_dofs_voidfraction,
+  //                         this->mpi_communicator);
 
-  nodal_void_fraction_owned = nodal_void_fraction_relevant;
+  // nodal_void_fraction_owned = nodal_void_fraction_relevant;
 
-  complete_system_matrix_void_fraction.residual(lambda,
-                                                nodal_void_fraction_owned,
-                                                system_rhs_void_fraction);
+  // complete_system_matrix_void_fraction.residual(lambda,
+  //                                               nodal_void_fraction_owned,
+  //                                               system_rhs_void_fraction);
 
-  void_fraction_constraints.clear();
+  // void_fraction_constraints.clear();
 
-  // reinitialize affine constraints
-  void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
+  // // reinitialize affine constraints
+  // void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
 
-  // Remake hanging node constraints
-  DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
-                                          void_fraction_constraints);
+  // // Remake hanging node constraints
+  // DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
+  //                                         void_fraction_constraints);
 
-  // Define constraints for periodic boundary conditions
-  auto &boundary_conditions =
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
-  for (auto const &[id, type] : boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          periodic_direction = boundary_conditions.periodic_direction.at(id);
-          DoFTools::make_periodicity_constraints(
-            void_fraction_dof_handler,
-            id,
-            boundary_conditions.periodic_neighbor_id.at(id),
-            periodic_direction,
-            void_fraction_constraints);
+  // // Define constraints for periodic boundary conditions
+  // auto &boundary_conditions =
+  //   this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
+  // for (auto const &[id, type] : boundary_conditions.type)
+  //   {
+  //     if (type == BoundaryConditions::BoundaryType::periodic)
+  //       {
+  //         periodic_direction = boundary_conditions.periodic_direction.at(id);
+  //         DoFTools::make_periodicity_constraints(
+  //           void_fraction_dof_handler,
+  //           id,
+  //           boundary_conditions.periodic_neighbor_id.at(id),
+  //           periodic_direction,
+  //           void_fraction_constraints);
 
-          // Get periodic offset if void fraction method is qcm or spm
-          if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-                Parameters::VoidFractionMode::qcm ||
-              this->cfd_dem_simulation_parameters.void_fraction->mode ==
-                Parameters::VoidFractionMode::spm)
-            {
-              periodic_offset = get_periodic_offset_distance(id);
-            }
-        }
-    }
+  //         // Get periodic offset if void fraction method is qcm or spm
+  //         if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+  //               Parameters::VoidFractionMode::qcm ||
+  //             this->cfd_dem_simulation_parameters.void_fraction->mode ==
+  //               Parameters::VoidFractionMode::spm)
+  //           {
+  //             periodic_offset = get_periodic_offset_distance(id);
+  //           }
+  //       }
+  //   }
 
-  active_set.clear();
+  // active_set.clear();
 
-  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
-               ++v)
-            {
-              Assert(void_fraction_dof_handler.get_fe().dofs_per_cell ==
-                       GeometryInfo<dim>::vertices_per_cell,
-                     ExcNotImplemented());
-              const unsigned int dof_index = cell->vertex_dof_index(v, 0);
-              if (locally_owned_dofs_voidfraction.is_element(dof_index))
-                {
-                  const double solution_value =
-                    nodal_void_fraction_owned(dof_index);
-                  if (lambda(dof_index) +
-                        penalty_parameter * mass_matrix(dof_index, dof_index) *
-                          (solution_value - this->cfd_dem_simulation_parameters
-                                              .void_fraction->l2_upper_bound) >
-                      0)
-                    {
-                      active_set.add_index(dof_index);
-                      void_fraction_constraints.add_line(dof_index);
-                      void_fraction_constraints.set_inhomogeneity(
-                        dof_index,
-                        this->cfd_dem_simulation_parameters.void_fraction
-                          ->l2_upper_bound);
-                      nodal_void_fraction_owned(dof_index) =
-                        this->cfd_dem_simulation_parameters.void_fraction
-                          ->l2_upper_bound;
-                      lambda(dof_index) = 0;
-                    }
-                  else if (lambda(dof_index) +
-                             penalty_parameter *
-                               mass_matrix(dof_index, dof_index) *
-                               (solution_value -
-                                this->cfd_dem_simulation_parameters
-                                  .void_fraction->l2_lower_bound) <
-                           0)
-                    {
-                      active_set.add_index(dof_index);
-                      void_fraction_constraints.add_line(dof_index);
-                      void_fraction_constraints.set_inhomogeneity(
-                        dof_index,
-                        this->cfd_dem_simulation_parameters.void_fraction
-                          ->l2_lower_bound);
-                      nodal_void_fraction_owned(dof_index) =
-                        this->cfd_dem_simulation_parameters.void_fraction
-                          ->l2_lower_bound;
-                      lambda(dof_index) = 0;
-                    }
-                }
-            }
-        }
-    }
-  active_set.compress();
-  nodal_void_fraction_relevant = nodal_void_fraction_owned;
-  void_fraction_constraints.close();
+  // for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+  //   {
+  //     if (cell->is_locally_owned())
+  //       {
+  //         for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
+  //              ++v)
+  //           {
+  //             Assert(void_fraction_dof_handler.get_fe().dofs_per_cell ==
+  //                      GeometryInfo<dim>::vertices_per_cell,
+  //                    ExcNotImplemented());
+  //             const unsigned int dof_index = cell->vertex_dof_index(v, 0);
+  //             if (locally_owned_dofs_voidfraction.is_element(dof_index))
+  //               {
+  //                 const double solution_value =
+  //                   nodal_void_fraction_owned(dof_index);
+  //                 if (lambda(dof_index) +
+  //                       penalty_parameter * mass_matrix(dof_index, dof_index)
+  //                       *
+  //                         (solution_value -
+  //                         this->cfd_dem_simulation_parameters
+  //                                             .void_fraction->l2_upper_bound)
+  //                                             >
+  //                     0)
+  //                   {
+  //                     active_set.add_index(dof_index);
+  //                     void_fraction_constraints.add_line(dof_index);
+  //                     void_fraction_constraints.set_inhomogeneity(
+  //                       dof_index,
+  //                       this->cfd_dem_simulation_parameters.void_fraction
+  //                         ->l2_upper_bound);
+  //                     nodal_void_fraction_owned(dof_index) =
+  //                       this->cfd_dem_simulation_parameters.void_fraction
+  //                         ->l2_upper_bound;
+  //                     lambda(dof_index) = 0;
+  //                   }
+  //                 else if (lambda(dof_index) +
+  //                            penalty_parameter *
+  //                              mass_matrix(dof_index, dof_index) *
+  //                              (solution_value -
+  //                               this->cfd_dem_simulation_parameters
+  //                                 .void_fraction->l2_lower_bound) <
+  //                          0)
+  //                   {
+  //                     active_set.add_index(dof_index);
+  //                     void_fraction_constraints.add_line(dof_index);
+  //                     void_fraction_constraints.set_inhomogeneity(
+  //                       dof_index,
+  //                       this->cfd_dem_simulation_parameters.void_fraction
+  //                         ->l2_lower_bound);
+  //                     nodal_void_fraction_owned(dof_index) =
+  //                       this->cfd_dem_simulation_parameters.void_fraction
+  //                         ->l2_lower_bound;
+  //                     lambda(dof_index) = 0;
+  //                   }
+  //               }
+  //           }
+  //       }
+  //   }
+  // active_set.compress();
+  // nodal_void_fraction_relevant = nodal_void_fraction_owned;
+  // void_fraction_constraints.close();
 }
 
 template <int dim>
@@ -445,963 +391,12 @@ FluidDynamicsVANS<dim>::vertices_cell_mapping()
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
-  LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
+  LetheGridTools::vertices_cell_mapping(this->void_fraction_manager.dof_handler,
                                         vertices_to_cell);
 
   if (has_periodic_boundaries)
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-      this->void_fraction_dof_handler, vertices_to_periodic_cell);
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::particle_centered_method()
-{
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(1);
-
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        this->fe_void_fraction,
-                                        quadrature_formula,
-                                        update_values |
-                                          update_quadrature_points |
-                                          update_JxW_values | update_gradients);
-
-  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
-  FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs_void_fraction(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  std::vector<double>                  phi_vf(dofs_per_cell);
-  std::vector<Tensor<1, dim>>          grad_phi_vf(dofs_per_cell);
-
-  system_rhs_void_fraction    = 0;
-  system_matrix_void_fraction = 0;
-
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_void_fraction.reinit(cell);
-
-          local_matrix_void_fraction = 0;
-          local_rhs_void_fraction    = 0;
-
-          double solid_volume_in_cell = 0;
-
-          // Loop over particles in cell
-          // Begin and end iterator for particles in cell
-          const auto pic = particle_handler.particles_in_cell(cell);
-          for (auto &particle : pic)
-            {
-              auto particle_properties = particle.get_properties();
-              solid_volume_in_cell +=
-                M_PI *
-                Utilities::fixed_power<dim>(
-                  particle_properties[DEM::PropertiesIndex::dp]) /
-                (2.0 * dim);
-            }
-          double cell_volume = compute_cell_measure_with_JxW(
-            fe_values_void_fraction.get_JxW_values());
-
-          // Calculate cell void fraction
-          double cell_void_fraction =
-            (cell_volume - solid_volume_in_cell) / cell_volume;
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
-                  grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
-                }
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // Assemble L2 projection
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      local_matrix_void_fraction(i, j) +=
-                        (phi_vf[j] * phi_vf[i]) *
-                          fe_values_void_fraction.JxW(q) +
-                        (this->cfd_dem_simulation_parameters.void_fraction
-                           ->l2_smoothing_factor *
-                         grad_phi_vf[j] * grad_phi_vf[i] *
-                         fe_values_void_fraction.JxW(q));
-                    }
-                  local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
-                                                fe_values_void_fraction.JxW(q);
-                }
-            }
-          cell->get_dof_indices(local_dof_indices);
-          void_fraction_constraints.distribute_local_to_global(
-            local_matrix_void_fraction,
-            local_rhs_void_fraction,
-            local_dof_indices,
-            system_matrix_void_fraction,
-            system_rhs_void_fraction);
-        }
-    }
-  system_matrix_void_fraction.compress(VectorOperation::add);
-  system_rhs_void_fraction.compress(VectorOperation::add);
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::quadrature_centered_sphere_method(
-  bool load_balance_step)
-{
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(1);
-
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        this->fe_void_fraction,
-                                        quadrature_formula,
-                                        update_values |
-                                          update_quadrature_points |
-                                          update_JxW_values | update_gradients);
-
-  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const unsigned int                   n_q_points = quadrature_formula.size();
-  FullMatrix<double>  local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
-  Vector<double>      local_rhs_void_fraction(dofs_per_cell);
-  std::vector<double> phi_vf(dofs_per_cell);
-  std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
-
-  double r_sphere = 0.0;
-  double particles_volume_in_sphere;
-  double quadrature_void_fraction;
-  double qcm_sphere_diameter =
-    this->cfd_dem_simulation_parameters.void_fraction->qcm_sphere_diameter;
-
-  // If the reference sphere diameter is user defined, the radius is calculated
-  // from it, otherwise, the value must be calculated while looping over the
-  // cells.
-  bool calculate_reference_sphere_radius = false;
-  if (qcm_sphere_diameter > 1e-16)
-    r_sphere = qcm_sphere_diameter / 2.0;
-  else
-    calculate_reference_sphere_radius = true;
-
-  // Lambda functions for calculating the radius of the reference sphere
-  // Calculate the radius by the volume (area in 2D) of sphere:
-  // r = (2*dim*V/pi)^(1/dim) / 2
-  auto radius_sphere_volume_cell = [](auto cell_measure) {
-    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
-  };
-
-  // Calculate the radius is obtained from the volume of sphere based on
-  // R_s = h_omega:
-  // V_s = pi*(2*V_c^(1/dim))^(dim)/(2*dim) = pi*2^(dim)*V_c/(2*dim)
-  auto radius_h_omega = [&radius_sphere_volume_cell](double cell_measure) {
-    double reference_sphere_volume =
-      M_PI * Utilities::fixed_power<dim>(2.0) * cell_measure / (2.0 * dim);
-
-    return radius_sphere_volume_cell(reference_sphere_volume);
-  };
-
-  system_rhs_void_fraction    = 0;
-  system_matrix_void_fraction = 0;
-
-  // Clear all contributions of particles from the previous timestep
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          const auto pic = particle_handler.particles_in_cell(cell);
-
-          for (auto &particle : pic)
-            {
-              auto particle_properties = particle.get_properties();
-
-              particle_properties
-                [DEM::PropertiesIndex::volumetric_contribution] = 0;
-            }
-        }
-    }
-
-  // Determine the new volumetric contributions of the particles necessary
-  // for void fraction calculation
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_void_fraction.reinit(cell);
-
-          // Active neighbors include the current cell as well
-          auto active_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
-
-          auto active_periodic_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(
-              vertices_to_periodic_cell, cell);
-
-          // Array of real locations for the quadrature points
-          std::vector<std::vector<Point<dim>>>
-            neighbor_quadrature_point_location(
-              active_neighbors.size(), std::vector<Point<dim>>(n_q_points));
-
-          for (unsigned int n = 0; n < active_neighbors.size(); n++)
-            {
-              fe_values_void_fraction.reinit(active_neighbors[n]);
-
-              neighbor_quadrature_point_location[n] =
-                fe_values_void_fraction.get_quadrature_points();
-            }
-
-          // Array of real locations for the periodic neighbor quadrature points
-          std::vector<std::vector<Point<dim>>>
-            periodic_neighbor_quadrature_point_location(
-              active_periodic_neighbors.size(),
-              std::vector<Point<dim>>(n_q_points));
-
-          for (unsigned int n = 0; n < active_periodic_neighbors.size(); n++)
-            {
-              fe_values_void_fraction.reinit(active_periodic_neighbors[n]);
-
-              periodic_neighbor_quadrature_point_location[n] =
-                fe_values_void_fraction.get_quadrature_points();
-            }
-
-          // Loop over the particles in the current cell
-          const auto pic = particle_handler.particles_in_cell(cell);
-          for (auto &particle : pic)
-            {
-              auto         particle_properties = particle.get_properties();
-              const double r_particle =
-                0.5 * particle_properties[DEM::PropertiesIndex::dp];
-
-              // Loop over neighboring cells to determine if a given neighboring
-              // particle contributes to the solid volume of the current
-              // reference sphere
-              //***********************************************************************
-              for (unsigned int n = 0; n < active_neighbors.size(); n++)
-                {
-                  // Define the radius of the reference sphere to be used as the
-                  // averaging volume for the QCM, if the reference sphere
-                  // diameter was given by the user the value is already defined
-                  // since it is not dependent on any measure of the active cell
-                  if (calculate_reference_sphere_radius)
-                    {
-                      if (this->cfd_dem_simulation_parameters.void_fraction
-                            ->qcm_sphere_equal_cell_volume == true)
-                        {
-                          // Get the radius by the volume of sphere which is
-                          // equal to the volume of cell
-                          r_sphere = radius_sphere_volume_cell(
-                            active_neighbors[n]->measure());
-                        }
-                      else
-                        {
-                          // The radius is obtained from the volume of sphere
-                          // based on R_s = h_omega
-                          r_sphere =
-                            radius_h_omega(active_neighbors[n]->measure());
-                        }
-                    }
-
-                  // Loop over quadrature points
-                  for (unsigned int k = 0; k < n_q_points; ++k)
-                    {
-                      // Distance between particle and quadrature point
-                      double neighbor_distance =
-                        particle.get_location().distance(
-                          neighbor_quadrature_point_location[n][k]);
-
-                      // Particle completely in reference sphere
-                      if (neighbor_distance <= (r_sphere - r_particle))
-                        {
-                          particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution] +=
-                            M_PI *
-                            Utilities::fixed_power<dim>(
-                              particle_properties[DEM::PropertiesIndex::dp]) /
-                            (2.0 * dim);
-                        }
-
-                      // Particle completely outside reference
-                      // sphere. Do absolutely nothing.
-
-                      // Particle partially in reference sphere
-                      else if ((neighbor_distance > (r_sphere - r_particle)) &&
-                               (neighbor_distance < (r_sphere + r_particle)))
-                        {
-                          if constexpr (dim == 2)
-                            particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
-                              particle_circle_intersection_2d(
-                                r_particle, r_sphere, neighbor_distance);
-
-                          else if constexpr (dim == 3)
-                            particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
-                              particle_sphere_intersection_3d(
-                                r_particle, r_sphere, neighbor_distance);
-                        }
-                    }
-                }
-
-              // Loop over periodic neighboring cells to determine if a given
-              // neighboring particle contributes to the solid volume of the
-              // current reference sphere
-              //***********************************************************************
-              for (unsigned int n = 0; n < active_periodic_neighbors.size();
-                   n++)
-                {
-                  if (calculate_reference_sphere_radius)
-                    {
-                      if (this->cfd_dem_simulation_parameters.void_fraction
-                            ->qcm_sphere_equal_cell_volume == true)
-                        {
-                          // Get the radius by the volume of sphere which is
-                          // equal to the volume of cell
-                          r_sphere = radius_sphere_volume_cell(
-                            active_periodic_neighbors[n]->measure());
-                        }
-                      else
-                        {
-                          // The radius is obtained from the volume of sphere
-                          // based on R_s = h_omega
-                          r_sphere = radius_h_omega(
-                            active_periodic_neighbors[n]->measure());
-                        }
-                    }
-
-                  // Loop over quadrature points
-                  for (unsigned int k = 0; k < n_q_points; ++k)
-                    {
-                      // Adjust the location of the particle in the cell to
-                      // account for the periodicity. If the position of the
-                      // periodic cell if greater than the position of the
-                      // current cell, the particle location needs a positive
-                      // correction, and vice versa
-                      const Point<dim> particle_location =
-                        (active_periodic_neighbors[n]
-                           ->center()[periodic_direction] >
-                         cell->center()[periodic_direction]) ?
-                          particle.get_location() + periodic_offset :
-                          particle.get_location() - periodic_offset;
-
-                      // Distance between particle and quadrature point
-                      double periodic_neighbor_distance =
-                        particle_location.distance(
-                          periodic_neighbor_quadrature_point_location[n][k]);
-
-                      // Particle completely in reference sphere
-                      if (periodic_neighbor_distance <= (r_sphere - r_particle))
-                        {
-                          particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution] +=
-                            M_PI *
-                            Utilities::fixed_power<dim>(
-                              particle_properties[DEM::PropertiesIndex::dp]) /
-                            (2.0 * dim);
-                        }
-
-                      // Particle completely outside reference
-                      // sphere. Do absolutely nothing.
-
-                      // Particle partially in reference sphere
-                      else if ((periodic_neighbor_distance >
-                                (r_sphere - r_particle)) &&
-                               (periodic_neighbor_distance <
-                                (r_sphere + r_particle)))
-                        {
-                          if constexpr (dim == 2)
-                            particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
-                              particle_circle_intersection_2d(
-                                r_particle,
-                                r_sphere,
-                                periodic_neighbor_distance);
-
-                          else if constexpr (dim == 3)
-                            particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
-                              particle_sphere_intersection_3d(
-                                r_particle,
-                                r_sphere,
-                                periodic_neighbor_distance);
-                        }
-                    }
-                }
-
-              //*********************************************************************
-            }
-        }
-    }
-
-  // Update ghost particles
-  if (load_balance_step)
-    {
-      particle_handler.sort_particles_into_subdomains_and_cells();
-      particle_handler.exchange_ghost_particles(true);
-    }
-  else
-    {
-      particle_handler.update_ghost_particles();
-    }
-
-  // After the particles' contributions have been determined, calculate and
-  // normalize the void fraction
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_void_fraction.reinit(cell);
-
-          local_matrix_void_fraction = 0;
-          local_rhs_void_fraction    = 0;
-
-          double sum_quadrature_weights = 0;
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              sum_quadrature_weights += fe_values_void_fraction.JxW(q);
-            }
-
-          // Define the volume of the reference sphere to be used as the
-          // averaging volume for the QCM
-          if (calculate_reference_sphere_radius)
-            {
-              if (this->cfd_dem_simulation_parameters.void_fraction
-                    ->qcm_sphere_equal_cell_volume == true)
-                {
-                  // Get the radius by the volume of sphere which is
-                  // equal to the volume of cell
-                  r_sphere = radius_sphere_volume_cell(cell->measure());
-                }
-              else
-                {
-                  // The radius is obtained from the volume of sphere based
-                  // on R_s = h_omega
-                  r_sphere = radius_h_omega(cell->measure());
-                }
-            }
-
-          // Array of real locations for the quadrature points
-          std::vector<Point<dim>> quadrature_point_location;
-
-          quadrature_point_location =
-            fe_values_void_fraction.get_quadrature_points();
-
-          // Active neighbors include the current cell as well
-          auto active_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
-
-          // Periodic neighbors of the current cell
-          auto active_periodic_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(
-              vertices_to_periodic_cell, cell);
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              particles_volume_in_sphere = 0;
-              quadrature_void_fraction   = 0;
-
-              for (unsigned int m = 0; m < active_neighbors.size(); m++)
-                {
-                  // Loop over particles in neighbor cell
-                  // Begin and end iterator for particles in neighbor cell
-                  const auto pic =
-                    particle_handler.particles_in_cell(active_neighbors[m]);
-                  for (auto &particle : pic)
-                    {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
-                      const double r_particle =
-                        particle_properties[DEM::PropertiesIndex::dp] * 0.5;
-                      double single_particle_volume =
-                        M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
-                        (2 * dim);
-
-                      // Distance between particle and quadrature point
-                      // centers
-                      distance = particle.get_location().distance(
-                        quadrature_point_location[q]);
-
-                      // Particle completely in reference sphere
-                      if (distance <= (r_sphere - r_particle))
-                        particles_volume_in_sphere +=
-                          (M_PI *
-                           Utilities::fixed_power<dim>(
-                             particle_properties[DEM::PropertiesIndex::dp]) /
-                           (2.0 * dim)) *
-                          single_particle_volume /
-                          particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution];
-
-                      // Particle completely outside reference sphere. Do
-                      // absolutely nothing.
-
-                      // Particle partially in reference sphere
-                      else if ((distance > (r_sphere - r_particle)) &&
-                               (distance < (r_sphere + r_particle)))
-                        {
-                          if (dim == 2)
-                            particles_volume_in_sphere +=
-                              particle_circle_intersection_2d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
-                          else if (dim == 3)
-                            particles_volume_in_sphere +=
-                              particle_sphere_intersection_3d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
-                        }
-                    }
-                }
-
-              // Execute same operations for periodic neighbors, if the
-              // simulation has no periodic boundaries, the container is empty.
-              // Also, those operations can not be done in the previous loop
-              // because the particles on the periodic side needs a correction
-              // with an offset for the distance with the quadrature point
-              for (unsigned int m = 0; m < active_periodic_neighbors.size();
-                   m++)
-                {
-                  // Loop over particles in periodic neighbor cell
-                  const auto pic = particle_handler.particles_in_cell(
-                    active_periodic_neighbors[m]);
-                  for (auto &particle : pic)
-                    {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
-                      const double r_particle =
-                        particle_properties[DEM::PropertiesIndex::dp] * 0.5;
-                      double single_particle_volume =
-                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
-                        (2 * dim);
-
-                      // Adjust the location of the particle in the cell to
-                      // account for the periodicity. If the position of the
-                      // periodic cell if greater than the position of the
-                      // current cell, the particle location needs a negative
-                      // correction, and vice versa. Since the particle is in
-                      // the periodic cell, this correction is the inverse of
-                      // the correction for the volumetric contribution
-                      const Point<dim> particle_location =
-                        (active_periodic_neighbors[m]
-                           ->center()[periodic_direction] >
-                         cell->center()[periodic_direction]) ?
-                          particle.get_location() - periodic_offset :
-                          particle.get_location() + periodic_offset;
-
-                      // Distance between particle and quadrature point
-                      // centers
-                      distance = particle_location.distance(
-                        quadrature_point_location[q]);
-
-                      // Particle completely in reference sphere
-                      if (distance <= (r_sphere - r_particle))
-                        particles_volume_in_sphere +=
-                          (M_PI *
-                           Utilities::fixed_power<dim>(
-                             particle_properties[DEM::PropertiesIndex::dp]) /
-                           (2.0 * dim)) *
-                          single_particle_volume /
-                          particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution];
-
-                      // Particle completely outside reference sphere. Do
-                      // absolutely nothing.
-
-                      // Particle partially in reference sphere
-                      else if ((distance > (r_sphere - r_particle)) &&
-                               (distance < (r_sphere + r_particle)))
-                        {
-                          if (dim == 2)
-                            particles_volume_in_sphere +=
-                              particle_circle_intersection_2d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
-                          else if (dim == 3)
-                            particles_volume_in_sphere +=
-                              particle_sphere_intersection_3d(r_particle,
-                                                              r_sphere,
-                                                              distance) *
-                              single_particle_volume /
-                              particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
-                        }
-                    }
-                }
-
-              // We use the volume of the cell as it is equal to the volume
-              // of the sphere
-              double cell_volume = compute_cell_measure_with_JxW(
-                fe_values_void_fraction.get_JxW_values());
-              quadrature_void_fraction =
-                ((fe_values_void_fraction.JxW(q) * cell_volume /
-                  sum_quadrature_weights) -
-                 particles_volume_in_sphere) /
-                (fe_values_void_fraction.JxW(q) * cell_volume /
-                 sum_quadrature_weights);
-
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
-                  grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
-                }
-
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // Assemble L2 projection
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      local_matrix_void_fraction(i, j) +=
-                        ((phi_vf[j] * phi_vf[i]) +
-                         (this->cfd_dem_simulation_parameters.void_fraction
-                            ->l2_smoothing_factor *
-                          grad_phi_vf[j] * grad_phi_vf[i])) *
-                        fe_values_void_fraction.JxW(q);
-                    }
-
-                  local_rhs_void_fraction(i) += phi_vf[i] *
-                                                quadrature_void_fraction *
-                                                fe_values_void_fraction.JxW(q);
-                }
-            }
-
-          cell->get_dof_indices(local_dof_indices);
-          void_fraction_constraints.distribute_local_to_global(
-            local_matrix_void_fraction,
-            local_rhs_void_fraction,
-            local_dof_indices,
-            system_matrix_void_fraction,
-            system_rhs_void_fraction);
-        }
-    }
-
-  system_matrix_void_fraction.compress(VectorOperation::add);
-  system_rhs_void_fraction.compress(VectorOperation::add);
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::satellite_point_method()
-{
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(1);
-
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        this->fe_void_fraction,
-                                        quadrature_formula,
-                                        update_values |
-                                          update_quadrature_points |
-                                          update_JxW_values | update_gradients);
-
-  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
-  FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs_void_fraction(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  std::vector<double>                  phi_vf(dofs_per_cell);
-  std::vector<Tensor<1, dim>>          grad_phi_vf(dofs_per_cell);
-
-  system_rhs_void_fraction    = 0;
-  system_matrix_void_fraction = 0;
-
-  // Creation of reference sphere and components required for mapping into
-  // individual particles
-  //-------------------------------------------------------------------------
-  QGauss<dim>        quadrature_particle(1);
-  Triangulation<dim> particle_triangulation;
-  Point<dim>         center;
-
-  // Reference particle with radius 1
-  GridGenerator::hyper_ball(particle_triangulation, center, 1);
-  particle_triangulation.refine_global(
-    this->cfd_dem_simulation_parameters.void_fraction
-      ->particle_refinement_factor);
-
-  DoFHandler<dim> dof_handler_particle(particle_triangulation);
-
-  FEValues<dim> fe_values_particle(mapping,
-                                   this->fe_void_fraction,
-                                   quadrature_particle,
-                                   update_JxW_values |
-                                     update_quadrature_points);
-
-  dof_handler_particle.distribute_dofs(this->fe_void_fraction);
-
-  std::vector<Point<dim>> reference_quadrature_location(
-    quadrature_particle.size() *
-    particle_triangulation.n_global_active_cells());
-
-  std::vector<double> reference_quadrature_weights(
-    quadrature_particle.size() *
-    particle_triangulation.n_global_active_cells());
-
-  std::vector<Point<dim>> quadrature_particle_location(
-    quadrature_particle.size() *
-    particle_triangulation.n_global_active_cells());
-
-  std::vector<double> quadrature_particle_weights(
-    quadrature_particle.size() *
-    particle_triangulation.n_global_active_cells());
-
-  unsigned int n = 0;
-  for (const auto &particle_cell : dof_handler_particle.active_cell_iterators())
-    {
-      fe_values_particle.reinit(particle_cell);
-      for (unsigned int q = 0; q < quadrature_particle.size(); ++q)
-        {
-          reference_quadrature_weights[n] =
-            (M_PI * Utilities::fixed_power<dim>(2.0) / (2.0 * dim)) /
-            reference_quadrature_weights.size();
-          reference_quadrature_location[n] =
-            fe_values_particle.quadrature_point(q);
-          n++;
-        }
-    }
-  //-------------------------------------------------------------------------
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_void_fraction.reinit(cell);
-
-          local_matrix_void_fraction = 0;
-          local_rhs_void_fraction    = 0;
-
-          double solid_volume_in_cell = 0;
-
-          // Active neighbors include the current cell as well
-          auto active_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
-
-          for (unsigned int m = 0; m < active_neighbors.size(); m++)
-            {
-              // Loop over particles in cell
-              // Begin and end iterator for particles in cell
-              const auto pic =
-                particle_handler.particles_in_cell(active_neighbors[m]);
-              for (auto &particle : pic)
-                {
-                  /*****************************************************************/
-                  auto particle_properties = particle.get_properties();
-                  auto particle_location   = particle.get_location();
-
-                  // Translation factor used to translate the reference sphere
-                  // location and size to those of the particles. Usually, we
-                  // take it as the radius of every individual particle. This
-                  // makes our method valid for different particle distribution.
-                  double translational_factor =
-                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
-
-                  // Resize and translate reference sphere
-                  // to the particle size and position according the volume
-                  // ratio between sphere and particle.
-                  for (unsigned int l = 0;
-                       l < reference_quadrature_location.size();
-                       ++l)
-                    {
-                      // For example, in 3D V_particle/V_sphere =
-                      // r_particle³/r_sphere³ and since r_sphere is always 1,
-                      // then V_particle/V_sphere = r_particle³. Therefore,
-                      // V_particle = r_particle³ * V_sphere.
-                      quadrature_particle_weights[l] =
-                        Utilities::fixed_power<dim>(translational_factor) *
-                        reference_quadrature_weights[l];
-
-                      // Here, we translate the position of the reference sphere
-                      // into the position of the particle, but for this we have
-                      // to shrink or expand the size of the reference sphere to
-                      // be equal to the size of the particle as the location of
-                      // the quadrature points is affected by the size by
-                      // multiplying with the particle's radius. We then
-                      // translate by taking the translational vector between
-                      // the reference sphere center and the particle's center.
-                      // This translates directly into the translational vector
-                      // being the particle's position as the reference sphere
-                      // is always located at (0,0) in 2D or (0,0,0) in 3D.
-                      quadrature_particle_location[l] =
-                        (translational_factor *
-                         reference_quadrature_location[l]) +
-                        particle_location;
-
-                      if (cell->point_inside(quadrature_particle_location[l]))
-                        solid_volume_in_cell += quadrature_particle_weights[l];
-                    }
-                }
-            }
-
-          // Same steps for the periodic neighbors with particle location
-          // correction
-          auto active_periodic_neighbors =
-            LetheGridTools::find_cells_around_cell<dim>(
-              vertices_to_periodic_cell, cell);
-
-          for (unsigned int m = 0; m < active_periodic_neighbors.size(); m++)
-            {
-              const auto pic = particle_handler.particles_in_cell(
-                active_periodic_neighbors[m]);
-              for (auto &particle : pic)
-                {
-                  /*****************************************************************/
-                  auto particle_properties = particle.get_properties();
-                  const Point<dim> particle_location =
-                    (active_periodic_neighbors[m]
-                       ->center()[periodic_direction] >
-                     cell->center()[periodic_direction]) ?
-                      particle.get_location() - periodic_offset :
-                      particle.get_location() + periodic_offset;
-
-                  double translational_factor =
-                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
-
-                  for (unsigned int l = 0;
-                       l < reference_quadrature_location.size();
-                       ++l)
-                    {
-                      quadrature_particle_weights[l] =
-                        Utilities::fixed_power<dim>(translational_factor) *
-                        reference_quadrature_weights[l];
-
-                      quadrature_particle_location[l] =
-                        (translational_factor *
-                         reference_quadrature_location[l]) +
-                        particle_location;
-
-                      if (cell->point_inside(quadrature_particle_location[l]))
-                        solid_volume_in_cell += quadrature_particle_weights[l];
-                    }
-                }
-            }
-
-          double cell_volume = compute_cell_measure_with_JxW(
-            fe_values_void_fraction.get_JxW_values());
-
-          // Calculate cell void fraction
-          double cell_void_fraction =
-            (cell_volume - solid_volume_in_cell) / cell_volume;
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
-                  grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
-                }
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      local_matrix_void_fraction(i, j) +=
-                        (phi_vf[j] * phi_vf[i]) *
-                          fe_values_void_fraction.JxW(q) +
-                        (this->cfd_dem_simulation_parameters.void_fraction
-                           ->l2_smoothing_factor *
-                         grad_phi_vf[j] * grad_phi_vf[i] *
-                         fe_values_void_fraction.JxW(q));
-                    }
-                  local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
-                                                fe_values_void_fraction.JxW(q);
-                }
-            }
-          cell->get_dof_indices(local_dof_indices);
-          void_fraction_constraints.distribute_local_to_global(
-            local_matrix_void_fraction,
-            local_rhs_void_fraction,
-            local_dof_indices,
-            system_matrix_void_fraction,
-            system_rhs_void_fraction);
-        }
-    }
-
-  system_matrix_void_fraction.compress(VectorOperation::add);
-  system_rhs_void_fraction.compress(VectorOperation::add);
-}
-
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::solve_L2_system_void_fraction()
-{
-  // Solve the L2 projection system
-  const double linear_solver_tolerance = 1e-15;
-
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .at(PhysicsID::fluid_dynamics)
-        .verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
-    }
-
-  const IndexSet locally_owned_dofs_voidfraction =
-    void_fraction_dof_handler.locally_owned_dofs();
-
-  GlobalVectorType completely_distributed_solution(
-    locally_owned_dofs_voidfraction, this->mpi_communicator);
-
-  SolverControl solver_control(
-    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .at(PhysicsID::fluid_dynamics)
-      .max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-
-  TrilinosWrappers::SolverCG solver(solver_control);
-
-  //**********************************************
-  // Trillinos Wrapper ILU Preconditioner
-  //*********************************************
-  const double ilu_fill =
-    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .at(PhysicsID::fluid_dynamics)
-      .ilu_precond_fill;
-  const double ilu_atol =
-    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .at(PhysicsID::fluid_dynamics)
-      .ilu_precond_atol;
-  const double ilu_rtol =
-    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-      .at(PhysicsID::fluid_dynamics)
-      .ilu_precond_rtol;
-
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
-
-  ilu_preconditioner->initialize(system_matrix_void_fraction,
-                                 preconditionerOptions);
-
-  solver.solve(system_matrix_void_fraction,
-               completely_distributed_solution,
-               system_rhs_void_fraction,
-               *ilu_preconditioner);
-
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .at(PhysicsID::fluid_dynamics)
-        .verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
-
-  void_fraction_constraints.distribute(completely_distributed_solution);
-  nodal_void_fraction_relevant = completely_distributed_solution;
+      this->void_fraction_manager.dof_handler, vertices_to_periodic_cell);
 }
 
 // Do an iteration with the NavierStokes Solver
@@ -1603,7 +598,7 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->mapping,
       *this->face_quadrature);
 
-    scratch_data.enable_void_fraction(fe_void_fraction,
+    scratch_data.enable_void_fraction(*void_fraction_manager.fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
 
@@ -1647,19 +642,22 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->void_fraction_dof_handler);
+    &this->void_fraction_manager.dof_handler);
 
-  scratch_data.reinit_void_fraction(void_fraction_cell,
-                                    nodal_void_fraction_relevant,
-                                    previous_void_fraction);
+  scratch_data.reinit_void_fraction(
+    void_fraction_cell,
+    void_fraction_manager.void_fraction_locally_relevant,
+    void_fraction_manager.previous_void_fraction);
 
-  scratch_data.reinit_particle_fluid_interactions(cell,
-                                                  this->evaluation_point,
-                                                  this->previous_solutions[0],
-                                                  nodal_void_fraction_relevant,
-                                                  particle_handler,
-                                                  this->dof_handler,
-                                                  void_fraction_dof_handler);
+  scratch_data.reinit_particle_fluid_interactions(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions[0],
+    this->void_fraction_manager.void_fraction_locally_relevant,
+    particle_handler,
+    this->dof_handler,
+    void_fraction_manager.dof_handler);
+
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
@@ -1708,7 +706,7 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
-  scratch_data.enable_void_fraction(fe_void_fraction,
+  scratch_data.enable_void_fraction(*void_fraction_manager.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
 
@@ -1755,19 +753,21 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->void_fraction_dof_handler);
+    &this->void_fraction_manager.dof_handler);
 
-  scratch_data.reinit_void_fraction(void_fraction_cell,
-                                    nodal_void_fraction_relevant,
-                                    previous_void_fraction);
+  scratch_data.reinit_void_fraction(
+    void_fraction_cell,
+    void_fraction_manager.void_fraction_locally_relevant,
+    void_fraction_manager.previous_void_fraction);
 
-  scratch_data.reinit_particle_fluid_interactions(cell,
-                                                  this->evaluation_point,
-                                                  this->previous_solutions[0],
-                                                  nodal_void_fraction_relevant,
-                                                  particle_handler,
-                                                  this->dof_handler,
-                                                  void_fraction_dof_handler);
+  scratch_data.reinit_particle_fluid_interactions(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions[0],
+    void_fraction_manager.void_fraction_locally_relevant,
+    particle_handler,
+    this->dof_handler,
+    void_fraction_manager.dof_handler);
 
   scratch_data.calculate_physical_properties();
   copy_data.reset();
@@ -1803,8 +803,8 @@ template <int dim>
 void
 FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(void_fraction_dof_handler,
-                           nodal_void_fraction_relevant,
+  data_out.add_data_vector(void_fraction_manager.dof_handler,
+                           void_fraction_manager.void_fraction_locally_relevant,
                            "void_fraction");
 }
 
@@ -1822,7 +822,7 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
                             update_hessians);
 
   FEValues<dim> fe_values_void_fraction(*this->mapping,
-                                        this->fe_void_fraction,
+                                        *this->void_fraction_manager.fe,
                                         quadrature_formula,
                                         update_values |
                                           update_quadrature_points |
@@ -1866,14 +866,16 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
             &(*this->triangulation),
             cell->level(),
             cell->index(),
-            &this->void_fraction_dof_handler);
+            &this->void_fraction_manager.dof_handler);
           fe_values_void_fraction.reinit(void_fraction_cell);
 
           // Gather void fraction (values, gradient)
           fe_values_void_fraction.get_function_values(
-            nodal_void_fraction_relevant, present_void_fraction_values);
+            void_fraction_manager.void_fraction_locally_relevant,
+            present_void_fraction_values);
           fe_values_void_fraction.get_function_gradients(
-            nodal_void_fraction_relevant, present_void_fraction_gradients);
+            void_fraction_manager.void_fraction_locally_relevant,
+            present_void_fraction_gradients);
 
           fe_values.reinit(cell);
 
@@ -1898,17 +900,20 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_void_fraction.get_function_values(
-                previous_void_fraction[0], p1_void_fraction_values);
+                void_fraction_manager.previous_void_fraction[0],
+                p1_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
-                  previous_void_fraction[1], p2_void_fraction_values);
+                  void_fraction_manager.previous_void_fraction[1],
+                  p2_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
-                  previous_void_fraction[2], p3_void_fraction_values);
+                  void_fraction_manager.previous_void_fraction[2],
+                  p3_void_fraction_values);
             }
 
           local_mass_source = 0;
@@ -2022,7 +1027,8 @@ FluidDynamicsVANS<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          initialize_void_fraction();
+          void_fraction_manager.initialize_void_fraction(
+            this->simulation_control->get_current_time());
           this->iterate();
         }
       else

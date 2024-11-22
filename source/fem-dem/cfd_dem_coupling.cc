@@ -218,7 +218,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->void_fraction_dof_handler);
+    this->void_fraction_manager.dof_handler);
 
   particle_wall_contact_force_object = set_particle_wall_contact_force_model(
     this->cfd_dem_simulation_parameters.dem_parameters,
@@ -263,12 +263,13 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   sort_particles_into_subdomains_and_cells();
 
+  // TODO BB
   // Remap periodic nodes after setup of dofs (If ASC and PBC)
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      sparse_contacts_object.map_periodic_nodes(
-        this->void_fraction_constraints);
+      // sparse_contacts_object.map_periodic_nodes(
+      // this->void_fraction_constraints);
     }
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
@@ -412,17 +413,21 @@ CFDDEMSolver<dim>::write_checkpoint()
 
   // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  vf_set_transfer.push_back(
+    &this->void_fraction_manager.void_fraction_locally_relevant);
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
-      vf_set_transfer.push_back(&this->previous_void_fraction[i]);
+      vf_set_transfer.push_back(
+        &this->void_fraction_manager.previous_void_fraction[i]);
     }
 
   this->multiphysics->write_checkpoint();
 
   // Prepare for Serialization
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_dof_handler);
+    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
   if (auto parallel_triangulation =
@@ -492,12 +497,13 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   this->setup_dofs();
 
+  // TODO BB
   // Remap periodic nodes after setup of dofs
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      sparse_contacts_object.map_periodic_nodes(
-        this->void_fraction_constraints);
+      // sparse_contacts_object.map_periodic_nodes(
+      // this->void_fraction_constraints);
     }
 
   // Velocity Vectors
@@ -540,7 +546,7 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
-    1 + this->previous_void_fraction.size());
+    1 + this->void_fraction_manager.previous_void_fraction.size());
 
   GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
                                          this->mpi_communicator);
@@ -550,9 +556,11 @@ CFDDEMSolver<dim>::read_checkpoint()
   std::vector<GlobalVectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->previous_void_fraction.size());
+    this->void_fraction_manager.previous_void_fraction.size());
 
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
         GlobalVectorType(this->locally_owned_dofs_voidfraction,
@@ -561,14 +569,18 @@ CFDDEMSolver<dim>::read_checkpoint()
     }
 
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_dof_handler);
+    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
 
-  this->nodal_void_fraction_relevant = vf_distributed_system;
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  this->void_fraction_manager.void_fraction_locally_relevant =
+    vf_distributed_system;
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
-      this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
+      this->void_fraction_manager.previous_void_fraction[i] =
+        vf_distributed_previous_solutions[i];
     }
 
   if (this->simulation_parameters.flow_control.enable_flow_control)
@@ -642,15 +654,19 @@ CFDDEMSolver<dim>::load_balance()
 
   // Void Fraction
   std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(&this->nodal_void_fraction_relevant);
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  vf_set_transfer.push_back(
+    &this->void_fraction_manager.void_fraction_locally_relevant);
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
-      vf_set_transfer.push_back(&this->previous_void_fraction[i]);
+      vf_set_transfer.push_back(
+        &this->void_fraction_manager.previous_void_fraction[i]);
     }
 
   // Prepare for Serialization
   parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
-    vf_system_trans_vectors(this->void_fraction_dof_handler);
+    vf_system_trans_vectors(this->void_fraction_manager.dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
 
@@ -704,17 +720,18 @@ CFDDEMSolver<dim>::load_balance()
   this->pcout << "Setup DOFs" << std::endl;
   this->setup_dofs();
 
+  // TODO BB
   // Remap periodic nodes after setup of dofs
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      sparse_contacts_object.map_periodic_nodes(
-        this->void_fraction_constraints);
+      // sparse_contacts_object.map_periodic_nodes(
+      //   this->void_fraction_constraints);
     }
 
   // Update the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->void_fraction_dof_handler);
+    this->void_fraction_manager.dof_handler);
 
   // Velocity Vectors
   std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
@@ -747,7 +764,7 @@ CFDDEMSolver<dim>::load_balance()
 
   // Void Fraction Vectors
   std::vector<GlobalVectorType *> vf_system(
-    1 + this->previous_void_fraction.size());
+    1 + this->void_fraction_manager.previous_void_fraction.size());
 
   GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
                                          this->mpi_communicator);
@@ -757,9 +774,11 @@ CFDDEMSolver<dim>::load_balance()
   std::vector<GlobalVectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
-    this->previous_void_fraction.size());
+    this->void_fraction_manager.previous_void_fraction.size());
 
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
         GlobalVectorType(this->locally_owned_dofs_voidfraction,
@@ -769,10 +788,14 @@ CFDDEMSolver<dim>::load_balance()
 
   vf_system_trans_vectors.interpolate(vf_system);
 
-  this->nodal_void_fraction_relevant = vf_distributed_system;
-  for (unsigned int i = 0; i < this->previous_void_fraction.size(); ++i)
+  this->void_fraction_manager.void_fraction_locally_relevant =
+    vf_distributed_system;
+  for (unsigned int i = 0;
+       i < this->void_fraction_manager.previous_void_fraction.size();
+       ++i)
     {
-      this->previous_void_fraction[i] = vf_distributed_previous_solutions[i];
+      this->void_fraction_manager.previous_void_fraction[i] =
+        vf_distributed_previous_solutions[i];
     }
 
   vf_system.clear();
@@ -1084,10 +1107,11 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
       TimerOutput::Scope t(this->computing_timer, "total_volume_calculation");
       double             total_volume_fluid, total_volume_particles;
       std::tie(total_volume_fluid, total_volume_particles) =
-        calculate_fluid_and_particle_volumes(this->void_fraction_dof_handler,
-                                             this->nodal_void_fraction_relevant,
-                                             *this->cell_quadrature,
-                                             *this->mapping);
+        calculate_fluid_and_particle_volumes(
+          this->void_fraction_manager.dof_handler,
+          this->void_fraction_manager.void_fraction_locally_relevant,
+          *this->cell_quadrature,
+          *this->mapping);
       this->table_phase_volumes.add_value(
         "time", this->simulation_control->get_current_time());
       this->table_phase_volumes.add_value("total-volume-fluid",
@@ -1144,14 +1168,14 @@ CFDDEMSolver<dim>::dynamic_flow_control()
       // Calculate the average velocity according to the void fraction
       unsigned int flow_direction =
         this->simulation_parameters.flow_control.flow_direction;
-      double average_velocity =
-        calculate_average_velocity(this->dof_handler,
-                                   this->void_fraction_dof_handler,
-                                   this->present_solution,
-                                   this->nodal_void_fraction_relevant,
-                                   flow_direction,
-                                   *this->cell_quadrature,
-                                   *this->mapping);
+      double average_velocity = calculate_average_velocity(
+        this->dof_handler,
+        this->void_fraction_manager.dof_handler,
+        this->present_solution,
+        this->void_fraction_manager.void_fraction_locally_relevant,
+        flow_direction,
+        *this->cell_quadrature,
+        *this->mapping);
 
       // Calculate the beta force for fluid
       this->flow_control.calculate_beta(
@@ -1333,7 +1357,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       // Identify the mobility status of particles (if ASC enabled)
       sparse_contacts_object.identify_mobility_status(
-        this->void_fraction_dof_handler,
+        this->void_fraction_manager.dof_handler,
         this->particle_handler,
         (*this->triangulation).n_active_cells(),
         this->mpi_communicator);
@@ -1420,7 +1444,8 @@ CFDDEMSolver<dim>::solve()
   // Calculate first instance of void fraction once particles are set-up
   this->vertices_cell_mapping();
   if (!dem_action_manager->check_restart_simulation())
-    this->initialize_void_fraction();
+    this->void_fraction_manager.initialize_void_fraction(
+      this->simulation_control->get_current_time());
 
   while (this->simulation_control->integrate())
     {
@@ -1468,7 +1493,7 @@ CFDDEMSolver<dim>::solve()
                       // Output mobility status vector
                       visualization_object.print_intermediate_format(
                         mobility_status,
-                        this->void_fraction_dof_handler,
+                        this->void_fraction_manager.dof_handler,
                         this->mpi_communicator);
                     }
                   break;

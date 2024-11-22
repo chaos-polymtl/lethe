@@ -17,6 +17,7 @@
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/vans_assemblers.h>
+#include <fem-dem/void_fraction.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -31,62 +32,6 @@
 
 
 using namespace dealii;
-
-/**
- * @brief Calculates the area of intersection between a circular (2D) particle and a circle
- *
- * @param r_particle Radius of the particle
- *
- * @param r_circle Radius of the circle
- *
- * @param neighbor_distance Distance between the particle and the circle
- */
-inline double
-particle_circle_intersection_2d(double r_particle,
-                                double r_circle,
-                                double neighbor_distance)
-{
-  return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
-                                cos((pow(neighbor_distance, 2) +
-                                     pow(r_particle, 2) - pow(r_circle, 2)) /
-                                    (2 * neighbor_distance * r_particle))) +
-         Utilities::fixed_power<2, double>(r_circle) *
-           Utilities::fixed_power<-1, double>(
-             cos((pow(neighbor_distance, 2) - pow(r_particle, 2) +
-                  pow(r_circle, 2)) /
-                 (2 * neighbor_distance * r_circle))) -
-         0.5 * sqrt((-neighbor_distance + r_particle + r_circle) *
-                    (neighbor_distance + r_particle - r_circle) *
-                    (neighbor_distance - r_particle + r_circle) *
-                    (neighbor_distance + r_particle + r_circle));
-}
-
-/**
- * @brief Calculates the volume of intersection between a spherical (3D) particle and a sphere
- *
- * @param r_particle Radius of the particle
- *
- * @param r_sphere Radius of the sphere
- *
- * @param neighbor_distance Distance between the particle and the sphere
- */
-
-inline double
-particle_sphere_intersection_3d(double r_particle,
-                                double r_sphere,
-                                double neighbor_distance)
-{
-  return M_PI *
-         Utilities::fixed_power<2, double>(r_sphere + r_particle -
-                                           neighbor_distance) *
-         (Utilities::fixed_power<2, double>(neighbor_distance) +
-          (2 * neighbor_distance * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(r_particle)) +
-          (2 * neighbor_distance * r_sphere) + (6 * r_sphere * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(r_sphere))) /
-         (12 * neighbor_distance);
-}
-
 
 /**
  * A solver class for the VANS equation using GLS stabilization
@@ -115,18 +60,6 @@ private:
 
   void
   update_solution_and_constraints();
-
-  void
-  particle_centered_method();
-
-  void
-  quadrature_centered_sphere_method(bool load_balance_step);
-
-  void
-  satellite_point_method();
-
-  void
-  solve_L2_system_void_fraction();
 
   void
   read_dem();
@@ -199,9 +132,6 @@ protected:
 
   virtual void
   iterate() override;
-
-  void
-  initialize_void_fraction();
 
   void
   calculate_void_fraction(const double time, bool load_balance_step);
@@ -304,8 +234,7 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
-  void
-  percolate_void_fraction();
+
 
   /**
    * Member Variables
@@ -313,34 +242,15 @@ protected:
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
-  DoFHandler<dim> void_fraction_dof_handler;
-  FE_Q<dim>       fe_void_fraction;
-
   MappingQGeneric<dim> particle_mapping;
 
   IndexSet locally_owned_dofs_voidfraction;
   IndexSet locally_relevant_dofs_voidfraction;
 
-  // Solution of the void fraction at previous time steps
-  std::vector<GlobalVectorType> previous_void_fraction;
-
-  GlobalVectorType nodal_void_fraction_relevant;
-  GlobalVectorType nodal_void_fraction_owned;
-
   // Assemblers for the particle_fluid interactions
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
     particle_fluid_assemblers;
 
-  TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
-  GlobalVectorType               system_rhs_void_fraction;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_void_fraction;
-  GlobalVectorType               complete_system_rhs_void_fraction;
-  TrilinosWrappers::SparseMatrix mass_matrix;
-  GlobalVectorType               diagonal_of_mass_matrix;
-  IndexSet                       active_set;
-
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  AffineConstraints<double>                          void_fraction_constraints;
 
   const bool   PSPG        = true;
   const bool   SUPG        = true;
@@ -360,6 +270,8 @@ protected:
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
+
+  VoidFractionBase<dim> void_fraction_manager;
 };
 
 #endif

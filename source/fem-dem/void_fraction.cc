@@ -125,7 +125,7 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
     }
 
 
-  solve_linear_system();
+  solve_linear_system_and_update_solution(false);
   // if (this->cfd_dem_simulation_parameters.void_fraction
   //       ->bound_void_fraction == true)
   //   update_solution_and_constraints();
@@ -1029,7 +1029,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
 template <int dim>
 void
-VoidFractionBase<dim>::solve_linear_system()
+VoidFractionBase<dim>::solve_linear_system_and_update_solution(
+  const bool &is_post_mesh_adaptation)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -1117,3 +1118,9 @@ VoidFractionBase<dim>::assemble_mass_matrix_diagonal(
         }
     }
 }
+
+// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
+// library is valid before we actually compile the solver This greatly
+// helps with debugging
+template class VoidFractionBase<2>;
+template class VoidFractionBase<3>;

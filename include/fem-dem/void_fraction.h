@@ -21,6 +21,8 @@
 
 #include <core/vector.h>
 
+#include <solvers/physics_subequations_solver.h>
+
 #include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
@@ -107,17 +109,21 @@ particle_sphere_intersection_3d(double r_particle,
  * @tparam dim An integer that denotes the number of spatial dimensions.
  */
 template <int dim>
-class VoidFractionBase
+class VoidFractionBase : public PhysicsLinearSubequationsSolver
 {
+public:
   VoidFractionBase(
-    parallel::DistributedTriangulationBase<dim>   *triangulation,
-    const Parameters::VoidFractionParameters<dim> &input_parameters,
-    const Parameters::LinearSolver                &linear_solver_parameters,
-    const Particles::ParticleHandler<dim>         *particle_handler,
-    const unsigned int                             fe_degree,
-    const bool                                     simplex)
-    : dof_handler(*triangulation)
+    parallel::DistributedTriangulationBase<dim>             *triangulation,
+    std::shared_ptr<Parameters::VoidFractionParameters<dim>> input_parameters,
+    const Parameters::LinearSolver        &linear_solver_parameters,
+    const Particles::ParticleHandler<dim> *particle_handler,
+    const unsigned int                     fe_degree,
+    const bool                             simplex,
+    const ConditionalOStream              &pcout)
+    : PhysicsLinearSubequationsSolver(pcout)
+    , dof_handler(*triangulation)
     , void_fraction_parameters(input_parameters)
+    , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
   {
     if (simplex)
@@ -140,7 +146,7 @@ class VoidFractionBase
    *
    */
   void
-  setup_dofs();
+  setup_dofs() override;
 
 
   /**
@@ -164,6 +170,57 @@ class VoidFractionBase
   calculate_void_fraction(const double time);
 
 
+  /**
+   * @brief Assemble and solve the system.
+   *
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adaptation(), for verbosity.
+   */
+  void
+  solve(const bool & /*is_post_mesh_adaptation*/) override
+  {}
+
+
+  /**
+   * @brief Percolates the time vector for the void fraction. This operation is called at the end of a time-step.
+   *
+   */
+  void
+  percolate_void_fraction()
+  {
+    for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
+      {
+        previous_void_fraction[i] = previous_void_fraction[i - 1];
+      }
+    previous_void_fraction[0] = void_fraction_locally_relevant;
+  }
+
+
+  /**
+   * @brief Initializes the void fraction at the begginig of a simulation
+   *
+   */
+
+  void
+  initialize_void_fraction(const double time)
+  {
+    calculate_void_fraction(time);
+    for (auto &previous_solution : this->previous_void_fraction)
+      previous_solution = void_fraction_locally_relevant;
+  }
+
+  /// DoFHandler that manages the void fraction
+  DoFHandler<dim> dof_handler;
+
+  /// The solutions are made public instead of using getters
+  /// Solution of the void fraction at previous time steps
+  std::vector<GlobalVectorType> previous_void_fraction;
+
+  /// Fully distributed (including locally relevant) solution
+  GlobalVectorType void_fraction_locally_relevant;
+
+  /// Finite element for the void fraction
+  std::shared_ptr<FiniteElement<dim>> fe;
 
 private:
   /**
@@ -200,11 +257,11 @@ private:
    * @brief Solve the linear system resulting from the assemblies
    *
    */
-  void
-  solve_linear_system();
+  virtual void
+  solve_linear_system_and_update_solution(
+    const bool &is_post_mesh_adaptation = false) override;
 
-  /// Finite element for the void fraction
-  std::shared_ptr<FiniteElement<dim>> fe;
+
 
   /// Mapping for the void fraction
   std::shared_ptr<Mapping<dim>> mapping;
@@ -213,7 +270,8 @@ private:
   std::shared_ptr<Quadrature<dim>> quadrature;
 
   /// Parameters for the calculation of the void fraction
-  const Parameters::VoidFractionParameters<dim> void_fraction_parameters;
+  std::shared_ptr<Parameters::VoidFractionParameters<dim>>
+    void_fraction_parameters;
 
   /// Linear solvers for the calculation of the void fraction
   const Parameters::LinearSolver linear_solver_parameters;
@@ -221,8 +279,7 @@ private:
   /// Particle handler used when the void fraction depends on particles
   const Particles::ParticleHandler<dim> *particle_handler;
 
-  /// DoFHandler that manages the void fraction
-  DoFHandler<dim> dof_handler;
+
 
   /// Index set for the locally owned degree of freedoms
   IndexSet locally_owned_dofs;
@@ -230,11 +287,7 @@ private:
   /// Index set for the locally relevant degree of freedoms
   IndexSet locally_relevant_dofs;
 
-  // Solution of the void fraction at previous time steps
-  std::vector<GlobalVectorType> previous_void_fraction;
 
-  /// Fully distributed (including locally relevant) solution
-  GlobalVectorType void_fraction_locally_relevant;
 
   /// Locally owned solution of the void fraction
   GlobalVectorType void_fraction_locally_owned;
