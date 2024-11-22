@@ -83,20 +83,39 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
     if restart_array or array_name not in df.array_names:
         # Create array if it does not exist
         new_array = np.repeat(standard_value, len(df[reference_array_name]))
+
+        new_array = new_array.astype(np.float32)
+
         print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
         # Push array to all pyvista arrays
         global create_array
         def create_array(i):
             if self.df_available:
-                self.df[i][array_name] = np.repeat(standard_value, len(self.df[i][reference_array_name]))
+                self.df[i][array_name] = new_array
             
             else:
                 df = self.get_df(i)
-                df[array_name] = np.repeat(standard_value, len(df[reference_array_name]))
-                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+                df[array_name] = new_array
+                new_pdata_line = f'    <DataArray type="Float32" Name="{array_name}" format="ascii"/>\n'
+                with open(f'{self.path_output}/{self.list_pvtu[i]}', 'r') as f:
+                    # Read the file contents
+                    lines = f.readlines()
 
-        self.parallel_run(create_array, range(len(self.list_vtu)), tqdm_desc = f"Creating array {array_name}")
+                # Find the closing tag of the PPointData section
+                for j, line in enumerate(lines):
+                    if line.strip() == "</PPointData>":
+                        # Insert the new line just before the closing tag
+                        lines.insert(j, new_pdata_line)
+                        break
+
+                # Write the updated contents back to the file
+                with open(f'{self.path_output}/{self.list_pvtu[i]}', 'w') as file:
+                    file.writelines(lines)
+
+                df.save(f'{self.path_output}/{self.list_vtu[i]}', binary = False)
+
+        self.parallel_run(create_array, range(len(self.list_pvtu)), tqdm_desc = f"Creating array {array_name}")
 
     else:
         if self.df_available:
@@ -213,12 +232,12 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                         new_array[k] = eval(array_values)
 
             # Assign new_array to pyvista dataframe
-            df[array_name] = new_array
+            df[array_name] = new_array.astype(np.float32)
             
             if self.df_available:
                 self.df[i] = df
             else:
-                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+                df.save(f'{self.path_output}/{self.list_vtu[i]}', binary = False)
 
     # If not time dependent, the condition and array_values will be applied
     # at the reference_time_step.
@@ -289,7 +308,7 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
             self.df[reference_time_step][array_name] = new_array
         else:
             df_reference[array_name] = new_array
-            df_reference.save(f'{self.path_output}/{self.list_vtu[reference_time_step]}')
+            df_reference.save(f'{self.path_output}/{self.list_vtu[reference_time_step]}', binary = False)
 
         # Create dictionary (map) based on reference_array
         reference_time_step_dict = dict(zip(df_reference[reference_array_name], df_reference[array_name]))
@@ -318,4 +337,4 @@ def modify_array(self, reference_array_name = "ID", array_name = "new_array", re
                 df[array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
-    self.parallel_run(modify_array_loop, range(len(self.list_vtu)), tqdm_desc = "Assigning array")
+    self.parallel_run(modify_array_loop, range(len(self.list_pvtu)), tqdm_desc = "Assigning array")

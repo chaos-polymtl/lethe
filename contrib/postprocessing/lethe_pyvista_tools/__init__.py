@@ -5,6 +5,7 @@
 # Import modules
 import pyvista as pv
 from tqdm import tqdm
+import os
 
 # Define class:
 class lethe_pyvista_tools():
@@ -66,7 +67,9 @@ class lethe_pyvista_tools():
         self.time_list          -> Returns the list of times corresponding to 
         datasets.
 
-        self.list_vtu           -> Returns the list of names of .pvtu files.
+        self.list_pvtu           -> Returns the list of names of .pvtu files.
+
+        self.list_vtu    -> Returns the list of names of .vtu files for copy purposes.
 
         self.padding            -> Returns the padding of pvtu file numbering.
 
@@ -82,8 +85,7 @@ class lethe_pyvista_tools():
         self.padding = '0'
 
         if n_procs is None:
-            from os import cpu_count
-            self.n_procs = cpu_count()
+            self.n_procs = 1
         else:
             self.n_procs = n_procs
 
@@ -162,6 +164,9 @@ class lethe_pyvista_tools():
                         else:
                             self.prm_dict[clean_line[0]] = clean_line[1]
 
+            if 'output file name' not in self.prm_dict.keys():
+                self.prm_dict['output file name'] = 'out'
+
             print(f'Successfully constructed. To see the .prm dictionary, print($NAME.prm_dict)')
         
         # Define path where pvtu files are
@@ -177,26 +182,30 @@ class lethe_pyvista_tools():
         self.time_list = self.reader.time_values
 
         # Create a list of all files' names
-        list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
+        list_pvtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
 
         # Remove duplicates
-        list_vtu = list(dict.fromkeys(list_vtu))
+        list_pvtu = list(dict.fromkeys(list_pvtu))
 
         # Select data
         if last is None:
-            self.list_vtu = list_vtu[first::step]
+            self.list_pvtu = list_pvtu[first::step]
             self.time_list = self.time_list[first::step]
             self.first = first
             self.step = step
             self.last = len(self.time_list) - 1
             self.pvd_datasets = self.reader.datasets[first::step]
         else:
-            self.list_vtu = list_vtu[first:last:step]
+            self.list_pvtu = list_pvtu[first:last:step]
             self.time_list = self.time_list[first:last:step]
             self.first = first
             self.step = step
             self.last = last
             self.pvd_datasets = self.reader.datasets[first:last:step]
+
+        #Define list of VTU files
+        list_vtu = self.list_pvtu.copy()
+        self.list_vtu = [x.replace('.pvtu', '.00000.vtu') for x in list_vtu]
 
         if len(prefix) > 0:
             self.create_copy(prefix = prefix)
@@ -216,9 +225,9 @@ class lethe_pyvista_tools():
             self.df = []
 
             # Read PVTU data
-            n_pvtu = len(self.list_vtu)
+            n_pvtu = len(self.list_pvtu)
             pbar = tqdm(total = n_pvtu, desc="Reading PVTU files")
-            for i in range(len(self.list_vtu)):
+            for i in range(len(self.list_pvtu)):
                 
                 # Read dataframes from VTU files into df
                 self.df.append(self.get_df)
@@ -226,7 +235,7 @@ class lethe_pyvista_tools():
 
             self.df_available = True
 
-            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
+            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_pvtu)-1}')
 
     # IMPORT FUNCTIONS:
 

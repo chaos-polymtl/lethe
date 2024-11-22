@@ -17,4 +17,7 @@ def get_df(self, time_step):
     for data in self.ignore_data:
         pvtu_reader.disable_point_array(data)
 
-    return pvtu_reader.read()
+    data = pvtu_reader.read()
+    data = data.cast_to_unstructured_grid()
+
+    return data

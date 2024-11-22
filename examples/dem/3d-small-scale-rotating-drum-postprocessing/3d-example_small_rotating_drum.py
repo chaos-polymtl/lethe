@@ -12,12 +12,12 @@ sys.path.append(path_to_module)
 
 # Import tools from module
 from lethe_pyvista_tools import *
+import numpy as np
 import matplotlib.pyplot as plt
 
 
 # Create object named "particles"
-particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm", "out.pvd")
-
+particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm", "out.pvd", prefix="mod_", first = 200)
 
 # State condition for particle_color array creation
 condition = "(y**2 + z**2)**(1/2) > 0.025"
