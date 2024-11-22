@@ -98,7 +98,7 @@ Consequently, the physical properties are defined as follows :
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set kinematic viscosity = 0.01 # Re_h=2/nu
+        set kinematic viscosity = 0.02 # Re_h=2/nu
       end
     end
 	
