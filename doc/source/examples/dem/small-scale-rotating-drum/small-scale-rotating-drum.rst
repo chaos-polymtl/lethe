@@ -38,13 +38,13 @@ Parameter File
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the ``set initial refinement`` parameters. The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see `Rotating Drum example <../rotating-drum/rotating-drum.html>`_). Both parameters files have the same mesh parameters.
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius of the cylinder (0.056 m) and half-length (0.051 m), respectively.  The grid is refined 3 times using the ``set initial refinement`` parameters. The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell (for more details see `Rotating Drum example <../rotating-drum/rotating-drum.html>`_). The mesh subsection is the same for both parameter files.
 
 
 .. code-block:: text
 
     subsection mesh
-      set type                                 = dealii
+      set type                                = dealii
       set grid type                           = cylinder
       set grid arguments                      = 0.056:0.051
       set initial refinement                  = 3
@@ -55,7 +55,7 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 Packing information
 ~~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry. Otherwise, particles will be lost during the insertion stage. This section is in the ``packing-rotating-drum.prm`` file.
+An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry to prevent particles loss during the insertion stage. This section is in the ``packing-rotating-drum.prm`` file.
 
 .. code-block:: text
 
@@ -70,12 +70,12 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
       set insertion prn seed                             = 19
     end
 
-Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.
+Restart files are written once the packing ends. Using these restart files we can run the rotating drum simulation the end of the packing simulation.
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m3, respectively. All other particles' physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.  Both parameters files have the same physical properties.
+The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m\ :sup:`3`. All other particles' physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.  Both parameters files have the same physical properties.
 
 .. code-block:: text
 
