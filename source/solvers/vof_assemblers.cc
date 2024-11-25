@@ -364,8 +364,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
       // Directionality tensor describing [rr - (r⋅s)^2*ss]
       const Tensor<2, dim> dir_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector) -
-        (Utilities::fixed_power<2>(gradient_unit_vector *
-                                   velocity_unit_vector) *
+        ((gradient_unit_vector * velocity_unit_vector) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
       // Compute the artificial viscosity of the shock capture
@@ -436,8 +435,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
       // Directionality tensor describing [rr - (r⋅s)^2*ss]
       const Tensor<2, dim> dir_tensor =
         outer_product(gradient_unit_vector, gradient_unit_vector) -
-        (Utilities::fixed_power<2>(gradient_unit_vector *
-                                   velocity_unit_vector) *
+        ((gradient_unit_vector * velocity_unit_vector) *
          outer_product(velocity_unit_vector, velocity_unit_vector));
 
       // Compute the artificial viscosity of the shock capture
