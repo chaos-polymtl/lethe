@@ -103,21 +103,21 @@ if process_data:
     angle_top_plot.plot(time, postprocessing.theoritical_angle * np.ones(len(time)), '--', color='k', label='Theoretical angle', linewidth=1.00)
 
     for k in range(0, len(names)):
-        time = data_list[k]['time'].values
-        mass_plot.plot(time, data_list[k]['mass'], '--', color='C' + str(k),
+        time = data_list[k]['time'].to_numpy() #values
+        mass_plot.plot(time, data_list[k]['mass'].to_numpy(), '--', color='C' + str(k),
                        label=f'{dict_names[names[k]]}', linewidth=1.00)
 
-        angle_top_plot.plot(time, abs(data_list[k]['angle_top']), color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
+        angle_top_plot.plot(time, abs(data_list[k]['angle_top'].to_numpy()), color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
         angle_top_plot.fill_between(time,
-                                    abs(data_list[k]['left_angle_top'].values).astype(float),
-                                    abs(data_list[k]['right_angle_top'].values).astype(float), color='C' + str(k), alpha=0.5)
+                                    abs(data_list[k]['left_angle_top'].to_numpy()).astype(float),
+                                    abs(data_list[k]['right_angle_top'].to_numpy()).astype(float), color='C' + str(k), alpha=0.5)
 
-        angle_bottom_plot.plot(time, abs(data_list[k]['angle_bottom']),
+        angle_bottom_plot.plot(time, abs(data_list[k]['angle_bottom'].to_numpy()),
                                color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
         angle_bottom_plot.fill_between(time,
-                                       abs(pd.to_numeric(data_list[k]['left_angle_bottom'].values,
+                                       abs(pd.to_numeric(data_list[k]['left_angle_bottom'].to_numpy(),
                                                          errors='coerce')),
-                                       abs(pd.to_numeric(data_list[k]['right_angle_bottom'].values,
+                                       abs(pd.to_numeric(data_list[k]['right_angle_bottom'].to_numpy(),
                                                          errors='coerce')), color='C' + str(k), alpha=0.5)
 
     start = 10
@@ -152,15 +152,16 @@ if process_data:
     fig_angle.savefig(f'./plate-discharge-angle-data.png', bbox_inches='tight', dpi=300)
 
 if process_log:
-    time = log_list[0]['time'].values
+    time = log_list[0]['time'].to_numpy()
+    #print(time)
     for k in range(0, len(names)):
-        performance_plot.plot(time, log_list[k]['dem_walltime'].rolling(3).mean(),
+        performance_plot.plot(time, log_list[k]['dem_walltime'].rolling(3).mean().to_numpy(),
                               color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
 
         if k != 0:
             speedup = log_list[0]['dem_walltime']/log_list[k]['dem_walltime']
             speedup[0] = 0.0
-            speedup_plot.plot(time, speedup.rolling(5).mean(), '--', color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
+            speedup_plot.plot(time, speedup.rolling(5).mean().to_numpy(), '--', color='C' + str(k), label=f'{dict_names[names[k]]}', linewidth=1.00)
             speedup_plot.plot(time[-1], speedup.iat[-1], 'o', color='C' + str(k), markersize=5)
             speedup_plot.annotate(f'{speedup.iat[-1]:.2f}x', (time[-1], speedup.iat[-1]), textcoords="offset points", xytext=(-31, 1.75), color='C' + str(k))
 

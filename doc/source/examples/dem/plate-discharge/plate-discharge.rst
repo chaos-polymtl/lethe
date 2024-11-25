@@ -449,7 +449,7 @@ Angle of Repose
 
 The angles of repose are calculated from the data extracted from the VTU output files. The 2 angles of repose are calculated from the pile of particles on the plate for comparison with the literature, and from the piles formed by the discharge for curiosity.
 
-The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate for the pile at the top of the plate and for the 2 piles at the bottom. The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from :math:`-0.35 \ \text{m}` to :math:`-0.15 \ \text{m}` for the left angles and from :math:`0.15 \ \text{m}` to :math`0.35 \ \text{m}` for the right angles along the x-axis. The following figure shows the areas where the angles are calculated. The areas where the angle of repose is calculated for the left (blue) and right (red) sides of the piles.
+The configuration of the case gives a symmetrical formation of the piles, meaning that there are 2 angles of repose to calculate for the pile at the top of the plate and for the 2 piles at the bottom. The angles of repose are calculated by linear regressions from the highest particle positions in y-axis from :math:`-0.35 \ \text{m}` to :math:`-0.15 \ \text{m}` for the left angles and from :math:`0.15 \ \text{m}` to :math:`0.35 \ \text{m}` for the right angles along the x-axis. The following figure shows the areas where the angles are calculated. The areas where the angle of repose is calculated for the left (blue) and right (red) sides of the piles.
 
 
 .. figure:: images/angle-areas.png
@@ -468,7 +468,7 @@ The given angles of repose are the linear regressions from the positions with ab
 
    The angles of repose calculated from the simulation data. The solid lines are the angles computed from the highest particles on both side, while the shaded areas represent the angles for the left and the right.
 
-According to Zhou *et al.* [#zhou2002]_, the angle of repose for this type of configuration is calculated with the following theoretical formula:
+According to Zhou *et al.* [#zhou2002]_, the angle of repose for this type of configuration is calculated with the following empirical formula:
 
 .. math::
    \phi = 68.61 \mu_{\text{f,pp}}^{0.27} \mu_{\text{f,pw}}^{0.22} \mu_{\text{r,pp}}^{0.06} \mu_{\text{r,pw}}^{0.12} d_p^{-0.2}
