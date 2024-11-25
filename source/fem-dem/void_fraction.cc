@@ -210,7 +210,7 @@ VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
               if constexpr (dim == 3)
                 {
                   solid_volume_in_cell +=
-                    M_PI * 0.125 *
+                    M_PI * 1. / 6. *
                     Utilities::fixed_power<3>(
                       particle_properties[DEM::PropertiesIndex::dp]);
                 }
