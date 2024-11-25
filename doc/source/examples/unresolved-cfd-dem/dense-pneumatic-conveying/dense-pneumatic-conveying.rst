@@ -10,7 +10,7 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Particle insertion according to a shape `solid object <../../../parameters/dem/solid_objects.html>`_ using the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
+- Particle insertion according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ using the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
 - Has `periodic boundary conditions <../../../parameters/dem/boundary_conditions.html>`_  in DEM and CFD-DEM
 - Uses a `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_ in CFD-DEM
 - Uses the `adaptive sparse contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ for particle loading in DEM
@@ -36,7 +36,7 @@ The geometry of the pipe and the particle properties are based on the work of La
 
 As the other Unresolved CFD-DEM simulations, this example starts from inserting the particles.
 
-However, since the initial position of the particles play an important role in the dynamics, we have an accomodation step to the case, in which particles are repositioned as shown in the following figure.
+However, since the initial position of the particles play an important role in the dynamics, a more involved insertion procedure is used to generate an initial plug of particles as illustrated in the following figure.
 
 .. figure:: images/insertion.png
     :alt: insertion
@@ -47,7 +47,7 @@ However, since the initial position of the particles play an important role in t
 In summary, the simulation has three steps:
 
 - First, we run ``lethe-particles loading-particles.prm`` to load the particles. The insertion of particles is done using the plane insertion method.
-- Then, we run ``lethe-particles settling-particles.prm`` to accomodate particles in the system. The gravity is changed to the y-direction and we wait for particles to settle.
+- Then, we run ``lethe-particles settling-particles.prm`` to reorganize the particles in the system. The gravity is changed to the y-direction and we wait for particles to settle.
 - Finally, we call ``lethe-fluid-particles pneumatic-conveying.prm`` to simulate the dense pneumatic conveying.
 
 We enable checkpointing in order to write the DEM checkpoint files in between the steps, which will be used as the starting point of the next.
@@ -169,7 +169,7 @@ Periodic boundary conditions need to be setup in the DEM simulation since we use
      end
    end
 
-We nedd to set the periofic boundary conditions now for compatibility, but particles do not interact with these boundaries at the current stage. The next subsection explains how particles are prevented from interacting with the periodic boundaries.
+We need to set the periodic boundary conditions now for compatibility, but particles do not interact with these boundaries at the current stage. The next subsection explains how particles are prevented from interacting with the periodic boundaries.
 
 Floating Walls
 --------------
@@ -242,7 +242,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 
 .. note::
 
-    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation, which disable the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are used in the load balancing method. The `discharge plate example <../../dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
+    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation,. The method will disable the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are used in the load balancing method. The `discharge plate example <../../dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
 
 .. code-block:: text
 
@@ -339,7 +339,7 @@ This simulation restarts from the previous step. Also, the checkpointing is redu
 Lagrangian Physical Properties
 ------------------------------
 
-The main difference between the insertion and settling simulations is the gravity direction, which is changed to y-direction to be coherent with the next simulation using the CFD-DEM solver.
+The main difference between the insertion and settling simulations is the direction of the gravity, which is changed to y-direction to be coherent with the next simulation using the CFD-DEM solver.
 
 .. code-block:: text
 
