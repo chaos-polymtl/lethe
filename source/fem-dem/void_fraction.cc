@@ -42,6 +42,8 @@ VoidFractionBase<dim>::setup_dofs()
                                         locally_relevant_dofs,
                                         mpi_communicator);
 
+  this->previous_void_fraction.resize(maximum_number_of_previous_solutions());
+
   // Initialize vector of previous solutions for the void fraction
   for (auto &solution : this->previous_void_fraction)
     {
@@ -105,12 +107,15 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
   if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
     {
       calculate_void_fraction_function(time);
+      // If its a function, no need to solve a linear system of equations so
+      // return.
+      return;
     }
   // The void fraction is established using a particle handler.
   // A right-hand side and a linear system of equation are assembled and then
   // solved. The resulting solution yields the nodal values of the void
   // fraction.
-  else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::pcm)
+  if (void_fraction_parameters->mode == Parameters::VoidFractionMode::pcm)
     {
       calculate_void_fraction_particle_centered_method();
     }
@@ -125,7 +130,6 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
     {
       calculate_void_fraction_satellite_point_method();
     }
-
 
   solve_linear_system_and_update_solution(false);
   // if (this->cfd_dem_simulation_parameters.void_fraction
