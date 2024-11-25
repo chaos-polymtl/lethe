@@ -88,7 +88,7 @@ In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, a
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
 The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on the ``phase filtration``.
+We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on ``phase filtration``.
 
 .. code-block:: text
 
@@ -128,7 +128,7 @@ Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 On all four sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
-This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection with a ``dirichlet`` boundary condition on the phase fraction as shown below.
+This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection using ``dirichlet`` boundary conditions on the phase fraction as shown below.
 
 Boundary Conditions - Fluid Dynamics
 ************************************
@@ -309,7 +309,7 @@ The results can be post-processed by invoking the following command from the fol
   python3 air-bubble-compression-postprocessing.py . air-bubble-compression.prm
 
 .. important::
-    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click :doc:`here <../../../tools/postprocessing/postprocessing_pyvista>` for details.
 
 The following figures present the comparison between the analytical results and the simulation results for the density and pressure evolutions evaluated at the center of the bubble. A pretty good agreement between the simulation and analytical results is observed.
 
