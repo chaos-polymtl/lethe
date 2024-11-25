@@ -231,8 +231,6 @@ void
 FluidDynamicsVANS<dim>::calculate_void_fraction(const double time,
                                                 bool         load_balance_step)
 {
-  announce_string(this->pcout, "Void Fraction");
-
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
   void_fraction_manager.calculate_void_fraction(time);
 }

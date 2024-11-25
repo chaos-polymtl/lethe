@@ -104,6 +104,8 @@ template <int dim>
 void
 VoidFractionBase<dim>::calculate_void_fraction(const double time)
 {
+  announce_string(this->pcout, "Void Fraction");
+
   if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
     {
       calculate_void_fraction_function(time);
