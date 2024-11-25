@@ -25,7 +25,7 @@ VoidFractionBase<dim>::setup_dofs()
   // establish the void fraction vectors
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
 
-  dof_handler.distribute_dofs(fe);
+  dof_handler.distribute_dofs(*fe);
   locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
@@ -45,13 +45,13 @@ VoidFractionBase<dim>::setup_dofs()
   // Initialize vector of previous solutions for the void fraction
   for (auto &solution : this->previous_void_fraction)
     {
-      solution.reinit(this->locally_owned_dofs_voidfraction,
-                      this->locally_relevant_dofs_voidfraction,
-                      this->mpi_communicator);
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->triangulation->get_communicator());
     }
 
   void_fraction_locally_owned.reinit(locally_owned_dofs,
-                                     this->mpi_communicator);
+                                     this->triangulation->get_communicator());
 
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -59,36 +59,38 @@ VoidFractionBase<dim>::setup_dofs()
                                   dsp,
                                   void_fraction_constraints,
                                   false);
-  SparsityTools::distribute_sparsity_pattern(dsp,
-                                             locally_owned_dofs,
-                                             this->mpi_communicator,
-                                             locally_relevant_dofs);
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    locally_owned_dofs,
+    this->triangulation->get_communicator(),
+    locally_relevant_dofs);
 
   system_matrix_void_fraction.reinit(locally_owned_dofs,
                                      locally_owned_dofs,
                                      dsp,
-                                     this->mpi_communicator);
+                                     this->triangulation->get_communicator());
 
-  complete_system_matrix_void_fraction.reinit(locally_owned_dofs,
-                                              locally_owned_dofs,
-                                              dsp,
-                                              this->mpi_communicator);
+  complete_system_matrix_void_fraction.reinit(
+    locally_owned_dofs,
+    locally_owned_dofs,
+    dsp,
+    this->triangulation->get_communicator());
 
-  system_rhs_void_fraction.reinit(locally_owned_dofs, this->mpi_communicator);
+  system_rhs_void_fraction.reinit(locally_owned_dofs,
+                                  this->triangulation->get_communicator());
 
   active_set.set_size(dof_handler.n_dofs());
 
   mass_matrix.reinit(locally_owned_dofs,
                      locally_owned_dofs,
                      dsp,
-                     this->mpi_communicator);
+                     this->triangulation->get_communicator());
 
   assemble_mass_matrix_diagonal(mass_matrix);
 
 
   // Vertices to cell mapping
-  LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
-                                        vertices_to_cell);
+  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
   // TODO
   // if (has_periodic_boundaries)
@@ -100,7 +102,7 @@ template <int dim>
 void
 VoidFractionBase<dim>::calculate_void_fraction(const double time)
 {
-  if (void_fraction_parameters.mode = Parameters::VoidFractionMode::function)
+  if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
     {
       calculate_void_fraction_function(time);
     }
@@ -108,18 +110,18 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
   // A right-hand side and a linear system of equation are assembled and then
   // solved. The resulting solution yields the nodal values of the void
   // fraction.
-  else if (void_fraction_parameters.mode == Parameters::VoidFractionMode::pcm)
+  else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::pcm)
     {
       calculate_void_fraction_particle_centered_method();
     }
   // particle_centered_method();
-  else if (void_fraction_parameters.mode == Parameters::VoidFractionMode::qcm)
+  else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm)
     {
       calculate_void_fraction_quadrature_centered_method();
     }
 
   //  quadrature_centered_sphere_method(load_balance_step);
-  else if (void_fraction_parameters.mode == Parameters::VoidFractionMode::spm)
+  else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::spm)
     {
       calculate_void_fraction_satellite_point_method();
     }
@@ -136,15 +138,15 @@ void
 VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
 {
   // The current time of the function is set for time-dependant functions
-  void_fraction_parameters.void_fraction.set_time(time);
+  void_fraction_parameters->void_fraction.set_time(time);
 
   // The function is directly interpolate at the nodes.
   // This is not an L2 projection, but a direct evaluation.
   // This may lead to some issues on coarses meshes if a high-order
   // interpolation (>FE_Q(1)) is used.
-  VectorTools::interpolate(mapping,
+  VectorTools::interpolate(*mapping,
                            dof_handler,
-                           void_fraction_parameters.void_fraction,
+                           void_fraction_parameters->void_fraction,
                            void_fraction_locally_owned);
 
   // Propagate ghost values
@@ -156,16 +158,16 @@ void
 VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
 {
   const double l2_smoothing_factor =
-    void_fraction_parameters.l2_smoothing_factor;
+    void_fraction_parameters->l2_smoothing_factor;
 
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        this->fe,
-                                        quadrature,
+  FEValues<dim> fe_values_void_fraction(*mapping,
+                                        *fe,
+                                        *quadrature,
                                         update_values | update_JxW_values |
                                           update_gradients);
 
   const unsigned int dofs_per_cell = fe->dofs_per_cell;
-  const unsigned int n_q_points    = quadrature.size();
+  const unsigned int n_q_points    = quadrature->size();
   FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
   Vector<double>     local_rhs_void_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -255,14 +257,14 @@ template <int dim>
 void
 VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
 {
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        fe,
-                                        quadrature,
+  FEValues<dim> fe_values_void_fraction(*mapping,
+                                        *fe,
+                                        *quadrature,
                                         update_values | update_JxW_values |
                                           update_gradients);
 
-  const unsigned int dofs_per_cell = fe.dofs_per_cell;
-  const unsigned int n_q_points    = quadrature.size();
+  const unsigned int dofs_per_cell = fe->dofs_per_cell;
+  const unsigned int n_q_points    = quadrature->size();
   FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
   Vector<double>     local_rhs_void_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -284,17 +286,17 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
   // Reference particle with radius 1
   GridGenerator::hyper_ball(particle_triangulation, center, 1);
   particle_triangulation.refine_global(
-    void_fraction_parameters.particle_refinement_factor);
+    void_fraction_parameters->particle_refinement_factor);
 
   DoFHandler<dim> dof_handler_particle(particle_triangulation);
 
-  FEValues<dim> fe_values_particle(mapping,
-                                   fe,
+  FEValues<dim> fe_values_particle(*mapping,
+                                   *fe,
                                    quadrature_particle,
                                    update_JxW_values |
                                      update_quadrature_points);
 
-  dof_handler_particle.distribute_dofs(fe);
+  dof_handler_particle.distribute_dofs(*fe);
 
   std::vector<Point<dim>> reference_quadrature_location(
     quadrature_particle.size() *
@@ -331,8 +333,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
   // correctly pre-calculated and stored. Now we assemble the system using
   // the satellite point method to calculate the void fraction adequately.
 
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -465,8 +466,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                       local_matrix_void_fraction(i, j) +=
                         (phi_vf[j] * phi_vf[i]) *
                           fe_values_void_fraction.JxW(q) +
-                        (this->cfd_dem_simulation_parameters.void_fraction
-                           ->l2_smoothing_factor *
+                        (void_fraction_parameters->l2_smoothing_factor *
                          grad_phi_vf[j] * grad_phi_vf[i] *
                          fe_values_void_fraction.JxW(q));
                     }
@@ -492,16 +492,16 @@ template <int dim>
 void
 VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 {
-  FEValues<dim> fe_values_void_fraction(mapping,
-                                        fe,
-                                        quadrature,
+  FEValues<dim> fe_values_void_fraction(*mapping,
+                                        *fe,
+                                        *quadrature,
                                         update_values |
                                           update_quadrature_points |
                                           update_JxW_values | update_gradients);
 
-  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const unsigned int                   n_q_points = quadrature.size();
+  const unsigned int                   n_q_points = quadrature->size();
   FullMatrix<double>  local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs_void_fraction(dofs_per_cell);
   std::vector<double> phi_vf(dofs_per_cell);
@@ -510,8 +510,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
   double r_sphere = 0.0;
   double particles_volume_in_sphere;
   double quadrature_void_fraction;
-  double qcm_sphere_diameter =
-    this->cfd_dem_simulation_parameters.void_fraction->qcm_sphere_diameter;
+  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
 
   // If the reference sphere diameter is user defined, the radius is calculated
   // from it, otherwise, the value must be calculated while looping over the
@@ -544,8 +543,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
   system_matrix_void_fraction = 0;
 
   // Clear all contributions of particles from the previous timestep
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -563,8 +561,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
   // Determine the new volumetric contributions of the particles necessary
   // for void fraction calculation
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -625,7 +622,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                   // since it is not dependent on any measure of the active cell
                   if (calculate_reference_sphere_radius)
                     {
-                      if (this->cfd_dem_simulation_parameters.void_fraction
+                      if (void_fraction_parameters
                             ->qcm_sphere_equal_cell_volume == true)
                         {
                           // Get the radius by the volume of sphere which is
@@ -692,7 +689,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                 {
                   if (calculate_reference_sphere_radius)
                     {
-                      if (this->cfd_dem_simulation_parameters.void_fraction
+                      if (void_fraction_parameters
                             ->qcm_sphere_equal_cell_volume == true)
                         {
                           // Get the radius by the volume of sphere which is
@@ -785,8 +782,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
   // After the particles' contributions have been determined, calculate and
   // normalize the void fraction
-  for (const auto &cell :
-       this->void_fraction_dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -806,8 +802,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
           // averaging volume for the QCM
           if (calculate_reference_sphere_radius)
             {
-              if (this->cfd_dem_simulation_parameters.void_fraction
-                    ->qcm_sphere_equal_cell_volume == true)
+              if (void_fraction_parameters->qcm_sphere_equal_cell_volume ==
+                  true)
                 {
                   // Get the radius by the volume of sphere which is
                   // equal to the volume of cell
@@ -1001,8 +997,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                     {
                       local_matrix_void_fraction(i, j) +=
                         ((phi_vf[j] * phi_vf[i]) +
-                         (this->cfd_dem_simulation_parameters.void_fraction
-                            ->l2_smoothing_factor *
+                         (void_fraction_parameters->l2_smoothing_factor *
                           grad_phi_vf[j] * grad_phi_vf[i])) *
                         fe_values_void_fraction.JxW(q);
                     }
@@ -1041,11 +1036,10 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution(
                   << linear_solver_tolerance << std::endl;
     }
 
-  const IndexSet locally_owned_dofs_voidfraction =
-    dof_handler.locally_owned_dofs();
+  const IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   GlobalVectorType completely_distributed_solution(
-    locally_owned_dofs_voidfraction, this->mpi_communicator);
+    locally_owned_dofs, this->triangulation->get_communicator());
 
   SolverControl solver_control(linear_solver_parameters.max_iterations,
                                linear_solver_tolerance,
@@ -1090,15 +1084,14 @@ VoidFractionBase<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &diagonal_mass_matrix)
 {
   Assert(
-    fe.degree == 1,
+    fe->degree == 1,
     ExcMessage(
       "Constraining the void fraction between lower and upper bound is not supported when using a FE_Q with a degree higher than 1"));
-  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  FEValues<dim>      fe_void_fraction_values(fe,
-                                        quadrature_formula,
+  FEValues<dim>      fe_void_fraction_values(*fe,
+                                        *quadrature,
                                         update_values | update_JxW_values);
-  const unsigned int dofs_per_cell = fe.dofs_per_cell;
-  const unsigned int n_qpoints     = quadrature_formula.size();
+  const unsigned int dofs_per_cell = fe->dofs_per_cell;
+  const unsigned int n_qpoints     = quadrature->size();
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   for (const auto &cell : dof_handler.active_cell_iterators())

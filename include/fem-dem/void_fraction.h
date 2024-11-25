@@ -115,15 +115,17 @@ public:
   VoidFractionBase(
     parallel::DistributedTriangulationBase<dim>             *triangulation,
     std::shared_ptr<Parameters::VoidFractionParameters<dim>> input_parameters,
-    const Parameters::LinearSolver        &linear_solver_parameters,
-    const Particles::ParticleHandler<dim> *particle_handler,
-    const unsigned int                     fe_degree,
-    const bool                             simplex,
-    const ConditionalOStream              &pcout)
+    const Parameters::LinearSolver  &linear_solver_parameters,
+    Particles::ParticleHandler<dim> *particle_handler,
+    const unsigned int               fe_degree,
+    const bool                       simplex,
+    const ConditionalOStream        &pcout)
     : PhysicsLinearSubequationsSolver(pcout)
     , dof_handler(*triangulation)
+    , triangulation(triangulation)
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
+    // BB TODO verify if the particle handler can be remade const
     , particle_handler(particle_handler)
   {
     if (simplex)
@@ -261,7 +263,8 @@ private:
   solve_linear_system_and_update_solution(
     const bool &is_post_mesh_adaptation = false) override;
 
-
+  /// Triangulation
+  parallel::DistributedTriangulationBase<dim> *triangulation;
 
   /// Mapping for the void fraction
   std::shared_ptr<Mapping<dim>> mapping;
@@ -277,7 +280,7 @@ private:
   const Parameters::LinearSolver linear_solver_parameters;
 
   /// Particle handler used when the void fraction depends on particles
-  const Particles::ParticleHandler<dim> *particle_handler;
+  Particles::ParticleHandler<dim> *particle_handler;
 
 
 
