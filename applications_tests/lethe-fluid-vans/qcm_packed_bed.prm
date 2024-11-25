@@ -80,9 +80,6 @@ subsection void fraction
   set read dem                     = true
   set dem file name                = dem
   set l2 smoothing factor          = 0
-  set bound void fraction          = true
-  set l2 lower bound               = 0
-  set l2 upper bound               = 1
 end
 
 #---------------------------------------------------
