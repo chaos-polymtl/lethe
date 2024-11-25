@@ -12,7 +12,7 @@ Features
 
 - Solver: ``lethe-fluid`` 
 - Volume of fluid (VOF) and Heat Transfer (HT)
-- Unsteady problem with phase change handled by an adaptive BDF2 time-stepping scheme
+- Unsteady problem with phase change handled by an adaptive BDF1 time-stepping scheme
 
 ****
 
@@ -71,16 +71,16 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.1` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure. 
+The time integration is handled by a 2nd-order backward differentiation scheme (``bdf1``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling. 
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
+      set method           = bdf1
       set time end         = 0.0005
       set time step        = 1.9e-8
       set adapt            = true
-      set max cfl          = 0.1
+      set max cfl          = 0.06
       set max time step    = 1.9e-8
       set output name      = static-irradiation
       set output path      = output/
@@ -260,10 +260,6 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
       end
       subsection VOF
         set Function expression = if (y<0.43 , 1, 0)
-        subsection projection step
-          set enable           = false
-          set diffusion factor = 1
-        end
       end
     end
 
@@ -324,27 +320,6 @@ We also set in this subsection the reference surface tension coefficient of the 
         end
       end
     end
-    
-Constrain Stasis
-~~~~~~~~~~~~~~~~
-
-To improve the computational time, we constrain solid degrees of freedom to a velocity of :math:`0.0` using the ``constrain statis`` subsection.
-
-.. code-block:: text
-
-    subsection constrain stasis
-      set enable                               = true
-      set number of constraints                = 1
-      set enable domain restriction with plane = true
-      set restriction plane point              = 0.0, 0.387
-      set restriction plane normal vector      = 0.0, 1.0
-      subsection constraint 0
-        set fluid id        = 1
-        set max temperature = 500
-      end
-    end
-
-Here, we impose this constrain only in the metal (``set fluid id = 1``) when the temperature is below :math:`500\;\text{K}` (``set max temperature = 500``). To avoid any insconsitency when the liquid metal wets the solid surface, we apply the constrain only below the plane define by the point :math:`(0.0, 0.387)` and the unit normal vector :math:`\vec{n} = [0.0, 1.0]`. 
 
 Laser parameters
 ~~~~~~~~~~~~~~~~
@@ -479,11 +454,11 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the dark red line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
 
 .. raw:: html
 
-    <iframe width="720" height="428" src="https://www.youtube.com/embed/gtIBY9FRyvY?rel=0&vq=hd720" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allowfullscreen></iframe>
+    <iframe width="700" height="394" src="https://www.youtube.com/embed/6zXlcNbjGRE" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 We also observe a air cushion forming at the triple-phase contact line. We assume it is linked to the fact that wetting is not modeled in the simulation. Thus, the implementation of a wetting model corresponds to a future addition in Lethe.
 

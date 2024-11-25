@@ -11,11 +11,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
+  set method           = bdf1
   set time end         = 0.0005
   set time step        = 1.9e-8
   set adapt            = true
-  set max cfl          = 0.1
+  set max cfl          = 0.06
   set max time step    = 1.9e-8
   set output name      = static-irradiation
   set output path      = output/
@@ -234,22 +234,6 @@ subsection physical properties
       set liquidus temperature                        = 1928.0
       set solidus temperature                         = 1878.0
     end
-  end
-end
-
-#---------------------------------------------------
-# Constrain Stasis
-#---------------------------------------------------
-
-subsection constrain stasis
-  set enable                               = true
-  set number of constraints                = 1
-  set enable domain restriction with plane = true
-  set restriction plane point              = 0.0, 0.387
-  set restriction plane normal vector      = 0.0, 1.0
-  subsection constraint 0
-    set fluid id        = 1
-    set max temperature = 500
   end
 end
 
