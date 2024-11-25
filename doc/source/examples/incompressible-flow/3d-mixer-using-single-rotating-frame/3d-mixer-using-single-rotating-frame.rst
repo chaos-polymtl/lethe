@@ -126,7 +126,7 @@ Mesh
 
     subsection mesh
         set type      = gmsh
-        set file name = diff-step-mesh.msh
+        set file name = ../diff-step-mesh.msh
         set simplex   = true
     end
 
