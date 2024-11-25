@@ -28,9 +28,9 @@ All files mentioned below are located in the example's folder (``examples/incomp
 Description of the Case
 --------------------------
 
-In this example, a flow is passing across a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The velocity profile of the flow is simulated. The parameter file used is ``ahmed.prm``.
+In this example we simulate the flow around a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The parameter file used is ``ahmed.prm``.
 
-The following schematic describes the simulation.
+The following schematic describes the simulated geometry.
 
 .. image:: images/ahmed-bc.png
     :alt: The geometry and boundary conditions
@@ -58,7 +58,7 @@ First, we import the mesh as in the `2D Flow around a cylinder <https://chaos-po
 
 Mesh
 ~~~~~
-Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` file, as shown below. Namely the step parameter ``phi`` can be easily adapted.
+Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` file, as shown below. For instance, the step parameter ``phi`` could be changed.
 
 .. code-block:: text
 
@@ -93,13 +93,13 @@ The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` fi
       set file name = Ahmed-Body-20-2D.msh
     end
 
-.. note::
+.. important::
 
-    For further information about `Mesh <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
+    For further information about `Meshing <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
 Initial and Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The `Initial Condition <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
+The `Initial Conditions <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/initial_conditions.html>`_ and the `Boundary Conditions <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
 .. code-block:: text
 
@@ -147,11 +147,7 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
       set time step        = 0.01
     end
 
-
-.. Warning::
-   To successfully launch the simulation, the ``output path`` where the results are saved (in this example, the folder ``Re720``) must already exist. Otherwise, the simulation will hang because it will be unable to save the results.
-
-Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied  by changing the ``kinematic viscosity``:
+Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the flow speed is set to 1 (``u = 1``) so that the Reynolds number for the simulation (``Re = uL/ν``, with ``L`` the height of the Ahmed body) is varied by changing the ``kinematic viscosity``:
 
 .. code-block:: text 
 
@@ -166,7 +162,7 @@ Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the f
 Running the Simulation
 ----------------------
 
-The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``lethe-fluid`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:
+We launch the simulation from the same folder as the ``.prm`` and ``.msh`` file, using the ``lethe-fluid`` solver. To decrease simulation time, it is advised to run on multiple CPU cores, using ``mpirun``:
 
 To do so, copy and paste the ``lethe-fluid`` executable to the same folder as your ``.prm`` file and launch it running the following line:
 
@@ -192,36 +188,53 @@ Results
 -------
 Transient results are shown for three ``Re`` values:
 
-+-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
-| Re    | :math:`{\nu}`   | Video              | t = 0.5 s                             | t = 4 s                              |
-+=======+=================+====================+=======================================+======================================+
-| 28.8  | 1e-2            | |video_1_ahmed|_   | .. image:: images/Re28-speed-t05.png  | .. image:: images/Re28-speed-t4.png  |
-+-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
-| 288   | 1e-3            | |video_2_ahmed|_   | .. image:: images/Re288-speed-t05.png | .. image:: images/Re288-speed-t4.png |
-+-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
-| 720   | 4e-2            | |video_3_ahmed|_   | .. image:: images/Re720-speed-t05.png | .. image:: images/Re720-speed-t4.png |
-+-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
+.. list-table:: 
+  :widths: 10 10 40 40
+  :header-rows: 1
+  :align: center
 
-.. |video_1_ahmed| image:: images/video-1-ahmed.jfif 
+  * - Re
+    - :math:`{\nu}`
+    - Video
+    - t = 4 s
+  * - 28.8
+    - 1e-2
+    - |video_1_ahmed|_
+    - .. image:: images/Re28-speed-t4.png
+  * - 288
+    - 1e-3
+    - |video_2_ahmed|_
+    - .. image:: images/Re288-speed-t4.png
+  * - 720
+    - 4e-4
+    - |video_3_ahmed|_
+    - .. image:: images/Re720-speed-t4.png
+
+
+.. |video_1_ahmed| image:: images/Re28-speed-t4.png
 .. _video_1_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=5iqMJ7O_AcU
 
-.. |video_2_ahmed| image:: images/video-2-ahmed.jfif 
+.. |video_2_ahmed| image:: images/Re288-speed-t4.png 
 .. _video_2_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=22salV0Q8_0
 
-.. |video_3_ahmed| image:: images/video-3-ahmed.jfif 
+.. |video_3_ahmed| image:: images/Re720-speed-t4.png
 .. _video_3_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=SVReNMeDNiE
 
 The mesh and processors load is adapted dynamically throughout the simulation, as shown below for ``Re = 720``.
 
-+-------------+----------------------------------------+
-| Time        | Image                                  |
-+=============+========================================+
-| t = 0 s     | .. image:: images/Re720-mesh-t0.png    |
-+-------------+----------------------------------------+
-| t = 0.05 s  | .. image:: images/Re720-mesh-t005.png  |
-+-------------+----------------------------------------+
-| t = 4 s     | .. image:: images/Re720-mesh-t4.png    |
-+-------------+----------------------------------------+
+.. list-table::
+  :widths: 10 40
+  :header-rows: 1
+  :align: center
+
+  * - Time
+    - Image
+  * - t = 0 s
+    - .. image:: images/Re720-mesh-t0.png
+  * - t = 0.05 s
+    - .. image:: images/Re720-mesh-t005.png
+  * - t = 4 s
+    - .. image:: images/Re720-mesh-t4.png
 
 
 ----------------------------

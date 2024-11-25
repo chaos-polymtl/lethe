@@ -53,7 +53,7 @@ Incompressible Flow
 
       incompressible_1_4 [label="Flow past a Backward-Facing Step", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html"];
 
-      incompressible_1_5 [label="Transient Flow around an Ahmed Body", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html"];
+      incompressible_1_5 [label="Transient Flow around an Ahmed Body", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html"];
 
       incompressible_1_6 [label="Transient Flow around a Cylinder", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html"];
 
