@@ -292,7 +292,14 @@ On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clea
 Velocity Distribution
 ----------------------
 
-To validate the quality of the mesh/geometry as well, it is interesting to compare the obtained velocity distributions with analytical data. The following figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution.
+To validate the quality of the mesh/geometry as well, it is interesting to compare the obtained velocity distributions with analytical data. The plots are generated using the following command:
+
+.. code-block:: text
+  :class: copy-button
+
+  python3 velocity_distribution.py -Re 100
+
+where the Reynolds number is given through the ``-Re`` flag. The figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution:
 
 .. image:: image/Reynolds100-poiseuille.png
     :width: 49%
@@ -300,7 +307,6 @@ To validate the quality of the mesh/geometry as well, it is interesting to compa
     :width: 49%
 
 For :math:`\mathrm{Re} = 1000`, an error in the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developed at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`\mathrm{Re} \geq 1000`.
-
 
 ---------------------------
 Possibilities for Extension
