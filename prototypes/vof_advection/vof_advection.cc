@@ -536,7 +536,7 @@ private:
   
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
-  void compute_sign_distance(unsigned int time_iteration, const double global_volume);
+  void compute_sign_distance(unsigned int time_iteration, double global_volume);
   void compute_volume();
   double compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator);
   
@@ -991,7 +991,7 @@ AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::
 
 template <int dim>
 void 
-AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, const double global_volume)
+AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double global_volume)
 {   
   
   pcout << "In redistancation" << std::endl;
@@ -1225,24 +1225,24 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, const 
   
   NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
   // 
-  // double global_volume = 0.0;
+  global_volume = 0.0;
   // 
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  // {
-  //   if (cell->is_locally_owned())
-  //   {
-  // 
-  //     Vector<double> cell_dof_values(dofs_per_cell);
-  // 
-  //     cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-  // 
-  //     global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  // 
-  //   }
-  // }
-  // global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  // 
-  // pcout << "global_volume = " << global_volume << std::endl;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+  
+      Vector<double> cell_dof_values(dofs_per_cell);
+  
+      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+  
+      global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  
+    }
+  }
+  global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
+  
+  pcout << "global_volume = " << global_volume << std::endl;
   
   pcout << "Coucou" << std::endl;
   volume_correction = 0.0;
@@ -1870,12 +1870,15 @@ void AdvectionProblem<dim>::run()
     
     compute_level_set_from_phase_fraction();
     
-    mesh_classifier.reclassify();
-    compute_sign_distance(it, global_volume);
-    
-    compute_phase_fraction_from_level_set();
-    
-    compute_level_set_from_phase_fraction();
+    if (it%1 == 0)
+    {
+      mesh_classifier.reclassify();
+      compute_sign_distance(it, global_volume);
+      
+      compute_phase_fraction_from_level_set();
+      
+      compute_level_set_from_phase_fraction();
+    }
     
     compute_volume();
     
