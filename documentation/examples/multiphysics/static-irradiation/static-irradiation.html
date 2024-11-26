@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Laser Melt Pool" href="../laser-melt-pool/laser-melt-pool.html" /><link rel="prev" title="Melting Cavity" href="../melting-cavity/melting-cavity.html" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Concentric Heat Exchanger" href="../concentric-heat-exchanger/concentric-heat-exchanger.html" /><link rel="prev" title="Melting Cavity" href="../melting-cavity/melting-cavity.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Laser Heating - Lethe documentation</title>
+        <title>Static Irradiation of a Bare Plate - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -268,8 +268,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../melting-cavity/melting-cavity.html">Melting Cavity</a></li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Laser Heating</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../laser-melt-pool/laser-melt-pool.html">Laser Melt Pool</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Static Irradiation of a Bare Plate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
 </ul>
 </li>
@@ -432,155 +431,443 @@
           </label>
         </div>
         <article role="main">
-          <section id="laser-heating">
-<h1>Laser Heating<a class="headerlink" href="#laser-heating" title="Link to this heading">#</a></h1>
-<p>This example simulates a three-dimensional solid block heated with a laser beam which follows a complex path. This mimics an additive manufacturing process.</p>
+          <section id="static-irradiation-of-a-bare-plate">
+<h1>Static Irradiation of a Bare Plate<a class="headerlink" href="#static-irradiation-of-a-bare-plate" title="Link to this heading">#</a></h1>
+<p>This example simulates the static irradiation of a Ti6Al4V bare plate. It is based on the experimental work of Cunningham <em>et al.</em> <a class="footnote-reference brackets" href="#cunningham2019" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and includes the relevant phenomena involved in the laser powder bed fusion manufacturing process.</p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Laser heat source</p></li>
-<li><p>Convection-radiation heat transfer boundary condition</p></li>
-<li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
-<li><p>Time-dependent laser path</p></li>
-<li><p>Mesh adaptation using temperature</p></li>
+<li><p>Volume of fluid (VOF) and Heat Transfer (HT)</p></li>
+<li><p>Unsteady problem with phase change handled by an adaptive BDF1 time-stepping scheme</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
-<h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
+<p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/static-irradiation</span></code>).</p>
 <ul class="simple">
-<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">examples/multiphysics/laser-heating/laser-heating.prm</span></code></p></li>
+<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">2D/static-irradiation.prm</span></code></p></li>
+<li><p>Mesh file: <code class="docutils literal notranslate"><span class="pre">mesh/bare-plate-2D.msh</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>A laser beam heats a three-dimensional solid block. The laser beam is emitted perpendicular to the top surface of the block in the negative z direction. The following schematic describes the geometry and dimensions of block and laser beam:</p>
-<a class="reference internal image-reference" href="../../../_images/geometry1.png"><img alt="Schematic" class="align-center" src="../../../_images/geometry1.png" style="width: 400px;" /></a>
-<p>The laser path changes with time. The laser beam radius and penetration depth are both set to <span class="math notranslate nohighlight">\(0.00005\)</span> m. Because of this small radius and penetration depth, we use adaptive mesh refinement based on the temperature. Thermal boundary conditions are <code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code> with a convective heat transfer coefficient of 5 and an emissivity of 0.4. The corresponding parameter file is:
-<code class="docutils literal notranslate"><span class="pre">laser-heating.prm</span></code>.</p>
+<p>Laser powder bed fusion is a manufacturing process using a laser to selectively melt and consolidate, layer-by-layer, a metal powder. Simply, it corresponds to 3D printing with a metal powder. The main laser-material interaction takes place at the melt pool scale where the flow dynamics involve multiple driving forces:</p>
+<ul class="simple">
+<li><p>phase changes due to laser heating</p></li>
+<li><p>surface tension effects due to the small scale of the melt pool</p></li>
+<li><p>evaporative cooling and recoil pressure as temperature reaches the boiling point</p></li>
+</ul>
+<p>In this example, we consider the static irradiation of Ti6Al4V bare plate (without powder) in a building chamber backfilled with Argon to study the melt pool dynamics. We simulate an irradiation of <span class="math notranslate nohighlight">\(0.5 \;\text{ms}\)</span> by a laser beam with a diameter of <span class="math notranslate nohighlight">\(140\;\mu\text{m}\)</span> and a power of <span class="math notranslate nohighlight">\(156\;\text{W}\)</span>. The following figure shows the case setup, which is based on the experimental work of Cunningham <em>et al.</em> <a class="footnote-reference brackets" href="#cunningham2019" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="case-setup">
+<a class="reference internal image-reference" href="../../../_images/new-benchmark.png"><img alt="../../../_images/new-benchmark.png" src="../../../_images/new-benchmark.png" style="width: 620px;" /></a>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The dimensions (<span class="math notranslate nohighlight">\(H, \Delta h\)</span>, and <span class="math notranslate nohighlight">\(L\)</span>) and the Dirichlet boundary condition values (<span class="math notranslate nohighlight">\(u_{\text{in}}, T_\text{in}\)</span>, and <span class="math notranslate nohighlight">\(T_\text{0}\)</span>) are listed bellow.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Parameter</p></td>
+<td><p>Value</p></td>
+<td><p>Parameter</p></td>
+<td><p>Value</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(H\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(170\;\mu\text{m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(u_{\text{in}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0.1\;\text{m s}^{-1}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta h\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(20\;\mu\text{m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T_{\text{in}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(298\;\text{K}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(L\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(600\;\mu\text{m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T_{\text{0}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(298\;\text{K}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> corresponds to the Argon phase and <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as <span class="math notranslate nohighlight">\(1\;\text{mm}\)</span>. This scaling helps the matrices to have better conditioning, as explained for the pressure scaling in the <a class="reference internal" href="../../../parameters/cfd/stabilization.html"><span class="doc">stabilization subsection</span></a>.</p>
+</div>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
-<p>Time integration is handled by a 2nd order backward differentiation scheme <cite>(bdf2)</cite> (for a better temporal accuracy), for a <span class="math notranslate nohighlight">\(0.003\)</span> seconds simulation time with a constant
-time step of <span class="math notranslate nohighlight">\(5.0 \times 10^{-5}\)</span> seconds.</p>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
+<p>The time integration is handled by a first order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf1</span></code>) with a maximum time-step of <span class="math notranslate nohighlight">\(\Delta t = 1.9 \times 10^{-8} \; \text{s} &lt; \Delta t_\sigma\)</span> which corresponds to the capillary time-step constraint (see <a class="reference internal" href="../capillary-wave/capillary-wave.html"><span class="doc">capillary wave example</span></a>). We use adaptive time stepping with a maximum CFL of <span class="math notranslate nohighlight">\(0.06\)</span> to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 0.003
-  set time step        = 0.00005
-  set output name      = laser-heating
-  set output frequency = 1
-  set output path      = ./output/
-  set subdivision      = 1
-end
-</pre></div>
-</div>
-</section>
-<section id="boundary-conditions">
-<h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>All the boundary conditions are <code class="docutils literal notranslate"><span class="pre">noslip</span></code>, and the heat transfer boundary conditions are <code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code>.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 1
-  subsection bc 0
-    set type = noslip
-  end
-end
-subsection boundary conditions heat transfer
-  set number = 1
-  subsection bc 0
-    set type       = convection-radiation-flux
-    subsection h
-      set Function expression = 5
-    end
-    subsection Tinf
-      set Function expression = 20
-    end
-    subsection emissivity
-      set Function expression = 0.4
-    end
-  end
+  set method           = bdf1
+  set time end         = 0.0005
+  set time step        = 1.9e-8
+  set adapt            = true
+  set max cfl          = 0.06
+  set max time step    = 1.9e-8
+  set output name      = static-irradiation
+  set output path      = output/
+  set output frequency = 100
 end
 </pre></div>
 </div>
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>) and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here only <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code> is enabled.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection, we enable both the VOF and HT solvers.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
+  set VOF           = true
   set heat transfer = true
 end
 </pre></div>
 </div>
 </section>
-<section id="laser-parameters">
-<h3>Laser Parameters<a class="headerlink" href="#laser-parameters" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">laser</span> <span class="pre">parameters</span></code> section, the parameters of the laser model are defined. The exponential decaying model <a class="reference external" href="https://doi.org/10.1016/j.matdes.2018.01.022">[1]</a> is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:</p>
-<div class="math-wrapper docutils container">
-<div class="math notranslate nohighlight">
-\[q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}\]</div>
-</div>
-<p>where <span class="math notranslate nohighlight">\(\eta\)</span>, <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(R\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(r\)</span> and <span class="math notranslate nohighlight">\(z\)</span> denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/laser_heat_source.html">laser parameters</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The scanning path of the laser is defined using a Function expression in the <code class="docutils literal notranslate"><span class="pre">path</span></code> subsection. Here the laser <code class="docutils literal notranslate"><span class="pre">path</span></code> is a function of time, and changes its direction twice during laser operation.</p>
-</div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection laser parameters
-  set enable               = true
-  set type                 = exponential_decay
-  set concentration factor = 50
-  set power                = 3
-  set absorptivity         = 0.6
-  set penetration depth    = 0.00005
-  set beam radius          = 0.00005
-  set start time           = 0
-  set end time             = 0.003
-  set beam orientation     = z-
-  subsection path
-    set Function expression = if(t&lt;0.001, 0.5 * t, if(t&lt;0.002, 0.0005, if(t&lt;0.003 , 0.0005-0.5 * (t-0.002), -1))); if(t&lt;0.001, 0.00025, if(t &lt; 0.002, 0.00025 - 0.5 * (t-0.001) , if(t &lt; 0.003 , -0.00025, -1))) ; 0.0003
+<section id="mesh-and-box-refinement">
+<h3>Mesh and box refinement<a class="headerlink" href="#mesh-and-box-refinement" title="Link to this heading">#</a></h3>
+<p>The coarse level mesh considered for this example is generated with Pointwise to enable the imposition of the inlet and outlet boundary conditions described in the figure above. It is then uniformly refined <span class="math notranslate nohighlight">\(4\)</span> times and box refinement is used to insure a well discretized metal-gas interface.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
+  set type               = gmsh
+  set file name          = ../mesh/bare-plate-2D.msh
+  set initial refinement = 4
+end
+
+subsection box refinement
+  subsection mesh
+    set type           = dealii
+    set grid type      = subdivided_hyper_rectangle
+    set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
   end
+  set initial refinement = 3
 end
 </pre></div>
 </div>
 </section>
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we choose a mesh refinement based on the variable <code class="docutils literal notranslate"><span class="pre">temperature</span></code>. Mesh adaptation is explained in more detail in <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh_adaptation_control.html">mesh adaptation control</a></p>
+<p>As the laser heats the metal-gas interface, a vapor depression forms and deepens, and the liquid-gas interface reaches the bottom boundary of the box refinement. Hence, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">temperature</span></code> as the refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code> to keep a well discretized interface. We choose <span class="math notranslate nohighlight">\(7\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(4\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. The mesh is adapted each <span class="math notranslate nohighlight">\(20\)</span> iterations to reduce the computational cost by setting <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">20</span></code>. Note that the <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> is set to <span class="math notranslate nohighlight">\(0.0\)</span> to avoid coarsening in the center of the melt pool, where the temperature gradient, used by the Kelly error estimator, is less important than at the liquid-gas interface.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                 = kelly
   set variable             = temperature
   set fraction type        = fraction
-  set max refinement level = 4
-  set min refinement level = 0
-  set frequency            = 1
-  set fraction refinement  = 0.5
-  set fraction coarsening  = 0.2
+  set max refinement level = 7
+  set min refinement level = 4
+  set frequency            = 20
+  set fraction refinement  = 0.4
+  set fraction coarsening  = 0.0
 end
 </pre></div>
 </div>
 </section>
-</section>
-<section id="running-the-simulation">
-<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
-<p>Call the lethe-fluid by invoking:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-fluid laser-heating.prm
+<section id="boundary-conditions">
+<h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
+<p>In the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection, we set the boundary conditions described in the figure above for the NS, HT, and VOF solvers. The following <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> sets the NS boundary conditions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 2 # bottom wall
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 5 # bottom part of the right wall
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 6
+    set type = outlet # top part of the right wall
+    set beta = 0
+  end
+  subsection bc 3
+    set id   = 7
+    set type = slip # top wall
+  end
+  subsection bc 4
+    set id   = 4 # top part of the left wall
+    set type = function
+    subsection u
+      set Function expression = 100.0
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 5
+    set id   = 3 # bottom part of the left wall
+    set type = noslip
+  end
+end
 </pre></div>
 </div>
-<p>to run the simulation using eight CPU cores. Feel free to use more.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">heat</span> <span class="pre">transfer</span></code>, we set the boundary conditions for the HT solver:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions heat transfer
+  set number = 6
+  subsection bc 0
+    set id   = 2  # bottom wall
+    set type = temperature
+    subsection value
+      set Function expression = 298
+    end
+  end
+  subsection bc 1
+    set id   = 5 # bottom part of the right wall
+    set type = noflux
+  end
+  subsection bc 2
+    set id   = 6 # top part of the right wall
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 7 # top wall
+    set type = noflux
+  end
+  subsection bc 4
+    set id   = 4 # top part of the left wall
+    set type = temperature
+    subsection value
+      set Function expression = 298
+    end
+  end
+  subsection bc 5
+    set id   = 3 # bottom part of the left wall
+    set type = noflux
+  end
+end
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We recover the <code class="docutils literal notranslate"><span class="pre">id</span></code> of each boundary at the end of the mesh file generated with Pointwise (<code class="docutils literal notranslate"><span class="pre">mesh/bare-plate-2D.msh</span></code>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$PhysicalNames
+6
+1 2 &quot;bottom&quot;
+1 3 &quot;left_bottom&quot;
+1 4 &quot;left_top&quot;
+1 5 &quot;right_bottom&quot;
+1 6 &quot;right_top&quot;
+1 7 &quot;top&quot;
+$EndPhysicalNames
+</pre></div>
+</div>
+<p>Here, the <code class="docutils literal notranslate"><span class="pre">id</span></code> corresponds to the second column and we identify the corresponding boundary in the domain with the description given in the third column.</p>
+</div>
+<p>For the sake of brevity, we leave out the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> because they all corresponds to no flux boundary conditions (<code class="docutils literal notranslate"><span class="pre">none</span></code>). However, in the example’s parameter file, all boundary conditions are defined.</p>
+</section>
+<section id="initial-conditions">
+<h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we set the initial condition for all the solvers:</p>
+<ul class="simple">
+<li><p>NS intial conditions are <span class="math notranslate nohighlight">\(0.0\)</span> for both velocity components and for the pressure</p></li>
+<li><p>HT intial condition corresponds to a uniform temperature <span class="math notranslate nohighlight">\(T_\text{0} = 298\;\text{K}\)</span></p></li>
+<li><p>VOF intial condition allows us to described the metal and gas phases. The bottom part of the domain (<span class="math notranslate nohighlight">\(y&lt;430\;\mu\text{m}\)</span>) corresponds to the Ti6Al4V metal phase (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>), while Argon (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>) fills the top part.</p></li>
+</ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 298
+  end
+  subsection VOF
+    set Function expression = if (y&lt;0.43 , 1, 0)
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="physical-properties">
+<h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the <a class="reference internal" href="../stefan-problem/stefan-problem.html"><span class="doc">Stefan problem</span></a> and <a class="reference internal" href="../melting-cavity/melting-cavity.html"><span class="doc">melting cavity</span></a> examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone).</p>
+<p>We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span> <span class="pre">=</span> <span class="pre">phase</span> <span class="pre">change</span></code>. We refer to the parameter guide <a class="reference internal" href="../../../parameters/cfd/physical_properties.html"><span class="doc">Physical Properties</span></a> for more details on this model.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
+  set number of fluids = 2
+  subsection fluid 1
+    set density              = 4.42e-6
+    set thermal conductivity = 2.88e4
+
+    set thermal expansion model = phase_change
+    set rheological model       = phase_change
+    set specific heat model     = phase_change
+
+    subsection phase change
+      set liquidus temperature = 1928.0
+      set solidus temperature  = 1878.0
+
+      set viscosity liquid = 0.905
+      set viscosity solid  = 9.05e4
+
+      set specific heat liquid = 1.126e9
+      set specific heat solid  = 0.8e9
+      set latent enthalpy      = 2.9e11
+    end
+  end
+
+  subsection fluid 0
+    set density              = 1.784e-9
+    set thermal conductivity = 18
+    set kinematic viscosity  = 56.1
+    set specific heat        = 5.20e8
+  end
+
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id                              = 0
+      set second fluid id                             = 1
+      set surface tension model                       = phase change
+      set surface tension coefficient                 = 1.52
+      set reference state temperature                 = 1928.0
+      set temperature-driven surface tension gradient = -5.5e-4
+      set liquidus temperature                        = 1928.0
+      set solidus temperature                         = 1878.0
+    end
+  end
+end
+</pre></div>
+</div>
+</section>
+<section id="laser-parameters">
+<h3>Laser parameters<a class="headerlink" href="#laser-parameters" title="Link to this heading">#</a></h3>
+<p>We defined the laser heat source in the <code class="docutils literal notranslate"><span class="pre">laser</span> <span class="pre">parameters</span></code> subsection. In the present example, we are considering the irradiation of a bare plate. Thus, the laser only heats the metal-gas interface and we model this surface heat flux using the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> laser model. We refer to the parameter guide <a class="reference internal" href="../../../parameters/cfd/laser_heat_source.html"><span class="doc">Laser Heat Source</span></a> for more details on this model.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection laser parameters
+  set enable           = true
+  set type             = gaussian_heat_flux_vof_interface
+  set power            = 156e6
+  set absorptivity     = 0.35
+  set beam radius      = 0.07
+  set start time       = 0
+  set end time         = 0.002
+  set beam orientation = y-
+  subsection path
+    set Function expression = 0.3; 0.43
+  end
+end
+</pre></div>
+</div>
+<p>The laser is static in the middle of the domain at the metal-gas interface <span class="math notranslate nohighlight">\(\vec{x} = [0.3, 0.43]\)</span>, hence its <code class="docutils literal notranslate"><span class="pre">path</span></code> is independent of the time. Note that the <span class="math notranslate nohighlight">\(y\)</span> component of the <code class="docutils literal notranslate"><span class="pre">path</span></code> is not relevant: the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model applies the laser heat flux at the metal-gas interface no matter its postion along the <span class="math notranslate nohighlight">\(y\)</span> axis. This allows us to model the effect of the interface deformation on the surface heat flux.</p>
+</section>
+<section id="evaporation">
+<h3>Evaporation<a class="headerlink" href="#evaporation" title="Link to this heading">#</a></h3>
+<p>The cooling and the recoil pressure due to a fast, out of equilibrium, evaporation are driving forces in the energy and momentum balances, respectively. We active both terms in the <code class="docutils literal notranslate"><span class="pre">evaporation</span></code> subsection.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection evaporation
+  set evaporation mass flux model = temperature_dependent
+  set enable evaporative cooling  = true
+  set enable recoil pressure      = true
+
+  set evaporation coefficient     = 0.82
+  set recoil pressure coefficient = 0.56
+  set evaporation latent heat     = 8.9e12
+  set molar mass                  = 4.58e-2
+  set universal gas constant      = 8.314e6
+  set boiling temperature         = 3550.0
+  set ambient pressure            = 101.325
+end
+</pre></div>
+</div>
+<p>In this example, we consider the model of Anisimov and Khokhlov <a class="footnote-reference brackets" href="#anisimov1995" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> to compute the evaporative cooling <span class="math notranslate nohighlight">\(q_\text{evap}\)</span> and the recoil pressure <span class="math notranslate nohighlight">\(p_\text{rec}\)</span>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[q_\text{evap} = \phi_\text{evap} L_\text{vap} p_\text{sat}\sqrt{\frac{M}{2\pi R}}\]</div>
+</div>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p_\text{rec} = \psi_\text{evap} p_\text{sat}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\phi_\text{evap}=0.82\)</span> and <span class="math notranslate nohighlight">\(\psi_\text{evap}=0.56\)</span> are the <code class="docutils literal notranslate"><span class="pre">evaporation</span> <span class="pre">coefficient</span></code> and <code class="docutils literal notranslate"><span class="pre">recoil</span> <span class="pre">pressure</span> <span class="pre">coefficient</span></code>, respectively, <span class="math notranslate nohighlight">\(L_\text{vap}=8.9\times 10^{6}\;\text{Jkg}^{-1}\)</span> is the <code class="docutils literal notranslate"><span class="pre">evaporation</span> <span class="pre">latent</span> <span class="pre">heat</span></code>, <span class="math notranslate nohighlight">\(M=4.58\times 10^{-2}\)</span> is the <code class="docutils literal notranslate"><span class="pre">molar</span> <span class="pre">mass</span></code> of the metal, <span class="math notranslate nohighlight">\(R=8.314\;\text{Jmol K}^{-1}\)</span> is the <code class="docutils literal notranslate"><span class="pre">universal</span> <span class="pre">gas</span> <span class="pre">constant</span></code> and <span class="math notranslate nohighlight">\(p_\text{sat}\)</span> is the saturation pressure. The latter is computed according to:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p_\text{sat} = p_\text{atm}\exp{\left[\frac{L_\text{vap}M}{RT_\text{boil}}\left(1-\frac{T_\text{boil}}{T}\right)\right]}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(p_\text{atm}=101.325\;\text{kPa}\)</span> is the <code class="docutils literal notranslate"><span class="pre">ambient</span> <span class="pre">pressure</span></code>, and <span class="math notranslate nohighlight">\(T_\text{boil}=3550\;\text{K}\)</span> is the <code class="docutils literal notranslate"><span class="pre">boiling</span> <span class="pre">temperature</span></code>.</p>
+<p>Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide.</p>
+</section>
+<section id="non-linear-solver">
+<h3>Non-Linear Solver<a class="headerlink" href="#non-linear-solver" title="Link to this heading">#</a></h3>
+<p>The parameters for the non-linear system resolution of the three physiscs are set in the <code class="docutils literal notranslate"><span class="pre">non-linear</span> <span class="pre">solver</span></code> subsection.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+  subsection heat transfer
+    set tolerance      = 100
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+  subsection VOF
+    set tolerance      = 1e-4
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+end
+</pre></div>
+</div>
+<p>We select the tolerances of the NS and HT non-linear solvers so that the norm of the velocity, pressure and temperature corrections make sense with the order of magnitude of the corresponding solution. For example, we set the tolerance on the residual of the HT solver to <code class="docutils literal notranslate"><span class="pre">100</span></code>, resulting in a maximal correction of <span class="math notranslate nohighlight">\(\text{O}(1\times 10^{-3})\)</span> on the temperature, which is <span class="math notranslate nohighlight">\(\text{O}(1\times 10^{3})\)</span>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>--------------
+Heat Transfer
+--------------
+Newton iteration: 0  - Residual:  1.985e+07
+  -Tolerance of iterative solver is : 1.985e+05
+  -Iterative solver took : 2 steps to reach a residual norm of 3.944e+04
+    alpha =      1 res = 1.583e+05  ||dT||_L2 =  71.89      ||dT||_Linfty = 15.46
+Newton iteration: 1  - Residual:  1.583e+05
+  -Tolerance of iterative solver is : 1583
+  -Iterative solver took : 2 steps to reach a residual norm of 409.8
+    alpha =      1 res =   1074     ||dT||_L2 = 0.3355      ||dT||_Linfty = 0.103
+Newton iteration: 2  - Residual:  1074
+  -Tolerance of iterative solver is : 10.74
+  -Iterative solver took : 2 steps to reach a residual norm of 5.567
+    alpha =      1 res =   5.47     ||dT||_L2 = 0.0111      ||dT||_Linfty = 0.001807
+</pre></div>
+</div>
+<p>The linear solver tolerances are set accordingly.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="running-the-simulation">
+<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
+<p>We call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> to launch the simulation by invoking the following command from the <code class="docutils literal notranslate"><span class="pre">2D</span></code> subdirectory:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 14 lethe-fluid static-irradiation.prm
+</pre></div>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Make sure to compile lethe in <cite>Release</cite> mode and
-run in parallel using mpirun. This simulation takes
-<span class="math notranslate nohighlight">\(\approx\)</span> 5 minutes on 8 processes.</p>
+<p>Make sure to compile Lethe in <cite>Release</cite> mode and run in parallel using mpirun.
+This simulation takes <span class="math notranslate nohighlight">\(\sim \, 24\)</span> hours on <span class="math notranslate nohighlight">\(12\)</span> processes.</p>
 </div>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>The following animation shows the temperature distribution in the simulations domain, as well the laser path.</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/e9bZ_3DAyZk" frameborder="0" allowfullscreen></iframe></section>
-<section id="possibility-for-extension">
-<h2>Possibility for Extension<a class="headerlink" href="#possibility-for-extension" title="Link to this heading">#</a></h2>
-<p>This example can be extended to implement phase change (melting the solid block by laser and solidifying again after cooling).</p>
+<p>The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center.</p>
+<iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><p>We also observe a air cushion forming at the triple-phase contact line. We assume it is linked to the fact that wetting is not modeled in the simulation. Thus, the implementation of a wetting model corresponds to a future addition in Lethe.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="cunningham2019" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>R. Cunningham et al., “Keyhole threshold and morphology in laser melting revealed by ultrahigh-speed x-ray imaging,” <em>Science</em>, vol. 363, pp. 849-852, Feb. 2019, doi: <a class="reference external" href="https://www.science.org/doi/10.1126/science.aav4687">10.1126/science.aav4687</a>.</p>
+</aside>
+<aside class="footnote brackets" id="anisimov1995" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>S. I. Anisimov and V. A. Khokhlov. Instabilities in laser-matter interaction. CRC press, 1995.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -589,12 +876,12 @@ run in parallel using mpirun. This simulation takes
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../laser-melt-pool/laser-melt-pool.html">
+          <a class="next-page" href="../concentric-heat-exchanger/concentric-heat-exchanger.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Laser Melt Pool</div>
+                <div class="title">Concentric Heat Exchanger</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -639,21 +926,26 @@ run in parallel using mpirun. This simulation takes
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Laser Heating</a><ul>
+<li><a class="reference internal" href="#">Static Irradiation of a Bare Plate</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#files-used-in-this-example">Files Used in This Example</a></li>
+<li><a class="reference internal" href="#files-used-in-this-example">Files Used in this Example</a></li>
 <li><a class="reference internal" href="#description-of-the-case">Description of the Case</a></li>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
 <li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>
-<li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
 <li><a class="reference internal" href="#multiphysics">Multiphysics</a></li>
-<li><a class="reference internal" href="#laser-parameters">Laser Parameters</a></li>
+<li><a class="reference internal" href="#mesh-and-box-refinement">Mesh and box refinement</a></li>
 <li><a class="reference internal" href="#mesh-adaptation">Mesh Adaptation</a></li>
+<li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
+<li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
+<li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
+<li><a class="reference internal" href="#laser-parameters">Laser parameters</a></li>
+<li><a class="reference internal" href="#evaporation">Evaporation</a></li>
+<li><a class="reference internal" href="#non-linear-solver">Non-Linear Solver</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
 <li><a class="reference internal" href="#results">Results</a></li>
-<li><a class="reference internal" href="#possibility-for-extension">Possibility for Extension</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>

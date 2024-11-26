@@ -54,12 +54,10 @@ Multiphysics
       multiphysics_2_3 [label="Warming up a Viscous Fluid", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html"];
 
       multiphysics_2_4 [label="Melting Cavity", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html"];
+      
+      multiphysics_2_5 [label="Static Irradiation of a Bare Plate", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/static-irradiation/static-irradiation.html"];
 
-      multiphysics_2_5 [label="Laser Heating", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/laser-heating/laser-heating.html"];
-
-      multiphysics_2_6 [label="Laser Melt Pool", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/laser-melt-pool/laser-melt-pool.html"];
-
-      multiphysics_2_7 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
+      multiphysics_2_6 [label="Concentric Heat Exchanger", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html"];
 
       multiphysics_3 [label="Tracer", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html"];  
 

@@ -55,7 +55,7 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 
       set periodic_id        = 1
       set periodic_direction = 0
-      set beta               = 0
+      set beta               = 1
     end
     subsection bc 1
       set type = noslip

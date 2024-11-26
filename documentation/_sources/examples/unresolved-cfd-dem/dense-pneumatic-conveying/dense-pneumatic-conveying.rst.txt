@@ -10,7 +10,7 @@ Features
 
 - Solvers: ``lethe-particles`` and ``lethe-fluid-particles``
 - Three-dimensional problem
-- Displays how to insert particles according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ using the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
+- Particle insertion according to a shape with a `solid object <../../../parameters/dem/solid_objects.html>`_ using the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_
 - Has `periodic boundary conditions <../../../parameters/dem/boundary_conditions.html>`_  in DEM and CFD-DEM
 - Uses a `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_ in CFD-DEM
 - Uses the `adaptive sparse contacts <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ for particle loading in DEM
@@ -21,7 +21,7 @@ Features
 Files Used in this Example
 ---------------------------
 
-All the files mentioned below are located in the example folder (``examples/unresolved-cfd-dem/dense-pneumatic-conveying``).
+All example's files are located in the example's folder (``examples/unresolved-cfd-dem/dense-pneumatic-conveying``), and they include:
 
 - Parameter files for particle loading and settling: ``loading-particles.prm`` and ``settling-particles.prm``
 - Parameter file for CFD-DEM simulation of the pneumatic conveying: ``pneumatic-conveying.prm``
@@ -32,15 +32,11 @@ Description of the Case
 -----------------------
 
 This example simulates the conveying of particles arranged in a plug/slug with a stationary layer.
-Since the initial particle layout plays an important role in the regime of the pneumatic conveying, the particles are already forming a plug at the beginning of the CFD-DEM simulation.
-Three simulation runs need to be performed.
-First, we call ``lethe-particles`` to load the particles with the file ``loading-particles.prm``.
-The setup of the simulation is a pipe with a solid object (mesh) that represents the shape of a slug.
-The insertion of particles is done using the plane insertion.
-Second, we call ``lethe-particles`` to settle the particles with the file ``settling-particles.prm``. Only the direction of gravity is changed.
-Finally, we call ``lethe-fluid-particles`` to simulate the dense pneumatic conveying with the file ``pneumatic-conveying.prm`` using periodic boundary conditions.
-We enable checkpointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation.
 The geometry of the pipe and the particle properties are based on the work of Lavrinec *et al*. [#lavrinec2021]_
+
+As the other Unresolved CFD-DEM simulations, this example starts from inserting the particles.
+
+However, since the initial position of the particles play an important role in the dynamics, a more involved insertion procedure is used to generate an initial plug of particles as illustrated in the following figure.
 
 .. figure:: images/insertion.png
     :alt: insertion
@@ -48,6 +44,13 @@ The geometry of the pipe and the particle properties are based on the work of La
 
     View of the pipe after the loading of particles with the insertion plane.
 
+In summary, the simulation has three steps:
+
+- First, we run ``lethe-particles loading-particles.prm`` to load the particles. The insertion of particles is done using the plane insertion method.
+- Then, we run ``lethe-particles settling-particles.prm`` to reorganize the particles in the system. The gravity is changed to the y-direction and we wait for particles to settle.
+- Finally, we call ``lethe-fluid-particles pneumatic-conveying.prm`` to simulate the dense pneumatic conveying.
+
+We enable checkpointing in order to write the DEM checkpoint files in between the steps, which will be used as the starting point of the next.
 
 .. figure:: images/pneumatic.png
     :alt: pneumatic-conveying
@@ -62,12 +65,12 @@ DEM Parameter files
 Loading Particles
 ~~~~~~~~~~~~~~~~~
 
-In this section we introduce the different sections of the parameter file ``loading-particles.prm`` needed to load the particles of the simulation.
+In this section we introduce the different sections of the parameter file ``loading-particles.prm``.
 
 Mesh
 ----
 
-In this example, we are simulating a horizontal cylindrical pipe. We use the `custom cylinder <../../../parameters/cfd/mesh.html>`_ of type balanced. We use this type of mesh in order to have uniform cell size in the radial direction. The length of a cell is about 2 times the diameter of the particles in each direction. The classical cylinder mesh of deal.II has smaller cells in the center which restrict the size of the particles. The length of the pipe is 1 m and the diameter is 0.084 m. The conveying is processed in the x-direction through periodic boundary conditions.
+In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the `custom cylinder <../../../parameters/cfd/mesh.html>`_ of type balanced, which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells' size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.
 
 .. code-block:: text
 
@@ -80,7 +83,7 @@ In this example, we are simulating a horizontal cylindrical pipe. We use the `cu
    end
 
 .. note::
-    Note that, since the mesh is cylindrical, ``set expand particle-wall contact search = true``. Details on this in the `DEM mesh parameters guide <../../../parameters/dem/mesh.html>`_.
+    Note that, since the mesh is cylindrical, ``set expand particle-wall contact search = true``. For further details, refer to `DEM mesh parameters guide <../../../parameters/dem/mesh.html>`_.
 
 A cross-section of the resulting mesh is presented in the following figure.
 
@@ -94,9 +97,12 @@ Lagrangian Physical Properties
 ------------------------------
 
 The lagrangian properties were based on the work of Lavrinec *et al*. [#lavrinec2021]_, except for the Young's modulus that was deliberately reduced to get a higher Rayleigh critical time step.
-The gravity is set in the x-direction to allow the packing of the particles from the right side of the pipe.
-The number of particles in the simulation is 32194. When the example was setup, the number specified in the simulation was higher since the insertion is done with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_, which will insert particles up to when they reach the plane.
-In order to avoid confusion with the number of particles in the parameter file, we did give the real number of particles inserted after 30 seconds.
+
+For the particle insertion, we set gravity in x-direction to allow the packing of the particles from the right side of the pipe.
+The number of particles in the simulation is 32194. 
+
+.. note::
+  In order to avoid confusion with the number of particles in the parameter file, we did give the real number of particles inserted after 30 seconds. However, this is not necessary for the plane insertion method. We refer the reader to the `DEM insertion info guide <../../../parameters/dem/insertion_info.html#plane>`_ for further information.
 
 .. code-block:: text
 
@@ -124,7 +130,7 @@ In order to avoid confusion with the number of particles in the parameter file, 
 Insertion Info
 --------------
 
-As said in the previous section, the particles are inserted with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_. The plane is located at the right side of the pipe. As we can see from the following figure, the plane is positioned at an angle. Since the plane insertion method will insert one particle in a cell that is intersected by the plane, we need to place the plane so it does not intersect the area above the solid object. Particles have an initial velocity in x-direction in order to speed up the packing process and in y-direction to have more collisions and randomness in the distribution.
+As said in the previous section, the particles are inserted with the `plane insertion method <../../../parameters/dem/insertion_info.html#plane>`_. The plane, in red, is located at the right-hand side of the pipe. As we can see from the following figure, the plane is positioned at an angle. Since the plane insertion method will insert one particle in a cell that is intersected by the plane, we need to place the plane so it does not intersect the area above the solid object. Particles have an initial velocity in x-direction in order to speed up the packing process and in y-direction to have more collisions and randomness in the distribution.
 
 .. figure:: images/insertion-plane.png
     :alt: insertion.
@@ -148,7 +154,7 @@ As said in the previous section, the particles are inserted with the `plane inse
 Boundary Conditions DEM
 -----------------------
 
-Periodic boundary conditions need to be setup in the DEM simulation since we use them in the CFD-DEM simulation. They are therefore already configured for compatibility. However, we do not want periodicity during the loading of the particles.
+Periodic boundary conditions need to be setup in the DEM simulation since we use them in the CFD-DEM simulation.
 
 .. code-block:: text
 
@@ -163,10 +169,12 @@ Periodic boundary conditions need to be setup in the DEM simulation since we use
      end
    end
 
+We need to set the periodic boundary conditions now for compatibility, but particles do not interact with these boundaries at the current stage. The next subsection explains how particles are prevented from interacting with the periodic boundaries.
+
 Floating Walls
 --------------
 
-In order to avoid particles passing through the periodic boundary conditions, we use floating walls. The floating walls are placed at the left and right side of the pipe. We need this pair of walls because periodic particles do not interact with the walls on the other side of the periodic boundary condition.
+We use floating walls to avoid particles passing through the periodic boundary conditions. The floating walls are placed at the left and right side of the pipe. We need this pair of walls because periodic particles do not interact with the periodic boundaries.
 
 .. code-block:: text
 
@@ -205,7 +213,7 @@ In order to avoid particles passing through the periodic boundary conditions, we
 Solid Objects
 -------------
 
-The solid object is a simplex surface mesh that represents the shape of a slug. The mesh is generated with the `Gmsh <https://gmsh.info/>`_ software.
+The solid object is a simplex surface mesh that represents the shape of a slug. The mesh is generated with `Gmsh <https://gmsh.info/>`_.
 The following figure shows the different parts of the slug. The length of the slug core (where particles fully obstruct the pipe; in green) is 0.5 m, and 45° planes inclined are placed the rear and the front of the slug (in blue). The stationary layer (the layer between periodic slugs; in red) has a height of 0.021 m which represents 20 % of the cross-section area of the pipe. 
 
 .. figure:: images/slug.png
@@ -234,7 +242,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 
 .. note::
 
-    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation. The method will disabled the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are use in the load balancing method. The `discharge plate example <../../dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
+    Here, we use the `Adaptive Sparse Contacts (ASC) <../../../parameters/dem/model_parameters.html#adaptive-sparse-contacts-asc>`_ method to speedup the simulation,. The method will disable the contact computation in quasi-static areas which represents a significant part of the domain during the loading of the particles. Weight factor parameters for the ASC status are used in the load balancing method. The `discharge plate example <../../dem/plate-discharge/plate-discharge.html>`_ is a good example of the use of the ASC method with DEM.
 
 .. code-block:: text
 
@@ -266,7 +274,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
 Simulation Control
 ------------------
 
-Here, we define the time step and the simulation end time. 30 seconds of simulation are needed to load the particles. This long simulation time is caused by the plane insertion method that inserts only a small number of particles at a time (about 1000 particles per second of simulation).
+Here, we define the time step and the simulation end time. 30 seconds of simulation are needed to load the particles. The long simulation time is due to the plane insertion method, which only allows for about 1000 particles per second of simulation.
 
 .. code-block:: text
 
@@ -317,7 +325,7 @@ Here we allow a 2.5 seconds for the settling of the particles. Since this simula
 Restart
 -------
 
-This simulation reads the restart, meaning this option is set to true. Also, the checkpointing is reduce to 0.5 seconds.
+This simulation restarts from the previous step. Also, the checkpointing is reduced to 0.5 seconds.
 
 .. code-block:: text
 
@@ -331,7 +339,7 @@ This simulation reads the restart, meaning this option is set to true. Also, the
 Lagrangian Physical Properties
 ------------------------------
 
-The main difference in this simulation is the gravity. It changes to the y-direction to be coherent with the next simulation using the CFD-DEM solver.
+The main difference between the insertion and settling simulations is the direction of the gravity, which is changed to y-direction to be coherent with the next simulation using the CFD-DEM solver.
 
 .. code-block:: text
 
@@ -363,7 +371,7 @@ CFD-DEM Parameter file
 Pneumatic Conveying Simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The CFD simulation is to be carried out using the slug generated in the previous step. We will discuss the different sections of the parameter file used for the CFD-DEM simulation.
+The CFD simulation is carried out using the slug generated in the previous step. We will discuss the different sections of the parameter file used for the CFD-DEM simulation.
 The mesh and the DEM boundary condition sections are identical to the ones in the DEM simulations and will not be shown again.
 
 Lagrangian Physical Properties
@@ -397,7 +405,7 @@ The physical properties of the particles are the same as in the DEM simulations,
 Model Parameters
 ----------------
 
-Model parameters are the same as in the DEM simulation, but we do not use any strategies for performance enhancement, such as load balancing or adaptive sparse contacts.
+Model parameters are the same as in the DEM simulation, but without load balancing or adaptive sparse contacts.
 
 .. code-block:: text
 
@@ -431,7 +439,7 @@ The simulation lasts 5 seconds and the CFD time step is 5e-4 seconds.
 Physical Properties
 -------------------
 
-The physical properties of air are the same as Lavrinec *et al*. [#lavrinec2021]_
+The physical properties of air are the same as Lavrinec *et al*. [#lavrinec2021]_.
 
 .. code-block:: text
 
@@ -445,7 +453,7 @@ The physical properties of air are the same as Lavrinec *et al*. [#lavrinec2021]
 Boundary Conditions
 -------------------
 
-The boundary condition at the wall of the pipe is a weak function where the Dirichlet condition is weakly imposed as a no-slip condition, since we specify zero velocity. The inlet and the outlet have periodic boundaries. `See here <../../../parameters/cfd/boundary_conditions_cfd.html>`_ for more information about those boundary conditions.
+The boundary condition at the wall of the pipe is a weak function where the Dirichlet condition is weakly imposed as a no-slip condition. The inlet and the outlet have periodic boundaries. `See here <../../../parameters/cfd/boundary_conditions_cfd.html>`_ for more information on boundary conditions.
 
 .. code-block:: text
 
@@ -476,7 +484,9 @@ The boundary condition at the wall of the pipe is a weak function where the Diri
 Flow control
 ------------
 
-Since the simulation has periodic boundary conditions, a correction volumetric force is needed to drive the flow to compensate the pressure drop in the pipe. In other to achieve this, we use the `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_. Here, we also apply a proportional force on particles. The average velocity is set to 3 m/s, this correspond to the average over the entire domain considering the void fraction. The flow controller performs well for CFD simulation, but needs some tuning for CFD-DEM simulation. By default, the controller has a high stiffness and aims to correct the flow in the next time step. However, the carrying of particles by the flow leads to a response time that is not taken into account and results in a oscillation of the velocity of the flow. To avoid this, we use the volumetric force threshold ``beta threshold`` and the ``alpha`` relaxation parameter. Here, the volumetric force value will not be updated if the new value is within the 5% of the previous value. Also, the correction to apply to the previous volumetric force value is reduced by a factor of 0.25. This way, the velocity of the flow and the particles are more stable.
+Since the simulation has periodic boundary conditions, a correction volumetric force is needed to drive the flow to compensate the pressure drop in the pipe. For this, we use the `dynamic flow controller <../../../parameters/cfd/dynamic_flow_control.html>`_. Here, we also apply a proportional force on particles. The average velocity is set to 3 m/s, this correspond to the average over the entire domain considering the void fraction. The flow controller performs well for CFD simulation, but needs some tuned for CFD-DEM simulation. 
+
+By default, the controller has a high stiffness and aims to correct the flow in the next time step. However, the carrying of particles by the flow leads to a response time that is not taken into account and results in a oscillation of the velocity of the flow. To avoid this, we use the volumetric force threshold ``beta threshold`` and the ``alpha`` relaxation parameter. Here, the volumetric force value will not be updated if the new value is within the 5% of the previous value. Also, the correction to apply to the previous volumetric force value is reduced by a factor of 0.25. This way, the velocity of the flow and the particles are more stable.
 
 .. code-block:: text
 
