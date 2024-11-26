@@ -455,7 +455,7 @@ The following video shows on the left the temperature evolution in the metal, an
 
 .. raw:: html
 
-    <iframe width="700" height="394" src="https://www.youtube.com/embed/6zXlcNbjGRE" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 We also observe a air cushion forming at the triple-phase contact line. We assume it is linked to the fact that wetting is not modeled in the simulation. Thus, the implementation of a wetting model corresponds to a future addition in Lethe.
 
