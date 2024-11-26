@@ -52,7 +52,7 @@ The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary c
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | Parameter                 | Value                     | Parameter                  | Value                       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
-| :math:`H`                 | :math:`170\;\mu\text{m}`  | :math:`u_{\text{in}}`| :math:`0.1\;\text{m s}^{-1}`|
+| :math:`H`                 | :math:`170\;\mu\text{m}`  | :math:`u_{\text{in}}`      | :math:`0.1\;\text{m s}^{-1}`|
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | :math:`\Delta h`          | :math:`20\;\mu\text{m}`   | :math:`T_{\text{in}}`      | :math:`298\;\text{K}`       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
@@ -62,7 +62,7 @@ The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary c
 There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
 
 .. note::
-  To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
+  To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`. This scaling helps the matrices to have better conditioning, as explained for the pressure scaling in the :doc:`stabilization subsection <../../../parameters/cfd/stabilization>`.
     
 --------------
 Parameter File
@@ -269,9 +269,6 @@ Physical Properties
 The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
 
 We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
-
-.. note::
-  To improve the performances of the solvers, all dimensional quantites below are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
   
 .. code-block:: text
 
@@ -454,7 +451,7 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the dark red line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
 
 .. raw:: html
 
