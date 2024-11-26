@@ -115,24 +115,25 @@ subsection mesh adaptation
   set initial refinement steps = 4
 end
 
-
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
-    set id                 = 0
-    set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set id   = 0
+    set type = slip
   end
   subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
     set id   = 2
     set type = noslip
   end
-  subsection bc 2
+  subsection bc 3
     set id   = 3
     set type = noslip
   end
@@ -141,7 +142,6 @@ end
 subsection boundary conditions VOF
   set number = 4
 end
-
 
 #---------------------------------------------------
 # FEM
