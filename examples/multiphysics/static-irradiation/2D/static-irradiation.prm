@@ -37,7 +37,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ./mesh/2d-benchmark.msh
+  set file name          = ../mesh/bare-plate-2D.msh
   set initial refinement = 4
 end
 

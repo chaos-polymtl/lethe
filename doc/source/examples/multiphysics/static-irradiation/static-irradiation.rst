@@ -33,7 +33,7 @@ Description of the Case
 
 Laser powder bed fusion is a manufacturing process using a laser to selectively melt and consolidate, layer-by-layer, a metal powder. Simply, it corresponds to 3D printing with a metal powder. The main laser-material interaction takes place at the melt pool scale where the flow dynamics involve multiple driving forces:
 
-- phase change due to laser heating
+- phase changes due to laser heating
 - surface tension effects due to the small scale of the melt pool
 - evaporative cooling and recoil pressure as temperature reaches the boiling point
 
@@ -47,12 +47,12 @@ In this example, we consider the static irradiation of Ti6Al4V bare plate (witho
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`\vec{u}_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed bellow.
+The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`u_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed bellow.
 
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | Parameter                 | Value                     | Parameter                  | Value                       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
-| :math:`H`                 | :math:`170\;\mu\text{m}`  | :math:`\vec{u}_{\text{in}}`| :math:`0.1\;\text{m s}^{-1}`|
+| :math:`H`                 | :math:`170\;\mu\text{m}`  | :math:`u_{\text{in}}`| :math:`0.1\;\text{m s}^{-1}`|
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | :math:`\Delta h`          | :math:`20\;\mu\text{m}`   | :math:`T_{\text{in}}`      | :math:`298\;\text{K}`       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
@@ -108,7 +108,7 @@ The coarse level mesh considered for this example is generated with Pointwise to
 
     subsection mesh
       set type               = gmsh
-      set file name          = ./mesh/bare-plate-2D.msh
+      set file name          = ../mesh/bare-plate-2D.msh
       set initial refinement = 4
     end
 
@@ -439,7 +439,7 @@ The linear solver tolerances are set accordingly.
 Running the Simulation
 -----------------------
 
-We call ``lethe-fluid`` to launch the simulation by invoking the following command:
+We call ``lethe-fluid`` to launch the simulation by invoking the following command from the ``2D`` subdirectory:
 
 .. code-block:: text
   :class: copy-button
