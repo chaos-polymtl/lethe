@@ -20,8 +20,8 @@ All files mentioned below are located in the example's folder (``examples/incomp
 
 - Geometry file: ``backward-facing-step.geo``
 - Mesh file: ``backward-facing-step.msh``
-- Parameter file for the base case (:math:`\mathrm{Re} = 100`): ``Reynolds100.prm``
-- Parameter file for the higher-Reynolds case (:math:`\mathrm{Re} = 1000`): ``Reynolds1000.prm``
+- Parameter file for the base case (:math:`\mathrm{Re} = 100`): ``Reynolds100_steady.prm``
+- Parameter file for the higher-Reynolds case (:math:`\mathrm{Re} = 1000`): ``Reynolds1000_steadybdf.prm``
 - Postprocessing Python script for computing the reattachment length: ``bisection.py``
 - Postprocessing Python script for computing velocity distributions at outlet: ``velocity_distribution.py``
 
@@ -246,9 +246,9 @@ The simulation can be executed using the following command (assuming that the so
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np j lethe-fluid Reynolds100.prm
+  mpirun -np j lethe-fluid Reynolds100_steady.prm
 
-For the case where :math:`\textrm{Re}=1000`, replace the name of the parameter file by ``Reynolds100.prm``.
+For the case where :math:`\textrm{Re}=1000`, replace the name of the parameter file by ``Reynolds1000_steadybdf.prm``.
 
 ----------------------
 Results and Discussion
