@@ -102,8 +102,7 @@ Consequently, the physical properties are defined as follows :
       end
     end
 	
-.. note::
-	The ``kinematic viscosity`` is the only parameter that changes coherently with :math:`\mathrm{Re}`. For :math:`\mathrm{Re} = 100`, we set the kinematic viscosity to :math:`0.02`, while for :math:`\mathrm{Re} = 1000` we set it to :math:`0.002`.
+The ``kinematic viscosity`` is the only parameter that changes coherently with :math:`\mathrm{Re}`. For :math:`\mathrm{Re} = 100`, we set the kinematic viscosity to :math:`0.02`, while for :math:`\mathrm{Re} = 1000` we set it to :math:`0.002`.
 
 Mesh
 ~~~~
@@ -216,7 +215,7 @@ For :math:`\mathrm{Re} = 100`, standard parameters are suitable to achieve conve
       end
     end         
 	
-For :math:`\mathrm{Re} = 1000`, however, we use an ``amg`` preconditioner with an ILU smoother with ``amg preconditioner ilu fill = 1`` in order to save calculation time and increase the number of Krylov vectors:
+For :math:`\mathrm{Re} = 1000`, however, we use an ``amg`` preconditioner with an ILU smoother with ``amg preconditioner ilu fill = 1`` and increase the number of Krylov vectors:
 
 .. code-block:: text
 
@@ -241,7 +240,7 @@ For :math:`\mathrm{Re} = 1000`, however, we use an ``amg`` preconditioner with a
 Running the Simulations
 -----------------------
 
-The simulation can be executed using the following command (assuming that the solver's location is in your PATH environment variable and you want to use "j" processes for parallel computations):
+The simulation can be executed using the following command (assuming that the solver's location is in your PATH environment variable and you want to use ``j`` processes for parallel computations):
 
 .. code-block:: text
   :class: copy-button
@@ -307,11 +306,9 @@ For :math:`\mathrm{Re} = 1000`, an error in the velocity profile is visually not
 Possibilities for Extension
 ---------------------------
 
-- **Test the example for other Reynolds numbers**: the parameter file provided for :math:`\mathrm{Re} = 100` should work for all Reynolds numbers below :math:`\mathrm{Re} = 600`, for higher Reynolds numbers use the parameter file provided for :math:`\mathrm{Re} = 1000`.
+- **Test the example for other Reynolds numbers**: the parameter file provided for :math:`\mathrm{Re} = 100` should work for all Reynolds numbers below :math:`\mathrm{Re} = 600`, for higher Reynolds numbers use the parameter file provided for :math:`\mathrm{Re} = 1000`. 
 - **Validate with a 3D geometry/mesh**: Since experimental data takes into account 3D effects, it would be interesting to compare numerical data to experimental results.
 - **Use second order elements for higher Reynolds simulations**: Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratic elements can theoretically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
-- **Validate for even higher Reynolds numbers**: Some studies compute their simulations up to :math:`\mathrm{Re} = 3000`. It would also be interesting to visualize the formation of more eddies further downstream of the step.
-
 
 ----------
 References
