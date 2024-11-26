@@ -17,7 +17,7 @@ Features
 ****
 
 ---------------------------
-Files Used in This Example
+Files Used in this Example
 ---------------------------
 
 All files mentioned below are located in the example's folder (``examples/multiphysics/static-irradiation``).
@@ -62,7 +62,7 @@ The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary c
 There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
 
 .. note::
-  To improve the performances of the solvers, all dimensional quantites in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
+  To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`.
     
 --------------
 Parameter File
@@ -71,7 +71,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 2nd-order backward differentiation scheme (``bdf1``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling. 
+The time integration is handled by a first order backward differentiation scheme (``bdf1``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling. 
 
 .. code-block:: text
 
@@ -389,7 +389,7 @@ Both terms are then applied at the liquid-gas interface using the Continuous Sur
 Non-Linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The parameters for the non-linear system resolution of the three physiscs are set in the ``non linear solver`` subsection.
+The parameters for the non-linear system resolution of the three physiscs are set in the ``non-linear solver`` subsection.
 
 .. code-block:: text
 
