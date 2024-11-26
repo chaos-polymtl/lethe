@@ -5,6 +5,7 @@ Air Bubble Compression
 This example simulates the compression of an air bubble by surrounding liquid.
 The problem is inspired by the test case of Caltagirone *et al.* [#caltagirone2011]_
 
+****
 
 --------
 Features
@@ -16,6 +17,7 @@ Features
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
 
+****
 
 ---------------------------
 Files Used in This Example
@@ -26,6 +28,7 @@ Both files mentioned below are located in the example's folder (``examples/multi
 - Parameter file: ``air-bubble-compression.prm``
 - Postprocessing python script: ``air-bubble-compression-postprocessing.py``
 
+****
 
 -----------------------
 Description of the Case
@@ -46,6 +49,8 @@ The initial configuration of this example is illustrated below.
 
 .. note::
   In this example, gravity and surface tension forces are not considered.
+
+****
 
 --------------
 Parameter File
@@ -263,6 +268,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
       set initial refinement steps = 6
     end
 
+****
 
 -----------------------
 Running the Simulation
@@ -280,6 +286,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 .. warning:: 
     Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 1.5 minute on 8 processes.
 
+****
 
 -------
 Results
@@ -332,6 +339,7 @@ The following figures present the comparison between the analytical results and 
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
+****
 
 ----------
 References

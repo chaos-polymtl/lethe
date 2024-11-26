@@ -4,6 +4,7 @@ Dam-Break
 
 This example simulates the dam break experiments of Martin and Moyce [#martin1952]_.
 
+****
 
 ----------------------------------
 Features
@@ -14,6 +15,7 @@ Features
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
+****
 
 ---------------------------
 Files Used in This Example
@@ -23,6 +25,7 @@ Both files mentioned below are located in the example's folder (``examples/multi
 - Parameter file: ``dam-break-Martin-and-Moyce.prm``
 - Postprocessing Python script: ``dam-break-2d.py``
 
+****
 
 ---------------------------
 Description of the Case
@@ -47,6 +50,7 @@ The following schematic describes the geometry and dimensions of the simulation 
     All the four boundary conditions are ``slip``, and an external 
     gravity field of :math:`-1` is applied in the :math:`y` direction.
 
+****
 
 --------------
 Parameter File
@@ -207,6 +211,7 @@ is adapted to the initial condition for the phase.
       set initial refinement steps = 4
     end
 
+****
 
 ----------------------
 Running the Simulation
@@ -227,6 +232,7 @@ to run the simulation using six CPU cores. Feel free to use more.
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
     This simulation takes :math:`\sim \, 3` minutes on :math:`6` processes.
 
+****
 
 -----------------------
 Results and Discussion
@@ -268,6 +274,7 @@ and refines the meshes on the interface.
     :alt: refinement
     :align: center
 
+****
 
 ----------------------------
 References
