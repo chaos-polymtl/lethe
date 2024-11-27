@@ -22,7 +22,7 @@ All files mentioned below are located in the example's folder (``examples/incomp
 - Mesh file: ``backward-facing-step.msh``
 - Parameter file for the base case (:math:`\mathrm{Re} = 100`): ``Reynolds100_steady.prm``
 - Parameter file for the higher-Reynolds case (:math:`\mathrm{Re} = 1000`): ``Reynolds1000_steadybdf.prm``
-- Postprocessing Python script for computing the reattachment length: ``bisection.py``
+- Postprocessing Python script for computing the reattachment length: ``reattachment_length.py``
 - Postprocessing Python script for computing velocity distributions at outlet: ``velocity_distribution.py``
 
 
@@ -53,7 +53,7 @@ For :math:`\mathrm{Re} = 100`, the solution is stable enough to be computed in s
     subsection simulation control
       set method            = steady
       set number mesh adapt = 10
-      set output name       = output
+      set output name       = backward_facing_step_output
       set output frequency  = 1
     end
 	
@@ -253,40 +253,36 @@ For the case where :math:`\textrm{Re}=1000`, replace the name of the parameter f
 Results and Discussion
 ----------------------
 
-Low Reynolds Number (:math:`\mathrm{Re}=100`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:math:`\mathrm{Re}=100`
+~~~~~~~~~~~~~~~~~~~~~~~
 
-After opening the file ``backward_facing_step_output.pvd`` with Paraview, the following results are obtained.
-
-For :math:`\mathrm{Re} = 100` :
+After opening the file ``backward_facing_step_output.pvd`` with Paraview, the following results are observed:
 
 .. image:: image/Reynolds100_profile.png
 
-It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
+It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`2.7 \leq x_r \leq 2.9` (:math:`17.7 \leq x \leq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically using the following equation:
 
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
 
-which can be resolved with a bisection algorithm or with any other appropriate numerical approach. By doing this step for each successively refined mesh (10 meshes as specified by ``set number mesh adapt`` in the simulation control section), a mesh refinement analysis can be achieved.
+which can be resolved with a bisection algorithm or with any other appropriate numerical approach. The postprocessing script provided can be used to compute this reattachment length by using the following command: 
 
-.. image:: image/Reynolds100-mesh-refinement.png
-    :width: 49%
-.. image:: image/Reynolds100-error-analysis.png
-    :width: 49%
+.. code-block:: text
+  :class: copy-button
 
-The final value of :math:`x_r` is :math:`2.893`. We notice from the graph that convergence is obtained quite quickly. In addition, the figure to the left illustrates the evolution of the relative error as the number of elements increases. The reference value used in the error analysis is taken from Erturk (2008) [#erturk2008]_.
+  python3 reattachment_length.py -Re 100
+
+The final value of :math:`x_r` is :math:`2.896` with a relative error of :math:`0.8\%`.  The reference value used to compute the error is the one given by Erturk (2008) [#erturk2008]_.
 
 
-Higher Reynolds Number (:math:`\mathrm{Re}=1000`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:math:`\mathrm{Re}=1000`
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a similar way as we did in the last subsection, the solution for :math:`\mathrm{Re} = 1000` can be obtained.
-
-For :math:`\mathrm{Re} = 1000` : 
+In a similar way as we did in the last subsection, for :math:`\mathrm{Re} = 1000` the results that can be visualized in Paraview are the following:
 
 .. image:: image/Reynolds1000_profile.png
 
-On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python code as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
+On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). The same Python code as before can be used by setting the Reynolds flag to ``-Re 1000``; we obtain :math:`x_r = 12.602` as a numerical result with a relative error of :math:`3.9\%`.
 
 ----------------------
 Velocity Distribution
@@ -312,7 +308,7 @@ For :math:`\mathrm{Re} = 1000`, an error in the velocity profile is visually not
 Possibilities for Extension
 ---------------------------
 
-- **Test the example for other Reynolds numbers**: the parameter file provided for :math:`\mathrm{Re} = 100` should work for all Reynolds numbers below :math:`\mathrm{Re} = 600`, for higher Reynolds numbers use the parameter file provided for :math:`\mathrm{Re} = 1000`. 
+- **Test the example for other Reynolds numbers**: the parameter file provided for :math:`\mathrm{Re} = 100` should work for all Reynolds numbers below :math:`\mathrm{Re} = 600`, for higher Reynolds numbers use the parameter file provided for :math:`\mathrm{Re} = 1000`. Reference data for other Reynolds numbers can be found in the ``benchmark-data.txt`` file.
 - **Validate with a 3D geometry/mesh**: Since experimental data takes into account 3D effects, it would be interesting to compare numerical data to experimental results.
 - **Use second order elements for higher Reynolds simulations**: Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratic elements can theoretically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
 
