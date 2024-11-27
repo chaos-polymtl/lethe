@@ -46,7 +46,7 @@ The following subsections show the different parameters used in the simulations.
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-For :math:`\mathrm{Re} = 100`, the solution is stable enough to be computed in steady state by setting ``method`` to ``steady``: 
+At :math:`\mathrm{Re} = 100`, the solution is stable enough to be computed as steady state. We do so by setting ``method`` to ``steady``: 
 
 .. code-block:: text
 
@@ -59,7 +59,7 @@ For :math:`\mathrm{Re} = 100`, the solution is stable enough to be computed in s
 	
 A mesh refinement analysis can be done with ``set number mesh adapt = 10``. By starting from a very coarse mesh and by dynamically refining the mesh at least 10 times, asymptotic convergence can be clearly observed.
 
-However, for :math:`\mathrm{Re} = 1000`, convergence can be quite difficult to obtain while doing a steady state simulation. In fact, as the Reynolds number increases, the problem becomes progressively stiffer to a point where the ``steady`` solver ultimately fails. With that in mind, the case can be solved as a transient problem until the steady state solution is obtained. This can be achieved with the ``method = steady_bdf`` parameter.
+However, at :math:`\mathrm{Re} = 1000`, convergence can be quite difficult to obtain while doing a steady state simulation. As the Reynolds number increases, the problem becomes progressively stiffer to a point where the ``steady`` solver ultimately fails. With that in mind, the case can be solved as a transient problem until the steady state solution is obtained. This can be achieved with the ``method = steady_bdf`` parameter.
 
 .. code-block:: text
 
@@ -74,7 +74,7 @@ However, for :math:`\mathrm{Re} = 1000`, convergence can be quite difficult to o
       set output frequency             = 1
     end
   
-``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. In this case, choosing ``stop tolerance = 1e-5`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
+``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady state simulation. In this case, choosing ``stop tolerance = 1e-5`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -129,7 +129,7 @@ In this example, the mesh adaptation algorithm is based on the Kelly error estim
       set fraction refinement = 0.2
     end
 	
-For higher Reynolds number with adjoint time stepping, ``frequency = 5`` can be added to the above parameters in order to obtain a reasonable number of elements throughout the simulation. In this particular case, the mesh would be refined at every fifth time iteration. As an example, the mesh after eight refinement steps for :math:`\mathrm{Re} = 100` looks as follows:
+For higher Reynolds numbers with adjoint time stepping, ``frequency = 5`` can be added to the above parameters to obtain a reasonable number of elements throughout the simulation. In this particular case, the mesh would be refined at every fifth time iteration. As an example, the mesh after eight refinement steps for :math:`\mathrm{Re} = 100` looks as follows:
 
 .. image:: image/8th-mesh.png
 
@@ -282,7 +282,7 @@ In a similar way as we did in the last subsection, for :math:`\mathrm{Re} = 1000
 
 .. image:: image/Reynolds1000_profile.png
 
-On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). The same Python code as before can be used by setting the Reynolds flag to ``-Re 1000``; we obtain :math:`x_r = 12.602` as a numerical result with a relative error of :math:`3.9\%`.
+On the contrary of what we saw in the :math:`\mathrm{Re} = 100` case, it is clear that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). The same Python code as before can be used by setting the Reynolds flag to ``-Re 1000``; we obtain :math:`x_r = 12.602` as a numerical result with a relative error of :math:`3.9\%`.
 
 ----------------------
 Velocity Distribution
