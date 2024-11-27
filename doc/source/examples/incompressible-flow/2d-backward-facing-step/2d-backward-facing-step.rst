@@ -84,7 +84,7 @@ In this problem, the Reynolds number is defined as follows:
 .. math::
 	Re_{D_h} = \frac{u D_h}{\nu} = \frac{2uh}{\nu}
 	
-where :math:`h` is the step height, :math:`D_h = 2h` is the hydraulic diameter and :math:`\nu` the kinematic viscosity.
+where :math:`h` is the step height, :math:`D_h = 2h` is the characteristic length and :math:`\nu` the kinematic viscosity.
 
 In addition, unit values of :math:`u` and :math:`h` are chosen in the goal of obtaining an adimensional problem.
 
@@ -114,7 +114,7 @@ Mesh
       set file name = ../backward-facing-step.msh
     end
 	
-The mesh features quadrilateral elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developed flow. Finally, since a ``gmsh`` mesh file is used, the initial mesh should be as coarse as possible, since these cells cannot be coarsened with the mesh adaptation algorithm.
+The mesh features quadrilateral elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet must be spaced far enough apart to allow the formation of a fully developed flow. Finally, since a ``gmsh`` mesh file is used, the initial mesh should be as coarse as possible, since these cells cannot be coarsened with the mesh adaptation algorithm.
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
@@ -177,7 +177,7 @@ As presented in the description of the case (see figure above), three different 
       end
     end
 	
-First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is denoted by ``outlet`` and it is specified for the boundary ID :math:`2`.
+First, ``subsection bc 0`` sets a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is denoted by ``outlet`` and it is specified for the boundary ID :math:`2`.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
