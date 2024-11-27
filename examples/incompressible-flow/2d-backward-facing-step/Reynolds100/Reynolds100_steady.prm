@@ -9,6 +9,7 @@ set dimension = 2
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
   set method            = steady
   set number mesh adapt = 10
@@ -23,7 +24,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity = 0.01 # Re_h=2/nu
+    set kinematic viscosity = 0.02 # Re_h=2/nu
   end
 end
 
@@ -60,13 +61,13 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number         = 3
+  set number = 3
   subsection bc 0
-    set   id = 0
+    set id   = 0
     set type = noslip
   end
   subsection bc 1
-    set   id = 1
+    set id   = 1
     set type = function
     subsection u
       set Function expression = 1
@@ -79,7 +80,7 @@ subsection boundary conditions
     end
   end
   subsection bc 2
-    set   id = 2
+    set id   = 2
     set type = outlet
   end
 end
@@ -90,9 +91,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity      = verbose
-    set tolerance      = 1e-6
-    set max iterations = 10
+    set verbosity = verbose
+    set tolerance = 1e-6
   end
 end
 
@@ -104,8 +104,8 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = verbose
     set method                                = gmres
-    set max iters                             = 1000
-    set max krylov vectors                    = 1000
+    set max iters                             = 300
+    set max krylov vectors                    = 300
     set relative residual                     = 1e-4
     set minimum residual                      = 1e-9
     set preconditioner                        = ilu
