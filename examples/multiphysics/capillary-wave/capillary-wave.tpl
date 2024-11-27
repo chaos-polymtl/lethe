@@ -120,20 +120,18 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number = 3
   subsection bc 0
-    set id   = 0
-    set type = slip
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
   end
   subsection bc 1
-    set id   = 1
-    set type = slip
-  end
-  subsection bc 2
     set id   = 2
     set type = noslip
   end
-  subsection bc 3
+  subsection bc 2
     set id   = 3
     set type = noslip
   end
