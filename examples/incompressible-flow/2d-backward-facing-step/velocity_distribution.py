@@ -28,6 +28,9 @@ parser.add_argument("-Re", "--Reynolds", type=int, help="Reynolds number (only 1
 args, leftovers = parser.parse_known_args()
 Re = args.Reynolds
 
+if (Re != 100 and Re != 1000):
+    sys.exit("This Reynolds number is not supported. Only Re = 100 and Re = 1000.")
+
 #Define folder path according to Re
 folder = "./Reynolds" + str(Re) +'/'
 
