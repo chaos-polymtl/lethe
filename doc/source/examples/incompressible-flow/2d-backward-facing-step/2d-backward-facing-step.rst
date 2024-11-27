@@ -34,7 +34,7 @@ In this example, a bidimensional flow goes past a backward-facing step. The flow
 
 .. image:: image/backward-facing-step-description.png
 
-The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to two Reynolds numbers (:math:`\mathrm{Re} = 100` to :math:`\mathrm{Re} =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on.
+The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters of the backward-facing step problem will be shown. A solution to two Reynolds numbers (:math:`\mathrm{Re} = 100` to :math:`\mathrm{Re} =1000`) will then be presented and compared to numerical and analytical data.
 
 
 --------------
@@ -260,7 +260,7 @@ After opening the file ``backward_facing_step_output.pvd`` with Paraview, the fo
 
 .. image:: image/Reynolds100_profile.png
 
-It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`2.7 \leq x_r \leq 2.9` (:math:`17.7 \leq x \leq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically using the following equation:
+It is possible to notice a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`2.7 \leq x_r \leq 2.9` (:math:`17.7 \leq x \leq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically using the following equation:
 
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
