@@ -161,10 +161,12 @@ list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "/mass
 
 relative_mass_variation_fluid_1 = (list_of_list_of_vars[0][6]/list_of_list_of_vars[0][6][0]-1)*100
 
+dpi_val = 300
+fig0 = plt.figure(figsize=(1920/dpi_val, 1440/dpi_val))
 plt.plot(list_of_list_of_vars[0][0],relative_mass_variation_fluid_1)
 plt.title("Evolution of the mass of fluid 1 with {} interface sharpening\n".format(output_path[9:-1]))
 plt.xlabel(r"Time $(t)$ [s]")
 plt.ylabel(r"Relative mass variation percentage $\left(\frac{m_t-m_0}{m_0} \ 100\% \right)$")
 plt.ylim(-0.2,0.4)
-plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]))
+plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]), dpi=dpi_val)
 plt.show()
