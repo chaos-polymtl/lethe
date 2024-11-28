@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-11-28
+
+### Changed
+
+- MINOR The squared term that was added in the correction direction vector of the VOF DCDD stabilization has been removed after observing regression in computed results of VOF examples. [#1390](https://github.com/chaos-polymtl/lethe/pull/1390)
+
 ## [Master] - 2024-11-21
 
 ### Changed
