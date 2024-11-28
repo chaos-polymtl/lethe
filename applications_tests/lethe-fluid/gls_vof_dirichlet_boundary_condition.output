@@ -18,44 +18,44 @@ Transient iteration: 1        Time: 0.05     Time step: 0.05     CFL: 2.23662
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-5.000000e-02    2.023368e-02            2.023368e+00      -2.916883e-03      -2.022545e+00    9.797663e-01            2.939299e+02       3.285580e-03      -2.938668e+02         5.000000e-01 
+5.000000e-02    2.022997e-02            2.022997e+00      -2.904127e-03      -2.022178e+00    9.797700e-01            2.939310e+02       3.247343e-03      -2.938679e+02         5.000000e-01
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.1      Time step: 0.05     CFL: 2.93874 
-*******************************************************************************
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.000000e-01    3.991214e-02            3.991214e+00      -3.514015e-03      -3.993601e+00    9.600879e-01            2.880264e+02       3.315622e-03      -2.880185e+02         5.000000e-01 
-
-*******************************************************************************
-Transient iteration: 3        Time: 0.15     Time step: 0.05     CFL: 2.87622 
+Transient iteration: 2        Time: 0.1      Time step: 0.05     CFL: 2.93873
 *******************************************************************************
 
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.500000e-01    6.362990e-02            6.362990e+00      -3.677075e-03      -6.366046e+00    9.363701e-01            2.809110e+02       3.288925e-03      -2.809018e+02         5.000000e-01 
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.000000e-01    4.000801e-02            4.000801e+00      -3.499492e-03      -4.003198e+00    9.599920e-01            2.879976e+02       3.271545e-03      -2.879897e+02         5.000000e-01
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.2      Time step: 0.05     CFL: 2.86088 
-*******************************************************************************
-
-----------------------
-VOF Mass Conservation
-----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.000000e-01    8.856688e-02            8.856688e+00      -3.716378e-03      -8.860082e+00    9.114331e-01            2.734299e+02       2.660659e-03      -2.734197e+02         5.000000e-01 
-
-*******************************************************************************
-Transient iteration: 5        Time: 0.25     Time step: 0.05     CFL: 2.85364 
+Transient iteration: 3        Time: 0.15     Time step: 0.05     CFL: 2.87622
 *******************************************************************************
 
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.500000e-01    1.138431e-01            1.138431e+01      -3.712321e-03      -1.138794e+01    8.861569e-01            2.658471e+02       1.672484e-03      -2.658361e+02         5.000000e-01 
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.500000e-01    6.365731e-02            6.365731e+00      -3.662590e-03      -6.368794e+00    9.363427e-01            2.809028e+02       3.244410e-03      -2.808936e+02         5.000000e-01
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.2      Time step: 0.05     CFL: 2.86088
+*******************************************************************************
+
+----------------------
+VOF Mass Conservation
+----------------------
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+2.000000e-01    8.852284e-02            8.852284e+00      -3.702138e-03      -8.855684e+00    9.114772e-01            2.734431e+02       2.617015e-03      -2.734329e+02         5.000000e-01
+
+*******************************************************************************
+Transient iteration: 5        Time: 0.25     Time step: 0.05     CFL: 2.85365
+*******************************************************************************
+
+----------------------
+VOF Mass Conservation
+----------------------
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+2.500000e-01    1.137550e-01            1.137550e+01      -3.698586e-03      -1.137913e+01    8.862450e-01            2.658735e+02       1.630379e-03      -2.658626e+02         5.000000e-01

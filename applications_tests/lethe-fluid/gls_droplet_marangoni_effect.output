@@ -4,35 +4,35 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      0.0064
    Number of thermal degrees of freedom: 4225
    Number of VOF degrees of freedom: 4225
-Enstrophy  : 0
-Kinetic energy : 0
+Enstrophy: 0
+Kinetic energy: 0
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0       
+Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0
 *******************************************************************************
-Enstrophy  : 0.42658
-Kinetic energy : 1.5988e-05
+Enstrophy: 0.42658
+Kinetic energy: 1.5988e-05
 
 ********************************************************************************
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 0.0080812
 ********************************************************************************
-Enstrophy  : 97.119
-Kinetic energy : 0.0010102
+Enstrophy: 97.103
+Kinetic energy: 0.001011
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.17532 
+Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.17531
 *******************************************************************************
-Enstrophy  : 299.29
-Kinetic energy : 0.0039173
+Enstrophy: 299.47
+Kinetic energy: 0.0039228
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.30998 
+Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.31002
 *******************************************************************************
-Enstrophy  : 513.69
-Kinetic energy : 0.0079426
+Enstrophy: 513.9
+Kinetic energy: 0.0079503
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.40316 
+Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.40314
 *******************************************************************************
-Enstrophy  : 705.36
-Kinetic energy : 0.012344
+Enstrophy: 705.51
+Kinetic energy: 0.012354
