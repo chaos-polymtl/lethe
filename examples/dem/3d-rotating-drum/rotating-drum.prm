@@ -103,7 +103,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set lagrangian post-processing = false
+  set lagrangian post-processing = true
 end
 
 
