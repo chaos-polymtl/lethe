@@ -12,7 +12,7 @@ Features
 
 - Solver: ``lethe-fluid`` 
 - Volume of fluid (VOF)
-- Unsteady problem handled by an adaptive BDF2 time stepping scheme
+- Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
 
 ****
@@ -68,7 +68,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The results for this problem are highly sensitive to the accuracy of the time stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to :math:`1.025` to ensure that the time step does not rise too quickly during wave oscillations.
+The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time-step. The ``adaptive time step scaling`` is set to :math:`1.025` to ensure that the time-step does not rise too quickly during wave oscillations.
 
 .. code-block:: text
 

@@ -61,7 +61,7 @@ Simulation Control
 
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`4.1` s simulation time with an initial 
-time step of :math:`0.01` seconds.
+time-step of :math:`0.01` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 

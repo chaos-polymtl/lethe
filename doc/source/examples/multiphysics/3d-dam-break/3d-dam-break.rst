@@ -90,7 +90,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time-step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
 and the max CFL is :math:`0.8`.
 
 .. note::

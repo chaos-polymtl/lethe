@@ -72,7 +72,7 @@ Simulation Control
 
 Time integration is handled by a 2nd order backward differentiation scheme
 (``bdf2``), for a :math:`0.75\, \text{s}` simulation time with an initial
-time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
+time-step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
 and the max CFL is :math:`0.8`.
 
 .. note::   

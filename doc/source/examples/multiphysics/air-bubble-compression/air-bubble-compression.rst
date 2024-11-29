@@ -59,8 +59,8 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step.
-The initial time step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
+Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time-step.
+The initial time-step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
 
 .. code-block:: text
 

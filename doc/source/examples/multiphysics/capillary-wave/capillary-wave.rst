@@ -214,7 +214,7 @@ In the ``physical properties`` subsection, we define the fluids such that both f
 Running the Simulation
 -----------------------
 
-We can call ``lethe-fluid`` for each time step value. For :math:`\Delta t \approx 0.95\Delta t_\sigma`, this can be done by invoking the following command:
+We can call ``lethe-fluid`` for each time-step value. For :math:`\Delta t \approx 0.95\Delta t_\sigma`, this can be done by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
