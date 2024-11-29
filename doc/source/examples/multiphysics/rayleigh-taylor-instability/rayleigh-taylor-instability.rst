@@ -4,6 +4,7 @@ Rayleigh-Taylor Instability
 
 This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor instability [#he1999]_ by density contrast.
 
+****
 
 --------
 Features
@@ -16,6 +17,7 @@ Features
 - Monitoring mass conservation
 - Interface sharpening
 
+****
 
 --------------------------
 Files Used in This Example
@@ -26,6 +28,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Parameter file for constant sharpening: ``rayleigh-taylor-instability-constant-sharpening.prm``
 - Postprocessing Python script: ``rayleigh-taylor_postprocess.py``
 
+****
 
 -----------------------
 Description of the Case
@@ -56,8 +59,9 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a ``no-slip`` boundary condition is applied, while on the left and right walls, a ``periodic`` boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman [#garoosi2022]_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* [#he1999]_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
+A perturbed interface defined as :math:`y = 2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a ``no-slip`` boundary condition is applied, while on the left and right walls, ``slip`` boundary conditions are used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman [#garoosi2022]_ at dimensionless times (:math:`t^* = t \sqrt{\mathbf{g} / H}`) of :math:`1.5`, :math:`2.5`, :math:`3.5`, :math:`4.0` and :math:`4.5`. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* [#he1999]_ The term "spike" refers to the lowest point of ``fluid 1`` and the term "bubble" refers to the highest point of ``fluid 0``.
 
+****
 
 --------------
 Parameter File
@@ -68,7 +72,7 @@ Simulation Control
 
 Time integration is handled by a 2nd order backward differentiation scheme
 (``bdf2``), for a :math:`0.75\, \text{s}` simulation time with an initial
-time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
+time-step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
 and the max CFL is :math:`0.8`.
 
 .. note::   
@@ -192,23 +196,25 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The boundary conditions applied on the left and right boundaries are ``periodic``, while a ``noslip`` boundary condition is used for the top and bottom walls. In the definition of a ``periodic`` boundary, we need to specify the ``periodic_id`` and the ``periodic_direction`` (in this example, :math:`0` which indicates the :math:`x` direction).
+The boundary conditions applied on the left and right boundaries are ``slip``, while a ``noslip`` boundary condition is used for the top and bottom walls.
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 3
+      set number = 4
       subsection bc 0
-        set id                 = 0
-        set type               = periodic
-        set periodic_id        = 1
-        set periodic_direction = 0
+        set id   = 0
+        set type = slip
       end
       subsection bc 1
+        set id   = 1
+        set type = slip
+      end
+      subsection bc 2
         set id   = 2
         set type = noslip
       end
-      subsection bc 2
+      subsection bc 3
         set id   = 3
         set type = noslip
       end
@@ -274,6 +280,8 @@ In the ``post-processing`` subsection, the output of the mass of each fluid is e
       set calculate mass conservation = true
     end
 
+****
+
 ---------------------------
 Running the Simulation
 ---------------------------
@@ -293,6 +301,7 @@ to run the simulations using eight CPU cores. Feel free to use more.
     run in parallel using mpirun. On :math:`8` processes, this simulation takes
     :math:`\sim` :math:`2` minutes for the ``adaptive`` sharpening and :math:`\sim` :math:`4` minutes for ``constant`` sharpening.
 
+****
 
 -----------------------
 Results and Discussion
@@ -364,6 +373,8 @@ The following figures show the mass of ``fluid 1`` throughout the simulation wit
 |      :width: 400                            |      :width: 400                            |
 |                                             |                                             |
 +---------------------------------------------+---------------------------------------------+
+
+****
 
 -----------
 References

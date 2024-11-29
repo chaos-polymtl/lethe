@@ -47,46 +47,46 @@ Total pressure drop: -0.00497741 Pa
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-2.000000e-02    5.912813e-01            5.912813e-01       7.205532e-07      -2.095201e-06    1.227187e-01            1.227187e-01      -5.507064e-07      -1.576839e-07         5.000000e-01 
+2.000000e-02    5.912813e-01            5.912813e-01       7.205516e-07      -2.095203e-06    1.227187e-01            1.227187e-01      -5.507048e-07      -1.576816e-07         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof        y_vof        vx_vof        vy_vof     
-2.000000e-02 5.000001e-01 6.152840e-02 -4.487550e-06 -1.284921e-06 
+    time        x_vof        y_vof        vx_vof        vy_vof
+2.000000e-02 5.000001e-01 6.152841e-02 -4.487537e-06 -1.284902e-06
 
 **********************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.000176621
 **********************************************************************************
-Pressure drop: -0.00508754 Pa
-Total pressure drop: -0.00508754 Pa
+Pressure drop: -0.00508755 Pa
+Total pressure drop: -0.00508755 Pa
 
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-3.000000e-02    5.912813e-01            5.912813e-01       7.519397e-07      -2.126174e-06    1.227187e-01            1.227187e-01      -5.724598e-07      -1.644859e-07         5.000000e-01 
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+3.000000e-02    5.912813e-01            5.912813e-01       7.519369e-07      -2.126180e-06    1.227187e-01            1.227187e-01      -5.724564e-07      -1.644793e-07         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof        y_vof        vx_vof        vy_vof     
-3.000000e-02 5.000001e-01 6.152841e-02 -4.664813e-06 -1.340349e-06 
+    time        x_vof        y_vof        vx_vof        vy_vof
+3.000000e-02 5.000001e-01 6.152842e-02 -4.664785e-06 -1.340296e-06
 
 **********************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000187224
 **********************************************************************************
-Pressure drop: -0.00517123 Pa
-Total pressure drop: -0.00517123 Pa
+Pressure drop: -0.00517128 Pa
+Total pressure drop: -0.00517128 Pa
 
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-4.000000e-02    5.912813e-01            5.912813e-01       7.667839e-07      -2.136658e-06    1.227187e-01            1.227187e-01      -5.803016e-07      -1.666419e-07         5.000000e-01 
+    time     surface_fluid_0 mass_per_length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 mass_per_length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+4.000000e-02    5.912813e-01            5.912813e-01       7.667819e-07      -2.136667e-06    1.227187e-01            1.227187e-01      -5.802978e-07      -1.666305e-07         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof        y_vof        vx_vof        vy_vof     
-4.000000e-02 5.000001e-01 6.152842e-02 -4.728715e-06 -1.357918e-06 
+    time        x_vof        y_vof        vx_vof        vy_vof
+4.000000e-02 5.000001e-01 6.152844e-02 -4.728684e-06 -1.357825e-06

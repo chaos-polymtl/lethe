@@ -116,7 +116,7 @@ ax0.set_xlabel(r'$t^* = t \sqrt{g/H}$')
 ax0.set_xlim([0, 4.5])
 ax0.set_ylim([0.1, 0.8])
 ax0.legend(loc="upper left")
-plt.title("Spike and bubble evolution with {} interface sharpening".format(output_path[9:-1]))
+plt.title("Spike and bubble evolution with {} interface sharpening\n".format(output_path[9:-1]))
 fig0.savefig('./spike_and_bubble_evolution_{}.png'.format(output_path[9:-1]))
 plt.show()
 
@@ -159,11 +159,14 @@ def read_my_data(results_path):
 
 list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "/mass_conservation_information.dat")
 
+relative_mass_variation_fluid_1 = (list_of_list_of_vars[0][6]/list_of_list_of_vars[0][6][0]-1)*100
 
-plt.plot(list_of_list_of_vars[0][0],list_of_list_of_vars[0][4])
-plt.title("Evolution of the mass of fluid 1 with {} interface sharpening".format(output_path[9:-1]))
-plt.xlabel("Time (s)")
-plt.ylabel("Mass of fluid 1 (kg)")
-plt.ylim(37.4,37.7)
-plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]))
+dpi_val = 300
+fig0 = plt.figure(figsize=(1920/dpi_val, 1440/dpi_val))
+plt.plot(list_of_list_of_vars[0][0],relative_mass_variation_fluid_1)
+plt.title("Evolution of the mass of fluid 1 with {} interface sharpening\n".format(output_path[9:-1]))
+plt.xlabel(r"Time $(t)$ [s]")
+plt.ylabel(r"Relative mass variation percentage $\left(\frac{m_t-m_0}{m_0} \ 100\% \right)$")
+plt.ylim(-0.2,0.4)
+plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]), dpi=dpi_val)
 plt.show()

@@ -4,6 +4,7 @@ Capillary Wave
 
 This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
 
+****
 
 --------
 Features
@@ -15,6 +16,7 @@ Features
 - Bash scripts to write, launch, and postprocess multiple cases
 - Python scripts for postprocessing data
 
+****
 
 ---------------------------
 Files Used in This Example
@@ -32,6 +34,7 @@ All files mentioned below are located in the example's folder (``examples/multip
 - Postprocessing Bash script: ``capillary-wave-time-step-sensitivity-postprocess.sh``
 - Python script for computing quantities of interest: ``capillary-wave-calculation.py``
 
+****
 
 -----------------------
 Description of the Case
@@ -88,6 +91,7 @@ with the shortest unambiguously resolved capillary wave having a wavelength of :
 
 Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe's current implementation.
 
+****
 
 --------------
 Parameter File
@@ -204,12 +208,13 @@ In the ``physical properties`` subsection, we define the fluids such that both f
       end
     end
 
+****
 
 -----------------------
 Running the Simulation
 -----------------------
 
-We can call ``lethe-fluid`` for each time step value. For :math:`\Delta t \approx 0.95\Delta t_\sigma`, this can be done by invoking the following command:
+We can call ``lethe-fluid`` for each time-step value. For :math:`\Delta t \approx 0.95\Delta t_\sigma`, this can be done by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -253,6 +258,7 @@ to run the simulation using four CPU cores. Feel free to use more CPU cores.
     This script runs the ``capillary-wave-calculation.py`` script before generating the different cases.
     Make sure that the information entered in the Python script corresponds to the ones you wish to simulate.
 
+****
 
 -------
 Results
@@ -361,6 +367,7 @@ By increasing the mesh resolution by an additional refinement, the :math:`\mathr
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 
+****
 
 ----------------
 Acknowledgment
@@ -368,6 +375,7 @@ Acknowledgment
 
 We would like to thank Prof. Fabian Denner for sharing his time and knowledge throughout the process of developing this example.
 
+****
 
 ----------
 References

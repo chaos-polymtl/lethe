@@ -63,16 +63,6 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  subsection fluid dynamics
-    set Function expression = 0; 0; 0
-  end
-end
-
-#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 
@@ -124,7 +114,6 @@ subsection mesh adaptation
   set fraction coarsening      = 0.05
   set initial refinement steps = 4
 end
-
 
 # --------------------------------------------------
 # Boundary Conditions

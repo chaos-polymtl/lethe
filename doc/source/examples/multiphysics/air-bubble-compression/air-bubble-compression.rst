@@ -5,6 +5,7 @@ Air Bubble Compression
 This example simulates the compression of an air bubble by surrounding liquid.
 The problem is inspired by the test case of Caltagirone *et al.* [#caltagirone2011]_
 
+****
 
 --------
 Features
@@ -16,6 +17,7 @@ Features
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
 
+****
 
 ---------------------------
 Files Used in This Example
@@ -26,6 +28,7 @@ Both files mentioned below are located in the example's folder (``examples/multi
 - Parameter file: ``air-bubble-compression.prm``
 - Postprocessing python script: ``air-bubble-compression-postprocessing.py``
 
+****
 
 -----------------------
 Description of the Case
@@ -47,6 +50,8 @@ The initial configuration of this example is illustrated below.
 .. note::
   In this example, gravity and surface tension forces are not considered.
 
+****
+
 --------------
 Parameter File
 --------------
@@ -54,8 +59,8 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step.
-The initial time step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
+Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time-step.
+The initial time-step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
 
 .. code-block:: text
 
@@ -88,7 +93,7 @@ In the ``VOF`` subsection, the ``compressible``, the ``interface sharpening``, a
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
 The ``interface sharpening`` method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on the ``phase filtration``.
+We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on ``phase filtration``.
 
 .. code-block:: text
 
@@ -128,7 +133,7 @@ Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 On all four sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
-This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection with a ``dirichlet`` boundary condition on the phase fraction as shown below.
+This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection using ``dirichlet`` boundary conditions on the phase fraction as shown below.
 
 Boundary Conditions - Fluid Dynamics
 ************************************
@@ -263,6 +268,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
       set initial refinement steps = 6
     end
 
+****
 
 -----------------------
 Running the Simulation
@@ -280,6 +286,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 .. warning:: 
     Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 1.5 minute on 8 processes.
 
+****
 
 -------
 Results
@@ -309,7 +316,7 @@ The results can be post-processed by invoking the following command from the fol
   python3 air-bubble-compression-postprocessing.py . air-bubble-compression.prm
 
 .. important::
-    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
+    You need to ensure that ``lethe_pyvista_tools`` is working on your machine. Click :doc:`here <../../../tools/postprocessing/postprocessing_pyvista>` for details.
 
 The following figures present the comparison between the analytical results and the simulation results for the density and pressure evolutions evaluated at the center of the bubble. A pretty good agreement between the simulation and analytical results is observed.
 
@@ -332,6 +339,7 @@ The following figures present the comparison between the analytical results and 
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
+****
 
 ----------
 References
