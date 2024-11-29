@@ -516,7 +516,7 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(6 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(0.001 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt=true</span></code>
+<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(6 \ \text{s}\)</span> simulation time with an initial time-step of <span class="math notranslate nohighlight">\(0.001 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt=true</span></code>
 and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -644,7 +644,9 @@ end
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>We call the lethe-fluid by invoking:</p>
-<p><code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">$number_of_CPU_cores</span> <span class="pre">lethe-fluid</span> <span class="pre">3d-dam-break.prm</span></code></p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np $number_of_CPU_cores lethe-fluid 3d-dam-break.prm
+</pre></div>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Make sure to compile Lethe in <cite>Release</cite> mode and run in parallel using <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>. This simulation took <span class="math notranslate nohighlight">\(\approx\)</span> 17 hours on 64 processes (runned on the <a class="reference external" href="https://docs.alliancecan.ca/wiki/Narval/en">Narval</a> cluster).</p>

@@ -434,6 +434,7 @@
           <section id="sloshing-in-a-rectangular-tank">
 <h1>Sloshing in a Rectangular Tank<a class="headerlink" href="#sloshing-in-a-rectangular-tank" title="Link to this heading">#</a></h1>
 <p>This example simulates the damping of a small amplitude wave for Reynolds number of (<span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span>). The problem is inspired by the test case of Carrica <em>et al.</em> <a class="footnote-reference brackets" href="#carrica2007" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -443,6 +444,7 @@
 <li><p>Usage of a python script for post-processing data</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/sloshing-in-rectangular-tank</span></code>).</p>
@@ -457,9 +459,10 @@
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">sloshing_postprocessing.py</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas).
+<p>Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquefied natural gas).
 Yet, simulating their dynamics is difficult, especially for high Reynolds number values.
 Indeed, in this case, the amplitude of the waves dampen very slowly.
 This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver.</p>
@@ -483,11 +486,12 @@ This leads to an oscillatory wave problem which is highly sensitive to the time 
 </div>
 <p>Four values of the Reynolds number are investigated: <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span>.</p>
 </section>
+<hr class="docutils" />
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time step. The <code class="docutils literal notranslate"><span class="pre">adaptive</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> is set to <span class="math notranslate nohighlight">\(1.025\)</span> to ensure that the time-step does not rise too quickly during wave oscillations.</p>
+<p>The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time-step. The <code class="docutils literal notranslate"><span class="pre">adaptive</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> is set to <span class="math notranslate nohighlight">\(1.025\)</span> to ensure that the time-step does not rise too quickly during wave oscillations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method                       = bdf2
   set time end                     = 50
@@ -567,6 +571,7 @@ end
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>We can call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> for each Reynolds number. For <span class="math notranslate nohighlight">\(Re=20\)</span>, this can be done by invoking the following command:</p>
@@ -581,9 +586,10 @@ run in parallel using mpirun. This simulation takes
 <span class="math notranslate nohighlight">\(\sim \, 8\)</span> minutes (<span class="math notranslate nohighlight">\(Re=2\)</span>) to <span class="math notranslate nohighlight">\(6\)</span> hours (<span class="math notranslate nohighlight">\(Re=2000\)</span>) on <span class="math notranslate nohighlight">\(8\)</span> processes.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
-<p>We compare the relative height of the free surface at <span class="math notranslate nohighlight">\(x=0\)</span> with an analytical solution proposed by Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> For the Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span> and <span class="math notranslate nohighlight">\(200\)</span>, data were directly extracted from Carrica <em>et al.</em> <a class="footnote-reference brackets" href="#carrica2007" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, whereas for the Reynolds of <span class="math notranslate nohighlight">\(2000\)</span>, the simplified analytical expression of Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> is used. The results for Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span> can be post-processed by invoking the following command from the folder of the Reynolds number of interest (<span class="math notranslate nohighlight">\(Re=20\)</span> in the example below):</p>
+<p>We compare the relative height of the free surface at <span class="math notranslate nohighlight">\(x=0\)</span> with an analytical solution proposed by Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> For the Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span> and <span class="math notranslate nohighlight">\(200\)</span>, data were directly extracted from Carrica <em>et al.</em> <a class="footnote-reference brackets" href="#carrica2007" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, whereas for the Reynolds of <span class="math notranslate nohighlight">\(2000\)</span>, the simplified analytical expression of Wu <em>et al.</em> <a class="footnote-reference brackets" href="#wu2001" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> is used. The results for Reynolds number of <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(20\)</span>, <span class="math notranslate nohighlight">\(200\)</span> and <span class="math notranslate nohighlight">\(2000\)</span> can be postprocessed by invoking the following command from the folder of the Reynolds number of interest (<span class="math notranslate nohighlight">\(Re=20\)</span> in the example below):</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ../sloshing_postprocessing.py . sloshing-in-rectangular-tank_Re0020.prm
 </pre></div>
 </div>
@@ -620,6 +626,7 @@ run in parallel using mpirun. This simulation takes
 </table>
 </div>
 </section>
+<hr class="docutils" />
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">

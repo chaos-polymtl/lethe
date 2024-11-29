@@ -435,6 +435,7 @@
 <h1>Air Bubble Compression<a class="headerlink" href="#air-bubble-compression" title="Link to this heading">#</a></h1>
 <p>This example simulates the compression of an air bubble by surrounding liquid.
 The problem is inspired by the test case of Caltagirone <em>et al.</em> <a class="footnote-reference brackets" href="#caltagirone2011" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -445,6 +446,7 @@ The problem is inspired by the test case of Caltagirone <em>et al.</em> <a class
 <li><p>Usage of a python script for post-processing data</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/air-bubble-compression</span></code>).</p>
@@ -453,6 +455,7 @@ The problem is inspired by the test case of Caltagirone <em>et al.</em> <a class
 <li><p>Postprocessing python script: <code class="docutils literal notranslate"><span class="pre">air-bubble-compression-postprocessing.py</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>A circular air bubble of diameter <span class="math notranslate nohighlight">\(D=0.06\)</span> lies at the center of a square-shaped domain with sides of length <span class="math notranslate nohighlight">\(L=0.1\)</span>.
@@ -474,12 +477,13 @@ The initial configuration of this example is illustrated below.</p>
 <p>In this example, gravity and surface tension forces are not considered.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 2nd-order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time step.
-The initial time step is set to <span class="math notranslate nohighlight">\(0.1 \, \text{s}\)</span> and the simulation lasts <span class="math notranslate nohighlight">\(2.5 \, \text{s}\)</span>.</p>
+<p>Time integration is handled by a 2nd-order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time-step.
+The initial time-step is set to <span class="math notranslate nohighlight">\(0.1 \, \text{s}\)</span> and the simulation lasts <span class="math notranslate nohighlight">\(2.5 \, \text{s}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method           = bdf2
   set time end         = 2.5
@@ -508,7 +512,7 @@ end
 The enabled <code class="docutils literal notranslate"><span class="pre">compressible</span></code> parameter allows interface compression by adding the term <span class="math notranslate nohighlight">\(\phi (\nabla \cdot \mathbf{u})\)</span> to the VOF equation.
 The <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code> method and its parameters are explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example.
 The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for further explanation on the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code>.</p>
+We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for further explanation on <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
   set compressible = true
   subsection interface sharpening
@@ -544,7 +548,7 @@ end
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <p>On all four sides of the domain, water which is associated with the phase fraction <span class="math notranslate nohighlight">\(\phi=1\)</span> is injected.
-This is done in the simulation by setting the velocities of the fluid in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection and by selecting the correct fluid in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection with a <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> boundary condition on the phase fraction as shown below.</p>
+This is done in the simulation by setting the velocities of the fluid in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection and by selecting the correct fluid in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection using <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> boundary conditions on the phase fraction as shown below.</p>
 <section id="boundary-conditions-fluid-dynamics">
 <h4>Boundary Conditions - Fluid Dynamics<a class="headerlink" href="#boundary-conditions-fluid-dynamics" title="Link to this heading">#</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
@@ -672,6 +676,7 @@ end
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>We can call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> by invoking the following command:</p>
@@ -684,6 +689,7 @@ end
 <p>Make sure to compile lethe in <cite>Release</cite> mode and run in parallel using mpirun. This simulation takes <span class="math notranslate nohighlight">\(\sim\)</span> 1.5 minute on 8 processes.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
 <p>We compare the density (<span class="math notranslate nohighlight">\(\rho_{\text{air}}\)</span>) and pressure (<span class="math notranslate nohighlight">\(p_{\text{air}}\)</span>) in the air bubble with their analytical values. The density is given by:</p>
@@ -704,7 +710,7 @@ end
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>You need to ensure that <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> is working on your machine. Click <a class="reference external" href="../../../tools/postprocessing/postprocessing.html">here</a> for details.</p>
+<p>You need to ensure that <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> is working on your machine. Click <a class="reference internal" href="../../../tools/postprocessing/postprocessing_pyvista.html"><span class="doc">here</span></a> for details.</p>
 </div>
 <p>The following figures present the comparison between the analytical results and the simulation results for the density and pressure evolutions evaluated at the center of the bubble. A pretty good agreement between the simulation and analytical results is observed.</p>
 <div class="table-wrapper docutils container">
@@ -733,6 +739,7 @@ end
 </table>
 </div>
 </section>
+<hr class="docutils" />
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">

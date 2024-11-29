@@ -434,6 +434,7 @@
           <section id="capillary-wave">
 <h1>Capillary Wave<a class="headerlink" href="#capillary-wave" title="Link to this heading">#</a></h1>
 <p>This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -444,6 +445,7 @@
 <li><p>Python scripts for postprocessing data</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/capillary-wave</span></code>).</p>
@@ -459,6 +461,7 @@
 <li><p>Python script for computing quantities of interest: <code class="docutils literal notranslate"><span class="pre">capillary-wave-calculation.py</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>Have you ever tried skipping stones on a pond or at the beach? If so, you have likely observed the mesmerizing ripples that form when the stone makes contact with the water’s surface. Ripples and waves are an integral part of our everyday lives. You can witness their presence at the beach, where surfers ride them, when swimming in a swimming pool, or even when you drop a cube of sugar into your morning coffee. Notably, these phenomena occur at different length scales and propagate at a velocity (<span class="math notranslate nohighlight">\(c\)</span>), often referred to as the <em>phase velocity</em>. Under the assumption that viscous stresses are negligible, the phase velocity of a single wave can be expressed as follows:</p>
@@ -514,6 +517,7 @@
 <p>with the shortest unambiguously resolved capillary wave having a wavelength of <span class="math notranslate nohighlight">\(\lambda_\sigma = 2 \Delta x\)</span> <a class="footnote-reference brackets" href="#denner2015" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p>Therefore, in order to get stable simulation results, <span class="math notranslate nohighlight">\(\Delta t &lt; \Delta t_\sigma\)</span> should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe’s current implementation.</p>
 </section>
+<hr class="docutils" />
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
@@ -616,9 +620,10 @@ end
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
-<p>We can call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> for each time step value. For <span class="math notranslate nohighlight">\(\Delta t \approx 0.95\Delta t_\sigma\)</span>, this can be done by invoking the following command:</p>
+<p>We can call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> for each time-step value. For <span class="math notranslate nohighlight">\(\Delta t \approx 0.95\Delta t_\sigma\)</span>, this can be done by invoking the following command:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 4 lethe-fluid capillary-wave-TSM-0_95.prm
 </pre></div>
 </div>
@@ -657,6 +662,7 @@ Make sure that the information entered in the Python script corresponds to the o
 </div>
 </div>
 </section>
+<hr class="docutils" />
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
 <p>We compare the relative amplitude <span class="math notranslate nohighlight">\(\left(\frac{a}{a_0} \right)\)</span> of the wave at <span class="math notranslate nohighlight">\(x=0\)</span> with the analytical solution (equation 22) proposed by Prosperetti <a class="footnote-reference brackets" href="#prosperetti1981" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
@@ -757,10 +763,12 @@ Make sure that the information entered in the Python script corresponds to the o
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="acknowledgment">
 <h2>Acknowledgment<a class="headerlink" href="#acknowledgment" title="Link to this heading">#</a></h2>
 <p>We would like to thank Prof. Fabian Denner for sharing his time and knowledge throughout the process of developing this example.</p>
 </section>
+<hr class="docutils" />
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">

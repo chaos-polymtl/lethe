@@ -434,6 +434,7 @@
           <section id="dam-break">
 <h1>Dam-Break<a class="headerlink" href="#dam-break" title="Link to this heading">#</a></h1>
 <p>This example simulates the dam break experiments of Martin and Moyce <a class="footnote-reference brackets" href="#martin1952" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -443,6 +444,7 @@
 <li><p>The use of a python script for post-processing data</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>Both files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/dam-break</span></code>).</p>
@@ -451,6 +453,7 @@
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">dam-break-2d.py</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>A liquid is fixed behind a dam at the left most corner of
@@ -473,13 +476,14 @@ the liquid is released into the total simulation domain.</p>
 gravity field of <span class="math notranslate nohighlight">\(-1\)</span> is applied in the <span class="math notranslate nohighlight">\(y\)</span> direction.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>Time integration is handled by a 1st order backward differentiation scheme
 <cite>(bdf1)</cite>, for a <span class="math notranslate nohighlight">\(4.1\)</span> s simulation time with an initial
-time step of <span class="math notranslate nohighlight">\(0.01\)</span> seconds.</p>
+time-step of <span class="math notranslate nohighlight">\(0.01\)</span> seconds.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
@@ -509,10 +513,8 @@ end
 </pre></div>
 </div>
 </section>
-<section id="interface-sharpening-parameters">
-<h3>Interface Sharpening Parameters<a class="headerlink" href="#interface-sharpening-parameters" title="Link to this heading">#</a></h3>
 <section id="vof">
-<h4>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h4>
+<h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
 <p>If the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpening</span></code> is not enabled in <a class="reference internal" href="../../../parameters/cfd/volume_of_fluid.html"><span class="doc">VOF</span></a> subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> documentation for more explanation on both methods.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
   subsection interface sharpening
@@ -529,11 +531,8 @@ end
 </pre></div>
 </div>
 </section>
-</section>
-<section id="fluid-phase-parameters">
-<h3>Fluid Phase Parameters<a class="headerlink" href="#fluid-phase-parameters" title="Link to this heading">#</a></h3>
 <section id="initial-conditions">
-<h4>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h4>
+<h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code>, the initial velocity and initial position
 of the liquid phase are defined. The liquid phase is initially
 defined as rectangle of length <span class="math notranslate nohighlight">\(= 3.5\)</span> and height <span class="math notranslate nohighlight">\(= 7\)</span>.</p>
@@ -550,7 +549,7 @@ end
 </div>
 </section>
 <section id="source-term">
-<h4>Source Term<a class="headerlink" href="#source-term" title="Link to this heading">#</a></h4>
+<h3>Source Term<a class="headerlink" href="#source-term" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">term</span></code> subsection defines the gravitational acceleration:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection source term
   subsection fluid dynamics
@@ -561,7 +560,7 @@ end
 </div>
 </section>
 <section id="physical-properties">
-<h4>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h4>
+<h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
 <p>Two fluids are present in this simulation, hence in the <code class="docutils literal notranslate"><span class="pre">physical</span>
 <span class="pre">properties</span></code> subsection, their physical properties should be defined:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
@@ -580,7 +579,6 @@ end
 <p>We define two fluids here simply by setting the number of fluids to be <span class="math notranslate nohighlight">\(2\)</span>.
 In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">0</span></code>, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0.
 Similar procedure is done for the phase associated with a VOF indicator of 1 in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
-</section>
 </section>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
@@ -618,6 +616,7 @@ end
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>Call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> by invoking:</p>
@@ -632,22 +631,23 @@ Make sure to compile Lethe in <cite>Release</cite> mode and run in parallel usin
 This simulation takes <span class="math notranslate nohighlight">\(\sim \, 3\)</span> minutes on <span class="math notranslate nohighlight">\(6\)</span> processes.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
 <p>The following image shows the screenshots of the simulation at <span class="math notranslate nohighlight">\(0\)</span>, <span class="math notranslate nohighlight">\(1\)</span>, <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(3\)</span>, and <span class="math notranslate nohighlight">\(4\)</span> seconds,
 of the phase results without and with phase filtering.
 The red area corresponds to the liquid phase and the blue area corresponds to the air phase.</p>
 <img alt="time-shots" class="align-center" src="../../../_images/time-series.png" />
-<p>A python post-processing code <cite>(dam-break-2d.py)</cite>
-is added to the example folder to post-process the results.
+<p>A python postprocessing code <cite>(dam-break-2d.py)</cite>
+is added to the example folder to postprocess the results.
 Run</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./dam-break-2d.py ./output
 </pre></div>
 </div>
-<p>to execute this post-processing code, where <code class="docutils literal notranslate"><span class="pre">./output</span></code> is the directory that contains the simulation results.
-In post-processing, the maximum dimensionless lateral position of the liquid phase is tracked
+<p>to execute this postprocessing code, where <code class="docutils literal notranslate"><span class="pre">./output</span></code> is the directory that contains the simulation results.
+In postprocessing, the maximum dimensionless lateral position of the liquid phase is tracked
 through time and compared with the experiments of Martin and Moyce (1952) <a class="footnote-reference brackets" href="#martin1952" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
-The following figure shows the result of the post-processing, with a good agreement between the simulation and the experiment:</p>
+The following figure shows the result of the postprocessing, with a good agreement between the simulation and the experiment:</p>
 <img alt="xmax_t" class="align-center" src="../../../_images/xmax-t.png" />
 <p>As mentioned previously, this simulation uses adaptive mesh
 refinement. The following image shows the mesh and the position of
@@ -655,6 +655,7 @@ the interface at <span class="math notranslate nohighlight">\(4\)</span> s. The 
 and refines the meshes on the interface.</p>
 <img alt="refinement" class="align-center" src="../../../_images/refinement.png" />
 </section>
+<hr class="docutils" />
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
@@ -729,16 +730,10 @@ and refines the meshes on the interface.</p>
 <li><a class="reference internal" href="#parameter-file">Parameter File</a><ul>
 <li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>
 <li><a class="reference internal" href="#multiphysics">Multiphysics</a></li>
-<li><a class="reference internal" href="#interface-sharpening-parameters">Interface Sharpening Parameters</a><ul>
 <li><a class="reference internal" href="#vof">VOF</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#fluid-phase-parameters">Fluid Phase Parameters</a><ul>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#source-term">Source Term</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#mesh">Mesh</a></li>
 </ul>
 </li>

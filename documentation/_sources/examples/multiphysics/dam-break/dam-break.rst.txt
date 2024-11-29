@@ -4,6 +4,7 @@ Dam-Break
 
 This example simulates the dam break experiments of Martin and Moyce [#martin1952]_.
 
+****
 
 ----------------------------------
 Features
@@ -14,6 +15,7 @@ Features
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
+****
 
 ---------------------------
 Files Used in This Example
@@ -23,6 +25,7 @@ Both files mentioned below are located in the example's folder (``examples/multi
 - Parameter file: ``dam-break-Martin-and-Moyce.prm``
 - Postprocessing Python script: ``dam-break-2d.py``
 
+****
 
 ---------------------------
 Description of the Case
@@ -47,6 +50,7 @@ The following schematic describes the geometry and dimensions of the simulation 
     All the four boundary conditions are ``slip``, and an external 
     gravity field of :math:`-1` is applied in the :math:`y` direction.
 
+****
 
 --------------
 Parameter File
@@ -57,7 +61,7 @@ Simulation Control
 
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`4.1` s simulation time with an initial 
-time step of :math:`0.01` seconds.
+time-step of :math:`0.01` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
@@ -88,14 +92,10 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
     subsection multiphysics
       set VOF = true
-    end 
-
-
-Interface Sharpening Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    end
 
 VOF
-***
+~~~
 
 If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
 
@@ -114,11 +114,8 @@ If the ``interface sharpening`` is not enabled in :doc:`VOF <../../../parameters
       end
     end
 
-Fluid Phase Parameters
-~~~~~~~~~~~~~~~~~~~~~~
-
 Initial Conditions
-******************
+~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions``, the initial velocity and initial position
 of the liquid phase are defined. The liquid phase is initially 
@@ -137,7 +134,7 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
     end
 
 Source Term
-***********
+~~~~~~~~~~~
 
 The ``source term`` subsection defines the gravitational acceleration:
 
@@ -150,7 +147,7 @@ The ``source term`` subsection defines the gravitational acceleration:
     end
 
 Physical Properties
-*******************
+~~~~~~~~~~~~~~~~~~~
 
 Two fluids are present in this simulation, hence in the ``physical 
 properties`` subsection, their physical properties should be defined:
@@ -214,6 +211,7 @@ is adapted to the initial condition for the phase.
       set initial refinement steps = 4
     end
 
+****
 
 ----------------------
 Running the Simulation
@@ -234,6 +232,7 @@ to run the simulation using six CPU cores. Feel free to use more.
     Make sure to compile Lethe in `Release` mode and run in parallel using mpirun.
     This simulation takes :math:`\sim \, 3` minutes on :math:`6` processes.
 
+****
 
 -----------------------
 Results and Discussion
@@ -247,8 +246,8 @@ The red area corresponds to the liquid phase and the blue area corresponds to th
     :alt: time-shots
     :align: center
 
-A python post-processing code `(dam-break-2d.py)` 
-is added to the example folder to post-process the results.
+A python postprocessing code `(dam-break-2d.py)`
+is added to the example folder to postprocess the results.
 Run
 
 .. code-block:: text
@@ -256,10 +255,10 @@ Run
 
   python3 ./dam-break-2d.py ./output
 
-to execute this post-processing code, where ``./output`` is the directory that contains the simulation results.
-In post-processing, the maximum dimensionless lateral position of the liquid phase is tracked
+to execute this postprocessing code, where ``./output`` is the directory that contains the simulation results.
+In postprocessing, the maximum dimensionless lateral position of the liquid phase is tracked
 through time and compared with the experiments of Martin and Moyce (1952) [#martin1952]_.
-The following figure shows the result of the post-processing, with a good agreement between the simulation and the experiment:
+The following figure shows the result of the postprocessing, with a good agreement between the simulation and the experiment:
 
 .. image:: images/xmax-t.png
     :alt: xmax_t
@@ -275,6 +274,7 @@ and refines the meshes on the interface.
     :alt: refinement
     :align: center
 
+****
 
 ----------------------------
 References

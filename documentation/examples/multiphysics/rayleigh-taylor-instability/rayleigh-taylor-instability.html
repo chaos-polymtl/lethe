@@ -434,6 +434,7 @@
           <section id="rayleigh-taylor-instability">
 <h1>Rayleigh-Taylor Instability<a class="headerlink" href="#rayleigh-taylor-instability" title="Link to this heading">#</a></h1>
 <p>This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor instability <a class="footnote-reference brackets" href="#he1999" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> by density contrast.</p>
+<hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -445,6 +446,7 @@
 <li><p>Interface sharpening</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="files-used-in-this-example">
 <h2>Files Used in This Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <p>All files mentioned below are located in the example’s folder (<code class="docutils literal notranslate"><span class="pre">examples/multiphysics/rayleigh-taylor-instability</span></code>).</p>
@@ -454,6 +456,7 @@
 <li><p>Postprocessing Python script: <code class="docutils literal notranslate"><span class="pre">rayleigh-taylor_postprocess.py</span></code></p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>In this example, we simulate the Rayleigh-Taylor instability benchmark. In this benchmark, a dense fluid, as shown in the following figure, is located on top of a fluid with a smaller density.</p>
@@ -486,15 +489,16 @@
 </div>
 </dd>
 </dl>
-<p>A perturbed interface defined as <span class="math notranslate nohighlight">\(y = 2H + 0.1 H \cos{(2 \pi x / H)}\)</span> separates the fluids. At the top and bottom boundaries, a <code class="docutils literal notranslate"><span class="pre">no-slip</span></code> boundary condition is applied, while on the left and right walls, a <code class="docutils literal notranslate"><span class="pre">periodic</span></code> boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman <a class="footnote-reference brackets" href="#garoosi2022" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> at dimensionless times (<span class="math notranslate nohighlight">\(t^* = t \sqrt{\mathbf{g} / H}\)</span>) of <span class="math notranslate nohighlight">\(1.5\)</span>, <span class="math notranslate nohighlight">\(2.5\)</span>, <span class="math notranslate nohighlight">\(3.5\)</span>, <span class="math notranslate nohighlight">\(4.0\)</span> and <span class="math notranslate nohighlight">\(4.5\)</span>. The temporal evolution of the spike and the bubble positions are then compared to the results of He <em>et al.</em> <a class="footnote-reference brackets" href="#he1999" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> The term “spike” refers to the lowest point of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and the term “bubble” refers to the highest point of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>.</p>
+<p>A perturbed interface defined as <span class="math notranslate nohighlight">\(y = 2H + 0.1 H \cos{(2 \pi x / H)}\)</span> separates the fluids. At the top and bottom boundaries, a <code class="docutils literal notranslate"><span class="pre">no-slip</span></code> boundary condition is applied, while on the left and right walls, <code class="docutils literal notranslate"><span class="pre">slip</span></code> boundary conditions are used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman <a class="footnote-reference brackets" href="#garoosi2022" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> at dimensionless times (<span class="math notranslate nohighlight">\(t^* = t \sqrt{\mathbf{g} / H}\)</span>) of <span class="math notranslate nohighlight">\(1.5\)</span>, <span class="math notranslate nohighlight">\(2.5\)</span>, <span class="math notranslate nohighlight">\(3.5\)</span>, <span class="math notranslate nohighlight">\(4.0\)</span> and <span class="math notranslate nohighlight">\(4.5\)</span>. The temporal evolution of the spike and the bubble positions are then compared to the results of He <em>et al.</em> <a class="footnote-reference brackets" href="#he1999" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> The term “spike” refers to the lowest point of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and the term “bubble” refers to the highest point of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>.</p>
 </section>
+<hr class="docutils" />
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>Time integration is handled by a 2nd order backward differentiation scheme
 (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>), for a <span class="math notranslate nohighlight">\(0.75\, \text{s}\)</span> simulation time with an initial
-time step of <span class="math notranslate nohighlight">\(0.0002\)</span> seconds. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code>
+time-step of <span class="math notranslate nohighlight">\(0.0002\)</span> seconds. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code>
 and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -604,20 +608,22 @@ end
 </section>
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>The boundary conditions applied on the left and right boundaries are <code class="docutils literal notranslate"><span class="pre">periodic</span></code>, while a <code class="docutils literal notranslate"><span class="pre">noslip</span></code> boundary condition is used for the top and bottom walls. In the definition of a <code class="docutils literal notranslate"><span class="pre">periodic</span></code> boundary, we need to specify the <code class="docutils literal notranslate"><span class="pre">periodic_id</span></code> and the <code class="docutils literal notranslate"><span class="pre">periodic_direction</span></code> (in this example, <span class="math notranslate nohighlight">\(0\)</span> which indicates the <span class="math notranslate nohighlight">\(x\)</span> direction).</p>
+<p>The boundary conditions applied on the left and right boundaries are <code class="docutils literal notranslate"><span class="pre">slip</span></code>, while a <code class="docutils literal notranslate"><span class="pre">noslip</span></code> boundary condition is used for the top and bottom walls.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 3
+  set number = 4
   subsection bc 0
-    set id                 = 0
-    set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set id   = 0
+    set type = slip
   end
   subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
     set id   = 2
     set type = noslip
   end
-  subsection bc 2
+  subsection bc 3
     set id   = 3
     set type = noslip
   end
@@ -679,6 +685,7 @@ end
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="running-the-simulation">
 <h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">#</a></h2>
 <p>Call <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> by invoking:</p>
@@ -693,6 +700,7 @@ run in parallel using mpirun. On <span class="math notranslate nohighlight">\(8\
 <span class="math notranslate nohighlight">\(\sim\)</span> <span class="math notranslate nohighlight">\(2\)</span> minutes for the <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> sharpening and <span class="math notranslate nohighlight">\(\sim\)</span> <span class="math notranslate nohighlight">\(4\)</span> minutes for <code class="docutils literal notranslate"><span class="pre">constant</span></code> sharpening.</p>
 </div>
 </section>
+<hr class="docutils" />
 <section id="results-and-discussion">
 <h2>Results and Discussion<a class="headerlink" href="#results-and-discussion" title="Link to this heading">#</a></h2>
 <p>In the following picture, the boundary between the two fluids is compared with (right) and without (left) <code class="docutils literal notranslate"><span class="pre">projection</span> <span class="pre">step</span></code>:</p>
@@ -746,6 +754,7 @@ run in parallel using mpirun. On <span class="math notranslate nohighlight">\(8\
 </table>
 </div>
 </section>
+<hr class="docutils" />
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
