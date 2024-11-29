@@ -25,7 +25,7 @@ Both files mentioned below are located in the example's folder (``examples/dem/3
 Description of the Case
 -----------------------
 
-226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. The rotation of the cylinder is applied using a ``rotational`` boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of ``boundary condition`` and load-balancing are explained in this example.
+226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. This rotation is applied using a ``rotational`` boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of ``boundary condition`` and load-balancing are explained in this example.
 
 
 --------------
@@ -40,11 +40,11 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 .. code-block:: text
 
     subsection mesh
-  set type                                = dealii
-  set grid type                           = subdivided_cylinder
-  set grid arguments                      = 4: 0.12:0.18
-  set initial refinement                  = 4
-  set expand particle-wall contact search = true
+      set type                                = dealii
+      set grid type                           = subdivided_cylinder
+      set grid arguments                      = 4: 0.12:0.18
+      set initial refinement                  = 4
+      set expand particle-wall contact search = true
     end
 
 
@@ -55,21 +55,21 @@ An insertion box is defined inside the cylindrical domain. 38000 particles are i
 
 .. code-block:: text
 
-  subsection insertion info
-    set insertion method                               = volume
-    set inserted number of particles at each time step = 38000
-    set insertion frequency                            = 25000
-    set insertion box points coordinates               = -0.175, -0.07, 0 : 0.175, 0.07, 0.09
-    set insertion distance threshold                   = 1.575
-    set insertion maximum offset                       = 0.025
-    set insertion prn seed                             = 19
-  end
+    subsection insertion info
+      set insertion method                               = volume
+      set inserted number of particles at each time step = 38000
+      set insertion frequency                            = 25000
+      set insertion box points coordinates               = -0.175, -0.07, 0 : 0.175, 0.07, 0.09
+      set insertion distance threshold                   = 1.575
+      set insertion maximum offset                       = 0.025
+      set insertion prn seed                             = 19
+    end
 
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The particles (226080 particles) are monodispersed, their diameter and density are 0.003 m and 2500 kg/m3, respectively.
+The particles are monodispersed. Their diameter and density are 0.003 m and 2500 kg/m3 respectively.
 
 .. code-block:: text
 
@@ -123,7 +123,7 @@ In the rotating drum simulation, we use a ``frequent`` load-balancing method and
 DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined.  Using ``rotational`` boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate around its axis (`x` direction).
+In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined.  Using ``rotational`` boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate on its axis (`x` direction).
 
 .. code-block:: text
 

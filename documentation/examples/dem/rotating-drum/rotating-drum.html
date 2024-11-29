@@ -452,20 +452,20 @@
 </section>
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
-<p>226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. The rotation of the cylinder is applied using a <code class="docutils literal notranslate"><span class="pre">rotational</span></code> boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">condition</span></code> and load-balancing are explained in this example.</p>
+<p>226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. This rotation is applied using a <code class="docutils literal notranslate"><span class="pre">rotational</span></code> boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">condition</span></code> and load-balancing are explained in this example.</p>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <p>In this example, we choose a <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The <code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  subsection mesh
-set type                                = dealii
-set grid type                           = subdivided_cylinder
-set grid arguments                      = 4: 0.12:0.18
-set initial refinement                  = 4
-set expand particle-wall contact search = true
-  end
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 4: 0.12:0.18
+  set initial refinement                  = 4
+  set expand particle-wall contact search = true
+end
 </pre></div>
 </div>
 </section>
@@ -486,7 +486,7 @@ end
 </section>
 <section id="lagrangian-physical-properties">
 <h3>Lagrangian Physical Properties<a class="headerlink" href="#lagrangian-physical-properties" title="Link to this heading">#</a></h3>
-<p>The particles (226080 particles) are monodispersed, their diameter and density are 0.003 m and 2500 kg/m3, respectively.</p>
+<p>The particles are monodispersed. Their diameter and density are 0.003 m and 2500 kg/m3 respectively.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection lagrangian physical properties
   set g                        = 0.0, 0.0, -9.81
   set number of particle types = 1
@@ -532,7 +532,7 @@ end
 </section>
 <section id="dem-boundary-conditions">
 <h3>DEM Boundary Conditions<a class="headerlink" href="#dem-boundary-conditions" title="Link to this heading">#</a></h3>
-<p>In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> is specified. Then for each boundary condition, its information is defined.  Using <code class="docutils literal notranslate"><span class="pre">rotational</span></code> boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> side wall, defined with deal.ii grid generator is 4. We set the <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">speed</span></code> equal to 11.6 rad/s, and the cylinder should rotate around its axis (<cite>x</cite> direction).</p>
+<p>In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> is specified. Then for each boundary condition, its information is defined.  Using <code class="docutils literal notranslate"><span class="pre">rotational</span></code> boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> side wall, defined with deal.ii grid generator is 4. We set the <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">speed</span></code> equal to 11.6 rad/s, and the cylinder should rotate on its axis (<cite>x</cite> direction).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
