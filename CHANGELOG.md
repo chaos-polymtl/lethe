@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+## [Master] - 2024-12-03
+
+### Removed
+
+- MAJOR The ability to bound the void fraction from below and above (using l2 lower bound and l2 upper bound parameters) has been removed. This bounding of the void fraction was highly problematic, since it could create discontinuities in the time derivative of the void fraction and contaminate the solution. In reality, this feature was never used. Importantly, this PR refactors the calculation of the void fraction outside of the VANS and CFD-DEM solvers of Lethe so that it exists only independently in a seperate subequation solver. This change is in preperation for the matrix free implementation of the VANS equations.
+
 ## Release of Lethe v1.0 - 2024-11-30
 
 The lethe v1.0 release marks the transition of lethe to a numbered released format. Following numbered releases will be generated more often and we aim to release a numbered version 4 to 6 times per year or when sufficient changes have been realized.
