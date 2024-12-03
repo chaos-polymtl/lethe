@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+## Release of Lethe v1.0 - 2024-11-30
+
+The lethe v1.0 release marks the transition of lethe to a numbered released format. Following numbered releases will be generated more often and we aim to release a numbered version 4 to 6 times per year or when sufficient changes have been realized.
+
+The lethe v1.0 release comes with a structured and stable syntax. All of the examples and test provided with lethe were re-ran with this v1.0 release to ensure that all of the results provided online are up to date. This version is production-ready and has been tested and validated extensively.
+
 ## [Master] - 2024-11-28
 
 ### Changed
