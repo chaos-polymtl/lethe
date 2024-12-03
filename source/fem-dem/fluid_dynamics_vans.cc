@@ -151,8 +151,7 @@ FluidDynamicsVANS<dim>::read_dem()
 
 template <int dim>
 void
-FluidDynamicsVANS<dim>::calculate_void_fraction(const double time,
-                                                bool         load_balance_step)
+FluidDynamicsVANS<dim>::calculate_void_fraction(const double time)
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
   void_fraction_manager.calculate_void_fraction(time);
@@ -809,8 +808,7 @@ FluidDynamicsVANS<dim>::solve()
         {
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           vertices_cell_mapping();
-          calculate_void_fraction(this->simulation_control->get_current_time(),
-                                  false);
+          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
 

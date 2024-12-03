@@ -76,7 +76,7 @@ protected:
   iterate() override;
 
   void
-  calculate_void_fraction(const double time, bool load_balance_step);
+  calculate_void_fraction(const double time);
 
   void
   vertices_cell_mapping();
