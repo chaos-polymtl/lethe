@@ -548,8 +548,8 @@ CFDDEMSolver<dim>::read_checkpoint()
   std::vector<GlobalVectorType *> vf_system(
     1 + this->void_fraction_manager.previous_void_fraction.size());
 
-  GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
-                                         this->mpi_communicator);
+  GlobalVectorType vf_distributed_system(
+    this->void_fraction_manager.locally_owned_dofs, this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
@@ -563,7 +563,7 @@ CFDDEMSolver<dim>::read_checkpoint()
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs_voidfraction,
+        GlobalVectorType(this->void_fraction_manager.locally_owned_dofs,
                          this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
@@ -766,8 +766,8 @@ CFDDEMSolver<dim>::load_balance()
   std::vector<GlobalVectorType *> vf_system(
     1 + this->void_fraction_manager.previous_void_fraction.size());
 
-  GlobalVectorType vf_distributed_system(this->locally_owned_dofs_voidfraction,
-                                         this->mpi_communicator);
+  GlobalVectorType vf_distributed_system(
+    this->void_fraction_manager.locally_owned_dofs, this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
@@ -781,7 +781,7 @@ CFDDEMSolver<dim>::load_balance()
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs_voidfraction,
+        GlobalVectorType(this->void_fraction_manager.locally_owned_dofs,
                          this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }

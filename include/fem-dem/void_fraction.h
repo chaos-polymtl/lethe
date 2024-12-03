@@ -224,6 +224,12 @@ public:
   /// Finite element for the void fraction
   std::shared_ptr<FiniteElement<dim>> fe;
 
+  /// Index set for the locally owned degree of freedoms
+  IndexSet locally_owned_dofs;
+
+  /// Index set for the locally relevant degree of freedoms
+  IndexSet locally_relevant_dofs;
+
 private:
   /**
    * @brief Calculates the void fraction using a function. This is a straightforward usage of VectorTools.
@@ -281,12 +287,6 @@ private:
 
   /// Particle handler used when the void fraction depends on particles
   Particles::ParticleHandler<dim> *particle_handler;
-
-  /// Index set for the locally owned degree of freedoms
-  IndexSet locally_owned_dofs;
-
-  /// Index set for the locally relevant degree of freedoms
-  IndexSet locally_relevant_dofs;
 
   /// Locally owned solution of the void fraction
   GlobalVectorType void_fraction_locally_owned;

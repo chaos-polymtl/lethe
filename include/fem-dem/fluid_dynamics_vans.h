@@ -244,9 +244,6 @@ protected:
 
   MappingQGeneric<dim> particle_mapping;
 
-  IndexSet locally_owned_dofs_voidfraction;
-  IndexSet locally_relevant_dofs_voidfraction;
-
   // Assemblers for the particle_fluid interactions
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
     particle_fluid_assemblers;
