@@ -1464,8 +1464,7 @@ CFDDEMSolver<dim>::solve()
         }
 
       this->calculate_void_fraction(
-        this->simulation_control->get_current_time(),
-        dem_action_manager->check_load_balance());
+        this->simulation_control->get_current_time());
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
