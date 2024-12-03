@@ -1081,7 +1081,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 template <int dim>
 void
 VoidFractionBase<dim>::solve_linear_system_and_update_solution(
-  const bool &is_post_mesh_adaptation)
+  const bool & /*is_post_mesh_adaptation*/)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
