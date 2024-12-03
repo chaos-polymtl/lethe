@@ -144,11 +144,20 @@ public:
   }
 
   /**
-   * @brief Setup the degrees of freedom and establishes the constraints of the void fraction systems.
+   * @brief Setup the degrees of freedom
    *
    */
   void
   setup_dofs() override;
+
+
+  /**
+   * @brief Establishes the constraints of the void fraction systems.
+   *
+   */
+  void
+  setup_constraints(
+    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
 
 
   /**
@@ -230,6 +239,13 @@ public:
   /// Index set for the locally relevant degree of freedoms
   IndexSet locally_relevant_dofs;
 
+  /// Constraints used for the boundary conditions of the void fraction.
+  /// Currently, this is only used to establish periodic void fractions. This
+  /// object has to be made public because the boundary conditions are set
+  /// outside of the object for now.
+  AffineConstraints<double> void_fraction_constraints;
+
+
 private:
   /**
    * @brief Calculates the void fraction using a function. This is a straightforward usage of VectorTools.
@@ -268,6 +284,64 @@ private:
   virtual void
   solve_linear_system_and_update_solution(
     const bool &is_post_mesh_adaptation = false) override;
+
+  /**
+   * @brief This function calculates and returns the periodic offset distance of the domain which is needed
+   * for the periodic boundary conditions using the QCM or SPM for void fraction
+   * with the GLS VANS/CFD-DEM solver. The distance is based on one of the
+   * periodic boundaries and all particle location shifted by this distance is
+   * according to this periodic boundary.
+   *
+   * @param boundary_id The id of one of the periodic boundaries
+   *
+   * @return The periodic offset distance
+   */
+  inline Tensor<1, dim>
+  get_periodic_offset_distance(unsigned int boundary_id) const
+  {
+    Tensor<1, dim> offset;
+
+    // Iterating over the active cells in the triangulation
+    for (const auto &cell : (*this->triangulation).active_cell_iterators())
+      {
+        if (cell->is_locally_owned() || cell->is_ghost())
+          {
+            if (cell->at_boundary())
+              {
+                // Iterating over cell faces
+                for (unsigned int face_id = 0; face_id < cell->n_faces();
+                     ++face_id)
+                  {
+                    unsigned int face_boundary_id =
+                      cell->face(face_id)->boundary_id();
+
+                    // Check if face is on the boundary, if so, get
+                    // the periodic offset distance for one pair of periodic
+                    // faces only since periodic boundaries are aligned with the
+                    // direction and only axis are currently allowed
+                    if (face_boundary_id == boundary_id)
+                      {
+                        Point<dim> face_center = cell->face(face_id)->center();
+                        auto periodic_cell = cell->periodic_neighbor(face_id);
+                        unsigned int periodic_face_id =
+                          cell->periodic_neighbor_face_no(face_id);
+                        Point<dim> periodic_face_center =
+                          periodic_cell->face(periodic_face_id)->center();
+
+                        offset = periodic_face_center - face_center;
+
+                        return offset;
+                      }
+                  }
+              }
+          }
+      }
+
+    // A zero tensor is returned in case no cells are found on the periodic
+    // boundaries on this processor. This processor won't handle particle in
+    // cells at periodic boundaries, so it won't affect any computation.
+    return offset;
+  }
 
   /// Triangulation
   parallel::DistributedTriangulationBase<dim> *triangulation;
@@ -310,9 +384,6 @@ private:
   /// void fraction
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
-  /// Constraints used for the boundary conditions of the void fraction.
-  /// Currently, this is only used to establish periodic void fractions.
-  AffineConstraints<double> void_fraction_constraints;
 
   /// System matrix used to assembled the smoothed L2 projection of the void
   /// fraction

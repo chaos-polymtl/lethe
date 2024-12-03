@@ -64,9 +64,7 @@ FluidDynamicsVANS<dim>::setup_dofs()
 {
   FluidDynamicsMatrixBased<dim>::setup_dofs();
 
-  void_fraction_manager.setup_dofs();
-
-  // // Define constraints for periodic boundary conditions
+  // Define constraints for periodic boundary conditions
   // auto &boundary_conditions =
   //   this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
   // for (auto const &[id, type] : boundary_conditions.type)
@@ -75,11 +73,11 @@ FluidDynamicsVANS<dim>::setup_dofs()
   //       {
   //         periodic_direction = boundary_conditions.periodic_direction.at(id);
   //         DoFTools::make_periodicity_constraints(
-  //           void_fraction_dof_handler,
+  //           this->void_fraction_manager.dof_handler,
   //           id,
   //           boundary_conditions.periodic_neighbor_id.at(id),
   //           periodic_direction,
-  //           void_fraction_constraints);
+  //           this->void_fraction_manager.void_fraction_constraints);
 
   //         // Get periodic offset if void fraction method is qcm or spm
   //         if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
@@ -92,7 +90,11 @@ FluidDynamicsVANS<dim>::setup_dofs()
   //       }
   //   }
 
-  // void_fraction_constraints.close();
+  // void_fraction_manager.void_fraction_constraints.close();
+  void_fraction_manager.setup_dofs();
+  void_fraction_manager.setup_constraints(
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
 
   // nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
   //                                     locally_relevant_dofs_voidfraction,

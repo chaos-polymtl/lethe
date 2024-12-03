@@ -61,6 +61,7 @@ VoidFractionBase<dim>::setup_dofs()
                                   dsp,
                                   void_fraction_constraints,
                                   false);
+
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     locally_owned_dofs,
@@ -72,33 +73,80 @@ VoidFractionBase<dim>::setup_dofs()
                                      dsp,
                                      this->triangulation->get_communicator());
 
-  complete_system_matrix_void_fraction.reinit(
-    locally_owned_dofs,
-    locally_owned_dofs,
-    dsp,
-    this->triangulation->get_communicator());
 
   system_rhs_void_fraction.reinit(locally_owned_dofs,
                                   this->triangulation->get_communicator());
 
-  active_set.set_size(dof_handler.n_dofs());
-
-  mass_matrix.reinit(locally_owned_dofs,
-                     locally_owned_dofs,
-                     dsp,
-                     this->triangulation->get_communicator());
-
-  assemble_mass_matrix_diagonal(mass_matrix);
-
 
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
-
-  // TODO
-  // if (has_periodic_boundaries)
-  //  LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-  //    this->void_fraction_dof_handler, vertices_to_periodic_cell);
 }
+
+
+template <int dim>
+void
+VoidFractionBase<dim>::setup_constraints(
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions)
+{
+  has_periodic_boundaries = false;
+  // Define constraints for periodic boundary conditions
+  void_fraction_constraints.clear();
+  void_fraction_constraints.reinit(locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler,
+                                          void_fraction_constraints);
+
+
+  for (auto const &[id, type] : boundary_conditions.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::periodic)
+        {
+          periodic_direction = boundary_conditions.periodic_direction.at(id);
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            id,
+            boundary_conditions.periodic_neighbor_id.at(id),
+            periodic_direction,
+            this->void_fraction_constraints);
+
+          has_periodic_boundaries = true;
+
+          // Get periodic offset if void fraction method is qcm or spm
+          if (this->void_fraction_parameters->mode ==
+                Parameters::VoidFractionMode::qcm ||
+              this->void_fraction_parameters->mode ==
+                Parameters::VoidFractionMode::spm)
+            {
+              periodic_offset = get_periodic_offset_distance(id);
+            }
+        }
+    }
+  void_fraction_constraints.close();
+
+
+  // Reinit system matrix
+
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  dsp,
+                                  void_fraction_constraints,
+                                  false);
+
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    locally_owned_dofs,
+    this->triangulation->get_communicator(),
+    locally_relevant_dofs);
+
+  system_matrix_void_fraction.reinit(locally_owned_dofs,
+                                     locally_owned_dofs,
+                                     dsp,
+                                     this->triangulation->get_communicator());
+
+  if (has_periodic_boundaries)
+    LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
+      this->dof_handler, this->vertices_to_periodic_cell);
+}
+
 
 template <int dim>
 void
@@ -368,7 +416,8 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                   // Translation factor used to translate the reference sphere
                   // location and size to those of the particles. Usually, we
                   // take it as the radius of every individual particle. This
-                  // makes our method valid for different particle distribution.
+                  // makes our method valid for different particle
+                  // distribution.
                   double translational_factor =
                     particle_properties[DEM::PropertiesIndex::dp] * 0.5;
 
@@ -387,17 +436,18 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                         Utilities::fixed_power<dim>(translational_factor) *
                         reference_quadrature_weights[l];
 
-                      // Here, we translate the position of the reference sphere
-                      // into the position of the particle, but for this we have
-                      // to shrink or expand the size of the reference sphere to
-                      // be equal to the size of the particle as the location of
-                      // the quadrature points is affected by the size by
-                      // multiplying with the particle's radius. We then
-                      // translate by taking the translational vector between
-                      // the reference sphere center and the particle's center.
-                      // This translates directly into the translational vector
-                      // being the particle's position as the reference sphere
-                      // is always located at (0,0) in 2D or (0,0,0) in 3D.
+                      // Here, we translate the position of the reference
+                      // sphere into the position of the particle, but for
+                      // this we have to shrink or expand the size of the
+                      // reference sphere to be equal to the size of the
+                      // particle as the location of the quadrature points is
+                      // affected by the size by multiplying with the
+                      // particle's radius. We then translate by taking the
+                      // translational vector between the reference sphere
+                      // center and the particle's center. This translates
+                      // directly into the translational vector being the
+                      // particle's position as the reference sphere is always
+                      // located at (0,0) in 2D or (0,0,0) in 3D.
                       quadrature_particle_location[l] =
                         (translational_factor *
                          reference_quadrature_location[l]) +
@@ -518,9 +568,9 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
   double quadrature_void_fraction;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
 
-  // If the reference sphere diameter is user defined, the radius is calculated
-  // from it, otherwise, the value must be calculated while looping over the
-  // cells.
+  // If the reference sphere diameter is user defined, the radius is
+  // calculated from it, otherwise, the value must be calculated while looping
+  // over the cells.
   bool calculate_reference_sphere_radius = true;
   if (qcm_sphere_diameter > 1e-16)
     {
@@ -594,7 +644,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                 fe_values_void_fraction.get_quadrature_points();
             }
 
-          // Array of real locations for the periodic neighbor quadrature points
+          // Array of real locations for the periodic neighbor quadrature
+          // points
           std::vector<std::vector<Point<dim>>>
             periodic_neighbor_quadrature_point_location(
               active_periodic_neighbors.size(),
@@ -616,16 +667,17 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
               const double r_particle =
                 0.5 * particle_properties[DEM::PropertiesIndex::dp];
 
-              // Loop over neighboring cells to determine if a given neighboring
-              // particle contributes to the solid volume of the current
-              // reference sphere
+              // Loop over neighboring cells to determine if a given
+              // neighboring particle contributes to the solid volume of the
+              // current reference sphere
               //***********************************************************************
               for (unsigned int n = 0; n < active_neighbors.size(); n++)
                 {
-                  // Define the radius of the reference sphere to be used as the
-                  // averaging volume for the QCM, if the reference sphere
-                  // diameter was given by the user the value is already defined
-                  // since it is not dependent on any measure of the active cell
+                  // Define the radius of the reference sphere to be used as
+                  // the averaging volume for the QCM, if the reference sphere
+                  // diameter was given by the user the value is already
+                  // defined since it is not dependent on any measure of the
+                  // active cell
                   if (calculate_reference_sphere_radius)
                     {
                       if (void_fraction_parameters
@@ -903,10 +955,11 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                 }
 
               // Execute same operations for periodic neighbors, if the
-              // simulation has no periodic boundaries, the container is empty.
-              // Also, those operations can not be done in the previous loop
-              // because the particles on the periodic side needs a correction
-              // with an offset for the distance with the quadrature point
+              // simulation has no periodic boundaries, the container is
+              // empty. Also, those operations can not be done in the previous
+              // loop because the particles on the periodic side needs a
+              // correction with an offset for the distance with the
+              // quadrature point
               for (unsigned int m = 0; m < active_periodic_neighbors.size();
                    m++)
                 {

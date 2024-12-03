@@ -263,13 +263,12 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   sort_particles_into_subdomains_and_cells();
 
-  // TODO BB
   // Remap periodic nodes after setup of dofs (If ASC and PBC)
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      // sparse_contacts_object.map_periodic_nodes(
-      // this->void_fraction_constraints);
+      sparse_contacts_object.map_periodic_nodes(
+        this->void_fraction_manager.void_fraction_constraints);
     }
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
@@ -502,8 +501,8 @@ CFDDEMSolver<dim>::read_checkpoint()
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      // sparse_contacts_object.map_periodic_nodes(
-      // this->void_fraction_constraints);
+      sparse_contacts_object.map_periodic_nodes(
+        this->void_fraction_manager.void_fraction_constraints);
     }
 
   // Velocity Vectors
@@ -725,8 +724,8 @@ CFDDEMSolver<dim>::load_balance()
   if (dem_action_manager->check_periodic_boundaries_enabled() &&
       dem_action_manager->check_sparse_contacts_enabled())
     {
-      // sparse_contacts_object.map_periodic_nodes(
-      //   this->void_fraction_constraints);
+      sparse_contacts_object.map_periodic_nodes(
+        this->void_fraction_manager.void_fraction_constraints);
     }
 
   // Update the local and ghost cells (if ASC enabled)
