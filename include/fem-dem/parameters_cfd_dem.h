@@ -67,11 +67,8 @@ namespace Parameters
     VoidFractionMode               mode;
     Functions::ParsedFunction<dim> void_fraction;
     bool                           read_dem;
-    bool                           bound_void_fraction;
     std::string                    dem_file_name;
     double                         l2_smoothing_factor;
-    double                         l2_lower_bound;
-    double                         l2_upper_bound;
     unsigned int                   particle_refinement_factor;
     double                         qcm_sphere_diameter;
     bool                           qcm_sphere_equal_cell_volume;

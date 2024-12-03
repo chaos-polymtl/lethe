@@ -274,7 +274,7 @@ Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
 We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
-For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since we want to keep the mass conservative properties of the :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``. Unlike the other schemes, we do not smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space.
+For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Unlike the other schemes, we do not smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space.
 
 .. code-block:: text
 
@@ -283,7 +283,6 @@ For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since
       set qcm sphere equal cell volume = false
       set read dem                     = true
       set dem file name                = dem
-      set bound void fraction          = false
     end
 
 CFD-DEM
