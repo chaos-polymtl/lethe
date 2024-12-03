@@ -365,25 +365,9 @@ private:
   /// Locally owned solution of the void fraction
   GlobalVectorType void_fraction_locally_owned;
 
-  /// ??? Not fully sure of this yet
-  TrilinosWrappers::SparseMatrix complete_system_matrix_void_fraction;
-  GlobalVectorType               complete_system_rhs_void_fraction;
-
-  /// Mass matrix used to constraint the value of the void fraction to be
-  /// bounded
-  TrilinosWrappers::SparseMatrix mass_matrix;
-
-  /// Mass matrix diagonal used to constraint the value of the void fraction to
-  /// be bounded
-  GlobalVectorType diagonal_of_mass_matrix;
-
-  /// ??? BB Not fully sure of this yet
-  IndexSet active_set;
-
   /// Preconditioner used for the solution of the smoothed L2 projection of the
   /// void fraction
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-
 
   /// System matrix used to assembled the smoothed L2 projection of the void
   /// fraction
@@ -398,12 +382,6 @@ private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
-
-
-  /**
-   * Member related to boundary conditions. At the moment, only a single
-   * boundary condition is supported.
-   */
 
   /// Boolean to indicate if the mesh has periodic boundaries
   bool has_periodic_boundaries;

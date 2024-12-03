@@ -182,9 +182,6 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
     }
 
   solve_linear_system_and_update_solution(false);
-  // if (this->cfd_dem_simulation_parameters.void_fraction
-  //       ->bound_void_fraction == true)
-  //   update_solution_and_constraints();
 }
 
 template <int dim>
@@ -1135,40 +1132,6 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution(
 
   void_fraction_constraints.distribute(completely_distributed_solution);
   void_fraction_locally_relevant = completely_distributed_solution;
-}
-
-template <int dim>
-void
-VoidFractionBase<dim>::assemble_mass_matrix_diagonal(
-  TrilinosWrappers::SparseMatrix &diagonal_mass_matrix)
-{
-  Assert(
-    fe->degree == 1,
-    ExcMessage(
-      "Constraining the void fraction between lower and upper bound is not supported when using a FE_Q with a degree higher than 1"));
-  FEValues<dim>      fe_void_fraction_values(*fe,
-                                        *quadrature,
-                                        update_values | update_JxW_values);
-  const unsigned int dofs_per_cell = fe->dofs_per_cell;
-  const unsigned int n_qpoints     = quadrature->size();
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_void_fraction_values.reinit(cell);
-          cell_matrix = 0;
-          for (unsigned int q = 0; q < n_qpoints; ++q)
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              cell_matrix(i, i) += (fe_void_fraction_values.shape_value(i, q) *
-                                    fe_void_fraction_values.shape_value(i, q) *
-                                    fe_void_fraction_values.JxW(q));
-          cell->get_dof_indices(local_dof_indices);
-          void_fraction_constraints.distribute_local_to_global(
-            cell_matrix, local_dof_indices, mass_matrix);
-        }
-    }
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the

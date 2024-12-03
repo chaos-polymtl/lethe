@@ -64,8 +64,6 @@ private:
   void
   read_dem();
 
-
-
 protected:
   /**
    * @brief associates the degrees of freedom to each vertex of the finite elements
