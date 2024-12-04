@@ -29,13 +29,13 @@
 using namespace dealii;
 
 /**
- * @brief Calculates the area of intersection between a circular (2D) particle and a circle
+ * @brief Calculate the area of intersection between a circular (2D) particle and a circle.
  *
- * @param r_particle Radius of the particle
+ * @param[in] r_particle Radius of the particle
  *
- * @param r_circle Radius of the circle
+ * @param[in] r_circle Radius of the circle
  *
- * @param neighbor_distance Distance between the particle and the circle
+ * @param[in] neighbor_distance Distance between the particle and the circle
  */
 inline double
 particle_circle_intersection_2d(double r_particle,
@@ -58,13 +58,13 @@ particle_circle_intersection_2d(double r_particle,
 }
 
 /**
- * @brief Calculates the volume of intersection between a spherical (3D) particle and a sphere
+ * @brief Calculate the volume of intersection between a spherical (3D) particle and a sphere.
  *
- * @param r_particle Radius of the particle
+ * @param[in] r_particle Radius of the particle
  *
- * @param r_sphere Radius of the sphere
+ * @param[in] r_sphere Radius of the sphere
  *
- * @param neighbor_distance Distance between the particle and the sphere
+ * @param[in] neighbor_distance Distance between the particle and the sphere
  */
 
 inline double
@@ -129,7 +129,7 @@ public:
   }
 
   /**
-   * @brief Setup the degrees of freedom
+   * @brief Setup the degrees of freedom.
    *
    */
   void
@@ -137,7 +137,7 @@ public:
 
 
   /**
-   * @brief Establishes the constraints of the void fraction systems.
+   * @brief Establish the constraints of the void fraction systems.
    *
    * @param boundary_conditions The boundary conditions of fluid dynamics. This is used to establish periodic boundary conditions for the void fraction.
    *
@@ -148,9 +148,9 @@ public:
 
 
   /**
-   * @brief Assembles the diagonal of the mass matrix to impose constraints on the system
+   * @brief Assemble the diagonal of the mass matrix to impose constraints on the system
    *
-   *  @param diagonal_mass_matrix The matrix for which the diagonal entries will be filled with the diagonal of the mass matrix
+   *  @param[out] diagonal_mass_matrix The matrix for which the diagonal entries will be filled with the diagonal of the mass matrix
    *
    *  @todo Establish if it is really necessary to keep this as a matrix and not as a vector since a diagonal is nothing more than a vector.
    */
@@ -159,9 +159,9 @@ public:
     TrilinosWrappers::SparseMatrix &diagonal_mass_matrix);
 
   /**
-   * @brief Calculates the void fraction
+   * @brief Calculate the void fraction.
    *
-   * @param time current time for which the void fraction is to be calculated.
+   * @param[in] time Current time for which the void fraction is to be calculated.
    *
    */
   void
@@ -180,7 +180,7 @@ public:
 
 
   /**
-   * @brief Percolates the time vector for the void fraction. This operation is called at the end of a time-step.
+   * @brief Percolate the time vector for the void fraction. This operation is called at the end of a time-step.
    *
    */
   void
@@ -235,37 +235,37 @@ public:
 
 private:
   /**
-   * @brief Calculates the void fraction using a function. This is a straightforward usage of VectorTools.
+   * @brief Calculate the void fraction using a function. This is a straightforward usage of VectorTools.
    *
-   * @param time current time for which the void fraction is to be calculated.
+   * @param[in] time Current time for which the void fraction is to be calculated.
    *
    */
   void
   calculate_void_fraction_function(const double time);
 
   /**
-   * @brief Calculates the void fraction using the particle centered method.
+   * @brief Calculate the void fraction using the particle centered method.
    *
    */
   void
   calculate_void_fraction_particle_centered_method();
 
   /**
-   * @brief Calculates the void fraction using the satellite point method.
+   * @brief Calculate the void fraction using the satellite point method.
    *
    */
   void
   calculate_void_fraction_satellite_point_method();
 
   /**
-   * @brief Calculates the void fraction using the Quadrature-Centered Method (QCM).
+   * @brief Calculate the void fraction using the Quadrature-Centered Method (QCM).
    *
    */
   void
   calculate_void_fraction_quadrature_centered_method();
 
   /**
-   * @brief Solve the linear system resulting from the assemblies
+   * @brief Solve the linear system resulting from the assemblies.
    *
    * @param is_post_mesh_adaptation Indicates if the equation is being solved during post_mesh_adaptation(),
    * for verbosity.
@@ -275,15 +275,15 @@ private:
     const bool &is_post_mesh_adaptation = false) override;
 
   /**
-   * @brief This function calculates and returns the periodic offset distance of the domain which is needed
+   * @brief Calculate and return the periodic offset distance vector of the domain which is needed
    * for the periodic boundary conditions using the QCM or SPM for void fraction
    * with the GLS VANS/CFD-DEM solver. The distance is based on one of the
-   * periodic boundaries and all particle location shifted by this distance is
-   * according to this periodic boundary.
+   * periodic boundaries. This periodic boundary is then used as the reference 
+   * for all particle locations shifted by this offset vector.
    *
-   * @param boundary_id The id of one of the periodic boundaries
+   * @param[in] boundary_id The ID of one of the periodic boundaries
    *
-   * @return The periodic offset distance
+   * @return The periodic offset vector.
    */
   inline Tensor<1, dim>
   get_periodic_offset_distance(unsigned int boundary_id) const

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
-- MAJOR The ability to bound the void fraction from below and above (using l2 lower bound and l2 upper bound parameters) has been removed. This bounding of the void fraction was highly problematic, since it could create discontinuities in the time derivative of the void fraction and contaminate the solution. In reality, this feature was never used. Importantly, this PR refactors the calculation of the void fraction outside of the VANS and CFD-DEM solvers of Lethe so that it exists only independently in a seperate subequation solver. This change is in preperation for the matrix free implementation of the VANS equations.
+- MAJOR The ability to bound the void fraction from below and above (using l2 lower bound and l2 upper bound parameters) has been removed. This bounding of the void fraction was highly problematic, since it could create discontinuities in the time derivative of the void fraction and contaminate the solution. In reality, this feature was never used. Importantly, this PR refactors the calculation of the void fraction outside of the VANS and CFD-DEM solvers of Lethe so that it exists only independently in a seperate subequation solver. This change is in preperation for the matrix free implementation of the VANS equations. [#1392](https://github.com/chaos-polymtl/lethe/pull/1392)
 
 ## Release of Lethe v1.0 - 2024-11-30
 

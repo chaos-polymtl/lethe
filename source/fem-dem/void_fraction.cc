@@ -418,7 +418,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                   double translational_factor =
                     particle_properties[DEM::PropertiesIndex::dp] * 0.5;
 
-                  // Resize and translate reference sphere
+                  // Resize and translate the reference sphere
                   // to the particle size and position according the volume
                   // ratio between sphere and particle.
                   for (unsigned int l = 0;
@@ -565,7 +565,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
   double quadrature_void_fraction;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
 
-  // If the reference sphere diameter is user defined, the radius is
+  // If the reference sphere diameter is user-defined, the radius is
   // calculated from it, otherwise, the value must be calculated while looping
   // over the cells.
   bool calculate_reference_sphere_radius = true;
@@ -595,7 +595,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
-  // Clear all contributions of particles from the previous timestep
+  // Clear all contributions of particles from the previous time-step
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -716,7 +716,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       // Particle completely outside reference
                       // sphere. Do absolutely nothing.
 
-                      // Particle partially in reference sphere
+                      // Particle partially in the reference sphere
                       else if ((neighbor_distance > (r_sphere - r_particle)) &&
                                (neighbor_distance < (r_sphere + r_particle)))
                         {
@@ -781,7 +781,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle_location.distance(
                           periodic_neighbor_quadrature_point_location[n][k]);
 
-                      // Particle completely in reference sphere
+                      // Particle completely in the reference sphere
                       if (periodic_neighbor_distance <= (r_sphere - r_particle))
                         {
                           particle_properties
@@ -792,10 +792,10 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                             (2.0 * dim);
                         }
 
-                      // Particle completely outside reference
+                      // Particle completely outside the reference
                       // sphere. Do absolutely nothing.
 
-                      // Particle partially in reference sphere
+                      // Particle partially in the reference sphere
                       else if ((periodic_neighbor_distance >
                                 (r_sphere - r_particle)) &&
                                (periodic_neighbor_distance <
@@ -913,7 +913,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       distance = particle.get_location().distance(
                         quadrature_point_location[q]);
 
-                      // Particle completely in reference sphere
+                      // Particle completely in the reference sphere
                       if (distance <= (r_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
@@ -924,10 +924,10 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution];
 
-                      // Particle completely outside reference sphere. Do
+                      // Particle completely outside the reference sphere. Do
                       // absolutely nothing.
 
-                      // Particle partially in reference sphere
+                      // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
                                (distance < (r_sphere + r_particle)))
                         {
@@ -953,8 +953,8 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
               // Execute same operations for periodic neighbors, if the
               // simulation has no periodic boundaries, the container is
-              // empty. Also, those operations can not be done in the previous
-              // loop because the particles on the periodic side needs a
+              // empty. Also, those operations cannot be done in the previous
+              // loop because the particles on the periodic side need a
               // correction with an offset for the distance with the
               // quadrature point
               for (unsigned int m = 0; m < active_periodic_neighbors.size();
@@ -992,7 +992,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       distance = particle_location.distance(
                         quadrature_point_location[q]);
 
-                      // Particle completely in reference sphere
+                      // Particle completely in the reference sphere
                       if (distance <= (r_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
@@ -1003,10 +1003,10 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution];
 
-                      // Particle completely outside reference sphere. Do
+                      // Particle completely outside the reference sphere. Do
                       // absolutely nothing.
 
-                      // Particle partially in reference sphere
+                      // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
                                (distance < (r_sphere + r_particle)))
                         {
@@ -1134,7 +1134,7 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution(
   void_fraction_locally_relevant = completely_distributed_solution;
 }
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
+// Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
 template class VoidFractionBase<2>;
