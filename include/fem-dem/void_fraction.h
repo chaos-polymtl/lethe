@@ -1,20 +1,5 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2024 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
- *
- */
-
+// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_void_fraction_h
 #define lethe_void_fraction_h
@@ -154,6 +139,8 @@ public:
   /**
    * @brief Establishes the constraints of the void fraction systems.
    *
+   * @param boundary_conditions The boundary conditions of fluid dynamics. This is used to establish periodic boundary conditions for the void fraction.
+   *
    */
   void
   setup_constraints(
@@ -208,10 +195,10 @@ public:
 
 
   /**
-   * @brief Initializes the void fraction at the begginig of a simulation
+   * @brief Initializes the void fraction at the beggining of a simulation
    *
+   * @param time The current time. This is used for time-dependent functions.
    */
-
   void
   initialize_void_fraction(const double time)
   {
@@ -280,6 +267,8 @@ private:
   /**
    * @brief Solve the linear system resulting from the assemblies
    *
+   * @param is_post_mesh_adaptation Indicates if the equation is being solved during post_mesh_adaptation(),
+   * for verbosity.
    */
   virtual void
   solve_linear_system_and_update_solution(
@@ -369,7 +358,7 @@ private:
   /// void fraction
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
-  /// System matrix used to assembled the smoothed L2 projection of the void
+  /// System matrix used to assemble the smoothed L2 projection of the void
   /// fraction
   TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
 
@@ -389,7 +378,7 @@ private:
   /// Offset for the periodic boundary condition
   Tensor<1, dim> periodic_offset;
 
-  /// Direction associated of the periodic boundary condition
+  /// Direction associated with the periodic boundary condition
   unsigned int periodic_direction;
 
   /// Vertices to periodic cell map, this is used in the QCM and the satellite
