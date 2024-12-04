@@ -709,9 +709,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                             (2.0 * dim);
                         }
 
-                      // Particle completely outside reference
-                      // sphere. Do absolutely nothing.
-
                       // Particle partially in the reference sphere
                       else if ((neighbor_distance > (r_sphere - r_particle)) &&
                                (neighbor_distance < (r_sphere + r_particle)))
@@ -728,6 +725,9 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                               particle_sphere_intersection_3d(
                                 r_particle, r_sphere, neighbor_distance);
                         }
+
+                      // Particle completely outside reference
+                      // sphere. Do absolutely nothing.
                     }
                 }
 
@@ -788,9 +788,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                             (2.0 * dim);
                         }
 
-                      // Particle completely outside the reference
-                      // sphere. Do absolutely nothing.
-
                       // Particle partially in the reference sphere
                       else if ((periodic_neighbor_distance >
                                 (r_sphere - r_particle)) &&
@@ -813,6 +810,9 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                                 r_sphere,
                                 periodic_neighbor_distance);
                         }
+
+                      // Particle completely outside the reference
+                      // sphere. Do absolutely nothing.
                     }
                 }
             }
@@ -920,9 +920,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution];
 
-                      // Particle completely outside the reference sphere. Do
-                      // absolutely nothing.
-
                       // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
                                (distance < (r_sphere + r_particle)))
@@ -944,6 +941,9 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                               particle_properties
                                 [DEM::PropertiesIndex::volumetric_contribution];
                         }
+
+                      // Particle completely outside the reference sphere. Do
+                      // absolutely nothing.
                     }
                 }
 
@@ -999,9 +999,6 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution];
 
-                      // Particle completely outside the reference sphere. Do
-                      // absolutely nothing.
-
                       // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
                                (distance < (r_sphere + r_particle)))
@@ -1023,6 +1020,9 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                               particle_properties
                                 [DEM::PropertiesIndex::volumetric_contribution];
                         }
+
+                      // Particle completely outside the reference sphere. Do
+                      // absolutely nothing.
                     }
                 }
 
