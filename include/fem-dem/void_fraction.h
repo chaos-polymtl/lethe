@@ -139,7 +139,9 @@ public:
   /**
    * @brief Establish the constraints of the void fraction systems.
    *
-   * @param[in] boundary_conditions The boundary conditions of fluid dynamics. This is used to establish periodic boundary conditions for the void fraction.
+   * @param[in] boundary_conditions The boundary conditions of fluid dynamics.
+   * This is used to establish periodic boundary conditions for the void
+   * fraction.
    *
    */
   void
@@ -187,7 +189,8 @@ public:
   /**
    * @brief Initialize the void fraction at the beginning of a simulation.
    *
-   * @param[in] time The current time. This is used for time-dependent functions.
+   * @param[in] time The current time. This is used for time-dependent
+   * functions.
    */
   void
   initialize_void_fraction(const double time)
@@ -258,8 +261,8 @@ private:
   /**
    * @brief Solve the linear system resulting from the assemblies.
    *
-   * @param[in] is_post_mesh_adaptation Indicates if the equation is being solved during post_mesh_adaptation(),
-   * for verbosity.
+   * @param[in] is_post_mesh_adaptation Indicates if the equation is being
+   * solved during post_mesh_adaptation(), for verbosity.
    */
   virtual void
   solve_linear_system_and_update_solution(
