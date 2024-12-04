@@ -35,7 +35,7 @@ namespace DEM
     fem_torque_z            = 13,
     mass                    = 14,
     volumetric_contribution = 15,
-    n_properties            = 16,
+    n_properties            = 160,
   };
 
   unsigned int
