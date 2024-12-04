@@ -97,6 +97,18 @@ template <int dim>
 class VoidFractionBase : public PhysicsLinearSubequationsSolver
 {
 public:
+
+/**
+ * @brief Constructor for the void fraction calculator.
+ * 
+ * @param triangulation The triangulation on which the simulation is being done.
+ * @param input_parameters The parameters for the void fraction calculation.
+ * @param linear_solver_parameters The parameters for the linear solver. This is used to solve the L2 projection of the void fraction
+ * @param particle_handler The particle handler used to manage the particles in the simulation. This object must be provided even if the particles are not used to establish the void fraction.
+ * @param fe_degree The finite element degree used to interpolate the void fraction.
+ * @param simplex A flag to indicate if the simulations are being done with simplex elements.
+ * @param pcout The ConditionalOStream used to print the information.
+ */
   VoidFractionBase(
     parallel::DistributedTriangulationBase<dim>             *triangulation,
     std::shared_ptr<Parameters::VoidFractionParameters<dim>> input_parameters,
@@ -110,7 +122,6 @@ public:
     , triangulation(triangulation)
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
-    // BB TODO verify if the particle handler can be remade const
     , particle_handler(particle_handler)
   {
     if (simplex)
