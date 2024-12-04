@@ -35,7 +35,6 @@ VoidFractionBase<dim>::setup_dofs()
   DoFTools::make_hanging_node_constraints(dof_handler,
                                           void_fraction_constraints);
 
-  /// TODO ADD Periodic constraints
   void_fraction_constraints.close();
 
   void_fraction_locally_relevant.reinit(locally_owned_dofs,
@@ -169,13 +168,10 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
     {
       calculate_void_fraction_particle_centered_method();
     }
-  // particle_centered_method();
   else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm)
     {
       calculate_void_fraction_quadrature_centered_method();
     }
-
-  //  quadrature_centered_sphere_method(load_balance_step);
   else if (void_fraction_parameters->mode == Parameters::VoidFractionMode::spm)
     {
       calculate_void_fraction_satellite_point_method();

@@ -148,20 +148,10 @@ public:
 
 
   /**
-   * @brief Assemble the diagonal of the mass matrix to impose constraints on the system
+   * @brief Calculates the void fraction
    *
-   *  @param[out] diagonal_mass_matrix The matrix for which the diagonal entries will be filled with the diagonal of the mass matrix
-   *
-   *  @todo Establish if it is really necessary to keep this as a matrix and not as a vector since a diagonal is nothing more than a vector.
-   */
-  void
-  assemble_mass_matrix_diagonal(
-    TrilinosWrappers::SparseMatrix &diagonal_mass_matrix);
-
-  /**
-   * @brief Calculate the void fraction.
-   *
-   * @param[in] time Current time for which the void fraction is to be calculated.
+   * @param[in] time Current time for which the void fraction is to be
+   * calculated.
    *
    */
   void
@@ -237,7 +227,8 @@ private:
   /**
    * @brief Calculate the void fraction using a function. This is a straightforward usage of VectorTools.
    *
-   * @param[in] time Current time for which the void fraction is to be calculated.
+   * @param[in] time Current time for which the void fraction is to be
+   * calculated.
    *
    */
   void
@@ -278,7 +269,7 @@ private:
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed
    * for the periodic boundary conditions using the QCM or SPM for void fraction
    * with the GLS VANS/CFD-DEM solver. The distance is based on one of the
-   * periodic boundaries. This periodic boundary is then used as the reference 
+   * periodic boundaries. This periodic boundary is then used as the reference
    * for all particle locations shifted by this offset vector.
    *
    * @param[in] boundary_id The ID of one of the periodic boundaries
