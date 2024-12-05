@@ -70,7 +70,6 @@ subsection void fraction
   set qcm sphere equal cell volume = true
   set read dem                     = true
   set dem file name                = dem
-  set bound void fraction          = false
 end
 
 #---------------------------------------------------

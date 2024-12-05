@@ -7,7 +7,7 @@ namespace Parameters
 {
   template <int dim>
   void
-  VoidFraction<dim>::declare_parameters(ParameterHandler &prm)
+  VoidFractionParameters<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
     prm.declare_entry(
@@ -22,11 +22,6 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Define particles using a DEM simulation results file.");
-    prm.declare_entry(
-      "bound void fraction",
-      "false",
-      Patterns::Bool(),
-      "Boolean for the bounding of the void fraction using an active set method.");
     prm.declare_entry("dem file name",
                       "dem",
                       Patterns::FileName(),
@@ -35,14 +30,6 @@ namespace Parameters
                       "0.000001",
                       Patterns::Double(),
                       "The smoothing factor for void fraction L2 projection");
-    prm.declare_entry("l2 lower bound",
-                      "0.36",
-                      Patterns::Double(),
-                      "The lower bound for void fraction L2 projection");
-    prm.declare_entry("l2 upper bound",
-                      "1",
-                      Patterns::Double(),
-                      "The upper bound for void fraction L2 projection");
     prm.declare_entry(
       "particle refinement factor",
       "0",
@@ -63,7 +50,7 @@ namespace Parameters
 
   template <int dim>
   void
-  VoidFraction<dim>::parse_parameters(ParameterHandler &prm)
+  VoidFractionParameters<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("void fraction");
     const std::string op = prm.get("mode");
@@ -82,11 +69,8 @@ namespace Parameters
     prm.leave_subsection();
 
     read_dem                   = prm.get_bool("read dem");
-    bound_void_fraction        = prm.get_bool("bound void fraction");
     dem_file_name              = prm.get("dem file name");
     l2_smoothing_factor        = prm.get_double("l2 smoothing factor");
-    l2_lower_bound             = prm.get_double("l2 lower bound");
-    l2_upper_bound             = prm.get_double("l2 upper bound");
     particle_refinement_factor = prm.get_integer("particle refinement factor");
     qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
@@ -228,5 +212,5 @@ namespace Parameters
   }
 } // namespace Parameters
 // Pre-compile the 2D and 3D
-template class Parameters::VoidFraction<2>;
-template class Parameters::VoidFraction<3>;
+template class Parameters::VoidFractionParameters<2>;
+template class Parameters::VoidFractionParameters<3>;

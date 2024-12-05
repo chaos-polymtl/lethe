@@ -17,6 +17,7 @@
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/vans_assemblers.h>
+#include <fem-dem/void_fraction.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -29,63 +30,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+
 using namespace dealii;
-
-/**
- * @brief Calculates the area of intersection between a circular (2D) particle and a circle
- *
- * @param r_particle Radius of the particle
- *
- * @param r_circle Radius of the circle
- *
- * @param neighbor_distance Distance between the particle and the circle
- */
-inline double
-particle_circle_intersection_2d(double r_particle,
-                                double r_circle,
-                                double neighbor_distance)
-{
-  return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
-                                cos((pow(neighbor_distance, 2) +
-                                     pow(r_particle, 2) - pow(r_circle, 2)) /
-                                    (2 * neighbor_distance * r_particle))) +
-         Utilities::fixed_power<2, double>(r_circle) *
-           Utilities::fixed_power<-1, double>(
-             cos((pow(neighbor_distance, 2) - pow(r_particle, 2) +
-                  pow(r_circle, 2)) /
-                 (2 * neighbor_distance * r_circle))) -
-         0.5 * sqrt((-neighbor_distance + r_particle + r_circle) *
-                    (neighbor_distance + r_particle - r_circle) *
-                    (neighbor_distance - r_particle + r_circle) *
-                    (neighbor_distance + r_particle + r_circle));
-}
-
-/**
- * @brief Calculates the volume of intersection between a spherical (3D) particle and a sphere
- *
- * @param r_particle Radius of the particle
- *
- * @param r_sphere Radius of the sphere
- *
- * @param neighbor_distance Distance between the particle and the sphere
- */
-
-inline double
-particle_sphere_intersection_3d(double r_particle,
-                                double r_sphere,
-                                double neighbor_distance)
-{
-  return M_PI *
-         Utilities::fixed_power<2, double>(r_sphere + r_particle -
-                                           neighbor_distance) *
-         (Utilities::fixed_power<2, double>(neighbor_distance) +
-          (2 * neighbor_distance * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(r_particle)) +
-          (2 * neighbor_distance * r_sphere) + (6 * r_sphere * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(r_sphere))) /
-         (12 * neighbor_distance);
-}
-
 
 /**
  * A solver class for the VANS equation using GLS stabilization
@@ -116,77 +62,7 @@ private:
   update_solution_and_constraints();
 
   void
-  particle_centered_method();
-
-  void
-  quadrature_centered_sphere_method(bool load_balance_step);
-
-  void
-  satellite_point_method();
-
-  void
-  solve_L2_system_void_fraction();
-
-  void
   read_dem();
-
-  /**
-   * @brief This function calculates and returns the periodic offset distance of the domain which is needed
-   * for the periodic boundary conditions using the QCM or SPM for void fraction
-   * with the GLS VANS/CFD-DEM solver. The distance is based on one of the
-   * periodic boundaries and all particle location shifted by this distance is
-   * according to this periodic boundary.
-   *
-   * @param boundary_id The id of one of the periodic boundaries
-   *
-   * @return The periodic offset distance
-   */
-  inline Tensor<1, dim>
-  get_periodic_offset_distance(unsigned int boundary_id) const
-  {
-    Tensor<1, dim> offset;
-
-    // Iterating over the active cells in the triangulation
-    for (const auto &cell : (*this->triangulation).active_cell_iterators())
-      {
-        if (cell->is_locally_owned() || cell->is_ghost())
-          {
-            if (cell->at_boundary())
-              {
-                // Iterating over cell faces
-                for (unsigned int face_id = 0; face_id < cell->n_faces();
-                     ++face_id)
-                  {
-                    unsigned int face_boundary_id =
-                      cell->face(face_id)->boundary_id();
-
-                    // Check if face is on the boundary, if so, get
-                    // the periodic offset distance for one pair of periodic
-                    // faces only since periodic boundaries are aligned with the
-                    // direction and only axis are currently allowed
-                    if (face_boundary_id == boundary_id)
-                      {
-                        Point<dim> face_center = cell->face(face_id)->center();
-                        auto periodic_cell = cell->periodic_neighbor(face_id);
-                        unsigned int periodic_face_id =
-                          cell->periodic_neighbor_face_no(face_id);
-                        Point<dim> periodic_face_center =
-                          periodic_cell->face(periodic_face_id)->center();
-
-                        offset = periodic_face_center - face_center;
-
-                        return offset;
-                      }
-                  }
-              }
-          }
-      }
-
-    // A zero tensor is returned in case no cells are found on the periodic
-    // boundaries on this processor. This processor won't handle particle in
-    // cells at periodic boundaries, so it won't affect any computation.
-    return offset;
-  }
 
 protected:
   /**
@@ -200,10 +76,7 @@ protected:
   iterate() override;
 
   void
-  initialize_void_fraction();
-
-  void
-  calculate_void_fraction(const double time, bool load_balance_step);
+  calculate_void_fraction(const double time);
 
   void
   vertices_cell_mapping();
@@ -303,8 +176,7 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
-  void
-  percolate_void_fraction();
+
 
   /**
    * Member Variables
@@ -312,34 +184,12 @@ protected:
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
-  DoFHandler<dim> void_fraction_dof_handler;
-  FE_Q<dim>       fe_void_fraction;
-
   MappingQGeneric<dim> particle_mapping;
-
-  IndexSet locally_owned_dofs_voidfraction;
-  IndexSet locally_relevant_dofs_voidfraction;
-
-  // Solution of the void fraction at previous time steps
-  std::vector<GlobalVectorType> previous_void_fraction;
-
-  GlobalVectorType nodal_void_fraction_relevant;
-  GlobalVectorType nodal_void_fraction_owned;
 
   // Assemblers for the particle_fluid interactions
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
     particle_fluid_assemblers;
 
-  TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
-  GlobalVectorType               system_rhs_void_fraction;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_void_fraction;
-  GlobalVectorType               complete_system_rhs_void_fraction;
-  TrilinosWrappers::SparseMatrix mass_matrix;
-  GlobalVectorType               diagonal_of_mass_matrix;
-  IndexSet                       active_set;
-
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  AffineConstraints<double>                          void_fraction_constraints;
 
   const bool   PSPG        = true;
   const bool   SUPG        = true;
@@ -359,6 +209,8 @@ protected:
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;
+
+  VoidFractionBase<dim> void_fraction_manager;
 };
 
 #endif
