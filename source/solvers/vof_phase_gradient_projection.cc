@@ -37,6 +37,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   FullMatrix<double> local_matrix(n_dofs_per_cell, n_dofs_per_cell);
   Vector<double>     local_rhs(n_dofs_per_cell);
 
+  // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
   // Extractor for phase fraction gradient vector

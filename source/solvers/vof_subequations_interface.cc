@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <solvers/vof_algebraic_interface_reinitialization.h>
 #include <solvers/vof_curvature_projection.h>
 #include <solvers/vof_linear_subequations_solver.h>
 #include <solvers/vof_phase_gradient_projection.h>
@@ -10,6 +11,7 @@ template <int dim>
 VOFSubequationsInterface<dim>::VOFSubequationsInterface(
   const SimulationParameters<dim> &p_simulation_parameters,
   const ConditionalOStream        &p_pcout,
+  const SimulationControl         &p_simulation_control,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> &p_triangulation,
   MultiphysicsInterface<dim> *p_multiphysics_interface)
   : multiphysics_interface(p_multiphysics_interface)
@@ -35,6 +37,22 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
         std::make_shared<VOFCurvatureProjection<dim>>(
           p_simulation_parameters,
           this->pcout,
+          p_triangulation,
+          this->multiphysics_interface,
+          this);
+    }
+  if (p_simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization
+        .enable)
+    {
+      this->active_subequations.push_back(
+        VOFSubequationsID::algebraic_interface_reinitialization);
+      this->subequations
+        [VOFSubequationsID::algebraic_interface_reinitialization] =
+        std::make_shared<VOFAlgebraicInterfaceReinitialization<dim>>(
+          p_simulation_parameters,
+          this->pcout,
+          p_simulation_control,
           p_triangulation,
           this->multiphysics_interface,
           this);

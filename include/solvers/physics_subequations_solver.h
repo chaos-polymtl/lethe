@@ -4,6 +4,8 @@
 #ifndef lethe_physics_subequations_solver_h
 #define lethe_physics_subequations_solver_h
 
+#include <core/physics_solver.h>
+
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -68,6 +70,41 @@ protected:
     const bool &is_post_mesh_adaptation = false) = 0;
 
 
+  const ConditionalOStream pcout;
+};
+
+/**
+ * @brief TODO AMISHGA
+ * @tparam dim
+ * @tparam VectorType
+ */
+template <int dim, typename VectorType>
+class PhysicsNonlinearSubequationsSolver : public PhysicsSubequationsSolverBase,
+                                           public PhysicsSolver<VectorType>
+{
+public:
+  /**
+   * @brief TODO AMISHGA
+   *
+   * @param non_linear_solver_parameters
+   * @param pcout
+   */
+  PhysicsNonlinearSubequationsSolver(
+    const Parameters::NonLinearSolver non_linear_solver_parameters,
+    const ConditionalOStream         &pcout)
+    : PhysicsSolver<VectorType>(non_linear_solver_parameters)
+    , pcout(pcout)
+  {}
+
+  /**
+   * TODO AMISHGA
+   * @brief Set up preconditioner. Not used for the physics subequations, but
+   * needed for the compilation of the non-linear solver.
+   */
+  void
+  setup_preconditioner() override{};
+
+protected:
   const ConditionalOStream pcout;
 };
 

@@ -76,7 +76,11 @@ test()
   // Phase fraction gradient and curvature L2 projection enabled
   {
     VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters, pcout, tria, multiphysics_interface.get());
+      solver_parameters,
+      pcout,
+      *simulation_control,
+      tria,
+      multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();
@@ -95,7 +99,11 @@ test()
     false;
   {
     VOFSubequationsInterface<dim> subequations_interface(
-      solver_parameters, pcout, tria, multiphysics_interface.get());
+      solver_parameters,
+      pcout,
+      *simulation_control,
+      tria,
+      multiphysics_interface.get());
 
     std::vector<VOFSubequationsID> active_subequations =
       subequations_interface.get_active_subequations();

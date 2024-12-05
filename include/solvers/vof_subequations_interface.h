@@ -20,7 +20,9 @@ enum class VOFSubequationsID : unsigned int
   /// VOF phase fraction gradient L2 projection
   phase_gradient_projection = 0,
   /// VOF curvature L2 projection
-  curvature_projection = 1
+  curvature_projection = 1,
+  /// VOF algebraic interface reinitialization
+  algebraic_interface_reinitialization = 2
 };
 
 
@@ -42,6 +44,9 @@ public:
    *
    * @param[in] p_pcout Parallel cout used to print the information.
    *
+   * @param[in] p_simulation_control Object containing simulation time-stepping
+   * information.
+   *
    * @param[in] p_triangulation Distributed mesh information.
    *
    * @param[in] p_multiphysics_interface Multiphysics interface object pointer
@@ -50,6 +55,7 @@ public:
   VOFSubequationsInterface(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
+    const SimulationControl         &p_simulation_control,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                &p_triangulation,
     MultiphysicsInterface<dim> *p_multiphysics_interface);
@@ -199,6 +205,9 @@ public:
       subequation_string = "VOF phase fraction gradient L2 projection";
     else if (subequation_id == VOFSubequationsID::curvature_projection)
       subequation_string = "VOF curvature L2 projection";
+    else if (subequation_id ==
+             VOFSubequationsID::algebraic_interface_reinitialization)
+      subequation_string = "VOF algebraic interface reinitialization";
 
     return subequation_string;
   }

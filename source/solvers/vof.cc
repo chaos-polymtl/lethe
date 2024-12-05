@@ -1144,11 +1144,23 @@ VolumeOfFluid<dim>::modify_solution()
           handle_interface_sharpening();
         }
     }
-  // Apply filter to phase fraction
+
+  // Apply algebraic interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
+    reinitialize_interface_with_algebraic_method();
+
+  // Apply filter to phase fraction values
   apply_phase_filter();
 
   // Solve phase fraction gradient and curvature projections
-  this->subequations->solve();
+  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+        .enable)
+    {
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection);
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::curvature_projection);
+    }
 }
 
 template <int dim>
@@ -1588,11 +1600,22 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
       this->previous_solutions[i] = tmp_previous_solution;
     }
 
+  // Apply algebraic interface reinitialization
+  if (simulation_parameters.multiphysics.vof_parameters.algebraic_interface_reinitialization.enable)
+    reinitialize_interface_with_algebraic_method();
+
   // Apply filter to phase fraction
   apply_phase_filter();
 
   // Solve phase fraction gradient and curvature projections
-  this->subequations->solve(true);
+  if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
+        .enable)
+    {
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection, true);
+      this->subequations->solve_specific_subequation(
+        VOFSubequationsID::curvature_projection, true);
+    }
 }
 
 template <int dim>
@@ -2343,7 +2366,7 @@ VolumeOfFluid<dim>::apply_phase_filter()
   filter = VolumeOfFluidFilterBase::model_cast(
     this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
-  // Apply filter to solution
+  // Apply filter to the solution
   for (auto p : this->locally_owned_dofs)
     {
       filtered_solution_owned[p] =
@@ -2362,6 +2385,25 @@ VolumeOfFluid<dim>::apply_phase_filter()
     }
 }
 
+template <int dim>
+void
+  VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
+{
+  // Solve algebraic reinitialization steps
+  this->subequations->solve_specific_subequation(
+    VOFSubequationsID::algebraic_interface_reinitialization);
+
+  // Overwrite solution with the algebraic interface reinitialization
+  VectorTools::interpolate_to_different_mesh(
+  *this->subequations->get_dof_handler(
+    VOFSubequationsID::algebraic_interface_reinitialization),
+  *this->subequations->get_solution(
+    VOFSubequationsID::algebraic_interface_reinitialization),
+      this->dof_handler,
+      this->local_evaluation_point); // TODO AMISHGA check if it can be directly in present solution (locally relevant)
+  this->nonzero_constraints.distribute(this->local_evaluation_point);
+  this->present_solution = this->local_evaluation_point;
+}
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;
