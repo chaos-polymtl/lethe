@@ -2,6 +2,7 @@ add_library(lethe-solvers
   # Sources
   analytical_solutions.cc
   auxiliary_physics.cc
+  average_scalar_in_time.cc
   cahn_hilliard.cc
   cahn_hilliard_assemblers.cc
   cahn_hilliard_filter.cc
@@ -45,6 +46,7 @@ add_library(lethe-solvers
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
+  ../../include/solvers/average_scalar_in_time.h
   ../../include/solvers/cahn_hilliard.h
   ../../include/solvers/cahn_hilliard_assemblers.h
   ../../include/solvers/cahn_hilliard_filter.h

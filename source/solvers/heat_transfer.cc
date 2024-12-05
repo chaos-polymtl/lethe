@@ -740,6 +740,18 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
 
+  if (simulation_parameters.post_processing.calculate_average_velocities)
+  {
+    std::cout << "allo" << std::endl;
+    this->average_temperature->calculate_average_scalar(
+      this->present_solution,
+      this->simulation_parameters.post_processing,
+      simulation_control->get_current_time(),
+      simulation_control->get_time_step());
+    this->average_temperature_to_output = this -> average_temperature -> get_average_scalar();
+    data_out.add_data_vector(dof_handler, this->average_temperature_to_output, "average_temperature");
+  }
+
   // Get number of fluids and solids
   const unsigned int n_fluids =
     this->simulation_parameters.physical_properties_manager
@@ -767,6 +779,8 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
       data_out.add_data_vector(this->dof_handler,
                                this->present_solution,
                                heat_flux_postprocessors[f_id]);
+      
+      
     }
   // Heat fluxes in solids
   for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
@@ -782,6 +796,8 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                this->present_solution,
                                heat_flux_postprocessors[m_id]);
     }
+
+  
 }
 
 template <int dim>
@@ -1246,6 +1262,15 @@ HeatTransfer<dim>::setup_dofs()
                  .dirichlet_value.at(id),
               nonzero_constraints);
           }
+      }
+
+    // Initialize the vectors used in the time average temperature calculation
+    if (this->simulation_parameters.post_processing.calculate_average_velocities)
+      {
+        this -> average_temperature -> initialize_vectors(
+          this->locally_owned_dofs,
+          this->locally_relevant_dofs,
+          mpi_communicator);
       }
   }
   nonzero_constraints.close();
