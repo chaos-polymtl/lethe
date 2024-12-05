@@ -332,8 +332,6 @@ We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cf
       set l2 smoothing factor = 2.8387584e-5
     end
 
-.. note::
-    Note that void fraction is not bound in this case. The size of the particles used in this example forces us to use a very coarse mesh. Bounding void fraction would lead to instability in the present case.
 
 CFD-DEM
 ~~~~~~~~~~

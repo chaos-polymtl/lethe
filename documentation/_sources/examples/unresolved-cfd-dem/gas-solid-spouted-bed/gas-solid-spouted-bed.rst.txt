@@ -307,7 +307,7 @@ Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem. We choose to use the quadrature centered method (QCM) to calculate the void fraction. This method does not require smoothing the void fraction as it is space and time continuous. For this simulation, we use a reference sphere having the same volume as the mesh elements as the averaging volume to calculate the void fraction.
-For this, we specify the ``mode`` to be ``qcm``. We want the volume of the volume averaging sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``true``. Since we want to keep the mass conservative properties of the  :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``.
+For this, we specify the ``mode`` to be ``qcm``. We want the volume of the volume averaging sphere to be equal to the volume of the element. For this, we set the ``qcm sphere equal cell volume`` equals to ``true``.
 
 .. code-block:: text
 
@@ -316,7 +316,6 @@ For this, we specify the ``mode`` to be ``qcm``. We want the volume of the volum
       set qcm sphere equal cell volume = true
       set read dem                     = true
       set dem file name                = dem
-      set bound void fraction          = false
     end
 
 CFD-DEM

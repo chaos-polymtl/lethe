@@ -203,7 +203,7 @@ $(function() {
 , <a class="el" href="structParameters_1_1VOF__InterfaceSharpening.html#a7f4d45f09bfe1f66121ada8de37482f9">Parameters::VOF_InterfaceSharpening</a>
 , <a class="el" href="structParameters_1_1VOF__PhaseFilter.html#a38afa06c0cac46a4baf5a88d69aa2272">Parameters::VOF_PhaseFilter</a>
 , <a class="el" href="structParameters_1_1VOF__SurfaceTensionForce.html#ab937321e5ce77c8eae53d128594fb267">Parameters::VOF_SurfaceTensionForce</a>
-, <a class="el" href="classParameters_1_1VoidFraction.html#ac9b6b156ee6ea92e77469688cb3a76e9">Parameters::VoidFraction&lt; dim &gt;</a>
+, <a class="el" href="classParameters_1_1VoidFractionParameters.html#a4feaf481f25768635644586f948b5545">Parameters::VoidFractionParameters&lt; dim &gt;</a>
 , <a class="el" href="classParsedFunctionCustom.html#a428c64b07a63f13bca68293b50a3cd28">ParsedFunctionCustom&lt; n_components &gt;</a>
 , <a class="el" href="classSourceTerms_1_1SourceTerm.html#a9daacd5f949cf89baaeef43d50cb8861">SourceTerms::SourceTerm&lt; dim &gt;</a>
 </li>
@@ -238,9 +238,6 @@ $(function() {
 </li>
 <li>particle_average_diameter
 : <a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a4b72bd96f13d2bf1be4363f9f236fc2f">Parameters::Lagrangian::LagrangianPhysicalProperties</a>
-</li>
-<li>particle_centered_method()
-: <a class="el" href="classFluidDynamicsVANS.html#a23684ed381c732b9407f9ae6c27d20de">FluidDynamicsVANS&lt; dim &gt;</a>
 </li>
 <li>particle_contact_info
 : <a class="el" href="structDEM_1_1dem__data__structures.html#a8410f89e19e0746b627be7168759e098">DEM::dem_data_structures&lt; dim &gt;</a>
@@ -286,6 +283,7 @@ $(function() {
 , <a class="el" href="classFluidDynamicsVANS.html#a8708f412821ca41dfd28a2f545969708">FluidDynamicsVANS&lt; dim &gt;</a>
 , <a class="el" href="classLagrangianLoadBalancing.html#a188425d9ce4907b7256d3d8687288165">LagrangianLoadBalancing&lt; dim &gt;</a>
 , <a class="el" href="classParticleVisualization.html#a285956983fd3d32f62d41a7fceb0551d">ParticleVisualization&lt; dim &gt;</a>
+, <a class="el" href="classVoidFractionBase.html#a1778898e13be6bb452c9469e7e4128cf">VoidFractionBase&lt; dim &gt;</a>
 </li>
 <li>particle_id
 : <a class="el" href="classIBParticle.html#aa17f9cf826780a5b4d3d7870785d3da0">IBParticle&lt; dim &gt;</a>
@@ -353,7 +351,7 @@ $(function() {
 : <a class="el" href="classNavierStokesScratchData.html#a62323c078408373c8553c6c4a19b83be">NavierStokesScratchData&lt; dim &gt;</a>
 </li>
 <li>particle_refinement_factor
-: <a class="el" href="classParameters_1_1VoidFraction.html#a3daa6479ea52c21c33dc4245dd09149c">Parameters::VoidFraction&lt; dim &gt;</a>
+: <a class="el" href="classParameters_1_1VoidFractionParameters.html#abe16a64804e93916fef626bdda0bca7b">Parameters::VoidFractionParameters&lt; dim &gt;</a>
 </li>
 <li>particle_residual
 : <a class="el" href="classFluidDynamicsSharp.html#ae23ee889f849429c667783bde1543464">FluidDynamicsSharp&lt; dim &gt;</a>
@@ -520,7 +518,7 @@ $(function() {
 : <a class="el" href="classNavierStokesBase.html#add394a755303214dd4a9edbdcd992f6c">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>
 </li>
 <li>percolate_void_fraction()
-: <a class="el" href="classFluidDynamicsVANS.html#ac87b3bc6133c9bf3d7ba6c36e389529d">FluidDynamicsVANS&lt; dim &gt;</a>
+: <a class="el" href="classVoidFractionBase.html#ace4e36c599e1331d3194721f1e5a5237">VoidFractionBase&lt; dim &gt;</a>
 </li>
 <li>periodic_boundaries_cells_info
 : <a class="el" href="structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41">DEM::dem_data_structures&lt; dim &gt;</a>
@@ -554,6 +552,7 @@ $(function() {
 : <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#a768f01477ffe2d44190462c5ac3c6a20">BoundaryConditions::BoundaryConditions&lt; dim &gt;</a>
 , <a class="el" href="classFluidDynamicsVANS.html#ace1e23549a5b4d63d0a81c3e08a86f74">FluidDynamicsVANS&lt; dim &gt;</a>
 , <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#a23497deead884b1a9854076008b6b7bd">Parameters::Lagrangian::BCDEM</a>
+, <a class="el" href="classVoidFractionBase.html#a69294db5db270cec37ee5162ae1bdc3d">VoidFractionBase&lt; dim &gt;</a>
 </li>
 <li>periodic_neighbor_id
 : <a class="el" href="classBoundaryConditions_1_1BoundaryConditions.html#ad4b86c1f513f80d14ad258dd9089dbcc">BoundaryConditions::BoundaryConditions&lt; dim &gt;</a>
@@ -568,6 +567,7 @@ $(function() {
 : <a class="el" href="classDEMContactManager.html#af5cffa8a1b9b514526021949d46233ee">DEMContactManager&lt; dim &gt;</a>
 , <a class="el" href="classFluidDynamicsVANS.html#ac800ded010d152830fae721977fd65ee">FluidDynamicsVANS&lt; dim &gt;</a>
 , <a class="el" href="classParticleParticleContactForceBase.html#a89c2c67344c38dea722c5d1dac6118dd">ParticleParticleContactForceBase&lt; dim &gt;</a>
+, <a class="el" href="classVoidFractionBase.html#a3d58ed88359cdd5fda9bcf8b4815c847">VoidFractionBase&lt; dim &gt;</a>
 </li>
 <li>PeriodicBoundariesManipulator()
 : <a class="el" href="classPeriodicBoundariesManipulator.html#a3af23a12e5a5fde913de8e983fd9398a">PeriodicBoundariesManipulator&lt; dim &gt;</a>
@@ -713,7 +713,7 @@ $(function() {
 : <a class="el" href="classParameters_1_1PhysicalProperties.html#a2ea322566ae890e8095d016527caa6b8">Parameters::PhysicalProperties</a>
 </li>
 <li>PhysicalPropertiesManager()
-: <a class="el" href="classPhysicalPropertiesManager.html#a82b25d27baf2cf7804c6ddaa5c552f3d">PhysicalPropertiesManager</a>
+: <a class="el" href="classPhysicalPropertiesManager.html#a48c33f808f3f49aca4ef87db6ff1d652">PhysicalPropertiesManager</a>
 </li>
 <li>PhysicalPropertyModel()
 : <a class="el" href="classPhysicalPropertyModel.html#a790b73800189af9ff8d80f1e6f8c9306">PhysicalPropertyModel</a>
@@ -1119,7 +1119,7 @@ $(function() {
 , <a class="el" href="classVOFScratchData.html#a72ddd3f7bf9fd2b4e3193971d9d316fa">VOFScratchData&lt; dim &gt;</a>
 </li>
 <li>previous_void_fraction
-: <a class="el" href="classFluidDynamicsVANS.html#a0b5c291607e14282e350f7b309c49077">FluidDynamicsVANS&lt; dim &gt;</a>
+: <a class="el" href="classVoidFractionBase.html#acfbe9af71df4d8d45072a68e55c40278">VoidFractionBase&lt; dim &gt;</a>
 </li>
 <li>previous_void_fraction_values
 : <a class="el" href="classNavierStokesScratchData.html#aa48c218f4f67db5887e6036756508bbd">NavierStokesScratchData&lt; dim &gt;</a>

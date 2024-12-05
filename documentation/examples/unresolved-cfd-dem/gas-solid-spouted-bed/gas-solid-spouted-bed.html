@@ -685,13 +685,12 @@ end
 <section id="void-fraction">
 <h3>Void Fraction<a class="headerlink" href="#void-fraction" title="Link to this heading">#</a></h3>
 <p>Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the <code class="docutils literal notranslate"><span class="pre">mode</span></code> to <code class="docutils literal notranslate"><span class="pre">dem</span></code>. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">dem</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> and specify the prefix of the dem files to be dem. We choose to use the quadrature centered method (QCM) to calculate the void fraction. This method does not require smoothing the void fraction as it is space and time continuous. For this simulation, we use a reference sphere having the same volume as the mesh elements as the averaging volume to calculate the void fraction.
-For this, we specify the <code class="docutils literal notranslate"><span class="pre">mode</span></code> to be <code class="docutils literal notranslate"><span class="pre">qcm</span></code>. We want the volume of the volume averaging sphere to be equal to the volume of the element. For this, we set the <code class="docutils literal notranslate"><span class="pre">qcm</span> <span class="pre">sphere</span> <span class="pre">equal</span> <span class="pre">cell</span> <span class="pre">volume</span></code> equals to <code class="docutils literal notranslate"><span class="pre">true</span></code>. Since we want to keep the mass conservative properties of the  <span class="math notranslate nohighlight">\(L^2\)</span> projection, we do not bound the void fraction and as such we set <code class="docutils literal notranslate"><span class="pre">bound</span> <span class="pre">void</span> <span class="pre">fraction</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+For this, we specify the <code class="docutils literal notranslate"><span class="pre">mode</span></code> to be <code class="docutils literal notranslate"><span class="pre">qcm</span></code>. We want the volume of the volume averaging sphere to be equal to the volume of the element. For this, we set the <code class="docutils literal notranslate"><span class="pre">qcm</span> <span class="pre">sphere</span> <span class="pre">equal</span> <span class="pre">cell</span> <span class="pre">volume</span></code> equals to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection void fraction
   set mode                         = qcm
   set qcm sphere equal cell volume = true
   set read dem                     = true
   set dem file name                = dem
-  set bound void fraction          = false
 end
 </pre></div>
 </div>
@@ -872,6 +871,5 @@ The bubble formation as well as the spouting strength are highly dependent on th
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
