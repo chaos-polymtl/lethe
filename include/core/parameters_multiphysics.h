@@ -170,6 +170,17 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct VOF_AlgebraicInterfaceReinitialization
+  {
+    bool                  enable;
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
   /**
    * @brief VOF - Defines the parameters for free surface simulations
@@ -181,6 +192,8 @@ namespace Parameters
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
     Parameters::VOF_PhaseFilter         phase_filter;
+    Parameters::VOF_AlgebraicInterfaceReinitialization
+      algebraic_interface_reinitialization;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 
