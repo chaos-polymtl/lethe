@@ -104,6 +104,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     sharpening.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
+    algebraic_interface_reinitialization.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
                       "fluid 1",
@@ -136,6 +137,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     sharpening.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
+    algebraic_interface_reinitialization.parse_parameters(prm);
 
     // Viscous dissipative fluid
     const std::string op = prm.get("viscous dissipative fluid");
@@ -422,6 +424,45 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::quiet;
     else
       throw(std::logic_error("Invalid verbosity level"));
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("algebraic interface reinitialization");
+  {
+    prm.declare_entry(
+      "enable",
+      "false",
+      Patterns::Bool(),
+      "Enables the interface to be reinitialized with the algebraic method <true|false>");
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose"),
+      "States whether the output from the algebraic interface reinitialization should be printed "
+      "Choices are <quiet|verbose>.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
+  dealii::ParameterHandler &prm)
+{
+  prm.enter_subsection("algebraic interface reinitialization");
+  {
+    enable               = prm.get_bool("enable");
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (op == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else
+      throw(std::runtime_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }

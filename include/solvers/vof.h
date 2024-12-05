@@ -144,6 +144,7 @@ public:
     this->subequations = std::make_shared<VOFSubequationsInterface<dim>>(
       this->simulation_parameters,
       this->pcout,
+      *this->simulation_control,
       this->triangulation,
       this->multiphysics);
   }
@@ -649,12 +650,6 @@ private:
   smooth_phase_fraction();
 
   /**
-   * @brief Carries out finding the interface curvature.
-   */
-  void
-  find_projected_interface_curvature();
-
-  /**
    * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
    *
    * @param solution VOF solution (phase fraction)
@@ -670,30 +665,17 @@ private:
   solve_projection_phase_fraction(GlobalVectorType &solution);
 
   /**
-   * @brief Assembles the matrix and rhs for calculation of the curvature.
-   *
-   * Solves:
-   * \f$v * k + \eta * \nabla v . \nabla k = \nabla v . (\psi / |\psi|)\f$
-   * where \f$v\f$, \f$\psi\f$, \f$\eta\f$, and \f$k\f$ are test function, fpg,
-   * filter value, and curvature.
-   *
-   * @param present_projected_phase_fraction_gradient_solution
-   */
-  void
-  assemble_curvature_matrix_and_rhs(
-    GlobalVectorType &present_projected_phase_fraction_gradient_solution);
-
-  /**
-   * @brief Solves curvature system.
-   */
-  void
-  solve_curvature();
-
-  /**
-   * @brief Applies filter on phase fraction values.
+   * @brief Apply filter on phase fraction values.
    */
   void
   apply_phase_filter();
+
+  /**
+   * @brief Reinitialize the interface between fluids using the algebraic
+   * approach.
+   */
+  void
+  reinitialize_interface_with_algebraic_method();
 
   GlobalVectorType nodal_phase_fraction_owned;
 

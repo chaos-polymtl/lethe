@@ -104,7 +104,6 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution(
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    mpi_communicator);
-  completely_distributed_solution = this->present_solution;
 
   if (verbose)
     {

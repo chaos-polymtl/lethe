@@ -84,7 +84,7 @@ public:
 
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
-   * the physics.
+   * the subequation.
    */
   void
   setup_dofs() override;
