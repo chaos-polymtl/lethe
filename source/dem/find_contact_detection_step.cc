@@ -6,7 +6,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, DEM::SolverType solverType>
 void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
@@ -34,12 +34,13 @@ find_particle_contact_detection_step(
 
       // Finding displacement of each particle during last step
       particle_displacement +=
-        dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
-                    particle_properties[DEM::PropertiesIndex::v_x] +
-                  particle_properties[DEM::PropertiesIndex::v_y] *
-                    particle_properties[DEM::PropertiesIndex::v_y] +
-                  particle_properties[DEM::PropertiesIndex::v_z] *
-                    particle_properties[DEM::PropertiesIndex::v_z]);
+        dt *
+        sqrt(particle_properties[DEM::PropertiesIndexEnum<solverType>::v_x] *
+               particle_properties[DEM::PropertiesIndexEnum<solverType>::v_x] +
+             particle_properties[DEM::PropertiesIndexEnum<solverType>::v_y] *
+               particle_properties[DEM::PropertiesIndexEnum<solverType>::v_y] +
+             particle_properties[DEM::PropertiesIndexEnum<solverType>::v_z] *
+               particle_properties[DEM::PropertiesIndexEnum<solverType>::v_z]);
 
       // Updating maximum displacement of particles
       max_displacement = std::max(max_displacement, particle_displacement);

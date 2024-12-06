@@ -270,7 +270,7 @@ private:
   /**
    * @brief The properties of the DEM simulation.
    */
-  DEM::DEMProperties<dim> properties_class;
+  DEM::DEMProperties<dim, SolverType::dem> properties_class;
 
   /**
    * @brief The acceleration acting on the particles.
