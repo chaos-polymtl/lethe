@@ -212,7 +212,7 @@ private:
   std::shared_ptr<Insertion<dim>>  insertion_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
-  std::shared_ptr<ParticleWallContactForce<dim>>
+  std::shared_ptr<ParticleWallContactForce<dim, DEM::SolverType::cfd_dem>>
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
@@ -244,7 +244,7 @@ private:
   // Storage of statistics about time and contact lists
   statistics contact_list;
 
-  DEM::DEMProperties<dim> properties_class;
+  DEM::DEMProperties<dim, SolverType::cfd_dem> properties_class;
 
   // Information for parallel grid processing
   PVDHandler grid_pvdhandler;

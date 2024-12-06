@@ -25,7 +25,7 @@ using namespace dealii;
  * particle-wall contact force.
  */
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class ParticleWallContactForce
 {
 public:
