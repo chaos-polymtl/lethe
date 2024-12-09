@@ -13,6 +13,7 @@
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
+#include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessors.h>
 #include <solvers/postprocessors_smoothing.h>
 
@@ -168,6 +169,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     average_velocities =
       std::make_shared<AverageVelocities<dim, VectorType, DofsType>>(
         dof_handler);
+  
+  // this would be for the scalar
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_scalar = std::make_shared<AverageScalarInTime<dim>>(dof_handler);
 
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
@@ -876,6 +881,9 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             .calculate_average_velocities)
         average_velocities->prepare_for_mesh_adaptation();
 
+      // if (this->simulation_parameters.post_processing.calculate_average_velocities){
+      //   average_scalar->prepare_for_mesh_adaptation();
+      // }
 
       tria.execute_coarsening_and_refinement();
       this->setup_dofs();
@@ -905,6 +913,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       if (this->simulation_parameters.post_processing
             .calculate_average_velocities)
         average_velocities->post_mesh_adaptation();
+
+      // if (this->simulation_parameters.post_processing.calculate_average_velocities){
+      //   average_scalar->post_mesh_adaptation();
+      // }
     }
 }
 
@@ -1124,6 +1136,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         Parameters::InitialConditionType::average_velocity_profile)
     average_velocities->prepare_for_mesh_adaptation();
 
+  // if (this->simulation_parameters.post_processing.calculate_average_velocities){
+  //   average_scalar->prepare_for_mesh_adaptation();
+  // }
+
   tria.execute_coarsening_and_refinement();
   this->setup_dofs();
 
@@ -1154,6 +1170,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       this->simulation_parameters.initial_condition->type ==
         Parameters::InitialConditionType::average_velocity_profile)
     average_velocities->post_mesh_adaptation();
+
+  // if (this->simulation_parameters.post_processing.calculate_average_velocities){
+  //   average_scalar->post_mesh_adaptation();
+  // }
 
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)

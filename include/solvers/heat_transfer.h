@@ -13,6 +13,7 @@
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/postprocessors.h>
+#include <solvers/postprocessing_scalar.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -129,6 +130,10 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
+    if (simulation_parameters.post_processing.calculate_average_velocities){
+      average_temperature = std::make_shared<AverageScalarInTime<dim>>(this->dof_handler);
+    }
   }
 
   /**
@@ -789,6 +794,16 @@ private:
    */
   std::vector<std::shared_ptr<ThermalConductivityModel>>
     thermal_conductivity_models;
+
+  /**
+   * @brief Compute the average temperature in time.
+   */
+  std::shared_ptr<AverageScalarInTime<dim>> average_temperature;
+
+  /**
+   * @brief Locally owned average temperature calculated using the AverageScalarInTime object. 
+   */
+  GlobalVectorType average_temperature_to_output;
 
   /**
    * @brief Compute local heat flux quantities from temperature field and
