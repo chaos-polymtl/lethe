@@ -16,6 +16,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/postprocessing_velocities.h>
+#include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessors.h>
 #include <solvers/postprocessors_smoothing.h>
 #include <solvers/simulation_parameters.h>
@@ -910,6 +911,7 @@ protected:
   TableHandler flow_rate_table;
   std::shared_ptr<AverageVelocities<dim, VectorType, DofsType>>
              average_velocities;
+  std::shared_ptr<AverageScalarInTime<dim>> average_scalar;
   VectorType average_solution;
 
   // Refinement control
