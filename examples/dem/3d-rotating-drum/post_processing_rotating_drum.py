@@ -88,7 +88,7 @@ for i in range(start, len(time)):
 vel_value_x = vel_value_x / (len(time) - start)
 vel_value_y = vel_value_y / (len(time) - start)
 
-plt.plot(vel_value_x, y_graph, label="Lethe - 2024")
+plt.plot(vel_value_x, y_graph, label="Lethe")
 plt.plot(-df_x_zero_exp["Column1"].to_numpy(),
          df_x_zero_exp["Column2"].to_numpy(), "xk", label="RPT")
 plt.xlabel("u (m/s)")
