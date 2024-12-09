@@ -26,7 +26,7 @@ time = particle.time_list
 # We fix the angle at 27 deg like is was mentioned in the experimental article
 angle = 27. * 2. * np.pi / 360.
 
-# H is the normal distance been the free surface and the center of the cylinder
+# H is the normal distance between the free surface and the center of the cylinder
 H = -0.03
 
 # Point where the local averages are made
