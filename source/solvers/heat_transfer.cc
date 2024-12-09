@@ -1170,6 +1170,21 @@ HeatTransfer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(this->dof_handler);
+
+  std::string  checkpoint_file_prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  // This will need to be changed to the average temperature
+  if (simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      std::vector<GlobalVectorType *> sum_vectors =
+        this->average_temperature->read(checkpoint_file_prefix);
+
+      input_vectors.insert(input_vectors.end(), sum_vectors.begin(), sum_vectors.end());
+    }
+
   solution_transfer->deserialize(input_vectors);
 
   present_solution = distributed_system;

@@ -911,7 +911,6 @@ protected:
   TableHandler flow_rate_table;
   std::shared_ptr<AverageVelocities<dim, VectorType, DofsType>>
              average_velocities;
-  std::shared_ptr<AverageScalarInTime<dim>> average_scalar;
   VectorType average_solution;
 
   // Refinement control
