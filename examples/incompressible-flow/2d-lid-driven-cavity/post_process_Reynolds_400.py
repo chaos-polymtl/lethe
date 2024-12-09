@@ -14,10 +14,17 @@ This comparison is similar to what is done in the step-57 of deal.II
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
+import argparse
+
 
 #--------------------------------------------
 # Main
 #--------------------------------------------
+
+
+parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
+parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 # Load reference data
 # Note, this reference data is taken from step-57 of deal.II
@@ -48,4 +55,16 @@ plt.xlabel("u")
 plt.ylabel("y")
 plt.legend()
 plt.savefig("lethe-ghia-re-400-comparison.png", dpi=300)
-plt.show()
+
+if (not args.validate):
+  plt.show()
+
+else:
+  # Combine the vectors into an array (columns)
+  data = np.column_stack((y,u))
+
+  # Output file name
+  output_file = "solution.dat"
+
+  # Save the data to a .dat file with space as the separator
+  np.savetxt(output_file, data, fmt="%.6f",header="u y", delimiter=" ") 
