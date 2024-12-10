@@ -73,11 +73,11 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                    = verbose
-  set calculate kinetic energy     = true
-  set calculate enstrophy          = true
-  set calculate average velocities = false
-  set initial time                 = 0.
+  set verbosity                         = verbose
+  set calculate kinetic energy          = true
+  set calculate enstrophy               = true
+  set calculate average velocities      = false
+  set initial time for average velocity = 0.
 end
 
 #---------------------------------------------------

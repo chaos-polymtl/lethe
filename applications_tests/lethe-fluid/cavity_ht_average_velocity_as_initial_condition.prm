@@ -71,11 +71,11 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = verbose
-  set calculate temperature statistics = true
-  set calculate average velocities     = true
-  set initial time                     = 0.1
-  set calculate mass conservation      = false
+  set verbosity                         = verbose
+  set calculate temperature statistics  = true
+  set calculate average velocities      = true
+  set initial time for average velocity = 0.1
+  set calculate mass conservation       = false
 end
 
 #---------------------------------------------------

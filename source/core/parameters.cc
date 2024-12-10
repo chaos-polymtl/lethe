@@ -1843,6 +1843,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
+      prm.declare_entry("calculate average temperature",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of time average temperature");
+
       prm.declare_entry(
         "calculate pressure drop",
         "false",
@@ -1871,10 +1876,16 @@ namespace Parameters
         "Enable calculation of tracer flow rate at boundaries.");
 
       prm.declare_entry(
-        "initial time",
+        "initial time for average velocity",
         "0.0",
         Patterns::Double(),
         "Initial time to start calculations for average velocities");
+
+      prm.declare_entry(
+        "initial time for average temperature",
+        "0.0",
+        Patterns::Double(),
+        "Initial time to start calculations for average temperature");
 
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
@@ -2066,12 +2077,14 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
+      calculate_average_temperature = prm.get_bool("calculate average temperature");
       calculate_pressure_drop      = prm.get_bool("calculate pressure drop");
       inlet_boundary_id            = prm.get_integer("inlet boundary id");
       outlet_boundary_id           = prm.get_integer("outlet boundary id");
       calculate_flow_rate          = prm.get_bool("calculate flow rate");
       calculate_tracer_flow_rate   = prm.get_bool("calculate tracer flow rate");
-      initial_time                 = prm.get_double("initial time");
+      initial_time_for_average_velocities = prm.get_double("initial time for average velocity");
+      initial_time_for_average_temperature = prm.get_double("initial time for average temperature");
       kinetic_energy_output_name   = prm.get("kinetic energy name");
       pressure_drop_output_name    = prm.get("pressure drop name");
       flow_rate_output_name        = prm.get("flow rate name");

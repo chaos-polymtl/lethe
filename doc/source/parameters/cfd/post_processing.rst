@@ -18,8 +18,8 @@ This subsection controls the post-processing other than the forces and torque on
     set kinetic energy name              = kinetic_energy
 
     # Average velocities calculation
-    set calculate average velocities     = false
-    set initial time                     = 0.0
+    set calculate average velocities      = false
+    set initial time for average velocity = 0.0
 
     # Pressure drop calculation
     set calculate pressure drop          = false

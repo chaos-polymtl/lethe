@@ -47,8 +47,8 @@ test()
   simulation_control_parameters.time_step_independent_of_end_time = true;
 
   Parameters::PostProcessing postprocessing_parameters;
-  postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.initial_time                 = 0.5;
+  postprocessing_parameters.calculate_average_velocities        = true;
+  postprocessing_parameters.initial_time_for_average_velocities = 0.5;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
@@ -93,7 +93,7 @@ test()
 
   // Time info
   const double time_end     = simulation_control_parameters.time_end;
-  const double initial_time = postprocessing_parameters.initial_time;
+  const double initial_time = postprocessing_parameters.initial_time_for_average_velocities;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
   double       epsilon      = 1e-6;

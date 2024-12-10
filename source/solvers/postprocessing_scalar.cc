@@ -24,10 +24,9 @@ AverageScalarInTime<dim>::calculate_average_scalar(
   const double                      time_step)
 {
   const double epsilon      = 1e-6;
-  const double initial_time = post_processing.initial_time;
+  const double initial_time = post_processing.initial_time_for_average_temperature;
   dt                        = time_step;
 
-  std::cout<<"allo 0"<<std::endl;
   // When averaging velocities begins
   if (current_time >= (initial_time - epsilon) && !average_calculation)
     {
@@ -70,6 +69,10 @@ AverageScalarInTime<dim>::initialize_vectors(
   average_scalar_with_ghost_cells.reinit(locally_owned_dofs,
                                          locally_relevant_dofs,
                                          mpi_communicator);
+
+  sum_scalar_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                        locally_relevant_dofs,
+                                        mpi_communicator);
 }
 
 
