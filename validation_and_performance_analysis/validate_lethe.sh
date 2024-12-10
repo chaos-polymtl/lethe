@@ -125,29 +125,64 @@ fi
 echo "The output path has been set to $output_path"
 verify_or_create_folder "$output_path"
 lethe_path=$(pwd)
-echo "Please ensure that the current path is the root folder of lethe"
 echo "The current path is: $lethe_path"
+echo "Please ensure that the current path is the root folder of lethe"
+
+# Output file
+hash_file="$output_path/current_git_hash.txt"
+
+# Get the current Git hash
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    git_hash=$(git rev-parse HEAD)
+    echo "Current Git hash: $git_hash"
+    echo "$git_hash" > "$hash_file"
+    echo "Git hash saved to '$hash_file'."
+else
+    echo "Error: Not inside a Git repository."
+    exit 1
+fi
 
 echo "Press Enter to continue..."
 read -r  # Wait for user to press Enter
-echo "Proceeding with validation..."
+
 
 
 # Input file
 input_file="validation_and_performance_analysis/validation_cases.txt"
 
-# Loop through each line of the file
-while IFS= read -r line; do
-    # Skip lines that are empty or start with a comment
-    if [[ -z "$line" || "$line" =~ ^# ]]; then
-        continue
-    fi
+cases=()
+n_procs=()
 
-    # Do something with the line
-    echo "Processing: $line"
-    cd $lethe_path/$line
-    bash validate.sh -p $output_path
-    cd $lethe_path
+# Loop through each line of the file and store the cases and number of procs
+while IFS= read -r line; do
+
+  # Skip lines that are empty or start with a comment
+  if [[ -z "$line" || "$line" =~ ^# ]]; then
+      continue
+  fi
+
+  # Split the line into two parts
+  part1=$(echo "$line" | awk '{print $1}')
+  part2=$(echo "$line" | awk '{print $2}')
+  
+  # Append the parts to the respective arrays
+  cases+=("$part1")
+  n_procs+=("$part2")
+
 done < "$input_file"
 
+#Create the first page of the PDF report
+echo -e "Lethe validation \nDate: $(date) \nGit hash: $git_hash  \nComputer: $(hostname -f) \n" | \
+magick -density 300 -pointsize 12 text:- $output_path/report.pdf
+
+
+echo "Proceeding with validation..."
+echo "-----------------------------"
+for i in "${!cases[@]}"; do
+  echo "---> Processing ${cases[i]} using ${n_procs[i]} cores"
+  cd $lethe_path/${cases[i]}
+  bash validate.sh -p $output_path -np ${n_procs[i]}
+  echo "     Finished processing ${cases[i]}"
+  cd $lethe_path
+done
 

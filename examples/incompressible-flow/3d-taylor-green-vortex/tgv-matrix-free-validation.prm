@@ -1,0 +1,164 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set max cfl          = 1
+  set adapt            = true
+  set time step        = 0.01
+  set time end         = 20
+  set output name      = tgv
+  set output frequency = 0
+  set output path      = ./output/
+  set subdivision      = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = sin(x)*cos(y)*cos(z); -cos(x)*sin(y)*cos(z);0; 1./16*(cos(2*x)+cos(2*y))*(cos(2*z)+2);
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 0.000625
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                = verbose
+  set calculate enstrophy      = true
+  set calculate kinetic energy = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -3.14159265359 : 3.14159265359 : true
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  set fix pressure constant = true
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 2
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+  subsection bc 2
+    set type               = periodic
+    set id                 = 4
+    set periodic_id        = 5
+    set periodic_direction = 2
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set solver    = newton
+    set tolerance = 1e-3
+    set verbosity = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = verbose
+    set method             = gmres
+    set max iters          = 10
+    set max krylov vectors = 10
+    set relative residual  = 1e-4
+    set minimum residual   = 1e-7
+    set preconditioner     = gcmg
+
+    # MG parameters
+    set mg verbosity                   = verbose
+    set mg enable hessians in jacobian = false
+
+    # Smoother
+    set mg smoother iterations     = 5
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = verbose
+
+    # Coarse-grid solver
+    set mg coarse grid solver = direct
+  end
+end

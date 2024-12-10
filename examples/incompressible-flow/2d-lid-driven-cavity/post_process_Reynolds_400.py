@@ -21,7 +21,6 @@ import argparse
 # Main
 #--------------------------------------------
 
-
 parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
 parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
@@ -54,9 +53,9 @@ plt.plot(u_ghia,y_ghia,'s',ms=8,mfc="None",markeredgecolor="black",label="Ghia 1
 plt.xlabel("u")
 plt.ylabel("y")
 plt.legend()
-plt.savefig("lethe-ghia-re-400-comparison.png", dpi=300)
 
 if (not args.validate):
+  plt.savefig("lethe-ghia-re-400-comparison.png", dpi=300)
   plt.show()
 
 else:
@@ -68,3 +67,4 @@ else:
 
   # Save the data to a .dat file with space as the separator
   np.savetxt(output_file, data, fmt="%.6f",header="u y", delimiter=" ") 
+  plt.savefig("lethe-ghia-re-400-comparison.pdf")
