@@ -36,9 +36,7 @@ AverageScalarInTime<dim>::calculate_average_scalar(
       // Store the first dt value in case dt varies.
       dt_0 = dt;
     }
-  std::cout<< dt <<std::endl;
 
-  std::cout<<local_evaluation_point.size()<<std::endl;
   // Calculate (scalar*dt) at each time step and accumulates the values
   scalar_dt.equ(dt, local_evaluation_point);
 
