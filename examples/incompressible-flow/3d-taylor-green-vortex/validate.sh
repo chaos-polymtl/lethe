@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This script automates the validation process for the 2D Taylor-Couette benchmark
+# This script automates the validation process for the 2D lid-driven cavity benchmark
 # in Lethe.
 
 # Function to recreate the folder
@@ -18,7 +18,7 @@ recreate_folder() {
 default_value="./"
 
 # Default number of cores
-n_proc=1
+n_proc=16
 
 # Parse command-line arguments
 output_root=$default_value
@@ -49,23 +49,21 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-folder="$output_root/2d-taylor-couette"
-action="mpirun -np $n_proc lethe-fluid taylor-couette.prm" 
+folder="$output_root/3d-taylor-green-vortex"
+action="mpirun -np $n_proc lethe-fluid tgv-matrix-free-validation.prm"
 recreate_folder "$folder"
 
 { time $action ; } &> "$folder/log"
+python3 calculate_dissipation_rate_constant_cfl.py -f output/  -i kinetic_energy.dat
+python3 plot_dissipation_rate.py -ke kinetic_energy_rate.dat -ens output/enstrophy.dat -v 0.000625 --validate
 
-python3 postprocess_taylor_couette.py --validate
-
-        # Copy the information to the log folder
-cp lethe-analytical-taylor-couette-comparison.pdf $folder
-cp torque.00.dat $folder
-cp torque.01.dat $folder
-cp solution.dat $folder
+# Copy the information to the log folder
+cp dissipation_comparison.pdf $folder
+cp solution_enstrophy.dat $folder
+cp solution_kinetic_energy.dat $folder
 
 # Append the information to the report
-magick -density 300  $output_root/report.pdf lethe-analytical-taylor-couette-comparison.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf dissipation_comparison.pdf  -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
-
 
 

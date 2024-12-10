@@ -69,6 +69,6 @@ else:
   output_file = "solution.dat"
 
   # Save the data to a .dat file with space as the separator
-  np.savetxt(output_file, data, fmt="%.6f",header="u y", delimiter=" ") 
+  np.savetxt(output_file, data, fmt="%.6f",header="r u", delimiter=" ") 
 plt.savefig("lethe-analytical-taylor-couette-comparison.pdf")
 

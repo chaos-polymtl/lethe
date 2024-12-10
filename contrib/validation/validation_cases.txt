@@ -8,4 +8,5 @@
 
 examples/incompressible-flow/2d-lid-driven-cavity 1
 examples/incompressible-flow/2d-taylor-couette 1
+examples/incompressible-flow/3d-taylor-green-vortex 16
 
