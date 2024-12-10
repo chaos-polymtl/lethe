@@ -740,7 +740,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
 
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temperature && this->simulation_control->get_current_time() > simulation_parameters.post_processing.initial_time_for_average_temperature + 1e-12)
   {
     this->average_temperature->calculate_average_scalar(
       this->present_solution,
