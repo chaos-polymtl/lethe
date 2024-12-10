@@ -482,7 +482,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time)
+            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -507,7 +507,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time)
+            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -649,7 +649,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time)
+            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -675,7 +675,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time)
+            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -740,9 +740,8 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
 
-  if (simulation_parameters.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_temperature)
   {
-    std::cout << "allo" << std::endl;
     this->average_temperature->calculate_average_scalar(
       this->present_solution,
       this->simulation_parameters.post_processing,
@@ -1044,7 +1043,8 @@ HeatTransfer<dim>::pre_mesh_adaptation()
         previous_solutions[i]);
     }
 
-  this -> average_temperature->prepare_for_mesh_adaptation();
+  if (simulation_parameters.post_processing.calculate_average_temperature)
+    this -> average_temperature->prepare_for_mesh_adaptation();
 }
 
 template <int dim>
@@ -1076,7 +1076,8 @@ HeatTransfer<dim>::post_mesh_adaptation()
       previous_solutions[i] = tmp_previous_solution;
     }
   
-  this -> average_temperature -> post_mesh_adaptation();
+  if (simulation_parameters.post_processing.calculate_average_temperature)
+    this -> average_temperature -> post_mesh_adaptation();
 }
 
 template <int dim>
@@ -1116,6 +1117,21 @@ HeatTransfer<dim>::write_checkpoint()
     {
       sol_set_transfer.emplace_back(&previous_solution);
     }
+
+  std::string  checkpoint_file_prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  if (simulation_parameters.post_processing.calculate_average_temperature)
+    {
+      std::vector<const GlobalVectorType *> avg_scalar_set_transfer =
+        this->average_temperature->save(checkpoint_file_prefix);
+
+      sol_set_transfer.insert(sol_set_transfer.end(),
+                              avg_scalar_set_transfer.begin(),
+                              avg_scalar_set_transfer.end());    
+    }
+
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
   // Serialize error table
@@ -1177,7 +1193,7 @@ HeatTransfer<dim>::read_checkpoint()
     this->simulation_parameters.restart_parameters.filename;
 
   // This will need to be changed to the average temperature
-  if (simulation_parameters.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_temperature)
     {
       std::vector<GlobalVectorType *> sum_vectors =
         this->average_temperature->read(checkpoint_file_prefix);
@@ -1186,6 +1202,9 @@ HeatTransfer<dim>::read_checkpoint()
     }
 
   solution_transfer->deserialize(input_vectors);
+
+  if (simulation_parameters.post_processing.calculate_average_temperature)
+    this->average_temperature->sanitize_after_restart();  
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1279,7 +1298,7 @@ HeatTransfer<dim>::setup_dofs()
           }
       }
     // Initialize the vectors used in the time average temperature calculation
-    if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    if (this->simulation_parameters.post_processing.calculate_average_temperature)
       {
         this -> average_temperature -> initialize_vectors(
           this->locally_owned_dofs,

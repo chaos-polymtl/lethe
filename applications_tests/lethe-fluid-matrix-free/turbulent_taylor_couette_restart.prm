@@ -87,8 +87,8 @@ subsection post-processing
   # Enstrophy calculation
   set calculate enstrophy = true
 
-  set calculate average velocities = false
-  set initial time                 = 0.
+  set calculate average velocities              = false
+  set initial time for average velocity = 0.
 end
 
 #---------------------------------------------------

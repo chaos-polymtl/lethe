@@ -102,8 +102,8 @@ subsection post-processing
   set kinetic energy name      = kinetic_energy
 
   # Average velocities calculation
-  set calculate average velocities = true
-  set initial time                 = 5
+  set calculate average velocities      = true
+  set initial time for average velocity = 5
 end
 
 #---------------------------------------------------

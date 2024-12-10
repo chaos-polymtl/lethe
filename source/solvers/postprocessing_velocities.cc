@@ -26,7 +26,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const double                     &time_step)
 {
   const double epsilon      = 1e-6;
-  const double initial_time = post_processing.initial_time;
+  const double initial_time = post_processing.initial_time_for_average_velocities;
   dt                        = time_step;
 
   // When averaging velocities begins

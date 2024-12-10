@@ -1382,7 +1382,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // time >= initial time with the epsilon as tolerance.
       const double dt = simulation_control->get_time_step();
       if (simulation_control->get_current_time() >
-          (simulation_parameters.post_processing.initial_time - 1e-6 * dt))
+          (simulation_parameters.post_processing.initial_time_for_average_velocities - 1e-6 * dt))
         {
           this->average_velocities->calculate_average_velocities(
             this->local_evaluation_point,
