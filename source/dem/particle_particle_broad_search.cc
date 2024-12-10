@@ -131,7 +131,7 @@ find_particle_particle_contact_pairs(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -143,7 +143,7 @@ find_particle_particle_contact_pairs(
     &local_contact_pair_candidates,
   typename dem_data_structures<dim>::particle_particle_candidates
                                     &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+  const AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object)
 {
   // Clear containers
   local_contact_pair_candidates.clear();
@@ -168,8 +168,8 @@ find_particle_particle_contact_pairs(
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::advected)
         continue;
 
       // Get particles in the main cell
@@ -180,7 +180,7 @@ find_particle_particle_contact_pairs(
       // Store other particles in the main cell as contact candidates if
       // main cell is mobile only (this is equivalent to when adaptive sparse
       // contacts feature is not enabled)
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::mobile)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::mobile)
         {
           // Find local-local collision pairs in the main cell, 1st particle
           // iterator is skipped since the main particle will not be
@@ -211,13 +211,13 @@ find_particle_particle_contact_pairs(
           // inactive cells are irrelevant. In this case, we skip this neighbor
           // cell.
           if (neighbor_cell_mobility_status !=
-              AdaptiveSparseContacts<dim>::mobile)
+              AdaptiveSparseContacts<dim,solver_type>::mobile)
             {
               if (main_cell_mobility_status ==
-                  AdaptiveSparseContacts<dim>::static_active)
+                  AdaptiveSparseContacts<dim,solver_type>::static_active)
                 continue;
               if (main_cell_mobility_status ==
-                  AdaptiveSparseContacts<dim>::advected_active)
+                  AdaptiveSparseContacts<dim,solver_type>::advected_active)
                 continue;
             }
 
@@ -254,8 +254,8 @@ find_particle_particle_contact_pairs(
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status and
       // are skipped
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::advected)
         continue;
 
       // Particles in the main cell
@@ -275,13 +275,13 @@ find_particle_particle_contact_pairs(
           // No storing of particles as candidate if main cell is active
           // but neighbor is not mobile
           if (neighbor_cell_mobility_status !=
-              AdaptiveSparseContacts<dim>::mobile)
+              AdaptiveSparseContacts<dim,solver_type>::mobile)
             {
               if (main_cell_mobility_status ==
-                  AdaptiveSparseContacts<dim>::static_active)
+                  AdaptiveSparseContacts<dim,solver_type>::static_active)
                 continue;
               if (main_cell_mobility_status ==
-                  AdaptiveSparseContacts<dim>::advected_active)
+                  AdaptiveSparseContacts<dim,solver_type>::advected_active)
                 continue;
             }
 
@@ -487,7 +487,7 @@ find_particle_particle_periodic_contact_pairs(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -503,7 +503,7 @@ find_particle_particle_periodic_contact_pairs(
     &ghost_contact_pair_periodic_candidates,
   typename dem_data_structures<dim>::particle_particle_candidates
     &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object)
+  const AdaptiveSparseContacts<dim,solver_type> &sparse_contacts_object)
 {
   // Clear containers
   local_contact_pair_periodic_candidates.clear();
@@ -528,8 +528,8 @@ find_particle_particle_periodic_contact_pairs(
       // No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::advected)
         continue;
 
       // Particles in the main cell
@@ -551,11 +551,11 @@ find_particle_particle_periodic_contact_pairs(
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim,solver_type>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::advected_active) &&
+                 AdaptiveSparseContacts<dim,solver_type>::advected_active) &&
               neighbor_cell_mobility_status !=
-                AdaptiveSparseContacts<dim>::mobile)
+                AdaptiveSparseContacts<dim,solver_type>::mobile)
             continue;
 
           // Defining iterator on local particles in the periodic neighbor
@@ -598,8 +598,8 @@ find_particle_particle_periodic_contact_pairs(
       // cell No needs to check if the main cell has any particle after this
       // step since empty cells have inactive or advected mobility status
       // and are skipped
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::advected)
         continue;
 
       // Particles in the main cell
@@ -620,11 +620,11 @@ find_particle_particle_periodic_contact_pairs(
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim,solver_type>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::advected_active) &&
+                 AdaptiveSparseContacts<dim,solver_type>::advected_active) &&
               neighbor_cell_mobility_status !=
-                AdaptiveSparseContacts<dim>::mobile)
+                AdaptiveSparseContacts<dim,solver_type>::mobile)
             continue;
 
           // Defining iterator on ghost particles in the neighbor cells
@@ -666,8 +666,8 @@ find_particle_particle_periodic_contact_pairs(
       unsigned int main_cell_mobility_status =
         sparse_contacts_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
-      if (main_cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-          main_cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+      if (main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::inactive ||
+          main_cell_mobility_status == AdaptiveSparseContacts<dim,solver_type>::advected)
         continue;
 
       // Particles in the main cell
@@ -688,11 +688,11 @@ find_particle_particle_periodic_contact_pairs(
           // No storing of particles if main cell is active but neighbor is
           // not mobile
           if ((main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::static_active ||
+                 AdaptiveSparseContacts<dim,solver_type>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim>::advected_active) &&
+                 AdaptiveSparseContacts<dim,solver_type>::advected_active) &&
               neighbor_cell_mobility_status !=
-                AdaptiveSparseContacts<dim>::mobile)
+                AdaptiveSparseContacts<dim,solver_type>::mobile)
             continue;
 
           // Defining iterator on local particles in the neighbor cells
@@ -780,7 +780,7 @@ find_particle_particle_contact_pairs<3>(
     &ghost_contact_pair_candidates);
 
 template void
-find_particle_particle_contact_pairs<2>(
+find_particle_particle_contact_pairs<2,SolverType::dem>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
   const typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -790,10 +790,23 @@ find_particle_particle_contact_pairs<2>(
     &local_contact_pair_candidates,
   typename dem_data_structures<2>::particle_particle_candidates
                                   &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+  const AdaptiveSparseContacts<2, SolverType::dem> &sparse_contacts_object);
 
 template void
-find_particle_particle_contact_pairs<3>(
+find_particle_particle_contact_pairs<2,SolverType::cfd_dem>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+                                                   &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<2, SolverType::cfd_dem> &sparse_contacts_object);
+
+template void
+find_particle_particle_contact_pairs<3,SolverType::dem>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
   const typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_neighbor_list,
@@ -803,7 +816,20 @@ find_particle_particle_contact_pairs<3>(
     &local_contact_pair_candidates,
   typename dem_data_structures<3>::particle_particle_candidates
                                   &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<3> &sparse_contacts_object);
+  const AdaptiveSparseContacts<3,SolverType::dem> &sparse_contacts_object);
+
+template void
+find_particle_particle_contact_pairs<3,SolverType::cfd_dem>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+                                                   &ghost_contact_pair_candidates,
+  const AdaptiveSparseContacts<3,SolverType::cfd_dem> &sparse_contacts_object);
 
 template void
 find_particle_particle_periodic_contact_pairs<2>(
@@ -838,7 +864,7 @@ find_particle_particle_periodic_contact_pairs<3>(
     &ghost_local_contact_pair_periodic_candidates);
 
 template void
-find_particle_particle_periodic_contact_pairs<2>(
+find_particle_particle_periodic_contact_pairs<2,SolverType::dem>(
   dealii::Particles::ParticleHandler<2> &particle_handler,
   const typename dem_data_structures<2>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
@@ -852,10 +878,27 @@ find_particle_particle_periodic_contact_pairs<2>(
     &ghost_contact_pair_periodic_candidates,
   typename dem_data_structures<2>::particle_particle_candidates
                                   &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<2> &sparse_contacts_object);
+  const AdaptiveSparseContacts<2,SolverType::dem> &sparse_contacts_object);
 
 template void
-find_particle_particle_periodic_contact_pairs<3>(
+find_particle_particle_periodic_contact_pairs<2,SolverType::cfd_dem>(
+  dealii::Particles::ParticleHandler<2> &particle_handler,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<2>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<2>::particle_particle_candidates
+                                                   &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<2,SolverType::cfd_dem> &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<3,SolverType::dem>(
   dealii::Particles::ParticleHandler<3> &particle_handler,
   const typename dem_data_structures<3>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
@@ -869,4 +912,21 @@ find_particle_particle_periodic_contact_pairs<3>(
     &ghost_contact_pair_periodic_candidates,
   typename dem_data_structures<3>::particle_particle_candidates
                                   &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<3> &sparse_contacts_object);
+  const AdaptiveSparseContacts<3,SolverType::dem> &sparse_contacts_object);
+
+template void
+find_particle_particle_periodic_contact_pairs<3,SolverType::cfd_dem>(
+  dealii::Particles::ParticleHandler<3> &particle_handler,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_local_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_periodic_neighbor_list,
+  const typename dem_data_structures<3>::cells_neighbor_list
+    &cells_ghost_local_neighbor_list,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &local_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+    &ghost_contact_pair_periodic_candidates,
+  typename dem_data_structures<3>::particle_particle_candidates
+                                                   &ghost_local_contact_pair_periodic_candidates,
+  const AdaptiveSparseContacts<3,SolverType::cfd_dem> &sparse_contacts_object);

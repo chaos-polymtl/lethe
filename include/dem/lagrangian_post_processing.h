@@ -41,7 +41,7 @@ using namespace dealii;
  * @param mpi_communicator MPI communicator.
  * @param sparse_contacts_object Àdaptive sparse contacts object.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -52,7 +52,7 @@ write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  AdaptiveSparseContacts<dim>                     &sparse_contacts_object);
+  AdaptiveSparseContacts<dim,solver_type>                     &sparse_contacts_object);
 
 /**
  * @brief Carries out the calculation of the average particles velocity in each local

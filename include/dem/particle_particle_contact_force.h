@@ -98,7 +98,8 @@ protected:
 template <
   int                                                       dim,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
-  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model,
+  DEM::SolverType solver_type>
 class ParticleParticleContactForce
   : public ParticleParticleContactForceBase<dim>
 {
@@ -130,6 +131,7 @@ public:
    * @param torque Torque acting on particles.
    * @param force Force acting on particles.
    */
+
   virtual void
   calculate_particle_particle_contact_force(
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
@@ -161,6 +163,7 @@ protected:
    * @param[in] particle_two_location Location of particle two in contact.
    * @param[in] dt DEM time step.
    */
+  template<DEM::SolverType solver_type>
   inline void
   update_contact_information(
     particle_particle_contact_info<dim> &contact_info,
@@ -188,28 +191,28 @@ protected:
 
     // Assigning velocities and angular velocities of particles
     contact_relative_velocity[0] =
-      particle_one_properties[PropertiesIndex::v_x] -
-      particle_two_properties[PropertiesIndex::v_x];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::v_x] -
+      particle_two_properties[PropertiesIndexEnum<solver_type>::v_x];
     contact_relative_velocity[1] =
-      particle_one_properties[PropertiesIndex::v_y] -
-      particle_two_properties[PropertiesIndex::v_y];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::v_y] -
+      particle_two_properties[PropertiesIndexEnum<solver_type>::v_y];
     contact_relative_velocity[2] =
-      particle_one_properties[PropertiesIndex::v_z] -
-      particle_two_properties[PropertiesIndex::v_z];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::v_z] -
+      particle_two_properties[PropertiesIndexEnum<solver_type>::v_z];
 
-    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
-    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
-    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
+    particle_one_omega[0] = particle_one_properties[PropertiesIndexEnum<solver_type>::omega_x];
+    particle_one_omega[1] = particle_one_properties[PropertiesIndexEnum<solver_type>::omega_y];
+    particle_one_omega[2] = particle_one_properties[PropertiesIndexEnum<solver_type>::omega_z];
 
-    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
-    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
-    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
+    particle_two_omega[0] = particle_two_properties[PropertiesIndexEnum<solver_type>::omega_x];
+    particle_two_omega[1] = particle_two_properties[PropertiesIndexEnum<solver_type>::omega_y];
+    particle_two_omega[2] = particle_two_properties[PropertiesIndexEnum<solver_type>::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
-             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
+      0.5 * (particle_one_properties[PropertiesIndexEnum<solver_type>::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndexEnum<solver_type>::dp] * particle_two_omega),
       normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the
@@ -289,6 +292,7 @@ protected:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
+  template<DEM::SolverType solver_type>
   inline void
   calculate_contact(particle_particle_contact_info<dim> &contact_info,
                     const Tensor<1, 3> &tangential_relative_velocity,
@@ -307,7 +311,7 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::linear)
       {
-        calculate_linear_contact(contact_info,
+        calculate_linear_contact<solver_type>(contact_info,
                                  tangential_relative_velocity,
                                  normal_relative_velocity_value,
                                  normal_unit_vector,
@@ -323,7 +327,7 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::hertz)
       {
-        this->calculate_hertz_contact(contact_info,
+        this->calculate_hertz_contact<solver_type>(contact_info,
                                       tangential_relative_velocity,
                                       normal_relative_velocity_value,
                                       normal_unit_vector,
@@ -340,7 +344,7 @@ protected:
     if constexpr (contact_model ==
                   ParticleParticleContactForceModel::hertz_mindlin_limit_force)
       {
-        calculate_hertz_mindlin_limit_force_contact(
+        calculate_hertz_mindlin_limit_force_contact<solver_type>(
           contact_info,
           tangential_relative_velocity,
           normal_relative_velocity_value,
@@ -358,7 +362,7 @@ protected:
     if constexpr (contact_model == ParticleParticleContactForceModel::
                                      hertz_mindlin_limit_overlap)
       {
-        calculate_hertz_mindlin_limit_overlap_contact(
+        calculate_hertz_mindlin_limit_overlap_contact<solver_type>(
           contact_info,
           tangential_relative_velocity,
           normal_relative_velocity_value,
@@ -376,7 +380,7 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::hertz_JKR)
       {
-        this->calculate_hertz_JKR_contact(contact_info,
+        this->calculate_hertz_JKR_contact<solver_type>(contact_info,
                                           tangential_relative_velocity,
                                           normal_relative_velocity_value,
                                           normal_unit_vector,
@@ -392,7 +396,7 @@ protected:
 
     if constexpr (contact_model == ParticleParticleContactForceModel::DMT)
       {
-        this->calculate_DMT_contact(contact_info,
+        this->calculate_DMT_contact<solver_type>(contact_info,
                                     tangential_relative_velocity,
                                     normal_relative_velocity_value,
                                     normal_unit_vector,
@@ -514,6 +518,7 @@ private:
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
    */
+  template<DEM::SolverType solver_type>
   inline std::tuple<double, double>
   find_effective_radius_and_mass(
     const ArrayView<const double> &particle_one_properties,
@@ -521,15 +526,15 @@ private:
   {
     // Calculate the effective radius
     const double diameter_one =
-      particle_one_properties[DEM::PropertiesIndex::dp];
+      particle_one_properties[DEM::PropertiesIndexEnum<solver_type>::dp];
     const double diameter_two =
-      particle_two_properties[DEM::PropertiesIndex::dp];
+      particle_two_properties[DEM::PropertiesIndexEnum<solver_type>::dp];
     double effective_radius =
       (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
 
     // Calculate the effective mass
-    const double mass_one = particle_one_properties[DEM::PropertiesIndex::mass];
-    const double mass_two = particle_two_properties[DEM::PropertiesIndex::mass];
+    const double mass_one = particle_one_properties[DEM::PropertiesIndexEnum<solver_type>::mass];
+    const double mass_two = particle_two_properties[DEM::PropertiesIndexEnum<solver_type>::mass];
     double       effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
 
     return std::make_tuple(effective_radius, effective_mass);
@@ -546,6 +551,7 @@ private:
    * @param[in] normal_unit_vector Contact normal unit vector.
    * @param[out] tangential_force Contact tangential force.
    */
+  template <DEM::SolverType solver_type>
   inline Tensor<1, 3>
   calculate_rolling_resistance_torque(
     const double                   effective_radius,
@@ -571,7 +577,7 @@ private:
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::constant_resistance)
       {
-        return constant_rolling_resistance_torque(effective_radius,
+        return constant_rolling_resistance_torque<solver_type>(effective_radius,
                                                   particle_one_properties,
                                                   particle_two_properties,
                                                   rolling_friction_coeff,
@@ -581,7 +587,7 @@ private:
 
     if constexpr (rolling_friction_model == viscous_resistance)
       {
-        return viscous_rolling_resistance_torque(effective_radius,
+        return viscous_rolling_resistance_torque<solver_type>(effective_radius,
                                                  particle_one_properties,
                                                  particle_two_properties,
                                                  rolling_friction_coeff,
@@ -611,6 +617,7 @@ private:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
+  template <DEM::SolverType solver_type>
   inline void
   calculate_linear_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -634,9 +641,9 @@ private:
     // Get the reference of the effective properties according to the particle
     // types in vectors for easy-to-read equations.
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -648,8 +655,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndexEnum<solver_type>::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndexEnum<solver_type>::dp];
 
     // Characteristic velocity is set at 1.0 so that the normal and tangential
     // spring constant remain constant throughout a simulation.
@@ -756,6 +763,7 @@ private:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
+  template <DEM::SolverType solver_type>
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -777,9 +785,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -792,8 +800,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndexEnum<solver_type>::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndexEnum<solver_type>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -903,6 +911,7 @@ private:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
+  template <DEM::SolverType solver_type>
   inline void
   calculate_hertz_mindlin_limit_force_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -924,9 +933,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -939,8 +948,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndexEnum<solver_type>::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndexEnum<solver_type>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1035,6 +1044,7 @@ private:
    * particle two.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
+  template <DEM::SolverType solver_type>
   inline void
   calculate_hertz_contact(
     particle_particle_contact_info<dim> &contact_info,
@@ -1056,9 +1066,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1071,8 +1081,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndexEnum<solver_type>::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndexEnum<solver_type>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1173,9 +1183,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1189,8 +1199,8 @@ private:
     const double surface_energy = this->effective_surface_energy[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndexEnum<solver_type>::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndexEnum<solver_type>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1298,6 +1308,7 @@ private:
    * @param particle_two_tangential_torque Contact tangential torque on particle two
    * @param rolling_resistance_torque Contact rolling resistance torque
    */
+  template <DEM::SolverType solver_type>
   inline void
   calculate_DMT_contact(particle_particle_contact_info<dim> &contact_info,
                         const Tensor<1, 3> &tangential_relative_velocity,
@@ -1320,9 +1331,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      particle_one_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      particle_two_properties[PropertiesIndexEnum<solver_type>::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1504,7 +1515,7 @@ private:
    * @param force Force acting on particles.
    * @param dt DEM time step.
    */
-  template <ContactType contact_type>
+  template <ContactType contact_type, DEM::SolverType solver_type>
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
@@ -1568,8 +1579,8 @@ private:
 
         // Calculation of normal overlap
         double normal_overlap =
-          0.5 * (particle_one_properties[PropertiesIndex::dp] +
-                 particle_two_properties[PropertiesIndex::dp]) -
+          0.5 * (particle_one_properties[PropertiesIndexEnum<solver_type>::dp] +
+                 particle_two_properties[PropertiesIndexEnum<solver_type>::dp]) -
           particle_one_location.distance(particle_two_location);
 
         // Get the threshold distance for contact force, this is useful for non-

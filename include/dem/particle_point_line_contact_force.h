@@ -22,7 +22,7 @@ using namespace dealii;
  * particle-point and particle-line contact forces are similar, we only used one
  * function for both tasks.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class ParticlePointLineForce
 {
 public:

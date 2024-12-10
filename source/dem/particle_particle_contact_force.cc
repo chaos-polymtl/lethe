@@ -10,7 +10,8 @@ using namespace Parameters::Lagrangian;
 
 template <int                               dim,
           ParticleParticleContactForceModel contact_model,
-          RollingResistanceMethod           rolling_friction_model>
+          RollingResistanceMethod           rolling_friction_model,
+          DEM::SolverType solver_type>
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
@@ -20,7 +21,8 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
 template <int                               dim,
           ParticleParticleContactForceModel contact_model,
-          RollingResistanceMethod           rolling_friction_model>
+          RollingResistanceMethod           rolling_friction_model,
+          DEM::SolverType solver_type>
 void
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   calculate_particle_particle_contact_force(
@@ -42,7 +44,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)
     {
-      execute_contact_calculation<ContactType::local_particle_particle>(
+      execute_contact_calculation<ContactType::local_particle_particle, solver_type>(
         adjacent_particles_list, torque, force, dt);
     }
 
@@ -86,51 +88,63 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::DMT,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,
+  DEM::SolverType::dem>;
+template class ParticleParticleContactForce<
+  2,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance,
+  DEM::SolverType::cfd_dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::DMT,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,
+  DEM::SolverType::dem>;
+template class ParticleParticleContactForce<
+  3,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance,
+  DEM::SolverType::cfd_dem>;
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::hertz,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::hertz,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::hertz_JKR,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::hertz_JKR,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   2,
   ParticleParticleContactForceModel::linear,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 template class ParticleParticleContactForce<
   3,
   ParticleParticleContactForceModel::linear,
-  RollingResistanceMethod::no_resistance>;
+  RollingResistanceMethod::no_resistance,DEM::SolverType::dem>;
 
 // Constant resistance
 template class ParticleParticleContactForce<

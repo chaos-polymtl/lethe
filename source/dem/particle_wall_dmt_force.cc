@@ -12,7 +12,7 @@ template <int dim, DEM::SolverType solver_type>
 ParticleWallDMTForce<dim, solver_type>::ParticleWallDMTForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
-  : ParticleWallNonLinearForce<dim>(dem_parameters)
+  : ParticleWallNonLinearForce<dim,solver_type>(dem_parameters)
   , dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
   initialize_particle_wall_properties(dem_parameters);
@@ -53,7 +53,7 @@ ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
 {
   constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
 
-  ParticleWallContactForce<dim>::force_on_walls =
+  ParticleWallContactForce<dim,solver_type>::force_on_walls =
     ParticleWallContactForce<dim,solver_type>::initialize();
   ParticleWallContactForce<dim, solver_type>::torque_on_walls =
     ParticleWallContactForce<dim, solver_type>::initialize();
@@ -300,7 +300,7 @@ ParticleWallDMTForce<dim,solver_type>::calculate_particle_floating_wall_contact_
               // distance and projection of particles on the triangle
               // (floating mesh cell)
               auto particle_triangle_information =
-                LetheGridTools::find_particle_triangle_projection(
+                LetheGridTools::find_particle_triangle_projection<dim,solver_type>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =

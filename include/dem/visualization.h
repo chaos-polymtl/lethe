@@ -22,7 +22,7 @@ using namespace dealii;
  * @brief Building patches of particle properties for visualization.
  * This function is taken from Aspect and dealii and implemented here.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class Visualization : public dealii::DataOutInterface<0, dim>
 {
 public:

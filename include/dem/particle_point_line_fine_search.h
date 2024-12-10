@@ -21,7 +21,7 @@ using namespace dealii;
  * information (normal overlap, normal vector and contact normal relative
  * velocity) for calculation of particle-point contact force.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
@@ -43,7 +43,7 @@ particle_point_fine_search(
  * information (normal overlap, normal vector and contact normal relative
  * velocity) for calculation of particle-line contact force.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates

@@ -23,7 +23,7 @@ using namespace dealii;
  * particles and walls
  */
 template <int dim, DEM::SolverType solver_type>
-class ParticleWallDMTForce : public ParticleWallNonLinearForce<dim>
+class ParticleWallDMTForce : public ParticleWallNonLinearForce<dim, solver_type>
 {
   using FuncPtrType =
     Tensor<1, 3> (ParticleWallDMTForce<dim, solver_type>::*)(const ArrayView<const double> &,

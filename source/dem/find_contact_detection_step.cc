@@ -60,7 +60,8 @@ find_particle_contact_detection_step(
     }
 }
 
-template void
+template <int dim, DEM::SolverType solver_type>
+void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
@@ -69,7 +70,8 @@ find_particle_contact_detection_step(
   std::vector<double>           &displacement,
   const bool                     parallel_update);
 
-template void
+template <int dim, DEM::SolverType solver_type>
+void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,

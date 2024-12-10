@@ -30,8 +30,8 @@ using namespace dealii;
  * a(n+1)   = F(n+1) / m
  * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
  */
-template <int dim>
-class VelocityVerletIntegrator : public Integrator<dim>
+template <int dim, DEM::SolverType solver_type>
+class VelocityVerletIntegrator : public Integrator<dim,solver_type>
 {
 public:
   VelocityVerletIntegrator()
@@ -85,7 +85,7 @@ public:
             std::vector<Tensor<1, 3>>                       &force,
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
+            AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) override;
 
   void
   integrate_with_advected_particles(
@@ -96,7 +96,7 @@ public:
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim>                     &sparse_contacts_object);
+    AdaptiveSparseContacts<dim, solver_type>                     &sparse_contacts_object);
 };
 
 #endif

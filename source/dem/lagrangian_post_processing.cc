@@ -56,7 +56,7 @@ calculate_average_particles_velocity(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 calculate_average_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -102,9 +102,11 @@ calculate_average_granular_temperature(
                   for (int d = 0; d < dim; ++d)
                     {
                       cell_velocity_fluctuation_squared_sum[d] +=
-                        (particle_properties[DEM::PropertiesIndex::v_x + d] -
+                        (particle_properties
+                           [DEM::PropertiesIndexEnum<solver_type>::v_x + d] -
                          velocity_in_cell_average[d]) *
-                        (particle_properties[DEM::PropertiesIndex::v_x + d] -
+                        (particle_properties
+                           [DEM::PropertiesIndexEnum<solver_type>::v_x + d] -
                          velocity_in_cell_average[d]);
                     }
 
@@ -126,7 +128,7 @@ calculate_average_granular_temperature(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 Tensor<1, dim>
 calculate_cell_average_particles_velocity(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
@@ -157,7 +159,8 @@ calculate_cell_average_particles_velocity(
           for (int d = 0; d < dim; ++d)
             {
               velocity_cell_sum[d] +=
-                particle_properties[DEM::PropertiesIndex::v_x + d];
+                particle_properties[DEM::PropertiesIndexEnum<solver_type>::v_x +
+                                    d];
             }
 
           particles_cell_number++;
@@ -169,7 +172,7 @@ calculate_cell_average_particles_velocity(
   return velocity_cell_average;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -180,7 +183,7 @@ write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  AdaptiveSparseContacts<dim>                     &sparse_contacts_object)
+  AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -259,25 +262,49 @@ write_post_processing_results(
 }
 
 template void
-write_post_processing_results<2>(
-  const parallel::distributed::Triangulation<2> &triangulation,
-  PVDHandler                                    &grid_pvdhandler,
-  const DoFHandler<2>                           &background_dh,
-  const Particles::ParticleHandler<2>           &particle_handler,
-  const DEMSolverParameters<2>                  &dem_parameters,
-  const double                                   current_time,
-  const unsigned int                             step_number,
-  const MPI_Comm                                &mpi_communicator,
-  AdaptiveSparseContacts<2>                     &sparse_contacts_object);
+write_post_processing_results<2, DEM::SolverType::dem>(
+  const parallel::distributed::Triangulation<2>   &triangulation,
+  PVDHandler                                      &grid_pvdhandler,
+  const DoFHandler<2>                             &background_dh,
+  const Particles::ParticleHandler<2>             &particle_handler,
+  const DEMSolverParameters<2>                    &dem_parameters,
+  const double                                     current_time,
+  const unsigned int                               step_number,
+  const MPI_Comm                                  &mpi_communicator,
+  AdaptiveSparseContacts<2, DEM::SolverType::dem> &sparse_contacts_object);
 
 template void
-write_post_processing_results<3>(
-  const parallel::distributed::Triangulation<3> &triangulation,
-  PVDHandler                                    &grid_pvdhandler,
-  const DoFHandler<3>                           &background_dh,
-  const Particles::ParticleHandler<3>           &particle_handler,
-  const DEMSolverParameters<3>                  &dem_parameters,
-  const double                                   current_time,
-  const unsigned int                             step_number,
-  const MPI_Comm                                &mpi_communicator,
-  AdaptiveSparseContacts<3>                     &sparse_contacts_object);
+write_post_processing_results<2, DEM::SolverType::cfd_dem>(
+  const parallel::distributed::Triangulation<2>       &triangulation,
+  PVDHandler                                          &grid_pvdhandler,
+  const DoFHandler<2>                                 &background_dh,
+  const Particles::ParticleHandler<2>                 &particle_handler,
+  const DEMSolverParameters<2>                        &dem_parameters,
+  const double                                         current_time,
+  const unsigned int                                   step_number,
+  const MPI_Comm                                      &mpi_communicator,
+  AdaptiveSparseContacts<2, DEM::SolverType::cfd_dem> &sparse_contacts_object);
+
+template void
+write_post_processing_results<3, DEM::SolverType::dem>(
+  const parallel::distributed::Triangulation<3>   &triangulation,
+  PVDHandler                                      &grid_pvdhandler,
+  const DoFHandler<3>                             &background_dh,
+  const Particles::ParticleHandler<3>             &particle_handler,
+  const DEMSolverParameters<3>                    &dem_parameters,
+  const double                                     current_time,
+  const unsigned int                               step_number,
+  const MPI_Comm                                  &mpi_communicator,
+  AdaptiveSparseContacts<3, DEM::SolverType::dem> &sparse_contacts_object);
+
+template void
+write_post_processing_results<3, DEM::SolverType::cfd_dem>(
+  const parallel::distributed::Triangulation<3>       &triangulation,
+  PVDHandler                                          &grid_pvdhandler,
+  const DoFHandler<3>                                 &background_dh,
+  const Particles::ParticleHandler<3>                 &particle_handler,
+  const DEMSolverParameters<3>                        &dem_parameters,
+  const double                                         current_time,
+  const unsigned int                                   step_number,
+  const MPI_Comm                                      &mpi_communicator,
+  AdaptiveSparseContacts<3, DEM::SolverType::cfd_dem> &sparse_contacts_object);

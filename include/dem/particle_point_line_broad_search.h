@@ -29,7 +29,7 @@ using namespace dealii;
  * Each element of map (pair) contains a contact pair particle located near
  * boundaries with vertices and the vertex location).
  */
-template <int dim>
+template <int dim,DEM::SolverType solver_type>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -54,7 +54,7 @@ find_particle_point_contact_pairs(
  * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
  * status checks.
  */
-template <int dim>
+template <int dim,DEM::SolverType solver_type>
 void
 find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -62,7 +62,7 @@ find_particle_point_contact_pairs(
     &boundary_cells_with_points,
   typename DEM::dem_data_structures<dim>::particle_point_candidates
                                     &particle_point_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim,solver_type> &sparse_contacts_object);
 
 /**
  * @brief Find a map of tuples (tuple of particle and the locations of
@@ -78,7 +78,7 @@ find_particle_point_contact_pairs(
  * a particle and the locations of beginning and ending vertices of the boundary
  * lines.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -103,7 +103,7 @@ find_particle_line_contact_pairs(
  * @param sparse_contacts_object The Adaptive Sparse Contacts for mobility
  * status checks.
  */
-template <int dim>
+template <int dim,DEM::SolverType solver_type>
 void
 find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -111,6 +111,6 @@ find_particle_line_contact_pairs(
     &boundary_cells_with_lines,
   typename DEM::dem_data_structures<dim>::particle_line_candidates
                                     &particle_line_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim,solver_type> &sparse_contacts_object);
 
 #endif

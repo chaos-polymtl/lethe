@@ -7,15 +7,15 @@
 
 #include <deal.II/fe/fe_q.h>
 
-template <int dim>
-AdaptiveSparseContacts<dim>::AdaptiveSparseContacts()
+template <int dim, DEM::SolverType solver_type>
+AdaptiveSparseContacts<dim,solver_type>::AdaptiveSparseContacts()
   : sparse_contacts_enabled(false)
   , advect_particles_enabled(false)
 {}
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
+AdaptiveSparseContacts<dim,solver_type>::update_local_and_ghost_cell_set(
   const DoFHandler<dim> &background_dh)
 {
   if (!sparse_contacts_enabled)
@@ -29,9 +29,9 @@ AdaptiveSparseContacts<dim>::update_local_and_ghost_cell_set(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
+AdaptiveSparseContacts<dim,solver_type>::calculate_granular_temperature_and_solid_fraction(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::set<typename DoFHandler<dim>::active_cell_iterator>
                  &local_and_ghost_cells_with_particles,
@@ -65,12 +65,12 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           // Get particle properties
           auto particle_properties =
             particles_in_cell_iterator->get_properties();
-          const double dp = particle_properties[DEM::PropertiesIndex::dp];
+          const double dp = particle_properties[DEM::PropertiesIndexEnum<solver_type>::dp];
 
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = DEM::PropertiesIndexEnum<solver_type>::v_x + d;
 
               // Add the velocity component value
               velocity_cell_average[d] += particle_properties[v_axis];
@@ -97,7 +97,7 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = DEM::PropertiesIndexEnum<solver_type>::v_x + d;
 
               cell_velocity_fluctuation_squared_average[d] +=
                 Utilities::fixed_power<2>(particle_properties[v_axis] -
@@ -121,9 +121,9 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-AdaptiveSparseContacts<dim>::identify_mobility_status(
+AdaptiveSparseContacts<dim,solver_type>::identify_mobility_status(
   const DoFHandler<dim>                 &background_dh,
   const Particles::ParticleHandler<dim> &particle_handler,
   const unsigned int                     n_active_cells,
@@ -354,9 +354,9 @@ AdaptiveSparseContacts<dim>::identify_mobility_status(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
+AdaptiveSparseContacts<dim,solver_type>::update_average_velocities_acceleration(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const std::vector<Tensor<1, 3>> &force,
@@ -400,7 +400,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     particle.get_local_index();
 
                   double dt_mass_inverse =
-                    dt / particle_properties[DEM::PropertiesIndex::mass];
+                    dt / particle_properties[DEM::PropertiesIndexEnum<solver_type>::mass];
 
                   // Calculate the acceleration of the particle times the time
                   // step
@@ -414,7 +414,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     {
                       // Add up the current velocity for the average velocity
                       velocity_cell_average[d] +=
-                        particle_properties[DEM::PropertiesIndex::v_x + d] +
+                        particle_properties[DEM::PropertiesIndexEnum<solver_type>::v_x + d] +
                         acc_dt_particle[d];
                     }
                 }
@@ -431,5 +431,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
     }
 }
 
-template class AdaptiveSparseContacts<2>;
-template class AdaptiveSparseContacts<3>;
+template class AdaptiveSparseContacts<2, DEM::SolverType::dem>;
+template class AdaptiveSparseContacts<2, DEM::SolverType::cfd_dem>;
+template class AdaptiveSparseContacts<3, DEM::SolverType::dem>;
+template class AdaptiveSparseContacts<3, DEM::SolverType::cfd_dem>;

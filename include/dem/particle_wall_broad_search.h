@@ -45,7 +45,7 @@ find_particle_wall_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     &particle_wall_contact_candidates);
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
@@ -53,7 +53,7 @@ find_particle_wall_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
                                     &particle_wall_contact_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim,solver_type> &sparse_contacts_object);
 
 /**
  * @brief Find a two-layered unordered map of particle iterators which shows the
@@ -84,7 +84,7 @@ find_particle_floating_wall_contact_pairs(
   const double                                      simulation_time,
   typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
     &particle_floating_wall_candidates);
-template <int dim>
+template <int dim,DEM::SolverType  solver_type>
 void
 find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
@@ -96,7 +96,7 @@ find_particle_floating_wall_contact_pairs(
   const double                                      simulation_time,
   typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
                                     &particle_floating_wall_candidates,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim,solver_type> &sparse_contacts_object);
 
 /**
  * @brief Find a two-layered unordered map
@@ -126,7 +126,7 @@ particle_solid_surfaces_contact_search(
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     &cells_total_neighbor_list);
 
-template <int dim>
+template <int dim,DEM::SolverType  solver_type>
 void
 particle_solid_surfaces_contact_search(
   const typename DEM::dem_data_structures<dim>::solid_surfaces_mesh_information
@@ -136,7 +136,7 @@ particle_solid_surfaces_contact_search(
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
                                     &cells_total_neighbor_list,
-  const AdaptiveSparseContacts<dim> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object);
 
 
 /**
