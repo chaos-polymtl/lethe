@@ -36,6 +36,7 @@ public:
    * @brief Constructor that initializes the solution transfer objects for the scalar field.
    *
    * @param[in] dof_handler Used to initialize the solution transfer objects.
+   * The solution transfer object is later used for mesh adaptation.
    */
   AverageScalarInTime(DoFHandler<dim> &dof_handler);
 
@@ -46,7 +47,8 @@ public:
    *
    * @param[in] local_evaluation_point The solution vector with no ghost cells.
    *
-   * @param[in] post_processing The postprocessing parameters to definie initial
+   * @param[in] post_processing The postprocessing parameters to get the initial
+   * time used for averaging.
    *
    * @param[in] current_time The current time.
    *
@@ -58,13 +60,25 @@ public:
                            const double                      current_time,
                            const double                      time_step);
 
+  /**
+   * @brief Calculate time-averaged scalar field using vector with no ghost
+   * cells.
+   *
+   * @param[in] locally_owned_dofs Degrees of freedom owned by a single
+   * processor.
+   *
+   * @param[in] locally_relevant_dofs Degrees of freedom that live on locally
+   * owned or ghost cells of a single processor.
+   *
+   * @param[in] mpi_communicator The communicator information.
+   */
   void
   initialize_vectors(const IndexSet &locally_owned_dofs,
                      const IndexSet &locally_relevant_dofs,
                      const MPI_Comm &mpi_communicator);
 
   /**
-   * @brief   Use the inverse of the time since the beginning of the time averaging to reevaluate the average scalar field.
+   * @brief Getter for the average scalar.
    *
    */
   GlobalVectorType
@@ -74,13 +88,13 @@ public:
   }
 
   /**
-   * @brief Prepare average velocity object for dynamic mesh adaptation.
+   * @brief Prepare average scalar object for dynamic mesh adaptation.
    */
   void
   update_average_scalar();
 
   /**
-   * @brief Prepare average velocity object for dynamic mesh adaptation.
+   * @brief Prepare average scalar object for dynamic mesh adaptation.
    */
   void
   prepare_for_mesh_adaptation();
@@ -92,11 +106,11 @@ public:
   post_mesh_adaptation();
 
   /**
-   * @brief Save checkpoints to continuing averaging after restart.
+   * @brief Save checkpoints to continue the averaging after the restart.
    *
    * @param[in] prefix Name for checkpointing files.
    *
-   * @return Vector with average values.
+   * @return Vector containing the average values.
    */
   std::vector<const GlobalVectorType *>
   save(const std::string &prefix);
@@ -106,7 +120,7 @@ public:
    *
    * @param[in] prefix Name for checkpoint files.
    *
-   * @return Vector with average values.
+   * @return Vector containing the average values.
    */
   std::vector<GlobalVectorType *>
   read(const std::string &prefix);
@@ -133,16 +147,16 @@ private:
   GlobalVectorType scalar_dt;
 
   /**
-   * @brief Ghosted vector to store the sum of all the scalar multiplied by time step.
-   *
-   */
-  GlobalVectorType sum_scalar_dt_with_ghost_cells;
-
-  /**
    * @brief Vector to store the sum of all the scalar multiplied by time step.
    *
    */
   GlobalVectorType sum_scalar_dt;
+
+  /**
+   * @brief Ghosted vector to store the sum of all the scalar multiplied by time step.
+   *
+   */
+  GlobalVectorType sum_scalar_dt_with_ghost_cells;
 
   /**
    * @brief Object to transfer the averaged scalar in case of mesh adaptation.

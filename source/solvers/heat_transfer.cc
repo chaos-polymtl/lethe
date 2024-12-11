@@ -787,14 +787,12 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                heat_flux_postprocessors[m_id]);
     }
 
-  // Add the average heat flux
-
-  // Ouput the time average temperature
+  // Ouput the time average temperature and time average heat flux
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf &&
       this->simulation_control->get_current_time() >
         simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf +
-          1e-12)
+            .initial_time_for_average_temp_and_hf -
+          1e-6 * simulation_control->get_time_step())
     {
       this->average_temperature->calculate_average_scalar(
         this->present_solution,
@@ -821,7 +819,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                        mesh_m_id,
                                        solid_phase_present));
 
-          // Also add the time average heat flux
           data_out.add_data_vector(this->dof_handler,
                                    this->average_temperature_to_output,
                                    average_heat_flux_postprocessors[f_id]);
@@ -837,7 +834,6 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                        mesh_m_id,
                                        solid_phase_present));
 
-          // Also add the time average heat flux
           data_out.add_data_vector(this->dof_handler,
                                    this->average_temperature_to_output,
                                    average_heat_flux_postprocessors[m_id]);
@@ -1243,7 +1239,6 @@ HeatTransfer<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  // This will need to be changed to the average temperature
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
       std::vector<GlobalVectorType *> sum_vectors =
@@ -1350,6 +1345,7 @@ HeatTransfer<dim>::setup_dofs()
               nonzero_constraints);
           }
       }
+
     // Initialize the vectors used in the time average temperature calculation
     if (this->simulation_parameters.post_processing
           .calculate_average_temp_and_hf)

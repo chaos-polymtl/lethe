@@ -27,7 +27,7 @@ AverageScalarInTime<dim>::calculate_average_scalar(
     post_processing.initial_time_for_average_temp_and_hf;
   dt = time_step;
 
-  // When averaging velocities begins
+  // When averaging scalar begins
   if (current_time >= (initial_time - epsilon) && !average_calculation)
     {
       average_calculation = true;
@@ -46,7 +46,7 @@ AverageScalarInTime<dim>::calculate_average_scalar(
   total_time_for_average = (current_time - real_initial_time) + dt_0;
   inv_range_time         = 1. / total_time_for_average;
 
-  // Calculate the average velocities.
+  // Calculate the average scalars.
   average_scalar.equ(inv_range_time, sum_scalar_dt);
 }
 
@@ -57,8 +57,7 @@ AverageScalarInTime<dim>::initialize_vectors(
   const IndexSet &locally_relevant_dofs,
   const MPI_Comm &mpi_communicator)
 {
-  // Reinitialisation of the average velocity and reynolds stress vectors
-  // to get the right length.
+  // Reinitialisation of the average scalars to get the right length.
   scalar_dt.reinit(locally_owned_dofs, mpi_communicator);
   sum_scalar_dt.reinit(locally_owned_dofs, mpi_communicator);
   average_scalar.reinit(locally_owned_dofs, mpi_communicator);
@@ -71,9 +70,6 @@ AverageScalarInTime<dim>::initialize_vectors(
                                         locally_relevant_dofs,
                                         mpi_communicator);
 }
-
-
-// CHECK FROM HERE
 
 template <int dim>
 void

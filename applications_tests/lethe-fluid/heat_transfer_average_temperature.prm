@@ -151,7 +151,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set calculate average temperature = true
+  set calculate average temperature and average heat flux = true
 end
 
 #---------------------------------------------------
