@@ -1,16 +1,25 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import argparse
 from lethe_pyvista_tools import *
 from numpy.ma.core import arctan
 from numpy.ma.extras import average
 
-# Experimental date extracted using Web plot digitizer
-df_x_zero_exp = pd.read_csv("./data_exp.csv", header=None,
-                            names=['Column1', 'Column2'])
+parser = argparse.ArgumentParser(description='Arguments for calculation of the velocity profile in the rotating drum')
+parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
+parser.add_argument("-i", "--input", type=str, help="Name of the input file", required=True)
+args, leftovers=parser.parse_known_args()
 
-# Path where the parameter file and the output folder is
-path = "."
+folder=args.folder
+filename=args.input
+
+# Experimental date extracted using Web plot digitizer
+df_x_zero_exp = pd.read_csv(folder + "/" +filename, header=None,
+                            names=['Column1', 'Column2'])
 
 # Starting vtu id. Here, we are interested in the last 100 vtu
 start = 900
@@ -19,7 +28,7 @@ start = 900
 pvd_name = 'out.pvd'
 ignore_data = ['type', 'volumetric contribution', 'torque', 'fem_torque',
                'fem_force']
-particle = lethe_pyvista_tools(path, "rotating-drum.prm",
+particle = lethe_pyvista_tools("./", "rotating-drum.prm",
                                pvd_name, ignore_data=ignore_data)
 time = particle.time_list
 
@@ -98,7 +107,3 @@ plt.legend()
 plt.title(f"Average velocity parallel to the free surface \ndepending on the depth from the center of the cylinder")
 plt.show()
 
-for i in range(len(vel_value_x)):
-    if vel_value_x[i] > 0.:
-        print(y_graph[i])
-        break
