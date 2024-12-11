@@ -50,12 +50,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 folder="$output_root/3d-taylor-green-vortex"
-action="mpirun -np $n_proc lethe-fluid tgv-matrix-free-validation.prm"
+action="mpirun -np $n_proc lethe-fluid-matrix-free tgv-matrix-free-validation.prm"
 recreate_folder "$folder"
 
 { time $action ; } &> "$folder/log"
 python3 calculate_dissipation_rate_constant_cfl.py -f output/  -i kinetic_energy.dat
-python3 plot_dissipation_rate.py -ke kinetic_energy_rate.dat -ens output/enstrophy.dat -v 0.000625 --validate
+python3 plot_dissipation_rate.py -ke output/ke_rate.dat -ens output/enstrophy.dat -v 0.000625 --validate
 
 # Copy the information to the log folder
 cp dissipation_comparison.pdf $folder

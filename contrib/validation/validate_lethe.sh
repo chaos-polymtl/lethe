@@ -1,4 +1,4 @@
-#!/bin/bash
+i#!/bin/bash
 # SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
@@ -148,7 +148,7 @@ read -r  # Wait for user to press Enter
 
 
 # Input file
-input_file="validation_and_performance_analysis/validation_cases.txt"
+input_file="$lethe_path/contrib/validation/validation_cases.txt"
 
 cases=()
 n_procs=()
@@ -178,11 +178,13 @@ magick -density 300 -pointsize 12 text:- $output_path/report.pdf
 
 echo "Proceeding with validation..."
 echo "-----------------------------"
+date +"%Y-%m-%d: %H:%M"
 for i in "${!cases[@]}"; do
   echo "---> Processing ${cases[i]} using ${n_procs[i]} cores"
   cd $lethe_path/${cases[i]}
   bash validate.sh -p $output_path -np ${n_procs[i]}
   echo "     Finished processing ${cases[i]}"
   cd $lethe_path
+  date +"%Y-%m-%d: %H:%M"
 done
 
