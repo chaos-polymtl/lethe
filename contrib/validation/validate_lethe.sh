@@ -1,4 +1,4 @@
-i#!/bin/bash
+#!/bin/bash
 # SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
