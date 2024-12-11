@@ -811,6 +811,12 @@ private:
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
 
+  /**
+   * @brief Compute local average heat flux quantities from temperature field and
+   * material properties.
+   */
+  std::vector<HeatFluxPostprocessor<dim>> average_heat_flux_postprocessors;
+
   /*
    * Phase change post-processing. These parameters track the presence of a
    * phase change physical property and the associated post-processing
