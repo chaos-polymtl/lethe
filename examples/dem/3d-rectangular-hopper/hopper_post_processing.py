@@ -2,19 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
-"""
-Postprocessing automation tool.
-
-By: Victor Oliveira Ferreira, Audrey Collard-Daigneault
-Date: May 5th, 2022
-"""
-#############################################################################
-
-#############################################################################
 '''Importing Libraries'''
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -25,9 +17,16 @@ from lethe_pyvista_tools import *
 #############################################################################
 '''Simulation properties'''
 
-#Take case path as argument
-simulation_path = sys.argv[1]
-prm_file_name = sys.argv[2]
+#Take case path as argument and store it
+parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
+parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
+parser.add_argument("--prm", type=str, help="Prm file name", required=True)
+args, leftovers=parser.parse_known_args()
+
+
+simulation_path = args.folder
+prm_file_name = args.prm
 
 # Name the save path
 save_path = simulation_path
@@ -112,17 +111,29 @@ p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p
 print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
-print(data['time'][start:])
+time = data['time'].values[start:] - data['time'].values[start]
+discharge = data['mass_discharge'].values[start:] * 1000. / correction_factor
 
-
-plt.plot(data['time'].values[start:] - data['time'].values[start], data['mass_discharge'].values[start:] * 1000. / correction_factor,
+plt.plot(time, discharge,
          label="Lethe DEM")
 plt.plot(paper_data['time'].values, paper_data['discharge'].values, '.k', label="Anand et al.")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
 plt.grid()
-plt.savefig('figure_' + pvd_name + '.png')
-plt.show()
+if (args.validate):
+    with open("mass_and_discharge_rate.txt", "w") as file:
+        # Write the first line
+        file.write(f'{"Total mass in hopper :"} {n_particle * density * volume / correction_factor * 1000:.2f} g\n')
+        # Write the second line
+        file.write(f'Mass flow rate is : {p[0]:.2f} g/s.\n')
+
+    solution = np.column_stack((time, discharge))
+    np.savetxt("solution.dat",solution, header="time mass_discharged")
+    plt.savefig('hopper_flow_rate.pdf')
+    plt.close()
+else:
+    plt.savefig('figure_' + pvd_name + '.png')
+    plt.show()
 
 

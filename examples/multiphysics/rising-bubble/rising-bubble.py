@@ -54,7 +54,7 @@ ax0.set_xlabel(r'$t$')
 ax0.legend(loc="upper left")
 if (args.validate):
   solution = np.column_stack((t, y))
-  np.savetxt("solution_barycenter.dat",solution)
+  np.savetxt("solution_barycenter.dat",solution, header="t y")
   fig0.savefig(f'./bubble-rise-barycenter.pdf')
 else:
   fig0.savefig(f'./ymean-t.png',dpi=300)
@@ -72,7 +72,7 @@ ax1.legend(loc="upper left")
 ax1.legend(loc=4)
 if (args.validate):
   solution = np.column_stack((t, vy))
-  np.savetxt("solution_velocity.dat",solution)
+  np.savetxt("solution_velocity.dat",solution, header="t vy")
   fig1.savefig(f'./bubble-rise-velocity.pdf')
 
 else:
@@ -103,7 +103,7 @@ ax2.set_xlim([0.1,0.9])
 ax2.set_ylim([0.8,1.4])
 if (args.validate):
   solution = np.column_stack((x, y))
-  np.savetxt("solution_contour.dat",solution)
+  np.savetxt("solution_contour.dat", solution, header="x y")
   fig2.savefig("bubble-contour.pdf")
 
 else:
