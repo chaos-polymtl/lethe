@@ -12,8 +12,8 @@
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessing_scalar.h>
+#include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
 #include <solvers/postprocessors_smoothing.h>
 
@@ -905,7 +905,6 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       if (this->simulation_parameters.post_processing
             .calculate_average_velocities)
         average_velocities->post_mesh_adaptation();
-
     }
 }
 
@@ -1382,7 +1381,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // time >= initial time with the epsilon as tolerance.
       const double dt = simulation_control->get_time_step();
       if (simulation_control->get_current_time() >
-          (simulation_parameters.post_processing.initial_time_for_average_velocities - 1e-6 * dt))
+          (simulation_parameters.post_processing
+             .initial_time_for_average_velocities -
+           1e-6 * dt))
         {
           this->average_velocities->calculate_average_velocities(
             this->local_evaluation_point,

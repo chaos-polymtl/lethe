@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks the AverageScalarInTime class in postprocessing_scalar.cc. It does so by averaging a solution in time. 
+ * @brief This test checks the AverageScalarInTime class in postprocessing_scalar.cc. It does so by averaging a solution in time.
  */
 
 // Deal.II includes
@@ -30,7 +30,6 @@
 void
 test()
 {
-
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   // Parameters
@@ -75,10 +74,11 @@ test()
   GlobalVectorType average_solution;
 
   // Time info
-  const double time_end     = simulation_control_parameters.time_end;
-  const double initial_time = postprocessing_parameters.initial_time_for_average_temp_and_hf;
-  double       time         = simulation_control->get_current_time();
-  double       epsilon      = 1e-6;
+  const double time_end = simulation_control_parameters.time_end;
+  const double initial_time =
+    postprocessing_parameters.initial_time_for_average_temp_and_hf;
+  double time    = simulation_control->get_current_time();
+  double epsilon = 1e-6;
 
   // Initialize averaged vectors
   average.initialize_vectors(locally_owned_dofs,

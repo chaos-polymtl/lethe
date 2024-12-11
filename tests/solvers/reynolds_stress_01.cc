@@ -83,10 +83,11 @@ test()
   GlobalVectorType reynolds_shear_stresses;
 
   // Time info
-  const double time_end     = simulation_control_parameters.time_end;
-  const double initial_time = postprocessing_parameters.initial_time_for_average_velocities;
-  double       time         = simulation_control->get_current_time();
-  double       epsilon      = 1e-6;
+  const double time_end = simulation_control_parameters.time_end;
+  const double initial_time =
+    postprocessing_parameters.initial_time_for_average_velocities;
+  double time    = simulation_control->get_current_time();
+  double epsilon = 1e-6;
 
   // Initialize averaged vectors
   postprocessing_velocities.initialize_vectors(locally_owned_dofs,

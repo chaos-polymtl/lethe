@@ -8,8 +8,7 @@
 #include <fstream>
 
 template <int dim>
-AverageScalarInTime<dim>::AverageScalarInTime(
-  DoFHandler<dim> &dof_handler)
+AverageScalarInTime<dim>::AverageScalarInTime(DoFHandler<dim> &dof_handler)
   : solution_transfer_sum_scalar_dt(dof_handler)
   , total_time_for_average(0.0)
   , average_calculation(false)
@@ -23,9 +22,10 @@ AverageScalarInTime<dim>::calculate_average_scalar(
   const double                      current_time,
   const double                      time_step)
 {
-  const double epsilon      = 1e-6;
-  const double initial_time = post_processing.initial_time_for_average_temp_and_hf;
-  dt                        = time_step;
+  const double epsilon = 1e-6;
+  const double initial_time =
+    post_processing.initial_time_for_average_temp_and_hf;
+  dt = time_step;
 
   // When averaging velocities begins
   if (current_time >= (initial_time - epsilon) && !average_calculation)
@@ -48,15 +48,14 @@ AverageScalarInTime<dim>::calculate_average_scalar(
 
   // Calculate the average velocities.
   average_scalar.equ(inv_range_time, sum_scalar_dt);
-
 }
 
 template <int dim>
 void
 AverageScalarInTime<dim>::initialize_vectors(
-  const IndexSet  &locally_owned_dofs,
-  const IndexSet  &locally_relevant_dofs,
-  const MPI_Comm         &mpi_communicator)
+  const IndexSet &locally_owned_dofs,
+  const IndexSet &locally_relevant_dofs,
+  const MPI_Comm &mpi_communicator)
 {
   // Reinitialisation of the average velocity and reynolds stress vectors
   // to get the right length.
@@ -93,7 +92,8 @@ void
 AverageScalarInTime<dim>::prepare_for_mesh_adaptation()
 {
   sum_scalar_dt_with_ghost_cells = sum_scalar_dt;
-  solution_transfer_sum_scalar_dt.prepare_for_coarsening_and_refinement(sum_scalar_dt_with_ghost_cells);
+  solution_transfer_sum_scalar_dt.prepare_for_coarsening_and_refinement(
+    sum_scalar_dt_with_ghost_cells);
 }
 
 template <int dim>

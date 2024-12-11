@@ -482,7 +482,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -507,7 +508,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -649,7 +651,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -675,7 +678,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
@@ -786,55 +790,59 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Add the average heat flux
 
   // Ouput the time average temperature
-  if (simulation_parameters.post_processing.calculate_average_temp_and_hf && this->simulation_control->get_current_time() > simulation_parameters.post_processing.initial_time_for_average_temp_and_hf + 1e-12)
-  {
-    this->average_temperature->calculate_average_scalar(
-      this->present_solution,
-      this->simulation_parameters.post_processing,
-      simulation_control->get_current_time(),
-      simulation_control->get_time_step());
-    this->average_temperature_to_output = this -> average_temperature -> get_average_scalar();
-    data_out.add_data_vector(dof_handler, this->average_temperature_to_output, "temperature_average");
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf &&
+      this->simulation_control->get_current_time() >
+        simulation_parameters.post_processing
+            .initial_time_for_average_temp_and_hf +
+          1e-12)
+    {
+      this->average_temperature->calculate_average_scalar(
+        this->present_solution,
+        this->simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
+      this->average_temperature_to_output =
+        this->average_temperature->get_average_scalar();
+      data_out.add_data_vector(dof_handler,
+                               this->average_temperature_to_output,
+                               "temperature_average");
 
-    // Output the time average heat flux
-    average_heat_flux_postprocessors.clear();
-    average_heat_flux_postprocessors.reserve(n_fluids + n_solids);
-    
-    // Heat fluxes in fluids
-    for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
-      {
-        average_heat_flux_postprocessors.emplace_back(
-          HeatFluxPostprocessor<dim>(thermal_conductivity_models[f_id],
-                                    "average_f",
-                                    f_id,
-                                    mesh_m_id,
-                                    solid_phase_present));
+      // Output the time average heat flux
+      average_heat_flux_postprocessors.clear();
+      average_heat_flux_postprocessors.reserve(n_fluids + n_solids);
 
-        // Also add the time average heat flux
-        data_out.add_data_vector(this->dof_handler,
-                                this->average_temperature_to_output,
-                                average_heat_flux_postprocessors[f_id]);
-      }
-    // Heat fluxes in solids
-    for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
-      {
-        mesh_m_id += 1;
-        average_heat_flux_postprocessors.emplace_back(
-          HeatFluxPostprocessor<dim>(thermal_conductivity_models[m_id],
-                                    "average_s",
-                                    m_id - n_fluids,
-                                    mesh_m_id,
-                                    solid_phase_present));
-                                    
-        // Also add the time average heat flux
-        data_out.add_data_vector(this->dof_handler,
-                                this->average_temperature_to_output,
-                                average_heat_flux_postprocessors[m_id]);
-      }
-  }
+      // Heat fluxes in fluids
+      for (unsigned int f_id = 0; f_id < n_fluids; ++f_id)
+        {
+          average_heat_flux_postprocessors.emplace_back(
+            HeatFluxPostprocessor<dim>(thermal_conductivity_models[f_id],
+                                       "average_f",
+                                       f_id,
+                                       mesh_m_id,
+                                       solid_phase_present));
 
+          // Also add the time average heat flux
+          data_out.add_data_vector(this->dof_handler,
+                                   this->average_temperature_to_output,
+                                   average_heat_flux_postprocessors[f_id]);
+        }
+      // Heat fluxes in solids
+      for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
+        {
+          mesh_m_id += 1;
+          average_heat_flux_postprocessors.emplace_back(
+            HeatFluxPostprocessor<dim>(thermal_conductivity_models[m_id],
+                                       "average_s",
+                                       m_id - n_fluids,
+                                       mesh_m_id,
+                                       solid_phase_present));
 
-  
+          // Also add the time average heat flux
+          data_out.add_data_vector(this->dof_handler,
+                                   this->average_temperature_to_output,
+                                   average_heat_flux_postprocessors[m_id]);
+        }
+    }
 }
 
 template <int dim>
@@ -1086,7 +1094,7 @@ HeatTransfer<dim>::pre_mesh_adaptation()
     }
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
-    this -> average_temperature->prepare_for_mesh_adaptation();
+    this->average_temperature->prepare_for_mesh_adaptation();
 }
 
 template <int dim>
@@ -1117,9 +1125,9 @@ HeatTransfer<dim>::post_mesh_adaptation()
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
     }
-  
+
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
-    this -> average_temperature -> post_mesh_adaptation();
+    this->average_temperature->post_mesh_adaptation();
 }
 
 template <int dim>
@@ -1160,7 +1168,7 @@ HeatTransfer<dim>::write_checkpoint()
       sol_set_transfer.emplace_back(&previous_solution);
     }
 
-  std::string  checkpoint_file_prefix =
+  std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
@@ -1171,7 +1179,7 @@ HeatTransfer<dim>::write_checkpoint()
 
       sol_set_transfer.insert(sol_set_transfer.end(),
                               avg_scalar_set_transfer.begin(),
-                              avg_scalar_set_transfer.end());    
+                              avg_scalar_set_transfer.end());
     }
 
   solution_transfer->prepare_for_serialization(sol_set_transfer);
@@ -1228,9 +1236,10 @@ HeatTransfer<dim>::read_checkpoint()
       input_vectors[i + 1] = &distributed_previous_solutions[i];
     }
 
-  parallel::distributed::SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, GlobalVectorType>
+    system_trans_vectors(this->dof_handler);
 
-  std::string  checkpoint_file_prefix =
+  std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
@@ -1240,13 +1249,15 @@ HeatTransfer<dim>::read_checkpoint()
       std::vector<GlobalVectorType *> sum_vectors =
         this->average_temperature->read(checkpoint_file_prefix);
 
-      input_vectors.insert(input_vectors.end(), sum_vectors.begin(), sum_vectors.end());
+      input_vectors.insert(input_vectors.end(),
+                           sum_vectors.begin(),
+                           sum_vectors.end());
     }
 
   solution_transfer->deserialize(input_vectors);
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
-    this->average_temperature->sanitize_after_restart();  
+    this->average_temperature->sanitize_after_restart();
 
   present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1340,9 +1351,10 @@ HeatTransfer<dim>::setup_dofs()
           }
       }
     // Initialize the vectors used in the time average temperature calculation
-    if (this->simulation_parameters.post_processing.calculate_average_temp_and_hf)
+    if (this->simulation_parameters.post_processing
+          .calculate_average_temp_and_hf)
       {
-        this -> average_temperature -> initialize_vectors(
+        this->average_temperature->initialize_vectors(
           this->locally_owned_dofs,
           this->locally_relevant_dofs,
           mpi_communicator);

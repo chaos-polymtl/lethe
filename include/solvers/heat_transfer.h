@@ -12,8 +12,8 @@
 #include <solvers/heat_transfer_assemblers.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
-#include <solvers/postprocessors.h>
 #include <solvers/postprocessing_scalar.h>
+#include <solvers/postprocessors.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -131,9 +131,11 @@ public:
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
 
-    if (simulation_parameters.post_processing.calculate_average_temp_and_hf){
-      average_temperature = std::make_shared<AverageScalarInTime<dim>>(this->dof_handler);
-    }
+    if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+      {
+        average_temperature =
+          std::make_shared<AverageScalarInTime<dim>>(this->dof_handler);
+      }
   }
 
   /**
@@ -801,7 +803,7 @@ private:
   std::shared_ptr<AverageScalarInTime<dim>> average_temperature;
 
   /**
-   * @brief Locally owned average temperature calculated using the AverageScalarInTime object. 
+   * @brief Locally owned average temperature calculated using the AverageScalarInTime object.
    */
   GlobalVectorType average_temperature_to_output;
 

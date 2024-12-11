@@ -1843,10 +1843,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
-      prm.declare_entry("calculate average temperature and average heat flux",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of time average temperature and time average heat flux");
+      prm.declare_entry(
+        "calculate average temperature and average heat flux",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of time average temperature and time average heat flux");
 
       prm.declare_entry(
         "calculate pressure drop",
@@ -2077,20 +2078,23 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_average_temp_and_hf = prm.get_bool("calculate average temperature and average heat flux");
-      calculate_pressure_drop      = prm.get_bool("calculate pressure drop");
-      inlet_boundary_id            = prm.get_integer("inlet boundary id");
-      outlet_boundary_id           = prm.get_integer("outlet boundary id");
-      calculate_flow_rate          = prm.get_bool("calculate flow rate");
-      calculate_tracer_flow_rate   = prm.get_bool("calculate tracer flow rate");
-      initial_time_for_average_velocities = prm.get_double("initial time for average velocity");
-      initial_time_for_average_temp_and_hf = prm.get_double("initial time for average temperature and average heat flux");
-      kinetic_energy_output_name   = prm.get("kinetic energy name");
-      pressure_drop_output_name    = prm.get("pressure drop name");
-      flow_rate_output_name        = prm.get("flow rate name");
-      tracer_flow_rate_output_name = prm.get("tracer flow rate name");
-      enstrophy_output_name        = prm.get("enstrophy name");
-      pressure_power_output_name   = prm.get("pressure power name");
+      calculate_average_temp_and_hf =
+        prm.get_bool("calculate average temperature and average heat flux");
+      calculate_pressure_drop    = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id          = prm.get_integer("inlet boundary id");
+      outlet_boundary_id         = prm.get_integer("outlet boundary id");
+      calculate_flow_rate        = prm.get_bool("calculate flow rate");
+      calculate_tracer_flow_rate = prm.get_bool("calculate tracer flow rate");
+      initial_time_for_average_velocities =
+        prm.get_double("initial time for average velocity");
+      initial_time_for_average_temp_and_hf = prm.get_double(
+        "initial time for average temperature and average heat flux");
+      kinetic_energy_output_name      = prm.get("kinetic energy name");
+      pressure_drop_output_name       = prm.get("pressure drop name");
+      flow_rate_output_name           = prm.get("flow rate name");
+      tracer_flow_rate_output_name    = prm.get("tracer flow rate name");
+      enstrophy_output_name           = prm.get("enstrophy name");
+      pressure_power_output_name      = prm.get("pressure power name");
       viscous_dissipation_output_name = prm.get("viscous dissipation name");
       apparent_viscosity_output_name  = prm.get("apparent viscosity name");
       output_frequency                = prm.get_integer("output frequency");

@@ -15,8 +15,8 @@
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
-#include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessing_scalar.h>
+#include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
 #include <solvers/postprocessors_smoothing.h>
 #include <solvers/simulation_parameters.h>

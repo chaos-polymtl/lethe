@@ -484,7 +484,8 @@ private:
               Parameters::InitialConditionType::average_velocity_profile &&
             !this->simulation_parameters.multiphysics.fluid_dynamics &&
             simulation_control->get_current_time() >
-              this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+              this->simulation_parameters.post_processing
+                .initial_time_for_average_velocities)
           {
             scratch_data.reinit_face_velocity(
               velocity_cell,
@@ -512,7 +513,8 @@ private:
               Parameters::InitialConditionType::average_velocity_profile &&
             !this->simulation_parameters.multiphysics.fluid_dynamics &&
             simulation_control->get_current_time() >
-              this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+              this->simulation_parameters.post_processing
+                .initial_time_for_average_velocities)
           {
             scratch_data.reinit_face_velocity(
               velocity_cell,

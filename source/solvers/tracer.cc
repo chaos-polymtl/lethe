@@ -277,7 +277,8 @@ Tracer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_velocity(
             velocity_cell,
@@ -303,7 +304,8 @@ Tracer<dim>::assemble_local_system_matrix(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_velocity(
             velocity_cell,
@@ -562,7 +564,8 @@ Tracer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_velocity(
             velocity_cell,
@@ -588,7 +591,8 @@ Tracer<dim>::assemble_local_system_rhs(
             Parameters::InitialConditionType::average_velocity_profile &&
           !this->simulation_parameters.multiphysics.fluid_dynamics &&
           simulation_control->get_current_time() >
-            this->simulation_parameters.post_processing.initial_time_for_average_velocities)
+            this->simulation_parameters.post_processing
+              .initial_time_for_average_velocities)
         {
           scratch_data.reinit_velocity(
             velocity_cell,

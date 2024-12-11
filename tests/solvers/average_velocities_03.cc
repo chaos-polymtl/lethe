@@ -79,10 +79,11 @@ test()
   // average_solution.update_ghost_values();
 
   // Time and output info
-  const double time_end     = simulation_control_parameters.time_end;
-  const double initial_time = postprocessing_parameters.initial_time_for_average_velocities;
-  double       time         = simulation_control->get_current_time();
-  const double epsilon      = 1e-6;
+  const double time_end = simulation_control_parameters.time_end;
+  const double initial_time =
+    postprocessing_parameters.initial_time_for_average_velocities;
+  double       time    = simulation_control->get_current_time();
+  const double epsilon = 1e-6;
 
   // Initialize averaged vectors
   average.initialize_vectors(locally_owned_dofs,
