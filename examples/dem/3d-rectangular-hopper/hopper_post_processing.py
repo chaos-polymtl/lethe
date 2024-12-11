@@ -67,7 +67,7 @@ correction_factor = particle.prm_dict['number of particles']/n_part_paper
 # Total mass = nρV/factor
 n_particle = particle.prm_dict["number of particles"]
 density = particle.prm_dict["density particles"]
-print(f'Total mass in hopper : {n_particle * density * volume / correction_factor * 1000:.2f} g.')
+if (not args.validate) : print(f'Total mass in hopper : {n_particle * density * volume / correction_factor * 1000:.2f} g.')
 
 # Create a list to store the "flow rate" of particles
 rate = []
@@ -108,7 +108,7 @@ p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict
 # Calculate mass flow rate
 p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p0:p1]],
                [value * 1000 / correction_factor  for value in mass_discharge[p0:p1]], 1)
-print(f'Mass flow rate is : {p[0]:.2f} g/s.')
+if (not args.validate) : print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
 time = data['time'].values[start:] - data['time'].values[start]
