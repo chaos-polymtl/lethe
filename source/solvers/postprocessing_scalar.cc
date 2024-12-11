@@ -24,7 +24,7 @@ AverageScalarInTime<dim>::calculate_average_scalar(
   const double                      time_step)
 {
   const double epsilon      = 1e-6;
-  const double initial_time = post_processing.initial_time_for_average_temperature;
+  const double initial_time = post_processing.initial_time_for_average_temp_and_hf;
   dt                        = time_step;
 
   // When averaging velocities begins

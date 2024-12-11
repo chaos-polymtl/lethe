@@ -131,7 +131,7 @@ public:
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
 
-    if (simulation_parameters.post_processing.calculate_average_temperature){
+    if (simulation_parameters.post_processing.calculate_average_temp_and_hf){
       average_temperature = std::make_shared<AverageScalarInTime<dim>>(this->dof_handler);
     }
   }

@@ -786,7 +786,7 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Add the average heat flux
 
   // Ouput the time average temperature
-  if (simulation_parameters.post_processing.calculate_average_temperature && this->simulation_control->get_current_time() > simulation_parameters.post_processing.initial_time_for_average_temperature + 1e-12)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf && this->simulation_control->get_current_time() > simulation_parameters.post_processing.initial_time_for_average_temp_and_hf + 1e-12)
   {
     this->average_temperature->calculate_average_scalar(
       this->present_solution,
@@ -1085,7 +1085,7 @@ HeatTransfer<dim>::pre_mesh_adaptation()
         previous_solutions[i]);
     }
 
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     this -> average_temperature->prepare_for_mesh_adaptation();
 }
 
@@ -1118,7 +1118,7 @@ HeatTransfer<dim>::post_mesh_adaptation()
       previous_solutions[i] = tmp_previous_solution;
     }
   
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     this -> average_temperature -> post_mesh_adaptation();
 }
 
@@ -1164,7 +1164,7 @@ HeatTransfer<dim>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
       std::vector<const GlobalVectorType *> avg_scalar_set_transfer =
         this->average_temperature->save(checkpoint_file_prefix);
@@ -1235,7 +1235,7 @@ HeatTransfer<dim>::read_checkpoint()
     this->simulation_parameters.restart_parameters.filename;
 
   // This will need to be changed to the average temperature
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
       std::vector<GlobalVectorType *> sum_vectors =
         this->average_temperature->read(checkpoint_file_prefix);
@@ -1245,7 +1245,7 @@ HeatTransfer<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  if (simulation_parameters.post_processing.calculate_average_temperature)
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     this->average_temperature->sanitize_after_restart();  
 
   present_solution = distributed_system;
@@ -1340,7 +1340,7 @@ HeatTransfer<dim>::setup_dofs()
           }
       }
     // Initialize the vectors used in the time average temperature calculation
-    if (this->simulation_parameters.post_processing.calculate_average_temperature)
+    if (this->simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {
         this -> average_temperature -> initialize_vectors(
           this->locally_owned_dofs,

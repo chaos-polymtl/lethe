@@ -22,8 +22,8 @@ This subsection controls the post-processing other than the forces and torque on
     set initial time for average velocity = 0.0
 
     # Average temperature calculation
-    set calculate average temperature        = false
-    set initial time for average temperature = 0.0
+    set calculate average temperature and average heat flux        = false
+    set initial time for average temperature and average heat flux = 0.0
 
     # Pressure drop calculation
     set calculate pressure drop          = false
@@ -110,7 +110,7 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
     * ``initial time for average velocity``: initial time used for the average velocities calculations.
 
-* ``calculate average temperature``: controls if calculation of time-averaged temperature is enabled.
+* ``calculate average temperature and average heat flux``: controls if calculation of time-averaged temperature and time-averaged heat flux is enabled.
     * ``initial time for average temperature``: initial time used for the average temperature calculations.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
