@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks the AverageScalarInTime class in postprocessing_scalar.cc. It does so by averaging a solution in time.
+ * @brief This test checks the AverageScalar class in postprocessing_scalar.cc. It does so by averaging a solution in time.
  */
 
 // Deal.II includes
@@ -63,7 +63,7 @@ test()
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<3> dof_handler(tria);
 
-  AverageScalarInTime<3> average(dof_handler);
+  AverageScalar<3> average(dof_handler);
 
   GlobalVectorType solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 0.0;

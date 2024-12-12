@@ -29,7 +29,7 @@ using namespace dealii;
  */
 
 template <int dim>
-class AverageScalarInTime
+class AverageScalar
 {
 public:
   /**
@@ -38,7 +38,7 @@ public:
    * @param[in] dof_handler Used to initialize the solution transfer objects.
    * The solution transfer object is later used for mesh adaptation.
    */
-  AverageScalarInTime(DoFHandler<dim> &dof_handler);
+  AverageScalar(const DoFHandler<dim> &dof_handler);
 
 
   /**

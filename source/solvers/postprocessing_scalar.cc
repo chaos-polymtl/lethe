@@ -8,7 +8,7 @@
 #include <fstream>
 
 template <int dim>
-AverageScalarInTime<dim>::AverageScalarInTime(DoFHandler<dim> &dof_handler)
+AverageScalar<dim>::AverageScalar(const DoFHandler<dim> &dof_handler)
   : solution_transfer_sum_scalar_dt(dof_handler)
   , total_time_for_average(0.0)
   , average_calculation(false)
@@ -16,7 +16,7 @@ AverageScalarInTime<dim>::AverageScalarInTime(DoFHandler<dim> &dof_handler)
 
 template <int dim>
 void
-AverageScalarInTime<dim>::calculate_average_scalar(
+AverageScalar<dim>::calculate_average_scalar(
   const GlobalVectorType           &local_evaluation_point,
   const Parameters::PostProcessing &post_processing,
   const double                      current_time,
@@ -52,10 +52,9 @@ AverageScalarInTime<dim>::calculate_average_scalar(
 
 template <int dim>
 void
-AverageScalarInTime<dim>::initialize_vectors(
-  const IndexSet &locally_owned_dofs,
-  const IndexSet &locally_relevant_dofs,
-  const MPI_Comm &mpi_communicator)
+AverageScalar<dim>::initialize_vectors(const IndexSet &locally_owned_dofs,
+                                       const IndexSet &locally_relevant_dofs,
+                                       const MPI_Comm &mpi_communicator)
 {
   // Reinitialisation of the average scalars to get the right length.
   scalar_dt.reinit(locally_owned_dofs, mpi_communicator);
@@ -73,7 +72,7 @@ AverageScalarInTime<dim>::initialize_vectors(
 
 template <int dim>
 void
-AverageScalarInTime<dim>::update_average_scalar()
+AverageScalar<dim>::update_average_scalar()
 {
   if (total_time_for_average > 1e-16)
     {
@@ -85,7 +84,7 @@ AverageScalarInTime<dim>::update_average_scalar()
 
 template <int dim>
 void
-AverageScalarInTime<dim>::prepare_for_mesh_adaptation()
+AverageScalar<dim>::prepare_for_mesh_adaptation()
 {
   sum_scalar_dt_with_ghost_cells = sum_scalar_dt;
   solution_transfer_sum_scalar_dt.prepare_for_coarsening_and_refinement(
@@ -94,7 +93,7 @@ AverageScalarInTime<dim>::prepare_for_mesh_adaptation()
 
 template <int dim>
 void
-AverageScalarInTime<dim>::post_mesh_adaptation()
+AverageScalar<dim>::post_mesh_adaptation()
 {
   solution_transfer_sum_scalar_dt.interpolate(sum_scalar_dt);
 
@@ -105,7 +104,7 @@ AverageScalarInTime<dim>::post_mesh_adaptation()
 
 template <int dim>
 std::vector<const GlobalVectorType *>
-AverageScalarInTime<dim>::save(const std::string &prefix)
+AverageScalar<dim>::save(const std::string &prefix)
 {
   sum_scalar_dt_with_ghost_cells = sum_scalar_dt;
 
@@ -124,7 +123,7 @@ AverageScalarInTime<dim>::save(const std::string &prefix)
 
 template <int dim>
 std::vector<GlobalVectorType *>
-AverageScalarInTime<dim>::read(const std::string &prefix)
+AverageScalar<dim>::read(const std::string &prefix)
 {
   std::vector<GlobalVectorType *> sum_vectors;
   sum_vectors.push_back(&sum_scalar_dt_with_ghost_cells);
@@ -142,5 +141,5 @@ AverageScalarInTime<dim>::read(const std::string &prefix)
   return sum_vectors;
 }
 
-template class AverageScalarInTime<2>;
-template class AverageScalarInTime<3>;
+template class AverageScalar<2>;
+template class AverageScalar<3>;

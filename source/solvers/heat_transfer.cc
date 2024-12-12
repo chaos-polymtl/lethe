@@ -788,17 +788,22 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     }
 
   // Ouput the time average temperature and time average heat flux
-  if (simulation_parameters.post_processing.calculate_average_temp_and_hf &&
-      this->simulation_control->get_current_time() >
-        simulation_parameters.post_processing
-            .initial_time_for_average_temp_and_hf -
-          1e-6 * simulation_control->get_time_step())
+  if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
-      this->average_temperature->calculate_average_scalar(
-        this->present_solution,
-        this->simulation_parameters.post_processing,
-        simulation_control->get_current_time(),
-        simulation_control->get_time_step());
+      // Start calculating after the initial time for the average temperature
+      // and average heat flux
+      if (this->simulation_control->get_current_time() >
+          simulation_parameters.post_processing
+              .initial_time_for_average_temp_and_hf -
+            1e-6 * simulation_control->get_time_step())
+        {
+          this->average_temperature->calculate_average_scalar(
+            this->present_solution,
+            this->simulation_parameters.post_processing,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step());
+        }
+
       this->average_temperature_to_output =
         this->average_temperature->get_average_scalar();
       data_out.add_data_vector(dof_handler,

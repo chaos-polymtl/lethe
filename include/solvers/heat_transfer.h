@@ -134,7 +134,7 @@ public:
     if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {
         average_temperature =
-          std::make_shared<AverageScalarInTime<dim>>(this->dof_handler);
+          std::make_shared<AverageScalar<dim>>(this->dof_handler);
       }
   }
 
@@ -800,10 +800,10 @@ private:
   /**
    * @brief Compute the average temperature in time.
    */
-  std::shared_ptr<AverageScalarInTime<dim>> average_temperature;
+  std::shared_ptr<AverageScalar<dim>> average_temperature;
 
   /**
-   * @brief Locally owned average temperature calculated using the AverageScalarInTime object.
+   * @brief Locally owned average temperature calculated using the AverageScalar object.
    */
   GlobalVectorType average_temperature_to_output;
 
