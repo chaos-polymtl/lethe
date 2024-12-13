@@ -51,7 +51,7 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/error_estimator.h>
-
+#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/non_matching/fe_immersed_values.h>
 #include <deal.II/non_matching/fe_values.h>
@@ -84,28 +84,191 @@ namespace ChangeVectorTypes
 }
 
 template <int dim>
-inline double compute_point_2_interface_min_distance(const Point<dim> &point_0,const Point<dim> &point_1,const Point<dim> &y)
+inline double compute_point_2_interface_min_distance(const std::vector<Point<dim>> triangle,const Point<dim> &point)
 {
-  const Tensor<1,dim> d = point_1 - point_0;
-  
-  const double t_bar = d*(y-point_0)/(d.norm()*d.norm());
-  
   double D;
+  const Point<dim> &point_0 = triangle[0];
+  const Point<dim> &point_1 = triangle[1];
   
-  if (t_bar <= 0.0)
-  {
-    const Tensor<1,dim> y_minus_p0 = y-point_0;
-    D = y_minus_p0.norm();
-  }
-  else if (t_bar >= 1.0)
-  {
-    const Tensor<1,dim> y_minus_p1 = y-point_1;
-    D = y_minus_p1.norm();
-  }
-  else
-  {
-    const Tensor<1,dim> projection = y-(point_0+t_bar*d);
-    D = projection.norm();
+  if constexpr (dim == 3)
+    {
+      const Point<dim> &point_2 = triangle[2];
+      
+      Tensor<1, dim> vector_to_plane;
+      Point<dim>     pt_in_triangle;
+
+      vector_to_plane = point_0 - point;
+
+      const Tensor<1, dim> e_0 = point_1 - point_0;
+      const Tensor<1, dim> e_1 = point_2 - point_0;
+      
+      const double a   = e_0.norm_square();
+      const double b   = scalar_product(e_0, e_1);
+      const double c   = e_1.norm_square();
+      const double d = scalar_product(e_0, vector_to_plane);
+      const double e = scalar_product(e_1, vector_to_plane);
+      
+      const double det = abs(a * c - b * b);
+      
+      double s = b * e - c * d;
+      double t = b * d - a * e;
+
+      if (s + t <= det)
+        {
+          if (s < 0)
+            {
+              if (t < 0)
+                {
+                  // Region 4
+                  if (d < 0)
+                    {
+                      t = 0;
+                      if (-d >= a)
+                        s = 1;
+                      else
+                        s = -d / a;
+                    }
+                  else
+                    {
+                      s = 0;
+                      if (e >= 0)
+                        t = 0;
+                      else if (-e >= c)
+                        t = 1;
+                      else
+                        t = e / c;
+                    }
+                }
+              else
+                {
+                  // Region 3
+                  s = 0;
+                  if (e >= 0)
+                    t = 0;
+                  else if (-e >= c)
+                    t = 1;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 5
+              t = 0;
+              if (d >= 0)
+                s = 0;
+              else if (-d >= a)
+                s = 1;
+              else
+                s = -d / a;
+            }
+          else
+            {
+              // Region 0
+              const double inv_det = 1. / det;
+              s *= inv_det;
+              t *= inv_det;
+            }
+        }
+      else
+        {
+          if (s < 0)
+            {
+              // Region 2
+              const double tmp0 = b + d;
+              const double tmp1 = c + e;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+
+                  t = 1 - s;
+                }
+              else
+                {
+                  s = 0;
+                  if (tmp1 <= 0)
+                    t = 1;
+                  else if (e >= 0)
+                    t = 0;
+                  else
+                    t = -e / c;
+                }
+            }
+          else if (t < 0)
+            {
+              // Region 6
+              const double tmp0 = b + e;
+              const double tmp1 = a + d;
+              if (tmp1 > tmp0)
+                {
+                  const double numer = tmp1 - tmp0;
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    t = 1;
+                  else
+                    t = numer / denom;
+                  s = 1 - t;
+                }
+              else
+                {
+                  t = 0;
+                  if (tmp1 <= 0)
+                    s = 1;
+                  else if (d >= 0)
+                    s = 0;
+                  else
+                    s = -d / a;
+                }
+            }
+          else
+            {
+              // Region 1
+              const double numer = (c + e) - (b + d);
+              if (numer <= 0)
+                s = 0;
+              else
+                {
+                  const double denom = a - 2 * b + c;
+                  if (numer >= denom)
+                    s = 1;
+                  else
+                    s = numer / denom;
+                }
+              t = 1 - s;
+            }
+        }
+
+      pt_in_triangle = point_0 + s * e_0 + t * e_1;
+
+      D = pt_in_triangle.distance(point);
+    }
+  
+  if constexpr (dim == 2)
+    {
+      const Tensor<1,dim> d = point_1 - point_0;
+      
+      const double t_bar = d*(point-point_0)/(d.norm()*d.norm());
+      
+      if (t_bar <= 0.0)
+      {
+        const Tensor<1,dim> point_minus_p0 = point-point_0;
+        D = point_minus_p0.norm();
+      }
+      else if (t_bar >= 1.0)
+      {
+        const Tensor<1,dim> point_minus_p1 = point-point_1;
+        D = point_minus_p1.norm();
+      }
+      else
+      {
+        const Tensor<1,dim> projection = point-(point_0+t_bar*d);
+        D = projection.norm();
+      }
   }
   
   return D;
@@ -1028,6 +1191,13 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
                                                     mesh_classifier,
                                                     dof_handler,
                                                     level_set);
+                                                    
+                                                    
+  GridTools::MarchingCubeAlgorithm<dim, VectorType> marching_cube(mapping,
+                                                         fe, // todo
+                                                         1,
+                                                         1e-10);
+  
   // double global_volume = 0.0;
   // for (const auto &cell : dof_handler.active_cell_iterators())
   // {
@@ -1076,11 +1246,17 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   
   pcout << "In signed distance computation" << std::endl;
   
-  // pcout << "this->triangulation.n_active_cells() = " << this->triangulation.n_active_cells() << std::endl;
-  // Vector<double> cell_wise_volume(this->triangulation.n_active_cells());
+  // Local distance vetors initialization
+  for (auto p : this->locally_active_dofs)
+    {
+      distance(p) = 0.08;
+      distance_with_ghost(p) = 0.08;
+    }
+    
+  const unsigned int n_quad_points = fe.degree + 1;
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
   
-  
-  // Loop to identify intersected cells and compute the intersection points (interface reconstruction)
+  // Loop to identify intersected cells and compute the interface reconstruction
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
     if (cell->is_locally_owned())
@@ -1097,44 +1273,37 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
         &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
         
+      std::vector<Point<dim>>    surface_vertices;
+      std::vector<CellData<dim-1>> surface_cells;
+              
+      marching_cube.process_cell(cell, level_set, 0.0, surface_vertices, surface_cells);
       
-      
-      // If the cell is intersected, reconstruct the interface in it along with mass correction
-      if (surface_fe_values)
+      // If the cell is intersected, reconstruct the interface in it
+      if (surface_vertices.size() != 0)
       {
         const unsigned int cell_index = cell->global_active_cell_index();
         
-        std::vector<Point<dim>> cells_intersection_point;
+        Triangulation<dim-1,dim> surface_triangulation;
+        surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
         
-        cells_intersection_point.reserve(n);
-        
-        // Rescontruct interface using Gauss Lobatto quadrature first points (because Gauss Lobatto includes extremities as the first points -> first 2 in 2D to define the intersection line, first 3 in 3D to define the intersection plane)
-        for (const unsigned int q :
-             surface_fe_values->quadrature_point_indices())
+        for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
           {
-            const Point<dim> point = surface_fe_values->quadrature_point(q);
+            unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
+            std::vector<Point<dim>> surface_cell_vertices(surface_cell_n_vertices);
             
-            cells_intersection_point.push_back(point);
-            // intersection_point_set.insert(point);
+            for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
+            {
+              surface_cell_vertices[p] = surface_cell->vertex(p);
+            }
+            
+            intersection_point[cell_index] = surface_cell_vertices;
+            
           }
-          
-        // Store the interface reconstruction 
-        intersection_point[cell_index] = cells_intersection_point;
-        
-
       }
     }
   }
   
-  // Local distance vetors initialization
-  for (auto p : this->locally_active_dofs)
-    {
-      distance(p) = 0.08;
-      distance_with_ghost(p) = 0.08;
-    }
-    
-  const unsigned int n_quad_points = fe.degree + 1;
-  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+
 
   
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
@@ -1156,10 +1325,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       // Pre-store intersection points
       std::vector<Point<dim>> cells_intersection_point =  intersection_point.at(cell_index);
       
-      // This will not work in 3D
-      const Point<dim> point_0 = cells_intersection_point[0];
-      const Point<dim> point_1 = cells_intersection_point[1];
-      
       // Compute distance of the cell's dof 
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
@@ -1168,7 +1333,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   
         const Point<dim> y = dof_support_points.at(dof_indices[i]);
   
-        double D = compute_point_2_interface_min_distance(point_0, point_1, y);
+        double D = compute_point_2_interface_min_distance(cells_intersection_point, y);
         
         // Point<dim> bl = Point<dim>(0.4,0.4);
         // Point<dim> tr = Point<dim>(0.6,0.6);
@@ -1814,10 +1979,7 @@ void AdvectionProblem<dim>::run()
   refine_grid(8,6);
   
   compute_level_set_from_phase_fraction();
-  // mesh_classifier.reclassify();
-  // compute_sign_distance(it);
-  
-  // compute_phase_fraction_from_level_set();
+
   
   
   previous_solution = locally_relevant_solution;
@@ -1851,6 +2013,11 @@ void AdvectionProblem<dim>::run()
   global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
   
   pcout << "global_volume = " << global_volume << std::endl;
+  
+  mesh_classifier.reclassify();
+  compute_sign_distance(it, global_volume);
+  
+  compute_phase_fraction_from_level_set();
   
   output_results(it);
   // compute_volume();
