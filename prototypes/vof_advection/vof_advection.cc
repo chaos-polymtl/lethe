@@ -745,6 +745,10 @@ private:
   
   std::map<types::global_cell_index,std::vector<Point<dim>>> intersection_point;
   
+  std::map<types::global_cell_index,std::vector<Point<dim>>> interface_reconstruction_vertices;
+  
+  std::map<types::global_cell_index,std::vector<CellData<dim-1>>> interface_reconstruction_cells;
+  
   std::map<types::global_cell_index,Point<dim>> intersection_cell;
   
   std::set<types::global_cell_index> intersection_halo_cell;
@@ -1160,6 +1164,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   pcout << "In redistancation" << std::endl;
   
   intersection_point.clear();
+  interface_reconstruction_vertices.clear();
+  interface_reconstruction_cells.clear();
   intersection_cell.clear();
   intersection_halo_cell.clear();
   dofs_location_status.clear();
@@ -1283,9 +1289,22 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       {
         const unsigned int cell_index = cell->global_active_cell_index();
         
+        interface_reconstruction_vertices[cell_index] = surface_vertices;
+        interface_reconstruction_cells[cell_index] = surface_cells;
+        
+        
+        std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+        cell->get_dof_indices(dof_indices);
+        
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+        {
+          dofs_location_status.insert(dof_indices[i]);
+        }
+        
         Triangulation<dim-1,dim> surface_triangulation;
         surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
         
+
         for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
           {
             unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
@@ -1297,15 +1316,12 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
             }
             
             intersection_point[cell_index] = surface_cell_vertices;
-            
           }
       }
     }
   }
   
 
-
-  
   //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
   for (const auto &cell : dof_handler.active_cell_iterators())
   {
@@ -1317,45 +1333,39 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       cell->get_dof_indices(dof_indices);
     
       // If the cell is not stored in the intersection_point map, it means it is not intersected. So no distance computation for now.
-      if (intersection_point.find(cell_index) == intersection_point.end())
+      if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
       {
         continue;
       }
       
-      // Pre-store intersection points
-      std::vector<Point<dim>> cells_intersection_point =  intersection_point.at(cell_index);
+      std::vector<Point<dim>>    surface_vertices = interface_reconstruction_vertices.at(cell_index);
+      std::vector<CellData<dim-1>> surface_cells = interface_reconstruction_cells.at(cell_index);
       
-      // Compute distance of the cell's dof 
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      {
-        
-        dofs_in_interface_halo.insert(dof_indices[i]);
-  
-        const Point<dim> y = dof_support_points.at(dof_indices[i]);
-  
-        double D = compute_point_2_interface_min_distance(cells_intersection_point, y);
-        
-        // Point<dim> bl = Point<dim>(0.4,0.4);
-        // Point<dim> tr = Point<dim>(0.6,0.6);
-        // 
-        // Tensor<1,dim> dist_bl = bl - y;
-        // Tensor<1,dim> dist_tr = y - tr;
-        // 
-        // Tensor<1,dim> dist_border;
-        // dist_border[0] = std::max(dist_bl[0],dist_tr[0]);
-        // dist_border[1] = std::max(dist_bl[1],dist_tr[1]);
-        // 
-        // Tensor<1,dim> dist_corner;
-        // dist_corner[0] = std::max(0.0,dist_border[0]);
-        // dist_corner[1] = std::max(0.0,dist_border[1]);
-        // 
-        // D = dist_corner.norm() + std::min(0.0, std::max(dist_border[0],dist_border[1]));
-        // 
-        distance(dof_indices[i]) = std::min(std::abs(distance(dof_indices[i])), std::abs(D));
-
-        dofs_location_status.insert(dof_indices[i]);
-      }
+      // Create interface recontruction triangulation
+      Triangulation<dim-1,dim> surface_triangulation;
+      surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
       
+      // Compute minimum distance of the cell's dof to the interface reconstruction
+      for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
+        {
+          unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
+          std::vector<Point<dim>> surface_cell_vertices(surface_cell_n_vertices);
+          
+          for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
+          {
+            surface_cell_vertices[p] = surface_cell->vertex(p);
+          }
+          
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              dofs_in_interface_halo.insert(dof_indices[i]);
+        
+              const Point<dim> y = dof_support_points.at(dof_indices[i]);
+              double D = compute_point_2_interface_min_distance(surface_cell_vertices, y);
+              
+              distance(dof_indices[i]) = std::min(std::abs(distance(dof_indices[i])), std::abs(D));
+            }
+        }
     }
   }
   
@@ -1372,7 +1382,6 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   distance.zero_out_ghost_values();    
 
   // Copy the ghost values back in distance (zero_out_ghost_values() puts zeros in ghost DOFs)
-  // distance = distance_with_ghost;
   for (auto p : this->locally_active_dofs)
   {
     distance(p) = distance_with_ghost(p);
@@ -1418,28 +1427,13 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       const unsigned int cell_index = cell->global_active_cell_index();
       
       // The cell is not intersected, no need to correct the mass
-      if (intersection_point.find(cell_index) == intersection_point.end())
+      if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
       {
         continue;
       }
       
-      // non_matching_fe_values.reinit(cell);
-      // 
-      // const std::optional<FEValues<dim>>
-      //   &inside_fe_values = non_matching_fe_values.get_inside_fe_values();
-      // std::vector<double> JxW_inside = inside_fe_values->get_JxW_values();
-      // 
-      // double cell_volume= 0.0;  
-      // for (const unsigned int q :
-      //      inside_fe_values->quadrature_point_indices())
-      //   {
-      //     cell_volume += JxW_inside[q];
-      //   }
-      
-      
       Vector<double> cell_dof_values(dofs_per_cell);
       Vector<double> cell_level_set_dof_values(dofs_per_cell);
-      
       
       cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
@@ -1493,9 +1487,14 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
       std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
       cell->get_dof_indices(dof_indices);
       
+      double n_cells_per_dofs = 4.0;
+      if constexpr (dim == 3)
+      {
+        n_cells_per_dofs = 8.0;
+      }
       for (unsigned int i = 0; i < dofs_per_cell; ++i)
       {
-        volume_correction(dof_indices[i]) += local_corr_n/4.0;
+        volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
         
       }
       
