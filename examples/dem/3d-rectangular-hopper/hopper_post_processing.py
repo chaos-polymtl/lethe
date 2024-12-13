@@ -18,10 +18,10 @@ from lethe_pyvista_tools import *
 '''Simulation properties'''
 
 #Take case path as argument and store it
-parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
-parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
-parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
-parser.add_argument("--prm", type=str, help="Prm file name", required=True)
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the rectangular hopper DEM case')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser.add_argument("-f", "--folder", type=str, help="Root folder of the simulation. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--prm", type=str, help="Name of the prm file (including the extension .prm) but without the path to the  prm file", required=True)
 args, leftovers=parser.parse_known_args()
 
 

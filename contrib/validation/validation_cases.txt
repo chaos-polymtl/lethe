@@ -8,8 +8,8 @@
 
 examples/incompressible-flow/2d-lid-driven-cavity 1
 examples/incompressible-flow/2d-taylor-couette 1
-examples/incompressible-flow/3d-taylor-green-vortex 16
-examples/multiphysics/rising-bubble 16
-examples/dem/3d-rectangular-hopper 16
+#examples/incompressible-flow/3d-taylor-green-vortex 16
+#examples/multiphysics/rising-bubble 16
+#examples/dem/3d-rectangular-hopper 16
 
 

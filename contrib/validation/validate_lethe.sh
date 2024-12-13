@@ -26,10 +26,9 @@
 # - Reference results must be available in the specified directory.
 #
 # Notes:
-# - This program but be launched from the main folder of lethe
+# - The program needs to be launched from the main folder of lethe
 #
 # -----------------------------------------------------------------------------
-
 
 # Function to display the help message
 show_help() {
@@ -38,7 +37,6 @@ show_help() {
     echo "Options:"
     echo "  -h, --help       Display this help message"
     echo "  -o, --output     Specify the output directory for validation results"
-    echo "  -v, --verbose    Enable verbose mode for detailed output"
     echo
     echo "Description:"
     echo "This script automates the validation of the Computational Fluid Dynamics (CFD)"
@@ -106,7 +104,8 @@ while [[ $# -gt 0 ]]; do
                 output_path="$2"
                 shift 2  # Skip the flag and its argument
             else
-                error_exit "Missing argument for -o|--output."
+                echo "Error: Missing argument for -o|--output."
+                exit 1
             fi
             ;;
         *)
@@ -127,6 +126,26 @@ verify_or_create_folder "$output_path"
 lethe_path=$(pwd)
 echo "The current path is: $lethe_path"
 echo "Please ensure that the current path is the root folder of lethe"
+
+# Check if magick is available. Otherwise reports will not be generated.
+# If magick is not available, the script will exit with an error status.
+# Check if the application exists
+if ! command -v "magick" &> /dev/null; then
+  echo "Error: magick is not installed or not in the PATH." >&2
+  exit 1
+fi
+
+# Check if git is available. Otherwise it is not possible to have a git hash
+if ! command -v "git" &> /dev/null; then
+  error exit echo "Error: git is not installed or not in the PATH." >&2
+  exit 1
+fi
+
+# Check if python3 is available. Otherwise it is not possible to post-process the simulations
+if ! command -v "python3" &> /dev/null; then
+  error exit echo "Error: python3 is not installed or not in the PATH." >&2
+  exit 1
+fi
 
 # Output file
 hash_file="$output_path/current_git_hash.txt"

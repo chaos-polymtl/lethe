@@ -19,7 +19,7 @@ import os
 
 #Take case path as argument and store it
 parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
-parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
 args, leftovers=parser.parse_known_args()
 output_dir =args.folder

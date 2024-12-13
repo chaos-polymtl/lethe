@@ -61,10 +61,10 @@ python3 rising-bubble.py -f output  -v
 # Copy the information to the log folder
 cp bubble-rise-barycenter.pdf $folder
 cp bubble-rise-velocity.pdf $folder
-cp bubble_contour.pdf $folder
-cp solution_barycenter.dat $folder
-cp solution_contour.dat $folder
-cp solution_velocity.dat $folder
+cp bubble-contour.pdf $folder
+cp solution-barycenter.dat $folder
+cp solution-contour.dat $folder
+cp solution-velocity.dat $folder
 
 # Append the information to the report
 magick -density 300  $output_root/report.pdf bubble-rise-barycenter.pdf bubble-rise-velocity.pdf  bubble_contour.pdf  -quality 100 $output_root/temporary.pdf

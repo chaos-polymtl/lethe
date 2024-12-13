@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This script automates the validation process for the 2D lid-driven cavity benchmark
+# This script automates the validation process for the rectangular hopper
 # in Lethe.
 
 # Function to recreate the folder
