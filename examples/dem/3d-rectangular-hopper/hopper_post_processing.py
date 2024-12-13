@@ -18,7 +18,7 @@ from lethe_pyvista_tools import *
 '''Simulation properties'''
 
 #Take case path as argument and store it
-parser = argparse.ArgumentParser(description='Arguments for the post-processing of the rectangular hopper DEM case')
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-rectangular hopper DEM case')
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 parser.add_argument("-f", "--folder", type=str, help="Root folder of the simulation. This folder is the folder which contains the .prm file.", required=True)
 parser.add_argument("--prm", type=str, help="Name of the prm file (including the extension .prm) but without the path to the  prm file", required=True)
@@ -122,7 +122,7 @@ plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
 plt.grid()
 if (args.validate):
-    with open("mass_and_discharge_rate.txt", "w") as file:
+    with open("mass-and-discharge-rate.txt", "w") as file:
         # Write the first line
         file.write(f'{"Total mass in hopper :"} {n_particle * density * volume / correction_factor * 1000:.2f} g\n')
         # Write the second line
@@ -130,10 +130,10 @@ if (args.validate):
 
     solution = np.column_stack((time, discharge))
     np.savetxt("solution.dat",solution, header="time mass_discharged")
-    plt.savefig('hopper_flow_rate.pdf')
+    plt.savefig('hopper-flow-rate.pdf')
     plt.close()
 else:
-    plt.savefig('figure_' + pvd_name + '.png')
+    plt.savefig('figure-' + pvd_name + '.png')
     plt.show()
 
 

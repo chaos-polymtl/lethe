@@ -14,6 +14,12 @@ recreate_folder() {
     mkdir -p "$folder_path"  # Creates the folder
 }
 
+# Store filenames of all plots in a variable (space-seperated)
+plots="hopper-flow-rate.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+data="mass-and-discharge-rate.txt solution.dat"
+
 # Default path
 default_value="./"
 
@@ -58,18 +64,16 @@ recreate_folder "$folder"
 gmsh -3 hopper_structured.geo > "$folder/log-mesh"
 
 { time $action ; } &> "$folder/log"
-
 python3 hopper_post_processing.py -f . --prm hopper.prm --validate
 
 # Copy the information to the log folder
-cp hopper_flow_rate.pdf $folder
-cp mass_and_discharge_rate.txt $folder
-cp solution.dat $folder
+cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
-magick -density 300 -pointsize 12 -font Courier text:mass_and_discharge_rate.txt mass_and_discharge_rate.pdf
+magick -density 300 -pointsize 12 -font Courier text:mass-and-discharge-rate.txt mass-and-discharge-rate.pdf
 
-magick -density 300  $output_root/report.pdf mass_and_discharge_rate.pdf hopper_flow_rate.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf mass-and-discharge-rate.pdf $plots  -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
 
 

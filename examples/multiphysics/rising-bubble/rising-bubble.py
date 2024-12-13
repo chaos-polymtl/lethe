@@ -20,7 +20,7 @@ import os
 #Take case path as argument and store it
 parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
-parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
+parser.add_argument("-f", "--folder", type=str, help="Path to the output folder. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
 args, leftovers=parser.parse_known_args()
 output_dir =args.folder
 filename = output_dir + "/vof_barycenter_information.dat"
@@ -54,7 +54,7 @@ ax0.set_xlabel(r'$t$')
 ax0.legend(loc="upper left")
 if (args.validate):
   solution = np.column_stack((t, y))
-  np.savetxt("solution_barycenter.dat",solution, header="t y")
+  np.savetxt("solution-barycenter.dat",solution, header="t y")
   fig0.savefig(f'./bubble-rise-barycenter.pdf')
 else:
   fig0.savefig(f'./ymean-t.png',dpi=300)
@@ -72,7 +72,7 @@ ax1.legend(loc="upper left")
 ax1.legend(loc=4)
 if (args.validate):
   solution = np.column_stack((t, vy))
-  np.savetxt("solution_velocity.dat",solution, header="t vy")
+  np.savetxt("solution-velocity.dat",solution, header="t vy")
   fig1.savefig(f'./bubble-rise-velocity.pdf')
 
 else:
@@ -103,7 +103,7 @@ ax2.set_xlim([0.1,0.9])
 ax2.set_ylim([0.8,1.4])
 if (args.validate):
   solution = np.column_stack((x, y))
-  np.savetxt("solution_contour.dat", solution, header="x y")
+  np.savetxt("solution-contour.dat", solution, header="x y")
   fig2.savefig("bubble-contour.pdf")
 
 else:

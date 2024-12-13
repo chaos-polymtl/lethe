@@ -14,6 +14,12 @@ recreate_folder() {
     mkdir -p "$folder_path"  # Creates the folder
 }
 
+# Store filenames of all plots in a variable (space-seperated)
+plots="lethe-analytical-taylor-couette-comparison.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+data="torque.00.dat torque.01.dat solution.dat"
+
 # Default path
 default_value="./"
 
@@ -58,13 +64,11 @@ recreate_folder "$folder"
 python3 postprocess_taylor_couette.py --validate
 
         # Copy the information to the log folder
-cp lethe-analytical-taylor-couette-comparison.pdf $folder
-cp torque.00.dat $folder
-cp torque.01.dat $folder
-cp solution.dat $folder
+cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
-magick -density 300  $output_root/report.pdf lethe-analytical-taylor-couette-comparison.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf $plots -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
 
 

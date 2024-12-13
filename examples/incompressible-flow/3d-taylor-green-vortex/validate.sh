@@ -14,6 +14,12 @@ recreate_folder() {
     mkdir -p "$folder_path"  # Creates the folder
 }
 
+# Store filenames of all plots in a variable (space-seperated)
+plots=" dissipation_comparison.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+data="solution_enstrophy.dat solution_kinetic_energy.dat"
+
 # Default path
 default_value="./"
 
@@ -58,12 +64,11 @@ python3 calculate_dissipation_rate_constant_cfl.py -f output/  -i kinetic_energy
 python3 plot_dissipation_rate.py -ke output/ke_rate.dat -ens output/enstrophy.dat -v 0.000625 --validate
 
 # Copy the information to the log folder
-cp dissipation_comparison.pdf $folder
-cp solution_enstrophy.dat $folder
-cp solution_kinetic_energy.dat $folder
+cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
-magick -density 300  $output_root/report.pdf dissipation_comparison.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf $plots -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
 
 

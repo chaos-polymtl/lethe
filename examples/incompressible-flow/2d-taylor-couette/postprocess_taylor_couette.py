@@ -17,8 +17,8 @@ import argparse
 # Main
 #--------------------------------------------
 
-parser = argparse.ArgumentParser(description='Arguments for the validation of the 2d lid-driven cavity')
-parser.add_argument("-v", "--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 2d Taylor-Couette flow')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 # Load VTU file
@@ -70,5 +70,5 @@ else:
 
   # Save the data to a .dat file with space as the separator
   np.savetxt(output_file, data, fmt="%.6f",header="r u", delimiter=" ") 
-plt.savefig("lethe-analytical-taylor-couette-comparison.pdf")
+  plt.savefig("lethe-analytical-taylor-couette-comparison.pdf")
 

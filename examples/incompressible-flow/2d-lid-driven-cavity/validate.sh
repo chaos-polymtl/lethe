@@ -14,6 +14,12 @@ recreate_folder() {
     mkdir -p "$folder_path"  # Creates the folder
 }
 
+# Store filenames of all plots in a variable (space-seperated)
+plots="lethe-ghia-re-400-comparison.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+data="solution.dat"
+
 # Default path
 default_value="./"
 
@@ -58,11 +64,11 @@ recreate_folder "$folder"
 python3 post_process_Reynolds_400.py --validate
 
         # Copy the information to the log folder
-cp lethe-ghia-re-400-comparison.pdf $folder
-cp solution.dat $folder
+cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
-magick -density 300  $output_root/report.pdf lethe-ghia-re-400-comparison.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
 
 

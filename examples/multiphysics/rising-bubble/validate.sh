@@ -14,6 +14,12 @@ recreate_folder() {
     mkdir -p "$folder_path"  # Creates the folder
 }
 
+# Store filenames of all plots in a variable (space-seperated)
+plots="bubble-rise-barycenter.pdf bubble-rise-velocity.pdf bubble-contour.pdf"
+
+# Store filenames of all data files in a variable (space-seperated)
+data="solution-barycenter.dat solution-contour.dat solution-velocity.dat"
+
 # Default path
 default_value="./"
 
@@ -56,18 +62,14 @@ recreate_folder "$folder"
 { time $action ; } &> "$folder/log"
 
 # Process the simulation
-python3 rising-bubble.py -f output  -v
+python3 rising-bubble.py -f output  --validate
 
 # Copy the information to the log folder
-cp bubble-rise-barycenter.pdf $folder
-cp bubble-rise-velocity.pdf $folder
-cp bubble-contour.pdf $folder
-cp solution-barycenter.dat $folder
-cp solution-contour.dat $folder
-cp solution-velocity.dat $folder
+cp $plots $folder
+cp $data $folder
 
 # Append the information to the report
-magick -density 300  $output_root/report.pdf bubble-rise-barycenter.pdf bubble-rise-velocity.pdf  bubble_contour.pdf  -quality 100 $output_root/temporary.pdf
+magick -density 300  $output_root/report.pdf $plots  -quality 100 $output_root/temporary.pdf
 cp $output_root/temporary.pdf $output_root/report.pdf
 
 
