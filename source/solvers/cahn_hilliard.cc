@@ -732,7 +732,8 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                 Parameters::InitialConditionType::average_velocity_profile &&
               !this->simulation_parameters.multiphysics.fluid_dynamics &&
               simulation_control->get_current_time() >
-                this->simulation_parameters.post_processing.initial_time)
+                this->simulation_parameters.post_processing
+                  .initial_time_for_average_velocities)
             {
               position_and_velocity = calculate_barycenter(
                 this->present_solution,
@@ -755,7 +756,8 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                 Parameters::InitialConditionType::average_velocity_profile &&
               !this->simulation_parameters.multiphysics.fluid_dynamics &&
               simulation_control->get_current_time() >
-                this->simulation_parameters.post_processing.initial_time)
+                this->simulation_parameters.post_processing
+                  .initial_time_for_average_velocities)
             {
               position_and_velocity =
                 calculate_barycenter(this->present_solution,

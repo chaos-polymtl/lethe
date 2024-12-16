@@ -920,6 +920,9 @@ namespace Parameters
     /// Enable velocity post-processing
     bool calculate_average_velocities;
 
+    /// Enable average temperature and average heat flux post-processing
+    bool calculate_average_temp_and_hf;
+
     /// Enable pressure drop post-processing
     bool calculate_pressure_drop;
 
@@ -936,7 +939,11 @@ namespace Parameters
     bool calculate_tracer_flow_rate;
 
     /// Set initial time to start calculations for velocities
-    double initial_time;
+    double initial_time_for_average_velocities;
+
+    /// Set initial time to start calculations for average temperature and
+    /// average heat flux
+    double initial_time_for_average_temp_and_hf;
 
     /// Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
