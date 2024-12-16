@@ -27,6 +27,7 @@ add_library(lethe-solvers
   physical_properties_manager.cc
   postprocessing_cfd.cc
   postprocessing_velocities.cc
+  postprocessing_scalar.cc
   postprocessors_smoothing.cc
   simulation_parameters.cc
   source_terms.cc
@@ -45,6 +46,7 @@ add_library(lethe-solvers
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
+  ../../include/solvers/postprocessing_scalar.h
   ../../include/solvers/cahn_hilliard.h
   ../../include/solvers/cahn_hilliard_assemblers.h
   ../../include/solvers/cahn_hilliard_filter.h

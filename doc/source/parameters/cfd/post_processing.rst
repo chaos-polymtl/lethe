@@ -18,8 +18,12 @@ This subsection controls the post-processing other than the forces and torque on
     set kinetic energy name              = kinetic_energy
 
     # Average velocities calculation
-    set calculate average velocities     = false
-    set initial time                     = 0.0
+    set calculate average velocities      = false
+    set initial time for average velocity = 0.0
+
+    # Average temperature calculation
+    set calculate average temperature and heat flux        = false
+    set initial time for average temperature and heat flux = 0.0
 
     # Pressure drop calculation
     set calculate pressure drop          = false
@@ -104,7 +108,10 @@ This subsection controls the post-processing other than the forces and torque on
     
 
 * ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
-    * ``initial time``: initial time used for the average velocities calculations.
+    * ``initial time for average velocity``: initial time used for the average velocities calculations.
+
+* ``calculate average temperature and heat flux``: controls if calculation of time-averaged temperature and time-averaged heat flux is enabled.
+    * ``initial time for average temperature``: initial time used for the average temperature calculations.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 

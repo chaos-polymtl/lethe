@@ -172,8 +172,8 @@ The post-processing subsection allows the calculation of different quantities:
 .. code-block:: text
 
     subsection post-processing
-      set calculate average velocities = true
-      set initial time                 = 207
+      set calculate average velocities      = true
+      set initial time for average velocity = 207
     end
 
 In this example, we enable the calculation of average velocities through the parameter ``calculate average velocities`` after a certain time of the simulation. In this case, this time is set to ``207`` as we allow for the flow to reach some stability. The results of the calculated values will be available in the ``.vtu`` files when opened with a visualization software. 

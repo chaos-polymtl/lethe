@@ -12,6 +12,7 @@
 #include <solvers/heat_transfer_assemblers.h>
 #include <solvers/heat_transfer_scratch_data.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessors.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -129,6 +130,12 @@ public:
     // outputs
     if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
       this->computing_timer.disable_output();
+
+    if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
+      {
+        average_temperature =
+          std::make_shared<AverageScalar<dim>>(this->dof_handler);
+      }
   }
 
   /**
@@ -791,10 +798,26 @@ private:
     thermal_conductivity_models;
 
   /**
+   * @brief Compute the average temperature in time.
+   */
+  std::shared_ptr<AverageScalar<dim>> average_temperature;
+
+  /**
+   * @brief Locally owned average temperature calculated using the AverageScalar object.
+   */
+  GlobalVectorType average_temperature_to_output;
+
+  /**
    * @brief Compute local heat flux quantities from temperature field and
    * material properties.
    */
   std::vector<HeatFluxPostprocessor<dim>> heat_flux_postprocessors;
+
+  /**
+   * @brief Compute local average heat flux quantities from temperature field and
+   * material properties.
+   */
+  std::vector<HeatFluxPostprocessor<dim>> average_heat_flux_postprocessors;
 
   /*
    * Phase change post-processing. These parameters track the presence of a

@@ -247,8 +247,8 @@ It is often desirable to obtain the time-averaged velocity field when simulating
 .. code-block:: text
 
     subsection post-processing
-      set calculate average velocities = true
-      set initial time                 = 2
+      set calculate average velocities      = true
+      set initial time for average velocity = 2
     end
 
 Mesh Adaptation

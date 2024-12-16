@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR A new post-processing code is now available for the rotating drum example. This code output the average velocity profile of particles perpendicular to the free surface. 
+- MINOR A new post-processing code is now available for the rotating drum example. This code output the average velocity profile of particles perpendicular to the free surface. [#1394](https://github.com/chaos-polymtl/lethe/pull/1394)
+
+- MINOR Time averaged temperature can now be attached to the vtus using a new parameter in the post-processing subsection. A new object AverageScalar has been created. It can be used to calculate the time average temperature from a certain point in time. [#1395](https://github.com/chaos-polymtl/lethe/pull/1395)
 
 ## [Master] - 2024-12-03
 

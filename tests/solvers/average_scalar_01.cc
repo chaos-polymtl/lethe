@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This code tests averaging values in time with Trilinos vectors.
+ * @brief This test checks the AverageScalar class in postprocessing_scalar.cc. It does so by averaging a solution in time.
  */
 
 // Deal.II includes
@@ -22,7 +22,7 @@
 #include <core/simulation_control.h>
 #include <core/vector.h>
 
-#include <solvers/postprocessing_velocities.h>
+#include <solvers/postprocessing_scalar.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -42,8 +42,8 @@ test()
   simulation_control_parameters.time_step_independent_of_end_time = true;
 
   Parameters::PostProcessing postprocessing_parameters;
-  postprocessing_parameters.calculate_average_velocities        = true;
-  postprocessing_parameters.initial_time_for_average_velocities = 0.5;
+  postprocessing_parameters.calculate_average_temp_and_hf        = true;
+  postprocessing_parameters.initial_time_for_average_temp_and_hf = 0.5;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
@@ -63,7 +63,7 @@ test()
   GridGenerator::hyper_cube(tria, -1, 1);
   DoFHandler<3> dof_handler(tria);
 
-  AverageVelocities<3, GlobalVectorType, IndexSet> average(dof_handler);
+  AverageScalar<3> average(dof_handler);
 
   GlobalVectorType solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 0.0;
@@ -76,14 +76,13 @@ test()
   // Time info
   const double time_end = simulation_control_parameters.time_end;
   const double initial_time =
-    postprocessing_parameters.initial_time_for_average_velocities;
+    postprocessing_parameters.initial_time_for_average_temp_and_hf;
   double time    = simulation_control->get_current_time();
   double epsilon = 1e-6;
 
   // Initialize averaged vectors
   average.initialize_vectors(locally_owned_dofs,
                              locally_relevant_dofs,
-                             4,
                              mpi_communicator);
 
   // Time loop
@@ -91,13 +90,13 @@ test()
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
-          average.calculate_average_velocities(
+          average.calculate_average_scalar(
             solution,
             postprocessing_parameters,
             simulation_control->get_current_time(),
             simulation_control->get_time_step());
 
-          average_solution = average.get_average_velocities();
+          average_solution = average.get_average_scalar();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "
