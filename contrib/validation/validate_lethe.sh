@@ -36,7 +36,7 @@ show_help() {
     echo
     echo "Options:"
     echo "  -h, --help       Display this help message"
-    echo "  -o, --output     Specify the output directory for validation results"
+    echo "  -o, --output     Specify the absolute path directory for validation results"
     echo
     echo "Description:"
     echo "This script automates the validation of the Computational Fluid Dynamics (CFD)"
@@ -118,6 +118,11 @@ done
 # Check if the output path was provided
 if [[ -z $output_path ]]; then
     echo "Output path not specified. Use the -o or --output flag to set it."
+    exit 1
+fi
+
+if [[ "$output_path" != /* ]]; then
+    echo "Error: The path '$output_path' is not an absolute path." >&2
     exit 1
 fi
 
