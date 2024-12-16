@@ -319,23 +319,56 @@ inline std::vector<Point<dim>> compute_numerical_jacobian_stencil(const Point<di
 {
   
   std::vector<Point<dim>> stencil( 2*dim - 1);
-  
+  // std::cout << "local_face_id = " << local_face_id << std::endl;
   for (unsigned int i = 0; i < 2*dim - 1; ++i)
   {
     stencil[i] = x_ref;
   }
   
+  unsigned int skip_index = local_face_id/2;
+  std::vector<unsigned int> j_index(dim-1);
+  
+  unsigned int j = 0;
+  for (unsigned int i = 0; i < dim ; ++i)
+  {
+    if (i == skip_index)
+      continue;
+    j_index[j] = i;
+    j += 1;
+  }
+    
   for (unsigned int i = 1; i < dim; ++i)
   {
-    for (unsigned int j = 0; j < dim; ++j)
-    {
-      if (local_face_id/2 == j)
-        continue;
+    // for (unsigned int j = 0; j < dim; ++j)
+    // {
+      // std::cout << "local_face_id/2 = " << local_face_id/2 << std::endl;
+            
+      // std::cout << "i = " << i << std::endl;
+      
+      j = j_index[i-1];
+      
+      // std::cout << "j = " << j << std::endl;
+
       stencil[2*i-1][j] -= perturbation;
       stencil[2*i][j] += perturbation;
-    }
+      
+      // std::cout << stencil[2*i-1][j] << std::endl;
+      // std::cout << stencil[2*i][j] << std::endl;
+
+    // }
   }
   
+  // for (unsigned int i = 0; i < dim; ++i)
+  // {
+  //   unsigned int k = 0;
+  //   for (unsigned int j = 0; j < dim; ++j)
+  //   {
+  //     if (local_face_id/2 == j)
+  //       continue;
+  //     face_transformation_jac[i][k] = cell_transformation_jac[i][j];
+  //     k += 1;
+  //   }
+  // }
   return stencil;
 }
 
@@ -388,13 +421,14 @@ inline void compute_numerical_jacobians(const std::vector<Point<dim>> &stencil_r
   
     Tensor<1, dim-1> residual_ref_m1;
     compute_residual(x_n_to_x_J_real_m1, distance_gradients[2*i+1], transformation_jacobians[2*i+1], residual_ref_m1);
+    // std::cout << "residual_ref_m1 = " << residual_ref_m1 << std::endl;
     
   
     const Tensor<1,dim> x_n_to_x_J_real_p1 = x_J_real - stencil_real[2*i+2]; 
   
     Tensor<1, dim-1> residual_ref_p1;
     compute_residual(x_n_to_x_J_real_p1, distance_gradients[2*i+2], transformation_jacobians[2*i+2], residual_ref_p1);
-    
+    // std::cout << "residual_ref_p1 = " << residual_ref_p1 << std::endl;
   
     for (unsigned int j = 0; j < dim-1; ++j)
     {  
@@ -540,7 +574,7 @@ double InitialConditions<dim>::value(const Point<dim>  &p,
   (void)component;
   Assert(component == 0, ExcIndexRange(component, 0, 1));
   
-  Point<dim> center = Point<dim>(0.5,0.75);
+  Point<dim> center = Point<dim>(0.5,0.75,0.5);
   Tensor<1,dim> dist = center - p;
   
   return 0.5+0.5*std::tanh((0.15-dist.norm())/0.016);
@@ -1255,8 +1289,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   // Local distance vetors initialization
   for (auto p : this->locally_active_dofs)
     {
-      distance(p) = 0.08;
-      distance_with_ghost(p) = 0.08;
+      distance(p) = 1.0;
+      distance_with_ghost(p) = 1.0;
     }
     
   const unsigned int n_quad_points = fe.degree + 1;
@@ -1391,125 +1425,228 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   }
     
   // Correct distance to conserve volume
-  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
-  
-  hp::QCollection<1> q_collection;
-  q_collection.push_back(QGauss<1>(n_quad_points));
-  
-  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  // const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  // LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
   // 
-  global_volume = 0.0;
+  // hp::QCollection<1> q_collection;
+  // q_collection.push_back(QGauss<1>(n_quad_points));
   // 
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-  
-      Vector<double> cell_dof_values(dofs_per_cell);
-  
-      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-  
-      global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  
-    }
-  }
-  global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  
-  pcout << "global_volume = " << global_volume << std::endl;
-  
-  pcout << "Coucou" << std::endl;
-  volume_correction = 0.0;
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      const unsigned int cell_index = cell->global_active_cell_index();
-      
-      // The cell is not intersected, no need to correct the mass
-      if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
-      {
-        continue;
-      }
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      Vector<double> cell_level_set_dof_values(dofs_per_cell);
-      
-      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-      
-      double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);;  
-      
-      double cell_size;
-      if (dim == 2)
-        {
-          cell_size = std::sqrt(4. * cell->measure() / M_PI);
-        }
-      else if (dim == 3)
-        {
-          cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
-        }
-      
-      
-      for (unsigned int j = 0; j < dofs_per_cell; j++)
-      {
-        const double level_set_value = cell_level_set_dof_values[j];
-        cell_dof_values[j] *= sgn(level_set_value);
-      }
-      
-      double local_corr_nm1 = 0.0;
-      double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, local_corr_nm1, unit_box, level_set_function, quadrature_generator);
-      
-      double delta_volume_nm1 = abs(cell_volume - inside_cell_volume_nm1);
-      
-      double local_corr_n = cell_size*delta_volume_nm1/cell->measure();
-      
-      // pcout << "Bonjour, the volume error is " << delta_volume_nm1 << std::endl;
-      while (abs(delta_volume_nm1) > 1e-10)
-      {
-        
-        double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, local_corr_n, unit_box, level_set_function, quadrature_generator);
-        
-        double delta_volume_n = abs(cell_volume - inside_cell_volume_n);
-        
-        double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(local_corr_n - local_corr_nm1);
-        
-        double local_corr_np1 = local_corr_n - delta_volume_n/delta_volume_prime;
-        
-        local_corr_nm1 = local_corr_n;
-        local_corr_n = local_corr_np1;
-        inside_cell_volume_nm1 = inside_cell_volume_n;
-        delta_volume_nm1 = delta_volume_n;
-        
-        // pcout << "Now, the corr is "<< local_corr_np1 << " and the volume error is " << delta_volume_nm1 << std::endl;
-        
-      }
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      cell->get_dof_indices(dof_indices);
-      
-      double n_cells_per_dofs = 4.0;
-      if constexpr (dim == 3)
-      {
-        n_cells_per_dofs = 8.0;
-      }
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      {
-        volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
-        
-      }
-      
-      // pcout << "Bye" << std::endl;
-    }
-  }
-  
-  volume_correction.compress(VectorOperation::add);
-  volume_correction.update_ghost_values();
-  
+  // NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  // // 
+  // global_volume = 0.0;
+  // // 
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  // {
+  //   if (cell->is_locally_owned())
+  //   {
+  // 
+  //     Vector<double> cell_dof_values(dofs_per_cell);
+  // 
+  //     cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
+  // 
+  //     global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  // 
+  //   }
+  // }
+  // global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
+  // 
+  // pcout << "global_volume = " << global_volume << std::endl;
+  // 
+  // pcout << "Coucou" << std::endl;
+  // volume_correction = 0.0;
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  // {
+  //   if (cell->is_locally_owned())
+  //   {
+  //     const unsigned int cell_index = cell->global_active_cell_index();
+  // 
+  //     // The cell is not intersected, no need to correct the mass
+  //     if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
+  //     {
+  //       continue;
+  //     }
+  // 
+  //     Vector<double> cell_dof_values(dofs_per_cell);
+  //     Vector<double> cell_level_set_dof_values(dofs_per_cell);
+  // 
+  //     cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+  //     cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+  // 
+  //     double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);;  
+  // 
+  //     double cell_size;
+  //     if (dim == 2)
+  //       {
+  //         cell_size = std::sqrt(4. * cell->measure() / M_PI);
+  //       }
+  //     else if (dim == 3)
+  //       {
+  //         cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
+  //       }
+  // 
+  // 
+  //     for (unsigned int j = 0; j < dofs_per_cell; j++)
+  //     {
+  //       const double level_set_value = cell_level_set_dof_values[j];
+  //       cell_dof_values[j] *= sgn(level_set_value);
+  //     }
+  // 
+  //     double local_corr_nm1 = 0.0;
+  //     double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, local_corr_nm1, unit_box, level_set_function, quadrature_generator);
+  // 
+  //     double delta_volume_nm1 = abs(cell_volume - inside_cell_volume_nm1);
+  // 
+  //     double local_corr_n = cell_size*delta_volume_nm1/cell->measure();
+  // 
+  //     // pcout << "Bonjour, the volume error is " << delta_volume_nm1 << std::endl;
+  //     while (abs(delta_volume_nm1) > 1e-10)
+  //     {
+  // 
+  //       double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, local_corr_n, unit_box, level_set_function, quadrature_generator);
+  // 
+  //       double delta_volume_n = abs(cell_volume - inside_cell_volume_n);
+  // 
+  //       double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(local_corr_n - local_corr_nm1);
+  // 
+  //       double local_corr_np1 = local_corr_n - delta_volume_n/delta_volume_prime;
+  // 
+  //       local_corr_nm1 = local_corr_n;
+  //       local_corr_n = local_corr_np1;
+  //       inside_cell_volume_nm1 = inside_cell_volume_n;
+  //       delta_volume_nm1 = delta_volume_n;
+  // 
+  //       // pcout << "Now, the corr is "<< local_corr_np1 << " and the volume error is " << delta_volume_nm1 << std::endl;
+  // 
+  //     }
+  //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  //     cell->get_dof_indices(dof_indices);
+  // 
+  //     double n_cells_per_dofs = 4.0;
+  //     if constexpr (dim == 3)
+  //     {
+  //       n_cells_per_dofs = 8.0;
+  //     }
+  //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
+  //     {
+  //       volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
+  // 
+  //     }
+  // 
+  //     // pcout << "Bye" << std::endl;
+  //   }
+  // }
+  // 
+  // volume_correction.compress(VectorOperation::add);
+  // volume_correction.update_ghost_values();
+  // 
+  // // for (auto p : this->locally_active_dofs)
+  // // {
+  // //   const double level_set_value = level_set(p);
+  // // 
+  // //   distance(p) += volume_correction(p)*sgn(level_set_value);
+  // // }
+  // // 
+  // // distance.update_ghost_values();    
+  // // distance_with_ghost = distance;
+  // // distance.zero_out_ghost_values();    
+  // // 
+  // // for (auto p : this->locally_active_dofs)
+  // // {
+  // //   distance(p) = distance_with_ghost(p);
+  // // }
+  // 
+  // double corr_global_volume_nm1 = 0.0;
+  // 
+  // for (const auto &cell : dof_handler.active_cell_iterators())
+  // {
+  //   if (cell->is_locally_owned())
+  //   {
+  // 
+  //     Vector<double> cell_dof_values(dofs_per_cell);
+  //     Vector<double> cell_level_set_dof_values(dofs_per_cell);
+  //     Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
+  // 
+  // 
+  //     cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+  //     cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+  //     cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
+  // 
+  // 
+  //     for (unsigned int j = 0; j < dofs_per_cell; j++)
+  //     {
+  //       const double level_set_value = cell_level_set_dof_values[j];
+  //       cell_dof_values[j] *= sgn(level_set_value);
+  //       cell_dof_values[j] += cell_volume_correction_dof_values[j];
+  //     }
+  // 
+  //     corr_global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  // 
+  //   }
+  // }
+  // corr_global_volume_nm1 = Utilities::MPI::sum(corr_global_volume_nm1, mpi_communicator);
+  // 
+  // pcout << "corr_global_volume_nm1 = " << corr_global_volume_nm1 << std::endl;
+  // 
+  // double global_delta_volume_nm1 = abs(corr_global_volume_nm1 - global_volume);
+  // double C_nm1 = 1.0;
+  // 
+  // double corr_global_volume_n = corr_global_volume_nm1;
+  // double C_n = global_delta_volume_nm1/global_volume;
+  // 
+  // double global_delta_volume_n = 0.0;
+  // while (global_delta_volume_nm1 > 1e-10)
+  // {
+  //   corr_global_volume_n = 0.0;
+  //   for (const auto &cell : dof_handler.active_cell_iterators())
+  //   {
+  //     if (cell->is_locally_owned())
+  //     {
+  // 
+  //       Vector<double> cell_dof_values(dofs_per_cell);
+  //       Vector<double> cell_level_set_dof_values(dofs_per_cell);
+  //       Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
+  // 
+  // 
+  //       cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+  //       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+  //       cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
+  // 
+  // 
+  //       for (unsigned int j = 0; j < dofs_per_cell; j++)
+  //       {
+  //         const double level_set_value = cell_level_set_dof_values[j];
+  //         cell_dof_values[j] *= sgn(level_set_value);
+  //         cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
+  //       }
+  // 
+  //       corr_global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  // 
+  //     }
+  //   }
+  //   corr_global_volume_n = Utilities::MPI::sum(corr_global_volume_n, mpi_communicator);
+  // 
+  //   pcout << "corr_global_volume_n = " << corr_global_volume_n << std::endl;
+  // 
+  //   global_delta_volume_n = abs(corr_global_volume_n - global_volume);
+  // 
+  //   double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1);
+  // 
+  //   double C_np1 = C_n - global_delta_volume_n/global_delta_volume_prime;
+  // 
+  //   C_nm1 = C_n;
+  //   C_n = C_np1;
+  // 
+  //   corr_global_volume_nm1 = corr_global_volume_n;
+  //   global_delta_volume_nm1 = global_delta_volume_n;
+  // 
+  // }
+  // 
+  // 
   // for (auto p : this->locally_active_dofs)
   // {
   //   const double level_set_value = level_set(p);
-  // 
-  //   distance(p) += volume_correction(p)*sgn(level_set_value);
+  //   signed_distance(p) +=  C_n*volume_correction(p);
+  //   distance(p) = abs(signed_distance(p));
   // }
   // 
   // distance.update_ghost_values();    
@@ -1520,110 +1657,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   // {
   //   distance(p) = distance_with_ghost(p);
   // }
-  
-  double corr_global_volume_nm1 = 0.0;
-  
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      Vector<double> cell_level_set_dof_values(dofs_per_cell);
-      Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
-      
-      
-      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-      cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-      
-      
-      for (unsigned int j = 0; j < dofs_per_cell; j++)
-      {
-        const double level_set_value = cell_level_set_dof_values[j];
-        cell_dof_values[j] *= sgn(level_set_value);
-        cell_dof_values[j] += cell_volume_correction_dof_values[j];
-      }
-      
-      corr_global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  
-    }
-  }
-  corr_global_volume_nm1 = Utilities::MPI::sum(corr_global_volume_nm1, mpi_communicator);
-  
-  pcout << "corr_global_volume_nm1 = " << corr_global_volume_nm1 << std::endl;
-
-  double global_delta_volume_nm1 = abs(corr_global_volume_nm1 - global_volume);
-  double C_nm1 = 1.0;
-  
-  double corr_global_volume_n = corr_global_volume_nm1;
-  double C_n = global_delta_volume_nm1/global_volume;
-  
-  double global_delta_volume_n = 0.0;
-  while (global_delta_volume_nm1 > 1e-10)
-  {
-    corr_global_volume_n = 0.0;
-    for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-      {
-        
-        Vector<double> cell_dof_values(dofs_per_cell);
-        Vector<double> cell_level_set_dof_values(dofs_per_cell);
-        Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
-        
-        
-        cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-        cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-        cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-        
-        
-        for (unsigned int j = 0; j < dofs_per_cell; j++)
-        {
-          const double level_set_value = cell_level_set_dof_values[j];
-          cell_dof_values[j] *= sgn(level_set_value);
-          cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
-        }
-        
-        corr_global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-    
-      }
-    }
-    corr_global_volume_n = Utilities::MPI::sum(corr_global_volume_n, mpi_communicator);
-    
-    pcout << "corr_global_volume_n = " << corr_global_volume_n << std::endl;
-    
-    global_delta_volume_n = abs(corr_global_volume_n - global_volume);
-    
-    double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1);
-    
-    double C_np1 = C_n - global_delta_volume_n/global_delta_volume_prime;
-    
-    C_nm1 = C_n;
-    C_n = C_np1;
-    
-    corr_global_volume_nm1 = corr_global_volume_n;
-    global_delta_volume_nm1 = global_delta_volume_n;
-    
-  }
-  
-  
-  for (auto p : this->locally_active_dofs)
-  {
-    const double level_set_value = level_set(p);
-    signed_distance(p) +=  C_n*volume_correction(p);
-    distance(p) = abs(signed_distance(p));
-  }
-  
-  distance.update_ghost_values();    
-  distance_with_ghost = distance;
-  distance.zero_out_ghost_values();    
-  
-  for (auto p : this->locally_active_dofs)
-  {
-    distance(p) = distance_with_ghost(p);
-  }
-  
+  // 
   unsigned int n_opposite_faces_per_dofs = dim;
   
   // Compute the rest of the mesh
@@ -1646,6 +1680,8 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
         cell->get_dof_indices(dof_indices);
         std::vector<double> cell_dof_values(dofs_per_cell);
         cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+            
+        const unsigned int cell_id = cell->global_active_cell_index();
         
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
@@ -1666,17 +1702,21 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
           {
             // const auto opposite_face = cell->face(dof_opposite_faces[j]);
             
-            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(Point<dim-1>(0.5),dof_opposite_faces[j]);
+            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(Point<dim-1>(0.5,0.5),dof_opposite_faces[j]);
             Point<dim> x_n_real;
             
             double correction_norm = 1.0;
             int outside_check = 0;
+            int newton_it = 0;
             
             while (correction_norm > 1e-10 && outside_check<3)
             {
+              newton_it += 1;
+
               const double perturbation = 0.01;
                       
               std::vector<Point<dim>> stencil_ref = compute_numerical_jacobian_stencil<dim>(x_n_ref, dof_opposite_faces[j], perturbation);
+              
               
               fe_point_evaluation.reinit(cell, stencil_ref);
               
@@ -1689,6 +1729,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
               
               for (unsigned int k = 0; k < 2*dim - 1; k++)
               {
+                
                 stencil_real[k] = fe_point_evaluation.quadrature_point(k);
                 distance_gradients[k] = fe_point_evaluation.get_gradient(k);
                 cell_transformation_jacobians[k] = fe_point_evaluation.jacobian(k);
@@ -1709,6 +1750,7 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
               residual_n.unroll(residual_n_vec);
               
               jacobian_matrix.set_property(LAPACKSupport::general);
+              
               jacobian_matrix.compute_lu_factorization();
               
               residual_n_vec *= -1.0;
@@ -1965,7 +2007,7 @@ void AdvectionProblem<dim>::run()
     repetitions[i] = 1;
     
   GridGenerator::subdivided_hyper_rectangle(triangulation, repetitions, p_0, p_1);
-  triangulation.refine_global(8);
+  triangulation.refine_global(6);
             
   pcout << "Setup system" << std::endl;
   setup_system();
@@ -1974,8 +2016,8 @@ void AdvectionProblem<dim>::run()
   unsigned int it = 0;
   double final_time = 2.0;
 
-  refine_grid(8,6);
-  refine_grid(8,6);
+  refine_grid(6,4);
+  refine_grid(6,4);
   
   compute_level_set_from_phase_fraction();
 
@@ -2027,31 +2069,31 @@ void AdvectionProblem<dim>::run()
   {
     it += 1;
     time += this->dt;
-    
+  
     assemble_system();
-    
+  
     pcout << "it = " << it << " time = " << time << std::endl;
-
+  
     solve();
-    
+  
     compute_level_set_from_phase_fraction();
-    
+  
     if (it%1 == 0)
     {
       mesh_classifier.reclassify();
       compute_sign_distance(it, global_volume);
-      
+  
       compute_phase_fraction_from_level_set();
-      
+  
       compute_level_set_from_phase_fraction();
     }
-    
+  
     compute_volume();
-    
+  
     output_results(it);
-
-    refine_grid(8,6);
-    
+  
+    refine_grid(6,4);
+  
     previous_solution = locally_relevant_solution;
   } 
 }
@@ -2061,7 +2103,7 @@ int main(int argc, char *argv[])
 Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
 try
   {
-    AdvectionProblem<2> advection_problem_2d;
+    AdvectionProblem<3> advection_problem_2d;
     advection_problem_2d.run();
   }
 catch (std::exception &exc)
