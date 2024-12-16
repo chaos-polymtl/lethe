@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-12-16
+
+### Added
+
+- MINOR A new post-processing code is now available for the rotating drum example. This code output the average velocity profile of particles perpendicular to the free surface. 
 
 ## [Master] - 2024-12-03
 
