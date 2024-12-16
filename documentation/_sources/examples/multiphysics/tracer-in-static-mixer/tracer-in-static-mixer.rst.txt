@@ -174,8 +174,8 @@ Post-processing
     subsection post-processing
       set verbosity = verbose
 
-      set calculate average velocities = true
-      set initial time                 = 30e-4
+      set calculate average velocities      = true
+      set initial time for average velocity = 30e-4
 
       # Tracer post-processing
       set calculate tracer flow rate  = true

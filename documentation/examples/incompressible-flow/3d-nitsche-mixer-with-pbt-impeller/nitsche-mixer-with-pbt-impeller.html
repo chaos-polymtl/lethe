@@ -673,8 +673,8 @@ end
 <h3>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h3>
 <p>It is often desirable to obtain the time-averaged velocity field when simulating a transient flow. This is achieved through the <a class="reference internal" href="../../../parameters/cfd/post_processing.html"><span class="doc">Post-processing</span></a> section. The averaging period is started after the flows start to stabilize and reach their pseudo steady-state. In this case, we assume it happens after <span class="math notranslate nohighlight">\(2~\text{sec}\)</span>. This choice is prone to error, which can be mitigated by increasing the duration of simulations and using a longer averaging interval.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
-  set calculate average velocities = true
-  set initial time                 = 2
+  set calculate average velocities      = true
+  set initial time for average velocity = 2
 end
 </pre></div>
 </div>

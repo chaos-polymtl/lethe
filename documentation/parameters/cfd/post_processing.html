@@ -446,8 +446,12 @@
   set kinetic energy name              = kinetic_energy
 
   # Average velocities calculation
-  set calculate average velocities     = false
-  set initial time                     = 0.0
+  set calculate average velocities      = false
+  set initial time for average velocity = 0.0
+
+  # Average temperature calculation
+  set calculate average temperature and heat flux        = false
+  set initial time for average temperature and heat flux = 0.0
 
   # Pressure drop calculation
   set calculate pressure drop          = false
@@ -536,7 +540,14 @@ end
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">average</span> <span class="pre">velocities</span></code>: controls if calculation of time-averaged velocities is enabled.</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span></code>: initial time used for the average velocities calculations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">velocity</span></code>: initial time used for the average velocities calculations.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">average</span> <span class="pre">temperature</span> <span class="pre">and</span> <span class="pre">heat</span> <span class="pre">flux</span></code>: controls if calculation of time-averaged temperature and time-averaged heat flux is enabled.</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">time</span> <span class="pre">for</span> <span class="pre">average</span> <span class="pre">temperature</span></code>: initial time used for the average temperature calculations.</p></li>
 </ul>
 </dd>
 </dl>
