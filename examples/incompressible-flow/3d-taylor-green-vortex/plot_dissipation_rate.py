@@ -27,6 +27,8 @@ parser.add_argument("-ke", "--kinetic_rate", type=str, help="Name of the input f
 parser.add_argument("-ens", "--enstrophy", type=str, help="Name of the input file for the enstrophy", required=True)
 
 parser.add_argument("-v", "--viscosity", type=float, help="viscosity", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+
 parser.add_argument("-z", "--zoom", type=bool, help="viscosity", required=False)
 args, leftovers=parser.parse_known_args()
 
@@ -67,7 +69,19 @@ if (zoom):
     plt.axis([8.0,10.0,0.011,0.013])
 
 plt.tight_layout()
-    
-plt.savefig("dissipation_comparison.png",dpi=300)
-plt.savefig("dissipation_comparison.pdf")
-plt.show()
+
+if (args.validate):    
+    # Combine the vectors into an array (columns). We make two arrays because the size don't match
+    data_ke = np.column_stack((t_ike,ike))
+    data_ens = np.column_stack((t_ens,ens))
+    # Output file name
+    output_ke = "solution_kinetic_energy.dat"
+    output_ens = "solution_enstrophy.dat"
+    # Save the data to a .dat file with space as the separator
+    np.savetxt(output_ke, data_ke, fmt="%.6f",header="time kinetic_energy_decay", delimiter=" ") 
+    np.savetxt(output_ens, data_ens, fmt="%.6f",header="time enstrophy", delimiter=" ") 
+    plt.savefig("dissipation_comparison.pdf")
+else:
+
+    plt.savefig("dissipation_comparison.png",dpi=300)
+    plt.show()

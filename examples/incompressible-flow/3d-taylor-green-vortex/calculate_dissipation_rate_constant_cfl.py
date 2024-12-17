@@ -6,8 +6,8 @@ import argparse
 import numpy as np
 
 parser = argparse.ArgumentParser(description='Arguments for calculation of the dissipation rate')
-parser.add_argument("-f", "--folder", type=str, help="Folder path", required=True)
-parser.add_argument("-i", "--input", type=str, help="Name of the input file", required=True)
+parser.add_argument("-f", "--folder", type=str, help="Path to the output folder. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=True)
+parser.add_argument("-i", "--input", type=str, help="Name of the .dat file that contains the kinetic energy", required=True)
 parser.add_argument("-o", "--output", type=str, default="ke_rate.dat",  help="Name of the output file", required=False)
 args, leftovers=parser.parse_known_args()
 

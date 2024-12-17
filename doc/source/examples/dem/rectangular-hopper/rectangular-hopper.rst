@@ -216,7 +216,7 @@ It is possible to run the post-processing code with the following line. The argu
 .. code-block:: text
   :class: copy-button
 
-    python3 hopper_post_processing.py ./ hopper.prm
+    python3 hopper_post_processing.py --folder ./ --prm hopper.prm
 
 
 .. important::
