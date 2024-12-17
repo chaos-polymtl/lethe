@@ -2,19 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
-"""
-Postprocessing automation tool.
-
-By: Victor Oliveira Ferreira, Audrey Collard-Daigneault
-Date: May 5th, 2022
-"""
-#############################################################################
-
-#############################################################################
 '''Importing Libraries'''
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
 
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
@@ -25,9 +17,16 @@ from lethe_pyvista_tools import *
 #############################################################################
 '''Simulation properties'''
 
-#Take case path as argument
-simulation_path = sys.argv[1]
-prm_file_name = sys.argv[2]
+#Take case path as argument and store it
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the 3d-rectangular hopper DEM case')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+parser.add_argument("-f", "--folder", type=str, help="Root folder of the simulation. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--prm", type=str, help="Name of the prm file (including the extension .prm) but without the path to the  prm file", required=True)
+args, leftovers=parser.parse_known_args()
+
+
+simulation_path = args.folder
+prm_file_name = args.prm
 
 # Name the save path
 save_path = simulation_path
@@ -68,7 +67,7 @@ correction_factor = particle.prm_dict['number of particles']/n_part_paper
 # Total mass = nρV/factor
 n_particle = particle.prm_dict["number of particles"]
 density = particle.prm_dict["density particles"]
-print(f'Total mass in hopper : {n_particle * density * volume / correction_factor * 1000:.2f} g.')
+if (not args.validate) : print(f'Total mass in hopper : {n_particle * density * volume / correction_factor * 1000:.2f} g.')
 
 # Create a list to store the "flow rate" of particles
 rate = []
@@ -109,20 +108,32 @@ p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict
 # Calculate mass flow rate
 p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p0:p1]],
                [value * 1000 / correction_factor  for value in mass_discharge[p0:p1]], 1)
-print(f'Mass flow rate is : {p[0]:.2f} g/s.')
+if (not args.validate) : print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
-print(data['time'][start:])
+time = data['time'].values[start:] - data['time'].values[start]
+discharge = data['mass_discharge'].values[start:] * 1000. / correction_factor
 
-
-plt.plot(data['time'].values[start:] - data['time'].values[start], data['mass_discharge'].values[start:] * 1000. / correction_factor,
+plt.plot(time, discharge,
          label="Lethe DEM")
 plt.plot(paper_data['time'].values, paper_data['discharge'].values, '.k', label="Anand et al.")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
 plt.grid()
-plt.savefig('figure_' + pvd_name + '.png')
-plt.show()
+if (args.validate):
+    with open("mass-and-discharge-rate.txt", "w") as file:
+        # Write the first line
+        file.write(f'{"Total mass in hopper :"} {n_particle * density * volume / correction_factor * 1000:.2f} g\n')
+        # Write the second line
+        file.write(f'Mass flow rate is : {p[0]:.2f} g/s.\n')
+
+    solution = np.column_stack((time, discharge))
+    np.savetxt("solution.dat",solution, header="time mass_discharged")
+    plt.savefig('hopper-flow-rate.pdf')
+    plt.close()
+else:
+    plt.savefig('figure-' + pvd_name + '.png')
+    plt.show()
 
 

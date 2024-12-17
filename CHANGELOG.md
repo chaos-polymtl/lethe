@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-12-17
+
+### Added
+
+- MAJOR A new mechanism is added that allows to launch a series of examples specified in contrib/validation/validation_cases.txt using the contrib/validation/validate_lethe.sh script. This script automatically launches the simulations that are specified in the validation cases and keeps the logs, the simulation results used to generate the plots, the plots and generates a pdf report with all of the main results of the validation cases. This will be used to monitor the stability of Lethe on more complicated test cases than those that are tested within the application_tests. [#1396](https://github.com/chaos-polymtl/lethe/pull/1396)
+
 ## [Master] - 2024-12-16
 
 ### Added
