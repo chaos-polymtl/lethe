@@ -12,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set method                       = bdf1
-  set time end                     = 24
+  set time end                     = 10
   set time step                    = 0.01
   set adapt                        = true
   set max cfl                      = 0.5
@@ -21,7 +21,7 @@ subsection simulation control
   set number mesh adapt            = 0
   set output name                  = rayleigh-benard_convection
   set output control               = time
-  set output time frequency        = 0.5
+  set output time frequency        = 0.1
   set output path                  = ./output/
 end
 
@@ -63,7 +63,7 @@ subsection physical properties
   subsection fluid 0
     set density              = 1
     set kinematic viscosity  = 0.071
-    set thermal expansion    = 0.71
+    set thermal expansion    = 71
     set thermal conductivity = 10
     set specific heat        = 100
   end

@@ -2,7 +2,7 @@
 Rayleigh-Bénard Convection
 ==========================
 
-This example simulates two-dimensional Rayleigh–Benard convection [#venturi2010]_ [#mpi2022]_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` .
+This example simulates two-dimensional Rayleigh–Benard convection [#ouertatani][#venturi2010]_ [#mpi2022]_ at Rayleigh numbers of :math:`10^4` and :math:`10^6` .
 
 
 ----------------------------------
@@ -20,15 +20,15 @@ Files Used in This Example
 
 Both files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-benard-convection``).
 
-- Parameter file for :math:`Ra=10\, 000`: ``rayleigh-benard-convection-Ra10k.prm``
-- Parameter file for :math:`Ra=25\, 000`: ``rayleigh-benard-convection-Ra25k.prm``
+- Parameter file for :math:`Ra=10^4`: ``rayleigh-benard-convection-Ra10k.prm``
+- Parameter file for :math:`Ra=10^6`: ``rayleigh-benard-convection-Ra25k.prm``
 
 
 -----------------------------
 Description of the Case
 -----------------------------
 
-In this example, we evaluate the performance of the ``lethe-fluid`` solver in the simulation of the stability of natural convection within a two-dimensional rectangular domain. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
+In this example, we evaluate the performance of the ``lethe-fluid`` solver in the simulation of the stability of natural convection within a two-dimensional square domain. Our results are tested against the benchmark presented by Ouertatani et al. [#ouertatani]. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
 .. image:: images/geometry.png
     :alt: Schematic
@@ -45,15 +45,16 @@ The incompressible Navier-Stokes equations with a Boussinesq approximation for t
 
 where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
 
-A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_h=50`, the temperature of the top wall is equal to :math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices mainly depend on the Rayleigh number [1, 2]:
+A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_h=10`, the temperature of the top wall is equal to :math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices depend on the Rayleigh number and the Prandtl [1, 2]:
 
     .. math::
         \text{Ra} = \frac{\rho^2 \beta g (T_h - T_c) H^3 c_p}{k \mu}
+        \text{Pr} = \frac{\mu c_p}{k}
 
 
-where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` is the dynamic viscosity, and :math:`c_p` is the specific thermal capacity.
+where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, and :math:`\mu` is the dynamic viscosity, and :math:`c_p` is the specific heat capacity.
 
-In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers of 10000 and 25000. According to the literature [1, 2], we should see different numbers (2 and 3 vortices at :math:`Ra=10^4` and :math:`2.5 \times 10^4`, respectively) of vortices in the fluid at these two Rayleigh numbers. The gravity magnitude is set to -10 for both simulations. Additionally, :math:`\rho = 100`, :math:`\beta = 0.0002`, :math:`H = 0.25`, :math:`c_p = 100` and :math:`\mu = 1`. Thus, the Rayleigh number is controlled only by the thermal conduction coefficient for this example. In other words, we change the Rayleigh number by changing the thermal conduction coefficient of the fluid.
+In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers of :math:`Ra=10^4` and :math:`Ra=10^6` with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [1], we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small voriticies in opposite corners rotating in the reverse direction of the big vortex. The gravity magnitude is set to -10 for both simulations for simplicity. Additionally, because the two adimensionale number above are the only thing that characterize the flow we may choose the remaining parameter as we want. Here we chose for simplicity :math:`\rho = 1`, :math:`\beta = 0.0002`, :math:`H = 1`, :math:`c_p = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expension coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`) for this example. In other words, we change the Rayleigh number by changing the thermal expansion coefficient of the fluid.
 
 .. note:: 
     All four boundary conditions are ``noslip``, and an external 
@@ -68,21 +69,21 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`10000` s simulation time with an initial 
-time step of :math:`0.01` second.
+`(bdf1)`, for a :math:`24`s and :math:`10`s simulation time with an initial 
+time step of :math:`0.01` second. Those are obtained by simulating for longer time periodes using coarser grid.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = iteration``, and ``output frequency = 100`` the simulation results are written every 100 iteration regardless of the time steps.
+    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.5 here). Using ``output control = time``, and ``output time frequency = 0.5`` the simulation results are written every 0.5 seconds regardless of the time steps. This is chosen 
 
 .. note::   
-    Note that the heating process is slow, and the velocity magnitudes are small inside the fluid. Hence, we expect large time-steps and a long simulation.
+    Note that at the resolution to match the article (256x256) result in really small time step which result in a rather long simulation. If desired, you can choose to reduced to 7 or 6 ``initial refinement level`` of the prm file to reduce the simulation time without loosing too much accuracy.
 
 .. code-block:: text
 
     subsection simulation control
       set method                       = bdf1
-      set time end                     = 10000
+      set time end                     = 24
       set time step                    = 0.01
       set adapt                        = true
       set max cfl                      = 0.5
@@ -90,8 +91,8 @@ time step of :math:`0.01` second.
       set adaptative time step scaling = 1.3
       set number mesh adapt            = 0
       set output name                  = rayleigh-benard_convection
-      set output control               = iteration
-      set output frequency             = 100
+      set output control               = time
+      set output time frequency        = 0.5
       set output path                  = ./output/
     end
 
@@ -124,7 +125,7 @@ The ``source term`` subsection defines gravitational acceleration.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.0625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
+The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`Ra=10^6`), we use different thermal expension coefficient to reach mentioned Rayleigh numbers. Thermal expension coefficient values (:math:`k=0.71` for :math:`Ra=10^4`, and :math:`k=71` for :math:`Ra=10^6`) are adjusted in the respective parameter handler file. Here we present only the parameter file for :math:`Ra=10^4`.
 
 
 .. code-block:: text
@@ -132,11 +133,10 @@ The ``physical properties`` subsection defines the physical properties of the fl
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set density              = 100
-        set kinematic viscosity  = 0.01
-        set thermal expansion    = 0.0002
-        set thermal conductivity = 0.15625 # for Ra = 10000
-        #set thermal conductivity = 0.0625 # for Ra = 25000
+        set density              = 1
+        set kinematic viscosity  = 0.071
+        set thermal expansion    = 0.71
+        set thermal conductivity = 10
         set specific heat        = 100
       end
     end
@@ -158,34 +158,34 @@ and
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra25k.prm
+  mpirun -np 8 lethe-fluid rayleigh-benard-convection-Ra1M.prm
 
-to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=2.5 \times 10^4`, repectively.
+to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=10^6`, repectively.
 
 
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
-    run in parallel using mpirun. This simulation takes
-    :math:`\approx` 20 minutes on 8 processes.
+    run in parallel using mpirun. The first simulation takes
+    :math:`\approx` 20 minutes on 8 processes and the second :math:`\approx` 2 days.
 
 
 -------
 Results
 -------
 
-The following animation shows the results of this simulation:
+The following animation shows the results of the simulation at :math:`Ra=10^6`:
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe>
 
 
-Note that at :math:`Ra=10000`, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall for :math:`Ra=25000`. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
-
 
 -----------
 References
 -----------
+
+.. [#ouertatani] \N. Ouertatani, N. Ben Cheikh, B. Ben Beya, T. Lili, "Numerical simulation of two-dimensional Rayleigh-Bénard convection in an enclosure," Comptes Rendus – Mec. 2008;336(5):464–70. `10.1016/j.crme.2008.02.004 <https://comptes-rendus.academie-sciences.fr/mecanique/articles/10.1016/j.crme.2008.02.004/>`_\.
 
 .. [#venturi2010] \D. Venturi, X. Wan, and G. E. Karniadakis, “Stochastic bifurcation analysis of Rayleigh–Bénard convection,” *J. Fluid Mech.*, vol. 650, pp. 391–413, May 2010, doi: `10.1017/S0022112009993685 <https://doi.org/10.1017/S0022112009993685>`_\.
 
