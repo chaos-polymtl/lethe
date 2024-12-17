@@ -46,16 +46,12 @@ public:
    * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
-   * @param torque Torque acting on particle
-   * @param force Force acting on particles
    */
   virtual void
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                              &particle_wall_pairs_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+                &particle_wall_pairs_in_contact,
+    const double dt) override;
 
   /**
    * @brief Calculate particle-floating mesh contact force using
@@ -64,17 +60,13 @@ public:
    * @param particle_floating_mesh_in_contact A container that stores the information of
    * particle-floating mesh contact
    * @param dt DEM time step
-   * @param torque Torque acting on particles
-   * @param force Force acting on particles
    * @param solids Floating solids
    */
   virtual void
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                              &particle_floating_mesh_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
+                &particle_floating_mesh_in_contact,
+    const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 

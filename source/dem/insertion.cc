@@ -94,6 +94,12 @@ Insertion<dim>::assign_particle_properties(
       double omega_x      = dem_parameters.insertion_info.initial_omega[0];
       double omega_y      = dem_parameters.insertion_info.initial_omega[1];
       double omega_z      = dem_parameters.insertion_info.initial_omega[2];
+      double force_x      = 0.;
+      double force_y      = 0.;
+      double force_z      = 0.;
+      double torque_x     = 0.;
+      double torque_y     = 0.;
+      double torque_z     = 0.;
       double fem_force_x  = 0.;
       double fem_force_y  = 0.;
       double fem_force_z  = 0.;

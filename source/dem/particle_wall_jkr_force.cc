@@ -126,10 +126,8 @@ template <int dim>
 void
 ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                            &particle_wall_pairs_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+              &particle_wall_pairs_in_contact,
+  const double dt)
 {
   ParticleWallContactForce<dim>::force_on_walls =
     ParticleWallContactForce<dim>::initialize();
@@ -205,13 +203,9 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
               // Get particle's torque and force
               types::particle_index particle_id = particle->get_local_index();
 
-              Tensor<1, 3> &particle_torque = torque[particle_id];
-              Tensor<1, 3> &particle_force  = force[particle_id];
-
               // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
-                                           particle_torque,
-                                           particle_force,
+                                           particle_properties,
                                            point_on_boundary,
                                            contact_information.boundary_id);
             }
@@ -232,10 +226,8 @@ template <int dim>
 void
 ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                            &particle_floating_mesh_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force,
+              &particle_floating_mesh_in_contact,
+  const double dt,
   const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
 {
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
@@ -359,19 +351,11 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
                               this->calculate_jkr_contact_force_and_torque(
                                 contact_info, particle_properties);
 
-                          // Get particle's torque and force
-                          types::particle_index particle_id =
-                            particle->get_local_index();
-
-                          Tensor<1, 3> &particle_torque = torque[particle_id];
-                          Tensor<1, 3> &particle_force  = force[particle_id];
-
                           // Apply the calculated forces and torques on the
                           // particle
                           this->apply_force_and_torque(
                             forces_and_torques,
-                            particle_torque,
-                            particle_force,
+                            particle_properties,
                             projection_point,
                             contact_info.boundary_id);
                         }

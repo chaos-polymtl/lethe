@@ -220,14 +220,12 @@ public:
    * particles.
    * @param[in] g The external forces, same for all cells (gravity or other
    * sources).
-   * @param[in] force The contact or hydrodynamic forces.
    * @param[in] dt The DEM time step.
    */
   void
   update_average_velocities_acceleration(
     Particles::ParticleHandler<dim> &particle_handler,
     const Tensor<1, 3>              &g,
-    const std::vector<Tensor<1, 3>> &force,
     const double                     dt);
 
   /**

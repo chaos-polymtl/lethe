@@ -816,14 +816,9 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
     {
       auto particle_properties = particle->get_properties();
 
-      types::particle_index particle_id = particle->get_local_index();
-
-      force[particle_id][0] +=
-        particle_properties[DEM::PropertiesIndex::fem_force_x];
-      force[particle_id][1] +=
-        particle_properties[DEM::PropertiesIndex::fem_force_y];
-      force[particle_id][2] +=
-        particle_properties[DEM::PropertiesIndex::fem_force_z];
+      for (int d = 0; d < 3; ++d)
+        particle_properties[DEM::PropertiesIndex::force_x + d] +=
+          particle_properties[DEM::PropertiesIndex::fem_force_x + d];
     }
 }
 
@@ -837,14 +832,9 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
     {
       auto particle_properties = particle->get_properties();
 
-      types::particle_index particle_id = particle->get_local_index();
-
-      torque[particle_id][0] +=
-        particle_properties[DEM::PropertiesIndex::fem_torque_x];
-      torque[particle_id][1] +=
-        particle_properties[DEM::PropertiesIndex::fem_torque_y];
-      torque[particle_id][2] +=
-        particle_properties[DEM::PropertiesIndex::fem_torque_z];
+      for (int d = 0; d < 3; ++d)
+        particle_properties[DEM::PropertiesIndex::torque_x + d] +=
+          particle_properties[DEM::PropertiesIndex::fem_torque_x + d];
     }
 }
 
@@ -854,10 +844,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    contact_manager.get_particle_wall_in_contact(),
-    dem_time_step,
-    torque,
-    force);
+    contact_manager.get_particle_wall_in_contact(), dem_time_step);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
@@ -873,25 +860,20 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        contact_manager.get_particle_floating_wall_in_contact(),
-        dem_time_step,
-        torque,
-        force);
+        contact_manager.get_particle_floating_wall_in_contact(), dem_time_step);
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
-      dem_parameters.lagrangian_physical_properties,
-      force);
+      dem_parameters.lagrangian_physical_properties);
 
   if constexpr (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
-          dem_parameters.lagrangian_physical_properties,
-          force);
+          dem_parameters.lagrangian_physical_properties);
     }
 }
 
@@ -1237,9 +1219,7 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
       // Resize and reinitialize displacement container
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
-      // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
+      // Resize and reinitialize MOI container
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
@@ -1276,9 +1256,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
       contact_manager.get_local_local_periodic_adjacent_particles(),
       contact_manager.get_local_ghost_periodic_adjacent_particles(),
       contact_manager.get_ghost_local_periodic_adjacent_particles(),
-      dem_time_step,
-      torque,
-      force);
+      dem_time_step);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -1300,7 +1278,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // agitation.
   // Update the cell average velocities and accelerations
   sparse_contacts_object.update_average_velocities_acceleration(
-    this->particle_handler, g, force, dem_time_step);
+    this->particle_handler, g, dem_time_step);
 
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
@@ -1308,8 +1286,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // TODO do all DEM time step at first CFD time step are half step?
   if (this->simulation_control->get_step_number() == 0)
     {
-      integrator_object->integrate_half_step_location(
-        this->particle_handler, g, dem_time_step, torque, force, MOI);
+      integrator_object->integrate_half_step_location(this->particle_handler,
+                                                      g,
+                                                      dem_time_step,
+                                                      MOI);
     }
   else
     {
@@ -1319,8 +1299,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
       integrator_object->integrate(this->particle_handler,
                                    g,
                                    dem_time_step,
-                                   torque,
-                                   force,
                                    MOI,
                                    *parallel_triangulation,
                                    sparse_contacts_object);

@@ -46,10 +46,8 @@ template <int dim>
 void
 ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                            &particle_wall_pairs_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+              &particle_wall_pairs_in_contact,
+  const double dt)
 {
   constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
 
@@ -208,19 +206,12 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
                   cohesive_force = -F_cohesion * -normal_vector;
                 }
 
-              // Get particle's torque and force
-              types::particle_index particle_id = particle->get_local_index();
-
-              Tensor<1, 3> &particle_torque = torque[particle_id];
-              Tensor<1, 3> &particle_force  = force[particle_id];
-
               // Added the cohesive term
               std::get<0>(forces_and_torques) += cohesive_force;
 
               // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
-                                           particle_torque,
-                                           particle_force,
+                                           particle_properties,
                                            point_on_boundary,
                                            contact_information.boundary_id);
             }
@@ -242,10 +233,8 @@ template <int dim>
 void
 ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                            &particle_floating_mesh_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force,
+              &particle_floating_mesh_in_contact,
+  const double dt,
   const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
 {
   constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
@@ -462,12 +451,6 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                               cohesive_force =
                                 -F_cohesion * -normal_vectors[particle_counter];
                             }
-                          // Get particle's torque and force
-                          types::particle_index particle_id =
-                            particle->get_local_index();
-
-                          Tensor<1, 3> &particle_torque = torque[particle_id];
-                          Tensor<1, 3> &particle_force  = force[particle_id];
 
                           // Added the cohesive term
                           std::get<0>(forces_and_torques) += cohesive_force;
@@ -476,8 +459,7 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                           // particle
                           this->apply_force_and_torque(
                             forces_and_torques,
-                            particle_torque,
-                            particle_force,
+                            particle_properties,
                             projection_point,
                             contact_info.boundary_id);
                         }
