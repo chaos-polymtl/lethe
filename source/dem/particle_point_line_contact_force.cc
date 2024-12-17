@@ -21,8 +21,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
     const typename DEM::dem_data_structures<dim>::particle_point_in_contact
       *particle_point_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &physical_properties,
-    std::vector<Tensor<1, 3>> &force)
+      &physical_properties)
 
 {
   // Looping over particle_point_line_pairs_in_contact
@@ -113,19 +112,13 @@ ParticlePointLineForce<dim, PropertiesIndex>::
             (normal_damping_constant * normal_relative_velocity) *
             normal_vector;
 
-          // In particle-point and particle-line contacts, the tangential force
-          // is meaningless. So the total force is equal to the normal force
-          Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
-
-          // Getting force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          Tensor<1, 3> &particle_force = force[particle->get_id()];
-#else
-          Tensor<1, 3> &particle_force = force[particle->get_local_index()];
-#endif
-
           // Updating the body force of particles in the particle handler
-          particle_force += total_force;
+          particle_properties[PropertiesIndex::force_x] +=
+            spring_normal_force[0] - dashpot_normal_force[0];
+          particle_properties[PropertiesIndex::force_y] +=
+            spring_normal_force[1] - dashpot_normal_force[1];
+          particle_properties[PropertiesIndex::force_z] +=
+            spring_normal_force[2] - dashpot_normal_force[2];
         }
     }
 }
@@ -139,8 +132,7 @@ ParticlePointLineForce<dim, PropertiesIndex>::
     const typename DEM::dem_data_structures<dim>::particle_line_in_contact
       *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &physical_properties,
-    std::vector<Tensor<1, 3>> &force)
+      &physical_properties)
 {
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator = particle_line_pairs_in_contact->begin();
@@ -246,15 +238,10 @@ ParticlePointLineForce<dim, PropertiesIndex>::
           // is meaningless. So the total force is equal to the normal force
           Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
 
-          // Getting force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-          Tensor<1, 3> &particle_force = force[particle->get_id()];
-#else
-          Tensor<1, 3> &particle_force = force[particle->get_local_index()];
-#endif
-
           // Updating the body force of particles in the particle handler
-          particle_force += total_force;
+          for (int d = 0; d < 3; ++d)
+            particle_properties[PropertiesIndex::force_x + d] +=
+              total_force[d];
         }
     }
 }

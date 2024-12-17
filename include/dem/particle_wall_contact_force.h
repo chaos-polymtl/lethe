@@ -66,16 +66,13 @@ public:
    * @param particle_wall_pairs_in_contact Required information for the calculation of the
    * particle-wall contact force
    * @param dt DEM time step
-   * @param torque Torque acting on particles
    * @param force Force acting on particles
    */
   virtual void
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                              &particle_wall_pairs_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+                &particle_wall_pairs_in_contact,
+    const double dt) = 0;
 
   /**
    * Carries out the calculation of particle-floating mesh contact force using
@@ -84,17 +81,14 @@ public:
    * @param particle_floating_mesh_in_contact A container that stores the information of
    * particle-floating mesh contact
    * @param dt DEM time step
-   * @param torque Torque acting on particles
    * @param force Force acting on particles
    * @param solids Floating solids
    */
   virtual void
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                              &particle_floating_mesh_in_contact,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
+                &particle_floating_mesh_in_contact,
+    const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids) = 0;
 
   std::map<types::boundary_id, Tensor<1, 3>>
@@ -172,7 +166,7 @@ protected:
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
-   * @param particle_torque Torque acting on particle
+   * @param particle_properties Properties of particle in contact
    * @param particle_force Force acting on particle
    * @param point_on_boundary Contact point on the wall
    * @param boundary_id ID of the boundary
@@ -180,11 +174,10 @@ protected:
   inline void
   apply_force_and_torque(
     const std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-                   &forces_and_torques,
-    Tensor<1, 3>   &particle_torque,
-    Tensor<1, 3>   &particle_force,
-    const Point<3> &point_on_boundary,
-    int             boundary_id = 0)
+                      &forces_and_torques,
+    ArrayView<double> &particle_properties,
+    const Point<3>    &point_on_boundary,
+    int                boundary_id = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -201,14 +194,17 @@ protected:
                                            total_force,
                                            point_on_boundary);
 
-    // Updating the force of particles in the particle handler
-    // Since the forces were calculated on the wall, we use the -= operator
-    particle_force -= total_force;
-
     // Updating the torque acting on particles
+    // Since the forces were calculated on the wall, we use the -= operator
     // The torque was direcly calculated on the particle, thus we use the +=
     // operator
-    particle_torque += tangential_torque + rolling_resistance_torque;
+    for (int d = 0; d < 3; ++d)
+      {
+        particle_properties[PropertiesIndex::torque_x + d] +=
+          tangential_torque[d] + rolling_resistance_torque[d];
+        particle_properties[PropertiesIndex::force_x + d] -=
+          total_force[d];
+      }
   }
 
   /** This function is used to calculate the total force and total torque on

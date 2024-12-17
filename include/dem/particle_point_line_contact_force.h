@@ -39,15 +39,13 @@ public:
    * calculation of the particle-point contact force
    * @param physical_properties DEM physical_properties declared in the .prm
    * file
-   * @param force Force acting on particles
    */
   void
   calculate_particle_point_contact_force(
     const typename DEM::dem_data_structures<dim>::particle_point_in_contact
       *particle_point_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &physical_properties,
-    std::vector<Tensor<1, 3>> &force);
+      &physical_properties);
 
   /**
    * @brief Calculate of the particle-line contact force using
@@ -57,15 +55,13 @@ public:
    * calculation of the particle-line contact force
    * @param physical_properties DEM physical_properties declared in the .prm
    * file
-   * @param force Force acting on particles
    */
   void
   calculate_particle_line_contact_force(
     const typename DEM::dem_data_structures<dim>::particle_line_in_contact
       *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
-                              &physical_properties,
-    std::vector<Tensor<1, 3>> &force);
+      &physical_properties);
 
 private:
   /**

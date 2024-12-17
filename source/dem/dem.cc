@@ -512,9 +512,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
     contact_manager.get_particle_wall_in_contact(),
-    simulation_control->get_time_step(),
-    torque,
-    force);
+    simulation_control->get_time_step());
 
   if (parameters.forces_torques.calculate_force_torque)
     {
@@ -529,9 +527,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
         contact_manager.get_particle_floating_wall_in_contact(),
-        simulation_control->get_time_step(),
-        torque,
-        force);
+        simulation_control->get_time_step());
     }
 
   // Particle-solid objects contact force
@@ -541,24 +537,20 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
         ->calculate_particle_floating_wall_contact_force(
           contact_manager.get_particle_floating_mesh_in_contact(),
           simulation_control->get_time_step(),
-          torque,
-          force,
           solid_surfaces);
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
-      parameters.lagrangian_physical_properties,
-      force);
+      parameters.lagrangian_physical_properties);
 
   if constexpr (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
-          parameters.lagrangian_physical_properties,
-          force);
+          parameters.lagrangian_physical_properties);
     }
 }
 
@@ -823,9 +815,7 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
     {
       // Resize and reinitialize displacement container
       displacement.resize(particle_handler.get_max_local_particle_index());
-      // Resize and reinitialize displacement container
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
+      // Resize and reinitialize MOI container
       MOI.resize(displacement.size());
 
       // Updating moment of inertia container
@@ -1004,9 +994,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
           contact_manager.get_local_local_periodic_adjacent_particles(),
           contact_manager.get_local_ghost_periodic_adjacent_particles(),
           contact_manager.get_ghost_local_periodic_adjacent_particles(),
-          simulation_control->get_time_step(),
-          torque,
-          force);
+          simulation_control->get_time_step());
 
       // Update the boundary points and vectors (if grid motion)
       // We have to update the positions of the points on boundary faces and
@@ -1031,20 +1019,13 @@ DEMSolver<dim, PropertiesIndex>::solve()
       if (simulation_control->get_step_number() == 0)
         {
           integrator_object->integrate_half_step_location(
-            particle_handler,
-            g,
-            simulation_control->get_time_step(),
-            torque,
-            force,
-            MOI);
+            particle_handler, g, simulation_control->get_time_step(), MOI);
         }
       else
         {
           integrator_object->integrate(particle_handler,
                                        g,
                                        simulation_control->get_time_step(),
-                                       torque,
-                                       force,
                                        MOI,
                                        triangulation,
                                        sparse_contacts_object);

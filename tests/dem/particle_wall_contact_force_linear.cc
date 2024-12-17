@@ -36,6 +36,23 @@ using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
 void
+reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
+{
+  for (auto particle_iterator = particle_handler.begin();
+       particle_iterator != particle_handler.end();
+       ++particle_iterator)
+    {
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_x]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_y]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_z]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_x] = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_y] = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_z] = 0;
+    }
+}
+
+template <int dim>
+void
 test()
 {
   // Creating the mesh and refinement
@@ -114,14 +131,10 @@ test()
   pit1->get_properties()[PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  std::vector<double> MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  MOI.resize(particle_handler.get_max_local_particle_index());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -157,12 +170,13 @@ test()
   // Calling linear force
   ParticleWallLinearForce<dim, PropertiesIndex> force_object(dem_parameters);
   force_object.calculate_particle_wall_contact_force(
-    particle_wall_contact_information, dt, torque, force);
+    particle_wall_contact_information, dt);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force acting on particle 1 is: "
-          << force[particle->get_id()][0] << " N " << std::endl;
+          << particle->get_properties()[DEM::PropertiesIndex::force_x] << " N "
+          << std::endl;
 }
 
 int

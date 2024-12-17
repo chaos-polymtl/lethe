@@ -25,25 +25,18 @@ using namespace dealii;
 
 template <int dim>
 void
-reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::vector<Tensor<1, 3>>       &torque,
-                   std::vector<Tensor<1, 3>>       &force)
+reinitialize_force_and_torque(Particles::ParticleHandler<dim> &particle_handler)
 {
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
+  for (auto particle_iterator = particle_handler.begin();
+       particle_iterator != particle_handler.end();
+       ++particle_iterator)
     {
-      // Getting id of particle as local variable
-      unsigned int particle_id = particle->get_id();
-
-      // Reinitializing forces and torques of particles in the system
-      force[particle_id][0] = 0;
-      force[particle_id][1] = 0;
-      force[particle_id][2] = 0;
-
-      torque[particle_id][0] = 0;
-      torque[particle_id][1] = 0;
-      torque[particle_id][2] = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_x]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_y]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::force_z]  = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_x] = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_y] = 0;
+      particle_iterator->get_properties()[DEM::PropertiesIndex::torque_z] = 0;
     }
 }
 
@@ -163,9 +156,7 @@ test()
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  MOI.resize(particle_handler.get_max_local_particle_index());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -174,7 +165,7 @@ test()
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
       // Reinitializing forces
-      reinitialize_force(particle_handler, torque, force);
+      reinitialize_force_and_torque(particle_handler);
 
       particle_handler.exchange_ghost_particles();
 
@@ -199,17 +190,16 @@ test()
         contact_manager.get_local_local_periodic_adjacent_particles(),
         contact_manager.get_local_ghost_periodic_adjacent_particles(),
         contact_manager.get_ghost_local_periodic_adjacent_particles(),
-        dt,
-        torque,
-        force);
+        dt);
 
       // Store force before integration for proc 1
       // TODO - Improve this in the future, this is not clean.
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 1)
-        step_force = force[0][1];
+        step_force = particle_handler.begin()
+                       ->get_properties()[DEM::PropertiesIndex::force_y];
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+      integrator_object.integrate(particle_handler, g, dt, MOI);
 
       contact_manager.update_contacts();
 

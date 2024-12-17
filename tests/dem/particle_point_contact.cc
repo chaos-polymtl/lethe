@@ -121,14 +121,10 @@ test()
   ParticlePointLineForce<dim, PropertiesIndex>   force_object;
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  std::vector<double> MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  MOI.resize(particle_handler.get_max_local_particle_index());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -136,10 +132,8 @@ test()
 
   while (time < 0.2)
     {
-      auto particle                = particle_handler.begin();
-      force[particle->get_id()][0] = 0;
-      force[particle->get_id()][1] = 0;
-      force[particle->get_id()][2] = 0;
+      auto particle = particle_handler.begin();
+      reinitialize_force_and_torque<dim>(particle_handler);
 
       find_particle_point_contact_pairs<dim>(
         particle_handler,
@@ -151,11 +145,9 @@ test()
                                                        contact_information);
 
       force_object.calculate_particle_point_contact_force(
-        &contact_information,
-        dem_parameters.lagrangian_physical_properties,
-        force);
+        &contact_information, dem_parameters.lagrangian_physical_properties);
 
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+      integrator_object.integrate(particle_handler, g, dt, MOI);
 
       if (step % writing_frequency == 0)
         {

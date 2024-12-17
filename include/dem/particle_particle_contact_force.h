@@ -55,8 +55,6 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
    */
   virtual void
   calculate_particle_particle_contact_force(
@@ -69,10 +67,8 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+                &ghost_local_periodic_adjacent_particles,
+    const double dt) = 0;
 
   void
   set_periodic_offset(const Tensor<1, dim> &periodic_offset)
@@ -130,7 +126,6 @@ public:
    * candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
-   * @param torque Torque acting on particles.
    * @param force Force acting on particles.
    */
   virtual void
@@ -144,10 +139,8 @@ public:
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+                &ghost_local_periodic_adjacent_particles,
+    const double dt) override;
 
 protected:
   /**
@@ -455,10 +448,8 @@ private:
    * @param[in] particle_two_tangential_torque Contact tangential torque on
    * particle two.
    * @param[in] rolling_resistance_torque Contact rolling resistance torque.
-   * @param[in,out] particle_one_torque
-   * @param[in,out] particle_two_torque
-   * @param[in,out] particle_one_force Force acting on particle one
-   * @param[in,out] particle_two_force Force acting on particle two
+   * @param[in,out] particle_one_properties Properties of particle in contact
+   * @param[in,out] particle_two_properties Properties of particle in contact
    */
   inline void
   apply_force_and_torque_on_local_particles(
@@ -467,21 +458,21 @@ private:
     const Tensor<1, 3> &particle_one_tangential_torque,
     const Tensor<1, 3> &particle_two_tangential_torque,
     const Tensor<1, 3> &rolling_resistance_torque,
-    Tensor<1, 3>       &particle_one_torque,
-    Tensor<1, 3>       &particle_two_torque,
-    Tensor<1, 3>       &particle_one_force,
-    Tensor<1, 3>       &particle_two_force)
+    ArrayView<double>  &particle_one_properties,
+    ArrayView<double>  &particle_two_properties)
   {
-    // Calculation of total force
-    Tensor<1, 3> total_force = normal_force + tangential_force;
-
     // Updating the force and torque of particles in the particle handler
-    particle_one_force -= total_force;
-    particle_two_force += total_force;
-    particle_one_torque +=
-      -particle_one_tangential_torque + rolling_resistance_torque;
-    particle_two_torque +=
-      -particle_two_tangential_torque - rolling_resistance_torque;
+    for (int d = 0; d < 3; ++d)
+      {
+        particle_one_properties[PropertiesIndex::force_x + d] -=
+          normal_force[d] + tangential_force[d];
+        particle_two_properties[PropertiesIndex::force_x + d] +=
+          normal_force[d] + tangential_force[d];
+        particle_one_properties[PropertiesIndex::torque_x + d] +=
+          -particle_one_tangential_torque[d] + rolling_resistance_torque[d];
+        particle_two_properties[PropertiesIndex::torque_x + d] +=
+          -particle_two_tangential_torque[d] - rolling_resistance_torque[d];
+      }
   }
 
   /**
@@ -492,8 +483,7 @@ private:
    * @param[in] tangential_force Contact tangential force.
    * @param[in] particle_one_tangential_torque Contact tangential torque.
    * @param[in] rolling_resistance_torque Contact rolling resistance torque.
-   * @param[in,out] particle_one_torque Torque acting on particle one (local).
-   * @param[in,out] particle_one_force Force acting on particle one (local).
+   * @param[in,out] particle_one_properties Properties of particle in contact
    */
   inline void
   apply_force_and_torque_on_single_local_particle(
@@ -501,13 +491,16 @@ private:
     const Tensor<1, 3> &tangential_force,
     const Tensor<1, 3> &particle_one_tangential_torque,
     const Tensor<1, 3> &rolling_resistance_torque,
-    Tensor<1, 3>       &particle_one_torque,
-    Tensor<1, 3>       &particle_one_force)
+    ArrayView<double>  &particle_one_properties)
   {
-    // Updating the force and torque acting on particles in the particle handler
-    particle_one_force -= normal_force + tangential_force;
-    particle_one_torque +=
-      -particle_one_tangential_torque + rolling_resistance_torque;
+    // Updating the force and torque of particles in the particle handler
+    for (int d = 0; d < 3; ++d)
+      {
+        particle_one_properties[PropertiesIndex::torque_x + d] +=
+          -particle_one_tangential_torque[d] + rolling_resistance_torque[d];
+        particle_one_properties[PropertiesIndex::force_x + d] -=
+          normal_force[d] + tangential_force[d];
+      }
   }
 
   /**
@@ -1503,18 +1496,14 @@ private:
    *
    * @param adjacent_particles_list Container of the adjacent particles of a
    * particles
-   * @param torque Torque acting on particles.
-   * @param force Force acting on particles.
    * @param dt DEM time step.
    */
   template <ContactType contact_type>
   inline void
   execute_contact_calculation(
     typename DEM::dem_data_structures<dim>::particle_contact_info
-                              &adjacent_particles_list,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force,
-    const double               dt)
+                &adjacent_particles_list,
+    const double dt)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
@@ -1534,10 +1523,6 @@ private:
     auto first_contact_info      = adjacent_particles_list.begin();
     auto particle_one            = first_contact_info->second.particle_one;
     auto particle_one_properties = particle_one->get_properties();
-
-    types::particle_index particle_one_id     = particle_one->get_local_index();
-    Tensor<1, 3>         &particle_one_torque = torque[particle_one_id];
-    Tensor<1, 3>         &particle_one_force  = force[particle_one_id];
 
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = get_location(particle_one);
@@ -1665,22 +1650,14 @@ private:
                           contact_type ==
                             ContactType::local_periodic_particle_particle)
               {
-                types::particle_index particle_two_id =
-                  particle_two->get_local_index();
-
-                Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                Tensor<1, 3> &particle_two_force  = force[particle_two_id];
-
                 this->apply_force_and_torque_on_local_particles(
                   normal_force,
                   tangential_force,
                   particle_one_tangential_torque,
                   particle_two_tangential_torque,
                   rolling_resistance_torque,
-                  particle_one_torque,
-                  particle_two_torque,
-                  particle_one_force,
-                  particle_two_force);
+                  particle_one_properties,
+                  particle_two_properties);
               }
 
             // Apply the calculated forces and torques only on the local
@@ -1694,8 +1671,7 @@ private:
                   tangential_force,
                   particle_one_tangential_torque,
                   rolling_resistance_torque,
-                  particle_one_torque,
-                  particle_one_force);
+                  particle_one_properties);
               }
 
             // Apply the calculated forces and torques only on the local
@@ -1703,19 +1679,12 @@ private:
             if constexpr (contact_type ==
                           ContactType::ghost_local_periodic_particle_particle)
               {
-                types::particle_index particle_two_id =
-                  particle_two->get_local_index();
-
-                Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                Tensor<1, 3> &particle_two_force  = force[particle_two_id];
-
                 this->apply_force_and_torque_on_single_local_particle(
                   normal_force,
                   tangential_force,
                   particle_two_tangential_torque,
                   rolling_resistance_torque,
-                  particle_two_torque,
-                  particle_two_force);
+                  particle_two_properties);
               }
           }
         else

@@ -41,17 +41,15 @@ ParticleParticleContactForce<dim,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
-                              &ghost_local_periodic_adjacent_particles,
-    const double               dt,
-    std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force)
+                &ghost_local_periodic_adjacent_particles,
+    const double dt)
 {
   // Calculating the contact forces the local-local adjacent particles.
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::local_particle_particle>(
-        adjacent_particles_list, torque, force, dt);
+        adjacent_particles_list, dt);
     }
 
   // Calculating the contact forces the local-ghost adjacent particles.
@@ -59,7 +57,7 @@ ParticleParticleContactForce<dim,
        ghost_adjacent_particles | boost::adaptors::map_values)
     {
       execute_contact_calculation<ContactType::ghost_particle_particle>(
-        adjacent_particles_list, torque, force, dt);
+        adjacent_particles_list, dt);
     }
 
   // Calculating the contact forces the local-local periodic adjacent particles.
@@ -68,7 +66,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
+        periodic_adjacent_particles_list, dt);
     }
 
   // Calculating the contact forces the local-ghost periodic adjacent particles.
@@ -77,7 +75,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
+        periodic_adjacent_particles_list, dt);
     }
 
   // Calculating the contact forces the ghost-local periodic adjacent particles.
@@ -86,7 +84,7 @@ ParticleParticleContactForce<dim,
     {
       execute_contact_calculation<
         ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, torque, force, dt);
+        periodic_adjacent_particles_list, dt);
     }
 }
 

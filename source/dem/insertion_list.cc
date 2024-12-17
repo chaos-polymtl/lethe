@@ -197,17 +197,38 @@ InsertionList<dim>::assign_particle_properties_for_list_insertion(
       double diameter = this->diameters[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x   = this->velocities[particle_counter][0];
-      double vel_y   = this->velocities[particle_counter][1];
-      double vel_z   = this->velocities[particle_counter][2];
-      double omega_x = this->angular_velocities[particle_counter][0];
-      double omega_y = this->angular_velocities[particle_counter][1];
-      double omega_z = this->angular_velocities[particle_counter][2];
-      double mass    = density * 4. / 3. * M_PI *
+      double mass = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
+      double moment_of_inertia = 0.1 * mass * diameter * diameter;
+      double vel_x             = this->velocities[particle_counter][0];
+      double vel_y             = this->velocities[particle_counter][1];
+      double vel_z             = this->velocities[particle_counter][2];
+      double omega_x           = this->angular_velocities[particle_counter][0];
+      double omega_y           = this->angular_velocities[particle_counter][1];
+      double omega_z           = this->angular_velocities[particle_counter][2];
+      double force_x           = 0.;
+      double force_y           = 0.;
+      double force_z           = 0.;
+      double torque_x          = 0.;
+      double torque_y          = 0.;
+      double torque_z          = 0.;
 
-      std::vector<double> properties_of_one_particle{
-        type, diameter, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z, mass};
+      std::vector<double> properties_of_one_particle{type,
+                                                     diameter,
+                                                     mass,
+                                                     moment_of_inertia,
+                                                     vel_x,
+                                                     vel_y,
+                                                     vel_z,
+                                                     omega_x,
+                                                     omega_y,
+                                                     omega_z,
+                                                     force_x,
+                                                     force_y,
+                                                     force_z,
+                                                     torque_x,
+                                                     torque_y,
+                                                     torque_z};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();

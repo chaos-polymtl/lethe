@@ -84,17 +84,13 @@ test()
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_z] = 0;
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::mass]    = 1;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
-  torque.push_back(Tensor<1, dim>({0, 0, 0}));
-  force.push_back(Tensor<1, dim>({0, 0, 0}));
+  std::vector<double> MOI;
   MOI.push_back(1);
 
   // Calling velocity verlet integrator
   VelocityVerletIntegrator<dim, DEM::DEMProperties::PropertiesIndex>
     integration_object;
-  integration_object.integrate(particle_handler, g, dt, torque, force, MOI);
+  integration_object.integrate(particle_handler, g, dt, MOI);
 
   // Output
   for (auto particle_iterator = particle_handler.begin();

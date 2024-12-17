@@ -361,7 +361,6 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
   update_average_velocities_acceleration(
     Particles::ParticleHandler<dim> &particle_handler,
     const Tensor<1, 3>              &g,
-    const std::vector<Tensor<1, 3>> &force,
     const double                     dt)
 {
   // If the sparse contacts is disabled, exit the function.
@@ -398,16 +397,16 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
                 {
                   // Get particle properties
                   auto particle_properties = particle.get_properties();
-                  types::particle_index particle_id =
-                    particle.get_local_index();
 
                   double dt_mass_inverse =
                     dt / particle_properties[PropertiesIndex::mass];
 
-                  // Calculate the acceleration of the particle times the time
-                  // step
-                  Tensor<1, 3> acc_dt_particle =
-                    dt_g + force[particle_id] * dt_mass_inverse;
+                  Tensor<1, 3> acc_dt_particle;
+                  for (int d = 0; d < dim; ++d)
+                    acc_dt_particle[d] =
+                      dt_g[d] +
+                      particle_properties[PropertiesIndex::force_x + d] *
+                        dt_mass_inverse;
 
                   // Add up the acc. * dt for the average
                   acc_dt_cell_average += acc_dt_particle;

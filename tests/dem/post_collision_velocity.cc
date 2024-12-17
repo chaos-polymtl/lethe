@@ -79,10 +79,10 @@ test(double coefficient_of_restitution)
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   // Initializing motion of boundaries
-  Tensor<1, dim> translational_and_rotational_veclocity;
+  Tensor<1, dim> translational_and_rotational_velocity;
   for (unsigned int d = 0; d < dim; ++d)
     {
-      translational_and_rotational_veclocity[d] = 0;
+      translational_and_rotational_velocity[d] = 0;
     }
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
@@ -90,9 +90,9 @@ test(double coefficient_of_restitution)
       dem_parameters.boundary_conditions.boundary_rotational_speed.insert(
         {counter, 0});
       dem_parameters.boundary_conditions.boundary_translational_velocity.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
       dem_parameters.boundary_conditions.boundary_rotational_vector.insert(
-        {counter, translational_and_rotational_veclocity});
+        {counter, translational_and_rotational_velocity});
     }
 
   // Defining particle handler
@@ -118,14 +118,10 @@ test(double coefficient_of_restitution)
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
+  std::vector<double> MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-  force.resize(particle_handler.get_max_local_particle_index());
-  torque.resize(force.size());
-  MOI.resize(force.size());
+  MOI.resize(particle_handler.get_max_local_particle_index());
   for (auto &moi_val : MOI)
     moi_val = 1;
 
@@ -163,8 +159,8 @@ test(double coefficient_of_restitution)
                                      particle_wall_contact_information);
 
       particle_wall_force_object.calculate_particle_wall_contact_force(
-        particle_wall_contact_information, dt, torque, force);
-      integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+        particle_wall_contact_information, dt);
+      integrator_object.integrate(particle_handler, g, dt, MOI);
     }
 
   deallog << "Coefficient of restitution is " << coefficient_of_restitution
