@@ -264,7 +264,7 @@ Results and Discussion
 
 The following image shows the shape and dimensions of the bubble after :math:`3` seconds of simulation, and compares it with results of [#zahedi2012]_.
 
-.. image:: images/bubble.png
+.. image:: images/bubble-contour.png
     :alt: bubble
     :align: center
     :width: 400
@@ -275,7 +275,7 @@ Run
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py output
+  python3 ./rising-bubble.py -f output
 
 to execute this post-processing code, where ``output`` is the directory that
 contains the simulation results. The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_. The following images show the results of these comparisons. The agreement between the two simulations is remarkable considering the coarse mesh used within this example.
