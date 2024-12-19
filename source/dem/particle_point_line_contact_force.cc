@@ -117,10 +117,6 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
             (normal_damping_constant * normal_relative_velocity) *
             normal_vector;
 
-          // In particle-point and particle-line contacts, the tangential force
-          // is meaningless. So the total force is equal to the normal force
-          Tensor<1, 3> total_force = spring_normal_force - dashpot_normal_force;
-
           // Updating the body force of particles in the particle handler
           particle_properties[DEM::PropertiesIndex::force_x] +=
             spring_normal_force[0] - dashpot_normal_force[0];

@@ -200,9 +200,6 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
                   this->calculate_jkr_contact_force_and_torque(
                     contact_information, particle_properties);
 
-              // Get particle's torque and force
-              types::particle_index particle_id = particle->get_local_index();
-
               // Apply the calculated forces and torques on the particle
               this->apply_force_and_torque(forces_and_torques,
                                            particle_properties,

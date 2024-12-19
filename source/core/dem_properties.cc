@@ -19,6 +19,12 @@ namespace DEM
     properties[PropertiesIndex::omega_x]     = std::make_pair("omega", dim);
     properties[PropertiesIndex::omega_y]     = std::make_pair("omega", 1);
     properties[PropertiesIndex::omega_z]     = std::make_pair("omega", 1);
+    properties[PropertiesIndex::force_x]     = std::make_pair("force", dim);
+    properties[PropertiesIndex::force_y]     = std::make_pair("force", 1);
+    properties[PropertiesIndex::force_z]     = std::make_pair("force", 1);
+    properties[PropertiesIndex::torque_x]    = std::make_pair("force", dim);
+    properties[PropertiesIndex::torque_y]    = std::make_pair("force", 1);
+    properties[PropertiesIndex::torque_z]    = std::make_pair("force", 1);
     properties[PropertiesIndex::fem_force_x] = std::make_pair("fem_force", dim);
     properties[PropertiesIndex::fem_force_y] = std::make_pair("fem_force", 1);
     properties[PropertiesIndex::fem_force_z] = std::make_pair("fem_force", 1);
@@ -27,6 +33,8 @@ namespace DEM
     properties[PropertiesIndex::fem_torque_y] = std::make_pair("fem_torque", 1);
     properties[PropertiesIndex::fem_torque_z] = std::make_pair("fem_torque", 1);
     properties[PropertiesIndex::mass]         = std::make_pair("mass", 1);
+    properties[PropertiesIndex::moment_of_inertia] =
+      std::make_pair("moment_of_inertia", 1);
     properties[PropertiesIndex::volumetric_contribution] =
       std::make_pair("volumetric_contribution", 1);
 

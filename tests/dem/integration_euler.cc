@@ -70,8 +70,10 @@ test()
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
-  pit->get_properties()[DEM::PropertiesIndex::type] = 1;
-  pit->get_properties()[DEM::PropertiesIndex::dp]   = 0.005;
+  pit->get_properties()[DEM::PropertiesIndex::type]              = 1;
+  pit->get_properties()[DEM::PropertiesIndex::dp]                = 0.005;
+  pit->get_properties()[DEM::PropertiesIndex::moment_of_inertia] = 1;
+
   // Velocity
   pit->get_properties()[DEM::PropertiesIndex::v_x] = 0;
   pit->get_properties()[DEM::PropertiesIndex::v_y] = 0;
@@ -83,15 +85,11 @@ test()
   // mass and moment of inertia
   pit->get_properties()[DEM::PropertiesIndex::mass] = 1;
 
-  std::vector<Tensor<1, 3>> torque;
-  std::vector<Tensor<1, 3>> force;
-  std::vector<double>       MOI;
-  torque.push_back(Tensor<1, dim>({0, 0, 0}));
-  force.push_back(Tensor<1, dim>({0, 0, 0}));
+  std::vector<double> MOI;
   MOI.push_back(1);
 
   ExplicitEulerIntegrator<dim> integrator_object;
-  integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
+  integrator_object.integrate(particle_handler, g, dt, MOI);
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
