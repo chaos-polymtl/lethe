@@ -62,26 +62,29 @@
 
 using namespace dealii;
 
-namespace ChangeVectorTypes
+template <typename T>
+int
+sgn(T val)
 {
-  template <typename number>
-  void copy(TrilinosWrappers::MPI::Vector                    &out,
-            const LinearAlgebra::distributed::Vector<number> &in)
-  {
-    LinearAlgebra::ReadWriteVector<double> rwv(out.locally_owned_elements());
-    rwv.import_elements(in, VectorOperation::insert);
-    out.import_elements(rwv, VectorOperation::insert);
-  }
-
-  template <typename number>
-  void copy(LinearAlgebra::distributed::Vector<number> &out,
-            const TrilinosWrappers::MPI::Vector        &in)
-  {
-    LinearAlgebra::ReadWriteVector<double> rwv;
-    rwv.reinit(in);
-    out.import_elements(rwv, VectorOperation::insert);
-  }
+  return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
 }
+
+template <int dim>
+class AnalyticSolution : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    const Point<dim> center = Point<dim>(0.5,0.75,0.5);
+    Tensor<1,dim> dist = center - p;
+    
+    double signed_dist = 0.15 - dist.norm();
+      
+    return signed_dist;
+  }
+};
 
 template <int dim>
 inline double compute_point_2_interface_min_distance(const std::vector<Point<dim>> triangle,const Point<dim> &point)
@@ -108,7 +111,7 @@ inline double compute_point_2_interface_min_distance(const std::vector<Point<dim
       const double d = scalar_product(e_0, vector_to_plane);
       const double e = scalar_product(e_1, vector_to_plane);
       
-      const double det = abs(a * c - b * b);
+      const double det = a * c - b * b ;
       
       double s = b * e - c * d;
       double t = b * d - a * e;
@@ -242,7 +245,7 @@ inline double compute_point_2_interface_min_distance(const std::vector<Point<dim
               t = 1 - s;
             }
         }
-
+      
       pt_in_triangle = point_0 + s * e_0 + t * e_1;
 
       D = pt_in_triangle.distance(point);
@@ -413,7 +416,7 @@ inline Point<dim> transform_ref_face_point_to_ref_cell(const Point<dim-1> &x_ref
 }
 
 template <int dim>
-inline void compute_numerical_jacobians(const std::vector<Point<dim>> &stencil_real, const Point<dim> &x_J_real, const std::vector<Tensor<1, dim>> &distance_gradients, const std::vector<DerivativeForm<1, dim-1, dim>> &transformation_jacobians, const double perturbation, LAPACKFullMatrix<double> &jacobian_matrix)
+inline void compute_numerical_jacobian(const std::vector<Point<dim>> &stencil_real, const Point<dim> &x_J_real, const std::vector<Tensor<1, dim>> &distance_gradients, const std::vector<DerivativeForm<1, dim-1, dim>> &transformation_jacobians, const double perturbation, LAPACKFullMatrix<double> &jacobian_matrix)
 {  
   for (unsigned int i = 0; i < dim-1; ++i)
   {
@@ -443,12 +446,7 @@ inline double compute_distance(const Tensor<1,dim> &x_n_to_x_J_real, const doubl
   return distance + x_n_to_x_J_real.norm();
 }
 
-template <typename T>
-int
-sgn(T val)
-{
-  return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
-}
+
 
 template <int dim>
 class AdvectionField : public TensorFunction<1, dim>
@@ -609,7 +607,7 @@ public:
   Visualization();
   
   void  
-  build_patches(DoFHandler<dim> &dof_handler, NonMatching::FEValues<dim> &non_matching_fe_values);
+  build_patches(std::map<types::global_cell_index,std::vector<Point<dim>>> &interface_reconstruction_vertices);
   
 private:
   /**
@@ -639,32 +637,17 @@ Visualization<dim>::Visualization()
 
 template <int dim>
 void
-Visualization<dim>::build_patches(DoFHandler<dim> &dof_handler, NonMatching::FEValues<dim> &non_matching_fe_values)
+Visualization<dim>::build_patches(std::map<types::global_cell_index,std::vector<Point<dim>>> &interface_reconstruction_vertices)
 {
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (auto const& cell : interface_reconstruction_vertices)
   {
-    if (cell->is_locally_owned())
-    {
-      non_matching_fe_values.reinit(cell);
-  
-      const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
-      &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
-
-      if (surface_fe_values)
+      std::vector<Point<dim>> vertices = cell.second;
+      for (const Point<dim>& vertex : vertices)
       {
-        
-        for (const unsigned int q :
-             surface_fe_values->quadrature_point_indices())
-          {
-            const Point<dim> &point = surface_fe_values->quadrature_point(q);
-
-            DataOutBase::Patch<0, dim> temp;
-            temp.vertices[0] = point;
-            patches.push_back(temp);
-          }
-        }
-    }
+        DataOutBase::Patch<0, dim> temp;
+        temp.vertices[0] = vertex;
+        patches.push_back(temp);
+      }
   }
 }
 
@@ -731,10 +714,26 @@ private:
   void set_initial_conditions();
   void solve();
   
+  void perform_geometric_redistanciation(unsigned int time_iteration);
   void compute_level_set_from_phase_fraction();
   void compute_phase_fraction_from_level_set();
   void compute_sign_distance(unsigned int time_iteration, double global_volume);
-  void compute_volume();
+  void initialize_local_distance();
+  void reconstruct_interface();
+  void output_interface_recontruction(const unsigned int time_iteration);
+  void compute_first_neighbors_distance();
+  void compute_second_neighbors_distance();
+  void compute_signed_distance_from_distance();
+  
+  void exchange_distance();
+  void zero_out_ghost_values();
+  void update_ghost_values();
+  
+  void conserve_local_volume();
+  void conserve_global_volume(const double global_volume);
+  
+  void compute_static_sphere_error(unsigned int time_iteration);
+  double compute_volume(unsigned int time_iteration);
   double compute_cell_wise_volume(const typename DoFHandler<dim>::active_cell_iterator &cell, Vector<double> cell_dof_values, const double corr, const BoundingBox<dim> &unit_box, LocalCellWiseFunction<dim> &level_set_function, NonMatching::QuadratureGenerator<dim> &quadrature_generator);
   
   void refine_grid(const unsigned int max_grid_level, const unsigned int min_grid_level);
@@ -769,6 +768,8 @@ private:
   VectorType locally_relevant_solution;
   VectorType previous_solution;
   VectorType location;
+  VectorType error;
+  
   // VectorType cell_wise_volume;
   
   LinearAlgebra::distributed::Vector<double> signed_distance;
@@ -783,9 +784,8 @@ private:
   
   std::map<types::global_cell_index,std::vector<CellData<dim-1>>> interface_reconstruction_cells;
   
-  std::map<types::global_cell_index,Point<dim>> intersection_cell;
+  std::set<types::global_dof_index> intersected_dofs;
   
-  std::set<types::global_cell_index> intersection_halo_cell;
   std::set<types::global_dof_index> dofs_location_status;
   
     
@@ -797,6 +797,8 @@ private:
   MPI_Comm           mpi_communicator;
   ConditionalOStream pcout;
   TableHandler table_volume_monitoring;
+  TableHandler table_error_monitoring;
+  
 };
 
 enum ActiveFEIndex
@@ -818,7 +820,7 @@ AdvectionProblem<dim>::AdvectionProblem()
   , fe_level_set(1)
   , level_set_dof_handler(triangulation)
   , mesh_classifier(dof_handler, level_set)
-  , dt(0.5/300.0)
+  , dt(2.5/300.0)
   , mpi_communicator(MPI_COMM_WORLD)
   , pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
 {
@@ -853,6 +855,8 @@ void AdvectionProblem<dim>::setup_system()
   
   level_set.reinit(locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   location.reinit(locally_owned_dofs, mpi_communicator);
+  error.reinit(locally_owned_dofs, mpi_communicator);
+  
   // cell_wise_volume.reinit(locally_owned_dofs, mpi_communicator);
   
   
@@ -1150,7 +1154,7 @@ AdvectionProblem<dim>::compute_level_set_from_phase_fraction()
       const double phase = locally_relevant_solution[p];
       // level_set_owned[p] = log10(std::max(phase,1e-8)/std::max(1.0-phase,1e-8));
       double phase_sign = sgn(phase-0.5);
-      level_set_owned[p] = 0.016*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0-1e-16));
+      level_set_owned[p] = 0.016*std::atanh(phase_sign*std::min(abs(phase-0.5)/0.5,1.0-1e-12));
       // level_set_owned[p] = phase-0.5;
     }
   constraints.distribute(level_set_owned);
@@ -1192,6 +1196,30 @@ AdvectionProblem<dim>::compute_cell_wise_volume(const typename DoFHandler<dim>::
 
 template <int dim>
 void 
+AdvectionProblem<dim>::perform_geometric_redistanciation(unsigned int time_iteration)
+{
+  // Compute level set from phase fraction field to get the position of the interface.
+  compute_level_set_from_phase_fraction();
+  
+  // Compute volume (the one delimited by level set = 0.0).
+  double global_volume = compute_volume(time_iteration);
+  pcout << "global_volume = " << global_volume << std::endl;
+  
+  // Gain the writing right.
+  zero_out_ghost_values();
+  
+  compute_sign_distance(time_iteration, global_volume);
+
+  // Gain the reading right.
+  update_ghost_values();
+  
+  compute_static_sphere_error(time_iteration);
+  compute_phase_fraction_from_level_set();
+  
+}
+
+template <int dim>
+void 
 AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double global_volume)
 {   
   
@@ -1200,209 +1228,55 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
   intersection_point.clear();
   interface_reconstruction_vertices.clear();
   interface_reconstruction_cells.clear();
-  intersection_cell.clear();
-  intersection_halo_cell.clear();
+  intersected_dofs.clear();
   dofs_location_status.clear();
-  
-  unsigned int n;
-  
-  if constexpr (dim == 2)
-    n = 2;
-  if constexpr (dim == 3)
-    n = 4;
-
   
   std::unordered_set<types::global_dof_index> dofs_in_interface_halo;
                                            
-  // Dummy quadrature to have the intersection points 
-  const QGaussLobatto<1> quadrature_1D(n);
+  // Initialize local distance vetors.
+  initialize_local_distance();
   
-  // Update flag for the non-matching fe values
-  NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.surface = update_quadrature_points | 
-                                update_normal_vectors;
+  // Identify intersected cells and compute the interface reconstruction.
+  reconstruct_interface();
+  output_interface_recontruction(time_iteration);
   
-  region_update_flags.inside = update_quadrature_points | 
-                                update_JxW_values;
-  // non-matching fe values
-  NonMatching::FEValues<dim> non_matching_fe_values(fe_collection,
-                                                    quadrature_1D,
-                                                    region_update_flags,
-                                                    mesh_classifier,
-                                                    dof_handler,
-                                                    level_set);
-                                                    
-                                                    
-  GridTools::MarchingCubeAlgorithm<dim, VectorType> marching_cube(mapping,
-                                                         fe, // todo
-                                                         1,
-                                                         1e-10);
+  // Compute the distance for the dofs of the intersected cells (the ones in the intersected_dofs set). They correspond to the first neighbor dofs.
+  compute_first_neighbors_distance();
   
-  // double global_volume = 0.0;
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  // {
-  //   if (cell->is_locally_owned())
-  //   {
-  // 
-  //     non_matching_fe_values.reinit(cell);
-  // 
-  //     const std::optional<FEValues<dim>>
-  //       &inside_fe_values = non_matching_fe_values.get_inside_fe_values();
-  // 
-  // 
-  //     if (!inside_fe_values)
-  //     {
-  //       continue;
-  //     }
-  // 
-  //     std::vector<double> JxW_inside = inside_fe_values->get_JxW_values();
-  // 
-  //     for (const unsigned int q :
-  //          inside_fe_values->quadrature_point_indices())
-  //       {
-  //         global_volume += inside_fe_values->JxW(q);
-  //       }
-  // 
-  //   }
-  // }
-  // global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  // 
-  // pcout << "global_volume = " << global_volume << std::endl;
+  conserve_local_volume();
+  conserve_global_volume(global_volume);
   
-  // Interface rescontruction visualization
-  Visualization<dim> intersection_data_out;  
+  // Compute the distance for the dofs of the rest of the mesh. They correspond to the seconf neighbor dofs.
+  compute_second_neighbors_distance();
   
-  intersection_data_out.build_patches(dof_handler, non_matching_fe_values);
+  // Update ghost values to regain reading ability.
+  update_ghost_values();
   
-  intersection_data_out.write_vtu_with_pvtu_record("output/",
-                                      "interface",
-                                      time_iteration,
-                                      MPI_COMM_WORLD,
-                                      3);
-  
-  // DoF coordinates
-  std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping,
-                                       dof_handler);
-  
-  pcout << "In signed distance computation" << std::endl;
-  
-  // Local distance vetors initialization
-  for (auto p : this->locally_active_dofs)
-    {
-      distance(p) = 1.0;
-      distance_with_ghost(p) = 1.0;
-    }
-    
-  const unsigned int n_quad_points = fe.degree + 1;
-  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-  
-  // Loop to identify intersected cells and compute the interface reconstruction
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+}
 
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+template <int dim>
+void AdvectionProblem<dim>::update_ghost_values()
+{
+  // To have the right to read a LinearAlgebra::distributed::Vector, we have to update the ghost values.
+  distance.update_ghost_values();
+  distance_with_ghost.update_ghost_values();
+  signed_distance.update_ghost_values();
+  volume_correction.update_ghost_values();
+}
 
-      cell->get_dof_indices(dof_indices);
-      
-      non_matching_fe_values.reinit(cell);
-    
-      // Surface (interface reconstruction in the intersected cell) fe values (non-empty if the cell is indeed intersected)
-      const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
-        &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
-        
-      std::vector<Point<dim>>    surface_vertices;
-      std::vector<CellData<dim-1>> surface_cells;
-              
-      marching_cube.process_cell(cell, level_set, 0.0, surface_vertices, surface_cells);
-      
-      // If the cell is intersected, reconstruct the interface in it
-      if (surface_vertices.size() != 0)
-      {
-        const unsigned int cell_index = cell->global_active_cell_index();
-        
-        interface_reconstruction_vertices[cell_index] = surface_vertices;
-        interface_reconstruction_cells[cell_index] = surface_cells;
-        
-        
-        std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-        cell->get_dof_indices(dof_indices);
-        
-        for (unsigned int i = 0; i < dofs_per_cell; ++i)
-        {
-          dofs_location_status.insert(dof_indices[i]);
-        }
-        
-        Triangulation<dim-1,dim> surface_triangulation;
-        surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
-        
+template <int dim>
+void AdvectionProblem<dim>::zero_out_ghost_values()
+{
+  // To have the right to write in a LinearAlgebra::distributed::Vector, we have to zero out the ghost values.
+  distance.zero_out_ghost_values();
+  distance_with_ghost.zero_out_ghost_values();
+  signed_distance.zero_out_ghost_values();
+  volume_correction.zero_out_ghost_values();
+}
 
-        for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
-          {
-            unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
-            std::vector<Point<dim>> surface_cell_vertices(surface_cell_n_vertices);
-            
-            for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
-            {
-              surface_cell_vertices[p] = surface_cell->vertex(p);
-            }
-            
-            intersection_point[cell_index] = surface_cell_vertices;
-          }
-      }
-    }
-  }
-  
-
-  //  Loop to compute distance for the Dofs in of the intersected cells and the first neighbor cells (cells that have a vertice shared with an intersected cell)
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      const unsigned int cell_index = cell->global_active_cell_index();
-      
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      cell->get_dof_indices(dof_indices);
-    
-      // If the cell is not stored in the intersection_point map, it means it is not intersected. So no distance computation for now.
-      if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
-      {
-        continue;
-      }
-      
-      std::vector<Point<dim>>    surface_vertices = interface_reconstruction_vertices.at(cell_index);
-      std::vector<CellData<dim-1>> surface_cells = interface_reconstruction_cells.at(cell_index);
-      
-      // Create interface recontruction triangulation
-      Triangulation<dim-1,dim> surface_triangulation;
-      surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
-      
-      // Compute minimum distance of the cell's dof to the interface reconstruction
-      for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
-        {
-          unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
-          std::vector<Point<dim>> surface_cell_vertices(surface_cell_n_vertices);
-          
-          for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
-          {
-            surface_cell_vertices[p] = surface_cell->vertex(p);
-          }
-          
-          for (unsigned int i = 0; i < dofs_per_cell; ++i)
-            {
-              dofs_in_interface_halo.insert(dof_indices[i]);
-        
-              const Point<dim> y = dof_support_points.at(dof_indices[i]);
-              double D = compute_point_2_interface_min_distance(surface_cell_vertices, y);
-              
-              distance(dof_indices[i]) = std::min(std::abs(distance(dof_indices[i])), std::abs(D));
-            }
-        }
-    }
-  }
-  
+template <int dim>
+void AdvectionProblem<dim>::exchange_distance()
+{
   // Exchange and "select" min value between the processes
   distance.compress(VectorOperation::min);
   
@@ -1423,353 +1297,145 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
     const double level_set_value = level_set(p);
     signed_distance(p) = distance(p)*sgn(level_set_value);
   }
-    
-  // Correct distance to conserve volume
-  // const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  // LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
-  // 
-  // hp::QCollection<1> q_collection;
-  // q_collection.push_back(QGauss<1>(n_quad_points));
-  // 
-  // NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
-  // // 
-  // global_volume = 0.0;
-  // // 
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  // {
-  //   if (cell->is_locally_owned())
-  //   {
-  // 
-  //     Vector<double> cell_dof_values(dofs_per_cell);
-  // 
-  //     cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-  // 
-  //     global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  // 
-  //   }
-  // }
-  // global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  // 
-  // pcout << "global_volume = " << global_volume << std::endl;
-  // 
-  // pcout << "Coucou" << std::endl;
-  // volume_correction = 0.0;
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  // {
-  //   if (cell->is_locally_owned())
-  //   {
-  //     const unsigned int cell_index = cell->global_active_cell_index();
-  // 
-  //     // The cell is not intersected, no need to correct the mass
-  //     if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
-  //     {
-  //       continue;
-  //     }
-  // 
-  //     Vector<double> cell_dof_values(dofs_per_cell);
-  //     Vector<double> cell_level_set_dof_values(dofs_per_cell);
-  // 
-  //     cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-  //     cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-  // 
-  //     double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);;  
-  // 
-  //     double cell_size;
-  //     if (dim == 2)
-  //       {
-  //         cell_size = std::sqrt(4. * cell->measure() / M_PI);
-  //       }
-  //     else if (dim == 3)
-  //       {
-  //         cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
-  //       }
-  // 
-  // 
-  //     for (unsigned int j = 0; j < dofs_per_cell; j++)
-  //     {
-  //       const double level_set_value = cell_level_set_dof_values[j];
-  //       cell_dof_values[j] *= sgn(level_set_value);
-  //     }
-  // 
-  //     double local_corr_nm1 = 0.0;
-  //     double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, local_corr_nm1, unit_box, level_set_function, quadrature_generator);
-  // 
-  //     double delta_volume_nm1 = abs(cell_volume - inside_cell_volume_nm1);
-  // 
-  //     double local_corr_n = cell_size*delta_volume_nm1/cell->measure();
-  // 
-  //     // pcout << "Bonjour, the volume error is " << delta_volume_nm1 << std::endl;
-  //     while (abs(delta_volume_nm1) > 1e-10)
-  //     {
-  // 
-  //       double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, local_corr_n, unit_box, level_set_function, quadrature_generator);
-  // 
-  //       double delta_volume_n = abs(cell_volume - inside_cell_volume_n);
-  // 
-  //       double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(local_corr_n - local_corr_nm1);
-  // 
-  //       double local_corr_np1 = local_corr_n - delta_volume_n/delta_volume_prime;
-  // 
-  //       local_corr_nm1 = local_corr_n;
-  //       local_corr_n = local_corr_np1;
-  //       inside_cell_volume_nm1 = inside_cell_volume_n;
-  //       delta_volume_nm1 = delta_volume_n;
-  // 
-  //       // pcout << "Now, the corr is "<< local_corr_np1 << " and the volume error is " << delta_volume_nm1 << std::endl;
-  // 
-  //     }
-  //     std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-  //     cell->get_dof_indices(dof_indices);
-  // 
-  //     double n_cells_per_dofs = 4.0;
-  //     if constexpr (dim == 3)
-  //     {
-  //       n_cells_per_dofs = 8.0;
-  //     }
-  //     for (unsigned int i = 0; i < dofs_per_cell; ++i)
-  //     {
-  //       volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
-  // 
-  //     }
-  // 
-  //     // pcout << "Bye" << std::endl;
-  //   }
-  // }
-  // 
-  // volume_correction.compress(VectorOperation::add);
-  // volume_correction.update_ghost_values();
-  // 
-  // // for (auto p : this->locally_active_dofs)
-  // // {
-  // //   const double level_set_value = level_set(p);
-  // // 
-  // //   distance(p) += volume_correction(p)*sgn(level_set_value);
-  // // }
-  // // 
-  // // distance.update_ghost_values();    
-  // // distance_with_ghost = distance;
-  // // distance.zero_out_ghost_values();    
-  // // 
-  // // for (auto p : this->locally_active_dofs)
-  // // {
-  // //   distance(p) = distance_with_ghost(p);
-  // // }
-  // 
-  // double corr_global_volume_nm1 = 0.0;
-  // 
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  // {
-  //   if (cell->is_locally_owned())
-  //   {
-  // 
-  //     Vector<double> cell_dof_values(dofs_per_cell);
-  //     Vector<double> cell_level_set_dof_values(dofs_per_cell);
-  //     Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
-  // 
-  // 
-  //     cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-  //     cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-  //     cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-  // 
-  // 
-  //     for (unsigned int j = 0; j < dofs_per_cell; j++)
-  //     {
-  //       const double level_set_value = cell_level_set_dof_values[j];
-  //       cell_dof_values[j] *= sgn(level_set_value);
-  //       cell_dof_values[j] += cell_volume_correction_dof_values[j];
-  //     }
-  // 
-  //     corr_global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  // 
-  //   }
-  // }
-  // corr_global_volume_nm1 = Utilities::MPI::sum(corr_global_volume_nm1, mpi_communicator);
-  // 
-  // pcout << "corr_global_volume_nm1 = " << corr_global_volume_nm1 << std::endl;
-  // 
-  // double global_delta_volume_nm1 = abs(corr_global_volume_nm1 - global_volume);
-  // double C_nm1 = 1.0;
-  // 
-  // double corr_global_volume_n = corr_global_volume_nm1;
-  // double C_n = global_delta_volume_nm1/global_volume;
-  // 
-  // double global_delta_volume_n = 0.0;
-  // while (global_delta_volume_nm1 > 1e-10)
-  // {
-  //   corr_global_volume_n = 0.0;
-  //   for (const auto &cell : dof_handler.active_cell_iterators())
-  //   {
-  //     if (cell->is_locally_owned())
-  //     {
-  // 
-  //       Vector<double> cell_dof_values(dofs_per_cell);
-  //       Vector<double> cell_level_set_dof_values(dofs_per_cell);
-  //       Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
-  // 
-  // 
-  //       cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-  //       cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
-  //       cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
-  // 
-  // 
-  //       for (unsigned int j = 0; j < dofs_per_cell; j++)
-  //       {
-  //         const double level_set_value = cell_level_set_dof_values[j];
-  //         cell_dof_values[j] *= sgn(level_set_value);
-  //         cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
-  //       }
-  // 
-  //       corr_global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  // 
-  //     }
-  //   }
-  //   corr_global_volume_n = Utilities::MPI::sum(corr_global_volume_n, mpi_communicator);
-  // 
-  //   pcout << "corr_global_volume_n = " << corr_global_volume_n << std::endl;
-  // 
-  //   global_delta_volume_n = abs(corr_global_volume_n - global_volume);
-  // 
-  //   double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1);
-  // 
-  //   double C_np1 = C_n - global_delta_volume_n/global_delta_volume_prime;
-  // 
-  //   C_nm1 = C_n;
-  //   C_n = C_np1;
-  // 
-  //   corr_global_volume_nm1 = corr_global_volume_n;
-  //   global_delta_volume_nm1 = global_delta_volume_n;
-  // 
-  // }
-  // 
-  // 
-  // for (auto p : this->locally_active_dofs)
-  // {
-  //   const double level_set_value = level_set(p);
-  //   signed_distance(p) +=  C_n*volume_correction(p);
-  //   distance(p) = abs(signed_distance(p));
-  // }
-  // 
-  // distance.update_ghost_values();    
-  // distance_with_ghost = distance;
-  // distance.zero_out_ghost_values();    
-  // 
-  // for (auto p : this->locally_active_dofs)
-  // {
-  //   distance(p) = distance_with_ghost(p);
-  // }
-  // 
-  unsigned int n_opposite_faces_per_dofs = dim;
+}
+
+template <int dim>
+void AdvectionProblem<dim>::compute_second_neighbors_distance()
+{
+  const unsigned int n_opposite_faces_per_dofs = dim;
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
   
-  // Compute the rest of the mesh
+  std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping, dof_handler);
+  
+  Point<dim-1> ref_face_center_point = Point<dim-1>();
+  ref_face_center_point(0) = 0.5;
+  if constexpr (dim == 3)
+    ref_face_center_point(1) = 0.5;
+  
+  FEPointEvaluation<1, dim> fe_point_evaluation(mapping, fe, update_values | update_gradients | update_jacobians);
+  
+  // The method is iterative, hence, we solve as long as the distance approximation changes for at least one dof. We use the flag change to track this change.
   bool change = true;
+  
+  // The count corresponds to how many times we iterate. In fact, it correspond to the number of cell layers (starting from the interface) that the approximation of the distance is known.
   int count = 0;
   while (change)
   {
-    count +=1;
-    FEPointEvaluation<1, dim> fe_point_evaluation(mapping, fe, update_values | update_gradients | update_jacobians);
-    
+    pcout << "Layer = " << count << std::endl;
     change = false;
+    
     for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
       {
-        const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+        const unsigned int cell_index = cell->global_active_cell_index();
+        
+        // If the cell is intersected, the distance is already computed.
+        if (interface_reconstruction_vertices.find(cell_index) != interface_reconstruction_vertices.end())
+        {
+          continue;
+        }
         
         std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
         
         cell->get_dof_indices(dof_indices);
         std::vector<double> cell_dof_values(dofs_per_cell);
         cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
-            
-        const unsigned int cell_id = cell->global_active_cell_index();
         
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
         {
-          if (dofs_in_interface_halo.find(dof_indices[i]) != dofs_in_interface_halo.end())
+          // If the dof belongs to an intersected cell, the distance is already computed.
+          if (intersected_dofs.find(dof_indices[i]) != intersected_dofs.end())
           {
             continue;
           }
           
           // Get opposite faces 
           std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
-          
           get_dof_opposite_faces<dim>(i, dof_opposite_faces);
           
+          // Get the real coordinates of the current dof.
           const Point<dim> x_J_real = dof_support_points.at(dof_indices[i]);
           
           // Loop on opposite faces
           for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
           {
-            // const auto opposite_face = cell->face(dof_opposite_faces[j]);
-            
-            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(Point<dim-1>(0.5,0.5),dof_opposite_faces[j]);
+            // Initialize required variables. 
+            Point<dim> x_n_ref= transform_ref_face_point_to_ref_cell<dim>(ref_face_center_point,dof_opposite_faces[j]);
             Point<dim> x_n_real;
             
             double correction_norm = 1.0;
             int outside_check = 0;
             int newton_it = 0;
             
-            while (correction_norm > 1e-10 && outside_check<3)
+            // Solve the minimization problem with Newton method. Here, we resolve the problem in the reference space.
+            while (correction_norm > 1e-10 && outside_check<3 && newton_it < 100)
             {
-              newton_it += 1;
-
+              // Set stencil for numerical jacobian computation.
               const double perturbation = 0.01;
-                      
               std::vector<Point<dim>> stencil_ref = compute_numerical_jacobian_stencil<dim>(x_n_ref, dof_opposite_faces[j], perturbation);
-              
-              
-              fe_point_evaluation.reinit(cell, stencil_ref);
-              
-              fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::gradients);
               
               std::vector<Point<dim>> stencil_real(2*dim - 1);
               std::vector<Tensor<1, dim>> distance_gradients(2*dim - 1);
               std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians(2*dim - 1);
               std::vector<DerivativeForm<1, dim-1, dim>> face_transformation_jacobians(2*dim-1);
               
+              
+              // Prepare FEPointEvaluation to compute value and gradient at the stencil points
+              fe_point_evaluation.reinit(cell, stencil_ref);
+              fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::gradients);
+              
+              // Get the required values at each stencil point
               for (unsigned int k = 0; k < 2*dim - 1; k++)
               {
-                
                 stencil_real[k] = fe_point_evaluation.quadrature_point(k);
                 distance_gradients[k] = fe_point_evaluation.get_gradient(k);
                 cell_transformation_jacobians[k] = fe_point_evaluation.jacobian(k);
                 get_face_transformation_jacobians(cell_transformation_jacobians[k], dof_opposite_faces[j], face_transformation_jacobians[k]);
               }
               
+              // Compute the jacobian matrix. The Ax=b system is formulated as the dim-1 system. We solve for the correction in the reference face.
               LAPACKFullMatrix<double> jacobian_matrix(dim-1,dim-1);
-              compute_numerical_jacobians(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
+              compute_numerical_jacobian(stencil_real, x_J_real, distance_gradients, face_transformation_jacobians, perturbation, jacobian_matrix);
               
               const Tensor<1,dim> x_n_to_x_J_real = x_J_real - stencil_real[0];
               
+              // Compute the right hand side.
               Tensor<1, dim-1> residual_n;
-              
               compute_residual(x_n_to_x_J_real, distance_gradients[0], face_transformation_jacobians[0], residual_n);
               
+              // Convert the right hand side to the right format.
               Vector<double> residual_n_vec(dim-1);
-              
               residual_n.unroll(residual_n_vec);
+              residual_n_vec *= -1.0;
               
               jacobian_matrix.set_property(LAPACKSupport::general);
               
+              // Factorize and solve the matrix. The correction is put back in residual_n_vec.
               jacobian_matrix.compute_lu_factorization();
-              
-              residual_n_vec *= -1.0;
               jacobian_matrix.solve(residual_n_vec);
               
+              // Compute the norm of the correction.
               correction_norm = residual_n_vec.l2_norm();
               
-              Tensor<1,dim> correction = transform_ref_face_correction_to_ref_cell<dim, Vector<double>>(residual_n_vec,dof_opposite_faces[j]);
+              // Transform the dim-1 correction (in the reference face) to dim (in the reference cell).
+              Tensor<1,dim> correction =  transform_ref_face_correction_to_ref_cell<dim, Vector<double>>(residual_n_vec,dof_opposite_faces[j]);
               
+              // Compute the solution (the point x_n_ref on the face minimizing the distance).
               Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
               
+              // Relaxe the correction if it brings us outside of the cell.
               double relaxation = 1.0;
               
+              // Flag indicating if the correction brings us outside of the cell.
               bool check = false;
               for (unsigned int k = 0; k < dim; ++k)
               {
                 if (x_n_p1_ref[k] > 1.0 + 1e-12|| x_n_p1_ref[k] < 0.0 - 1e-12)
                 {
                   check = true;
+                  
+                  // Set the correction to put the solution on the face boundary. Select the minimum relaxation of the all direction to ensure the solution stays inside the cell. 
                   if (correction[k] > 1e-12)
                   {
                     relaxation = std::min((1.0 - x_n_ref[k])/(correction[k]+1e-12), relaxation);
@@ -1778,81 +1444,467 @@ AdvectionProblem<dim>::compute_sign_distance(unsigned int time_iteration, double
                   {
                     relaxation = std::min((0.0 - x_n_ref[k])/(correction[k]+1e-12), relaxation);
                   }
-              
                 }
               }
               
+              // Increment the outside_check if the correction brought us outside.
               if (check)
                 outside_check +=1;
               
+              // Re-compute the solution with the relaxation.
               x_n_p1_ref = stencil_ref[0] + relaxation*correction;
               
+              // Transform the solution from reference to the real cell. This could be improved to not call fe_point_evaluation.
               std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_p1_ref}; 
-              
               fe_point_evaluation.reinit(cell, x_n_p1_ref_vec);
-              
               Point<dim> x_n_p1_real = fe_point_evaluation.quadrature_point(0);
               
+              // Update the solution.
               x_n_ref = x_n_p1_ref;
               x_n_real = x_n_p1_real;
-          }
-          
-          const Tensor<1,dim> x_n_to_x_J_real = x_J_real - x_n_real;
-          
-          fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::values);
-          
-          double distance_value_at_x_n = fe_point_evaluation.get_value(0);
+              
+              newton_it += 1;
+            } // End of the Newton solver.
+            
+            // Compute the distance approximation: distance(x_J) = distance(x_n) + |x_n - x_J|.
+            const Tensor<1,dim> x_n_to_x_J_real = x_J_real - x_n_real;
+            fe_point_evaluation.evaluate(cell_dof_values, EvaluationFlags::values);
+            
+            double distance_value_at_x_n = fe_point_evaluation.get_value(0);
 
-          double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n);
-          
-          if (distance(dof_indices[i])> (approx_distance + 1e-8))
-          {    
-            change = true;
-            distance(dof_indices[i]) = approx_distance;
-          }
-        }
-        }
+            double approx_distance = compute_distance(x_n_to_x_J_real, distance_value_at_x_n);
+            
+            // If the new distance is smaller than the previous, update the value and flag the change.
+            if (distance(dof_indices[i])> (approx_distance + 1e-8))
+            {    
+              change = true;
+              distance(dof_indices[i]) = approx_distance;
+            }
+          } // End of the loop on the opposite faces.
+        } // End of the loop on the dofs.
       }
-    }
+    } // End of the loop on the cells.
     
-    // Exchange and "select" min value between the processes
-    distance.compress(VectorOperation::min);
-
-    // Update local ghost (distance becomes read only)
-    distance.update_ghost_values();
-
-    // Copy distance to distance_with_ghost
-    distance_with_ghost = distance;
-
-    // Zero out ghost DOFs to regain write functionalities in distance (it becomes write only, that is why we need distance_with_ghost - to read the values in it.)
-    distance.zero_out_ghost_values();  
+    exchange_distance();
     
-    // Copy the ghost values back in distance (zero_out_ghost_values() puts zeros in ghost DOFs)
-    // distance = distance_with_ghost;
-    for (auto p : this->locally_active_dofs)
-    {
-      distance(p) = distance_with_ghost(p);
-    }
-    
+    // Track the change flag accross the processes.
     change = Utilities::MPI::logical_or(change, mpi_communicator);
     
-    pcout << "count = "<< count << std::endl;
-    
-  }
+    count +=1;
+  } // End of the iterative while loop.
   
+  // Update the hagging node values.
   constraints.distribute(distance);
   
-  for (auto p : this->locally_active_dofs)
-  {
-    const double level_set_value = level_set(p);
-    signed_distance(p) = distance(p)*sgn(signed_distance(p));
-  }
-  signed_distance.update_ghost_values();
+  // Compute signed distance.
+  compute_signed_distance_from_distance();
   
 }
 
 template <int dim>
-void AdvectionProblem<dim>::compute_volume()
+void AdvectionProblem<dim>::compute_first_neighbors_distance()
+{
+  // dof coordinates
+  std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping,
+                                       dof_handler);
+  for (auto &intersected_cell : interface_reconstruction_cells)
+  {
+    const unsigned int cell_index = intersected_cell.first;
+    
+    std::vector<Point<dim>>    surface_vertices = interface_reconstruction_vertices.at(cell_index);
+    std::vector<CellData<dim-1>> surface_cells = intersected_cell.second;
+    
+    // Create interface recontruction triangulation
+    Triangulation<dim-1,dim> surface_triangulation;
+    surface_triangulation.create_triangulation(surface_vertices, surface_cells, {});
+      
+    for (const unsigned int &intersected_dof : intersected_dofs)
+    {
+      const Point<dim> y = dof_support_points.at(intersected_dof);
+
+      for (const auto &surface_cell : surface_triangulation.active_cell_iterators())
+      {
+        unsigned int surface_cell_n_vertices = surface_cell->n_vertices();
+        std::vector<Point<dim>> surface_cell_vertices(surface_cell_n_vertices);
+        
+        for (unsigned int p = 0; p < surface_cell_n_vertices; p++)
+        {
+          surface_cell_vertices[p] = surface_cell->vertex(p);
+        }
+        double D = compute_point_2_interface_min_distance(surface_cell_vertices, y);
+        
+        distance(intersected_dof) = std::min(std::abs(distance(intersected_dof)), std::abs(D));
+      }
+    }
+  }
+  exchange_distance();
+}
+
+template <int dim>
+void AdvectionProblem<dim>::conserve_global_volume(const double global_volume)
+{
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  
+  const unsigned int n_quad_points = fe.degree + 1;
+  hp::QCollection<1> q_collection;
+  q_collection.push_back(QGauss<1>(n_quad_points));
+  
+  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
+  double corr_global_volume_nm1 = 0.0; 
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+  
+      Vector<double> cell_dof_values(dofs_per_cell);
+      Vector<double> cell_level_set_dof_values(dofs_per_cell);
+      Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
+  
+  
+      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+      cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
+  
+  
+      for (unsigned int j = 0; j < dofs_per_cell; j++)
+      {
+        const double level_set_value = cell_level_set_dof_values[j];
+        cell_dof_values[j] *= sgn(level_set_value);
+        cell_dof_values[j] += cell_volume_correction_dof_values[j];
+      }
+  
+      corr_global_volume_nm1 += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  
+    }
+  }
+  corr_global_volume_nm1 = Utilities::MPI::sum(corr_global_volume_nm1, mpi_communicator);
+  
+  pcout << "corr_global_volume_nm1 = " << corr_global_volume_nm1 << std::endl;
+  
+  double global_delta_volume_nm1 = abs(corr_global_volume_nm1 - global_volume);
+  double C_nm1 = 1.0;
+  
+  double corr_global_volume_n = corr_global_volume_nm1;
+  double C_n = global_delta_volume_nm1/global_volume;
+  
+  double global_delta_volume_n = 0.0;
+  while (global_delta_volume_nm1 > 1e-10)
+  {
+    corr_global_volume_n = 0.0;
+    for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+      {
+  
+        Vector<double> cell_dof_values(dofs_per_cell);
+        Vector<double> cell_level_set_dof_values(dofs_per_cell);
+        Vector<double> cell_volume_correction_dof_values(dofs_per_cell);
+  
+  
+        cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+        cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+        cell->get_dof_values(volume_correction, cell_volume_correction_dof_values.begin(), cell_volume_correction_dof_values.end());
+  
+  
+        for (unsigned int j = 0; j < dofs_per_cell; j++)
+        {
+          const double level_set_value = cell_level_set_dof_values[j];
+          cell_dof_values[j] *= sgn(level_set_value);
+          cell_dof_values[j] += C_n*cell_volume_correction_dof_values[j];
+        }
+  
+        corr_global_volume_n += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+  
+      }
+    }
+    corr_global_volume_n = Utilities::MPI::sum(corr_global_volume_n, mpi_communicator);
+  
+    pcout << "corr_global_volume_n = " << corr_global_volume_n << std::endl;
+  
+    global_delta_volume_n = abs(corr_global_volume_n - global_volume);
+  
+    double global_delta_volume_prime = (global_delta_volume_n - global_delta_volume_nm1)/(C_n - C_nm1);
+  
+    double C_np1 = C_n - global_delta_volume_n/global_delta_volume_prime;
+  
+    C_nm1 = C_n;
+    C_n = C_np1;
+  
+    corr_global_volume_nm1 = corr_global_volume_n;
+    global_delta_volume_nm1 = global_delta_volume_n;
+  
+  }
+  
+  
+  for (auto p : this->locally_active_dofs)
+  {
+    const double level_set_value = level_set(p);
+    signed_distance(p) +=  C_n*volume_correction(p);
+    distance(p) = abs(signed_distance(p));
+  }
+  
+  exchange_distance();
+}
+
+template <int dim>
+void AdvectionProblem<dim>::conserve_local_volume()
+{
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
+  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
+  
+  const unsigned int n_quad_points = fe.degree + 1;
+  hp::QCollection<1> q_collection;
+  q_collection.push_back(QGauss<1>(n_quad_points));
+  
+  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
+  
+  // Re-initialize volume_correction vector.
+  volume_correction = 0.0;
+  
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+  
+      // The cell is not intersected, no need to correct the volume
+      if (interface_reconstruction_vertices.find(cell_index) == interface_reconstruction_vertices.end())
+      {
+        continue;
+      }
+      
+      // Get the signed distance values (could be improved)
+      Vector<double> cell_dof_values(dofs_per_cell);
+      Vector<double> cell_level_set_dof_values(dofs_per_cell);
+  
+      cell->get_dof_values(distance_with_ghost, cell_dof_values.begin(), cell_dof_values.end());
+      cell->get_dof_values(level_set, cell_level_set_dof_values.begin(), cell_level_set_dof_values.end());
+  
+      double cell_volume = compute_cell_wise_volume(cell, cell_level_set_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
+      
+      for (unsigned int j = 0; j < dofs_per_cell; j++)
+      {
+        const double level_set_value = cell_level_set_dof_values[j];
+        cell_dof_values[j] *= sgn(level_set_value);
+      }
+      
+      // Get cell size to initialize secante method.
+      double cell_size;
+      if (dim == 2)
+      {
+        cell_size = std::sqrt(4. * cell->measure() / M_PI);
+      }
+      else if (dim == 3)
+      {
+        cell_size = std::pow(6 * cell->measure() / M_PI, 1. / 3.);
+      }
+      
+      // Initialize secante method.
+      double local_corr_nm1 = 0.0;
+      double inside_cell_volume_nm1 = compute_cell_wise_volume(cell, cell_dof_values, local_corr_nm1, unit_box, level_set_function, quadrature_generator);
+      double delta_volume_nm1 = abs(cell_volume - inside_cell_volume_nm1);
+  
+      double local_corr_n = cell_size*delta_volume_nm1/cell->measure();
+      
+      unsigned int secante_it = 0;
+      
+      if (inside_cell_volume_nm1 < 1e-8 || inside_cell_volume_nm1 > (cell_size - 1e-8))
+      {
+        continue;
+      }
+        
+      while (abs(delta_volume_nm1) > 1e-10 && secante_it < 10)
+      {
+        // If the cell is almost full or empty, we stop correcting the volume.
+        if (inside_cell_volume_nm1 < 1e-8 || inside_cell_volume_nm1 > (cell_size - 1e-8))
+        {
+          local_corr_n = 0.0;
+          break;
+        }
+        secante_it += 1;
+        
+        double inside_cell_volume_n = compute_cell_wise_volume(cell, cell_dof_values, local_corr_n, unit_box, level_set_function, quadrature_generator);
+        
+        double delta_volume_n = abs(cell_volume - inside_cell_volume_n);
+  
+        double delta_volume_prime = (delta_volume_n - delta_volume_nm1)/(local_corr_n - local_corr_nm1 + 1e-12);
+  
+        double local_corr_np1 = local_corr_n - delta_volume_n/(delta_volume_prime + 1e-12);
+  
+        local_corr_nm1 = local_corr_n;
+        local_corr_n = local_corr_np1;
+        inside_cell_volume_nm1 = inside_cell_volume_n;
+        delta_volume_nm1 = delta_volume_n;
+      } // End secante method loop.
+      
+      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+      cell->get_dof_indices(dof_indices);
+  
+      double n_cells_per_dofs = 4.0;
+      if constexpr (dim == 3)
+      {
+        n_cells_per_dofs = 8.0;
+      }
+      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      {
+        volume_correction(dof_indices[i]) += local_corr_n/n_cells_per_dofs;
+      }
+    }
+  } // End loop on cells.
+  
+  volume_correction.compress(VectorOperation::add);
+  volume_correction.update_ghost_values();
+  
+  for (auto p : this->locally_active_dofs)
+  {
+    const double level_set_value = level_set(p);
+  
+    distance(p) += volume_correction(p)*sgn(level_set_value);
+  }
+  
+  exchange_distance();
+}
+
+template <int dim>
+void AdvectionProblem<dim>::reconstruct_interface()
+{
+  GridTools::MarchingCubeAlgorithm<dim, VectorType> marching_cube(mapping,
+                                                         fe,
+                                                         1,
+                                                         1e-10);
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+                                                         
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      std::vector<Point<dim>>    surface_vertices;
+      std::vector<CellData<dim-1>> surface_cells;
+                
+      marching_cube.process_cell(cell, level_set, 0.0, surface_vertices, surface_cells);
+      
+      // If the cell is intersected, reconstruct the interface in it
+      if (surface_vertices.size() != 0)
+      {
+        const unsigned int cell_index = cell->global_active_cell_index();
+        
+        // Store the interface reconstruction vertices and cells
+        interface_reconstruction_vertices[cell_index] = surface_vertices;
+        interface_reconstruction_cells[cell_index] = surface_cells;
+        
+        // Store the dofs of the intersected volume cell
+        std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+        cell->get_dof_indices(dof_indices);
+        
+        for (unsigned int i = 0; i < dofs_per_cell; ++i)
+        {
+          intersected_dofs.insert(dof_indices[i]);
+        }
+      }
+    }
+  }
+}
+
+template <int dim>
+void AdvectionProblem<dim>::output_interface_recontruction(const unsigned int time_iteration)
+{
+  Visualization<dim> intersection_data_out;  
+  
+  intersection_data_out.build_patches(interface_reconstruction_vertices);
+  
+  intersection_data_out.write_vtu_with_pvtu_record("output/",
+                                      "interface",
+                                      time_iteration,
+                                      MPI_COMM_WORLD,
+                                      3);
+}
+
+template <int dim>
+void AdvectionProblem<dim>::initialize_local_distance()
+{
+  // Initialization of the active dofs to the max distance we want to redistanciate. It requires a loop on the active dofs to initialize also the distance value of the ghost dofs. Otherwise, they are set to 0.0 by default.
+  for (auto p : this->locally_active_dofs)
+    {
+      distance(p) = 0.2;
+      distance_with_ghost(p) = 0.2;
+    }
+}
+
+template <int dim>
+void AdvectionProblem<dim>::compute_signed_distance_from_distance()
+{
+  for (auto p : this->locally_active_dofs)
+  {
+    signed_distance(p) = distance(p)*sgn(signed_distance(p));
+  }
+}
+
+template <int dim>
+void AdvectionProblem<dim>::compute_static_sphere_error(unsigned int time_iteration)
+{
+  // DoF coordinates
+  std::map< types::global_dof_index, Point<dim >> dof_support_points = DoFTools::map_dofs_to_support_points(mapping,
+                                       dof_handler);
+  AnalyticSolution<dim> analytical_solution = AnalyticSolution<dim>();
+  
+  FEValues<dim> fe_values(fe,
+                      QGauss<dim>(fe.degree + 5),
+                      update_values | update_quadrature_points | update_JxW_values);
+
+  const unsigned int n_q_points    = fe_values.n_quadrature_points;
+  
+  double error_global = 0.0;
+  unsigned int count = 0;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned())
+    {
+      const unsigned int cell_index = cell->global_active_cell_index();
+      
+      count += 1;
+      std::vector<double> signed_distance_values(n_q_points);
+      fe_values.reinit(cell);
+      fe_values.get_function_values(signed_distance, signed_distance_values);
+
+      for (unsigned int q = 0; q < n_q_points; ++q)
+        {
+          const Point<dim> quadrature_point = fe_values.quadrature_point(q);
+          const double cell_analytical_solution = analytical_solution.value(quadrature_point);
+          
+          if (cell_analytical_solution > 0.2)
+            continue;
+          const double cell_error = abs(signed_distance_values[q] - cell_analytical_solution);
+          error_global += fe_values.JxW(q) * cell_error*cell_error;
+        }
+    }
+  }
+  
+  error_global = Utilities::MPI::sum(error_global, mpi_communicator);
+  error_global = sqrt(error_global);
+  
+  count = Utilities::MPI::sum(count, mpi_communicator);
+  
+  table_error_monitoring.add_value("time_iteration", time_iteration);
+  
+  table_error_monitoring.add_value("time", time);
+  table_error_monitoring.set_scientific("time", true);
+  
+  table_error_monitoring.add_value("n_intersected_cells", count);
+  
+  table_error_monitoring.add_value("error_global", error_global);
+  table_error_monitoring.set_scientific("error_global", true);
+  
+  
+  std::ofstream output("output/error.dat");
+  table_error_monitoring.write_text(output);
+}
+template <int dim>
+double AdvectionProblem<dim>::compute_volume(unsigned int time_iteration)
 {
   
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
@@ -1899,48 +1951,21 @@ void AdvectionProblem<dim>::compute_volume()
   volume_sharp = Utilities::MPI::sum(volume_sharp, mpi_communicator);
   volume_phase = Utilities::MPI::sum(volume_phase, mpi_communicator);
   
-  pcout << "volume_sharp = " << volume_sharp << std::endl;
-  pcout << "volume_phase = " << volume_phase << std::endl;
+  table_volume_monitoring.add_value("time_iteration", time_iteration);
   
-  // 
-  // double volume = 0.0;
-  // FEValues<dim> fe_values(fe,
-  //                         QGauss<dim>(fe.degree + 1),
-  //                         update_values | update_JxW_values);
-  // 
-  // const unsigned int n_q_points    = fe_values.n_quadrature_points;
-  // std::vector<double> phase_values(n_q_points);
-  // 
-  // for (const auto &cell : dof_handler.active_cell_iterators())
-  //   {
-  //     if (cell->is_locally_owned())
-  //       {
-  //         fe_values.reinit(cell);
-  //         fe_values.get_function_values(locally_relevant_solution, phase_values);
-  // 
-  //         for (unsigned int q = 0; q < n_q_points; ++q)
-  //           {
-  //             volume += fe_values.JxW(q) * phase_values[q];
-  //           }
-  //       }
-  //     }
-  // 
-  //     volume = Utilities::MPI::sum(volume, mpi_communicator);
-      
-      table_volume_monitoring.add_value("time", time);
-      table_volume_monitoring.set_scientific("time", true);
-      
-      table_volume_monitoring.add_value("volume_sharp", volume_sharp);
-      table_volume_monitoring.set_scientific("volume_sharp", true);
-      
-      table_volume_monitoring.add_value("volume_phase", volume_phase);
-      table_volume_monitoring.set_scientific("volume_phase", true);
-      // pcout << "Volume conservation" << std::endl;
-      // table_volume_monitoring.write_text(std::cout);
-              
-      std::ofstream output("output/volume.dat");
-      table_volume_monitoring.write_text(output);
-      
+  table_volume_monitoring.add_value("time", time);
+  table_volume_monitoring.set_scientific("time", true);
+  
+  table_volume_monitoring.add_value("volume_sharp", volume_sharp);
+  table_volume_monitoring.set_scientific("volume_sharp", true);
+  
+  table_volume_monitoring.add_value("volume_phase", volume_phase);
+  table_volume_monitoring.set_scientific("volume_phase", true);
+  
+  std::ofstream output("output/volume.dat");
+  table_volume_monitoring.write_text(output);
+  
+  return volume_sharp;    
 }
 
 template <int dim>
@@ -1954,20 +1979,17 @@ void AdvectionProblem<dim>::output_results(const int time_iteration) const
   
   
   data_out.add_data_vector(level_set, "level_set");
+  data_out.add_data_vector(error, "error");
   
-  signed_distance.update_ghost_values();
+  
   data_out.add_data_vector(signed_distance, "signed_distance");
-  signed_distance.zero_out_ghost_values();  
   
-  distance.update_ghost_values();
   data_out.add_data_vector(distance, "distance");
-  distance.zero_out_ghost_values();  
   
   data_out.add_data_vector(distance_with_ghost, "distance_with_ghost");
 
-  volume_correction.update_ghost_values();
   data_out.add_data_vector(volume_correction, "volume_correction");
-  volume_correction.zero_out_ghost_values();  
+  volume_correction.zero_out_ghost_values(); 
   
   data_out.build_patches();
 
@@ -1983,13 +2005,11 @@ void AdvectionProblem<dim>::output_results(const int time_iteration) const
                                       MPI_COMM_WORLD,
                                       3);
                                       
-                                        
 }
 
 template <int dim>
 void AdvectionProblem<dim>::run()
 {
-  pcout << "Bonjour from run" << std::endl;
   
   Point<dim> p_0 = Point<dim>();
   p_0[0] = 0;
@@ -2019,53 +2039,14 @@ void AdvectionProblem<dim>::run()
   refine_grid(6,4);
   refine_grid(6,4);
   
-  compute_level_set_from_phase_fraction();
-
-  
-  
   previous_solution = locally_relevant_solution;
   
-  const unsigned int n_quad_points = fe.degree + 1;
-  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-  
-  const BoundingBox<dim> unit_box = create_unit_bounding_box<dim>();
-  LocalCellWiseFunction<dim> level_set_function = LocalCellWiseFunction<dim>();
-  
-  hp::QCollection<1> q_collection;
-  q_collection.push_back(QGauss<1>(n_quad_points));
-
-  NonMatching::QuadratureGenerator<dim> quadrature_generator = NonMatching::QuadratureGenerator<dim>(q_collection);
-  
-  double global_volume = 0.0;
-  
-  for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned())
-    {
-      
-      Vector<double> cell_dof_values(dofs_per_cell);
-      
-      cell->get_dof_values(level_set, cell_dof_values.begin(), cell_dof_values.end());
-      
-      global_volume += compute_cell_wise_volume(cell, cell_dof_values, 0.0, unit_box, level_set_function, quadrature_generator);
-  
-    }
-  }
-  global_volume = Utilities::MPI::sum(global_volume, mpi_communicator);
-  
-  pcout << "global_volume = " << global_volume << std::endl;
-  
-  mesh_classifier.reclassify();
-  compute_sign_distance(it, global_volume);
-  
-  compute_phase_fraction_from_level_set();
+  perform_geometric_redistanciation(it);
   
   output_results(it);
-  // compute_volume();
-  
   
   pcout << "Solve system" << std::endl;
-  while (time < final_time) 
+  while (time + dt < final_time) 
   {
     it += 1;
     time += this->dt;
@@ -2075,26 +2056,35 @@ void AdvectionProblem<dim>::run()
     pcout << "it = " << it << " time = " << time << std::endl;
   
     solve();
-  
-    compute_level_set_from_phase_fraction();
-  
-    if (it%1 == 0)
-    {
-      mesh_classifier.reclassify();
-      compute_sign_distance(it, global_volume);
-  
-      compute_phase_fraction_from_level_set();
-  
-      compute_level_set_from_phase_fraction();
-    }
-  
-    compute_volume();
-  
+    
+    perform_geometric_redistanciation(it);
+    
     output_results(it);
   
     refine_grid(6,4);
   
-    previous_solution = locally_relevant_solution;
+    previous_solution = locally_relevant_solution;  
+    
+  // 
+  //   compute_level_set_from_phase_fraction();
+  // 
+  //   if (it%1 == 0)
+  //   {
+  //     mesh_classifier.reclassify();
+  //     compute_sign_distance(it, global_volume);
+  // 
+  //     compute_phase_fraction_from_level_set();
+  // 
+  //     compute_level_set_from_phase_fraction();
+  //   }
+  // 
+  //   compute_volume(it);
+  // 
+  //   output_results(it);
+  // 
+  //   refine_grid(6,4);
+  // 
+  //   previous_solution = locally_relevant_solution;
   } 
 }
 
