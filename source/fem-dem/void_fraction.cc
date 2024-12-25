@@ -249,14 +249,14 @@ VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
                   solid_volume_in_cell +=
                     M_PI * 0.25 *
                     Utilities::fixed_power<2>(
-                      particle_properties[DEM::PropertiesIndex::dp]);
+                      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]);
                 }
               if constexpr (dim == 3)
                 {
                   solid_volume_in_cell +=
                     M_PI * 1. / 6. *
                     Utilities::fixed_power<3>(
-                      particle_properties[DEM::PropertiesIndex::dp]);
+                      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]);
                 }
             }
           double cell_volume = cell->measure();
@@ -415,7 +415,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                   // makes our method valid for different particle
                   // distribution.
                   double translational_factor =
-                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5;
 
                   // Resize and translate the reference sphere
                   // to the particle size and position according the volume
@@ -476,7 +476,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
                       particle.get_location() + periodic_offset;
 
                   double translational_factor =
-                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5;
 
                   for (unsigned int l = 0;
                        l < reference_quadrature_location.size();
@@ -606,7 +606,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
               auto particle_properties = particle.get_properties();
 
               particle_properties
-                [DEM::PropertiesIndex::volumetric_contribution] = 0;
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] = 0;
             }
         }
     }
@@ -661,7 +661,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
             {
               auto         particle_properties = particle.get_properties();
               const double r_particle =
-                0.5 * particle_properties[DEM::PropertiesIndex::dp];
+                0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
               // Loop over neighboring cells to determine if a given
               // neighboring particle contributes to the solid volume of the
@@ -705,10 +705,10 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       if (neighbor_distance <= (r_sphere - r_particle))
                         {
                           particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution] +=
+                            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                             M_PI *
                             Utilities::fixed_power<dim>(
-                              particle_properties[DEM::PropertiesIndex::dp]) /
+                              particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) /
                             (2.0 * dim);
                         }
 
@@ -718,13 +718,13 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         {
                           if constexpr (dim == 2)
                             particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
+                              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                               particle_circle_intersection_2d(
                                 r_particle, r_sphere, neighbor_distance);
 
                           else if constexpr (dim == 3)
                             particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
+                              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                               particle_sphere_intersection_3d(
                                 r_particle, r_sphere, neighbor_distance);
                         }
@@ -784,10 +784,10 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       if (periodic_neighbor_distance <= (r_sphere - r_particle))
                         {
                           particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution] +=
+                            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                             M_PI *
                             Utilities::fixed_power<dim>(
-                              particle_properties[DEM::PropertiesIndex::dp]) /
+                              particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) /
                             (2.0 * dim);
                         }
 
@@ -799,7 +799,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         {
                           if constexpr (dim == 2)
                             particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
+                              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                               particle_circle_intersection_2d(
                                 r_particle,
                                 r_sphere,
@@ -807,7 +807,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
                           else if constexpr (dim == 3)
                             particle_properties
-                              [DEM::PropertiesIndex::volumetric_contribution] +=
+                              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution] +=
                               particle_sphere_intersection_3d(
                                 r_particle,
                                 r_sphere,
@@ -902,7 +902,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       double distance            = 0;
                       auto   particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5;
                       double single_particle_volume =
                         M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                         (2 * dim);
@@ -917,11 +917,11 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particles_volume_in_sphere +=
                           (M_PI *
                            Utilities::fixed_power<dim>(
-                             particle_properties[DEM::PropertiesIndex::dp]) /
+                             particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) /
                            (2.0 * dim)) *
                           single_particle_volume /
                           particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution];
+                            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
 
                       // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
@@ -934,7 +934,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                                                               distance) *
                               single_particle_volume /
                               particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
+                                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
                           else if (dim == 3)
                             particles_volume_in_sphere +=
                               particle_sphere_intersection_3d(r_particle,
@@ -942,7 +942,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                                                               distance) *
                               single_particle_volume /
                               particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
+                                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
                         }
 
                       // Particle completely outside the reference sphere. Do
@@ -967,7 +967,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                       double distance            = 0;
                       auto   particle_properties = particle.get_properties();
                       const double r_particle =
-                        particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5;
                       double single_particle_volume =
                         M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
                         (2 * dim);
@@ -996,11 +996,11 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                         particles_volume_in_sphere +=
                           (M_PI *
                            Utilities::fixed_power<dim>(
-                             particle_properties[DEM::PropertiesIndex::dp]) /
+                             particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) /
                            (2.0 * dim)) *
                           single_particle_volume /
                           particle_properties
-                            [DEM::PropertiesIndex::volumetric_contribution];
+                            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
 
                       // Particle partially in the reference sphere
                       else if ((distance > (r_sphere - r_particle)) &&
@@ -1013,7 +1013,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                                                               distance) *
                               single_particle_volume /
                               particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
+                                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
                           else if (dim == 3)
                             particles_volume_in_sphere +=
                               particle_sphere_intersection_3d(r_particle,
@@ -1021,7 +1021,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
                                                               distance) *
                               single_particle_volume /
                               particle_properties
-                                [DEM::PropertiesIndex::volumetric_contribution];
+                                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::volumetric_contribution];
                         }
 
                       // Particle completely outside the reference sphere. Do

@@ -42,7 +42,7 @@ ExplicitEulerIntegrator<dim>::integrate(
       Tensor<1, 3> &particle_torque     = torque[particle_id];
       Tensor<1, 3> &particle_force      = force[particle_id];
       Point<3>      particle_position;
-      double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
+      double mass_inverse = 1 / particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 
 
@@ -58,13 +58,13 @@ ExplicitEulerIntegrator<dim>::integrate(
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Velocity integration:
-          particle_properties[PropertiesIndex::v_x + d] += dt * acceleration[d];
+          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d] += dt * acceleration[d];
 
           // Position integration
           particle_position[d] +=
-            dt * particle_properties[PropertiesIndex::v_x + d];
+            dt * particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
 
-          particle_properties[PropertiesIndex::omega_x + d] +=
+          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d] +=
             dt * (particle_torque[d] * MOI_inverse);
         }
 

@@ -1255,7 +1255,7 @@ LetheGridTools::find_particle_triangle_projection(
   for (auto &part : particles)
     {
       const double radius =
-        part->get_properties()[DEM::PropertiesIndex::dp] * 0.5;
+        part->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5;
       Point<dim> particle_position = part->get_location();
       vector_to_plane              = p_0 - particle_position;
 

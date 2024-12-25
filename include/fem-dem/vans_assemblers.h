@@ -178,7 +178,7 @@ public:
                 -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)))
  *  and the momentum exchange coefficient
  *  beta =(0.5 * c_d * M_PI *
-         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+         pow(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp], 2) / 4) *
         relative_velocity.norm()
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -215,7 +215,7 @@ public:
                 exp(-pow(1.5 - log10(re), 2) / 2)))
  * and the momentum exchange coefficient
  *  beta =(0.5 * c_d * M_PI *
-         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+         pow(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp], 2) / 4) *
         relative_velocity.norm()
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -248,7 +248,7 @@ public:
         pow((0.63 + 4.8 / sqrt(re)), 2)
  * and the momentum exchange coefficient
  *  beta =(0.5 * c_d * M_PI *
-         pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+         pow(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp], 2) / 4) *
         relative_velocity.norm()
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -374,8 +374,8 @@ public:
           momentum_transfer_coefficient =
             (18 * pow(cell_void_fraction, -3.65) *
              (1 + 0.15 * pow(Re_p[particle_number], 0.687))) *
-            (particle_properties[DEM::PropertiesIndex::mass] * viscosity /
-             (pow(particle_properties[DEM::PropertiesIndex::dp], 2) *
+            (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] * viscosity /
+             (pow(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp], 2) *
               particle_density));
         }
       else
@@ -384,8 +384,8 @@ public:
           momentum_transfer_coefficient =
             (150 * (1 - cell_void_fraction) / pow(cell_void_fraction, 2) +
              1.75 * Re_p[particle_number] / pow(cell_void_fraction, 2)) *
-            (particle_properties[DEM::PropertiesIndex::mass] * viscosity /
-             (pow(particle_properties[DEM::PropertiesIndex::dp], 2) *
+            (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] * viscosity /
+             (pow(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp], 2) *
               particle_density));
         }
 

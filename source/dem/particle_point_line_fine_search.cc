@@ -41,7 +41,7 @@ particle_point_fine_search(
       // Get the particle, particle diameter and boundary vertex location once
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
       double                           particle_diameter =
-        particle->get_properties()[DEM::PropertiesIndex::dp];
+        particle->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
       Point<3> vertex_location   = pair_candidates.point;
       Point<3> particle_location = [&] {
@@ -100,7 +100,7 @@ particle_line_fine_search(
       // and ending vertices of the boundary line
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
       double                           particle_diameter =
-        particle->get_properties()[DEM::PropertiesIndex::dp];
+        particle->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
       Point<3> vertex_one_location = pair_candidates.point_one;
       Point<3> vertex_two_location = pair_candidates.point_two;

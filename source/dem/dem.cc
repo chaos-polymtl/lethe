@@ -40,7 +40,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , checkpoint_controller(parameters.restart)
   , triangulation(this->mpi_communicator)
   , mapping(1)
-  , particle_handler(triangulation, mapping, DEM::get_number_properties())
+  , particle_handler(triangulation, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>())
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
@@ -820,9 +820,9 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
         {
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
-            0.1 * particle_properties[DEM::PropertiesIndex::mass] *
-            particle_properties[DEM::PropertiesIndex::dp] *
-            particle_properties[DEM::PropertiesIndex::dp];
+            0.1 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+            particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+            particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
         }
     }
 

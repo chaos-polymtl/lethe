@@ -85,7 +85,7 @@ test()
     {
       auto particle_properties = particle->get_properties();
 
-      double dp = particle_properties[DEM::PropertiesIndex::dp];
+      double dp = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
       deallog << "Particle " << particle_number << " diameter is: " << dp
               << std::endl;

@@ -9,6 +9,12 @@
 
 namespace DEM
 {
+  enum SolverType
+  {
+    dem,
+    cfd_dem,
+  };
+
   /* This enum class is responsible for the handling the specific indexes of the
    * particles properties within the property pool and also to generate
    * the associative names for the properties
@@ -16,32 +22,73 @@ namespace DEM
    * used as an integer within the code I think this is a temporary solution for
    * now
    */
-
-  enum PropertiesIndex : int
+  namespace DEMsolver
   {
-    type                    = 0,
-    dp                      = 1,
-    v_x                     = 2,
-    v_y                     = 3,
-    v_z                     = 4,
-    omega_x                 = 5,
-    omega_y                 = 6,
-    omega_z                 = 7,
-    fem_force_x             = 8,
-    fem_force_y             = 9,
-    fem_force_z             = 10,
-    fem_torque_x            = 11,
-    fem_torque_y            = 12,
-    fem_torque_z            = 13,
-    mass                    = 14,
-    volumetric_contribution = 15,
-    n_properties            = 16,
+    enum PropertiesIndexDEM : std::uint8_t
+    {
+      type         = 0,
+      dp           = 1,
+      v_x          = 2,
+      v_y          = 3,
+      v_z          = 4,
+      omega_x      = 5,
+      omega_y      = 6,
+      omega_z      = 7,
+      mass         = 8,
+      n_properties = 9,
+    };
   };
 
+  // Specialization for `cfd_dem`
+  namespace CFDDEMsolver
+  {
+    enum PropertiesIndexCFDDEM : std::uint8_t
+    {
+      type                    = 0,
+      dp                      = 1,
+      v_x                     = 2,
+      v_y                     = 3,
+      v_z                     = 4,
+      omega_x                 = 5,
+      omega_y                 = 6,
+      omega_z                 = 7,
+      fem_force_x             = 8,
+      fem_force_y             = 9,
+      fem_force_z             = 10,
+      fem_torque_x            = 11,
+      fem_torque_y            = 12,
+      fem_torque_z            = 13,
+      mass                    = 14,
+      volumetric_contribution = 15,
+      n_properties            = 16,
+    };
+  };
+
+  // **Template Specialization to Select PropertiesIndex**
+  template <SolverType solver_type>
+  struct PropertiesIndexEnum;
+
+  template <>
+  struct PropertiesIndexEnum<SolverType::dem>
+  {
+    using Index  = DEMsolver::PropertiesIndexDEM;
+  };
+
+  template <>
+  struct PropertiesIndexEnum<SolverType::cfd_dem>
+  {
+    using Index = CFDDEMsolver::PropertiesIndexCFDDEM;
+  };
+
+  template<SolverType solver_type>
+  using PropertiesIndex = typename PropertiesIndexEnum<solver_type>::Index;
+
+
+  template <SolverType solve_type>
   unsigned int
   get_number_properties();
 
-  template <int dim>
+  template <int dim, SolverType solver_type>
   class DEMProperties
   {
   public:

@@ -61,9 +61,9 @@ constant_rolling_resistance_torque(
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_one_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
       particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_two_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
     }
 
   Tensor<1, 3> omega_ij =
@@ -108,9 +108,9 @@ viscous_rolling_resistance_torque(
   for (int d = 0; d < 3; ++d)
     {
       particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_one_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
       particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_two_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
     }
 
   Tensor<1, 3> omega_ij =
@@ -119,10 +119,10 @@ viscous_rolling_resistance_torque(
 
   Tensor<1, 3> v_omega =
     cross_product_3d(particle_one_angular_velocity,
-                     particle_one_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                     particle_one_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 *
                        normal_contact_vector) -
     cross_product_3d(particle_two_angular_velocity,
-                     particle_two_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                     particle_two_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 *
                        -normal_contact_vector);
 
   // Calculation of rolling resistance torque

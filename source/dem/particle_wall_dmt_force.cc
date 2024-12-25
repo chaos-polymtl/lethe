@@ -109,7 +109,7 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
+            ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) * 0.5) -
             (projected_vector.norm());
 
           // Minimal delta_star. We know a force has to be computed.
@@ -120,9 +120,9 @@ ParticleWallDMTForce<dim>::calculate_particle_wall_contact_force(
               // normal_vector to respect the convention (i ->
               // j)
               const unsigned int particle_type =
-                particle_properties[DEM::PropertiesIndex::type];
+                particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type];
               const double effective_radius =
-                0.5 * particle_properties[DEM::PropertiesIndex::dp];
+                0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
               const double effective_surface_energy =
                 this->effective_surface_energy[particle_type];
               const double effective_hamaker_constant =
@@ -339,7 +339,7 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties[DEM::PropertiesIndex::dp]) *
+                        ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -351,9 +351,9 @@ ParticleWallDMTForce<dim>::calculate_particle_floating_wall_contact_force(
                           // normal_vector to respect the convention (i ->
                           // j)
                           const unsigned int particle_type =
-                            particle_properties[DEM::PropertiesIndex::type];
+                            particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type];
                           const double effective_radius =
-                            0.5 * particle_properties[DEM::PropertiesIndex::dp];
+                            0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
                           const double effective_surface_energy =
                             this->effective_surface_energy[particle_type];
                           const double effective_hamaker_constant =

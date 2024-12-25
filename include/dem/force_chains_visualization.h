@@ -241,8 +241,8 @@ private:
 
         // Calculation of normal overlap
         double normal_overlap =
-          0.5 * (particle_one_properties[PropertiesIndex::dp] +
-                 particle_two_properties[PropertiesIndex::dp]) -
+          0.5 * (particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] +
+                 particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) -
           particle_one_location.distance(particle_two_location);
 
         if (normal_overlap > force_calculation_threshold_distance)
@@ -313,28 +313,28 @@ private:
 
     // Assigning velocities and angular velocities of particles
     contact_relative_velocity[0] =
-      particle_one_properties[PropertiesIndex::v_x] -
-      particle_two_properties[PropertiesIndex::v_x];
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] -
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x];
     contact_relative_velocity[1] =
-      particle_one_properties[PropertiesIndex::v_y] -
-      particle_two_properties[PropertiesIndex::v_y];
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] -
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_y];
     contact_relative_velocity[2] =
-      particle_one_properties[PropertiesIndex::v_z] -
-      particle_two_properties[PropertiesIndex::v_z];
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] -
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z];
 
-    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
-    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
-    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
+    particle_one_omega[0] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
+    particle_one_omega[1] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
+    particle_one_omega[2] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
 
-    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
-    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
-    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
+    particle_two_omega[0] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
+    particle_two_omega[1] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
+    particle_two_omega[2] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
-             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
+      0.5 * (particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * particle_two_omega),
       normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the

@@ -65,12 +65,12 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           // Get particle properties
           auto particle_properties =
             particles_in_cell_iterator->get_properties();
-          const double dp = particle_properties[DEM::PropertiesIndex::dp];
+          const double dp = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d;
 
               // Add the velocity component value
               velocity_cell_average[d] += particle_properties[v_axis];
@@ -97,7 +97,7 @@ AdaptiveSparseContacts<dim>::calculate_granular_temperature_and_solid_fraction(
           for (int d = 0; d < dim; ++d)
             {
               // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
-              int v_axis = DEM::PropertiesIndex::v_x + d;
+              int v_axis = DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d;
 
               cell_velocity_fluctuation_squared_average[d] +=
                 Utilities::fixed_power<2>(particle_properties[v_axis] -
@@ -400,7 +400,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     particle.get_local_index();
 
                   double dt_mass_inverse =
-                    dt / particle_properties[DEM::PropertiesIndex::mass];
+                    dt / particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
 
                   // Calculate the acceleration of the particle times the time
                   // step
@@ -414,7 +414,7 @@ AdaptiveSparseContacts<dim>::update_average_velocities_acceleration(
                     {
                       // Add up the current velocity for the average velocity
                       velocity_cell_average[d] +=
-                        particle_properties[DEM::PropertiesIndex::v_x + d] +
+                        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d] +
                         acc_dt_particle[d];
                     }
                 }

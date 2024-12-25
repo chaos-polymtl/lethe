@@ -182,7 +182,7 @@ ParticleWallJKRForce<dim>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex::dp]) * 0.5) -
+            ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) * 0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -322,7 +322,7 @@ ParticleWallJKRForce<dim>::calculate_particle_floating_wall_contact_force(
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties[DEM::PropertiesIndex::dp]) *
+                        ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -403,16 +403,16 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex::type];
+    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type];
 
   const double effective_radius =
-    0.5 * particle_properties[DEM::PropertiesIndex::dp];
+    0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
   double radius_times_overlap_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
+    sqrt(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 *
          contact_info.normal_overlap);
   double model_parameter_sn = 2 *
                               this->effective_youngs_modulus[particle_type] *
@@ -448,7 +448,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // equal to zero.
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
-    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
+    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]);
 
   // Tangential spring constant is set as a negative just like in the other
   // particle-wall models. This must be taken into account for the square root
@@ -512,7 +512,7 @@ ParticleWallJKRForce<dim>::calculate_jkr_contact_force_and_torque(
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
   Tensor<1, 3> tangential_torque =
-    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
+    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
                       normal_vector),
                      -tangential_force);
 
