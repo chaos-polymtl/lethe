@@ -5,9 +5,9 @@
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ParticleWallContactForce<dim>::update_contact_information(
+ParticleWallContactForce<dim, solver_type>::update_contact_information(
   particle_wall_contact_info<dim> &contact_info,
   const Point<3>                  &particle_position,
   const ArrayView<const double>   &particle_properties,
@@ -23,25 +23,24 @@ ParticleWallContactForce<dim>::update_contact_information(
   // local vectors
   Tensor<1, 3> particle_velocity;
   particle_velocity[0] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_x];
   particle_velocity[1] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_y];
   particle_velocity[2] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_z];
 
   Tensor<1, 3> particle_angular_velocity;
-  particle_angular_velocity[0] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
-  particle_angular_velocity[1] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
-  particle_angular_velocity[2] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+  particle_angular_velocity[0] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_x];
+  particle_angular_velocity[1] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_y];
+  particle_angular_velocity[2] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_z];
 
   // Calculate approximation of the contact point using the normal vector
   Point<3> contact_point =
     particle_position +
-    0.5 *
-      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+    0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
       normal_vector;
 
   // Get vector pointing from the contact point to the origin of the rotation
@@ -62,8 +61,7 @@ ParticleWallContactForce<dim>::update_contact_information(
   Tensor<1, 3> contact_relative_velocity =
     this->boundary_translational_velocity_map[boundary_id] - particle_velocity +
     cross_product_3d(
-      (-0.5 *
-       particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+      (-0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
        particle_angular_velocity),
       normal_vector) +
     cross_product_3d(this->boundary_rotational_speed_map[boundary_id] *
@@ -97,9 +95,9 @@ ParticleWallContactForce<dim>::update_contact_information(
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ParticleWallContactForce<dim>::
+ParticleWallContactForce<dim, solver_type>::
   update_particle_floating_wall_contact_information(
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties,
@@ -117,32 +115,30 @@ ParticleWallContactForce<dim>::
   // local vectors
   Tensor<1, 3> particle_velocity;
   particle_velocity[0] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_x];
   particle_velocity[1] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_y];
   particle_velocity[2] =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z];
+    particle_properties[DEM::PropertiesIndex<solver_type>::v_z];
 
 
   Tensor<1, 3> particle_angular_velocity;
-  particle_angular_velocity[0] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
-  particle_angular_velocity[1] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
-  particle_angular_velocity[2] = particle_properties
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+  particle_angular_velocity[0] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_x];
+  particle_angular_velocity[1] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_y];
+  particle_angular_velocity[2] =
+    particle_properties[DEM::PropertiesIndex<solver_type>::omega_z];
 
   // Defining relative contact velocity
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
     cut_cell_translational_velocity - particle_velocity +
-    cross_product_3d((center_of_rotation_particle_distance *
-                        cut_cell_rotational_velocity -
-                      0.5 *
-                        particle_properties
-                          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-                        particle_angular_velocity),
-                     normal_vector);
+    cross_product_3d(
+      (center_of_rotation_particle_distance * cut_cell_rotational_velocity -
+       0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
+         particle_angular_velocity),
+      normal_vector);
 
   // Calculation of normal relative velocity
   double normal_relative_velocity_value =
@@ -165,12 +161,12 @@ ParticleWallContactForce<dim>::
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
-  const unsigned int boundary_id,
-  Tensor<1, 3>       add_force,
-  const Point<3>     point_contact)
+ParticleWallContactForce<dim, solver_type>::
+  calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
+                                         Tensor<1, 3>       add_force,
+                                         const Point<3>     point_contact)
 {
   if (calculate_force_torque_on_boundary)
     {
@@ -184,9 +180,9 @@ ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 std::map<unsigned int, Tensor<1, 3>>
-ParticleWallContactForce<dim>::initialize()
+ParticleWallContactForce<dim, solver_type>::initialize()
 {
   std::map<unsigned int, Tensor<1, 3>> map;
   for (const auto &it : boundary_index)
@@ -196,10 +192,10 @@ ParticleWallContactForce<dim>::initialize()
   return map;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ParticleWallContactForce<
-  dim>::mpi_correction_over_calculation_of_forces_and_torques()
+ParticleWallContactForce<dim, solver_type>::
+  mpi_correction_over_calculation_of_forces_and_torques()
 {
   for (const auto &it : boundary_index)
     {
@@ -211,5 +207,7 @@ ParticleWallContactForce<
 }
 
 
-template class ParticleWallContactForce<2>;
-template class ParticleWallContactForce<3>;
+template class ParticleWallContactForce<2, DEM::SolverType::dem>;
+template class ParticleWallContactForce<2, DEM::SolverType::cfd_dem>;
+template class ParticleWallContactForce<3, DEM::SolverType::dem>;
+template class ParticleWallContactForce<3, DEM::SolverType::cfd_dem>;

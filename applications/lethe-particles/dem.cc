@@ -33,7 +33,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
 
-          DEMSolver<2> problem(dem_parameters);
+          DEMSolver<2, DEM::SolverType::dem> problem(dem_parameters);
           problem.solve();
         }
 
@@ -47,7 +47,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
 
-          DEMSolver<3> problem(dem_parameters);
+          DEMSolver<3, DEM::SolverType::dem> problem(dem_parameters);
           problem.solve();
         }
 

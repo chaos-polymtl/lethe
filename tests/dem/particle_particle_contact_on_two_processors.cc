@@ -100,7 +100,9 @@ test()
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    triangulation,
+    mapping,
+    DEM::get_number_properties<DEM::SolverType::cfd_dem>());
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;

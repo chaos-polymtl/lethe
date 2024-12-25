@@ -23,14 +23,16 @@ using namespace dealii;
  * particles and walls
  *
  */
-template <int dim>
-class ParticleWallLinearForce : public ParticleWallContactForce<dim>
+template <int dim, DEM::SolverType solver_type>
+class ParticleWallLinearForce
+  : public ParticleWallContactForce<dim, solver_type>
 {
-  using FuncPtrType = Tensor<1, 3> (ParticleWallLinearForce<dim>::*)(
-    const ArrayView<const double> &,
-    const double,
-    const double,
-    const Tensor<1, 3> &);
+  using FuncPtrType =
+    Tensor<1, 3> (ParticleWallLinearForce<dim, solver_type>::*)(
+      const ArrayView<const double> &,
+      const double,
+      const double,
+      const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:

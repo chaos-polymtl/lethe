@@ -30,7 +30,7 @@ using namespace dealii;
  * a(n+1)   = F(n+1) / m
  * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class VelocityVerletIntegrator : public Integrator<dim>
 {
 public:

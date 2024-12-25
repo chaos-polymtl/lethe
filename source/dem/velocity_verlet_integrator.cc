@@ -9,7 +9,7 @@
 
 using namespace DEM;
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> &particle_handler,
@@ -36,31 +36,27 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
           // Update acceleration
           particle_acceleration[d] =
             g[d] + (force[particle_id][d]) /
-                     particle_properties
-                       [PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+                     particle_properties[PropertiesIndex<solver_type>::mass];
 
           // Half-step velocity
-          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                              d] += 0.5 * particle_acceleration[d] * dt;
+          particle_properties[PropertiesIndex<solver_type>::v_x + d] +=
+            0.5 * particle_acceleration[d] * dt;
 
           // Half-step angular velocity
-          particle_properties
-            [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d] +=
+          particle_properties[PropertiesIndex<solver_type>::omega_x + d] +=
             0.5 * (torque[particle_id][d] / MOI[particle_id]) * dt;
 
           // Update particle position using half-step velocity
           particle_position[d] +=
-            particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                                d] *
-            dt;
+            particle_properties[PropertiesIndex<solver_type>::v_x + d] * dt;
         }
       particle->set_location(particle_position);
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-VelocityVerletIntegrator<dim>::integrate(
+VelocityVerletIntegrator<dim, solver_type>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -82,8 +78,7 @@ VelocityVerletIntegrator<dim>::integrate(
       Tensor<1, 3> &particle_force      = force[particle_id];
 
       double dt_mass_inverse =
-        dt /
-        particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+        dt / particle_properties[PropertiesIndex<solver_type>::mass];
       double dt_MOI_inverse = dt / MOI[particle_id];
 
       particle_position = [&] {
@@ -101,34 +96,28 @@ VelocityVerletIntegrator<dim>::integrate(
       // for (int d = 0; d < 3; ++d)
       {
         // Particle velocity integration
-        particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] +=
+        particle_properties[PropertiesIndex<solver_type>::v_x] +=
           dt_g[0] + particle_force[0] * dt_mass_inverse;
-        particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] +=
+        particle_properties[PropertiesIndex<solver_type>::v_y] +=
           dt_g[1] + particle_force[1] * dt_mass_inverse;
-        particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] +=
+        particle_properties[PropertiesIndex<solver_type>::v_z] +=
           dt_g[2] + particle_force[2] * dt_mass_inverse;
 
 
         // Particle location integration
         particle_position[0] +=
-          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] *
-          dt;
+          particle_properties[PropertiesIndex<solver_type>::v_x] * dt;
         particle_position[1] +=
-          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] *
-          dt;
+          particle_properties[PropertiesIndex<solver_type>::v_y] * dt;
         particle_position[2] +=
-          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] *
-          dt;
+          particle_properties[PropertiesIndex<solver_type>::v_z] * dt;
 
         // Updating angular velocity
-        particle_properties
-          [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] +=
+        particle_properties[PropertiesIndex<solver_type>::omega_x] +=
           particle_torque[0] * dt_MOI_inverse;
-        particle_properties
-          [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] +=
+        particle_properties[PropertiesIndex<solver_type>::omega_y] +=
           particle_torque[1] * dt_MOI_inverse;
-        particle_properties
-          [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] +=
+        particle_properties[PropertiesIndex<solver_type>::omega_z] +=
           particle_torque[2] * dt_MOI_inverse;
       }
 
@@ -149,9 +138,9 @@ VelocityVerletIntegrator<dim>::integrate(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-VelocityVerletIntegrator<dim>::integrate(
+VelocityVerletIntegrator<dim, solver_type>::integrate(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const Tensor<1, 3>                              &g,
   const double                                     dt,
@@ -226,9 +215,8 @@ VelocityVerletIntegrator<dim>::integrate(
                           Tensor<1, 3> &particle_force  = force[particle_id];
 
                           double dt_mass_inverse =
-                            dt /
-                            particle_properties
-                              [PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+                            dt / particle_properties
+                                   [PropertiesIndex<solver_type>::mass];
                           double dt_MOI_inverse = dt / MOI[particle_id];
 
                           particle_position = [&] {
@@ -247,24 +235,19 @@ VelocityVerletIntegrator<dim>::integrate(
                             {
                               // Particle velocity integration
                               particle_properties
-                                [PropertiesIndex<
-                                   DEM::SolverType::cfd_dem>::v_x +
-                                 d] +=
+                                [PropertiesIndex<solver_type>::v_x + d] +=
                                 dt_g[d] + particle_force[d] * dt_mass_inverse;
 
                               // Particle location integration
                               particle_position[d] +=
                                 particle_properties
-                                  [PropertiesIndex<
-                                     DEM::SolverType::cfd_dem>::v_x +
-                                   d] *
+                                  [PropertiesIndex<solver_type>::v_x + d] *
                                 dt;
 
                               // Updating angular velocity
                               particle_properties
-                                [PropertiesIndex<
-                                   DEM::SolverType::cfd_dem>::omega_x +
-                                 d] += particle_torque[d] * dt_MOI_inverse;
+                                [PropertiesIndex<solver_type>::omega_x + d] +=
+                                particle_torque[d] * dt_MOI_inverse;
                             }
 
                           // Reinitialize force and torque of particle
@@ -302,9 +285,9 @@ VelocityVerletIntegrator<dim>::integrate(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
+VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
   Particles::ParticleHandler<dim>                 &particle_handler,
   const Tensor<1, 3>                              &g,
   const double                                     dt,
@@ -363,8 +346,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 
                       double dt_mass_inverse =
                         dt /
-                        particle_properties
-                          [PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+                        particle_properties[PropertiesIndex<solver_type>::mass];
                       double dt_MOI_inverse = dt / MOI[particle_id];
 
                       particle_position = [&] {
@@ -388,26 +370,23 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
                         {
                           // Particle velocity integration
                           particle_properties
-                            [PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                             d] += acc_dt_particle[d];
+                            [PropertiesIndex<solver_type>::v_x + d] +=
+                            acc_dt_particle[d];
 
                           // Add velocity value for average velocity computation
                           velocity_cell_average[d] += particle_properties
-                            [PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                             d];
+                            [PropertiesIndex<solver_type>::v_x + d];
 
                           // Particle location integration
                           particle_position[d] +=
                             particle_properties
-                              [PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                               d] *
+                              [PropertiesIndex<solver_type>::v_x + d] *
                             dt;
 
                           // Updating angular velocity
                           particle_properties
-                            [PropertiesIndex<
-                               DEM::SolverType::cfd_dem>::omega_x +
-                             d] += particle_torque[d] * dt_MOI_inverse;
+                            [PropertiesIndex<solver_type>::omega_x + d] +=
+                            particle_torque[d] * dt_MOI_inverse;
                         }
 
                       // Reinitialize force and torque of particle
@@ -497,5 +476,7 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
 }
 
 
-template class VelocityVerletIntegrator<2>;
-template class VelocityVerletIntegrator<3>;
+template class VelocityVerletIntegrator<2, DEM::SolverType::dem>;
+template class VelocityVerletIntegrator<2, DEM::SolverType::cfd_dem>;
+template class VelocityVerletIntegrator<3, DEM::SolverType::dem>;
+template class VelocityVerletIntegrator<3, DEM::SolverType::cfd_dem>;

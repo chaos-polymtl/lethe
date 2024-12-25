@@ -22,14 +22,16 @@ using namespace dealii;
  * information obtained from the fine search and physical properties of
  * particles and walls.
  */
-template <int dim>
-class ParticleWallNonLinearForce : public ParticleWallContactForce<dim>
+template <int dim, DEM::SolverType solver_type>
+class ParticleWallNonLinearForce
+  : public ParticleWallContactForce<dim, solver_type>
 {
-  using FuncPtrType = Tensor<1, 3> (ParticleWallNonLinearForce<dim>::*)(
-    const ArrayView<const double> &,
-    const double,
-    const double,
-    const Tensor<1, 3> &);
+  using FuncPtrType =
+    Tensor<1, 3> (ParticleWallNonLinearForce<dim, solver_type>::*)(
+      const ArrayView<const double> &,
+      const double,
+      const double,
+      const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:

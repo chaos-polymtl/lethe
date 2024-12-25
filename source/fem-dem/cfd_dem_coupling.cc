@@ -16,18 +16,19 @@
 
 // Constructor for the class CFD-DEM class
 template <int dim>
-CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
+CFDDEMSolver<dim, solver_type>::CFDDEMSolver(
+  CFDDEMSimulationParameters<dim> &nsparam)
   : FluidDynamicsVANS<dim>(nsparam)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
 
 template <int dim>
-CFDDEMSolver<dim>::~CFDDEMSolver() = default;
+CFDDEMSolver<dim, solver_type>::~CFDDEMSolver() = default;
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_setup_parameters()
+CFDDEMSolver<dim, solver_type>::dem_setup_parameters()
 {
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
@@ -142,7 +143,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::setup_distribution_type()
+CFDDEMSolver<dim, solver_type>::setup_distribution_type()
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
@@ -189,7 +190,7 @@ CFDDEMSolver<dim>::setup_distribution_type()
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
-CFDDEMSolver<dim>::set_integrator_type()
+CFDDEMSolver<dim, solver_type>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
   ModelParameters::IntegrationMethod integration_method =
@@ -208,7 +209,7 @@ CFDDEMSolver<dim>::set_integrator_type()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::initialize_dem_parameters()
+CFDDEMSolver<dim, solver_type>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters" << std::endl;
 
@@ -276,7 +277,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 }
 template <int dim>
 void
-CFDDEMSolver<dim>::read_dem()
+CFDDEMSolver<dim, solver_type>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint" << std::endl;
 
@@ -352,7 +353,7 @@ CFDDEMSolver<dim>::read_dem()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::write_checkpoint()
+CFDDEMSolver<dim, solver_type>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
@@ -440,7 +441,7 @@ CFDDEMSolver<dim>::write_checkpoint()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::read_checkpoint()
+CFDDEMSolver<dim, solver_type>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
   std::string        prefix =
@@ -595,7 +596,8 @@ CFDDEMSolver<dim>::read_checkpoint()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
+CFDDEMSolver<dim, solver_type>::check_contact_detection_method(
+  unsigned int counter)
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
@@ -631,7 +633,7 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::load_balance()
+CFDDEMSolver<dim, solver_type>::load_balance()
 {
   load_balancing.check_load_balance_iteration();
 
@@ -808,7 +810,7 @@ CFDDEMSolver<dim>::load_balance()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
+CFDDEMSolver<dim, solver_type>::add_fluid_particle_interaction_force()
 {
   for (auto particle = this->particle_handler.begin();
        particle != this->particle_handler.end();
@@ -829,7 +831,7 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
+CFDDEMSolver<dim, solver_type>::add_fluid_particle_interaction_torque()
 {
   for (auto particle = this->particle_handler.begin();
        particle != this->particle_handler.end();
@@ -850,7 +852,7 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::particle_wall_contact_force()
+CFDDEMSolver<dim, solver_type>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
@@ -897,7 +899,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::write_dem_output_results()
+CFDDEMSolver<dim, solver_type>::write_dem_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -924,7 +926,7 @@ CFDDEMSolver<dim>::write_dem_output_results()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::report_particle_statistics()
+CFDDEMSolver<dim, solver_type>::report_particle_statistics()
 {
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
@@ -1012,7 +1014,7 @@ CFDDEMSolver<dim>::report_particle_statistics()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::print_particles_summary()
+CFDDEMSolver<dim, solver_type>::print_particles_summary()
 {
   const int display_width = this->simulation_control->get_log_precision() + 8;
   this->pcout << "Particle Summary" << std::endl;
@@ -1085,7 +1087,7 @@ CFDDEMSolver<dim>::print_particles_summary()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
+CFDDEMSolver<dim, solver_type>::postprocess_fd(bool first_iteration)
 {
   this->pcout
     << "---------------------------------------------------------------"
@@ -1102,7 +1104,7 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::postprocess_cfd_dem()
+CFDDEMSolver<dim, solver_type>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid
   if (this->simulation_parameters.post_processing.calculate_phase_volumes)
@@ -1162,7 +1164,7 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dynamic_flow_control()
+CFDDEMSolver<dim, solver_type>::dynamic_flow_control()
 {
   if (this->simulation_parameters.flow_control.enable_flow_control &&
       this->simulation_parameters.simulation_control.method !=
@@ -1227,7 +1229,7 @@ CFDDEMSolver<dim>::dynamic_flow_control()
 
 template <int dim>
 inline void
-CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
+CFDDEMSolver<dim, solver_type>::sort_particles_into_subdomains_and_cells()
 {
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1269,7 +1271,7 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
+CFDDEMSolver<dim, solver_type>::dem_iterator(unsigned int counter)
 {
   // dem_contact_build carries out the particle-particle and particle-wall
   // broad and fine searches, sort_particles_into_subdomains_and_cells, and
@@ -1339,7 +1341,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
+CFDDEMSolver<dim, solver_type>::dem_contact_build(unsigned int counter)
 {
   // For the contact search at the last CFD iteration
   if (counter == (coupling_frequency - 1))
@@ -1412,7 +1414,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::solve()
+CFDDEMSolver<dim, solver_type>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,

@@ -1217,7 +1217,7 @@ LetheGridTools::find_cells_cut_by_object(
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
 
-template <int dim>
+template <int dim, DEM::SolverType solverType>
 std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
 LetheGridTools::find_particle_triangle_projection(
   const std::vector<Point<dim>>                       &triangle,
@@ -1464,16 +1464,30 @@ LetheGridTools::find_particle_triangle_projection(
 
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::find_particle_triangle_projection(
+  LetheGridTools::find_particle_triangle_projection<2, DEM::SolverType::dem>(
     const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
+template std::tuple<std::vector<bool>,
+                    std::vector<Point<3>>,
+                    std::vector<Tensor<1, 3>>>
+LetheGridTools::find_particle_triangle_projection<2, DEM::SolverType::cfd_dem>(
+  const std::vector<Point<2>>                       &triangle,
+  const std::vector<Particles::ParticleIterator<2>> &particles,
+  const unsigned int                                &n_particles_in_base_cell);
 template std::
   tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::find_particle_triangle_projection(
+  LetheGridTools::find_particle_triangle_projection<3, DEM::SolverType::dem>(
     const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);
+template std::tuple<std::vector<bool>,
+                    std::vector<Point<3>>,
+                    std::vector<Tensor<1, 3>>>
+LetheGridTools::find_particle_triangle_projection<3, DEM::SolverType::cfd_dem>(
+  const std::vector<Point<3>>                       &triangle,
+  const std::vector<Particles::ParticleIterator<3>> &particles,
+  const unsigned int                                &n_particles_in_base_cell);
 
 
 template <int dim>

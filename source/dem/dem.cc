@@ -30,8 +30,8 @@
 
 #include <sstream>
 
-template <int dim>
-DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
+template <int dim, DEM::SolverType solver_type>
+DEMSolver<dim, solver_type>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -42,7 +42,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , mapping(1)
   , particle_handler(triangulation,
                      mapping,
-                     DEM::get_number_properties<DEM::SolverType::cfd_dem>())
+                     DEM::get_number_properties<DEM::solver_type>())
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
@@ -53,9 +53,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       parameters.lagrangian_physical_properties.particle_type_number)
 {}
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_parameters()
+DEMSolver<dim, solver_type>::setup_parameters()
 {
   // Print simulation starting information
   pcout << std::endl;
@@ -144,9 +144,9 @@ DEMSolver<dim>::setup_parameters()
     action_manager->restart_simulation();
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_distribution_type()
+DEMSolver<dim, solver_type>::setup_distribution_type()
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
@@ -190,9 +190,9 @@ DEMSolver<dim>::setup_distribution_type()
              2);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_solid_objects()
+DEMSolver<dim, solver_type>::setup_solid_objects()
 {
   // Set up solid objects and carry them in vectors
   for (unsigned int i_solid = 0;
@@ -222,9 +222,9 @@ DEMSolver<dim>::setup_solid_objects()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_functions_and_pointers()
+DEMSolver<dim, solver_type>::setup_functions_and_pointers()
 {
   contact_detection_iteration_check_function =
     set_contact_search_iteration_function();
@@ -243,7 +243,7 @@ DEMSolver<dim>::setup_functions_and_pointers()
 
 template <int dim>
 std::function<void()>
-DEMSolver<dim>::set_contact_search_iteration_function()
+DEMSolver<dim, solver_type>::set_contact_search_iteration_function()
 {
   using namespace Parameters::Lagrangian;
   ModelParameters::ContactDetectionMethod &contact_detection_method =
@@ -262,7 +262,7 @@ DEMSolver<dim>::set_contact_search_iteration_function()
 
 template <int dim>
 std::shared_ptr<Insertion<dim>>
-DEMSolver<dim>::set_insertion_type()
+DEMSolver<dim, solver_type>::set_insertion_type()
 {
   using namespace Parameters::Lagrangian;
   InsertionInfo::InsertionMethod insertion_method =
@@ -300,7 +300,7 @@ DEMSolver<dim>::set_insertion_type()
 
 template <int dim>
 std::shared_ptr<Integrator<dim>>
-DEMSolver<dim>::set_integrator_type()
+DEMSolver<dim, solver_type>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
   ModelParameters::IntegrationMethod integration_method =
@@ -317,9 +317,9 @@ DEMSolver<dim>::set_integrator_type()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_triangulation_dependent_parameters()
+DEMSolver<dim, solver_type>::setup_triangulation_dependent_parameters()
 {
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
@@ -363,9 +363,9 @@ DEMSolver<dim>::setup_triangulation_dependent_parameters()
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::setup_background_dofs()
+DEMSolver<dim, solver_type>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
@@ -399,9 +399,9 @@ DEMSolver<dim>::setup_background_dofs()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::load_balance()
+DEMSolver<dim, solver_type>::load_balance()
 {
   load_balancing.check_load_balance_iteration();
 
@@ -463,9 +463,9 @@ DEMSolver<dim>::load_balance()
   setup_background_dofs();
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-DEMSolver<dim>::check_contact_search_iteration_dynamic()
+DEMSolver<dim, solver_type>::check_contact_search_iteration_dynamic()
 {
   const bool parallel_update =
     (simulation_control->get_step_number() %
@@ -478,18 +478,18 @@ DEMSolver<dim>::check_contact_search_iteration_dynamic()
                                             parallel_update);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-DEMSolver<dim>::check_contact_search_iteration_constant()
+DEMSolver<dim, solver_type>::check_contact_search_iteration_constant()
 {
   if ((simulation_control->get_step_number() %
        parameters.model_parameters.contact_detection_frequency) == 0)
     action_manager->contact_detection_step();
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::insert_particles()
+DEMSolver<dim, solver_type>::insert_particles()
 {
   if ((simulation_control->get_step_number() %
        parameters.insertion_info.insertion_frequency) == 1)
@@ -500,9 +500,9 @@ DEMSolver<dim>::insert_particles()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::particle_wall_contact_force()
+DEMSolver<dim, solver_type>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
@@ -557,9 +557,9 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::move_solid_objects()
+DEMSolver<dim, solver_type>::move_solid_objects()
 {
   if (!action_manager->check_solid_objects_enabled())
     return;
@@ -577,9 +577,9 @@ DEMSolver<dim>::move_solid_objects()
       simulation_control->get_previous_time());
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::finish_simulation()
+DEMSolver<dim, solver_type>::finish_simulation()
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
@@ -639,9 +639,9 @@ DEMSolver<dim>::finish_simulation()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::write_output_results()
+DEMSolver<dim, solver_type>::write_output_results()
 {
   TimerOutput::Scope t(this->computing_timer, "Output VTU");
 
@@ -706,9 +706,9 @@ DEMSolver<dim>::write_output_results()
     solid_object->write_output_results(simulation_control);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::post_process_results()
+DEMSolver<dim, solver_type>::post_process_results()
 {
   if (parameters.post_processing.lagrangian_post_processing_enabled &&
       simulation_control->is_output_iteration())
@@ -725,9 +725,9 @@ DEMSolver<dim>::post_process_results()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::report_statistics()
+DEMSolver<dim, solver_type>::report_statistics()
 {
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
@@ -797,9 +797,9 @@ DEMSolver<dim>::report_statistics()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
+DEMSolver<dim, solver_type>::sort_particles_into_subdomains_and_cells()
 {
   particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -822,13 +822,9 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
         {
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
-            0.1 *
-            particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
-            particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-            particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+            0.1 * particle_properties[DEM::PropertiesIndex<solver>::mass] *
+            particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
+            particle_properties[DEM::PropertiesIndex<solver_type>::dp];
         }
     }
 
@@ -836,9 +832,9 @@ DEMSolver<dim>::sort_particles_into_subdomains_and_cells()
   std::fill(displacement.begin(), displacement.end(), 0.);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMSolver<dim>::solve()
+DEMSolver<dim, solver_type>::solve()
 {
   // Set up the parameters
   setup_parameters();
@@ -1093,5 +1089,7 @@ DEMSolver<dim>::solve()
   finish_simulation();
 }
 
-template class DEMSolver<2>;
-template class DEMSolver<3>;
+template class DEMSolver<2, DEM::SolverType::dem>;
+template class DEMSolver<2, DEM::SolverType::cfd_dem>;
+template class DEMSolver<3, DEM::SolverType::dem>;
+template class DEMSolver<3, DEM::SolverType::cfd_dem>;

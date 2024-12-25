@@ -9,7 +9,7 @@
 using namespace DEM;
 
 // This function is empty for explicit Euler integrator
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
@@ -20,9 +20,9 @@ ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   const std::vector<double> & /*MOI*/)
 {}
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ExplicitEulerIntegrator<dim>::integrate(
+ExplicitEulerIntegrator<dim, solver_type>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -43,8 +43,7 @@ ExplicitEulerIntegrator<dim>::integrate(
       Tensor<1, 3> &particle_force      = force[particle_id];
       Point<3>      particle_position;
       double        mass_inverse =
-        1 /
-        particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+        1 / particle_properties[PropertiesIndex<solver_type>::mass];
       double MOI_inverse = 1 / MOI[particle_id];
 
 
@@ -60,17 +59,14 @@ ExplicitEulerIntegrator<dim>::integrate(
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Velocity integration:
-          particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                              d] += dt * acceleration[d];
+          particle_properties[PropertiesIndex<solver_type>::v_x + d] +=
+            dt * acceleration[d];
 
           // Position integration
           particle_position[d] +=
-            dt *
-            particle_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_x +
-                                d];
+            dt * particle_properties[PropertiesIndex<solver_type>::v_x + d];
 
-          particle_properties
-            [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d] +=
+          particle_properties[PropertiesIndex<solver_type>::omega_x + d] +=
             dt * (particle_torque[d] * MOI_inverse);
         }
 
@@ -122,5 +118,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     "Adaptive sparse contacts are not supported with explicit Euler integrator, use Velocity Verlet integrator.");
 }
 
-template class ExplicitEulerIntegrator<2>;
-template class ExplicitEulerIntegrator<3>;
+template class ExplicitEulerIntegrator<2, DEM::SolverType::dem>;
+template class ExplicitEulerIntegrator<2, DEM::SolverType::cfd_dem>;
+template class ExplicitEulerIntegrator<3, DEM::SolverType::dem>;
+template class ExplicitEulerIntegrator<3, DEM::SolverType::cfd_dem>;

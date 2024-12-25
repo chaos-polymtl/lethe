@@ -282,7 +282,7 @@ namespace LetheGridTools
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
    */
-  template <int dim>
+  template <int dim, DEM::SolverType solverType>
   std::
     tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
     find_particle_triangle_projection(

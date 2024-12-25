@@ -48,7 +48,9 @@ test()
 
   // Defining general simulation parameters
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    triangulation,
+    mapping,
+    DEM::get_number_properties<DEM::SolverType::cfd_dem>());
 
   DEMContactManager<dim> contact_manager;
 

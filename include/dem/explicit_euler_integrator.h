@@ -21,7 +21,7 @@ using namespace dealii;
  * v(n+1) = v(n) + a(n) * dt
  * a(n+1) = F(n+1) / m
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class ExplicitEulerIntegrator : public Integrator<dim>
 {
 public:

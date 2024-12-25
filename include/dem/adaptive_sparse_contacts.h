@@ -100,7 +100,7 @@ template class LinearAlgebra::distributed::Vector<int>;
  *
  * @tparam dim Spatial dimension
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class AdaptiveSparseContacts
 {
 public:
