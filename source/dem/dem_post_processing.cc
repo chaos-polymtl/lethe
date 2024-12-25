@@ -31,11 +31,15 @@ namespace DEM
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
             for (unsigned d = 0; d < dim; ++d)
-              velocity[d] = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
+              velocity[d] = particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
 
             // Kinetic energy is 0.5*m*u^2
-            variable = 0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
-                       velocity.norm_square();
+            variable =
+              0.5 *
+              particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+              velocity.norm_square();
           }
         if constexpr (var == dem_statistic_variable::rotational_kinetic_energy)
           {
@@ -43,20 +47,26 @@ namespace DEM
             Tensor<1, 3> omega;
             if constexpr (dim == 2)
               {
-                omega[2] = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+                omega[2] = particle_properties
+                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
               }
             if constexpr (dim == 3)
               {
                 for (unsigned d = 0; d < dim; ++d)
-                  omega[d] =
-                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
+                  omega[d] = particle_properties
+                    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x +
+                     d];
               }
 
             // Kinetic energy is 0.1*m*d^2 * w^2
-            variable = 0.1 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
-                       Utilities::fixed_power<2>(
-                         particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
-                       omega.norm_square();
+            variable =
+              0.1 *
+              particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+              Utilities::fixed_power<2>(
+                particle_properties
+                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+              omega.norm_square();
           }
 
         if constexpr (var == dem_statistic_variable::velocity)
@@ -64,7 +74,8 @@ namespace DEM
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
             for (unsigned d = 0; d < dim; ++d)
-              velocity[d] = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
+              velocity[d] = particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
 
             variable = velocity.norm();
           }
@@ -75,13 +86,15 @@ namespace DEM
             Tensor<1, 3> omega;
             if constexpr (dim == 2)
               {
-                omega[2] = particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+                omega[2] = particle_properties
+                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
               }
             if constexpr (dim == 3)
               {
                 for (unsigned d = 0; d < dim; ++d)
-                  omega[d] =
-                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
+                  omega[d] = particle_properties
+                    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x +
+                     d];
               }
 
             variable = omega.norm();

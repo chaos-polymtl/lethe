@@ -14,21 +14,15 @@ namespace DEM
         std::vector<std::pair<std::string, int>> properties(
           PropertiesIndex<dem>::n_properties);
         properties[PropertiesIndex<dem>::type] = std::make_pair("type", 1);
-        properties[PropertiesIndex<dem>::dp] =
-          std::make_pair("diameter", 1);
-        properties[PropertiesIndex<dem>::v_x] =
-          std::make_pair("velocity", dim);
-        properties[PropertiesIndex<dem>::v_y] =
-          std::make_pair("velocity", 1);
-        properties[PropertiesIndex<dem>::v_z] =
-          std::make_pair("velocity", 1);
+        properties[PropertiesIndex<dem>::dp]   = std::make_pair("diameter", 1);
+        properties[PropertiesIndex<dem>::v_x] = std::make_pair("velocity", dim);
+        properties[PropertiesIndex<dem>::v_y] = std::make_pair("velocity", 1);
+        properties[PropertiesIndex<dem>::v_z] = std::make_pair("velocity", 1);
         properties[PropertiesIndex<dem>::omega_x] =
           std::make_pair("omega", dim);
-        properties[PropertiesIndex<dem>::omega_y] =
-          std::make_pair("omega", 1);
-        properties[PropertiesIndex<dem>::omega_z] =
-          std::make_pair("omega", 1);
-        properties[PropertiesIndex<dem>::mass] = std::make_pair("mass", 1);
+        properties[PropertiesIndex<dem>::omega_y] = std::make_pair("omega", 1);
+        properties[PropertiesIndex<dem>::omega_z] = std::make_pair("omega", 1);
+        properties[PropertiesIndex<dem>::mass]    = std::make_pair("mass", 1);
 
         return properties;
       }
@@ -37,8 +31,7 @@ namespace DEM
       {
         std::vector<std::pair<std::string, int>> properties(
           PropertiesIndex<cfd_dem>::n_properties);
-        properties[PropertiesIndex<cfd_dem>::type] =
-          std::make_pair("type", 1);
+        properties[PropertiesIndex<cfd_dem>::type] = std::make_pair("type", 1);
         properties[PropertiesIndex<cfd_dem>::dp] =
           std::make_pair("diameter", 1);
         properties[PropertiesIndex<cfd_dem>::v_x] =
@@ -53,16 +46,19 @@ namespace DEM
           std::make_pair("omega", 1);
         properties[PropertiesIndex<cfd_dem>::omega_z] =
           std::make_pair("omega", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_force_x]
-          = std::make_pair("fem_force", dim);
-        properties[PropertiesIndex<cfd_dem>::fem_force_y] = std::make_pair("fem_force", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_force_z] = std::make_pair("fem_force", 1);
+        properties[PropertiesIndex<cfd_dem>::fem_force_x] =
+          std::make_pair("fem_force", dim);
+        properties[PropertiesIndex<cfd_dem>::fem_force_y] =
+          std::make_pair("fem_force", 1);
+        properties[PropertiesIndex<cfd_dem>::fem_force_z] =
+          std::make_pair("fem_force", 1);
         properties[PropertiesIndex<cfd_dem>::fem_torque_x] =
           std::make_pair("fem_torque", dim);
-        properties[PropertiesIndex<cfd_dem>::fem_torque_y] = std::make_pair("fem_torque", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_torque_z] = std::make_pair("fem_torque", 1);
-        properties[PropertiesIndex<cfd_dem>::mass] =
-          std::make_pair("mass", 1);
+        properties[PropertiesIndex<cfd_dem>::fem_torque_y] =
+          std::make_pair("fem_torque", 1);
+        properties[PropertiesIndex<cfd_dem>::fem_torque_z] =
+          std::make_pair("fem_torque", 1);
+        properties[PropertiesIndex<cfd_dem>::mass] = std::make_pair("mass", 1);
 
         return properties;
       }
@@ -80,6 +76,8 @@ namespace DEM
   template class DEMProperties<3, SolverType::dem>;
   template class DEMProperties<3, SolverType::cfd_dem>;
 
-  template unsigned int DEM::get_number_properties<DEM::SolverType::dem>();
-  template unsigned int DEM::get_number_properties<DEM::SolverType::cfd_dem>();
+  template unsigned int
+  DEM::get_number_properties<DEM::SolverType::dem>();
+  template unsigned int
+  DEM::get_number_properties<DEM::SolverType::cfd_dem>();
 } // namespace DEM

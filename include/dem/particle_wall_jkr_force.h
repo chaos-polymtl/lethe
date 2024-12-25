@@ -118,8 +118,8 @@ private:
     Tensor<1, 3> angular_velocity;
     for (int d = 0; d < 3; ++d)
       {
-        angular_velocity[d] =
-          particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
+        angular_velocity[d] = particle_properties
+          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
       }
 
     // Calculation of particle-wall angular velocity (norm of the
@@ -135,7 +135,8 @@ private:
     // Calculation of rolling resistance torque
     Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
-      (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5) *
+      (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+       0.5) *
       normal_force_norm * particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
@@ -160,8 +161,8 @@ private:
     Tensor<1, 3> angular_velocity;
     for (int d = 0; d < 3; ++d)
       {
-        angular_velocity[d] =
-          particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
+        angular_velocity[d] = particle_properties
+          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x + d];
       }
 
     // Calculation of particle-wall angular velocity (norm of the
@@ -174,16 +175,16 @@ private:
         particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
-    Tensor<1, 3> v_omega =
-      cross_product_3d(angular_velocity,
-                       particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 *
-                         normal_contact_vector);
+    Tensor<1, 3> v_omega = cross_product_3d(
+      angular_velocity,
+      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+        0.5 * normal_contact_vector);
 
     // Calculation of rolling resistance torque
     Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
-      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 * normal_force_norm *
-      v_omega.norm() * particle_wall_angular_velocity;
+      particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+      0.5 * normal_force_norm * v_omega.norm() * particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
   }

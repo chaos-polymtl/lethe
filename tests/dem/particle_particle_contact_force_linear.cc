@@ -71,7 +71,7 @@ test()
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties());
+    triangulation, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
 
   // Creating containers manager for finding cell neighbor and also broad and
   // fine particle-particle search objects
@@ -95,15 +95,24 @@ test()
                                              particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]     = 0.01;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]    = 1;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+    particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+    0.01;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+    0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+    1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -111,15 +120,24 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type]    = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]      = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]    = 1;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+    0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+    particle_diameter;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+    0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+    0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+    0;
+  pit2->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+  pit2->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+  pit2->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+    1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;

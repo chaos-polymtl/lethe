@@ -197,20 +197,31 @@ protected:
       particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] -
       particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::v_z];
 
-    particle_one_omega[0] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
-    particle_one_omega[1] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
-    particle_one_omega[2] = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+    particle_one_omega[0] = particle_one_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
+    particle_one_omega[1] = particle_one_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
+    particle_one_omega[2] = particle_one_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
 
-    particle_two_omega[0] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
-    particle_two_omega[1] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
-    particle_two_omega[2] = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+    particle_two_omega[0] = particle_two_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x];
+    particle_two_omega[1] = particle_two_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y];
+    particle_two_omega[2] = particle_two_properties
+      [PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
-    contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * particle_one_omega +
-             particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * particle_two_omega),
-      normal_unit_vector));
+    contact_relative_velocity +=
+      (cross_product_3d(0.5 *
+                          (particle_one_properties
+                               [PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+                             particle_one_omega +
+                           particle_two_properties
+                               [PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+                             particle_two_omega),
+                        normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the
     // following line the product acts as inner product since both
@@ -520,17 +531,19 @@ private:
     const ArrayView<const double> &particle_two_properties)
   {
     // Calculate the effective radius
-    const double diameter_one =
-      particle_one_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double diameter_two =
-      particle_two_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double diameter_one = particle_one_properties
+      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double diameter_two = particle_two_properties
+      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
     double effective_radius =
       (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
 
     // Calculate the effective mass
-    const double mass_one = particle_one_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
-    const double mass_two = particle_two_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
-    double       effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
+    const double mass_one = particle_one_properties
+      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+    const double mass_two = particle_two_properties
+      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass];
+    double effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
 
     return std::make_tuple(effective_radius, effective_mass);
   }
@@ -648,8 +661,10 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references
-    const double &diameter_one = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_one =
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_two =
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
     // Characteristic velocity is set at 1.0 so that the normal and tangential
     // spring constant remain constant throughout a simulation.
@@ -792,8 +807,10 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_one =
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_two =
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -939,8 +956,10 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_one =
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_two =
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1071,8 +1090,10 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_one =
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_two =
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1189,8 +1210,10 @@ private:
     const double surface_energy = this->effective_surface_energy[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one = particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
-    const double &diameter_two = particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_one =
+      particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+    const double &diameter_two =
+      particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1568,8 +1591,10 @@ private:
 
         // Calculation of normal overlap
         double normal_overlap =
-          0.5 * (particle_one_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp] +
-                 particle_two_properties[PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) -
+          0.5 * (particle_one_properties
+                   [PropertiesIndex<DEM::SolverType::cfd_dem>::dp] +
+                 particle_two_properties
+                   [PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) -
           particle_one_location.distance(particle_two_location);
 
         // Get the threshold distance for contact force, this is useful for non-

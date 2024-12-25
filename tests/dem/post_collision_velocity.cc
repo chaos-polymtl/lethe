@@ -97,8 +97,7 @@ test(double coefficient_of_restitution)
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
-
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
   // Inserting one particle in contact with wall
   Point<dim>               position = {-0.999, 0, 0};
   int                      id       = 0;
@@ -107,14 +106,22 @@ test(double coefficient_of_restitution)
     GridTools::find_active_cell_around_point(tr, particle.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]     = -0.1;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+    particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+    -0.1;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+    0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
@@ -167,12 +174,14 @@ test(double coefficient_of_restitution)
       integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
     }
 
-  deallog << "Coefficient of restitution is " << coefficient_of_restitution
-          << " and the velocity of particle "
-             "before collision is 0.1, the velocity of particle after "
-             "collision is: "
-          << particle1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]
-          << std::endl;
+  deallog
+    << "Coefficient of restitution is " << coefficient_of_restitution
+    << " and the velocity of particle "
+       "before collision is 0.1, the velocity of particle after "
+       "collision is: "
+    << particle1
+         ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]
+    << std::endl;
 }
 
 int

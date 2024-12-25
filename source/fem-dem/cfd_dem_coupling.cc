@@ -818,12 +818,12 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 
       types::particle_index particle_id = particle->get_local_index();
 
-      force[particle_id][0] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_x];
-      force[particle_id][1] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_y];
-      force[particle_id][2] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_z];
+      force[particle_id][0] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_x];
+      force[particle_id][1] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_y];
+      force[particle_id][2] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_z];
     }
 }
 
@@ -839,12 +839,12 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
       types::particle_index particle_id = particle->get_local_index();
 
-      torque[particle_id][0] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_x];
-      torque[particle_id][1] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_y];
-      torque[particle_id][2] +=
-        particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_z];
+      torque[particle_id][0] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_x];
+      torque[particle_id][1] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_y];
+      torque[particle_id][2] += particle_properties
+        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_z];
     }
 }
 
@@ -1065,13 +1065,17 @@ CFDDEMSolver<dim>::print_particles_summary()
               for (unsigned int d = 0; d < dim; ++d)
                 std::cout << std::setw(display_width) << std::left
                           << particle_location[d];
-              std::cout << std::setw(display_width) << std::left
-                        << particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]
-                        << std::setw(display_width) << std::left
-                        << particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]
-                        << std::setw(display_width) << std::left
-                        << particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]
-                        << std::endl;
+              std::cout
+                << std::setw(display_width) << std::left
+                << particle_properties
+                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]
+                << std::setw(display_width) << std::left
+                << particle_properties
+                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]
+                << std::setw(display_width) << std::left
+                << particle_properties
+                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]
+                << std::endl;
             }
         }
       usleep(500);
@@ -1247,9 +1251,13 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
         {
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
-            0.1 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
-            particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-            particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+            0.1 *
+            particle_properties
+              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+            particle_properties
+              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+            particle_properties
+              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
         }
     }
 

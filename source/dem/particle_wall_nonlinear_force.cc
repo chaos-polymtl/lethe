@@ -169,7 +169,9 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) * 0.5) -
+            ((particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+             0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -309,7 +311,8 @@ ParticleWallNonLinearForce<dim>::calculate_particle_floating_wall_contact_force(
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+                        ((particle_properties[DEM::PropertiesIndex<
+                           DEM::SolverType::cfd_dem>::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -398,9 +401,9 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  const double radius_times_overlap_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] * 0.5 *
-         contact_info.normal_overlap);
+  const double radius_times_overlap_sqrt = sqrt(
+    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+    0.5 * contact_info.normal_overlap);
   const double model_parameter_sn =
     2 * this->effective_youngs_modulus[particle_type] *
     radius_times_overlap_sqrt;
@@ -418,7 +421,8 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // equal to zero.
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] *
-    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]);
+    sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex<
+                                DEM::SolverType::cfd_dem>::mass]);
 
   // There is a minus sign since the tangential force is applied in the opposite
   // direction of the tangential_overlap
@@ -470,10 +474,11 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
-  const Tensor<1, 3> tangential_torque =
-    cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-                      normal_vector),
-                     -tangential_force);
+  const Tensor<1, 3> tangential_torque = cross_product_3d(
+    (0.5 *
+     particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+     normal_vector),
+    -tangential_force);
 
   // Rolling resistance torque
   const Tensor<1, 3> rolling_resistance_torque =

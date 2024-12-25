@@ -94,7 +94,7 @@ test()
     }
 
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};
@@ -104,15 +104,24 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]     = 0.01;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]    = 1;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+    particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+    0.01;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+    0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+    1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;

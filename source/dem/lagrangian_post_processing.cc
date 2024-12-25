@@ -102,9 +102,13 @@ calculate_average_granular_temperature(
                   for (int d = 0; d < dim; ++d)
                     {
                       cell_velocity_fluctuation_squared_sum[d] +=
-                        (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d] -
+                        (particle_properties[DEM::PropertiesIndex<
+                                               DEM::SolverType::cfd_dem>::v_x +
+                                             d] -
                          velocity_in_cell_average[d]) *
-                        (particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d] -
+                        (particle_properties[DEM::PropertiesIndex<
+                                               DEM::SolverType::cfd_dem>::v_x +
+                                             d] -
                          velocity_in_cell_average[d]);
                     }
 
@@ -156,8 +160,8 @@ calculate_cell_average_particles_velocity(
 
           for (int d = 0; d < dim; ++d)
             {
-              velocity_cell_sum[d] +=
-                particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
+              velocity_cell_sum[d] += particle_properties
+                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
             }
 
           particles_cell_number++;

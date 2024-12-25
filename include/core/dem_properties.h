@@ -36,6 +36,7 @@ namespace DEM
       omega_z      = 7,
       mass         = 8,
       n_properties = 9,
+
     };
   };
 
@@ -71,7 +72,7 @@ namespace DEM
   template <>
   struct PropertiesIndexEnum<SolverType::dem>
   {
-    using Index  = DEMsolver::PropertiesIndexDEM;
+    using Index = DEMsolver::PropertiesIndexDEM;
   };
 
   template <>
@@ -80,7 +81,7 @@ namespace DEM
     using Index = CFDDEMsolver::PropertiesIndexCFDDEM;
   };
 
-  template<SolverType solver_type>
+  template <SolverType solver_type>
   using PropertiesIndex = typename PropertiesIndexEnum<solver_type>::Index;
 
 

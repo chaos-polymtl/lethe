@@ -34,12 +34,18 @@ find_particle_contact_detection_step(
 
       // Finding displacement of each particle during last step
       particle_displacement +=
-        dt * sqrt(particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] *
-                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] +
-                  particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] *
-                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] +
-                  particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] *
-                    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]);
+        dt * sqrt(particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] *
+                    particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] +
+                  particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] *
+                    particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] +
+                  particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] *
+                    particle_properties
+                      [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]);
 
       // Updating maximum displacement of particles
       max_displacement = std::max(max_displacement, particle_displacement);

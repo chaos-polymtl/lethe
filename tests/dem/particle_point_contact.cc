@@ -80,8 +80,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
-
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
   // Inserting one particle in contact with wall
   Point<dim>               position1 = {0.97, 2.05};
   int                      id        = 0;
@@ -91,15 +90,24 @@ test()
 
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass]    = 1;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+    particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+    0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+  pit1->get_properties()
+    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+    1;
 
   // Construct boundary cells object and build it
   BoundaryCellsInformation<dim> boundary_cells_object;
