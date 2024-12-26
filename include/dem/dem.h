@@ -112,7 +112,7 @@ private:
    *
    * @return The pointer to the integration object
    */
-  std::shared_ptr<Integrator<dim>>
+  std::shared_ptr<Integrator<dim, solver_type>>
   set_integrator_type();
 
   /**
@@ -315,12 +315,12 @@ private:
   /**
    * @brief The manager of all the contact search operations.
    */
-  DEMContactManager<dim> contact_manager;
+  DEMContactManager<dim, solver_type> contact_manager;
 
   /**
    * @brief The load balancing handler.
    */
-  LagrangianLoadBalancing<dim> load_balancing;
+  LagrangianLoadBalancing<dim, solver_type> load_balancing;
 
   /**
    * @brief The simulation control (DEM Transient).
@@ -340,29 +340,31 @@ private:
   /**
    * @brief The particle-particle contact force object.
    */
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
     particle_particle_contact_force_object;
 
   /**
    * @brief The particle-wall contact force object.
    */
-  std::shared_ptr<ParticleWallContactForce<dim>>
+  std::shared_ptr<ParticleWallContactForce<dim, solver_type>>
     particle_wall_contact_force_object;
 
   /**
    * @brief The particle-point-line contact force object.
    */
-  ParticlePointLineForce<dim> particle_point_line_contact_force_object;
+  ParticlePointLineForce<dim, solver_type>
+    particle_point_line_contact_force_object;
 
   /**
    * @brief The particle force chains post-processing object.
    */
-  std::shared_ptr<ParticlesForceChainsBase<dim>> particles_force_chains_object;
+  std::shared_ptr<ParticlesForceChainsBase<dim, solver_type>>
+    particles_force_chains_object;
 
   /**
    * @brief The integrator object.
    */
-  std::shared_ptr<Integrator<dim>> integrator_object;
+  std::shared_ptr<Integrator<dim, solver_type>> integrator_object;
 
   /**
    * @brief The insertion object.
@@ -372,7 +374,7 @@ private:
   /**
    * @brief The visualization object.
    */
-  Visualization<dim> visualization_object;
+  Visualization<dim, solver_type> visualization_object;
 
   /**
    * @brief The particle PVD handler.
@@ -486,7 +488,7 @@ private:
    * @brief The object handling the adaptive sparse contacts (ASC).
    * Only used with the ASC method.
    */
-  AdaptiveSparseContacts<dim> sparse_contacts_object;
+  AdaptiveSparseContacts<dim, solver_type> sparse_contacts_object;
 
   /**
    * @brief The constraints for the background grid needed for the adaptive sparse.

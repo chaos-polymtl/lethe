@@ -20,8 +20,8 @@
  * @param triangulation Triangulation
  * @return A pointer to the particle-wall contact force object
  */
-template <int dim>
-std::shared_ptr<ParticleWallContactForce<dim>>
+template <int dim, DEM::SolverType solver_type>
+std::shared_ptr<ParticleWallContactForce<dim, solver_type>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<dim>                  &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation);

@@ -108,6 +108,7 @@ template <
 class ParticlesForceChains
   : public ParticlesForceChainsBase<dim, solver_type>,
     public ParticleParticleContactForce<dim,
+                                        solver_type,
                                         force_model,
                                         rolling_friction_model>
 {

@@ -170,8 +170,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
              0.5) -
             (projected_vector.norm());
 

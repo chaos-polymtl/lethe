@@ -33,7 +33,7 @@ using namespace dealii;
  * exceeds the threshold and false otherwise
 
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,

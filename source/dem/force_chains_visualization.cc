@@ -23,8 +23,10 @@ template <int                               dim,
           RollingResistanceMethod           rolling_friction_model>
 ParticlesForceChains<dim, solver_type, contact_model, rolling_friction_model>::
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
-  : ParticleParticleContactForce<dim, contact_model, rolling_friction_model>(
-      dem_parameters_in)
+  : ParticleParticleContactForce<dim,
+                                 solver_type,
+                                 contact_model,
+                                 rolling_friction_model>(dem_parameters_in)
 {}
 
 template <int                               dim,

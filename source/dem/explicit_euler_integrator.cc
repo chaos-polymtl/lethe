@@ -11,7 +11,7 @@ using namespace DEM;
 // This function is empty for explicit Euler integrator
 template <int dim, DEM::SolverType solver_type>
 void
-ExplicitEulerIntegrator<dim>::integrate_half_step_location(
+ExplicitEulerIntegrator<dim, solver_type>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
   const Tensor<1, 3> & /*body_force*/,
   const double /*time_step*/,
@@ -90,9 +90,9 @@ ExplicitEulerIntegrator<dim, solver_type>::integrate(
 }
 
 // Explicit Euler not implemented for adaptive sparse contacts
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-ExplicitEulerIntegrator<dim>::integrate(
+ExplicitEulerIntegrator<dim, solver_type>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -100,7 +100,7 @@ ExplicitEulerIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>       &force,
   const std::vector<double>       &MOI,
   const parallel::distributed::Triangulation<dim> & /* triangulation */,
-  AdaptiveSparseContacts<dim> & /* sparse_contacts_object */)
+  AdaptiveSparseContacts<dim, solver_type> & /* sparse_contacts_object */)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 

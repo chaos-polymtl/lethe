@@ -1217,7 +1217,7 @@ LetheGridTools::find_cells_cut_by_object(
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
 
-template <int dim, DEM::SolverType solverType>
+template <int dim, DEM::SolverType solver_type>
 std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
 LetheGridTools::find_particle_triangle_projection(
   const std::vector<Point<dim>>                       &triangle,
@@ -1255,9 +1255,7 @@ LetheGridTools::find_particle_triangle_projection(
   for (auto &part : particles)
     {
       const double radius =
-        part->get_properties()
-          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-        0.5;
+        part->get_properties()[DEM::PropertiesIndex<solver_type>::dp] * 0.5;
       Point<dim> particle_position = part->get_location();
       vector_to_plane              = p_0 - particle_position;
 

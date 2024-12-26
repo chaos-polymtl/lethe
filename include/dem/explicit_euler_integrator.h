@@ -22,7 +22,7 @@ using namespace dealii;
  * a(n+1) = F(n+1) / m
  */
 template <int dim, DEM::SolverType solver_type>
-class ExplicitEulerIntegrator : public Integrator<dim>
+class ExplicitEulerIntegrator : public Integrator<dim, solver_type>
 {
 public:
   ExplicitEulerIntegrator()
@@ -69,14 +69,15 @@ public:
             const std::vector<double>       &MOI) override;
 
   virtual void
-  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
-            const Tensor<1, 3>                              &body_force,
-            const double                                     time_step,
-            std::vector<Tensor<1, 3>>                       &torque,
-            std::vector<Tensor<1, 3>>                       &force,
-            const std::vector<double>                       &MOI,
-            const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
+  integrate(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &body_force,
+    const double                                     time_step,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) override;
 };
 
 #endif

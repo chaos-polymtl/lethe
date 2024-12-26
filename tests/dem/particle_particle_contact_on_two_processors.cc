@@ -215,7 +215,7 @@ test()
 
       // Dummy Adaptive sparse contacts object and particle-particle broad
       // search
-      AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+      AdaptiveSparseContacts<dim, solver_type> dummy_adaptive_sparse_contacts;
       contact_manager.execute_particle_particle_broad_search(
         particle_handler, dummy_adaptive_sparse_contacts);
 

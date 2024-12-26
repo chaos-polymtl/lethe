@@ -58,7 +58,7 @@ public:
   inline unsigned int
   get_number_properties()
   {
-    return DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::n_properties;
+    return DEM::PropertiesIndex<DEM::SolverType::dem>::n_properties;
   }
 
   /**

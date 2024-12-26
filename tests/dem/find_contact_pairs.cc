@@ -89,7 +89,7 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Dummy Adaptive sparse contacts object for next call
-  AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+  AdaptiveSparseContacts<dim, solver_type> dummy_adaptive_sparse_contacts;
 
   // Calling broad search function
   contact_manager.execute_particle_particle_broad_search(

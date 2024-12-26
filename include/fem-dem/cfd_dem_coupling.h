@@ -72,7 +72,7 @@ private:
    *
    * @return The pointer to the integration object
    */
-  std::shared_ptr<Integrator<dim>>
+  std::shared_ptr<Integrator<dim, DEM::SolverType::cfd_dem>>
   set_integrator_type();
 
   /**
@@ -205,17 +205,19 @@ private:
   double                                     maximum_particle_diameter;
   double                                     smallest_contact_search_criterion;
 
-  DEMContactManager<dim>           contact_manager;
-  LagrangianLoadBalancing<dim>     load_balancing;
-  ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>> integrator_object;
-  std::shared_ptr<Insertion<dim>>  insertion_object;
-  std::shared_ptr<ParticleParticleContactForceBase<dim>>
+  DEMContactManager<dim, DEM::SolverType::cfd_dem>       contact_manager;
+  LagrangianLoadBalancing<dim, DEM::SolverType::cfd_dem> load_balancing;
+  ParticlePointLineForce<dim, DEM::SolverType::cfd_dem>
+    particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim, DEM::SolverType::cfd_dem>> integrator_object;
+  std::shared_ptr<Insertion<dim>>                            insertion_object;
+  std::shared_ptr<
+    ParticleParticleContactForceBase<dim, DEM::SolverType::cfd_dem>>
     particle_particle_contact_force_object;
-  std::shared_ptr<ParticleWallContactForce<dim>>
-                                particle_wall_contact_force_object;
-  Visualization<dim>            visualization_object;
-  BoundaryCellsInformation<dim> boundary_cell_object;
+  std::shared_ptr<ParticleWallContactForce<dim, DEM::SolverType::cfd_dem>>
+    particle_wall_contact_force_object;
+  Visualization<dim, DEM::SolverType::cfd_dem> visualization_object;
+  BoundaryCellsInformation<dim>                boundary_cell_object;
 
   // Mesh and boundary information
   typename dem_data_structures<dim>::solid_surfaces_mesh_information
@@ -233,7 +235,7 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
 
   // Object handling the sparse contacts
-  AdaptiveSparseContacts<dim> sparse_contacts_object;
+  AdaptiveSparseContacts<dim, DEM::SolverType::cfd_dem> sparse_contacts_object;
 
   // Counter of contact searches in a CFD iteration
   unsigned int contact_search_counter;

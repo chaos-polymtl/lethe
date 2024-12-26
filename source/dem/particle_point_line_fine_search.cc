@@ -15,7 +15,7 @@ using namespace dealii;
 // overlap, normal vector and normal relative velocity of the contact are
 // calculated. The output of this function is used for calculation of the
 // contact force
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 particle_point_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_point_candidates
@@ -41,8 +41,7 @@ particle_point_fine_search(
       // Get the particle, particle diameter and boundary vertex location once
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
       double                           particle_diameter =
-        particle->get_properties()
-          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+        particle->get_properties()[DEM::PropertiesIndex<solver_type>::dp];
 
       Point<3> vertex_location   = pair_candidates.point;
       Point<3> particle_location = [&] {
@@ -74,7 +73,7 @@ particle_point_fine_search(
 // overlap, normal vector and normal relative velocity of the contact are
 // calculated. The output of this function is used for calculation of the
 // contact force
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
 particle_line_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_line_candidates
@@ -101,8 +100,7 @@ particle_line_fine_search(
       // and ending vertices of the boundary line
       Particles::ParticleIterator<dim> particle = pair_candidates.particle;
       double                           particle_diameter =
-        particle->get_properties()
-          [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+        particle->get_properties()[DEM::PropertiesIndex<solver_type>::dp];
 
       Point<3> vertex_one_location = pair_candidates.point_one;
       Point<3> vertex_two_location = pair_candidates.point_two;
@@ -151,7 +149,7 @@ find_projection_point(const Point<3> &point_p,
 }
 
 template void
-particle_point_fine_search<2>(
+particle_point_fine_search<2, DEM::SolverType::dem>(
   const typename DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
@@ -159,7 +157,7 @@ particle_point_fine_search<2>(
     &particle_point_pairs_in_contact);
 
 template void
-particle_point_fine_search<3>(
+particle_point_fine_search<3, DEM::SolverType::dem>(
   const typename DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
@@ -167,7 +165,7 @@ particle_point_fine_search<3>(
     &particle_point_pairs_in_contact);
 
 template void
-particle_line_fine_search<2>(
+particle_line_fine_search<2, DEM::SolverType::dem>(
   const typename DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
@@ -175,7 +173,40 @@ particle_line_fine_search<2>(
     &particle_line_pairs_in_contact);
 
 template void
-particle_line_fine_search<3>(
+particle_line_fine_search<3, DEM::SolverType::dem>(
+  const typename DEM::dem_data_structures<3>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_line_in_contact
+    &particle_line_pairs_in_contact);
+
+template void
+particle_point_fine_search<2, DEM::SolverType::cfd_dem>(
+  const typename DEM::dem_data_structures<2>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+template void
+particle_point_fine_search<3, DEM::SolverType::cfd_dem>(
+  const typename DEM::dem_data_structures<3>::particle_point_candidates
+              &particle_point_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_point_in_contact
+    &particle_point_pairs_in_contact);
+
+
+template void
+particle_line_fine_search<2, DEM::SolverType::cfd_dem>(
+  const typename DEM::dem_data_structures<2>::particle_line_candidates
+              &particle_line_contact_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_line_in_contact
+    &particle_line_pairs_in_contact);
+
+template void
+particle_line_fine_search<3, DEM::SolverType::cfd_dem>(
   const typename DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,

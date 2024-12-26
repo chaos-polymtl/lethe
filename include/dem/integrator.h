@@ -17,7 +17,7 @@ using namespace dealii;
  * @brief Base interface for classes that carry out the integration of the velocity and
  * position of particles with inertia
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class Integrator
 {
 public:
@@ -73,14 +73,15 @@ public:
             const std::vector<double>       &MOI) = 0;
 
   virtual void
-  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
-            const Tensor<1, 3>                              &body_force,
-            const double                                     time_step,
-            std::vector<Tensor<1, 3>>                       &torque,
-            std::vector<Tensor<1, 3>>                       &force,
-            const std::vector<double>                       &MOI,
-            const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) = 0;
+  integrate(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &body_force,
+    const double                                     time_step,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) = 0;
 };
 
 #endif

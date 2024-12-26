@@ -42,7 +42,7 @@ DEMSolver<dim, solver_type>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , mapping(1)
   , particle_handler(triangulation,
                      mapping,
-                     DEM::get_number_properties<DEM::solver_type>())
+                     DEM::get_number_properties<solver_type>())
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
@@ -236,12 +236,13 @@ DEMSolver<dim, solver_type>::setup_functions_and_pointers()
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model(parameters);
+    set_particle_particle_contact_force_model<dim, solver_type>(parameters);
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model(parameters, triangulation);
+    set_particle_wall_contact_force_model<dim, solver_type>(parameters,
+                                                            triangulation);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 std::function<void()>
 DEMSolver<dim, solver_type>::set_contact_search_iteration_function()
 {
@@ -260,7 +261,7 @@ DEMSolver<dim, solver_type>::set_contact_search_iteration_function()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim, solver_type>::set_insertion_type()
 {
@@ -298,8 +299,8 @@ DEMSolver<dim, solver_type>::set_insertion_type()
     }
 }
 
-template <int dim>
-std::shared_ptr<Integrator<dim>>
+template <int dim, DEM::SolverType solver_type>
+std::shared_ptr<Integrator<dim, solver_type>>
 DEMSolver<dim, solver_type>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
@@ -309,9 +310,9 @@ DEMSolver<dim, solver_type>::set_integrator_type()
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-        return std::make_shared<VelocityVerletIntegrator<dim>>();
+        return std::make_shared<VelocityVerletIntegrator<dim, solver_type>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-        return std::make_shared<ExplicitEulerIntegrator<dim>>();
+        return std::make_shared<ExplicitEulerIntegrator<dim, solver_type>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
@@ -470,12 +471,13 @@ DEMSolver<dim, solver_type>::check_contact_search_iteration_dynamic()
   const bool parallel_update =
     (simulation_control->get_step_number() %
      parameters.model_parameters.contact_detection_frequency) == 0;
-  find_particle_contact_detection_step<dim>(particle_handler,
-                                            simulation_control->get_time_step(),
-                                            smallest_contact_search_criterion,
-                                            mpi_communicator,
-                                            displacement,
-                                            parallel_update);
+  find_particle_contact_detection_step<dim, solver_type>(
+    particle_handler,
+    simulation_control->get_time_step(),
+    smallest_contact_search_criterion,
+    mpi_communicator,
+    displacement,
+    parallel_update);
 }
 
 template <int dim, DEM::SolverType solver_type>
@@ -653,7 +655,7 @@ DEMSolver<dim, solver_type>::write_output_results()
   const unsigned int group_files = parameters.simulation_control.group_files;
 
   // Write particles
-  Visualization<dim> particle_data_out;
+  Visualization<dim, solver_type> particle_data_out;
   particle_data_out.build_patches(particle_handler,
                                   properties_class.get_properties_name());
 
@@ -686,7 +688,7 @@ DEMSolver<dim, solver_type>::write_output_results()
     {
       // Force chains visualization
       particles_force_chains_object =
-        set_force_chains_contact_force_model(parameters);
+        set_force_chains_contact_force_model<dim, solver_type>(parameters);
       particles_force_chains_object->write_force_chains(
         parameters,
         particles_pvdhandler_force_chains,
@@ -744,17 +746,23 @@ DEMSolver<dim, solver_type>::report_statistics()
   // Calculate statistics on the particles
   statistics translational_kinetic_energy = calculate_granular_statistics<
     dim,
+    solver_type,
     DEM::dem_statistic_variable::translational_kinetic_energy>(
     particle_handler, mpi_communicator);
   statistics rotational_kinetic_energy = calculate_granular_statistics<
     dim,
+    solver_type,
     DEM::dem_statistic_variable::rotational_kinetic_energy>(particle_handler,
                                                             mpi_communicator);
   statistics velocity =
-    calculate_granular_statistics<dim, DEM::dem_statistic_variable::velocity>(
+    calculate_granular_statistics<dim,
+                                  solver_type,
+                                  DEM::dem_statistic_variable::velocity>(
       particle_handler, mpi_communicator);
   statistics omega =
-    calculate_granular_statistics<dim, DEM::dem_statistic_variable::omega>(
+    calculate_granular_statistics<dim,
+                                  solver_type,
+                                  DEM::dem_statistic_variable::omega>(
       particle_handler, mpi_communicator);
 
   if (this_mpi_process == 0)
@@ -822,7 +830,7 @@ DEMSolver<dim, solver_type>::sort_particles_into_subdomains_and_cells()
         {
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
-            0.1 * particle_properties[DEM::PropertiesIndex<solver>::mass] *
+            0.1 * particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
             particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
             particle_properties[DEM::PropertiesIndex<solver_type>::dp];
         }

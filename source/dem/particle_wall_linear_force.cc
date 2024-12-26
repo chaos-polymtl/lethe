@@ -162,8 +162,7 @@ ParticleWallLinearForce<dim, solver_type>::
           Tensor<1, 3> projected_vector =
             this->find_projection(point_to_particle_vector, normal_vector);
           double normal_overlap =
-            ((particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
              0.5) -
             (projected_vector.norm());
 
@@ -305,8 +304,8 @@ ParticleWallLinearForce<dim, solver_type>::
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties[DEM::PropertiesIndex<
-                           DEM::SolverType::cfd_dem>::dp]) *
+                        ((particle_properties
+                            [DEM::PropertiesIndex<solver_type>::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -389,19 +388,16 @@ ParticleWallLinearForce<dim, solver_type>::
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type];
+    particle_properties[DEM::PropertiesIndex<solver_type>::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
-  double rp_sqrt = sqrt(
-    particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
-    0.5);
+  double rp_sqrt =
+    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::dp] * 0.5);
 
   double normal_spring_constant =
     1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
-    pow((0.9375 *
-         particle_properties
-           [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+    pow((0.9375 * particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
          1.0 * 1.0 / // Characteristic velocity is set to 1.0
          (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
@@ -410,8 +406,7 @@ ParticleWallLinearForce<dim, solver_type>::
   // equal to zero.
   double normal_damping_constant =
     2 * this->model_parameter_beta[particle_type] *
-    sqrt(particle_properties
-           [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
          normal_spring_constant);
 
   // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
@@ -454,8 +449,7 @@ ParticleWallLinearForce<dim, solver_type>::
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
   Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 *
-     particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+    (0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
      normal_vector),
     -tangential_force);
 

@@ -7,7 +7,7 @@
 
 namespace DEM
 {
-  template <int dim, dem_statistic_variable var>
+  template <int dim, DEM::SolverType solver_type, dem_statistic_variable var>
   statistics
   calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -31,14 +31,13 @@ namespace DEM
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
             for (unsigned d = 0; d < dim; ++d)
-              velocity[d] = particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
+              velocity[d] =
+                particle_properties[DEM::PropertiesIndex<solver_type>::v_x + d];
 
             // Kinetic energy is 0.5*m*u^2
             variable =
               0.5 *
-              particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+              particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
               velocity.norm_square();
           }
         if constexpr (var == dem_statistic_variable::rotational_kinetic_energy)
@@ -48,24 +47,21 @@ namespace DEM
             if constexpr (dim == 2)
               {
                 omega[2] = particle_properties
-                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+                  [DEM::PropertiesIndex<solver_type>::omega_z];
               }
             if constexpr (dim == 3)
               {
                 for (unsigned d = 0; d < dim; ++d)
                   omega[d] = particle_properties
-                    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x +
-                     d];
+                    [DEM::PropertiesIndex<solver_type>::omega_x + d];
               }
 
             // Kinetic energy is 0.1*m*d^2 * w^2
             variable =
               0.1 *
-              particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+              particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
               Utilities::fixed_power<2>(
-                particle_properties
-                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp]) *
+                particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
               omega.norm_square();
           }
 
@@ -74,8 +70,8 @@ namespace DEM
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
             for (unsigned d = 0; d < dim; ++d)
-              velocity[d] = particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x + d];
+              velocity[d] =
+                particle_properties[DEM::PropertiesIndex<solver_type>::v_x + d];
 
             variable = velocity.norm();
           }
@@ -87,14 +83,13 @@ namespace DEM
             if constexpr (dim == 2)
               {
                 omega[2] = particle_properties
-                  [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z];
+                  [DEM::PropertiesIndex<solver_type>::omega_z];
               }
             if constexpr (dim == 3)
               {
                 for (unsigned d = 0; d < dim; ++d)
                   omega[d] = particle_properties
-                    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x +
-                     d];
+                    [DEM::PropertiesIndex<solver_type>::omega_x + d];
               }
 
             variable = omega.norm();
@@ -124,6 +119,7 @@ namespace DEM
   template statistics
   calculate_granular_statistics<
     2,
+    DEM::SolverType::dem,
     dem_statistic_variable::translational_kinetic_energy>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -131,6 +127,7 @@ namespace DEM
   template statistics
   calculate_granular_statistics<
     3,
+    DEM::SolverType::dem,
     dem_statistic_variable::translational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -138,6 +135,7 @@ namespace DEM
   template statistics
   calculate_granular_statistics<
     2,
+    DEM::SolverType::dem,
     dem_statistic_variable::rotational_kinetic_energy>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
@@ -145,30 +143,99 @@ namespace DEM
   template statistics
   calculate_granular_statistics<
     3,
+    DEM::SolverType::dem,
     dem_statistic_variable::rotational_kinetic_energy>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
-  calculate_granular_statistics<2, dem_statistic_variable::velocity>(
+  calculate_granular_statistics<2,
+                                DEM::SolverType::dem,
+                                dem_statistic_variable::velocity>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
-  calculate_granular_statistics<3, dem_statistic_variable::velocity>(
+  calculate_granular_statistics<3,
+                                DEM::SolverType::dem,
+                                dem_statistic_variable::velocity>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
-  calculate_granular_statistics<2, dem_statistic_variable::omega>(
+  calculate_granular_statistics<2,
+                                DEM::SolverType::dem,
+                                dem_statistic_variable::omega>(
     const Particles::ParticleHandler<2, 2> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
 
   template statistics
-  calculate_granular_statistics<3, dem_statistic_variable::omega>(
+  calculate_granular_statistics<3,
+                                DEM::SolverType::dem,
+                                dem_statistic_variable::omega>(
     const Particles::ParticleHandler<3, 3> &particle_handler,
     const MPI_Comm                         &mpi_communicator);
 
+
+  template statistics
+  calculate_granular_statistics<
+    2,
+    DEM::SolverType::cfd_dem,
+    dem_statistic_variable::translational_kinetic_energy>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
+    3,
+    DEM::SolverType::cfd_dem,
+    dem_statistic_variable::translational_kinetic_energy>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
+    2,
+    DEM::SolverType::cfd_dem,
+    dem_statistic_variable::rotational_kinetic_energy>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<
+    3,
+    DEM::SolverType::cfd_dem,
+    dem_statistic_variable::rotational_kinetic_energy>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<2,
+                                DEM::SolverType::cfd_dem,
+                                dem_statistic_variable::velocity>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<3,
+                                DEM::SolverType::cfd_dem,
+                                dem_statistic_variable::velocity>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<2,
+                                DEM::SolverType::cfd_dem,
+                                dem_statistic_variable::omega>(
+    const Particles::ParticleHandler<2, 2> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
+
+  template statistics
+  calculate_granular_statistics<3,
+                                DEM::SolverType::cfd_dem,
+                                dem_statistic_variable::omega>(
+    const Particles::ParticleHandler<3, 3> &particle_handler,
+    const MPI_Comm                         &mpi_communicator);
 
 
 } // namespace DEM

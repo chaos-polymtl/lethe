@@ -30,7 +30,7 @@ using namespace DEM;
  * This class mostly calls proper functions in regards the type of contacts for
  * the contact detection and updates of data containers.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class DEMContactManager
 {
 public:
@@ -130,7 +130,8 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const AdaptiveSparseContacts<dim>       &sparse_particle_contact_object);
+    const AdaptiveSparseContacts<dim, solver_type>
+      &sparse_particle_contact_object);
 
   /**
    * @brief Execute the particle-wall broad searches with adaptive sparse
@@ -161,7 +162,8 @@ public:
                                                       solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const AdaptiveSparseContacts<dim> &sparse_particle_contact_object);
+    const AdaptiveSparseContacts<dim, solver_type>
+      &sparse_particle_contact_object);
 
   /**
    * @brief Execute the particle-particles fine searches.
