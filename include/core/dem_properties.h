@@ -9,6 +9,12 @@
 
 namespace DEM
 {
+  /* The SolverType enum identifies which type of solver is using the DEM particles.
+   * This is used to identify which index corresponds to which properties. Two type of
+   * solvers are currently supported. DEM implies pure DEM simulation whereas cfd_dem
+   * is used to indicate simulations in which the particles are coupled to CFD. In the latter case
+   * the particles carry additional properties related to the particle-fluid coupling.
+   */
   enum SolverType
   {
     dem,
@@ -19,8 +25,7 @@ namespace DEM
    * particles properties within the property pool and also to generate
    * the associative names for the properties
    * This is the only part where we should use a classical enum because it is
-   * used as an integer within the code I think this is a temporary solution for
-   * now
+   * used as an integer when indexing the particle properties.
    */
   namespace DEMsolver
   {
@@ -65,7 +70,7 @@ namespace DEM
     };
   };
 
-  // **Template Specialization to Select PropertiesIndex**
+  /// Template specialization to select the adequate PropertiesIndex
   template <SolverType solver_type>
   struct PropertiesIndexEnum;
 
