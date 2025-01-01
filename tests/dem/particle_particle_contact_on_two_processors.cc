@@ -7,7 +7,6 @@
  */
 
 // Deal.II
-#include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -24,11 +23,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_fine_search.h>
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
@@ -102,12 +97,12 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation,
     mapping,
-    DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    DEM::get_number_properties<DEM::SolverType::dem>());
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;
 
-  DEMContactManager<dim> contact_manager;
+  DEMContactManager<dim,DEM::SolverType::dem> contact_manager;
 
   // Finding cell neighbors
   typename dem_data_structures<dim>::periodic_boundaries_cells_info
@@ -116,12 +111,12 @@ test()
 
   // Creating particle-particle force objects
   ParticleParticleContactForce<
-    dim,
+    dim,DEM::SolverType::dem,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
                                 nonlinear_force_object(dem_parameters);
-  VelocityVerletIntegrator<dim> integrator_object;
+  VelocityVerletIntegrator<dim,DEM::SolverType::dem> integrator_object;
 
   MPI_Comm communicator     = triangulation.get_communicator();
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
@@ -143,24 +138,24 @@ test()
       Particles::ParticleIterator<dim> pit1 =
         particle_handler.insert_particle(particle1, cell1);
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 0;
       pit1
-        ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+        ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
         particle_diameter;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] = -0.5;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = -0.5;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
       pit1->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] = 1;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::mass] = 1;
     }
 
   // Particle 2 is inserted in a cell owned by process0
@@ -173,24 +168,24 @@ test()
       Particles::ParticleIterator<dim> pit2 =
         particle_handler.insert_particle(particle2, cell2);
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 0;
       pit2
-        ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+        ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
         particle_diameter;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] = 0.5;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0.5;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
       pit2->get_properties()
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] = 1;
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::mass] = 1;
     }
 
   std::vector<Tensor<1, 3>> torque;
@@ -215,7 +210,7 @@ test()
 
       // Dummy Adaptive sparse contacts object and particle-particle broad
       // search
-      AdaptiveSparseContacts<dim, solver_type> dummy_adaptive_sparse_contacts;
+      AdaptiveSparseContacts<dim, DEM::SolverType::dem> dummy_adaptive_sparse_contacts;
       contact_manager.execute_particle_particle_broad_search(
         particle_handler, dummy_adaptive_sparse_contacts);
 

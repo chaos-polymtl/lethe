@@ -286,6 +286,9 @@ namespace Parameters
         explicit_euler
       } integration_method;
 
+      // Solver type
+      DEM::SolverType solver_type;
+
       // Disable particle contacts to optimize performance
       bool sparse_particle_contacts;
 

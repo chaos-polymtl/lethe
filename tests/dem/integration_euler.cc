@@ -49,7 +49,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
   // inserting one particle at x = 0 , y = 0 and z = 0 m
   // initial velocity of particles = 0, 0, 0 m/s
   // gravitational acceleration = 0, 0, -9.81 m/s2
@@ -67,26 +67,26 @@ test()
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
     1;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
     0.005;
   // Velocity
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
     0;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
     0;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
     0;
   // Angular velocity
   pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
   pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
   pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
   // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     1;
 
   std::vector<Tensor<1, 3>> torque;
@@ -96,7 +96,7 @@ test()
   force.push_back(Tensor<1, dim>({0, 0, 0}));
   MOI.push_back(1);
 
-  ExplicitEulerIntegrator<dim> integrator_object;
+  ExplicitEulerIntegrator<dim, DEM::SolverType::dem> integrator_object;
   integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
   for (auto particle_iterator = particle_handler.begin();

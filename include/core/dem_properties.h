@@ -24,7 +24,7 @@ namespace DEM
    */
   namespace DEMsolver
   {
-    enum PropertiesIndexDEM : std::uint8_t
+    enum PropertiesIndexDEM : int
     {
       type         = 0,
       dp           = 1,
@@ -43,7 +43,7 @@ namespace DEM
   // Specialization for `cfd_dem`
   namespace CFDDEMsolver
   {
-    enum PropertiesIndexCFDDEM : std::uint8_t
+    enum PropertiesIndexCFDDEM : int
     {
       type                    = 0,
       dp                      = 1,

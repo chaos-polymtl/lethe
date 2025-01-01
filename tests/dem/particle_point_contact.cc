@@ -80,7 +80,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
   // Inserting one particle in contact with wall
   Point<dim>               position1 = {0.97, 2.05};
   int                      id        = 0;
@@ -90,23 +90,23 @@ test()
 
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
     0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
     particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
     0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
     0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
     0;
   pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_x] = 0;
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
   pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_y] = 0;
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
   pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] =
+    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     1;
 
   // Construct boundary cells object and build it
@@ -127,8 +127,8 @@ test()
   typename DEM::dem_data_structures<dim>::particle_point_in_contact
     contact_information;
 
-  ParticlePointLineForce<dim>   force_object;
-  VelocityVerletIntegrator<dim> integrator_object;
+  ParticlePointLineForce<dim,DEM::SolverType::dem>   force_object;
+  VelocityVerletIntegrator<dim, DEM::SolverType::dem> integrator_object;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -155,7 +155,7 @@ test()
         boundary_cells_object.get_boundary_cells_with_points(),
         contact_candidates);
 
-      particle_point_fine_search<dim>(contact_candidates,
+      particle_point_fine_search<dim,DEM::SolverType::dem>(contact_candidates,
                                       neighborhood_threshold,
                                       contact_information);
 

@@ -32,9 +32,17 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
+          const DEM::SolverType solver_type = dem_parameters.model_parameters.solver_type;
 
-          DEMSolver<2, DEM::SolverType::dem> problem(dem_parameters);
-          problem.solve();
+          if (solver_type == DEM::SolverType::dem)
+            {
+              DEMSolver<2, DEM::SolverType::dem> problem(dem_parameters);
+              problem.solve();
+            }
+          else
+            {
+              return 1;
+            }
         }
 
       else if (dim == 3)
@@ -46,9 +54,17 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
+          const DEM::SolverType solver_type = dem_parameters.model_parameters.solver_type;
 
-          DEMSolver<3, DEM::SolverType::dem> problem(dem_parameters);
-          problem.solve();
+          if (solver_type == DEM::SolverType::dem)
+            {
+              DEMSolver<3, DEM::SolverType::dem> problem(dem_parameters);
+              problem.solve();
+            }
+          else
+            {
+              return 1;
+            }
         }
 
       else
