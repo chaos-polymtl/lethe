@@ -4,6 +4,13 @@ Publications
 
 This section regroups the peer-reviewed journal articles that **describe** core functionalities of Lethe or that **use** Lethe. The publications are grouped by the year of the publications and displayed in the IEEE format.
 
+2025
+----
+
+* `A. Collard-Daigneault, D. Vidal, F. Bertrand, and B. Blais, “Enhancing the computational performance of granular flow simulations in DEM and CFD-DEM with adaptive sparse contacts (ASC),” Powder Technology, pp. 120530–120530, 2025 <https://doi.org/10.1016/j.powtec.2024.120530>`_.
+
+* `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Robust pore-resolved CFD through porous monoliths reconstructed by micro-computed tomography: From digitization to flow prediction,” Chemical Engineering Journal, pp. 158577–158577, 2025 <https://doi.org/10.1016/j.cej.2024.158577>`_.
+
 2024
 ----
 
@@ -52,7 +59,5 @@ Preprints
 ---------
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
-
-* `O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Pore-resolved CFD in Digital Twin of Porous Monoliths Reconstructed by Micro-computed Tomography,” arXiv.org, August 2024 <https://doi.org/10.48550/arXiv.2408.04711>`_.
 
 * `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", available at SSRN, October 2024 <https://dx.doi.org/10.2139/ssrn.4981567>`_.
