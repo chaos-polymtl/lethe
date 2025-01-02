@@ -34,7 +34,7 @@ subsection restart
   set checkpoint = false      # = true to generate the restart files.
   set frequency  = 10000
   set restart    = true       # = false to generate the restart files.
-  set filename   = insertion_file_restart
+  set filename   = restart_file_insertion
 end
 
 #---------------------------------------------------

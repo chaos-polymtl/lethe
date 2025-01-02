@@ -11,12 +11,21 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 5e-5
-  set time end          = .7
-  set log frequency     = 500
-  set output frequency  = 0
-  set output path       = ./output/
-  set output boundaries = false
+  set time step        = 5e-5
+  set time end         = 0.7
+  set log frequency    = 500
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 10000
+  set restart    = false
+  set filename   = ../restart_moving_receptacle_files/restart
 end
 
 #---------------------------------------------------
@@ -79,22 +88,6 @@ subsection insertion info
 end
 
 #---------------------------------------------------
-# Insertion Info
-#---------------------------------------------------
-
-subsection restart
-  # Checkpointing parameters
-  set checkpoint = true
-  set frequency  = 14000
-
-  # Output/input files
-  set filename = restart
-
-  # Restarting parameter
-  set restart = false
-end
-
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -110,20 +103,23 @@ end
 #---------------------------------------------------
 
 subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type               = gmsh
-      set file name          = square.msh
-      set simplex            = true
-      set initial refinement = 0
-    end
+  subsection solid surfaces
+    set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type               = gmsh
+        set file name          = ../restart_moving_receptacle_files/square.msh
+        set simplex            = true
+        set initial refinement = 0
+      end
 
-    subsection translational velocity
-      set Function expression = if(t>0.4,if(t<0.6,0.1,0),0) ; 0 ; 0
-    end
-    subsection angular velocity
-      set Function expression = 0 ; 0  ; 0
+      subsection translational velocity
+        set Function expression = if(t>0.4,if(t<0.6,0.1,0),0) ; 0 ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0  ; 0
+      end
     end
   end
 end
+
