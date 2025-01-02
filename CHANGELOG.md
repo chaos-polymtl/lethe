@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2024-01-01
+
+### Changed
+
+- MINOR All lethe-fluid-particles tests that have a restart file now start with "restart_". This nomenclature change is made to ensure that restart tests are easier to identify. Furthermore, all application_tests files now are seperated by underscores instead of a blend of hyphens and underscores. [#1400](https://github.com/chaos-polymtl/lethe/pull/14000)
+
 ## [Master] - 2024-12-17
 
 ### Added
