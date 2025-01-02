@@ -27,7 +27,7 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/include/core/revision.h
 )
 
-project(lethe VERSION 0.1 LANGUAGES CXX)
+project(lethe VERSION 1.0 LANGUAGES CXX)
 
 # Check for deal.II features after the PROJECT call — but still as close
 # as possible to the FIND_PACKAGE call — so that the messages appear
