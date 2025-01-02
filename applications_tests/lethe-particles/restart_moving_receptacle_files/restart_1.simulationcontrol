@@ -4,5 +4,5 @@ dt_1 5e-05
 dt_2 5e-05
 dt_3 5e-05
 CFL  0
-Time 0.7
-Iter 14000
+Time 0.5
+Iter 10000
