@@ -16,6 +16,8 @@ using namespace dealii;
  * also integrated into integration class
  *
  * @note Euler is a first-order integration scheme. Calculation proceudre:
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  *
  * x(n+1) = x(n) + v(n) * dt
  * v(n+1) = v(n) + a(n) * dt

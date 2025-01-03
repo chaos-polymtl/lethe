@@ -272,16 +272,19 @@ namespace LetheGridTools
    * Variables name are taken straight from this reference to ensure a better
    * readability.
    *
-   * @return A tuple in which 0. a vector of bools to determine if the particle is
-   * close to the triangle plane, 1. a vector of projected location of particles
-   * on the triangle, 2. a vector of normal vectors of the triangles
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam solve_type Type of solver used for the DEM.
    *
    * @param triangle A vector of points that defines a triangle
    * @param particles A particle_iterator_range that refers to all the particles
    * located in the background (base) cell
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
+   * * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * close to the triangle plane, 1. a vector of projected location of particles
+   * on the triangle, 2. a vector of normal vectors of the triangles
    */
+
   template <int dim, DEM::SolverType solverType>
   std::
     tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>

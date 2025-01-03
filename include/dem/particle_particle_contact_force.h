@@ -29,6 +29,8 @@ using namespace dealii;
  * actual implementation of the models are carried out in the
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class ParticleParticleContactForceBase

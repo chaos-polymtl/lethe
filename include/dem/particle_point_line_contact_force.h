@@ -21,6 +21,9 @@ using namespace dealii;
  * of particles and walls. Since the inputs and the calculation method of
  * particle-point and particle-line contact forces are similar, we only used one
  * function for both tasks.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class ParticlePointLineForce

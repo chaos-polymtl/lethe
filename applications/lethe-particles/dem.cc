@@ -32,7 +32,8 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
-          const DEM::SolverType solver_type = dem_parameters.model_parameters.solver_type;
+          const DEM::SolverType solver_type =
+            dem_parameters.model_parameters.solver_type;
 
           if (solver_type == DEM::SolverType::dem)
             {
@@ -41,7 +42,13 @@ main(int argc, char *argv[])
             }
           else
             {
-              return 1;
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, "
+                  "Lethe found a value different than \"dem\". As of January 2025, "
+                  "the lethe-particles application requires the uses of  "
+                  "\"solver type = dem\", which is the default value."));
             }
         }
 
@@ -54,8 +61,9 @@ main(int argc, char *argv[])
           // Parsing of the file
           prm.parse_input(argv[1]);
           dem_parameters.parse(prm);
-          const DEM::SolverType solver_type = dem_parameters.model_parameters.solver_type;
-
+          // const DEM::SolverType solver_type =
+          // dem_parameters.model_parameters.solver_type;
+          const DEM::SolverType solver_type = DEM::SolverType::dem;
           if (solver_type == DEM::SolverType::dem)
             {
               DEMSolver<3, DEM::SolverType::dem> problem(dem_parameters);
@@ -63,7 +71,13 @@ main(int argc, char *argv[])
             }
           else
             {
-              return 1;
+              AssertThrow(
+                false,
+                dealii::ExcMessage(
+                  "While reading the solver type from the input file, "
+                  "Lethe found a value different than \"dem\". As of January 2025, "
+                  "the lethe-particles application requires the uses of  "
+                  "\"solver type = dem\", which is the default value."));
             }
         }
 

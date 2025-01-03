@@ -38,6 +38,9 @@ no_rolling_resistance_torque(
  * The model woks as follows:
  * M_r = - mu_r * R_eff * |F_n| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
+ *
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.
@@ -85,6 +88,9 @@ constant_rolling_resistance_torque(
  * M_r = - mu_r * R_eff * |F_n| * |V_omega| * omega_hat
  * omega_hat = (omega_i - omega_j) / (|oemaga_i - omega_j|)
  * V_omega = omega_i × (R_i * n_ij) - omega_j × (R_j * n_ji)
+ *
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param[in] effective_r Effective radius.
  * @param[in] particle_one_properties Properties of particle one in contact.
  * @param[in] particle_two_properties Properties of particle two in contact.

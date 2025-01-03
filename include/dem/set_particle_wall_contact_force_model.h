@@ -16,6 +16,9 @@
  * @brief Set the selected particle-wall contact force model in the parameter
  * handler file.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param dem_parameters DEM parameters
  * @param triangulation Triangulation
  * @return A pointer to the particle-wall contact force object

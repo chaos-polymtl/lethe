@@ -108,24 +108,20 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
-    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 0;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
     particle_diameter;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
     -1.0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] =
     0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] =
     0;
-  pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
-  pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
-  pit1->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
-    1;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] =
+    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -156,11 +152,12 @@ test()
 
   // Particle-Wall fine search
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                                  particle_wall_contact_information;
-  ParticleWallNonLinearForce<dim,DEM::SolverType::dem> particle_wall_force_object(dem_parameters);
-  VelocityVerletIntegrator<dim,DEM::SolverType::dem>   integrator_object;
-  double                          distance;
-  double                          time = 0.0;
+    particle_wall_contact_information;
+  ParticleWallNonLinearForce<dim, DEM::SolverType::dem>
+    particle_wall_force_object(dem_parameters);
+  VelocityVerletIntegrator<dim, DEM::SolverType::dem> integrator_object;
+  double                                              distance;
+  double                                              time = 0.0;
 
   while (time < 0.00115)
     {
@@ -171,10 +168,11 @@ test()
         {
           force[0][2] = 0;
         }
-      distance = hyper_cube_length + particle->get_location()[0] -
-                 particle->get_properties()
-                     [DEM::PropertiesIndex<DEM::SolverType::dem>::dp] /
-                   2.0;
+      distance =
+        hyper_cube_length + particle->get_location()[0] -
+        particle
+            ->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] /
+          2.0;
 
       if (distance > 0.0)
         {

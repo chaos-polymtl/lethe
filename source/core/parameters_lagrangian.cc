@@ -931,10 +931,9 @@ namespace Parameters
         else if (solver_type_str == "cfd_dem")
           solver_type = DEM::SolverType::cfd_dem;
         else
-        {
-          throw(std::runtime_error("Invalid solver type"));
-        }
-
+          {
+            throw(std::runtime_error("Invalid solver type"));
+          }
       }
       prm.leave_subsection();
     }

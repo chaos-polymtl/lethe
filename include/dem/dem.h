@@ -47,6 +47,8 @@ using namespace DEM;
 /**
  * @brief Solver using the soft-sphere model of the discrete element method
  * (DEM) to simulate granular systems.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class DEMSolver
@@ -269,6 +271,8 @@ private:
 
   /**
    * @brief The properties of the DEM simulation.
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam solve_type Type of solver used for the DEM.
    */
   DEM::DEMProperties<dim, solver_type> properties_class;
 

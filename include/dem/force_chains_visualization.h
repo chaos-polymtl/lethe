@@ -25,12 +25,14 @@ using namespace dealii;
 using namespace DEM;
 
 /**
- * Base class for the particles force chains contact force models.
+ * @brief Base class for the particles force chains contact force models.
  * This class does not implement any of the models, but ensures that
  * an interface without template specialization is available. All of the
  * actual implementation of the models are carried out in the
  * ParticlesForceChains class which is templated by the contact model
  * type.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class ParticlesForceChainsBase

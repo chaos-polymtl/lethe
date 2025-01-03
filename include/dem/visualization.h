@@ -21,6 +21,10 @@ using namespace dealii;
 /**
  * @brief Building patches of particle properties for visualization.
  * This function is taken from Aspect and dealii and implemented here.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  */
 template <int dim, DEM::SolverType solver_type>
 class Visualization : public dealii::DataOutInterface<0, dim>

@@ -20,6 +20,9 @@ using namespace dealii;
  * @brief Manages the load balancing (repartitioning), of the domain according
  * to the computational load of the cells and the particles.
  * It is used by the DEM and the coupling CFD-DEM solvers.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class LagrangianLoadBalancing

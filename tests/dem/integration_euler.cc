@@ -67,27 +67,21 @@ test()
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
-    1;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
-    0.005;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 1;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] = 0.005;
   // Velocity
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
-    0;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
-    0;
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
-    0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
   // Angular velocity
-  pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
-  pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
-  pit->get_properties()
-    [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] =
+    0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] =
+    0;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] =
+    0;
   // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
-    1;
+  pit->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;

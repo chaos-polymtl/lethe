@@ -31,6 +31,9 @@ using namespace dealii;
 /**
  * @brief Carries out writing the cell data of the domain.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param triangulation Triangulation of the domain.
  * @param grid_pvdhandler PVD handler for grid.
  * @param background_dh Background DoF handler.

@@ -14,7 +14,8 @@
  * spring-dashpot model and the rolling resistance model (and the cohesive
  * force model if applicable).
  *
- * @tparam dim Space dimension.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  *
  * @param[in] dem_parameters DEM parameters.
  *
@@ -29,7 +30,8 @@ set_particle_particle_contact_force_model(
  *  @brief Set the rolling resistance model for the particle-particle contact
  *  force model.
  *
- * @tparam dim Space dimension.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  * @tparam particle_particle_contact_force_model Particle-particle contact force
  * model.
  *
@@ -51,6 +53,9 @@ set_rolling_resistance_model(
  * @brief Return the particle-particle contact force model based on the
  * spring-dashpot model and the rolling resistance model (and the cohesive
  * force model if applicable) for the force-chain post-processing.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  *
  * @param dem_parameters DEM parameters.
  *

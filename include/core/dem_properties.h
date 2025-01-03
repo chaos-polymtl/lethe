@@ -9,11 +9,12 @@
 
 namespace DEM
 {
-  /* The SolverType enum identifies which type of solver is using the DEM particles.
-   * This is used to identify which index corresponds to which properties. Two type of
-   * solvers are currently supported. DEM implies pure DEM simulation whereas cfd_dem
-   * is used to indicate simulations in which the particles are coupled to CFD. In the latter case
-   * the particles carry additional properties related to the particle-fluid coupling.
+  /* The SolverType enum identifies which type of solver is used by the DEM
+   * particles. This is used to identify which index corresponds to which
+   * properties. Two type of solvers are currently supported. DEM implies pure
+   * DEM simulation whereas cfd_dem is used to indicate simulations in which the
+   * particles are coupled to CFD. In the latter case the particles carry
+   * additional properties related to the particle-fluid coupling.
    */
   enum SolverType
   {
@@ -42,7 +43,7 @@ namespace DEM
       mass         = 8,
       n_properties = 9,
 
-    };
+    }
   };
 
   // Specialization for `cfd_dem`
@@ -67,7 +68,7 @@ namespace DEM
       mass                    = 14,
       volumetric_contribution = 15,
       n_properties            = 16,
-    };
+    }
   };
 
   /// Template specialization to select the adequate PropertiesIndex
@@ -86,18 +87,33 @@ namespace DEM
     using Index = CFDDEMsolver::PropertiesIndexCFDDEM;
   };
 
+  // This typename helps for code readability
   template <SolverType solver_type>
   using PropertiesIndex = typename PropertiesIndexEnum<solver_type>::Index;
 
-
+  /**
+   * @brief Return the number of properties stored on each particle.
+   * @tparam solve_type Type of solver used for the DEM.
+   * @return Number of DEM properties.
+   */
   template <SolverType solve_type>
   unsigned int
   get_number_properties();
 
+  /**
+   * @brief Controls the name of output variables for the vtu.
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam solve_type Type of solver used for the DEM.
+   */
   template <int dim, SolverType solver_type>
   class DEMProperties
   {
   public:
+    /**
+     * @brief Return the names of each DEM property. Used to properly generate
+     * output files.
+     * @return A vector with the names of each property.
+     */
     static std::vector<std::pair<std::string, int>>
     get_properties_name();
   };

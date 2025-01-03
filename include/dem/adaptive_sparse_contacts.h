@@ -98,7 +98,8 @@ template class LinearAlgebra::distributed::Vector<int>;
  * flagged as active cells. It works with the assignment and verification of the
  * mobility status at nodes to check the status of the neighboring cells.
  *
- * @tparam dim Spatial dimension
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class AdaptiveSparseContacts

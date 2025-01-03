@@ -32,7 +32,8 @@ namespace DEM
    * - Translational velocity
    * - Rotational (angular) velocity
    *
-   * @tparam dim Dimensionality of the problem (2D or 3D)
+   * @tparam dim An integer that denotes the number of spatial dimensions.
+   * @tparam solve_type Type of solver used for the DEM.
    * @tparam dem_statistics_variable Enum variable used to identify which
    * granular statistics is being calculated
    *

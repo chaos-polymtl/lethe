@@ -29,6 +29,9 @@ using namespace DEM;
  *
  * This class mostly calls proper functions in regards the type of contacts for
  * the contact detection and updates of data containers.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class DEMContactManager

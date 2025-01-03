@@ -15,7 +15,9 @@ using namespace dealii;
 
 /**
  * @brief Find steps for dynamic contact search for particle-particle contacts.
- *
+
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  * @param particle_handler
  * @param dt DEM time step
  * @param smallest_contact_search_criterion A criterion for finding

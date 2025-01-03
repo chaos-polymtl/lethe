@@ -83,17 +83,14 @@ test()
   Particles::ParticleIterator<dim> pit0 =
     particle_handler.insert_particle(particle0, particle0_cell);
 
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
-    0;
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
-    0;
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
-    0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
   pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     particle_mass;
 
   // Calling integrators
-  ExplicitEulerIntegrator<dim,DEM::SolverType::dem> explicit_euler_object;
+  ExplicitEulerIntegrator<dim, DEM::SolverType::dem> explicit_euler_object;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -150,12 +147,9 @@ test()
     particle_handler.insert_particle(particle1, particle1_cell);
 
 
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
-    0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
-    0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
-    0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     particle_mass;
 
@@ -213,12 +207,9 @@ test()
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, particle2_cell);
 
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
-    0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
-    0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
-    0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
   pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     particle_mass;
 
@@ -285,12 +276,9 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, particle3_cell);
 
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
-    0;
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
-    0;
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
-    0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
   pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
     particle_mass;
 

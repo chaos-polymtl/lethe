@@ -57,6 +57,9 @@ find_particle_particle_contact_pairs(
  * This version of the function is used when adaptive sparse contacts is
  * enabled.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param particle_handler The particle handler of particles in the broad
  * search
  * @param[in] cells_local_neighbor_list  A vector (with size equal to the number

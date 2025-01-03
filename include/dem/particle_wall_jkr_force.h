@@ -21,6 +21,9 @@ using namespace dealii;
  * @brief Calculation of the JKR particle-wall contact force using the
  * information obtained from the fine search and physical properties of
  * particles and walls
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, DEM::SolverType solver_type>
 class ParticleWallJKRForce : public ParticleWallContactForce<dim, solver_type>

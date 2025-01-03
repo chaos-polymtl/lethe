@@ -14,6 +14,9 @@ using namespace dealii;
  * contact, the normal overlap, normal vector of contact and contact normal
  * relative velocity are stored in a map which is the output of this function.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param particle_point_contact_candidates The output of particle-point broad
  * search which shows contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.

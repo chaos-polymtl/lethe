@@ -44,6 +44,9 @@ find_particle_point_contact_pairs(
  * collision pairs will be investigated in the fine search to check if they
  * are in contact or not.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  * @param particle_handler Particle handler of particles located in boundary
  * cells.
  * @param boundary_cells_with_points A container of cells which are located at
