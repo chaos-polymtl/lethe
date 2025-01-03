@@ -43,8 +43,8 @@ namespace DEM
       mass         = 8,
       n_properties = 9,
 
-    }
-  };
+    };
+  }
 
   // Specialization for `cfd_dem`
   namespace CFDDEMsolver
@@ -68,7 +68,7 @@ namespace DEM
       mass                    = 14,
       volumetric_contribution = 15,
       n_properties            = 16,
-    }
+    };
   };
 
   /// Template specialization to select the adequate PropertiesIndex
