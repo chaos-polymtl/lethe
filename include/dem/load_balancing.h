@@ -20,8 +20,11 @@ using namespace dealii;
  * @brief Manages the load balancing (repartitioning), of the domain according
  * to the computational load of the cells and the particles.
  * It is used by the DEM and the coupling CFD-DEM solvers.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class LagrangianLoadBalancing
 {
 public:
@@ -75,10 +78,11 @@ public:
    * (accesses to the mobility status of the cells)
    */
   inline void
-  copy_references(std::shared_ptr<SimulationControl>        &simulation_control,
-                  parallel::distributed::Triangulation<dim> &triangulation,
-                  Particles::ParticleHandler<dim>           &particle_handler,
-                  AdaptiveSparseContacts<dim> &adaptive_sparse_contacts)
+  copy_references(
+    std::shared_ptr<SimulationControl>        &simulation_control,
+    parallel::distributed::Triangulation<dim> &triangulation,
+    Particles::ParticleHandler<dim>           &particle_handler,
+    AdaptiveSparseContacts<dim, solver_type>  &adaptive_sparse_contacts)
   {
     this->simulation_control       = simulation_control;
     this->triangulation            = &triangulation;
@@ -438,7 +442,7 @@ private:
   /**
    * @brief Pointer to the adaptive sparse contacts object.
    */
-  AdaptiveSparseContacts<dim> *adaptive_sparse_contacts;
+  AdaptiveSparseContacts<dim, solver_type> *adaptive_sparse_contacts;
 };
 
 #endif

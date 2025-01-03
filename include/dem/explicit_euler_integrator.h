@@ -16,13 +16,15 @@ using namespace dealii;
  * also integrated into integration class
  *
  * @note Euler is a first-order integration scheme. Calculation proceudre:
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  *
  * x(n+1) = x(n) + v(n) * dt
  * v(n+1) = v(n) + a(n) * dt
  * a(n+1) = F(n+1) / m
  */
-template <int dim>
-class ExplicitEulerIntegrator : public Integrator<dim>
+template <int dim, DEM::SolverType solver_type>
+class ExplicitEulerIntegrator : public Integrator<dim, solver_type>
 {
 public:
   ExplicitEulerIntegrator()
@@ -69,14 +71,15 @@ public:
             const std::vector<double>       &MOI) override;
 
   virtual void
-  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
-            const Tensor<1, 3>                              &body_force,
-            const double                                     time_step,
-            std::vector<Tensor<1, 3>>                       &torque,
-            std::vector<Tensor<1, 3>>                       &force,
-            const std::vector<double>                       &MOI,
-            const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
+  integrate(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &body_force,
+    const double                                     time_step,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) override;
 };
 
 #endif

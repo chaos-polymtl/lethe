@@ -708,6 +708,12 @@ namespace Parameters
                           "Choosing integration method"
                           "Choices are <velocity_verlet|explicit_euler>.");
 
+        prm.declare_entry("solver type",
+                          "dem",
+                          Patterns::Selection("dem|cfd_dem"),
+                          "Choosing solver type"
+                          "Choices are <dem|cfd_dem>.");
+
         prm.enter_subsection("adaptive sparse contacts");
         {
           prm.declare_entry(
@@ -917,6 +923,16 @@ namespace Parameters
         else
           {
             throw(std::runtime_error("Invalid integration method "));
+          }
+
+        const std::string solver_type_str = prm.get("solver type");
+        if (solver_type_str == "dem")
+          solver_type = DEM::SolverType::dem;
+        else if (solver_type_str == "cfd_dem")
+          solver_type = DEM::SolverType::cfd_dem;
+        else
+          {
+            throw(std::runtime_error("Invalid solver type"));
           }
       }
       prm.leave_subsection();

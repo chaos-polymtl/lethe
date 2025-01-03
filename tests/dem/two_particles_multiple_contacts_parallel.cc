@@ -15,11 +15,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/dem_contact_manager.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_fine_search.h>
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
@@ -92,12 +88,12 @@ test()
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   Particles::ParticleHandler<dim> particle_handler(
-    triangulation, mapping, DEM::get_number_properties());
+    triangulation, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
 
   typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;
 
-  DEMContactManager<dim> contact_manager;
+  DEMContactManager<dim, DEM::SolverType::dem> contact_manager;
 
   // Finding cell neighbors
   typename dem_data_structures<dim>::periodic_boundaries_cells_info
@@ -107,11 +103,12 @@ test()
   // Particle-particle force objects
   ParticleParticleContactForce<
     dim,
+    DEM::SolverType::dem,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
       hertz_mindlin_limit_overlap,
     Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
-                                nonlinear_force_object(dem_parameters);
-  VelocityVerletIntegrator<dim> integrator_object;
+    nonlinear_force_object(dem_parameters);
+  VelocityVerletIntegrator<dim, DEM::SolverType::dem> integrator_object;
 
   MPI_Comm communicator     = triangulation.get_communicator();
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
@@ -131,15 +128,24 @@ test()
                                                  particle1.get_location());
       Particles::ParticleIterator<dim> pit1 =
         particle_handler.insert_particle(particle1, cell1);
-      pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-      pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.4;
-      pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-      pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
+        0;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
+        particle_diameter;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
+        0;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
+        -0.4;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
+        0;
+      pit1->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
+      pit1->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
+      pit1->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
+      pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+        1;
 
       Particles::Particle<dim> particle2(position2, position2, id2);
       typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -147,15 +153,24 @@ test()
                                                  particle2.get_location());
       Particles::ParticleIterator<dim> pit2 =
         particle_handler.insert_particle(particle2, cell2);
-      pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-      pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-      pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] =
+        0;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
+        particle_diameter;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] =
+        0;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] =
+        0;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] =
+        0;
+      pit2->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] = 0;
+      pit2->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] = 0;
+      pit2->get_properties()
+        [DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] = 0;
+      pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+        1;
     }
 
 
@@ -185,7 +200,8 @@ test()
 
       // Dummy Adaptive sparse contacts object and particle-particle broad
       // search
-      AdaptiveSparseContacts<dim> dummy_adaptive_sparse_contacts;
+      AdaptiveSparseContacts<dim, DEM::SolverType::dem>
+        dummy_adaptive_sparse_contacts;
       contact_manager.execute_particle_particle_broad_search(
         particle_handler, dummy_adaptive_sparse_contacts);
 

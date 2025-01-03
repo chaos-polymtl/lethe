@@ -37,27 +37,14 @@ w_z = df["omega"][:, 2]
 # Diameter
 diameters = df["diameter"][:]
 
-# FEM force
-fem_f_x = df["fem_force"][:, 0]
-fem_f_y = df["fem_force"][:, 1]
-fem_f_z = df["fem_force"][:, 2]
-
-# FEM force
-fem_t_x = df["fem_torque"][:, 0]
-fem_t_y = df["fem_torque"][:, 1]
-fem_t_z = df["fem_torque"][:, 2]
-
 with open(output_file_name, 'w') as file:
     # Write content to the file
     file.write(
-        "p_x; p_y; p_z; v_x  ; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; "
-        "fem_torque_x; fem_torque_y; fem_torque_z \n")
+        "p_x; p_y; p_z; v_x  ; v_y; v_z; w_x; w_y; w_z; diameters; \n")
 
-    for px, py, pz, vx, vy, vz, wx, wy, wz, d, ffx, ffy, ffz, ftx, fty, ftz in zip(p_x, p_y, p_z, v_x, v_y, v_z, w_x,
-                                                                                   w_y, w_z, diameters, fem_f_x,
-                                                                                   fem_f_y, fem_f_z, fem_t_x,
-                                                                                   fem_t_y, fem_t_z):
+    for px, py, pz, vx, vy, vz, wx, wy, wz, d in zip(p_x, p_y, p_z, v_x, v_y, v_z, w_x,
+                                                                                   w_y, w_z, diameters):
         file.write(
-            f"{px}; {py}; {pz}; {vx}; {vy}; {vz}; {wx}; {wy}; {wz}; {d}; {ffx}; {ffy}; {ffz}; {ftx}; {fty}; {ftz} \n")
+            f"{px}; {py}; {pz}; {vx}; {vy}; {vz}; {wx}; {wy}; {wz}; {d}; \n")
 
 print("Job is finish")

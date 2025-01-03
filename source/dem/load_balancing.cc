@@ -7,32 +7,32 @@
 
 using namespace dealii;
 
-template <int dim>
-LagrangianLoadBalancing<dim>::LagrangianLoadBalancing()
+template <int dim, DEM::SolverType solver_type>
+LagrangianLoadBalancing<dim, solver_type>::LagrangianLoadBalancing()
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
 {}
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-LagrangianLoadBalancing<dim>::check_load_balance_once()
+LagrangianLoadBalancing<dim, solver_type>::check_load_balance_once()
 {
   if (simulation_control->get_step_number() == load_balance_step)
     DEMActionManager::get_action_manager()->load_balance_step();
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-LagrangianLoadBalancing<dim>::check_load_balance_frequent()
+LagrangianLoadBalancing<dim, solver_type>::check_load_balance_frequent()
 {
   if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
     DEMActionManager::get_action_manager()->load_balance_step();
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
+LagrangianLoadBalancing<dim, solver_type>::check_load_balance_dynamic()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
@@ -53,9 +53,10 @@ LagrangianLoadBalancing<dim>::check_load_balance_dynamic()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 inline void
-LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
+LagrangianLoadBalancing<dim,
+                        solver_type>::check_load_balance_with_sparse_contacts()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
@@ -82,16 +83,16 @@ LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
               // is modified if cell is active or inactive
               double alpha = 1.0;
               if (cell_mobility_status ==
-                    AdaptiveSparseContacts<dim>::static_active ||
+                    AdaptiveSparseContacts<dim, solver_type>::static_active ||
                   cell_mobility_status ==
-                    AdaptiveSparseContacts<dim>::advected_active)
+                    AdaptiveSparseContacts<dim, solver_type>::advected_active)
                 {
                   alpha = active_status_factor;
                 }
               else if (cell_mobility_status ==
-                         AdaptiveSparseContacts<dim>::inactive ||
+                         AdaptiveSparseContacts<dim, solver_type>::inactive ||
                        cell_mobility_status ==
-                         AdaptiveSparseContacts<dim>::advected)
+                         AdaptiveSparseContacts<dim, solver_type>::advected)
                 {
                   alpha = inactive_status_factor;
                 }
@@ -128,16 +129,16 @@ LagrangianLoadBalancing<dim>::check_load_balance_with_sparse_contacts()
 }
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 unsigned int
-LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
+LagrangianLoadBalancing<dim, solver_type>::calculate_total_cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const typename parallel::distributed::Triangulation<dim>::CellStatus status)
   const
 #else
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 unsigned int
-LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
+LagrangianLoadBalancing<dim, solver_type>::calculate_total_cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
 #endif
@@ -194,18 +195,22 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight(
 }
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 unsigned int
-LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
+LagrangianLoadBalancing<dim, solver_type>::
+  calculate_total_cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+                                                                        &cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const
 #else
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 unsigned int
-LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
-  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const CellStatus status) const
+LagrangianLoadBalancing<dim, solver_type>::
+  calculate_total_cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+                    &cell,
+    const CellStatus status) const
 #endif
 {
   // Assign no weight to cells we do not own.
@@ -219,13 +224,17 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   // Applied a factor on the particle weight regards the mobility status
   // Factor of 1 when mobile cell
   double alpha = 1.0;
-  if (cell_mobility_status == AdaptiveSparseContacts<dim>::static_active ||
-      cell_mobility_status == AdaptiveSparseContacts<dim>::advected_active)
+  if (cell_mobility_status ==
+        AdaptiveSparseContacts<dim, solver_type>::static_active ||
+      cell_mobility_status ==
+        AdaptiveSparseContacts<dim, solver_type>::advected_active)
     {
       alpha = active_status_factor;
     }
-  else if (cell_mobility_status == AdaptiveSparseContacts<dim>::inactive ||
-           cell_mobility_status == AdaptiveSparseContacts<dim>::advected)
+  else if (cell_mobility_status ==
+             AdaptiveSparseContacts<dim, solver_type>::inactive ||
+           cell_mobility_status ==
+             AdaptiveSparseContacts<dim, solver_type>::advected)
     {
       alpha = inactive_status_factor;
     }
@@ -275,5 +284,7 @@ LagrangianLoadBalancing<dim>::calculate_total_cell_weight_with_mobility_status(
   return 0;
 }
 
-template class LagrangianLoadBalancing<2>;
-template class LagrangianLoadBalancing<3>;
+template class LagrangianLoadBalancing<2, DEM::SolverType::dem>;
+template class LagrangianLoadBalancing<2, DEM::SolverType::cfd_dem>;
+template class LagrangianLoadBalancing<3, DEM::SolverType::dem>;
+template class LagrangianLoadBalancing<3, DEM::SolverType::cfd_dem>;

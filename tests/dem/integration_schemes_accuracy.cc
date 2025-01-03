@@ -54,7 +54,7 @@ test()
 
   // Defning particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
 
   int    id              = 0;
   double particle_mass   = 1;
@@ -83,13 +83,14 @@ test()
   Particles::ParticleIterator<dim> pit0 =
     particle_handler.insert_particle(particle0, particle0_cell);
 
-  pit0->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
+  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+    particle_mass;
 
   // Calling integrators
-  ExplicitEulerIntegrator<dim> explicit_euler_object;
+  ExplicitEulerIntegrator<dim, DEM::SolverType::dem> explicit_euler_object;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -146,10 +147,11 @@ test()
     particle_handler.insert_particle(particle1, particle1_cell);
 
 
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+    particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -205,10 +207,11 @@ test()
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, particle2_cell);
 
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+    particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -225,7 +228,7 @@ test()
   MOI.resize(force.size());
 
   // Create Velocity Verlet integrator
-  VelocityVerletIntegrator<dim> velocity_verlet_object;
+  VelocityVerletIntegrator<dim, DEM::SolverType::dem> velocity_verlet_object;
 
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
@@ -273,10 +276,11 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, particle3_cell);
 
-  pit3->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
+  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+    particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)

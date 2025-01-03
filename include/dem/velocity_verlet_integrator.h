@@ -29,9 +29,13 @@ using namespace dealii;
  * Updating acceleration and velocity of particle
  * a(n+1)   = F(n+1) / m
  * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
+ *
  */
-template <int dim>
-class VelocityVerletIntegrator : public Integrator<dim>
+template <int dim, DEM::SolverType solver_type>
+class VelocityVerletIntegrator : public Integrator<dim, solver_type>
 {
 public:
   VelocityVerletIntegrator()
@@ -78,14 +82,15 @@ public:
             const std::vector<double>       &MOI) override;
 
   virtual void
-  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
-            const Tensor<1, 3>                              &body_force,
-            const double                                     time_step,
-            std::vector<Tensor<1, 3>>                       &torque,
-            std::vector<Tensor<1, 3>>                       &force,
-            const std::vector<double>                       &MOI,
-            const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim> &sparse_contacts_object) override;
+  integrate(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &body_force,
+    const double                                     time_step,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) override;
 
   void
   integrate_with_advected_particles(
@@ -96,7 +101,7 @@ public:
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim>                     &sparse_contacts_object);
+    AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object);
 };
 
 #endif

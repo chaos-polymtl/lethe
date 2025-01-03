@@ -9,9 +9,13 @@ using namespace DEM;
 using namespace Parameters::Lagrangian;
 
 template <int                               dim,
+          DEM::SolverType                   solver_type,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
-ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
+ParticleParticleContactForce<dim,
+                             solver_type,
+                             contact_model,
+                             rolling_friction_model>::
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
@@ -19,10 +23,14 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 }
 
 template <int                               dim,
+          DEM::SolverType                   solver_type,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
 void
-ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
+ParticleParticleContactForce<dim,
+                             solver_type,
+                             contact_model,
+                             rolling_friction_model>::
   calculate_particle_particle_contact_force(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
@@ -82,152 +90,377 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     }
 }
 
+// dem
 // No resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::no_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::no_resistance>;
 
 // Constant resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::constant_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::constant_resistance>;
 
 // Viscous resistance
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::DMT,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_JKR,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   2,
+  DEM::SolverType::dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::viscous_resistance>;
 template class ParticleParticleContactForce<
   3,
+  DEM::SolverType::dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::viscous_resistance>;
+
+
+// cfd_dem
+// No resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::no_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::no_resistance>;
+
+// Constant resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::constant_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::constant_resistance>;
+
+// Viscous resistance
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::DMT,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_JKR,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_force,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  2,
+  DEM::SolverType::cfd_dem,
+  ParticleParticleContactForceModel::linear,
+  RollingResistanceMethod::viscous_resistance>;
+template class ParticleParticleContactForce<
+  3,
+  DEM::SolverType::cfd_dem,
   ParticleParticleContactForceModel::linear,
   RollingResistanceMethod::viscous_resistance>;

@@ -7,12 +7,12 @@
 
 using namespace dealii;
 
-template <int dim>
-Visualization<dim>::Visualization() = default;
+template <int dim, DEM::SolverType solver_type>
+Visualization<dim, solver_type>::Visualization() = default;
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-Visualization<dim>::build_patches(
+Visualization<dim, solver_type>::build_patches(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>> properties)
 {
@@ -22,7 +22,7 @@ Visualization<dim>::build_patches(
   // Defining properties for writing
   this->properties_to_write.assign(properties.begin(),
                                    properties.begin() +
-                                     DEM::get_number_properties());
+                                     DEM::get_number_properties<solver_type>());
 
   // Defining property field position
   int field_position = 0;
@@ -61,7 +61,7 @@ Visualization<dim>::build_patches(
       // Particle location
       patches[i].vertices[0] = particle->get_location();
       patches[i].patch_index = i;
-      patches[i].data.reinit(DEM::get_number_properties(), 1);
+      patches[i].data.reinit(DEM::get_number_properties<solver_type>(), 1);
 
       // ID and other properties
       if (particle->has_properties())
@@ -73,7 +73,7 @@ Visualization<dim>::build_patches(
           patches[i].data(0, 0) = particle->get_id();
 
           for (unsigned int property_index = 1;
-               property_index < DEM::get_number_properties();
+               property_index < DEM::get_number_properties<solver_type>();
                ++property_index)
             patches[i].data(property_index, 0) =
               particle_properties[property_index - 1];
@@ -81,9 +81,9 @@ Visualization<dim>::build_patches(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-Visualization<dim>::print_xyz(
+Visualization<dim, solver_type>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const MPI_Comm                          &mpi_communicator,
   const ConditionalOStream                &pcout)
@@ -124,13 +124,14 @@ Visualization<dim>::print_xyz(
               auto particle_properties = particle->get_properties();
               auto particle_location   = particle->get_location();
 
-              std::cout << std::fixed << std::setprecision(0) << id << " "
-                        << std::setprecision(0)
-                        << particle_properties[DEM::PropertiesIndex::type]
-                        << " " << std::setprecision(5)
-                        << particle_properties[DEM::PropertiesIndex::dp] << " "
-                        << std::setprecision(4) << particle_location
-                        << std::endl;
+              std::cout
+                << std::fixed << std::setprecision(0) << id << " "
+                << std::setprecision(0)
+                << particle_properties[DEM::PropertiesIndex<solver_type>::type]
+                << " " << std::setprecision(5)
+                << particle_properties[DEM::PropertiesIndex<solver_type>::dp]
+                << " " << std::setprecision(4) << particle_location
+                << std::endl;
             }
         }
       usleep(500);
@@ -138,9 +139,9 @@ Visualization<dim>::print_xyz(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-Visualization<dim>::print_intermediate_format(
+Visualization<dim, solver_type>::print_intermediate_format(
   const Vector<float>   &data_to_print,
   const DoFHandler<dim> &background_dh,
   const MPI_Comm        &mpi_communicator)
@@ -186,33 +187,35 @@ Visualization<dim>::print_intermediate_format(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 const std::vector<DataOutBase::Patch<0, dim>> &
-Visualization<dim>::get_patches() const
+Visualization<dim, solver_type>::get_patches() const
 {
   return patches;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 std::vector<std::string>
-Visualization<dim>::get_dataset_names() const
+Visualization<dim, solver_type>::get_dataset_names() const
 {
   return dataset_names;
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 std::vector<
   std::tuple<unsigned int,
              unsigned int,
              std::string,
              DataComponentInterpretation::DataComponentInterpretation>>
-Visualization<dim>::get_nonscalar_data_ranges() const
+Visualization<dim, solver_type>::get_nonscalar_data_ranges() const
 {
   return vector_datasets;
 }
 
-template <int dim>
-Visualization<dim>::~Visualization() = default;
+template <int dim, DEM::SolverType solver_type>
+Visualization<dim, solver_type>::~Visualization() = default;
 
-template class Visualization<2>;
-template class Visualization<3>;
+template class Visualization<2, DEM::SolverType::dem>;
+template class Visualization<2, DEM::SolverType::cfd_dem>;
+template class Visualization<3, DEM::SolverType::dem>;
+template class Visualization<3, DEM::SolverType::cfd_dem>;

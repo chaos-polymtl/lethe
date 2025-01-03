@@ -23,9 +23,12 @@ using namespace dealii;
 /**
  * @brief Base interface for classes that carry out the calculation of
  * particle-wall contact force.
+
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam solve_type Type of solver used for the DEM.
  */
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 class ParticleWallContactForce
 {
 public:

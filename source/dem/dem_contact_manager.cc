@@ -6,9 +6,9 @@
 
 using namespace DEM;
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::execute_cell_neighbors_search(
+DEMContactManager<dim, solver_type>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const typename dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information)
@@ -39,9 +39,9 @@ DEMContactManager<dim>::execute_cell_neighbors_search(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::update_contacts()
+DEMContactManager<dim, solver_type>::update_contacts()
 {
   // Update particle-particle contacts in local_adjacent_particles of fine
   // search step with local_contact_pair_candidates
@@ -134,9 +134,9 @@ DEMContactManager<dim>::update_contacts()
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::update_local_particles_in_cells(
+DEMContactManager<dim, solver_type>::update_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler)
 {
   // Update the iterators to local particles in a map of particles
@@ -225,11 +225,11 @@ DEMContactManager<dim>::update_local_particles_in_cells(
                                  particle_container);
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::execute_particle_particle_broad_search(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const AdaptiveSparseContacts<dim>       &sparse_contacts_object)
+DEMContactManager<dim, solver_type>::execute_particle_particle_broad_search(
+  dealii::Particles::ParticleHandler<dim>        &particle_handler,
+  const AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -279,16 +279,16 @@ DEMContactManager<dim>::execute_particle_particle_broad_search(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::execute_particle_wall_broad_search(
+DEMContactManager<dim, solver_type>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
   BoundaryCellsInformation<dim>         &boundary_cell_object,
   const typename dem_data_structures<dim>::solid_surfaces_mesh_information
                                                     solid_surfaces_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const AdaptiveSparseContacts<dim>                &sparse_contacts_object)
+  const AdaptiveSparseContacts<dim, solver_type>   &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -383,9 +383,9 @@ DEMContactManager<dim>::execute_particle_wall_broad_search(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::execute_particle_particle_fine_search(
+DEMContactManager<dim, solver_type>::execute_particle_particle_fine_search(
   const double neighborhood_threshold)
 {
   // Fine search for local particle-particle
@@ -429,9 +429,9 @@ DEMContactManager<dim>::execute_particle_particle_fine_search(
     }
 }
 
-template <int dim>
+template <int dim, DEM::SolverType solver_type>
 void
-DEMContactManager<dim>::execute_particle_wall_fine_search(
+DEMContactManager<dim, solver_type>::execute_particle_wall_fine_search(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const double                                      neighborhood_threshold)
@@ -457,17 +457,19 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
         particle_floating_mesh_candidates, particle_floating_mesh_in_contact);
     }
 
-  particle_point_fine_search<dim>(particle_point_candidates,
-                                  neighborhood_threshold,
-                                  particle_points_in_contact);
+  particle_point_fine_search<dim, solver_type>(particle_point_candidates,
+                                               neighborhood_threshold,
+                                               particle_points_in_contact);
 
   if constexpr (dim == 3)
     {
-      particle_line_fine_search<dim>(particle_line_candidates,
-                                     neighborhood_threshold,
-                                     particle_lines_in_contact);
+      particle_line_fine_search<dim, solver_type>(particle_line_candidates,
+                                                  neighborhood_threshold,
+                                                  particle_lines_in_contact);
     }
 }
 
-template class DEMContactManager<2>;
-template class DEMContactManager<3>;
+template class DEMContactManager<2, DEM::SolverType::dem>;
+template class DEMContactManager<2, DEM::SolverType::cfd_dem>;
+template class DEMContactManager<3, DEM::SolverType::dem>;
+template class DEMContactManager<3, DEM::SolverType::cfd_dem>;
