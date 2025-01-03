@@ -274,7 +274,7 @@ private:
    * @tparam dim An integer that denotes the number of spatial dimensions.
    * @tparam solve_type Type of solver used for the DEM.
    */
-  DEM::DEMProperties<dim, solver_type> properties_class;
+  DEM::ParticleProperties<dim, solver_type> properties_class;
 
   /**
    * @brief The acceleration acting on the particles.

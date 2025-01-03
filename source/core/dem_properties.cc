@@ -7,7 +7,7 @@ namespace DEM
 {
   template <int dim, SolverType solver_type>
   std::vector<std::pair<std::string, int>>
-  DEMProperties<dim, solver_type>::get_properties_name()
+  ParticleProperties<dim, solver_type>::get_properties_name()
   {
     if constexpr (solver_type == dem)
       {
@@ -71,10 +71,10 @@ namespace DEM
     return PropertiesIndex<solver_type>::n_properties;
   }
 
-  template class DEMProperties<2, SolverType::dem>;
-  template class DEMProperties<2, SolverType::cfd_dem>;
-  template class DEMProperties<3, SolverType::dem>;
-  template class DEMProperties<3, SolverType::cfd_dem>;
+  template class ParticleProperties<2, SolverType::dem>;
+  template class ParticleProperties<2, SolverType::cfd_dem>;
+  template class ParticleProperties<3, SolverType::dem>;
+  template class ParticleProperties<3, SolverType::cfd_dem>;
 
   template unsigned int
   DEM::get_number_properties<DEM::SolverType::dem>();

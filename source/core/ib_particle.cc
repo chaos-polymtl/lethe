@@ -124,7 +124,8 @@ IBParticle<dim>::get_properties_name()
   std::vector<std::pair<std::string, int>> particle_properties(
     DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::n_properties);
   particle_properties =
-    DEM::DEMProperties<dim, DEM::SolverType::cfd_dem>::get_properties_name();
+    DEM::ParticleProperties<dim,
+                            DEM::SolverType::cfd_dem>::get_properties_name();
 
   // Rename particle type to id to match IB pattern
   particle_properties[DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::type] =

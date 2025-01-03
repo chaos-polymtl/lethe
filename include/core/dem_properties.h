@@ -24,14 +24,14 @@ namespace DEM
   };
 
 
-  namespace DEMsolver
+  namespace DEMProperties
   {
     /* @brief Manage the specific particle indices of the particle properties
      * within the PropertyPool of the ParticleHandler for pure DEM simulations.
      * A regular enum must be used here since an int is required to the particle
      * properties.
      */
-    enum PropertiesIndexDEM : int
+    enum PropertiesIndex : int
     {
       type         = 0,
       dp           = 1,
@@ -45,17 +45,17 @@ namespace DEM
       n_properties = 9,
 
     };
-  } // namespace DEMsolver
+  } // namespace DEMProperties
 
 
-  namespace CFDDEMsolver
+  namespace CFDDEMProperties
   {
     /* @brief Manage the specific particle indices of the particle properties
      * within the PropertyPool of the ParticleHandler for pure DEM simulations.
      * A regular enum must be used here since an int is required to the particle
      * properties.
      */
-    enum PropertiesIndexCFDDEM : int
+    enum PropertiesIndex : int
     {
       type                    = 0,
       dp                      = 1,
@@ -75,7 +75,7 @@ namespace DEM
       volumetric_contribution = 15,
       n_properties            = 16,
     };
-  }; // namespace CFDDEMsolver
+  }; // namespace CFDDEMProperties
 
   /// Template specialization to select the adequate PropertiesIndex
   template <SolverType solver_type>
@@ -84,13 +84,13 @@ namespace DEM
   template <>
   struct PropertiesIndexEnum<SolverType::dem>
   {
-    using Index = DEMsolver::PropertiesIndexDEM;
+    using Index = DEMProperties::PropertiesIndex;
   };
 
   template <>
   struct PropertiesIndexEnum<SolverType::cfd_dem>
   {
-    using Index = CFDDEMsolver::PropertiesIndexCFDDEM;
+    using Index = CFDDEMProperties::PropertiesIndex;
   };
 
   // This typename helps for code readability
@@ -112,7 +112,7 @@ namespace DEM
    * @tparam solve_type Type of solver used for the DEM.
    */
   template <int dim, SolverType solver_type>
-  class DEMProperties
+  class ParticleProperties
   {
   public:
     /**

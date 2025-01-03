@@ -246,7 +246,7 @@ private:
   // Storage of statistics about time and contact lists
   statistics contact_list;
 
-  DEM::DEMProperties<dim, DEM::SolverType::cfd_dem> properties_class;
+  DEM::ParticleProperties<dim, DEM::SolverType::cfd_dem> properties_class;
 
   // Information for parallel grid processing
   PVDHandler grid_pvdhandler;
