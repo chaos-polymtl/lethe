@@ -9,12 +9,13 @@
 
 namespace DEM
 {
-  /* The SolverType enum identifies which type of solver is used by the DEM
-   * particles. This is used to identify which index corresponds to which
-   * properties. Two type of solvers are currently supported. DEM implies pure
-   * DEM simulation whereas cfd_dem is used to indicate simulations in which the
-   * particles are coupled to CFD. In the latter case the particles carry
-   * additional properties related to the particle-fluid coupling.
+  /* @brief Identify which type of solver is used by the DEM
+   * particles. This is used to identify which index of the ParticleHandler
+   * corresponds to which properties. Two type of solvers are currently
+   * supported. DEM implies pure DEM simulation whereas cfd_dem is used to
+   * indicate simulations in which the particles are coupled to CFD (CFD-DEM).
+   * In the latter case the particles carry additional properties related to the
+   * particle-fluid coupling.
    */
   enum SolverType
   {
@@ -22,14 +23,14 @@ namespace DEM
     cfd_dem,
   };
 
-  /* This enum class is responsible for the handling the specific indexes of the
-   * particles properties within the property pool and also to generate
-   * the associative names for the properties
-   * This is the only part where we should use a classical enum because it is
-   * used as an integer when indexing the particle properties.
-   */
+
   namespace DEMsolver
   {
+    /* @brief Manage the specific particle indices of the particle properties
+     * within the PropertyPool of the ParticleHandler for pure DEM simulations.
+     * A regular enum must be used here since an int is required to the particle
+     * properties.
+     */
     enum PropertiesIndexDEM : int
     {
       type         = 0,
@@ -44,11 +45,16 @@ namespace DEM
       n_properties = 9,
 
     };
-  }
+  } // namespace DEMsolver
 
-  // Specialization for `cfd_dem`
+
   namespace CFDDEMsolver
   {
+    /* @brief Manage the specific particle indices of the particle properties
+     * within the PropertyPool of the ParticleHandler for pure DEM simulations.
+     * A regular enum must be used here since an int is required to the particle
+     * properties.
+     */
     enum PropertiesIndexCFDDEM : int
     {
       type                    = 0,
@@ -69,7 +75,7 @@ namespace DEM
       volumetric_contribution = 15,
       n_properties            = 16,
     };
-  };
+  }; // namespace CFDDEMsolver
 
   /// Template specialization to select the adequate PropertiesIndex
   template <SolverType solver_type>
