@@ -152,11 +152,11 @@ The ``file`` insertion method inserts particles in a similar way to the ``list``
 
 .. code-block:: text
 
-    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters; fem_force_x; fem_force_y; fem_force_z; fem_torque_x; fem_torque_y; fem_torque_z;
-    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
-    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;           0;           0;           0;            0;            0;            0;
+    p_x; p_y; p_z; v_x; v_y; v_z; w_x; w_y; w_z; diameters;
+    0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
+    1.0; 2.0; 3.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0;       0.2;
 
-Each line is associated with a particle and its properties. The ``fem_force`` and ``fem_torque`` properties are only used in the CFD-DEM solver, but must be specified in all cases. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/preprocessing/`` directory. This code extracts particle properties from the last vtu file from a given simulation.
+Each line is associated with a particle and its properties. The main advantage of using the ``file`` method over the ``list`` method is that the number of inserted particles is not limited to the maximum number of characters on a single line of parameter files. To generate an insertion file, particle positions and properties can be generated manually or with any script. An other option is to use the python code ``extract-particles-properties-from-vtu.py`` in ``lethe/contrib/preprocessing/`` directory. This code extracts particle properties from the last vtu file from a given simulation.
 
 * ``insertion frequency`` defines the frequency of the insertion of particles based on the list in the file(s)
 
