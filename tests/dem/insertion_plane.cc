@@ -68,7 +68,7 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
 
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
