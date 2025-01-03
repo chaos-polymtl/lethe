@@ -75,7 +75,7 @@ namespace DEM
       volumetric_contribution = 15,
       n_properties            = 16,
     };
-  }; // namespace CFDDEMProperties
+  } // namespace CFDDEMProperties
 
   /// Template specialization to select the adequate PropertiesIndex
   template <SolverType solver_type>
