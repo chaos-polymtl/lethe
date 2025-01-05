@@ -1,0 +1,63 @@
+
+DEAL::Output of the original particle handler
+DEAL::Particle 0
+DEAL::Position : 0.500000 0.500000
+DEAL::Property 0 : 1.00000
+DEAL::Property 1 : 0.00500000
+DEAL::Property 2 : 1.00000
+DEAL::Property 3 : 2.00000
+DEAL::Property 4 : 3.00000
+DEAL::Property 5 : 40.0000
+DEAL::Property 6 : 50.0000
+DEAL::Property 7 : 60.0000
+DEAL::Property 8 : 100.000
+DEAL::Output of the second particle handler
+DEAL::Particle 0
+DEAL::Position : 0.500000 0.500000
+DEAL::Property 0 : 1.00000
+DEAL::Property 1 : 0.00500000
+DEAL::Property 2 : 1.00000
+DEAL::Property 3 : 2.00000
+DEAL::Property 4 : 3.00000
+DEAL::Property 5 : 40.0000
+DEAL::Property 6 : 50.0000
+DEAL::Property 7 : 60.0000
+DEAL::Property 8 : 0.00000
+DEAL::Property 9 : 0.00000
+DEAL::Property 10 : 0.00000
+DEAL::Property 11 : 0.00000
+DEAL::Property 12 : 0.00000
+DEAL::Property 13 : 0.00000
+DEAL::Property 14 : 100.000
+DEAL::Property 15 : 0.00000
+DEAL::Output of the original particle handler
+DEAL::Particle 0
+DEAL::Position : 0.500000 0.500000 0.500000
+DEAL::Property 0 : 1.00000
+DEAL::Property 1 : 0.00500000
+DEAL::Property 2 : 1.00000
+DEAL::Property 3 : 2.00000
+DEAL::Property 4 : 3.00000
+DEAL::Property 5 : 40.0000
+DEAL::Property 6 : 50.0000
+DEAL::Property 7 : 60.0000
+DEAL::Property 8 : 100.000
+DEAL::Output of the second particle handler
+DEAL::Particle 0
+DEAL::Position : 0.500000 0.500000 0.500000
+DEAL::Property 0 : 1.00000
+DEAL::Property 1 : 0.00500000
+DEAL::Property 2 : 1.00000
+DEAL::Property 3 : 2.00000
+DEAL::Property 4 : 3.00000
+DEAL::Property 5 : 40.0000
+DEAL::Property 6 : 50.0000
+DEAL::Property 7 : 60.0000
+DEAL::Property 8 : 0.00000
+DEAL::Property 9 : 0.00000
+DEAL::Property 10 : 0.00000
+DEAL::Property 11 : 0.00000
+DEAL::Property 12 : 0.00000
+DEAL::Property 13 : 0.00000
+DEAL::Property 14 : 100.000
+DEAL::Property 15 : 0.00000

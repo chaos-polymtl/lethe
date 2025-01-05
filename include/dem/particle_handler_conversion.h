@@ -31,15 +31,15 @@ using namespace dealii;
 
 template <int dim, typename input, typename output>
 void
-convert_particle_handler(const parallel::TriangulationBase<dim> triangulation,
-                         const Particles::ParticleHandler<dim> &ph_in,
-                         Particles::ParticleHandler<dim>       &ph_out)
+convert_particle_handler(const parallel::distributed::Triangulation<dim> &triangulation,
+                         const Particles::ParticleHandler<dim>  &ph_in,
+                         Particles::ParticleHandler<dim>        &ph_out)
 {
   // Pre-allocate the vector of particle properties and location of ph_out
   std::vector<std::vector<double>> ph_out_properties;
   std::vector<Point<dim>>          ph_out_points;
-  ph_out_properties.reserve(ph_in.n_locally_owned_particles);
-  ph_out_points.reserve(ph_in.n_locally_owned_particles);
+  ph_out_properties.reserve(ph_in.n_locally_owned_particles());
+  ph_out_points.reserve(ph_in.n_locally_owned_particles());
 
   // We loop through all particles of the input particle handler and gather the
   // properties and locations
