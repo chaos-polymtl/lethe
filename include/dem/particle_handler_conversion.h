@@ -72,7 +72,7 @@ convert_particle_handler(const parallel::distributed::Triangulation<dim> &triang
       ph_out_particle_properties[output::mass] =
         particle_properties[input::mass];
 
-      ph_out_properties.push_back(ph_out_particle_properties);
+      ph_out_properties.emplace_back(ph_out_particle_properties);
     }
 
 
