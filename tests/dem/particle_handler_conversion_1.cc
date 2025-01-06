@@ -29,15 +29,16 @@ test()
   GridGenerator::hyper_cube(tr);
   int refinement_number = 1;
   tr.refine_global(refinement_number);
-  MappingQ<dim>            mapping(1);
+  MappingQ<dim> mapping(1);
 
   // Define a particle handler with a particle and properties
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
   // Inserting one particle in contact with wall
-  Point<dim>               position1;
-  for (int d=0 ; d<dim; ++d) position1[d] = 0.5;
-  int                      id        = 0;
+  Point<dim> position1;
+  for (int d = 0; d < dim; ++d)
+    position1[d] = 0.5;
+  int                      id = 0;
   Particles::Particle<dim> particle1(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle_cell =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
@@ -48,7 +49,7 @@ test()
   // Set the properties of the particle manually to some values
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 1;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
-   0.005;
+    0.005;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 1;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 2;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 3;
@@ -58,37 +59,51 @@ test()
     50;
   pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] =
     60;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] = 100;
+  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+    100;
 
   // Output the properties of particle
   deallog << "Output of the original particle handler" << std::endl;
-  for (auto particle = particle_handler.begin(); particle != particle_handler.end(); ++particle)
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
     {
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
-      for (unsigned int i = 0; i < DEM::get_number_properties<DEM::SolverType::dem>(); ++i)
+      for (unsigned int i = 0;
+           i < DEM::get_number_properties<DEM::SolverType::dem>();
+           ++i)
         {
-          deallog << "Property " << i << " : " << particle->get_properties()[i] << std::endl;
+          deallog << "Property " << i << " : " << particle->get_properties()[i]
+                  << std::endl;
         }
-      }
+    }
 
 
   // Create a second Particle Handler using a second set of properties
   Particles::ParticleHandler<dim> particle_handler_output(
-   tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
 
   // Fill the second particle handler using the first one
-  convert_particle_handler<dim, DEM::DEMProperties::PropertiesIndex,DEM::CFDDEMProperties::PropertiesIndex>(tr, particle_handler, particle_handler_output);
+  convert_particle_handler<dim,
+                           DEM::DEMProperties::PropertiesIndex,
+                           DEM::CFDDEMProperties::PropertiesIndex>(
+    tr, particle_handler, particle_handler_output);
 
   // Output the properties of particle
   deallog << "Output of the second particle handler" << std::endl;
-  for (auto particle = particle_handler_output.begin(); particle != particle_handler_output.end(); ++particle)
+  for (auto particle = particle_handler_output.begin();
+       particle != particle_handler_output.end();
+       ++particle)
     {
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
-      for (unsigned int i = 0; i < DEM::get_number_properties<DEM::SolverType::cfd_dem>(); ++i)
+      for (unsigned int i = 0;
+           i < DEM::get_number_properties<DEM::SolverType::cfd_dem>();
+           ++i)
         {
-          deallog << "Property " << i << " : " << particle->get_properties()[i] << std::endl;
+          deallog << "Property " << i << " : " << particle->get_properties()[i]
+                  << std::endl;
         }
     }
 }
