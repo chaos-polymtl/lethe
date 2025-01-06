@@ -31,9 +31,10 @@ using namespace dealii;
 
 template <int dim, typename input, typename output>
 void
-convert_particle_handler(const parallel::distributed::Triangulation<dim> &triangulation,
-                         const Particles::ParticleHandler<dim>  &ph_in,
-                         Particles::ParticleHandler<dim>        &ph_out)
+convert_particle_handler(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const Particles::ParticleHandler<dim>           &ph_in,
+  Particles::ParticleHandler<dim>                 &ph_out)
 {
   // Pre-allocate the vector of particle properties and location of ph_out
   std::vector<std::vector<double>> ph_out_properties;
@@ -84,9 +85,15 @@ convert_particle_handler(const parallel::distributed::Triangulation<dim> &triang
   // Calculate global bounding box for global insertion
   const auto my_bounding_box = GridTools::compute_mesh_predicate_bounding_box(
     triangulation, IteratorFilters::LocallyOwnedCell());
+#if DEAL_II_VERSION_GTE(9, 7, 0)
   const auto global_bounding_boxes =
     Utilities::MPI::all_gather(triangulation.get_mpi_communicator(),
                                my_bounding_box);
+#else
+  const auto global_bounding_boxes =
+    Utilities::MPI::all_gather(triangulation.get_communicator(),
+                               my_bounding_box);
+#endif
 
   // Do the global insertion
   ph_out.insert_global_particles(ph_out_points,
