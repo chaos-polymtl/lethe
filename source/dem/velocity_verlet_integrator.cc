@@ -9,9 +9,9 @@
 
 using namespace DEM;
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, solver_type>::integrate_half_step_location(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate_half_step_location(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -36,27 +36,27 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_half_step_location(
           // Update acceleration
           particle_acceleration[d] =
             g[d] + (force[particle_id][d]) /
-                     particle_properties[PropertiesIndex<solver_type>::mass];
+                     particle_properties[PropertiesIndex::mass];
 
           // Half-step velocity
-          particle_properties[PropertiesIndex<solver_type>::v_x + d] +=
+          particle_properties[PropertiesIndex::v_x + d] +=
             0.5 * particle_acceleration[d] * dt;
 
           // Half-step angular velocity
-          particle_properties[PropertiesIndex<solver_type>::omega_x + d] +=
+          particle_properties[PropertiesIndex::omega_x + d] +=
             0.5 * (torque[particle_id][d] / MOI[particle_id]) * dt;
 
           // Update particle position using half-step velocity
           particle_position[d] +=
-            particle_properties[PropertiesIndex<solver_type>::v_x + d] * dt;
+            particle_properties[PropertiesIndex::v_x + d] * dt;
         }
       particle->set_location(particle_position);
     }
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, solver_type>::integrate(
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
   const Tensor<1, 3>              &g,
   const double                     dt,
@@ -77,9 +77,8 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
       Tensor<1, 3> &particle_torque     = torque[particle_id];
       Tensor<1, 3> &particle_force      = force[particle_id];
 
-      double dt_mass_inverse =
-        dt / particle_properties[PropertiesIndex<solver_type>::mass];
-      double dt_MOI_inverse = dt / MOI[particle_id];
+      double dt_mass_inverse = dt / particle_properties[PropertiesIndex::mass];
+      double dt_MOI_inverse  = dt / MOI[particle_id];
 
       particle_position = [&] {
         if constexpr (dim == 3)
@@ -96,28 +95,25 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
       // for (int d = 0; d < 3; ++d)
       {
         // Particle velocity integration
-        particle_properties[PropertiesIndex<solver_type>::v_x] +=
+        particle_properties[PropertiesIndex::v_x] +=
           dt_g[0] + particle_force[0] * dt_mass_inverse;
-        particle_properties[PropertiesIndex<solver_type>::v_y] +=
+        particle_properties[PropertiesIndex::v_y] +=
           dt_g[1] + particle_force[1] * dt_mass_inverse;
-        particle_properties[PropertiesIndex<solver_type>::v_z] +=
+        particle_properties[PropertiesIndex::v_z] +=
           dt_g[2] + particle_force[2] * dt_mass_inverse;
 
 
         // Particle location integration
-        particle_position[0] +=
-          particle_properties[PropertiesIndex<solver_type>::v_x] * dt;
-        particle_position[1] +=
-          particle_properties[PropertiesIndex<solver_type>::v_y] * dt;
-        particle_position[2] +=
-          particle_properties[PropertiesIndex<solver_type>::v_z] * dt;
+        particle_position[0] += particle_properties[PropertiesIndex::v_x] * dt;
+        particle_position[1] += particle_properties[PropertiesIndex::v_y] * dt;
+        particle_position[2] += particle_properties[PropertiesIndex::v_z] * dt;
 
         // Updating angular velocity
-        particle_properties[PropertiesIndex<solver_type>::omega_x] +=
+        particle_properties[PropertiesIndex::omega_x] +=
           particle_torque[0] * dt_MOI_inverse;
-        particle_properties[PropertiesIndex<solver_type>::omega_y] +=
+        particle_properties[PropertiesIndex::omega_y] +=
           particle_torque[1] * dt_MOI_inverse;
-        particle_properties[PropertiesIndex<solver_type>::omega_z] +=
+        particle_properties[PropertiesIndex::omega_z] +=
           particle_torque[2] * dt_MOI_inverse;
       }
 
@@ -138,17 +134,16 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
     }
 }
 
-template <int dim, DEM::SolverType solver_type>
-void
-VelocityVerletIntegrator<dim, solver_type>::integrate(
-  Particles::ParticleHandler<dim>                 &particle_handler,
-  const Tensor<1, 3>                              &g,
-  const double                                     dt,
-  std::vector<Tensor<1, 3>>                       &torque,
-  std::vector<Tensor<1, 3>>                       &force,
-  const std::vector<double>                       &MOI,
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object)
+template <int dim, typename PropertiesIndex>
+  void VelocityVerletIntegrator < dim, PropertiesIndex>::integrate(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &g,
+    const double                                     dt,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -204,7 +199,7 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
               if (n_particles_in_cell > 0)
                 {
                   if (mobility_status ==
-                      AdaptiveSparseContacts<dim, solver_type>::mobile)
+                      AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
                     {
                       for (auto &particle : particles_in_cell)
                         {
@@ -217,7 +212,7 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
 
                           double dt_mass_inverse =
                             dt / particle_properties
-                                   [PropertiesIndex<solver_type>::mass];
+                                   [PropertiesIndex::mass];
                           double dt_MOI_inverse = dt / MOI[particle_id];
 
                           particle_position = [&] {
@@ -235,19 +230,17 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
                           for (unsigned int d = 0; d < 3; ++d)
                             {
                               // Particle velocity integration
-                              particle_properties
-                                [PropertiesIndex<solver_type>::v_x + d] +=
+                              particle_properties[PropertiesIndex::v_x + d] +=
                                 dt_g[d] + particle_force[d] * dt_mass_inverse;
 
                               // Particle location integration
                               particle_position[d] +=
-                                particle_properties
-                                  [PropertiesIndex<solver_type>::v_x + d] *
+                                particle_properties[PropertiesIndex::v_x + d] *
                                 dt;
 
                               // Updating angular velocity
-                              particle_properties
-                                [PropertiesIndex<solver_type>::omega_x + d] +=
+                              particle_properties[PropertiesIndex::omega_x +
+                                                  d] +=
                                 particle_torque[d] * dt_MOI_inverse;
                             }
 
@@ -286,17 +279,18 @@ VelocityVerletIntegrator<dim, solver_type>::integrate(
     }
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
-  Particles::ParticleHandler<dim>                 &particle_handler,
-  const Tensor<1, 3>                              &g,
-  const double                                     dt,
-  std::vector<Tensor<1, 3>>                       &torque,
-  std::vector<Tensor<1, 3>>                       &force,
-  const std::vector<double>                       &MOI,
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object)
+VelocityVerletIntegrator<dim, PropertiesIndex>::
+  integrate_with_advected_particles(
+    Particles::ParticleHandler<dim>                 &particle_handler,
+    const Tensor<1, 3>                              &g,
+    const double                                     dt,
+    std::vector<Tensor<1, 3>>                       &torque,
+    std::vector<Tensor<1, 3>>                       &force,
+    const std::vector<double>                       &MOI,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object)
 {
   Point<3>           particle_position;
   const Tensor<1, 3> dt_g = g * dt;
@@ -329,7 +323,7 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
           if (n_particles_in_cell > 0)
             {
               if (mobility_status ==
-                  AdaptiveSparseContacts<dim, solver_type>::mobile)
+                  AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
                 {
                   // When mobile, the average velocity of the cell and the
                   // acceleration is updated at the same step that the particles
@@ -347,8 +341,7 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
                       Tensor<1, 3> &particle_force  = force[particle_id];
 
                       double dt_mass_inverse =
-                        dt /
-                        particle_properties[PropertiesIndex<solver_type>::mass];
+                        dt / particle_properties[PropertiesIndex::mass];
                       double dt_MOI_inverse = dt / MOI[particle_id];
 
                       particle_position = [&] {
@@ -371,23 +364,19 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
                       for (unsigned int d = 0; d < 3; ++d)
                         {
                           // Particle velocity integration
-                          particle_properties
-                            [PropertiesIndex<solver_type>::v_x + d] +=
+                          particle_properties[PropertiesIndex::v_x + d] +=
                             acc_dt_particle[d];
 
                           // Add velocity value for average velocity computation
-                          velocity_cell_average[d] += particle_properties
-                            [PropertiesIndex<solver_type>::v_x + d];
+                          velocity_cell_average[d] +=
+                            particle_properties[PropertiesIndex::v_x + d];
 
                           // Particle location integration
                           particle_position[d] +=
-                            particle_properties
-                              [PropertiesIndex<solver_type>::v_x + d] *
-                            dt;
+                            particle_properties[PropertiesIndex::v_x + d] * dt;
 
                           // Updating angular velocity
-                          particle_properties
-                            [PropertiesIndex<solver_type>::omega_x + d] +=
+                          particle_properties[PropertiesIndex::omega_x + d] +=
                             particle_torque[d] * dt_MOI_inverse;
                         }
 
@@ -413,10 +402,11 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
                   velocity_cell_average /= n_particles_in_cell;
                 }
               else if (mobility_status ==
-                         AdaptiveSparseContacts<dim, solver_type>::advected ||
+                         AdaptiveSparseContacts<dim,
+                                                PropertiesIndex>::advected ||
                        mobility_status ==
                          AdaptiveSparseContacts<dim,
-                                                solver_type>::advected_active)
+                                                PropertiesIndex>::advected_active)
                 {
                   for (auto &particle : particles_in_cell)
                     {
@@ -479,7 +469,7 @@ VelocityVerletIntegrator<dim, solver_type>::integrate_with_advected_particles(
 }
 
 
-template class VelocityVerletIntegrator<2, DEM::SolverType::dem>;
-template class VelocityVerletIntegrator<2, DEM::SolverType::cfd_dem>;
-template class VelocityVerletIntegrator<3, DEM::SolverType::dem>;
-template class VelocityVerletIntegrator<3, DEM::SolverType::cfd_dem>;
+template class VelocityVerletIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<3, DEM::CFDDEMProperties::PropertiesIndex>;

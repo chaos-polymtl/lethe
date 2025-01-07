@@ -8,11 +8,11 @@
 
 using namespace dealii;
 
-template <int dim, DEM::SolverType solver_type>
-ParticleWallDMTForce<dim, solver_type>::ParticleWallDMTForce(
+template <int dim, typename PropertiesIndex>
+ParticleWallDMTForce<dim, PropertiesIndex>::ParticleWallDMTForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
-  : ParticleWallNonLinearForce<dim, solver_type>(dem_parameters)
+  : ParticleWallNonLinearForce<dim, PropertiesIndex>(dem_parameters)
   , dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
 {
   initialize_particle_wall_properties(dem_parameters);
@@ -20,19 +20,19 @@ ParticleWallDMTForce<dim, solver_type>::ParticleWallDMTForce(
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallDMTForce<dim, solver_type>::no_resistance;
+        &ParticleWallDMTForce<dim, PropertiesIndex>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallDMTForce<dim, solver_type>::constant_resistance;
+        &ParticleWallDMTForce<dim, PropertiesIndex>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallDMTForce<dim, solver_type>::viscous_resistance;
+        &ParticleWallDMTForce<dim, PropertiesIndex>::viscous_resistance;
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
@@ -42,9 +42,9 @@ ParticleWallDMTForce<dim, solver_type>::ParticleWallDMTForce(
   this->torque_on_walls       = this->initialize();
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
+ParticleWallDMTForce<dim, PropertiesIndex>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                             &particle_wall_pairs_in_contact,
   const double               dt,
@@ -53,10 +53,10 @@ ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
 {
   constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
 
-  ParticleWallContactForce<dim, solver_type>::force_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
-  ParticleWallContactForce<dim, solver_type>::torque_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::torque_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
 
   // Set the force_calculation_threshold_distance. This is useful for non-
   // contact cohesive force models such as the DMT force model.
@@ -109,7 +109,7 @@ ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
+            ((particle_properties[PropertiesIndex::dp]) *
              0.5) -
             (projected_vector.norm());
 
@@ -121,10 +121,10 @@ ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
               // normal_vector to respect the convention (i ->
               // j)
               const unsigned int particle_type =
-                particle_properties[DEM::PropertiesIndex<solver_type>::type];
+                particle_properties[PropertiesIndex::type];
               const double effective_radius =
                 0.5 *
-                particle_properties[DEM::PropertiesIndex<solver_type>::dp];
+                particle_properties[PropertiesIndex::dp];
               const double effective_surface_energy =
                 this->effective_surface_energy[particle_type];
               const double effective_hamaker_constant =
@@ -240,9 +240,9 @@ ParticleWallDMTForce<dim, solver_type>::calculate_particle_wall_contact_force(
 }
 
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallDMTForce<dim, solver_type>::
+ParticleWallDMTForce<dim, PropertiesIndex>::
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                               &particle_floating_mesh_in_contact,
@@ -304,7 +304,7 @@ ParticleWallDMTForce<dim, solver_type>::
               // (floating mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  solver_type>(
+                                                                  PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -344,7 +344,7 @@ ParticleWallDMTForce<dim, solver_type>::
                       // Find normal overlap
                       double normal_overlap =
                         ((particle_properties
-                            [DEM::PropertiesIndex<solver_type>::dp]) *
+                            [PropertiesIndex::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -356,10 +356,10 @@ ParticleWallDMTForce<dim, solver_type>::
                           // normal_vector to respect the convention (i ->
                           // j)
                           const unsigned int particle_type = particle_properties
-                            [DEM::PropertiesIndex<solver_type>::type];
+                            [PropertiesIndex::type];
                           const double effective_radius =
                             0.5 * particle_properties
-                                    [DEM::PropertiesIndex<solver_type>::dp];
+                                    [PropertiesIndex::dp];
                           const double effective_surface_energy =
                             this->effective_surface_energy[particle_type];
                           const double effective_hamaker_constant =
@@ -503,7 +503,7 @@ ParticleWallDMTForce<dim, solver_type>::
         }
     }
 }
-template class ParticleWallDMTForce<2, DEM::SolverType::dem>;
-template class ParticleWallDMTForce<2, DEM::SolverType::cfd_dem>;
-template class ParticleWallDMTForce<3, DEM::SolverType::dem>;
-template class ParticleWallDMTForce<3, DEM::SolverType::cfd_dem>;
+template class ParticleWallDMTForce<2, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallDMTForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallDMTForce<3, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallDMTForce<3, DEM::CFDDEMProperties::PropertiesIndex>;

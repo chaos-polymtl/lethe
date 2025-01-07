@@ -8,11 +8,11 @@
 
 using namespace dealii;
 
-template <int dim, DEM::SolverType solver_type>
-ParticleWallJKRForce<dim, solver_type>::ParticleWallJKRForce(
+template <int dim, typename PropertiesIndex>
+ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
-  : ParticleWallContactForce<dim, solver_type>(dem_parameters)
+  : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
 {
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
@@ -98,19 +98,19 @@ ParticleWallJKRForce<dim, solver_type>::ParticleWallJKRForce(
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim, solver_type>::no_resistance;
+        &ParticleWallJKRForce<dim, PropertiesIndex>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim, solver_type>::constant_resistance;
+        &ParticleWallJKRForce<dim, PropertiesIndex>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallJKRForce<dim, solver_type>::viscous_resistance;
+        &ParticleWallJKRForce<dim, PropertiesIndex>::viscous_resistance;
     }
 
 
@@ -122,20 +122,20 @@ ParticleWallJKRForce<dim, solver_type>::ParticleWallJKRForce(
   this->torque_on_walls       = this->initialize();
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 
 void
-ParticleWallJKRForce<dim, solver_type>::calculate_particle_wall_contact_force(
+ParticleWallJKRForce<dim, PropertiesIndex>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                             &particle_wall_pairs_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
 {
-  ParticleWallContactForce<dim, solver_type>::force_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
-  ParticleWallContactForce<dim, solver_type>::torque_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::torque_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
 
   // Looping over particle_wall_pairs_in_contact, which means looping over all
   // the active particles with iterator particle_wall_pairs_in_contact_iterator
@@ -183,7 +183,7 @@ ParticleWallJKRForce<dim, solver_type>::calculate_particle_wall_contact_force(
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
+            ((particle_properties[PropertiesIndex::dp]) *
              0.5) -
             (projected_vector.norm());
 
@@ -230,9 +230,9 @@ ParticleWallJKRForce<dim, solver_type>::calculate_particle_wall_contact_force(
 }
 
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallJKRForce<dim, solver_type>::
+ParticleWallJKRForce<dim, PropertiesIndex>::
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                               &particle_floating_mesh_in_contact,
@@ -287,7 +287,7 @@ ParticleWallJKRForce<dim, solver_type>::
               // (floating mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  solver_type>(
+                                                                  PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -327,7 +327,7 @@ ParticleWallJKRForce<dim, solver_type>::
                       // Find normal overlap
                       double normal_overlap =
                         ((particle_properties
-                            [DEM::PropertiesIndex<solver_type>::dp]) *
+                            [PropertiesIndex::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -397,9 +397,9 @@ ParticleWallJKRForce<dim, solver_type>::
 }
 
 // Calculates JKR contact force and torques
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallJKRForce<dim, solver_type>::calculate_jkr_contact_force_and_torque(
+ParticleWallJKRForce<dim, PropertiesIndex>::calculate_jkr_contact_force_and_torque(
   particle_wall_contact_info<dim> &contact_info,
   const ArrayView<const double>   &particle_properties)
 {
@@ -408,16 +408,16 @@ ParticleWallJKRForce<dim, solver_type>::calculate_jkr_contact_force_and_torque(
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex<solver_type>::type];
+    particle_properties[PropertiesIndex::type];
 
   const double effective_radius =
-    0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp];
+    0.5 * particle_properties[PropertiesIndex::dp];
 
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
   double radius_times_overlap_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::dp] * 0.5 *
+    sqrt(particle_properties[PropertiesIndex::dp] * 0.5 *
          contact_info.normal_overlap);
   double model_parameter_sn = 2 *
                               this->effective_youngs_modulus[particle_type] *
@@ -454,7 +454,7 @@ ParticleWallJKRForce<dim, solver_type>::calculate_jkr_contact_force_and_torque(
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
     sqrt(model_parameter_sn *
-         particle_properties[DEM::PropertiesIndex<solver_type>::mass]);
+         particle_properties[PropertiesIndex::mass]);
 
   // Tangential spring constant is set as a negative just like in the other
   // particle-wall models. This must be taken into account for the square root
@@ -518,7 +518,7 @@ ParticleWallJKRForce<dim, solver_type>::calculate_jkr_contact_force_and_torque(
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
   Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
+    (0.5 * particle_properties[PropertiesIndex::dp] *
      normal_vector),
     -tangential_force);
 
@@ -537,7 +537,7 @@ ParticleWallJKRForce<dim, solver_type>::calculate_jkr_contact_force_and_torque(
 }
 
 
-template class ParticleWallJKRForce<2, DEM::SolverType::dem>;
-template class ParticleWallJKRForce<2, DEM::SolverType::cfd_dem>;
-template class ParticleWallJKRForce<3, DEM::SolverType::dem>;
-template class ParticleWallJKRForce<3, DEM::SolverType::cfd_dem>;
+template class ParticleWallJKRForce<2, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallJKRForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallJKRForce<3, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallJKRForce<3, DEM::CFDDEMProperties::PropertiesIndex>;

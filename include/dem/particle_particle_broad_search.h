@@ -76,7 +76,7 @@ find_particle_particle_contact_pairs(
  * @param[in] sparse_contacts_object The object that contains the
  * information about the mobility status of cells
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -88,7 +88,7 @@ find_particle_particle_contact_pairs(
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
                                                  &ghost_contact_pair_candidates,
-  const AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Finds vectors of pairs (particle_particle_candidates) which contains the
@@ -167,7 +167,7 @@ find_particle_particle_periodic_contact_pairs(
  * @param sparse_contacts_object The object that contains the
  * information about the mobility status of cells
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
@@ -183,7 +183,7 @@ find_particle_particle_periodic_contact_pairs(
     &ghost_contact_pair_periodic_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &ghost_local_contact_pair_periodic_candidates,
-  const AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object);
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**
  * @brief Stores the candidate particle-particle collision pairs with a given

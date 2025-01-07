@@ -687,29 +687,29 @@ public:
           for (int d = 0; d < dim; ++d)
             {
               particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_x +
+                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x +
                  d] = 0.;
               particle_properties
-                [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_x +
+                [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x +
                  d]                     = 0.;
               undisturbed_flow_force[d] = 0.;
             }
 
           // Stock the values of particle velocity in a tensor
           particle_velocity[particle_i][0] = particle_properties
-            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x];
+            [DEM::CFDDEMProperties::PropertiesIndex::v_x];
           particle_velocity[particle_i][1] = particle_properties
-            [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y];
+            [DEM::CFDDEMProperties::PropertiesIndex::v_y];
           if constexpr (dim == 3)
             particle_velocity[particle_i][2] = particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z];
+              [DEM::CFDDEMProperties::PropertiesIndex::v_z];
 
           cell_void_fraction[particle_i] = 0;
           if (!interpolated_void_fraction)
             total_particle_volume +=
               M_PI *
               pow(particle_properties
-                    [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp],
+                    [DEM::CFDDEMProperties::PropertiesIndex::dp],
                   dim) /
               (2 * dim);
 
@@ -841,7 +841,7 @@ public:
             fluid_particle_relative_velocity_at_particle_location[particle_i]
               .norm() *
             particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] /
+              [DEM::CFDDEMProperties::PropertiesIndex::dp] /
             (kinematic_viscosity + DBL_MIN);
         particle_i++;
       }

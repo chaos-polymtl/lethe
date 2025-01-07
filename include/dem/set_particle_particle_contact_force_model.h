@@ -21,8 +21,8 @@
  *
  * @return The pointer to the particle-particle contact force object.
  */
-template <int dim, DEM::SolverType solver_type>
-std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
 set_particle_particle_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 
@@ -39,14 +39,14 @@ set_particle_particle_contact_force_model(
  * @param[out] particle_particle_contact_force_object Pointer to the particle-
  * particle contact force object.
  */
-template <int             dim,
-          DEM::SolverType solver_type,
+template <int dim,
+          typename PropertiesIndex,
           Parameters::Lagrangian::ParticleParticleContactForceModel
             particle_particle_contact_force_model>
 void
 set_rolling_resistance_model(
   const DEMSolverParameters<dim> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     &particle_particle_contact_force_object);
 
 /**
@@ -61,8 +61,8 @@ set_rolling_resistance_model(
  *
  * @return The pointer to the particle-particle contact force object.
  */
-template <int dim, DEM::SolverType solver_type>
-std::shared_ptr<ParticlesForceChainsBase<dim, solver_type>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
 set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 

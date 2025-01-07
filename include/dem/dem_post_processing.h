@@ -41,7 +41,7 @@ namespace DEM
    * DEM
    * @param mpi_communicator The MPI communicator
    */
-  template <int dim, DEM::SolverType solver_type, dem_statistic_variable var>
+  template <int dim, typename PropertiesIndex, dem_statistic_variable var>
   statistics
   calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,

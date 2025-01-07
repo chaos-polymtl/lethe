@@ -3,81 +3,78 @@
 
 #include <core/dem_properties.h>
 
+#include <type_traits>
+
+
 namespace DEM
 {
-  template <int dim, SolverType solver_type>
+  template <int dim, typename PropertiesIndex>
   std::vector<std::pair<std::string, int>>
-  ParticleProperties<dim, solver_type>::get_properties_name()
+  ParticleProperties<dim, PropertiesIndex>::get_properties_name()
   {
-    if constexpr (solver_type == dem)
+    if constexpr (std::is_same_v<PropertiesIndex,
+                                 DEM::DEMProperties::PropertiesIndex>)
       {
         std::vector<std::pair<std::string, int>> properties(
-          PropertiesIndex<dem>::n_properties);
-        properties[PropertiesIndex<dem>::type] = std::make_pair("type", 1);
-        properties[PropertiesIndex<dem>::dp]   = std::make_pair("diameter", 1);
-        properties[PropertiesIndex<dem>::v_x] = std::make_pair("velocity", dim);
-        properties[PropertiesIndex<dem>::v_y] = std::make_pair("velocity", 1);
-        properties[PropertiesIndex<dem>::v_z] = std::make_pair("velocity", 1);
-        properties[PropertiesIndex<dem>::omega_x] =
-          std::make_pair("omega", dim);
-        properties[PropertiesIndex<dem>::omega_y] = std::make_pair("omega", 1);
-        properties[PropertiesIndex<dem>::omega_z] = std::make_pair("omega", 1);
-        properties[PropertiesIndex<dem>::mass]    = std::make_pair("mass", 1);
+          PropertiesIndex::n_properties);
+        properties[PropertiesIndex::type]    = std::make_pair("type", 1);
+        properties[PropertiesIndex::dp]      = std::make_pair("diameter", 1);
+        properties[PropertiesIndex::v_x]     = std::make_pair("velocity", dim);
+        properties[PropertiesIndex::v_y]     = std::make_pair("velocity", 1);
+        properties[PropertiesIndex::v_z]     = std::make_pair("velocity", 1);
+        properties[PropertiesIndex::omega_x] = std::make_pair("omega", dim);
+        properties[PropertiesIndex::omega_y] = std::make_pair("omega", 1);
+        properties[PropertiesIndex::omega_z] = std::make_pair("omega", 1);
+        properties[PropertiesIndex::mass]    = std::make_pair("mass", 1);
 
         return properties;
       }
 
-    if constexpr (solver_type == cfd_dem)
+    if constexpr (std::is_same_v<PropertiesIndex,
+                                 DEM::CFDDEMProperties::PropertiesIndex>)
       {
         std::vector<std::pair<std::string, int>> properties(
-          PropertiesIndex<cfd_dem>::n_properties);
-        properties[PropertiesIndex<cfd_dem>::type] = std::make_pair("type", 1);
-        properties[PropertiesIndex<cfd_dem>::dp] =
-          std::make_pair("diameter", 1);
-        properties[PropertiesIndex<cfd_dem>::v_x] =
-          std::make_pair("velocity", dim);
-        properties[PropertiesIndex<cfd_dem>::v_y] =
-          std::make_pair("velocity", 1);
-        properties[PropertiesIndex<cfd_dem>::v_z] =
-          std::make_pair("velocity", 1);
-        properties[PropertiesIndex<cfd_dem>::omega_x] =
-          std::make_pair("omega", dim);
-        properties[PropertiesIndex<cfd_dem>::omega_y] =
-          std::make_pair("omega", 1);
-        properties[PropertiesIndex<cfd_dem>::omega_z] =
-          std::make_pair("omega", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_force_x] =
+          PropertiesIndex::n_properties);
+        properties[PropertiesIndex::type]    = std::make_pair("type", 1);
+        properties[PropertiesIndex::dp]      = std::make_pair("diameter", 1);
+        properties[PropertiesIndex::v_x]     = std::make_pair("velocity", dim);
+        properties[PropertiesIndex::v_y]     = std::make_pair("velocity", 1);
+        properties[PropertiesIndex::v_z]     = std::make_pair("velocity", 1);
+        properties[PropertiesIndex::omega_x] = std::make_pair("omega", dim);
+        properties[PropertiesIndex::omega_y] = std::make_pair("omega", 1);
+        properties[PropertiesIndex::omega_z] = std::make_pair("omega", 1);
+        properties[PropertiesIndex::fem_force_x] =
           std::make_pair("fem_force", dim);
-        properties[PropertiesIndex<cfd_dem>::fem_force_y] =
+        properties[PropertiesIndex::fem_force_y] =
           std::make_pair("fem_force", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_force_z] =
+        properties[PropertiesIndex::fem_force_z] =
           std::make_pair("fem_force", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_torque_x] =
+        properties[PropertiesIndex::fem_torque_x] =
           std::make_pair("fem_torque", dim);
-        properties[PropertiesIndex<cfd_dem>::fem_torque_y] =
+        properties[PropertiesIndex::fem_torque_y] =
           std::make_pair("fem_torque", 1);
-        properties[PropertiesIndex<cfd_dem>::fem_torque_z] =
+        properties[PropertiesIndex::fem_torque_z] =
           std::make_pair("fem_torque", 1);
-        properties[PropertiesIndex<cfd_dem>::mass] = std::make_pair("mass", 1);
+        properties[PropertiesIndex::mass] = std::make_pair("mass", 1);
 
         return properties;
       }
   }
 
-  template <SolverType solver_type>
+  template <typename PropertiesIndex>
   unsigned int
   get_number_properties()
   {
-    return PropertiesIndex<solver_type>::n_properties;
+    return PropertiesIndex::n_properties;
   }
 
-  template class ParticleProperties<2, SolverType::dem>;
-  template class ParticleProperties<2, SolverType::cfd_dem>;
-  template class ParticleProperties<3, SolverType::dem>;
-  template class ParticleProperties<3, SolverType::cfd_dem>;
+  template class ParticleProperties<2, DEM::DEMProperties::PropertiesIndex>;
+  template class ParticleProperties<2, DEM::CFDDEMProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::DEMProperties::PropertiesIndex>;
+  template class ParticleProperties<3, DEM::CFDDEMProperties::PropertiesIndex>;
 
   template unsigned int
-  DEM::get_number_properties<DEM::SolverType::dem>();
+  DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>();
   template unsigned int
-  DEM::get_number_properties<DEM::SolverType::cfd_dem>();
+  DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>();
 } // namespace DEM

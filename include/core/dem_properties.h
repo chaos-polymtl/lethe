@@ -77,32 +77,12 @@ namespace DEM
     };
   } // namespace CFDDEMProperties
 
-  /// Template specialization to select the adequate PropertiesIndex
-  template <SolverType solver_type>
-  struct PropertiesIndexEnum;
-
-  template <>
-  struct PropertiesIndexEnum<SolverType::dem>
-  {
-    using Index = DEMProperties::PropertiesIndex;
-  };
-
-  template <>
-  struct PropertiesIndexEnum<SolverType::cfd_dem>
-  {
-    using Index = CFDDEMProperties::PropertiesIndex;
-  };
-
-  // This typename helps for code readability
-  template <SolverType solver_type>
-  using PropertiesIndex = typename PropertiesIndexEnum<solver_type>::Index;
-
   /**
    * @brief Return the number of properties stored on each particle.
    * @tparam solve_type Type of solver used for the DEM.
    * @return Number of DEM properties.
    */
-  template <SolverType solve_type>
+  template <typename PropertiesIndex>
   unsigned int
   get_number_properties();
 
@@ -111,7 +91,7 @@ namespace DEM
    * @tparam dim An integer that denotes the number of spatial dimensions.
    * @tparam solve_type Type of solver used for the DEM.
    */
-  template <int dim, SolverType solver_type>
+  template <int dim, typename PropertiesIndex>
   class ParticleProperties
   {
   public:

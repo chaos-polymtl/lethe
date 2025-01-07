@@ -8,11 +8,11 @@
 
 using namespace dealii;
 
-template <int dim, DEM::SolverType solver_type>
-ParticleWallNonLinearForce<dim, solver_type>::ParticleWallNonLinearForce(
+template <int dim, typename PropertiesIndex>
+ParticleWallNonLinearForce<dim, PropertiesIndex>::ParticleWallNonLinearForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
-  : ParticleWallContactForce<dim, solver_type>(dem_parameters)
+  : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
 {
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
@@ -87,19 +87,19 @@ ParticleWallNonLinearForce<dim, solver_type>::ParticleWallNonLinearForce(
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallNonLinearForce<dim, solver_type>::no_resistance;
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallNonLinearForce<dim, solver_type>::constant_resistance;
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallNonLinearForce<dim, solver_type>::viscous_resistance;
+        &ParticleWallNonLinearForce<dim, PropertiesIndex>::viscous_resistance;
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
@@ -109,9 +109,9 @@ ParticleWallNonLinearForce<dim, solver_type>::ParticleWallNonLinearForce(
   this->torque_on_walls       = this->initialize();
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallNonLinearForce<dim, solver_type>::
+ParticleWallNonLinearForce<dim, PropertiesIndex>::
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                               &particle_wall_pairs_in_contact,
@@ -119,10 +119,10 @@ ParticleWallNonLinearForce<dim, solver_type>::
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
-  ParticleWallContactForce<dim, solver_type>::force_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
-  ParticleWallContactForce<dim, solver_type>::torque_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::torque_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
 
   // Looping over particle_wall_pairs_in_contact, which means looping over all
   // the active particles with iterator particle_wall_pairs_in_contact_iterator
@@ -170,7 +170,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
+            ((particle_properties[PropertiesIndex::dp]) *
              0.5) -
             (projected_vector.norm());
 
@@ -217,9 +217,9 @@ ParticleWallNonLinearForce<dim, solver_type>::
 }
 
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallNonLinearForce<dim, solver_type>::
+ParticleWallNonLinearForce<dim, PropertiesIndex>::
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                               &particle_floating_mesh_in_contact,
@@ -274,7 +274,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
               // (floating mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  solver_type>(
+                                                                  PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -314,7 +314,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
                       // Find normal overlap
                       double normal_overlap =
                         ((particle_properties
-                            [DEM::PropertiesIndex<solver_type>::dp]) *
+                            [PropertiesIndex::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -387,9 +387,9 @@ ParticleWallNonLinearForce<dim, solver_type>::
 
 
 // Calculates nonlinear contact force and torques
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallNonLinearForce<dim, solver_type>::
+ParticleWallNonLinearForce<dim, PropertiesIndex>::
   calculate_nonlinear_contact_force_and_torque(
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
@@ -399,13 +399,13 @@ ParticleWallNonLinearForce<dim, solver_type>::
   // convention (i -> j)
   const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex<solver_type>::type];
+    particle_properties[PropertiesIndex::type];
 
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
   const double radius_times_overlap_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::dp] * 0.5 *
+    sqrt(particle_properties[PropertiesIndex::dp] * 0.5 *
          contact_info.normal_overlap);
   const double model_parameter_sn =
     2 * this->effective_youngs_modulus[particle_type] *
@@ -425,7 +425,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] *
     sqrt(model_parameter_sn *
-         particle_properties[DEM::PropertiesIndex<solver_type>::mass]);
+         particle_properties[PropertiesIndex::mass]);
 
   // There is a minus sign since the tangential force is applied in the opposite
   // direction of the tangential_overlap
@@ -478,7 +478,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
   const Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
+    (0.5 * particle_properties[PropertiesIndex::dp] *
      normal_vector),
     -tangential_force);
 
@@ -497,7 +497,7 @@ ParticleWallNonLinearForce<dim, solver_type>::
 }
 
 
-template class ParticleWallNonLinearForce<2, DEM::SolverType::dem>;
-template class ParticleWallNonLinearForce<2, DEM::SolverType::cfd_dem>;
-template class ParticleWallNonLinearForce<3, DEM::SolverType::dem>;
-template class ParticleWallNonLinearForce<3, DEM::SolverType::cfd_dem>;
+template class ParticleWallNonLinearForce<2, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<3, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<3, DEM::CFDDEMProperties::PropertiesIndex>;

@@ -28,7 +28,7 @@ using namespace dealii;
  * @tparam solve_type Type of solver used for the DEM.
  */
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 class ParticleWallContactForce
 {
 public:

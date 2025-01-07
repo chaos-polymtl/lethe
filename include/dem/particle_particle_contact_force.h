@@ -32,7 +32,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam solve_type Type of solver used for the DEM.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 class ParticleParticleContactForceBase
 {
 public:
@@ -99,11 +99,11 @@ protected:
  */
 template <
   int                                                       dim,
-  DEM::SolverType                                           solver_type,
+  typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 class ParticleParticleContactForce
-  : public ParticleParticleContactForceBase<dim, solver_type>
+  : public ParticleParticleContactForceBase<dim, PropertiesIndex>
 {
 public:
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters);
@@ -191,35 +191,35 @@ protected:
 
     // Assigning velocities and angular velocities of particles
     contact_relative_velocity[0] =
-      particle_one_properties[PropertiesIndex<solver_type>::v_x] -
-      particle_two_properties[PropertiesIndex<solver_type>::v_x];
+      particle_one_properties[PropertiesIndex::v_x] -
+      particle_two_properties[PropertiesIndex::v_x];
     contact_relative_velocity[1] =
-      particle_one_properties[PropertiesIndex<solver_type>::v_y] -
-      particle_two_properties[PropertiesIndex<solver_type>::v_y];
+      particle_one_properties[PropertiesIndex::v_y] -
+      particle_two_properties[PropertiesIndex::v_y];
     contact_relative_velocity[2] =
-      particle_one_properties[PropertiesIndex<solver_type>::v_z] -
-      particle_two_properties[PropertiesIndex<solver_type>::v_z];
+      particle_one_properties[PropertiesIndex::v_z] -
+      particle_two_properties[PropertiesIndex::v_z];
 
     particle_one_omega[0] =
-      particle_one_properties[PropertiesIndex<solver_type>::omega_x];
+      particle_one_properties[PropertiesIndex::omega_x];
     particle_one_omega[1] =
-      particle_one_properties[PropertiesIndex<solver_type>::omega_y];
+      particle_one_properties[PropertiesIndex::omega_y];
     particle_one_omega[2] =
-      particle_one_properties[PropertiesIndex<solver_type>::omega_z];
+      particle_one_properties[PropertiesIndex::omega_z];
 
     particle_two_omega[0] =
-      particle_two_properties[PropertiesIndex<solver_type>::omega_x];
+      particle_two_properties[PropertiesIndex::omega_x];
     particle_two_omega[1] =
-      particle_two_properties[PropertiesIndex<solver_type>::omega_y];
+      particle_two_properties[PropertiesIndex::omega_y];
     particle_two_omega[2] =
-      particle_two_properties[PropertiesIndex<solver_type>::omega_z];
+      particle_two_properties[PropertiesIndex::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex<solver_type>::dp] *
+      0.5 * (particle_one_properties[PropertiesIndex::dp] *
                particle_one_omega +
-             particle_two_properties[PropertiesIndex<solver_type>::dp] *
+             particle_two_properties[PropertiesIndex::dp] *
                particle_two_omega),
       normal_unit_vector));
 
@@ -532,17 +532,17 @@ private:
   {
     // Calculate the effective radius
     const double diameter_one =
-      particle_one_properties[DEM::PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double diameter_two =
-      particle_two_properties[DEM::PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
     double effective_radius =
       (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
 
     // Calculate the effective mass
     const double mass_one =
-      particle_one_properties[DEM::PropertiesIndex<solver_type>::mass];
+      particle_one_properties[PropertiesIndex::mass];
     const double mass_two =
-      particle_two_properties[DEM::PropertiesIndex<solver_type>::mass];
+      particle_two_properties[PropertiesIndex::mass];
     double effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
 
     return std::make_tuple(effective_radius, effective_mass);
@@ -584,7 +584,7 @@ private:
     if constexpr (rolling_friction_model ==
                   RollingResistanceMethod::constant_resistance)
       {
-        return constant_rolling_resistance_torque<solver_type>(
+        return constant_rolling_resistance_torque<PropertiesIndex>(
           effective_radius,
           particle_one_properties,
           particle_two_properties,
@@ -595,7 +595,7 @@ private:
 
     if constexpr (rolling_friction_model == viscous_resistance)
       {
-        return viscous_rolling_resistance_torque<solver_type>(
+        return viscous_rolling_resistance_torque<PropertiesIndex>(
           effective_radius,
           particle_one_properties,
           particle_two_properties,
@@ -649,9 +649,9 @@ private:
     // Get the reference of the effective properties according to the particle
     // types in vectors for easy-to-read equations.
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -664,9 +664,9 @@ private:
 
     // Get particle diameter references
     const double &diameter_one =
-      particle_one_properties[PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double &diameter_two =
-      particle_two_properties[PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
 
     // Characteristic velocity is set at 1.0 so that the normal and tangential
     // spring constant remain constant throughout a simulation.
@@ -794,9 +794,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -810,9 +810,9 @@ private:
 
     // Get particle diameter references;
     const double &diameter_one =
-      particle_one_properties[PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double &diameter_two =
-      particle_two_properties[PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -943,9 +943,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -959,9 +959,9 @@ private:
 
     // Get particle diameter references;
     const double &diameter_one =
-      particle_one_properties[PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double &diameter_two =
-      particle_two_properties[PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1077,9 +1077,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1093,9 +1093,9 @@ private:
 
     // Get particle diameter references;
     const double &diameter_one =
-      particle_one_properties[PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double &diameter_two =
-      particle_two_properties[PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1196,9 +1196,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1213,9 +1213,9 @@ private:
 
     // Get particle diameter references;
     const double &diameter_one =
-      particle_one_properties[PropertiesIndex<solver_type>::dp];
+      particle_one_properties[PropertiesIndex::dp];
     const double &diameter_two =
-      particle_two_properties[PropertiesIndex<solver_type>::dp];
+      particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1345,9 +1345,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex<solver_type>::type];
+      particle_one_properties[PropertiesIndex::type];
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex<solver_type>::type];
+      particle_two_properties[PropertiesIndex::type];
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1593,8 +1593,8 @@ private:
 
         // Calculation of normal overlap
         double normal_overlap =
-          0.5 * (particle_one_properties[PropertiesIndex<solver_type>::dp] +
-                 particle_two_properties[PropertiesIndex<solver_type>::dp]) -
+          0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                 particle_two_properties[PropertiesIndex::dp]) -
           particle_one_location.distance(particle_two_location);
 
         // Get the threshold distance for contact force, this is useful for non-

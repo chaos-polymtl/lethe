@@ -9,15 +9,15 @@ using namespace dealii;
 using namespace Parameters::Lagrangian;
 
 
-template <int dim, DEM::SolverType solver_type>
-std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
 set_particle_particle_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters)
 {
   ParticleParticleContactForceModel particle_particle_contact_force_model =
     dem_parameters.model_parameters.particle_particle_contact_force_model;
 
-  std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     particle_particle_contact_force_object;
 
   switch (particle_particle_contact_force_model)
@@ -26,7 +26,7 @@ set_particle_particle_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::linear>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -35,7 +35,7 @@ set_particle_particle_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -44,7 +44,7 @@ set_particle_particle_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -53,7 +53,7 @@ set_particle_particle_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -62,7 +62,7 @@ set_particle_particle_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_JKR>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -70,7 +70,7 @@ set_particle_particle_contact_force_model(
       case ParticleParticleContactForceModel::DMT:
         {
           set_rolling_resistance_model<dim,
-                                       solver_type,
+                                       PropertiesIndex,
                                        ParticleParticleContactForceModel::DMT>(
             dem_parameters, particle_particle_contact_force_object);
           break;
@@ -87,13 +87,13 @@ set_particle_particle_contact_force_model(
 
 
 template <int             dim,
-          DEM::SolverType solver_type,
+          typename PropertiesIndex,
           Parameters::Lagrangian::ParticleParticleContactForceModel
             particle_particle_contact_force_model>
 void
 set_rolling_resistance_model(
   const DEMSolverParameters<dim> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<dim, solver_type>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     &particle_particle_contact_force_object)
 {
   RollingResistanceMethod rolling_resistance_method =
@@ -106,7 +106,7 @@ set_rolling_resistance_model(
           particle_particle_contact_force_object =
             std::make_shared<ParticleParticleContactForce<
               dim,
-              solver_type,
+              PropertiesIndex,
               particle_particle_contact_force_model,
               RollingResistanceMethod::no_resistance>>(dem_parameters);
           break;
@@ -116,7 +116,7 @@ set_rolling_resistance_model(
           particle_particle_contact_force_object =
             std::make_shared<ParticleParticleContactForce<
               dim,
-              solver_type,
+              PropertiesIndex,
               particle_particle_contact_force_model,
               RollingResistanceMethod::constant_resistance>>(dem_parameters);
           break;
@@ -126,7 +126,7 @@ set_rolling_resistance_model(
           particle_particle_contact_force_object =
             std::make_shared<ParticleParticleContactForce<
               dim,
-              solver_type,
+              PropertiesIndex,
               particle_particle_contact_force_model,
               RollingResistanceMethod::viscous_resistance>>(dem_parameters);
           break;
@@ -137,15 +137,15 @@ set_rolling_resistance_model(
 }
 
 
-template <int dim, DEM::SolverType solver_type>
-std::shared_ptr<ParticlesForceChainsBase<dim, solver_type>>
+template <int dim, typename PropertiesIndex>
+std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
 set_force_chains_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters)
 {
   ParticleParticleContactForceModel particle_particle_contact_force_model =
     dem_parameters.model_parameters.particle_particle_contact_force_model;
 
-  std::shared_ptr<ParticlesForceChainsBase<dim, solver_type>>
+  std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
     particles_force_chains_object;
 
   switch (particle_particle_contact_force_model)
@@ -154,7 +154,7 @@ set_force_chains_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::linear>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -163,7 +163,7 @@ set_force_chains_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -172,7 +172,7 @@ set_force_chains_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -181,7 +181,7 @@ set_force_chains_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -190,7 +190,7 @@ set_force_chains_contact_force_model(
         {
           set_rolling_resistance_model<
             dim,
-            solver_type,
+            PropertiesIndex,
             ParticleParticleContactForceModel::hertz_JKR>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -198,7 +198,7 @@ set_force_chains_contact_force_model(
       case ParticleParticleContactForceModel::DMT:
         {
           set_rolling_resistance_model<dim,
-                                       solver_type,
+                                       PropertiesIndex,
                                        ParticleParticleContactForceModel::DMT>(
             dem_parameters, particles_force_chains_object);
           break;
@@ -215,13 +215,13 @@ set_force_chains_contact_force_model(
 
 
 template <int             dim,
-          DEM::SolverType solver_type,
+          typename PropertiesIndex,
           Parameters::Lagrangian::ParticleParticleContactForceModel
             particle_particle_contact_force_model>
 void
 set_rolling_resistance_model(
   const DEMSolverParameters<dim> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<dim, solver_type>>
+  std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
     &particles_force_chains_object)
 {
   RollingResistanceMethod rolling_resistance_method =
@@ -233,7 +233,7 @@ set_rolling_resistance_model(
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
-                                 solver_type,
+                                 PropertiesIndex,
                                  particle_particle_contact_force_model,
                                  RollingResistanceMethod::no_resistance>>(
             dem_parameters);
@@ -243,7 +243,7 @@ set_rolling_resistance_model(
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
-                                 solver_type,
+                                 PropertiesIndex,
                                  particle_particle_contact_force_model,
                                  RollingResistanceMethod::constant_resistance>>(
             dem_parameters);
@@ -253,7 +253,7 @@ set_rolling_resistance_model(
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
-                                 solver_type,
+                                 PropertiesIndex,
                                  particle_particle_contact_force_model,
                                  RollingResistanceMethod::viscous_resistance>>(
             dem_parameters);
@@ -266,388 +266,388 @@ set_rolling_resistance_model(
 
 
 template std::shared_ptr<
-  ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
-set_particle_particle_contact_force_model<2, DEM::SolverType::dem>(
+  ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
+set_particle_particle_contact_force_model<2, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
 template std::shared_ptr<
-  ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
-set_particle_particle_contact_force_model<3, DEM::SolverType::dem>(
+  ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
+set_particle_particle_contact_force_model<3, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
 
-template std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
-set_force_chains_contact_force_model<2, DEM::SolverType::dem>(
+template std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
+set_force_chains_contact_force_model<2, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
-template std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
-set_force_chains_contact_force_model<3, DEM::SolverType::dem>(
+template std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
+set_force_chains_contact_force_model<3, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
 
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::dem,
+  DEM::DEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::dem,
+                             DEM::DEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::DEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 
 //////////////////////////
 template std::shared_ptr<
-  ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
-set_particle_particle_contact_force_model<2, DEM::SolverType::cfd_dem>(
+  ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
+set_particle_particle_contact_force_model<2, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
 template std::shared_ptr<
-  ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
-set_particle_particle_contact_force_model<3, DEM::SolverType::cfd_dem>(
+  ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
+set_particle_particle_contact_force_model<3, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
 
-template std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
-set_force_chains_contact_force_model<2, DEM::SolverType::cfd_dem>(
+template std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
+set_force_chains_contact_force_model<2, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &dem_parameters);
-template std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
-set_force_chains_contact_force_model<3, DEM::SolverType::cfd_dem>(
+template std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
+set_force_chains_contact_force_model<3, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &dem_parameters);
 
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticleParticleContactForceBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particle_particle_contact_force_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::linear>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_overlap>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   2,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<
   3,
-  DEM::SolverType::cfd_dem,
+  DEM::CFDDEMProperties::PropertiesIndex,
   ParticleParticleContactForceModel::hertz_mindlin_limit_force>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::hertz_JKR>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<2,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<2> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<2, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<2, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);
 template void
 set_rolling_resistance_model<3,
-                             DEM::SolverType::cfd_dem,
+                             DEM::CFDDEMProperties::PropertiesIndex,
                              ParticleParticleContactForceModel::DMT>(
   const DEMSolverParameters<3> &dem_parameters,
-  std::shared_ptr<ParticlesForceChainsBase<3, DEM::SolverType::cfd_dem>>
+  std::shared_ptr<ParticlesForceChainsBase<3, DEM::CFDDEMProperties::PropertiesIndex>>
     &particles_force_chains_object);

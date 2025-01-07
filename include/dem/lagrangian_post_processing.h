@@ -44,7 +44,7 @@ using namespace dealii;
  * @param mpi_communicator MPI communicator.
  * @param sparse_contacts_object Àdaptive sparse contacts object.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
 write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -55,7 +55,7 @@ write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object);
+  AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object);
 
 /**
  * @brief Carries out the calculation of the average particles velocity in each local
@@ -70,7 +70,7 @@ write_post_processing_results(
  * @param velocity_average_z Average velocity in z-direction.
  * @param velocity_average_magnitude Average velocity magnitude.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
 calculate_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -90,7 +90,7 @@ calculate_average_particles_velocity(
  * @param particle_handler Particle handler.
  * @param granular_temperature_average Average granular temperature.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
 calculate_average_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
@@ -108,7 +108,7 @@ calculate_average_granular_temperature(
  *
  * @return A tensor which stores the average particles velocity in the input cell
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 Tensor<1, dim>
 calculate_cell_average_particles_velocity(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,

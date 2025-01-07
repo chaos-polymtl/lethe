@@ -134,7 +134,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model<dim, DEM::SolverType::cfd_dem>(
+    set_particle_particle_contact_force_model<dim, DEM::CFDDEMProperties::PropertiesIndex>(
       this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Initialize the contact search counter
@@ -189,7 +189,7 @@ CFDDEMSolver<dim>::setup_distribution_type()
 }
 
 template <int dim>
-std::shared_ptr<Integrator<dim, cfd_dem>>
+std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
 CFDDEMSolver<dim>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
@@ -199,9 +199,9 @@ CFDDEMSolver<dim>::set_integrator_type()
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-        return std::make_shared<VelocityVerletIntegrator<dim, cfd_dem>>();
+        return std::make_shared<VelocityVerletIntegrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-        return std::make_shared<ExplicitEulerIntegrator<dim, cfd_dem>>();
+        return std::make_shared<ExplicitEulerIntegrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
@@ -222,7 +222,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     this->void_fraction_manager.dof_handler);
 
   particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model<dim, DEM::SolverType::cfd_dem>(
+    set_particle_wall_contact_force_model<dim, DEM::CFDDEMProperties::PropertiesIndex>(
       this->cfd_dem_simulation_parameters.dem_parameters,
       *parallel_triangulation);
 
@@ -313,7 +313,7 @@ CFDDEMSolver<dim>::read_dem()
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation,
     this->particle_mapping,
-    DEM::get_number_properties<SolverType::dem>());
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
 
   ia >> temporary_particle_handler;
 
@@ -634,7 +634,7 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
             this->simulation_control->get_time_step() /
             this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-          find_particle_contact_detection_step<dim, DEM::SolverType::cfd_dem>(
+          find_particle_contact_detection_step<dim, DEM::CFDDEMProperties::PropertiesIndex>(
             this->particle_handler,
             dt,
             smallest_contact_search_criterion,
@@ -837,11 +837,11 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
       types::particle_index particle_id = particle->get_local_index();
 
       force[particle_id][0] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_x];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x];
       force[particle_id][1] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_y];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_y];
       force[particle_id][2] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_force_z];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_z];
     }
 }
 
@@ -858,11 +858,11 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
       types::particle_index particle_id = particle->get_local_index();
 
       torque[particle_id][0] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_x];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x];
       torque[particle_id][1] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_y];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_y];
       torque[particle_id][2] += particle_properties
-        [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::fem_torque_z];
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_z];
     }
 }
 
@@ -926,7 +926,7 @@ CFDDEMSolver<dim>::write_dem_output_results()
     dem_parameters.simulation_control.group_files;
 
   // Write particles
-  Visualization<dim, DEM::SolverType::cfd_dem> particle_data_out;
+  Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex> particle_data_out;
   particle_data_out.build_patches(this->particle_handler,
                                   properties_class.get_properties_name());
 
@@ -959,22 +959,22 @@ CFDDEMSolver<dim>::report_particle_statistics()
   // Calculate statistics on the particles
   statistics translational_kinetic_energy = calculate_granular_statistics<
     dim,
-    cfd_dem,
+    DEM::CFDDEMProperties::PropertiesIndex,
     DEM::dem_statistic_variable::translational_kinetic_energy>(
     this->particle_handler, this->mpi_communicator);
   statistics rotational_kinetic_energy = calculate_granular_statistics<
     dim,
-    cfd_dem,
+    DEM::CFDDEMProperties::PropertiesIndex,
     DEM::dem_statistic_variable::rotational_kinetic_energy>(
     this->particle_handler, this->mpi_communicator);
   statistics velocity =
     calculate_granular_statistics<dim,
-                                  cfd_dem,
+                                  DEM::CFDDEMProperties::PropertiesIndex,
                                   DEM::dem_statistic_variable::velocity>(
       this->particle_handler, this->mpi_communicator);
   statistics omega =
     calculate_granular_statistics<dim,
-                                  cfd_dem,
+                                  DEM::CFDDEMProperties::PropertiesIndex,
                                   DEM::dem_statistic_variable::omega>(
       this->particle_handler, this->mpi_communicator);
 
@@ -1092,13 +1092,13 @@ CFDDEMSolver<dim>::print_particles_summary()
               std::cout
                 << std::setw(display_width) << std::left
                 << particle_properties
-                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_x]
+                     [DEM::CFDDEMProperties::PropertiesIndex::v_x]
                 << std::setw(display_width) << std::left
                 << particle_properties
-                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_y]
+                     [DEM::CFDDEMProperties::PropertiesIndex::v_y]
                 << std::setw(display_width) << std::left
                 << particle_properties
-                     [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::v_z]
+                     [DEM::CFDDEMProperties::PropertiesIndex::v_z]
                 << std::endl;
             }
         }
@@ -1277,11 +1277,11 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
           MOI[particle.get_local_index()] =
             0.1 *
             particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::mass] *
+              [DEM::CFDDEMProperties::PropertiesIndex::mass] *
             particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp] *
+              [DEM::CFDDEMProperties::PropertiesIndex::dp] *
             particle_properties
-              [DEM::PropertiesIndex<DEM::SolverType::cfd_dem>::dp];
+              [DEM::CFDDEMProperties::PropertiesIndex::dp];
         }
     }
 

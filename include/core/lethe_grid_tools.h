@@ -285,7 +285,7 @@ namespace LetheGridTools
    * on the triangle, 2. a vector of normal vectors of the triangles
    */
 
-  template <int dim, DEM::SolverType solverType>
+  template <int dim, typename PropertiesIndex>
   std::
     tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
     find_particle_triangle_projection(

@@ -22,7 +22,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
-                     DEM::get_number_properties<DEM::SolverType::cfd_dem>())
+                     DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
   , void_fraction_manager(
       &(*this->triangulation),
       nsparam.void_fraction,
@@ -116,7 +116,7 @@ FluidDynamicsVANS<dim>::read_dem()
   Particles::ParticleHandler<dim> temporary_particle_handler(
     *this->triangulation,
     particle_mapping,
-    DEM::get_number_properties<SolverType::dem>());
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
 
 
   ia >> temporary_particle_handler;

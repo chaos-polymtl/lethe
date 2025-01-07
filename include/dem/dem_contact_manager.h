@@ -33,7 +33,7 @@ using namespace DEM;
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam solve_type Type of solver used for the DEM.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 class DEMContactManager
 {
 public:
@@ -133,7 +133,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const AdaptiveSparseContacts<dim, solver_type>
+    const AdaptiveSparseContacts<dim, PropertiesIndex>
       &sparse_particle_contact_object);
 
   /**
@@ -165,7 +165,7 @@ public:
                                                       solid_surfaces_mesh_info,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const AdaptiveSparseContacts<dim, solver_type>
+    const AdaptiveSparseContacts<dim, PropertiesIndex>
       &sparse_particle_contact_object);
 
   /**

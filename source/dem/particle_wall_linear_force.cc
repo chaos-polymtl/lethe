@@ -8,11 +8,11 @@
 
 using namespace dealii;
 
-template <int dim, DEM::SolverType solver_type>
-ParticleWallLinearForce<dim, solver_type>::ParticleWallLinearForce(
+template <int dim, typename PropertiesIndex>
+ParticleWallLinearForce<dim, PropertiesIndex>::ParticleWallLinearForce(
   const DEMSolverParameters<dim>        &dem_parameters,
   const std::vector<types::boundary_id> &boundary_index)
-  : ParticleWallContactForce<dim, solver_type>(dem_parameters)
+  : ParticleWallContactForce<dim, PropertiesIndex>(dem_parameters)
 {
   const double wall_youngs_modulus =
     dem_parameters.lagrangian_physical_properties.youngs_modulus_wall;
@@ -81,19 +81,19 @@ ParticleWallLinearForce<dim, solver_type>::ParticleWallLinearForce(
       Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallLinearForce<dim, solver_type>::no_resistance;
+        &ParticleWallLinearForce<dim, PropertiesIndex>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallLinearForce<dim, solver_type>::constant_resistance;
+        &ParticleWallLinearForce<dim, PropertiesIndex>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &ParticleWallLinearForce<dim, solver_type>::viscous_resistance;
+        &ParticleWallLinearForce<dim, PropertiesIndex>::viscous_resistance;
     }
 
   this->calculate_force_torque_on_boundary =
@@ -104,9 +104,9 @@ ParticleWallLinearForce<dim, solver_type>::ParticleWallLinearForce(
   this->torque_on_walls       = this->initialize();
 }
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallLinearForce<dim, solver_type>::
+ParticleWallLinearForce<dim, PropertiesIndex>::
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                               &particle_wall_pairs_in_contact,
@@ -114,10 +114,10 @@ ParticleWallLinearForce<dim, solver_type>::
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
 {
-  ParticleWallContactForce<dim, solver_type>::force_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
-  ParticleWallContactForce<dim, solver_type>::torque_on_walls =
-    ParticleWallContactForce<dim, solver_type>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
+  ParticleWallContactForce<dim, PropertiesIndex>::torque_on_walls =
+    ParticleWallContactForce<dim, PropertiesIndex>::initialize();
   // Looping over particle_wall_pairs_in_contact, which means looping over all
   // the active particles with iterator particle_wall_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -162,7 +162,7 @@ ParticleWallLinearForce<dim, solver_type>::
           Tensor<1, 3> projected_vector =
             this->find_projection(point_to_particle_vector, normal_vector);
           double normal_overlap =
-            ((particle_properties[DEM::PropertiesIndex<solver_type>::dp]) *
+            ((particle_properties[PropertiesIndex::dp]) *
              0.5) -
             (projected_vector.norm());
 
@@ -208,9 +208,9 @@ ParticleWallLinearForce<dim, solver_type>::
 }
 
 
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 void
-ParticleWallLinearForce<dim, solver_type>::
+ParticleWallLinearForce<dim, PropertiesIndex>::
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
                               &particle_floating_mesh_in_contact,
@@ -265,7 +265,7 @@ ParticleWallLinearForce<dim, solver_type>::
               // (floating mesh cell)
               auto particle_triangle_information =
                 LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  solver_type>(
+                                                                  PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -305,7 +305,7 @@ ParticleWallLinearForce<dim, solver_type>::
                       // Find normal overlap
                       double normal_overlap =
                         ((particle_properties
-                            [DEM::PropertiesIndex<solver_type>::dp]) *
+                            [PropertiesIndex::dp]) *
                          0.5) -
                         particle_triangle_distance;
 
@@ -376,9 +376,9 @@ ParticleWallLinearForce<dim, solver_type>::
 
 
 // Calculates linear contact force and torques
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallLinearForce<dim, solver_type>::
+ParticleWallLinearForce<dim, PropertiesIndex>::
   calculate_linear_contact_force_and_torque(
     particle_wall_contact_info<dim> &contact_info,
     const ArrayView<const double>   &particle_properties)
@@ -388,16 +388,16 @@ ParticleWallLinearForce<dim, solver_type>::
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
   const unsigned int particle_type =
-    particle_properties[DEM::PropertiesIndex<solver_type>::type];
+    particle_properties[PropertiesIndex::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double rp_sqrt =
-    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::dp] * 0.5);
+    sqrt(particle_properties[PropertiesIndex::dp] * 0.5);
 
   double normal_spring_constant =
     1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
-    pow((0.9375 * particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
+    pow((0.9375 * particle_properties[PropertiesIndex::mass] *
          1.0 * 1.0 / // Characteristic velocity is set to 1.0
          (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
@@ -406,7 +406,7 @@ ParticleWallLinearForce<dim, solver_type>::
   // equal to zero.
   double normal_damping_constant =
     2 * this->model_parameter_beta[particle_type] *
-    sqrt(particle_properties[DEM::PropertiesIndex<solver_type>::mass] *
+    sqrt(particle_properties[PropertiesIndex::mass] *
          normal_spring_constant);
 
   // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
@@ -449,7 +449,7 @@ ParticleWallLinearForce<dim, solver_type>::
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
   Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[DEM::PropertiesIndex<solver_type>::dp] *
+    (0.5 * particle_properties[PropertiesIndex::dp] *
      normal_vector),
     -tangential_force);
 
@@ -469,7 +469,7 @@ ParticleWallLinearForce<dim, solver_type>::
 
 
 
-template class ParticleWallLinearForce<2, DEM::SolverType::dem>;
-template class ParticleWallLinearForce<2, DEM::SolverType::cfd_dem>;
-template class ParticleWallLinearForce<3, DEM::SolverType::dem>;
-template class ParticleWallLinearForce<3, DEM::SolverType::cfd_dem>;
+template class ParticleWallLinearForce<2, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<3, DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<3, DEM::CFDDEMProperties::PropertiesIndex>;

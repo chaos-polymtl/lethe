@@ -34,8 +34,8 @@ using namespace dealii;
  * @tparam solve_type Type of solver used for the DEM.
  *
  */
-template <int dim, DEM::SolverType solver_type>
-class VelocityVerletIntegrator : public Integrator<dim, solver_type>
+template <int dim, typename PropertiesType>
+class VelocityVerletIntegrator : public Integrator<dim, PropertiesType>
 {
 public:
   VelocityVerletIntegrator()
@@ -82,15 +82,15 @@ public:
             const std::vector<double>       &MOI) override;
 
   virtual void
-  integrate(
-    Particles::ParticleHandler<dim>                 &particle_handler,
-    const Tensor<1, 3>                              &body_force,
-    const double                                     time_step,
-    std::vector<Tensor<1, 3>>                       &torque,
-    std::vector<Tensor<1, 3>>                       &force,
-    const std::vector<double>                       &MOI,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) override;
+  integrate(Particles::ParticleHandler<dim>                 &particle_handler,
+            const Tensor<1, 3>                              &body_force,
+            const double                                     time_step,
+            std::vector<Tensor<1, 3>>                       &torque,
+            std::vector<Tensor<1, 3>>                       &force,
+            const std::vector<double>                       &MOI,
+            const parallel::distributed::Triangulation<dim> &triangulation,
+            AdaptiveSparseContacts<dim, PropertiesType> &sparse_contacts_object)
+    override;
 
   void
   integrate_with_advected_particles(
@@ -101,7 +101,7 @@ public:
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, solver_type>        &sparse_contacts_object);
+    AdaptiveSparseContacts<dim, PropertiesType>     &sparse_contacts_object);
 };
 
 #endif

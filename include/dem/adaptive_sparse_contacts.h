@@ -101,7 +101,7 @@ template class LinearAlgebra::distributed::Vector<int>;
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam solve_type Type of solver used for the DEM.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 class AdaptiveSparseContacts
 {
 public:

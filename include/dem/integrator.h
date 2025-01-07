@@ -19,7 +19,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam solve_type Type of solver used for the DEM.
  */
-template <int dim, DEM::SolverType solver_type>
+template <int dim, typename PropertiesIndex>
 class Integrator
 {
 public:
@@ -83,7 +83,7 @@ public:
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, solver_type> &sparse_contacts_object) = 0;
+    AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object) = 0;
 };
 
 #endif
