@@ -12,8 +12,8 @@ set dimension = 2
 
 subsection simulation control
   set method                       = bdf1
-  set time end                     = 10
-  set time step                    = 0.01
+  set time end                     = 4
+  set time step                    = 0.001
   set adapt                        = true
   set max cfl                      = 0.5
   set stop tolerance               = 1e-5
@@ -21,7 +21,7 @@ subsection simulation control
   set number mesh adapt            = 0
   set output name                  = rayleigh-benard_convection
   set output control               = time
-  set output time frequency        = 0.1
+  set output time frequency        = 0.005
   set output path                  = ./output/
 end
 
