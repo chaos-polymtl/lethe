@@ -15,7 +15,7 @@
  * force model if applicable).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param[in] dem_parameters DEM parameters.
  *
@@ -31,7 +31,7 @@ set_particle_particle_contact_force_model(
  *  force model.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @tparam particle_particle_contact_force_model Particle-particle contact force
  * model.
  *
@@ -55,7 +55,7 @@ set_rolling_resistance_model(
  * force model if applicable) for the force-chain post-processing.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param dem_parameters DEM parameters.
  *

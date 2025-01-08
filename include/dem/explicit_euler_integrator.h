@@ -17,7 +17,7 @@ using namespace dealii;
  *
  * @note Euler is a first-order integration scheme. Calculation proceudre:
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * x(n+1) = x(n) + v(n) * dt
  * v(n+1) = v(n) + a(n) * dt

@@ -79,7 +79,7 @@ namespace DEM
 
   /**
    * @brief Return the number of properties stored on each particle.
-   * @tparam solve_type Type of solver used for the DEM.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    * @return Number of DEM properties.
    */
   template <typename PropertiesIndex>
@@ -89,7 +89,7 @@ namespace DEM
   /**
    * @brief Controls the name of output variables for the vtu.
    * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam solve_type Type of solver used for the DEM.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
   template <int dim, typename PropertiesIndex>
   class ParticleProperties

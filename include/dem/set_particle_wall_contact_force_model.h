@@ -17,7 +17,7 @@
  * handler file.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param dem_parameters DEM parameters
  * @param triangulation Triangulation

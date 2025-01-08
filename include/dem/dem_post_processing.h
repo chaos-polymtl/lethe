@@ -33,7 +33,7 @@ namespace DEM
    * - Rotational (angular) velocity
    *
    * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam solve_type Type of solver used for the DEM.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    * @tparam dem_statistics_variable Enum variable used to identify which
    * granular statistics is being calculated
    *

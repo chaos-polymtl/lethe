@@ -48,9 +48,9 @@ using namespace DEM;
  * @brief Solver using the soft-sphere model of the discrete element method
  * (DEM) to simulate granular systems.
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
-template <int dim, typename PropertiesType>
+template <int dim, typename PropertiesIndex>
 class DEMSolver
 {
 public:
@@ -114,7 +114,7 @@ private:
    *
    * @return The pointer to the integration object
    */
-  std::shared_ptr<Integrator<dim, PropertiesType>>
+  std::shared_ptr<Integrator<dim, PropertiesIndex>>
   set_integrator_type();
 
   /**
@@ -272,9 +272,9 @@ private:
   /**
    * @brief The properties of the DEM simulation.
    * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam solve_type Type of solver used for the DEM.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    */
-  DEM::ParticleProperties<dim, PropertiesType> properties_class;
+  DEM::ParticleProperties<dim, PropertiesIndex> properties_class;
 
   /**
    * @brief The acceleration acting on the particles.
@@ -319,12 +319,12 @@ private:
   /**
    * @brief The manager of all the contact search operations.
    */
-  DEMContactManager<dim, PropertiesType> contact_manager;
+  DEMContactManager<dim, PropertiesIndex> contact_manager;
 
   /**
    * @brief The load balancing handler.
    */
-  LagrangianLoadBalancing<dim, PropertiesType> load_balancing;
+  LagrangianLoadBalancing<dim, PropertiesIndex> load_balancing;
 
   /**
    * @brief The simulation control (DEM Transient).
@@ -344,31 +344,31 @@ private:
   /**
    * @brief The particle-particle contact force object.
    */
-  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesType>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim, PropertiesIndex>>
     particle_particle_contact_force_object;
 
   /**
    * @brief The particle-wall contact force object.
    */
-  std::shared_ptr<ParticleWallContactForce<dim, PropertiesType>>
+  std::shared_ptr<ParticleWallContactForce<dim, PropertiesIndex>>
     particle_wall_contact_force_object;
 
   /**
    * @brief The particle-point-line contact force object.
    */
-  ParticlePointLineForce<dim, PropertiesType>
+  ParticlePointLineForce<dim, PropertiesIndex>
     particle_point_line_contact_force_object;
 
   /**
    * @brief The particle force chains post-processing object.
    */
-  std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesType>>
+  std::shared_ptr<ParticlesForceChainsBase<dim, PropertiesIndex>>
     particles_force_chains_object;
 
   /**
    * @brief The integrator object.
    */
-  std::shared_ptr<Integrator<dim, PropertiesType>> integrator_object;
+  std::shared_ptr<Integrator<dim, PropertiesIndex>> integrator_object;
 
   /**
    * @brief The insertion object.
@@ -378,7 +378,7 @@ private:
   /**
    * @brief The visualization object.
    */
-  Visualization<dim, PropertiesType> visualization_object;
+  Visualization<dim, PropertiesIndex> visualization_object;
 
   /**
    * @brief The particle PVD handler.
@@ -492,7 +492,7 @@ private:
    * @brief The object handling the adaptive sparse contacts (ASC).
    * Only used with the ASC method.
    */
-  AdaptiveSparseContacts<dim, PropertiesType> sparse_contacts_object;
+  AdaptiveSparseContacts<dim, PropertiesIndex> sparse_contacts_object;
 
   /**
    * @brief The constraints for the background grid needed for the adaptive sparse.

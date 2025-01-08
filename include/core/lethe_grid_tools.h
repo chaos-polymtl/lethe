@@ -273,7 +273,7 @@ namespace LetheGridTools
    * readability.
    *
    * @tparam dim An integer that denotes the number of spatial dimensions.
-   * @tparam solve_type Type of solver used for the DEM.
+   * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    *
    * @param triangle A vector of points that defines a triangle
    * @param particles A particle_iterator_range that refers to all the particles

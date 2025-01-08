@@ -45,7 +45,7 @@ find_particle_point_contact_pairs(
  * are in contact or not.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param particle_handler Particle handler of particles located in boundary
  * cells.

@@ -31,11 +31,11 @@ using namespace dealii;
  * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  */
-template <int dim, typename PropertiesType>
-class VelocityVerletIntegrator : public Integrator<dim, PropertiesType>
+template <int dim, typename PropertiesIndex>
+class VelocityVerletIntegrator : public Integrator<dim, PropertiesIndex>
 {
 public:
   VelocityVerletIntegrator()
@@ -89,7 +89,7 @@ public:
             std::vector<Tensor<1, 3>>                       &force,
             const std::vector<double>                       &MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            AdaptiveSparseContacts<dim, PropertiesType> &sparse_contacts_object)
+            AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
     override;
 
   void
@@ -101,7 +101,7 @@ public:
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, PropertiesType>     &sparse_contacts_object);
+    AdaptiveSparseContacts<dim, PropertiesIndex>     &sparse_contacts_object);
 };
 
 #endif

@@ -53,7 +53,7 @@ find_particle_wall_contact_pairs(
  * investigated in the fine search to check if they are in contact or not.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param boundary_cells_information Information of the boundary cells and
  * faces. This is the output of the FindBoundaryCellsInformation class.
@@ -111,7 +111,7 @@ find_particle_floating_wall_contact_pairs(
  * contact or not
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param boundary_cells_for_floating_walls Boundary cells located adjacent to
  * floating walls
@@ -175,7 +175,7 @@ particle_solid_surfaces_contact_search(
  * are in contact or not
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param solid_surfaces_mesh_information Information of the solid surfaces mapped
  * in the background triangulation.

@@ -32,7 +32,7 @@ using namespace dealii;
  * @brief Carries out writing the cell data of the domain.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  *
  * @param triangulation Triangulation of the domain.
  * @param grid_pvdhandler PVD handler for grid.

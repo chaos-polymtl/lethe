@@ -23,7 +23,7 @@ using namespace dealii;
  * particles and walls
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam solve_type Type of solver used for the DEM.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class ParticleWallJKRForce
