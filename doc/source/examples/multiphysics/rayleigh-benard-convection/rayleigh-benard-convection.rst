@@ -178,7 +178,7 @@ The following animation shows the evolution of the temperature field with the fl
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/tEg5M-wiCp8" frameborder="0" allowfullscreen></iframe>
+    <iframe width="640" height="360" src="https://www.youtube.com/embed/NSJJpPauiXo" frameborder="0" allowfullscreen></iframe>
 
 Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani et al. [#ouertatani]_ as a validation of Lethe software. 
 
