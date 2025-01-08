@@ -54,7 +54,9 @@ test()
 
   // Defning particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
+    tr,
+    mapping,
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
 
   int    id              = 0;
   double particle_mass   = 1;
@@ -83,14 +85,15 @@ test()
   Particles::ParticleIterator<dim> pit0 =
     particle_handler.insert_particle(particle0, particle0_cell);
 
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
+  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
+  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
+  pit0->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
     particle_mass;
 
   // Calling integrators
-  ExplicitEulerIntegrator<dim, DEM::SolverType::dem> explicit_euler_object;
+  ExplicitEulerIntegrator<dim, DEM::DEMProperties::PropertiesIndex>
+    explicit_euler_object;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
@@ -147,10 +150,10 @@ test()
     particle_handler.insert_particle(particle1, particle1_cell);
 
 
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
     particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
@@ -207,10 +210,10 @@ test()
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, particle2_cell);
 
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+  pit2->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
+  pit2->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
+  pit2->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
+  pit2->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
     particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
@@ -228,7 +231,8 @@ test()
   MOI.resize(force.size());
 
   // Create Velocity Verlet integrator
-  VelocityVerletIntegrator<dim, DEM::SolverType::dem> velocity_verlet_object;
+  VelocityVerletIntegrator<dim, DEM::DEMProperties::PropertiesIndex>
+    velocity_verlet_object;
 
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
@@ -276,10 +280,10 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, particle3_cell);
 
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
+  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x] = 0;
+  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y] = 0;
+  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z] = 0;
+  pit3->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] =
     particle_mass;
 
   particle_handler.sort_particles_into_subdomains_and_cells();

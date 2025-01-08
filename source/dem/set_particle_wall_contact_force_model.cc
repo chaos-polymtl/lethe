@@ -56,22 +56,26 @@ set_particle_wall_contact_force_model(
   return particle_wall_contact_force_object;
 }
 
-template std::shared_ptr<ParticleWallContactForce<2, DEM::DEMProperties::PropertiesIndex>>
+template std::shared_ptr<
+  ParticleWallContactForce<2, DEM::DEMProperties::PropertiesIndex>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<2>                  &dem_parameters,
   const parallel::distributed::Triangulation<2> &triangulation);
 
-template std::shared_ptr<ParticleWallContactForce<3, DEM::DEMProperties::PropertiesIndex>>
+template std::shared_ptr<
+  ParticleWallContactForce<3, DEM::DEMProperties::PropertiesIndex>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<3>                  &dem_parameters,
   const parallel::distributed::Triangulation<3> &triangulation);
 
-template std::shared_ptr<ParticleWallContactForce<2, DEM::CFDDEMProperties::PropertiesIndex>>
+template std::shared_ptr<
+  ParticleWallContactForce<2, DEM::CFDDEMProperties::PropertiesIndex>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<2>                  &dem_parameters,
   const parallel::distributed::Triangulation<2> &triangulation);
 
-template std::shared_ptr<ParticleWallContactForce<3, DEM::CFDDEMProperties::PropertiesIndex>>
+template std::shared_ptr<
+  ParticleWallContactForce<3, DEM::CFDDEMProperties::PropertiesIndex>>
 set_particle_wall_contact_force_model(
   const DEMSolverParameters<3>                  &dem_parameters,
   const parallel::distributed::Triangulation<3> &triangulation);

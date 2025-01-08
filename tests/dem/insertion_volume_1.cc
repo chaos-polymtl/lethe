@@ -56,7 +56,9 @@ test()
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
+    tr,
+    mapping,
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
   distribution_object_container.push_back(std::make_shared<UniformDistribution>(

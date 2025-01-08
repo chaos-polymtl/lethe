@@ -8,7 +8,7 @@
 using namespace DEM;
 using namespace Parameters::Lagrangian;
 
-template <int                               dim,
+template <int dim,
           typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
@@ -22,7 +22,7 @@ ParticleParticleContactForce<dim,
   set_effective_properties(dem_parameters);
 }
 
-template <int                               dim,
+template <int dim,
           typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>

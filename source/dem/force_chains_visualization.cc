@@ -17,11 +17,14 @@
 using namespace DEM;
 using namespace Parameters::Lagrangian;
 
-template <int                               dim,
+template <int dim,
           typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
-ParticlesForceChains<dim, PropertiesIndex, contact_model, rolling_friction_model>::
+ParticlesForceChains<dim,
+                     PropertiesIndex,
+                     contact_model,
+                     rolling_friction_model>::
   ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
   : ParticleParticleContactForce<dim,
                                  PropertiesIndex,
@@ -29,12 +32,15 @@ ParticlesForceChains<dim, PropertiesIndex, contact_model, rolling_friction_model
                                  rolling_friction_model>(dem_parameters_in)
 {}
 
-template <int                               dim,
-          typename                   PropertiesIndex,
+template <int dim,
+          typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
 void
-ParticlesForceChains<dim, PropertiesIndex, contact_model, rolling_friction_model>::
+ParticlesForceChains<dim,
+                     PropertiesIndex,
+                     contact_model,
+                     rolling_friction_model>::
   multi_general_cell(Triangulation<1, 3>         &tria,
                      const std::vector<Point<3>> &vertices)
 {
@@ -51,11 +57,14 @@ ParticlesForceChains<dim, PropertiesIndex, contact_model, rolling_friction_model
 
 template <
   int dim,
-  typename  PropertiesIndex,
+  typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel force_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 void
-ParticlesForceChains<dim, PropertiesIndex, force_model, rolling_friction_model>::
+ParticlesForceChains<dim,
+                     PropertiesIndex,
+                     force_model,
+                     rolling_friction_model>::
   calculate_force_chains(
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &local_adjacent_particles,
@@ -82,12 +91,15 @@ ParticlesForceChains<dim, PropertiesIndex, force_model, rolling_friction_model>:
     }
 }
 
-template <int                               dim,
-          typename                   PropertiesIndex,
+template <int dim,
+          typename PropertiesIndex,
           ParticleParticleContactForceModel contact_model,
           RollingResistanceMethod           rolling_friction_model>
 void
-ParticlesForceChains<dim, PropertiesIndex, contact_model, rolling_friction_model>::
+ParticlesForceChains<dim,
+                     PropertiesIndex,
+                     contact_model,
+                     rolling_friction_model>::
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
                      PVDHandler                     &pvd_handler,
                      MPI_Comm                        mpi_communicator,

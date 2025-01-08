@@ -135,15 +135,16 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::integrate(
 }
 
 template <int dim, typename PropertiesIndex>
-  void VelocityVerletIntegrator < dim, PropertiesIndex>::integrate(
-    Particles::ParticleHandler<dim>                 &particle_handler,
-    const Tensor<1, 3>                              &g,
-    const double                                     dt,
-    std::vector<Tensor<1, 3>>                       &torque,
-    std::vector<Tensor<1, 3>>                       &force,
-    const std::vector<double>                       &MOI,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object)
+void
+VelocityVerletIntegrator<dim, PropertiesIndex>::integrate(
+  Particles::ParticleHandler<dim>                 &particle_handler,
+  const Tensor<1, 3>                              &g,
+  const double                                     dt,
+  std::vector<Tensor<1, 3>>                       &torque,
+  std::vector<Tensor<1, 3>>                       &force,
+  const std::vector<double>                       &MOI,
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -211,8 +212,7 @@ template <int dim, typename PropertiesIndex>
                           Tensor<1, 3> &particle_force  = force[particle_id];
 
                           double dt_mass_inverse =
-                            dt / particle_properties
-                                   [PropertiesIndex::mass];
+                            dt / particle_properties[PropertiesIndex::mass];
                           double dt_MOI_inverse = dt / MOI[particle_id];
 
                           particle_position = [&] {
@@ -290,7 +290,7 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::
     std::vector<Tensor<1, 3>>                       &force,
     const std::vector<double>                       &MOI,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object)
+    AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object)
 {
   Point<3>           particle_position;
   const Tensor<1, 3> dt_g = g * dt;
@@ -405,8 +405,8 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::
                          AdaptiveSparseContacts<dim,
                                                 PropertiesIndex>::advected ||
                        mobility_status ==
-                         AdaptiveSparseContacts<dim,
-                                                PropertiesIndex>::advected_active)
+                         AdaptiveSparseContacts<dim, PropertiesIndex>::
+                           advected_active)
                 {
                   for (auto &particle : particles_in_cell)
                     {
@@ -470,6 +470,8 @@ VelocityVerletIntegrator<dim, PropertiesIndex>::
 
 
 template class VelocityVerletIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
-template class VelocityVerletIntegrator<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<2,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class VelocityVerletIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
-template class VelocityVerletIntegrator<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class VelocityVerletIntegrator<3,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;

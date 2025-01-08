@@ -162,8 +162,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
           Tensor<1, 3> projected_vector =
             this->find_projection(point_to_particle_vector, normal_vector);
           double normal_overlap =
-            ((particle_properties[PropertiesIndex::dp]) *
-             0.5) -
+            ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -263,9 +262,8 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
               // Call find_particle_triangle_projection to get the
               // projection of particles on the triangle
               // (floating mesh cell)
-              auto particle_triangle_information =
-                LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  PropertiesIndex>(
+              auto particle_triangle_information = LetheGridTools::
+                find_particle_triangle_projection<dim, PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -304,9 +302,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties
-                            [PropertiesIndex::dp]) *
-                         0.5) -
+                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -
                         particle_triangle_distance;
 
                       if (normal_overlap > 0)
@@ -387,18 +383,16 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
   // we need to put a minus sign infront of the normal_vector to respect the
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
-  const unsigned int particle_type =
-    particle_properties[PropertiesIndex::type];
+  const unsigned int particle_type = particle_properties[PropertiesIndex::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
-  double rp_sqrt =
-    sqrt(particle_properties[PropertiesIndex::dp] * 0.5);
+  double rp_sqrt = sqrt(particle_properties[PropertiesIndex::dp] * 0.5);
 
   double normal_spring_constant =
     1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
-    pow((0.9375 * particle_properties[PropertiesIndex::mass] *
-         1.0 * 1.0 / // Characteristic velocity is set to 1.0
+    pow((0.9375 * particle_properties[PropertiesIndex::mass] * 1.0 *
+         1.0 / // Characteristic velocity is set to 1.0
          (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
 
@@ -406,8 +400,7 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
   // equal to zero.
   double normal_damping_constant =
     2 * this->model_parameter_beta[particle_type] *
-    sqrt(particle_properties[PropertiesIndex::mass] *
-         normal_spring_constant);
+    sqrt(particle_properties[PropertiesIndex::mass] * normal_spring_constant);
 
   // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
   // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10,
@@ -448,10 +441,10 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
-  Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[PropertiesIndex::dp] *
-     normal_vector),
-    -tangential_force);
+  Tensor<1, 3> tangential_torque =
+    cross_product_3d((0.5 * particle_properties[PropertiesIndex::dp] *
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =
@@ -470,6 +463,8 @@ ParticleWallLinearForce<dim, PropertiesIndex>::
 
 
 template class ParticleWallLinearForce<2, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallLinearForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<2,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;
 template class ParticleWallLinearForce<3, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallLinearForce<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallLinearForce<3,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;

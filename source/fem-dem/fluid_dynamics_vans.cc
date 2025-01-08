@@ -20,9 +20,10 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   : FluidDynamicsMatrixBased<dim>(nsparam.cfd_parameters)
   , cfd_dem_simulation_parameters(nsparam)
   , particle_mapping(1)
-  , particle_handler(*this->triangulation,
-                     particle_mapping,
-                     DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
+  , particle_handler(
+      *this->triangulation,
+      particle_mapping,
+      DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>())
   , void_fraction_manager(
       &(*this->triangulation),
       nsparam.void_fraction,

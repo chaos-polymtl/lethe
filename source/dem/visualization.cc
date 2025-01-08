@@ -20,9 +20,9 @@ Visualization<dim, PropertiesIndex>::build_patches(
   properties.insert(properties.begin(), std::make_pair("ID", 1));
 
   // Defining properties for writing
-  this->properties_to_write.assign(properties.begin(),
-                                   properties.begin() +
-                                     DEM::get_number_properties<PropertiesIndex>());
+  this->properties_to_write.assign(
+    properties.begin(),
+    properties.begin() + DEM::get_number_properties<PropertiesIndex>());
 
   // Defining property field position
   int field_position = 0;
@@ -83,8 +83,7 @@ Visualization<dim, PropertiesIndex>::build_patches(
 
 template <int dim, typename PropertiesIndex>
 void
-Visualization<dim, PropertiesIndex
->::print_xyz(
+Visualization<dim, PropertiesIndex>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const MPI_Comm                          &mpi_communicator,
   const ConditionalOStream                &pcout)
@@ -125,14 +124,13 @@ Visualization<dim, PropertiesIndex
               auto particle_properties = particle->get_properties();
               auto particle_location   = particle->get_location();
 
-              std::cout
-                << std::fixed << std::setprecision(0) << id << " "
-                << std::setprecision(0)
-                << particle_properties[PropertiesIndex::type]
-                << " " << std::setprecision(5)
-                << particle_properties[PropertiesIndex::dp]
-                << " " << std::setprecision(4) << particle_location
-                << std::endl;
+              std::cout << std::fixed << std::setprecision(0) << id << " "
+                        << std::setprecision(0)
+                        << particle_properties[PropertiesIndex::type] << " "
+                        << std::setprecision(5)
+                        << particle_properties[PropertiesIndex::dp] << " "
+                        << std::setprecision(4) << particle_location
+                        << std::endl;
             }
         }
       usleep(500);
@@ -140,8 +138,7 @@ Visualization<dim, PropertiesIndex
     }
 }
 
-template <int dim, typename PropertiesIndex
->
+template <int dim, typename PropertiesIndex>
 void
 Visualization<dim, PropertiesIndex>::print_intermediate_format(
   const Vector<float>   &data_to_print,
@@ -189,16 +186,14 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
     }
 }
 
-template <int dim, typename PropertiesIndex
->
+template <int dim, typename PropertiesIndex>
 const std::vector<DataOutBase::Patch<0, dim>> &
 Visualization<dim, PropertiesIndex>::get_patches() const
 {
   return patches;
 }
 
-template <int dim, typename PropertiesIndex
->
+template <int dim, typename PropertiesIndex>
 std::vector<std::string>
 Visualization<dim, PropertiesIndex>::get_dataset_names() const
 {

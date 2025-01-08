@@ -26,13 +26,15 @@ using namespace dealii;
  * @tparam solve_type Type of solver used for the DEM.
  */
 template <int dim, typename PropertiesIndex>
-class ParticleWallDMTForce : public ParticleWallNonLinearForce<dim, PropertiesIndex>
+class ParticleWallDMTForce
+  : public ParticleWallNonLinearForce<dim, PropertiesIndex>
 {
-  using FuncPtrType = Tensor<1, 3> (ParticleWallDMTForce<dim, PropertiesIndex>::*)(
-    const ArrayView<const double> &,
-    const double,
-    const double,
-    const Tensor<1, 3> &);
+  using FuncPtrType =
+    Tensor<1, 3> (ParticleWallDMTForce<dim, PropertiesIndex>::*)(
+      const ArrayView<const double> &,
+      const double,
+      const double,
+      const Tensor<1, 3> &);
   FuncPtrType calculate_rolling_resistance_torque;
 
 public:
@@ -120,8 +122,7 @@ private:
     Tensor<1, 3> angular_velocity;
     for (int d = 0; d < 3; ++d)
       {
-        angular_velocity[d] =
-          particle_properties[PropertiesIndex::omega_x + d];
+        angular_velocity[d] = particle_properties[PropertiesIndex::omega_x + d];
       }
 
     // Calculation of particle-wall angular velocity (norm of the
@@ -137,8 +138,8 @@ private:
     // Calculation of rolling resistance torque
     Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
-      (particle_properties[PropertiesIndex::dp] * 0.5) *
-      normal_force_norm * particle_wall_angular_velocity;
+      (particle_properties[PropertiesIndex::dp] * 0.5) * normal_force_norm *
+      particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
   }
@@ -162,8 +163,7 @@ private:
     Tensor<1, 3> angular_velocity;
     for (int d = 0; d < 3; ++d)
       {
-        angular_velocity[d] =
-          particle_properties[PropertiesIndex::omega_x + d];
+        angular_velocity[d] = particle_properties[PropertiesIndex::omega_x + d];
       }
 
     // Calculation of particle-wall angular velocity (norm of the
@@ -176,16 +176,16 @@ private:
         particle_wall_angular_velocity = angular_velocity / omega_value;
       }
 
-    Tensor<1, 3> v_omega = cross_product_3d(
-      angular_velocity,
-      particle_properties[PropertiesIndex::dp] * 0.5 *
-        normal_contact_vector);
+    Tensor<1, 3> v_omega =
+      cross_product_3d(angular_velocity,
+                       particle_properties[PropertiesIndex::dp] * 0.5 *
+                         normal_contact_vector);
 
     // Calculation of rolling resistance torque
     Tensor<1, 3> rolling_resistance_torque =
       -effective_rolling_friction_coefficient *
-      particle_properties[PropertiesIndex::dp] * 0.5 *
-      normal_force_norm * v_omega.norm() * particle_wall_angular_velocity;
+      particle_properties[PropertiesIndex::dp] * 0.5 * normal_force_norm *
+      v_omega.norm() * particle_wall_angular_velocity;
 
     return rolling_resistance_torque;
   }

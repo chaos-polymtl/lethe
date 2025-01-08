@@ -42,9 +42,8 @@ ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
       Tensor<1, 3> &particle_torque     = torque[particle_id];
       Tensor<1, 3> &particle_force      = force[particle_id];
       Point<3>      particle_position;
-      double        mass_inverse =
-        1 / particle_properties[PropertiesIndex::mass];
-      double MOI_inverse = 1 / MOI[particle_id];
+      double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
+      double MOI_inverse  = 1 / MOI[particle_id];
 
 
       if constexpr (dim == 3)
@@ -59,8 +58,7 @@ ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
           acceleration[d] = g[d] + (particle_force[d]) * mass_inverse;
 
           // Velocity integration:
-          particle_properties[PropertiesIndex::v_x + d] +=
-            dt * acceleration[d];
+          particle_properties[PropertiesIndex::v_x + d] += dt * acceleration[d];
 
           // Position integration
           particle_position[d] +=
@@ -119,6 +117,8 @@ ExplicitEulerIntegrator<dim, PropertiesIndex>::integrate(
 }
 
 template class ExplicitEulerIntegrator<2, DEM::DEMProperties::PropertiesIndex>;
-template class ExplicitEulerIntegrator<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<2,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;
 template class ExplicitEulerIntegrator<3, DEM::DEMProperties::PropertiesIndex>;
-template class ExplicitEulerIntegrator<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ExplicitEulerIntegrator<3,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;

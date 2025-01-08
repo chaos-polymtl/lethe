@@ -170,8 +170,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[PropertiesIndex::dp]) *
-             0.5) -
+            ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -272,9 +271,8 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
               // Call find_particle_triangle_projection to get the
               // distance and projection of particles on the triangle
               // (floating mesh cell)
-              auto particle_triangle_information =
-                LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  PropertiesIndex>(
+              auto particle_triangle_information = LetheGridTools::
+                find_particle_triangle_projection<dim, PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -313,9 +311,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties
-                            [PropertiesIndex::dp]) *
-                         0.5) -
+                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -
                         particle_triangle_distance;
 
                       if (normal_overlap > 0)
@@ -398,8 +394,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
   // we need to put a minus sign infront of the normal_vector to respect the
   // convention (i -> j)
   const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
-  const unsigned int particle_type =
-    particle_properties[PropertiesIndex::type];
+  const unsigned int particle_type = particle_properties[PropertiesIndex::type];
 
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
@@ -424,8 +419,7 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
   // equal to zero.
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] *
-    sqrt(model_parameter_sn *
-         particle_properties[PropertiesIndex::mass]);
+    sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);
 
   // There is a minus sign since the tangential force is applied in the opposite
   // direction of the tangential_overlap
@@ -477,10 +471,10 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
-  const Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[PropertiesIndex::dp] *
-     normal_vector),
-    -tangential_force);
+  const Tensor<1, 3> tangential_torque =
+    cross_product_3d((0.5 * particle_properties[PropertiesIndex::dp] *
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   const Tensor<1, 3> rolling_resistance_torque =
@@ -497,7 +491,13 @@ ParticleWallNonLinearForce<dim, PropertiesIndex>::
 }
 
 
-template class ParticleWallNonLinearForce<2, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallNonLinearForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
-template class ParticleWallNonLinearForce<3, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallNonLinearForce<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<2,
+                                          DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<3,
+                                          DEM::DEMProperties::PropertiesIndex>;
+template class ParticleWallNonLinearForce<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex>;

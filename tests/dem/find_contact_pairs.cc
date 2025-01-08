@@ -45,7 +45,7 @@ test()
 
   MappingQ1<dim> mapping;
 
-  DEMContactManager<dim, DEM::SolverType::dem> contact_manager;
+  DEMContactManager<dim, DEM::DEMProperties::PropertiesIndex> contact_manager;
   Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 
   // Finding cell neighbors list, it is required for finding the broad search
@@ -89,7 +89,7 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Dummy Adaptive sparse contacts object for next call
-  AdaptiveSparseContacts<dim, DEM::SolverType::dem>
+  AdaptiveSparseContacts<dim, DEM::DEMProperties::PropertiesIndex>
     dummy_adaptive_sparse_contacts;
 
   // Calling broad search function

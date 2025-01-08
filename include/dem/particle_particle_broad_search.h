@@ -87,7 +87,7 @@ find_particle_particle_contact_pairs(
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                                                 &ghost_contact_pair_candidates,
+    &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**

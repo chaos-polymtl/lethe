@@ -66,8 +66,7 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
           // Get particle properties
           auto particle_properties =
             particles_in_cell_iterator->get_properties();
-          const double dp =
-            particle_properties[PropertiesIndex::dp];
+          const double dp = particle_properties[PropertiesIndex::dp];
 
           for (int d = 0; d < dim; ++d)
             {
@@ -403,8 +402,7 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
                     particle.get_local_index();
 
                   double dt_mass_inverse =
-                    dt / particle_properties
-                           [PropertiesIndex::mass];
+                    dt / particle_properties[PropertiesIndex::mass];
 
                   // Calculate the acceleration of the particle times the time
                   // step
@@ -418,8 +416,7 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
                     {
                       // Add up the current velocity for the average velocity
                       velocity_cell_average[d] +=
-                        particle_properties
-                          [PropertiesIndex::v_x + d] +
+                        particle_properties[PropertiesIndex::v_x + d] +
                         acc_dt_particle[d];
                     }
                 }
@@ -437,6 +434,8 @@ AdaptiveSparseContacts<dim, PropertiesIndex>::
 }
 
 template class AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>;
-template class AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class AdaptiveSparseContacts<2,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;
 template class AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>;
-template class AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class AdaptiveSparseContacts<3,
+                                      DEM::CFDDEMProperties::PropertiesIndex>;

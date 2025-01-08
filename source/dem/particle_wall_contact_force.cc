@@ -5,7 +5,7 @@
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
-template <int dim,typename PropertiesIndex>
+template <int dim, typename PropertiesIndex>
 void
 ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
   particle_wall_contact_info<dim> &contact_info,
@@ -22,26 +22,19 @@ ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
   // Using velocity and angular velocity of particle as
   // local vectors
   Tensor<1, 3> particle_velocity;
-  particle_velocity[0] =
-    particle_properties[PropertiesIndex::v_x];
-  particle_velocity[1] =
-    particle_properties[PropertiesIndex::v_y];
-  particle_velocity[2] =
-    particle_properties[PropertiesIndex::v_z];
+  particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
+  particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
+  particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
 
   Tensor<1, 3> particle_angular_velocity;
-  particle_angular_velocity[0] =
-    particle_properties[PropertiesIndex::omega_x];
-  particle_angular_velocity[1] =
-    particle_properties[PropertiesIndex::omega_y];
-  particle_angular_velocity[2] =
-    particle_properties[PropertiesIndex::omega_z];
+  particle_angular_velocity[0] = particle_properties[PropertiesIndex::omega_x];
+  particle_angular_velocity[1] = particle_properties[PropertiesIndex::omega_y];
+  particle_angular_velocity[2] = particle_properties[PropertiesIndex::omega_z];
 
   // Calculate approximation of the contact point using the normal vector
   Point<3> contact_point =
     particle_position +
-    0.5 * particle_properties[PropertiesIndex::dp] *
-      normal_vector;
+    0.5 * particle_properties[PropertiesIndex::dp] * normal_vector;
 
   // Get vector pointing from the contact point to the origin of the rotation
   // axis
@@ -60,10 +53,9 @@ ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
     this->boundary_translational_velocity_map[boundary_id] - particle_velocity +
-    cross_product_3d(
-      (-0.5 * particle_properties[PropertiesIndex::dp] *
-       particle_angular_velocity),
-      normal_vector) +
+    cross_product_3d((-0.5 * particle_properties[PropertiesIndex::dp] *
+                      particle_angular_velocity),
+                     normal_vector) +
     cross_product_3d(this->boundary_rotational_speed_map[boundary_id] *
                        this->boundary_rotational_vector[boundary_id],
                      vector_to_rotating_axis);
@@ -95,7 +87,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::update_contact_information(
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
-template <int dim,typename PropertiesIndex>
+template <int dim, typename PropertiesIndex>
 void
 ParticleWallContactForce<dim, PropertiesIndex>::
   update_particle_floating_wall_contact_information(
@@ -114,31 +106,25 @@ ParticleWallContactForce<dim, PropertiesIndex>::
   // Using velocity and angular velocity of particle as
   // local vectors
   Tensor<1, 3> particle_velocity;
-  particle_velocity[0] =
-    particle_properties[PropertiesIndex::v_x];
-  particle_velocity[1] =
-    particle_properties[PropertiesIndex::v_y];
-  particle_velocity[2] =
-    particle_properties[PropertiesIndex::v_z];
+  particle_velocity[0] = particle_properties[PropertiesIndex::v_x];
+  particle_velocity[1] = particle_properties[PropertiesIndex::v_y];
+  particle_velocity[2] = particle_properties[PropertiesIndex::v_z];
 
 
   Tensor<1, 3> particle_angular_velocity;
-  particle_angular_velocity[0] =
-    particle_properties[PropertiesIndex::omega_x];
-  particle_angular_velocity[1] =
-    particle_properties[PropertiesIndex::omega_y];
-  particle_angular_velocity[2] =
-    particle_properties[PropertiesIndex::omega_z];
+  particle_angular_velocity[0] = particle_properties[PropertiesIndex::omega_x];
+  particle_angular_velocity[1] = particle_properties[PropertiesIndex::omega_y];
+  particle_angular_velocity[2] = particle_properties[PropertiesIndex::omega_z];
 
   // Defining relative contact velocity
   // v_ij = v_j - v_i
   Tensor<1, 3> contact_relative_velocity =
     cut_cell_translational_velocity - particle_velocity +
-    cross_product_3d(
-      (center_of_rotation_particle_distance * cut_cell_rotational_velocity -
-       0.5 * particle_properties[PropertiesIndex::dp] *
-         particle_angular_velocity),
-      normal_vector);
+    cross_product_3d((center_of_rotation_particle_distance *
+                        cut_cell_rotational_velocity -
+                      0.5 * particle_properties[PropertiesIndex::dp] *
+                        particle_angular_velocity),
+                     normal_vector);
 
   // Calculation of normal relative velocity
   double normal_relative_velocity_value =
@@ -161,7 +147,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
 
-template <int dim,typename PropertiesIndex>
+template <int dim, typename PropertiesIndex>
 void
 ParticleWallContactForce<dim, PropertiesIndex>::
   calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
@@ -180,7 +166,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::
     }
 }
 
-template <int dim,typename PropertiesIndex>
+template <int dim, typename PropertiesIndex>
 std::map<unsigned int, Tensor<1, 3>>
 ParticleWallContactForce<dim, PropertiesIndex>::initialize()
 {
@@ -192,7 +178,7 @@ ParticleWallContactForce<dim, PropertiesIndex>::initialize()
   return map;
 }
 
-template <int dim,typename PropertiesIndex>
+template <int dim, typename PropertiesIndex>
 void
 ParticleWallContactForce<dim, PropertiesIndex>::
   mpi_correction_over_calculation_of_forces_and_torques()
@@ -208,6 +194,8 @@ ParticleWallContactForce<dim, PropertiesIndex>::
 
 
 template class ParticleWallContactForce<2, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallContactForce<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallContactForce<2,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;
 template class ParticleWallContactForce<3, DEM::DEMProperties::PropertiesIndex>;
-template class ParticleWallContactForce<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class ParticleWallContactForce<3,
+                                        DEM::CFDDEMProperties::PropertiesIndex>;

@@ -55,8 +55,8 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_dynamic()
 
 template <int dim, typename PropertiesIndex>
 inline void
-LagrangianLoadBalancing<dim,
-                        PropertiesIndex>::check_load_balance_with_sparse_contacts()
+LagrangianLoadBalancing<dim, PropertiesIndex>::
+  check_load_balance_with_sparse_contacts()
 {
   if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
     {
@@ -83,14 +83,17 @@ LagrangianLoadBalancing<dim,
               // is modified if cell is active or inactive
               double alpha = 1.0;
               if (cell_mobility_status ==
-                    AdaptiveSparseContacts<dim, PropertiesIndex>::static_active ||
+                    AdaptiveSparseContacts<dim,
+                                           PropertiesIndex>::static_active ||
                   cell_mobility_status ==
-                    AdaptiveSparseContacts<dim, PropertiesIndex>::advected_active)
+                    AdaptiveSparseContacts<dim,
+                                           PropertiesIndex>::advected_active)
                 {
                   alpha = active_status_factor;
                 }
               else if (cell_mobility_status ==
-                         AdaptiveSparseContacts<dim, PropertiesIndex>::inactive ||
+                         AdaptiveSparseContacts<dim,
+                                                PropertiesIndex>::inactive ||
                        cell_mobility_status ==
                          AdaptiveSparseContacts<dim, PropertiesIndex>::advected)
                 {
@@ -285,6 +288,8 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
 }
 
 template class LagrangianLoadBalancing<2, DEM::DEMProperties::PropertiesIndex>;
-template class LagrangianLoadBalancing<2, DEM::CFDDEMProperties::PropertiesIndex>;
+template class LagrangianLoadBalancing<2,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;
 template class LagrangianLoadBalancing<3, DEM::DEMProperties::PropertiesIndex>;
-template class LagrangianLoadBalancing<3, DEM::CFDDEMProperties::PropertiesIndex>;
+template class LagrangianLoadBalancing<3,
+                                       DEM::CFDDEMProperties::PropertiesIndex>;

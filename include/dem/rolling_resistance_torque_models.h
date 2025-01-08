@@ -127,14 +127,12 @@ viscous_rolling_resistance_torque(
   Tensor<1, 3> omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   Tensor<1, 3> v_omega =
-    cross_product_3d(
-      particle_one_angular_velocity,
-      particle_one_properties[PropertiesIndex::dp] * 0.5 *
-        normal_contact_vector) -
-    cross_product_3d(
-      particle_two_angular_velocity,
-      particle_two_properties[PropertiesIndex::dp] * 0.5 *
-        -normal_contact_vector);
+    cross_product_3d(particle_one_angular_velocity,
+                     particle_one_properties[PropertiesIndex::dp] * 0.5 *
+                       normal_contact_vector) -
+    cross_product_3d(particle_two_angular_velocity,
+                     particle_two_properties[PropertiesIndex::dp] * 0.5 *
+                       -normal_contact_vector);
 
   // Calculation of rolling resistance torque
   return (-effective_rolling_friction_coefficient * effective_r *

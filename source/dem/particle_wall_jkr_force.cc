@@ -125,12 +125,13 @@ ParticleWallJKRForce<dim, PropertiesIndex>::ParticleWallJKRForce(
 template <int dim, typename PropertiesIndex>
 
 void
-ParticleWallJKRForce<dim, PropertiesIndex>::calculate_particle_wall_contact_force(
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                            &particle_wall_pairs_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+ParticleWallJKRForce<dim, PropertiesIndex>::
+  calculate_particle_wall_contact_force(
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                              &particle_wall_pairs_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force)
 {
   ParticleWallContactForce<dim, PropertiesIndex>::force_on_walls =
     ParticleWallContactForce<dim, PropertiesIndex>::initialize();
@@ -183,8 +184,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::calculate_particle_wall_contact_forc
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[PropertiesIndex::dp]) *
-             0.5) -
+            ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
           if (normal_overlap > 0)
@@ -285,9 +285,8 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
               // Call find_particle_triangle_projection to get the
               // distance and projection of particles on the triangle
               // (floating mesh cell)
-              auto particle_triangle_information =
-                LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  PropertiesIndex>(
+              auto particle_triangle_information = LetheGridTools::
+                find_particle_triangle_projection<dim, PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -326,9 +325,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties
-                            [PropertiesIndex::dp]) *
-                         0.5) -
+                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -
                         particle_triangle_distance;
 
                       if (normal_overlap > 0)
@@ -399,16 +396,16 @@ ParticleWallJKRForce<dim, PropertiesIndex>::
 // Calculates JKR contact force and torques
 template <int dim, typename PropertiesIndex>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-ParticleWallJKRForce<dim, PropertiesIndex>::calculate_jkr_contact_force_and_torque(
-  particle_wall_contact_info<dim> &contact_info,
-  const ArrayView<const double>   &particle_properties)
+ParticleWallJKRForce<dim, PropertiesIndex>::
+  calculate_jkr_contact_force_and_torque(
+    particle_wall_contact_info<dim> &contact_info,
+    const ArrayView<const double>   &particle_properties)
 {
   // i is the particle, j is the wall.
   // we need to put a minus sign infront of the normal_vector to respect the
   // convention (i -> j)
   Tensor<1, 3>       normal_vector = -contact_info.normal_vector;
-  const unsigned int particle_type =
-    particle_properties[PropertiesIndex::type];
+  const unsigned int particle_type = particle_properties[PropertiesIndex::type];
 
   const double effective_radius =
     0.5 * particle_properties[PropertiesIndex::dp];
@@ -453,8 +450,7 @@ ParticleWallJKRForce<dim, PropertiesIndex>::calculate_jkr_contact_force_and_torq
   // equal to zero.
   const double normal_damping_constant =
     1.8257 * this->model_parameter_beta[particle_type] * // 2. * sqrt(5./6.)
-    sqrt(model_parameter_sn *
-         particle_properties[PropertiesIndex::mass]);
+    sqrt(model_parameter_sn * particle_properties[PropertiesIndex::mass]);
 
   // Tangential spring constant is set as a negative just like in the other
   // particle-wall models. This must be taken into account for the square root
@@ -517,10 +513,10 @@ ParticleWallJKRForce<dim, PropertiesIndex>::calculate_jkr_contact_force_and_torq
   // Calculation torque caused by tangential force
   // We add the minus sign here since the tangential_force is applied on the
   // particle is in the opposite direction
-  Tensor<1, 3> tangential_torque = cross_product_3d(
-    (0.5 * particle_properties[PropertiesIndex::dp] *
-     normal_vector),
-    -tangential_force);
+  Tensor<1, 3> tangential_torque =
+    cross_product_3d((0.5 * particle_properties[PropertiesIndex::dp] *
+                      normal_vector),
+                     -tangential_force);
 
   // Rolling resistance torque
   Tensor<1, 3> rolling_resistance_torque =

@@ -142,7 +142,7 @@ find_particle_particle_contact_pairs(
   typename dem_data_structures<dim>::particle_particle_candidates
     &local_contact_pair_candidates,
   typename dem_data_structures<dim>::particle_particle_candidates
-                                                 &ghost_contact_pair_candidates,
+    &ghost_contact_pair_candidates,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   // Clear containers
@@ -560,7 +560,8 @@ find_particle_particle_periodic_contact_pairs(
           if ((main_cell_mobility_status ==
                  AdaptiveSparseContacts<dim, PropertiesIndex>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim, PropertiesIndex>::advected_active) &&
+                 AdaptiveSparseContacts<dim,
+                                        PropertiesIndex>::advected_active) &&
               neighbor_cell_mobility_status !=
                 AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
             continue;
@@ -631,7 +632,8 @@ find_particle_particle_periodic_contact_pairs(
           if ((main_cell_mobility_status ==
                  AdaptiveSparseContacts<dim, PropertiesIndex>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim, PropertiesIndex>::advected_active) &&
+                 AdaptiveSparseContacts<dim,
+                                        PropertiesIndex>::advected_active) &&
               neighbor_cell_mobility_status !=
                 AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
             continue;
@@ -701,7 +703,8 @@ find_particle_particle_periodic_contact_pairs(
           if ((main_cell_mobility_status ==
                  AdaptiveSparseContacts<dim, PropertiesIndex>::static_active ||
                main_cell_mobility_status ==
-                 AdaptiveSparseContacts<dim, PropertiesIndex>::advected_active) &&
+                 AdaptiveSparseContacts<dim,
+                                        PropertiesIndex>::advected_active) &&
               neighbor_cell_mobility_status !=
                 AdaptiveSparseContacts<dim, PropertiesIndex>::mobile)
             continue;

@@ -228,7 +228,7 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
 template <int dim, typename PropertiesIndex>
 void
 DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_broad_search(
-  dealii::Particles::ParticleHandler<dim>        &particle_handler,
+  dealii::Particles::ParticleHandler<dim>            &particle_handler,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
@@ -285,10 +285,10 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
   const Particles::ParticleHandler<dim> &particle_handler,
   BoundaryCellsInformation<dim>         &boundary_cell_object,
   const typename dem_data_structures<dim>::solid_surfaces_mesh_information
-                                                    solid_surfaces_mesh_info,
-  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-  const double                                      simulation_time,
-  const AdaptiveSparseContacts<dim, PropertiesIndex>   &sparse_contacts_object)
+                                                      solid_surfaces_mesh_info,
+  const Parameters::Lagrangian::FloatingWalls<dim>   &floating_walls,
+  const double                                        simulation_time,
+  const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   auto *action_manager = DEMActionManager::get_action_manager();
 
@@ -458,14 +458,15 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_fine_search(
     }
 
   particle_point_fine_search<dim, PropertiesIndex>(particle_point_candidates,
-                                               neighborhood_threshold,
-                                               particle_points_in_contact);
+                                                   neighborhood_threshold,
+                                                   particle_points_in_contact);
 
   if constexpr (dim == 3)
     {
-      particle_line_fine_search<dim, PropertiesIndex>(particle_line_candidates,
-                                                  neighborhood_threshold,
-                                                  particle_lines_in_contact);
+      particle_line_fine_search<dim, PropertiesIndex>(
+        particle_line_candidates,
+        neighborhood_threshold,
+        particle_lines_in_contact);
     }
 }
 

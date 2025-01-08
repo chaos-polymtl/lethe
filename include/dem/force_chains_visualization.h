@@ -102,7 +102,8 @@ public:
  * @tparam force_model The particle-particle contact force model
  * @tparam rolling_friction_model The rolling resistance model
  */
-template <int dim,
+template <
+  int dim,
   typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel force_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
@@ -325,27 +326,19 @@ private:
       particle_one_properties[PropertiesIndex::v_z] -
       particle_two_properties[PropertiesIndex::v_z];
 
-    particle_one_omega[0] =
-      particle_one_properties[PropertiesIndex::omega_x];
-    particle_one_omega[1] =
-      particle_one_properties[PropertiesIndex::omega_y];
-    particle_one_omega[2] =
-      particle_one_properties[PropertiesIndex::omega_z];
+    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
+    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
+    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
 
-    particle_two_omega[0] =
-      particle_two_properties[PropertiesIndex::omega_x];
-    particle_two_omega[1] =
-      particle_two_properties[PropertiesIndex::omega_y];
-    particle_two_omega[2] =
-      particle_two_properties[PropertiesIndex::omega_z];
+    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
+    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
+    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex::dp] *
-               particle_one_omega +
-             particle_two_properties[PropertiesIndex::dp] *
-               particle_two_omega),
+      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
       normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the

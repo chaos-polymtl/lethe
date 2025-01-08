@@ -98,7 +98,7 @@ protected:
  * @tparam rolling_friction_model The rolling resistance model.
  */
 template <
-  int                                                       dim,
+  int dim,
   typename PropertiesIndex,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,
   Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
@@ -200,27 +200,19 @@ protected:
       particle_one_properties[PropertiesIndex::v_z] -
       particle_two_properties[PropertiesIndex::v_z];
 
-    particle_one_omega[0] =
-      particle_one_properties[PropertiesIndex::omega_x];
-    particle_one_omega[1] =
-      particle_one_properties[PropertiesIndex::omega_y];
-    particle_one_omega[2] =
-      particle_one_properties[PropertiesIndex::omega_z];
+    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
+    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
+    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
 
-    particle_two_omega[0] =
-      particle_two_properties[PropertiesIndex::omega_x];
-    particle_two_omega[1] =
-      particle_two_properties[PropertiesIndex::omega_y];
-    particle_two_omega[2] =
-      particle_two_properties[PropertiesIndex::omega_z];
+    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
+    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
+    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
 
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex::dp] *
-               particle_one_omega +
-             particle_two_properties[PropertiesIndex::dp] *
-               particle_two_omega),
+      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
+             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
       normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the
@@ -531,19 +523,15 @@ private:
     const ArrayView<const double> &particle_two_properties)
   {
     // Calculate the effective radius
-    const double diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
-    double effective_radius =
+    const double diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double diameter_two = particle_two_properties[PropertiesIndex::dp];
+    double       effective_radius =
       (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
 
     // Calculate the effective mass
-    const double mass_one =
-      particle_one_properties[PropertiesIndex::mass];
-    const double mass_two =
-      particle_two_properties[PropertiesIndex::mass];
-    double effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
+    const double mass_one = particle_one_properties[PropertiesIndex::mass];
+    const double mass_two = particle_two_properties[PropertiesIndex::mass];
+    double       effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
 
     return std::make_tuple(effective_radius, effective_mass);
   }
@@ -663,10 +651,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references
-    const double &diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
 
     // Characteristic velocity is set at 1.0 so that the normal and tangential
     // spring constant remain constant throughout a simulation.
@@ -809,10 +795,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -958,10 +942,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1092,10 +1074,8 @@ private:
       this->effective_coefficient_of_rolling_friction[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =
@@ -1212,10 +1192,8 @@ private:
     const double surface_energy = this->effective_surface_energy[pair_index];
 
     // Get particle diameter references;
-    const double &diameter_one =
-      particle_one_properties[PropertiesIndex::dp];
-    const double &diameter_two =
-      particle_two_properties[PropertiesIndex::dp];
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
 
     // Calculate intermediate model parameters
     const double radius_times_overlap_sqrt =

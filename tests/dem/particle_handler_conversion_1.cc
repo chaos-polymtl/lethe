@@ -33,7 +33,9 @@ test()
 
   // Define a particle handler with a particle and properties
   Particles::ParticleHandler<dim> particle_handler(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::dem>());
+    tr,
+    mapping,
+    DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>());
   // Inserting one particle in contact with wall
   Point<dim> position1;
   for (int d = 0; d < dim; ++d)
@@ -47,20 +49,15 @@ test()
     particle_handler.insert_particle(particle1, particle_cell);
 
   // Set the properties of the particle manually to some values
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::type] = 1;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::dp] =
-    0.005;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_x] = 1;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_y] = 2;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::v_z] = 3;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_x] =
-    40;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_y] =
-    50;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::omega_z] =
-    60;
-  pit1->get_properties()[DEM::PropertiesIndex<DEM::SolverType::dem>::mass] =
-    100;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::type]    = 1;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::dp]      = 0.005;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_x]     = 1;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_y]     = 2;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::v_z]     = 3;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_x] = 40;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_y] = 50;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_z] = 60;
+  pit1->get_properties()[DEM::DEMProperties::PropertiesIndex::mass]    = 100;
 
   // Output the properties of particle
   deallog << "Output of the original particle handler" << std::endl;
@@ -71,7 +68,8 @@ test()
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
       for (unsigned int i = 0;
-           i < DEM::get_number_properties<DEM::SolverType::dem>();
+           i <
+           DEM::get_number_properties<DEM::DEMProperties::PropertiesIndex>();
            ++i)
         {
           deallog << "Property " << i << " : " << particle->get_properties()[i]
@@ -82,7 +80,9 @@ test()
 
   // Create a second Particle Handler using a second set of properties
   Particles::ParticleHandler<dim> particle_handler_output(
-    tr, mapping, DEM::get_number_properties<DEM::SolverType::cfd_dem>());
+    tr,
+    mapping,
+    DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>());
 
   // Fill the second particle handler using the first one
   convert_particle_handler<dim,
@@ -99,7 +99,8 @@ test()
       deallog << "Particle " << particle->get_id() << std::endl;
       deallog << "Position : " << particle->get_location() << std::endl;
       for (unsigned int i = 0;
-           i < DEM::get_number_properties<DEM::SolverType::cfd_dem>();
+           i <
+           DEM::get_number_properties<DEM::CFDDEMProperties::PropertiesIndex>();
            ++i)
         {
           deallog << "Property " << i << " : " << particle->get_properties()[i]

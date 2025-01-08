@@ -134,7 +134,9 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
-    set_particle_particle_contact_force_model<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+    set_particle_particle_contact_force_model<
+      dim,
+      DEM::CFDDEMProperties::PropertiesIndex>(
       this->cfd_dem_simulation_parameters.dem_parameters);
 
   // Initialize the contact search counter
@@ -199,9 +201,13 @@ CFDDEMSolver<dim>::set_integrator_type()
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-        return std::make_shared<VelocityVerletIntegrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>();
+        return std::make_shared<
+          VelocityVerletIntegrator<dim,
+                                   DEM::CFDDEMProperties::PropertiesIndex>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-        return std::make_shared<ExplicitEulerIntegrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>();
+        return std::make_shared<
+          ExplicitEulerIntegrator<dim,
+                                  DEM::CFDDEMProperties::PropertiesIndex>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }
@@ -221,10 +227,11 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   sparse_contacts_object.update_local_and_ghost_cell_set(
     this->void_fraction_manager.dof_handler);
 
-  particle_wall_contact_force_object =
-    set_particle_wall_contact_force_model<dim, DEM::CFDDEMProperties::PropertiesIndex>(
-      this->cfd_dem_simulation_parameters.dem_parameters,
-      *parallel_triangulation);
+  particle_wall_contact_force_object = set_particle_wall_contact_force_model<
+    dim,
+    DEM::CFDDEMProperties::PropertiesIndex>(
+    this->cfd_dem_simulation_parameters.dem_parameters,
+    *parallel_triangulation);
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
@@ -634,7 +641,9 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
             this->simulation_control->get_time_step() /
             this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
 
-          find_particle_contact_detection_step<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+          find_particle_contact_detection_step<
+            dim,
+            DEM::CFDDEMProperties::PropertiesIndex>(
             this->particle_handler,
             dt,
             smallest_contact_search_criterion,
@@ -1089,17 +1098,16 @@ CFDDEMSolver<dim>::print_particles_summary()
               for (unsigned int d = 0; d < dim; ++d)
                 std::cout << std::setw(display_width) << std::left
                           << particle_location[d];
-              std::cout
-                << std::setw(display_width) << std::left
-                << particle_properties
-                     [DEM::CFDDEMProperties::PropertiesIndex::v_x]
-                << std::setw(display_width) << std::left
-                << particle_properties
-                     [DEM::CFDDEMProperties::PropertiesIndex::v_y]
-                << std::setw(display_width) << std::left
-                << particle_properties
-                     [DEM::CFDDEMProperties::PropertiesIndex::v_z]
-                << std::endl;
+              std::cout << std::setw(display_width) << std::left
+                        << particle_properties
+                             [DEM::CFDDEMProperties::PropertiesIndex::v_x]
+                        << std::setw(display_width) << std::left
+                        << particle_properties
+                             [DEM::CFDDEMProperties::PropertiesIndex::v_y]
+                        << std::setw(display_width) << std::left
+                        << particle_properties
+                             [DEM::CFDDEMProperties::PropertiesIndex::v_z]
+                        << std::endl;
             }
         }
       usleep(500);
@@ -1276,12 +1284,9 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
           auto particle_properties = particle.get_properties();
           MOI[particle.get_local_index()] =
             0.1 *
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::mass] *
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::dp];
+            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] *
+            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
+            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
         }
     }
 

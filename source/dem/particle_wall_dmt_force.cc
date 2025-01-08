@@ -44,12 +44,13 @@ ParticleWallDMTForce<dim, PropertiesIndex>::ParticleWallDMTForce(
 
 template <int dim, typename PropertiesIndex>
 void
-ParticleWallDMTForce<dim, PropertiesIndex>::calculate_particle_wall_contact_force(
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                            &particle_wall_pairs_in_contact,
-  const double               dt,
-  std::vector<Tensor<1, 3>> &torque,
-  std::vector<Tensor<1, 3>> &force)
+ParticleWallDMTForce<dim, PropertiesIndex>::
+  calculate_particle_wall_contact_force(
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                              &particle_wall_pairs_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force)
 {
   constexpr double M_2PI = 6.283185307179586; // 2. * M_PI
 
@@ -109,8 +110,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::calculate_particle_wall_contact_forc
             this->find_projection(point_to_particle_vector, normal_vector);
 
           double normal_overlap =
-            ((particle_properties[PropertiesIndex::dp]) *
-             0.5) -
+            ((particle_properties[PropertiesIndex::dp]) * 0.5) -
             (projected_vector.norm());
 
           // Minimal delta_star. We know a force has to be computed.
@@ -123,8 +123,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::calculate_particle_wall_contact_forc
               const unsigned int particle_type =
                 particle_properties[PropertiesIndex::type];
               const double effective_radius =
-                0.5 *
-                particle_properties[PropertiesIndex::dp];
+                0.5 * particle_properties[PropertiesIndex::dp];
               const double effective_surface_energy =
                 this->effective_surface_energy[particle_type];
               const double effective_hamaker_constant =
@@ -302,9 +301,8 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
               // Call find_particle_triangle_projection to get the
               // distance and projection of particles on the triangle
               // (floating mesh cell)
-              auto particle_triangle_information =
-                LetheGridTools::find_particle_triangle_projection<dim,
-                                                                  PropertiesIndex>(
+              auto particle_triangle_information = LetheGridTools::
+                find_particle_triangle_projection<dim, PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
               const std::vector<bool> pass_distance_check =
@@ -343,9 +341,7 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
 
                       // Find normal overlap
                       double normal_overlap =
-                        ((particle_properties
-                            [PropertiesIndex::dp]) *
-                         0.5) -
+                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -
                         particle_triangle_distance;
 
                       // We check if a force need to be computed.
@@ -355,11 +351,10 @@ ParticleWallDMTForce<dim, PropertiesIndex>::
                           // we need to put a minus sign in front of the
                           // normal_vector to respect the convention (i ->
                           // j)
-                          const unsigned int particle_type = particle_properties
-                            [PropertiesIndex::type];
+                          const unsigned int particle_type =
+                            particle_properties[PropertiesIndex::type];
                           const double effective_radius =
-                            0.5 * particle_properties
-                                    [PropertiesIndex::dp];
+                            0.5 * particle_properties[PropertiesIndex::dp];
                           const double effective_surface_energy =
                             this->effective_surface_energy[particle_type];
                           const double effective_hamaker_constant =

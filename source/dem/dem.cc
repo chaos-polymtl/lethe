@@ -31,7 +31,8 @@
 #include <sstream>
 
 template <int dim, typename PropertiesIndex>
-DEMSolver<dim, PropertiesIndex>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
+DEMSolver<dim, PropertiesIndex>::DEMSolver(
+  DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -239,7 +240,7 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
     set_particle_particle_contact_force_model<dim, PropertiesIndex>(parameters);
   particle_wall_contact_force_object =
     set_particle_wall_contact_force_model<dim, PropertiesIndex>(parameters,
-                                                            triangulation);
+                                                                triangulation);
 }
 
 template <int dim, typename PropertiesIndex>
@@ -310,9 +311,11 @@ DEMSolver<dim, PropertiesIndex>::set_integrator_type()
   switch (integration_method)
     {
       case ModelParameters::IntegrationMethod::velocity_verlet:
-        return std::make_shared<VelocityVerletIntegrator<dim, PropertiesIndex>>();
+        return std::make_shared<
+          VelocityVerletIntegrator<dim, PropertiesIndex>>();
       case ModelParameters::IntegrationMethod::explicit_euler:
-        return std::make_shared<ExplicitEulerIntegrator<dim, PropertiesIndex>>();
+        return std::make_shared<
+          ExplicitEulerIntegrator<dim, PropertiesIndex>>();
       default:
         throw(std::runtime_error("Invalid integration method."));
     }

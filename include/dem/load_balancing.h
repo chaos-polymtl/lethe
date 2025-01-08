@@ -79,10 +79,10 @@ public:
    */
   inline void
   copy_references(
-    std::shared_ptr<SimulationControl>        &simulation_control,
-    parallel::distributed::Triangulation<dim> &triangulation,
-    Particles::ParticleHandler<dim>           &particle_handler,
-    AdaptiveSparseContacts<dim, PropertiesIndex>  &adaptive_sparse_contacts)
+    std::shared_ptr<SimulationControl>           &simulation_control,
+    parallel::distributed::Triangulation<dim>    &triangulation,
+    Particles::ParticleHandler<dim>              &particle_handler,
+    AdaptiveSparseContacts<dim, PropertiesIndex> &adaptive_sparse_contacts)
   {
     this->simulation_control       = simulation_control;
     this->triangulation            = &triangulation;

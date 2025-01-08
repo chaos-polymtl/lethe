@@ -344,7 +344,7 @@ particle_solid_surfaces_contact_search(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                                                 &cells_total_neighbor_list,
+                                                     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object)
 {
   // Clear the candidate container
@@ -531,7 +531,8 @@ find_particle_floating_wall_contact_pairs<3>(
     &particle_floating_wall_candidates);
 
 template void
-find_particle_floating_wall_contact_pairs<2, DEM::DEMProperties::PropertiesIndex>(
+find_particle_floating_wall_contact_pairs<2,
+                                          DEM::DEMProperties::PropertiesIndex>(
   const std::unordered_map<
     types::global_dof_index,
     std::set<typename Triangulation<2>::active_cell_iterator>>
@@ -545,7 +546,8 @@ find_particle_floating_wall_contact_pairs<2, DEM::DEMProperties::PropertiesIndex
     &sparse_contacts_object);
 
 template void
-find_particle_floating_wall_contact_pairs<3, DEM::DEMProperties::PropertiesIndex>(
+find_particle_floating_wall_contact_pairs<3,
+                                          DEM::DEMProperties::PropertiesIndex>(
   const std::unordered_map<
     types::global_dof_index,
     std::set<typename Triangulation<3>::active_cell_iterator>>
@@ -559,7 +561,9 @@ find_particle_floating_wall_contact_pairs<3, DEM::DEMProperties::PropertiesIndex
     &sparse_contacts_object);
 
 template void
-find_particle_floating_wall_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIndex>(
+find_particle_floating_wall_contact_pairs<
+  2,
+  DEM::CFDDEMProperties::PropertiesIndex>(
   const std::unordered_map<
     types::global_dof_index,
     std::set<typename Triangulation<2>::active_cell_iterator>>
@@ -573,7 +577,9 @@ find_particle_floating_wall_contact_pairs<2, DEM::CFDDEMProperties::PropertiesIn
     &sparse_contacts_object);
 
 template void
-find_particle_floating_wall_contact_pairs<3, DEM::CFDDEMProperties::PropertiesIndex>(
+find_particle_floating_wall_contact_pairs<
+  3,
+  DEM::CFDDEMProperties::PropertiesIndex>(
   const std::unordered_map<
     types::global_dof_index,
     std::set<typename Triangulation<3>::active_cell_iterator>>
@@ -631,7 +637,8 @@ particle_solid_surfaces_contact_search<3, DEM::DEMProperties::PropertiesIndex>(
     &sparse_contacts_object);
 
 template void
-particle_solid_surfaces_contact_search<2, DEM::CFDDEMProperties::PropertiesIndex>(
+particle_solid_surfaces_contact_search<2,
+                                       DEM::CFDDEMProperties::PropertiesIndex>(
   const DEM::dem_data_structures<2>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<2> &particle_handler,
@@ -643,7 +650,8 @@ particle_solid_surfaces_contact_search<2, DEM::CFDDEMProperties::PropertiesIndex
     &sparse_contacts_object);
 
 template void
-particle_solid_surfaces_contact_search<3, DEM::CFDDEMProperties::PropertiesIndex>(
+particle_solid_surfaces_contact_search<3,
+                                       DEM::CFDDEMProperties::PropertiesIndex>(
   const DEM::dem_data_structures<3>::solid_surfaces_mesh_information
                                       &solid_surfaces_mesh_information,
   const Particles::ParticleHandler<3> &particle_handler,

@@ -196,7 +196,7 @@ particle_solid_surfaces_contact_search(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-                                                 &cells_total_neighbor_list,
+                                                     &cells_total_neighbor_list,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 

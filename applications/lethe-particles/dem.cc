@@ -37,7 +37,8 @@ main(int argc, char *argv[])
 
           if (solver_type == DEM::SolverType::dem)
             {
-              DEMSolver<2, DEM::DEMProperties::PropertiesIndex> problem(dem_parameters);
+              DEMSolver<2, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
               problem.solve();
             }
           else
@@ -66,7 +67,8 @@ main(int argc, char *argv[])
           const DEM::SolverType solver_type = DEM::SolverType::dem;
           if (solver_type == DEM::SolverType::dem)
             {
-              DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(dem_parameters);
+              DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(
+                dem_parameters);
               problem.solve();
             }
           else

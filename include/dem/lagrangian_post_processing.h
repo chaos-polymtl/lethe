@@ -55,7 +55,7 @@ write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm                                  &mpi_communicator,
-  AdaptiveSparseContacts<dim, PropertiesIndex>        &sparse_contacts_object);
+  AdaptiveSparseContacts<dim, PropertiesIndex>    &sparse_contacts_object);
 
 /**
  * @brief Carries out the calculation of the average particles velocity in each local
