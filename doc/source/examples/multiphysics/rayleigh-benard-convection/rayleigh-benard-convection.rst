@@ -2,7 +2,7 @@
 Rayleigh-Bénard Convection
 ==========================
 
-This example simulates a two-dimensional Rayleigh–Benard convection [#ouertatani]_ [#venturi2010]_ [#mpi2022]_ at Rayleigh numbers of :math:`10^4` and :math:`10^6` .
+This example simulates a two-dimensional Rayleigh–Bénard convection [#ouertatani]_ [#venturi2010]_ [#mpi2022]_ at Rayleigh numbers of :math:`10^4` and :math:`10^6` .
 
 
 ----------------------------------
@@ -45,16 +45,16 @@ The incompressible Navier-Stokes equations with a Boussinesq approximation for t
 
 where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a reference temperature, respectively.
 
-A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_h=10`, the temperature of the top wall is equal to :math:`T_c=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices depend on the Rayleigh number and the Prandtl [1, 2]:
+A two-dimensional block of fluid is heated from its bottom wall at :math:`t = 0` s. The temperature of the bottom wall is equal to :math:`T_\text{h}=10`, the temperature of the top wall is equal to :math:`T_\text{c}=0`, and the left and right walls are insulated. By heating the fluid from the bottom wall, the buoyant force (natural convection) creates vortices inside the fluid. The shape and number of these vortices depend on the Rayleigh number and the Prandtl [#ouertatani]_ [#venturi2010]_ :
 
     .. math::
-      \text{Ra} &= \frac{\rho^2 \beta g (T_h - T_c) H^3 c_p}{k \mu} \\
-      \text{Pr} &= \frac{\mu c_p}{k}
+      Ra &= \frac{\rho^2 \beta g (T_\text{h} - T_\text{c}) H^3 c_\text{p}}{k \mu} \\
+      Pr &= \frac{\mu c_\text{p}}{k}
 
 
-where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, :math:`\mu` is the dynamic viscosity, and :math:`c_p` is the specific heat capacity.
+where :math:`\rho` is the fluid density, :math:`g` is the magnitude of gravitational acceleration, :math:`H` denotes the characteristic length, :math:`k` is the thermal conduction coefficient, :math:`\mu` is the dynamic viscosity, and :math:`c_\text{p}` is the specific heat capacity.
 
-In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small voriticies in opposite corners rotating in the reverse direction of the big vortex. The gravity magnitude is set to -10 for both simulations for simplicity. Additionally, because the two adimensionale number above are the only thing that characterize the flow we may choose the remaining parameter as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_p = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expension coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`). In other words, we change the Rayleigh number by changing the thermal expansion coefficient of the fluid.
+In this example, we simulate the Rayleigh-Bénard convection problem at two Rayleigh numbers ( :math:`Ra=10^4` and :math:`Ra=10^6` ) with a Prandtl number of :math:`Pr=0.71` which correspond to air. According to the literature [#ouertatani]_ , we should see one big convective cell at steady-state for both :math:`Ra=10^4` and :math:`Ra=10^6`, but for the latter, there should also be two small voriticies in opposite corners rotating in the reverse direction of the big vortex. The gravity magnitude is set to -10 for both simulations for simplicity. Additionally, because the two adimensionale number above are the only thing that characterize the flow we may choose the remaining parameter as we want. Here we chose to fix :math:`\rho = 1`, :math:`H = 1`, :math:`c_\text{p} = 100` and :math:`\mu = 0.071`. Thus, the Rayleigh number is controlled only by the thermal expension coefficient (:math:`\beta = 0.71` or :math:`\beta = 71`). In other words, we change the Rayleigh number by changing the thermal expansion coefficient of the fluid.
 
 .. note:: 
     All four boundary conditions are ``noslip``, and an external 
@@ -65,7 +65,7 @@ In this example, we simulate the Rayleigh-Bénard convection problem at two Rayl
 Parameter File
 --------------
 
-For simplicity, we present the parameter file for :math:`Ra=10^4` only.
+For simplicity, we present only parameter file for :math:`Ra=10^4` only.
 
 .. note::   
     Note that the resolution (256x256) is set to match the one of the article results [#ouertatani]_ . If desired, you can choose to reduced to 7 or 6 ``initial refinement level`` of the prm file to reduce the simulation time without loosing too much accuracy.
@@ -74,7 +74,7 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 The time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`24` s simulation time. The choice of simulation time duration is made so the changes in the velocity profiles are negligible. The initial time step is set to :math:`0.001` second, but this will be adapted during the simulation.
+`(bdf1)`. A simulation time of :math:`24` s has been selected to ensure that the system reaches a quasi-steady state. The initial time-step is set to :math:`0.001` s, but this will be adapted during the simulation.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
@@ -126,8 +126,7 @@ The ``source term`` subsection defines gravitational acceleration.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluid. Thermal expension coefficient values is :math:`k=0.71` for :math:`Ra=10^4`, but it is changed to :math:`k=71` for :math:`Ra=10^6` in the corresponding parameter handler file.
-
+The ``physical properties`` subsection defines the physical properties of the fluid.
 
 .. code-block:: text
 
@@ -174,13 +173,13 @@ to run the simulations using eight CPU cores at the two Rayleigh number. Feel fr
 Results
 -------
 
-The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6` :
+The following animation shows the evolution of the temperature field with the flow direction for the simulation at :math:`Ra=10^6`:
 
 .. raw:: html
 
     <iframe width="640" height="360" src="https://www.youtube.com/embed/NSJJpPauiXo" frameborder="0" allowfullscreen></iframe>
 
-Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani et al. [#ouertatani]_ as a validation of Lethe software. 
+Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani et al. [#ouertatani]_ as a verfification of the Lethe software. 
 
 |fig1| |fig2|
 
@@ -197,7 +196,10 @@ The results can be postprocessed using the provided Python script (``rayleigh-be
 
   python3 rayleigh-benard-convection.py -f ./output_10k -f ./output_1M -Ra 10k -Ra 1M
 
-This script extracts the velocity in the :math:`x` and :math:`y` directions at the mid-width (x=0.5) and mid-height (y=0.5) respectively and create the above plots.
+This script extracts the velocity in the :math:`x` and :math:`y` directions at the mid-width (:math:`x=0.5`) and mid-height (:math:`y=0.5`) respectively and create the above plots.
+
+.. warning::
+  The orientation of the vortex rotation obtained with the simulation may differ from the one above due to machine precision that generate the initial instability.
 
 .. important::
   You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click :doc:`here <../../../tools/postprocessing/postprocessing_pyvista>` for details.
