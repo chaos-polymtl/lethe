@@ -39,6 +39,9 @@ particle_point_fine_search(
  * contact, the normal overlap, normal vector of contact and contact normal
  * relative velocity are stored in a map which is the output of this function.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_line_contact_candidates The output of particle-line broad
  * search which shows contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.

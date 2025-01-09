@@ -96,6 +96,9 @@ find_particle_line_contact_pairs(
  * candidate particle-line collision pairs. These collision pairs will be
  * investigated in the fine search to check if they are in contact or not.
  *
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ *
  * @param particle_handler Particle handler of particles located in boundary
  * cells.
  * @param boundary_cells_with_lines A container of cells which are located at

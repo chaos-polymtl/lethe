@@ -31,7 +31,7 @@ namespace DEM
      * A regular enum must be used here since an int is required to the particle
      * properties.
      */
-    enum PropertiesIndex: int
+    enum PropertiesIndex : int
     {
       type         = 0,
       dp           = 1,
@@ -55,7 +55,7 @@ namespace DEM
      * A regular enum must be used here since an int is required to the particle
      * properties.
      */
-    enum PropertiesIndex: int
+    enum PropertiesIndex : int
     {
       type                    = 0,
       dp                      = 1,
