@@ -280,7 +280,7 @@ namespace LetheGridTools
    * located in the background (base) cell
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
-   * * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * @return A tuple in which 0. a vector of bools to determine if the particle is
    * close to the triangle plane, 1. a vector of projected location of particles
    * on the triangle, 2. a vector of normal vectors of the triangles
    */
