@@ -74,7 +74,7 @@ protected:
 };
 
 /**
- * @brief TODO AMISHGA
+ * @brief TODO AA
  * @tparam dim
  * @tparam VectorType
  */
@@ -84,7 +84,7 @@ class PhysicsNonlinearSubequationsSolver : public PhysicsSubequationsSolverBase,
 {
 public:
   /**
-   * @brief TODO AMISHGA
+   * @brief TODO AA
    *
    * @param non_linear_solver_parameters
    * @param pcout
@@ -97,7 +97,7 @@ public:
   {}
 
   /**
-   * TODO AMISHGA
+   * TODO AA
    * @brief Set up preconditioner. Not used for the physics subequations, but
    * needed for the compilation of the non-linear solver.
    */

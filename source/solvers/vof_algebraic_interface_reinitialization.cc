@@ -53,9 +53,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::setup_dofs()
                                  this->locally_relevant_dofs,
                                  mpi_communicator);
   this->newton_update.reinit(this->locally_owned_dofs, mpi_communicator);
-  this->local_evaluation_point.reinit(
-    this->locally_owned_dofs,
-    mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      mpi_communicator);
+  this->previous_local_evaluation_point.reinit(this->locally_owned_dofs,
+                                               mpi_communicator);
   this->evaluation_point = this->present_solution;
 
   if (this->subequation_verbosity != Parameters::Verbosity::quiet)
@@ -178,6 +179,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
   this->present_solution = this->local_evaluation_point;
   this->previous_solution =
     this->present_solution; // We only have 1 previous solution (bdf1)
+  this->previous_local_evaluation_point = this->local_evaluation_point;
 }
 
 
@@ -261,8 +263,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                                        fe_algebraic_reinitialization.degree);
 
           // Compute diffusivity coefficient
-          const double diffusivity_coefficient =
-            2 * std::pow(h, 0.9); // TODO AMISHGA change power with parameter
+          const double diffusivity_coefficient = compute_diffusivity(h);
 
           // Get get present phase fraction and projected phase gradient values
           fe_values_algebraic_reinitialization.get_function_values(
@@ -280,8 +281,16 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           const Parameters::SimulationControl::TimeSteppingMethod method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf1;
           const Vector<double> bdf_coefficient_vector =
-            calculate_bdf_coefficients(
-              method, this->simulation_control.get_time_steps_vector());
+            calculate_bdf_coefficients(method, this->time_step_vector);
+
+          // TODO AA ERASE
+          //          this->pcout<<
+          //          this->simulation_control.get_time_steps_vector().size()
+          //          <<std::endl; for(const auto &time_val :
+          //          this->simulation_control.get_time_steps_vector())
+          //            {this->pcout << "TIME " << time_val << std::endl;}
+          //          for(const auto &time_val : time_step_vector)
+          //            {this->pcout << "TIME " << time_val << std::endl;}
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -308,24 +317,53 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                  projected_vof_phase_gradient_norm);
 
               // Local matrix assembly
-              for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+              if (this->simulation_parameters.multiphysics.vof_parameters
+                    .algebraic_interface_reinitialization.enable_linear_solving)
                 {
-                  for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                  for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
                     {
-                      local_matrix(i, j) +=
-                        (
-                          // Time-stepping term
-                          phi[i] * phi[j] * bdf_coefficient_vector[0] +
-                          scalar_product(grad_phi[i],
-                                         // Compressive term
-                                         (phi[j] * (1 - 2 * phase_fraction) *
-                                            interface_normal
-                                          // Diffusive term
-                                          - diffusivity_coefficient *
-                                              scalar_product(grad_phi[j],
-                                                             interface_normal) *
-                                              interface_normal))) *
-                        JxW_vec[q];
+                      for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                        {
+                          local_matrix(i, j) +=
+                            (
+                              // Time-stepping term
+                              phi[i] * phi[j] * bdf_coefficient_vector[0] +
+                              scalar_product(
+                                grad_phi[i],
+                                // Compressive term (linear)
+                                (phase_fraction * (1 - phi[j]) *
+                                   interface_normal
+                                 // Diffusive term
+                                 - diffusivity_coefficient *
+                                     scalar_product(grad_phi[j],
+                                                    interface_normal) *
+                                     interface_normal))) *
+                            JxW_vec[q];
+                        }
+                    }
+                }
+              else
+                {
+                  for (unsigned int i = 0; i < n_dofs_per_cell; ++i)
+                    {
+                      for (unsigned int j = 0; j < n_dofs_per_cell; ++j)
+                        {
+                          local_matrix(i, j) +=
+                            (
+                              // Time-stepping term
+                              phi[i] * phi[j] * bdf_coefficient_vector[0] +
+                              scalar_product(
+                                grad_phi[i],
+                                // Compressive term
+                                (phi[j] * (1 - 2 * phase_fraction) *
+                                   interface_normal
+                                 // Diffusive term
+                                 - diffusivity_coefficient *
+                                     scalar_product(grad_phi[j],
+                                                    interface_normal) *
+                                     interface_normal))) *
+                            JxW_vec[q];
+                        }
                     }
                 }
             }
@@ -352,7 +390,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
       VOFSubequationsID::phase_gradient_projection);
 
   // Initialize FEValues for interface algebraic reinitialization and phase
-  // fraction gradient projeciton
+  // fraction gradient projection
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
@@ -423,8 +461,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                                        fe_algebraic_reinitialization.degree);
 
           // Compute diffusivity coefficient
-          const double diffusivity_coefficient =
-            2 * std::pow(h, 0.9); // TODO AMISHGA change power with parameter
+          const double diffusivity_coefficient = compute_diffusivity(h);
 
           // Get VOF phase fraction and projected phase gradient values
           fe_values_algebraic_reinitialization.get_function_values(
@@ -440,12 +477,29 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;
 
-          // BDF coefficients for pseudo time-stepping
+          // BDF coefficients for pseudo time-stepping // TODO AA move outside
+          // also in matrix
           const Parameters::SimulationControl::TimeSteppingMethod method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf1;
           const Vector<double> bdf_coefficient_vector =
-            calculate_bdf_coefficients(
-              method, this->simulation_control.get_time_steps_vector());
+            calculate_bdf_coefficients(method, this->time_step_vector);
+
+          // TODO AA for debugging
+          //          this->pcout << "BDF coefficients: " <<
+          //          bdf_coefficient_vector.size() << std::endl; for (const
+          //          auto bdfcoeff : bdf_coefficient_vector)
+          //            {
+          //              this->pcout << bdfcoeff << std::endl;
+          //            }
+          //          this->pcout << "Time-steps: " <<
+          //          this->simulation_control.get_time_steps_vector().size() <<
+          //          std::endl;
+          //          for (const auto ts :
+          //          this->simulation_control.get_time_steps_vector())
+          //            {
+          //              this->pcout << "Time-steps: " << ts << std::endl;
+          //            }
+
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -526,15 +580,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     this->subequation_verbosity != Parameters::Verbosity::quiet &&
     this->linear_solver_verbosity != Parameters::Verbosity::quiet);
 
-  if (verbose)
-    {
-      std::string subequation_string =
-        this->subequations_interface->get_subequation_string(
-          this->subequation_id);
-
-      this->pcout << "  -Solving " << subequation_string << ":" << std::endl;
-    }
-
   // Get residual conditions
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
@@ -549,7 +594,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
 
   if (verbose)
     {
-      this->pcout << "    -Tolerance of iterative solver is: "
+      this->pcout << "  -Tolerance of iterative solver is: "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -611,35 +656,75 @@ void
 VOFAlgebraicInterfaceReinitialization<dim>::solve(
   const bool & /*is_post_mesh_adaptation = false*/)
 {
-  // Get time-step
-  double current_time_step_inv =
-    1. / this->simulation_control.get_time_steps_vector()[0];
+  // Compute time-step
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .algebraic_interface_reinitialization.compute_time_step_with_cfl)
+    {
+      const double cfl = this->simulation_control.get_CFL();
+      if (cfl > 0)
+        {
+          this->current_time_step = compute_time_step(cfl);
+          std::cout << "Current time step: " << this->current_time_step
+                    << std::endl;
+        }
+      else
+        {
+          this->current_time_step =
+            this->simulation_control.get_time_steps_vector()[0];
+        }
+    }
+  else
+    {
+      this->current_time_step = compute_time_step_without_CFL(
+        this->simulation_control.get_time_steps_vector()[0]);
+    }
 
-  // TODO AMISHGA ERASE
-  this->pcout << "Time-step: " << this->simulation_control.get_time_steps_vector()[0] << std::endl;
+  double current_time_step_inv = 1. / this->current_time_step;
+  this->time_step_vector[0] = this->current_time_step;
 
-  // Set tolerance for the stop criterion of the pseudo-time-stepping scheme
-  double tolerance = 1e-6;
+  // Get tolerance for the stop criterion of the pseudo-time-stepping scheme
+  double tolerance = this->simulation_parameters.multiphysics.vof_parameters
+                       .algebraic_interface_reinitialization.tolerance;
 
   // Set initial conditions from the VOF solution
   set_initial_conditions();
 
-  // Solve a first time-step
-  this->solve_non_linear_system(false);
-
   // Number of iterations counter
   unsigned int it = 1;
 
-  // Iterate until the stop criterion is met
+  // Solve a first time-step
+  if (this->subequation_verbosity != Parameters::Verbosity::quiet)
+    {
+      std::string subequation_string =
+        this->subequations_interface->get_subequation_string(
+          this->subequation_id);
+
+      this->pcout << "-Solving " << subequation_string << ", iteration " << it
+                  << ":" << std::endl;
+    }
+  this->solve_non_linear_system(true); // TODO AA true/false ???
+
+  // Iterate until the stop criterion is met // TODO AA double condition
+  //  while (continue_iterating(current_time_step_inv, tolerance) && it < 20)
   while (continue_iterating(current_time_step_inv, tolerance))
     {
       // Update previous solution
-      this->previous_solution = this->present_solution;
+      this->previous_solution               = this->present_solution;
+      this->previous_local_evaluation_point = this->local_evaluation_point;
 
       // Update non-zero constraints
-      define_non_zero_constraints(); // TODO AMISHGA check if necessary
+      define_non_zero_constraints(); // TODO AA check if necessary
 
       // Solve non-linear equation
+      if (this->subequation_verbosity != Parameters::Verbosity::quiet)
+        {
+          std::string subequation_string =
+            this->subequations_interface->get_subequation_string(
+              this->subequation_id);
+
+          this->pcout << "-Solving " << subequation_string << ", iteration "
+                      << it << ":" << std::endl;
+        }
       this->solve_non_linear_system(false);
 
       it += 1;

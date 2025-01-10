@@ -42,9 +42,24 @@ VOFSubequationsInterface<dim>::VOFSubequationsInterface(
           this);
     }
   if (p_simulation_parameters.multiphysics.vof_parameters
-        .algebraic_interface_reinitialization
-        .enable)
+        .algebraic_interface_reinitialization.enable)
     {
+      if (!p_simulation_parameters.multiphysics.vof_parameters
+             .surface_tension_force.enable)
+        {
+          // Phase gradient projection for interface normal vector computation
+          this->active_subequations.push_back(
+            VOFSubequationsID::phase_gradient_projection);
+          this->subequations[VOFSubequationsID::phase_gradient_projection] =
+            std::make_shared<VOFPhaseGradientProjection<dim>>(
+              p_simulation_parameters,
+              this->pcout,
+              p_triangulation,
+              this->multiphysics_interface,
+              this);
+        }
+
+      // Algebraic interface reinitialization
       this->active_subequations.push_back(
         VOFSubequationsID::algebraic_interface_reinitialization);
       this->subequations
